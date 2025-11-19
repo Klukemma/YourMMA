@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourMMA - Data-Driven MMA Picks & Fight Analytics</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">Your<span>MMA</span></a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="fighter-stats.html">Fighter Stats Database</a></li>
+                    <li><a href="ai-picks.html">AI Powered Picks</a></li>
+                    <li><a href="fight-predictor.html">Fight Predictor</a></li>
+                    <li><a href="my-predictions.html">My Predictions</a></li>
+                    <li><a href="leaderboard.html">Leaderboard</a></li>
+                    <li><a href="highlights.html">Fight Highlights</a></li>
+                </ul>
+                <button class="mobile-menu-btn">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="home-page">
+        <section class="hero">
+            <div class="container">
+                <h1>Data-Driven MMA Picks & Fight Analytics</h1>
+                <p>Model-based predictions, stylistic breakdowns and value bets for every card.</p>
+                <a href="#upcoming-fights" class="btn">View This Week's Card</a>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <div class="section-header">
+                    <h2>Latest MMA News</h2>
+                    <button class="btn refresh-btn" id="refresh-news">Refresh News</button>
+                </div>
+                <div class="news-grid" id="news-container">
+                    <!-- News will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="upcoming-fights">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Upcoming UFC Events</h2>
+                    <button class="btn refresh-btn" id="refresh-fights">Refresh Fights</button>
+                </div>
+                
+                <div class="countdown-timer">
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="days">00</div>
+                        <div class="countdown-label">Days</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="hours">00</div>
+                        <div class="countdown-label">Hours</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="minutes">00</div>
+                        <div class="countdown-label">Minutes</div>
+                    </div>
+                    <div class="countdown-item">
+                        <div class="countdown-value" id="seconds">00</div>
+                        <div class="countdown-label">Seconds</div>
+                    </div>
+                </div>
+
+                <div class="event-card" id="fights-container">
+                    <!-- Fights will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">Your<span>MMA</span></div>
+                <div class="social-links">
+                    <a href="#">X</a>
+                    <a href="#">Telegram</a>
+                    <a href="#">Discord</a>
+                </div>
+            </div>
+            <div class="disclaimer">
+                <p>All content is for informational and entertainment purposes only. Gamble responsibly.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Home page specific JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNews();
+            loadFights();
+            startCountdown();
+            
+            document.getElementById('refresh-news').addEventListener('click', loadNews);
+            document.getElementById('refresh-fights').addEventListener('click', loadFights);
+        });
+    </script>
+</body>
+</html>

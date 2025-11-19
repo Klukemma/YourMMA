@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Predictions - YourMMA</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">Your<span>MMA</span></a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="fighter-stats.html">Fighter Stats Database</a></li>
+                    <li><a href="ai-picks.html">AI Powered Picks</a></li>
+                    <li><a href="fight-predictor.html">Fight Predictor</a></li>
+                    <li><a href="my-predictions.html" class="active">My Predictions</a></li>
+                    <li><a href="leaderboard.html">Leaderboard</a></li>
+                    <li><a href="highlights.html">Fight Highlights</a></li>
+                </ul>
+                <button class="mobile-menu-btn">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <div class="container">
+                <h1>My Predictions</h1>
+                <p>Track your fight predictions and performance.</p>
+                
+                <div class="event-card">
+                    <h2>Current Predictions</h2>
+                    <table class="fights-table">
+                        <thead>
+                            <tr>
+                                <th>Fight</th>
+                                <th>My Pick</th>
+                                <th>Confidence</th>
+                                <th>Status</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Pereira vs Prochazka</td>
+                                <td class="pick">Pereira</td>
+                                <td>High</td>
+                                <td>Pending</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>Ortega vs Lopes</td>
+                                <td class="pick">Lopes</td>
+                                <td>Medium</td>
+                                <td>Pending</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">64%</div>
+                        <div class="stat-label">Accuracy Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">28</div>
+                        <div class="stat-label">Total Predictions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">18</div>
+                        <div class="stat-label">Correct Picks</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">Your<span>MMA</span></div>
+                <div class="social-links">
+                    <a href="#">X</a>
+                    <a href="#">Telegram</a>
+                    <a href="#">Discord</a>
+                </div>
+            </div>
+            <div class="disclaimer">
+                <p>All content is for informational and entertainment purposes only. Gamble responsibly.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

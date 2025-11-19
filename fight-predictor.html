@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fight Predictor - YourMMA</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">Your<span>MMA</span></a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="fighter-stats.html">Fighter Stats Database</a></li>
+                    <li><a href="ai-picks.html">AI Powered Picks</a></li>
+                    <li><a href="fight-predictor.html" class="active">Fight Predictor</a></li>
+                    <li><a href="my-predictions.html">My Predictions</a></li>
+                    <li><a href="leaderboard.html">Leaderboard</a></li>
+                    <li><a href="highlights.html">Fight Highlights</a></li>
+                </ul>
+                <button class="mobile-menu-btn">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <div class="container">
+                <h1>Fight Predictor</h1>
+                <p>Simulate fights and get predictions based on custom parameters.</p>
+                
+                <div class="event-card">
+                    <h2>Custom Fight Simulation</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h3>Fighter A</h3>
+                            <select id="fighterA" class="form-control">
+                                <option value="pereira">Alex Pereira</option>
+                                <option value="prochazka">Jiri Prochazka</option>
+                                <option value="ortega">Brian Ortega</option>
+                                <option value="lopes">Diego Lopes</option>
+                            </select>
+                        </div>
+                        <div>
+                            <h3>Fighter B</h3>
+                            <select id="fighterB" class="form-control">
+                                <option value="prochazka">Jiri Prochazka</option>
+                                <option value="pereira">Alex Pereira</option>
+                                <option value="lopes">Diego Lopes</option>
+                                <option value="ortega">Brian Ortega</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" style="margin-top: 20px;" onclick="simulateFight()">Simulate Fight</button>
+                    
+                    <div id="simulation-result" style="margin-top: 30px; display: none;">
+                        <h3>Simulation Result</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="win-percent-a">0%</div>
+                                <div class="stat-label" id="fighter-a-name">Fighter A</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="win-percent-b">0%</div>
+                                <div class="stat-label" id="fighter-b-name">Fighter B</div>
+                            </div>
+                        </div>
+                        <p id="fight-analysis">Analysis will appear here...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">Your<span>MMA</span></div>
+                <div class="social-links">
+                    <a href="#">X</a>
+                    <a href="#">Telegram</a>
+                    <a href="#">Discord</a>
+                </div>
+            </div>
+            <div class="disclaimer">
+                <p>All content is for informational and entertainment purposes only. Gamble responsibly.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <style>
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--darker-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        function simulateFight() {
+            const fighterA = document.getElementById('fighterA').value;
+            const fighterB = document.getElementById('fighterB').value;
+            
+            const simulations = {
+                'pereira-prochazka': { a: 65, b: 35, analysis: 'Pereira\'s striking power and takedown defense give him the edge in the rematch.' },
+                'ortega-lopes': { a: 42, b: 58, analysis: 'Lopes\' grappling and submission skills could neutralize Ortega\'s jiu-jitsu.' }
+            };
+            
+            const key = `${fighterA}-${fighterB}`;
+            const reverseKey = `${fighterB}-${fighterA}`;
+            const result = simulations[key] || simulations[reverseKey] || { a: 50, b: 50, analysis: 'Even matchup based on current stats and form.' };
+            
+            document.getElementById('win-percent-a').textContent = result.a + '%';
+            document.getElementById('win-percent-b').textContent = result.b + '%';
+            document.getElementById('fighter-a-name').textContent = document.getElementById('fighterA').options[document.getElementById('fighterA').selectedIndex].text;
+            document.getElementById('fighter-b-name').textContent = document.getElementById('fighterB').options[document.getElementById('fighterB').selectedIndex].text;
+            document.getElementById('fight-analysis').textContent = result.analysis;
+            document.getElementById('simulation-result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

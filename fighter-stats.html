@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fighter Stats Database - YourMMA</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">Your<span>MMA</span></a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="fighter-stats.html" class="active">Fighter Stats Database</a></li>
+                    <li><a href="ai-picks.html">AI Powered Picks</a></li>
+                    <li><a href="fight-predictor.html">Fight Predictor</a></li>
+                    <li><a href="my-predictions.html">My Predictions</a></li>
+                    <li><a href="leaderboard.html">Leaderboard</a></li>
+                    <li><a href="highlights.html">Fight Highlights</a></li>
+                </ul>
+                <button class="mobile-menu-btn">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <div class="container">
+                <h1>Fighter Stats Database</h1>
+                <p>Comprehensive statistics from Tapology.com. Select a fighter to view detailed analytics.</p>
+                
+                <div class="stats-container">
+                    <div class="fighter-list">
+                        <div class="search-box">
+                            <input type="text" id="fighter-search" placeholder="Search fighters...">
+                        </div>
+                        <div id="fighters-list">
+                            <div class="fighter-item active" data-fighter="pereira">
+                                <h3>Alex Pereira</h3>
+                                <p>Light Heavyweight • 9-2-0</p>
+                            </div>
+                            <div class="fighter-item" data-fighter="prochazka">
+                                <h3>Jiri Prochazka</h3>
+                                <p>Light Heavyweight • 29-4-1</p>
+                            </div>
+                            <div class="fighter-item" data-fighter="ortega">
+                                <h3>Brian Ortega</h3>
+                                <p>Featherweight • 16-3-0</p>
+                            </div>
+                            <div class="fighter-item" data-fighter="lopes">
+                                <h3>Diego Lopes</h3>
+                                <p>Featherweight • 24-6-0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="fighter-details">
+                        <div class="fighter-header">
+                            <div class="fighter-image">🥊</div>
+                            <div class="fighter-info">
+                                <h2>Alex Pereira</h2>
+                                <div class="fighter-record">Record: 9-2-0 (W-L-D) • 7 KO/TKO • 0 SUB • 2 DEC</div>
+                                <p>Light Heavyweight Champion • Striking Specialist • Former Glory Champion</p>
+                                <p><strong>Next Fight:</strong> vs Jiri Prochazka at UFC 303 (June 29, 2024)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid" id="fighter-stats">
+                            <!-- Stats loaded by JavaScript -->
+                        </div>
+                        
+                        <h3>Recent Fight History</h3>
+                        <table class="fights-table">
+                            <thead>
+                                <tr>
+                                    <th>Opponent</th>
+                                    <th>Result</th>
+                                    <th>Method</th>
+                                    <th>Round</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fight-history">
+                                <!-- Fight history loaded by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">Your<span>MMA</span></div>
+                <div class="social-links">
+                    <a href="#">X</a>
+                    <a href="#">Telegram</a>
+                    <a href="#">Discord</a>
+                </div>
+            </div>
+            <div class="disclaimer">
+                <p>All content is for informational and entertainment purposes only. Gamble responsibly.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Fighter stats page functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFighterData('pereira');
+            
+            // Fighter selection
+            document.querySelectorAll('.fighter-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.fighter-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    loadFighterData(this.dataset.fighter);
+                });
+            });
+
+            // Search functionality
+            document.getElementById('fighter-search').addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                document.querySelectorAll('.fighter-item').forEach(item => {
+                    const name = item.querySelector('h3').textContent.toLowerCase();
+                    item.style.display = name.includes(query) ? 'block' : 'none';
+                });
+            });
+        });
+
+        function loadFighterData(fighterId) {
+            const fighters = {
+                'pereira': {
+                    name: 'Alex Pereira',
+                    record: '9-2-0',
+                    stats: {
+                        strikesPerMin: '6.58',
+                        strikingAccuracy: '54%',
+                        strikesAbsorbed: '2.13',
+                        strikingDefense: '60%',
+                        takedownAverage: '0.00',
+                        takedownDefense: '80%',
+                        submissionAverage: '0.0',
+                        knockdowns: '7'
+                    },
+                    fightHistory: [
+                        { opponent: 'Jiri Prochazka', result: 'Win', method: 'KO/TKO', round: '2', date: 'Nov 11, 2023' },
+                        { opponent: 'Jan Blachowicz', result: 'Win', method: 'Decision', round: '3', date: 'Jul 29, 2023' },
+                        { opponent: 'Israel Adesanya', result: 'Loss', method: 'KO/TKO', round: '2', date: 'Apr 8, 2023' }
+                    ]
+                },
+                'prochazka': {
+                    name: 'Jiri Prochazka',
+                    record: '29-4-1',
+                    stats: {
+                        strikesPerMin: '5.67',
+                        strikingAccuracy: '52%',
+                        strikesAbsorbed: '3.45',
+                        strikingDefense: '48%',
+                        takedownAverage: '0.72',
+                        takedownDefense: '65%',
+                        submissionAverage: '1.2',
+                        knockdowns: '9'
+                    },
+                    fightHistory: [
+                        { opponent: 'Alex Pereira', result: 'Loss', method: 'KO/TKO', round: '2', date: 'Nov 11, 2023' },
+                        { opponent: 'Glover Teixeira', result: 'Win', method: 'Submission', round: '2', date: 'Jun 11, 2022' },
+                        { opponent: 'Dominick Reyes', result: 'Win', method: 'KO/TKO', round: '2', date: 'May 1, 2021' }
+                    ]
+                }
+            };
+
+            const fighter = fighters[fighterId];
+            if (!fighter) return;
+
+            document.querySelector('.fighter-info h2').textContent = fighter.name;
+            document.querySelector('.fighter-record').textContent = `Record: ${fighter.record}`;
+
+            // Update stats
+            const statsGrid = document.getElementById('fighter-stats');
+            statsGrid.innerHTML = Object.entries(fighter.stats).map(([key, value]) => `
+                <div class="stat-card">
+                    <div class="stat-value">${value}</div>
+                    <div class="stat-label">${key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</div>
+                </div>
+            `).join('');
+
+            // Update fight history
+            const fightHistory = document.getElementById('fight-history');
+            fightHistory.innerHTML = fighter.fightHistory.map(fight => `
+                <tr>
+                    <td>${fight.opponent}</td>
+                    <td>${fight.result}</td>
+                    <td>${fight.method}</td>
+                    <td>${fight.round}</td>
+                    <td>${fight.date}</td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
