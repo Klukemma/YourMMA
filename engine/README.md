@@ -194,6 +194,28 @@ fights involve a UFC debutant, against 16.5% across 2024-2025. So the harder
 cases are both more common and much less predictable. On experienced matchups
 the model still performs near its historical level.
 
+### Recalibration was tried and did not help
+
+`experiments/calibration_selection.py` picks a calibration recipe on 2025 and
+confirms it once on 2026, so the recipe is not fitted to the period used to
+judge it. Earlier runs that scored every variant directly on 2026 looked far
+more promising; that gap is what selecting on the test set buys you.
+
+| recipe | accuracy | Brier | ECE |
+| --- | --- | --- | --- |
+| no calibrator | 58.0% | 0.2343 | 0.112 |
+| production (all history, C=1e10) | 59.4% | 0.2407 | 0.123 |
+| best chosen on 2025 (all, C=1) | 59.1% | 0.2364 | **0.109** |
+
+ECE 0.123 to 0.109 is not worth a production change, and on the 2025 selection
+period the **uncalibrated** ensemble was the best calibrated of all (ECE 0.034),
+so calibration was adding error there rather than removing it.
+
+The reading: 2026 miscalibration cannot be fixed by refitting on pre-2026 data,
+because the problem is that 2026 differs from everything before it. No
+calibrator fitted on the past anticipates that. What would work is refitting as
+results arrive - now possible, since `grade.py` closes that loop.
+
 ## Known issues
 
 - **`TRUESKILL_BETA = 4.17` contradicts the data** (β ≈ 5.0, above). It feeds

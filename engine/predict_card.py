@@ -3360,8 +3360,16 @@ print("    Fitting Platt calibration on full data (winner features)...")
 p_lr_cal_full = lr_prod.predict_proba(X_cal_full_winner_s)[:, 1]
 p_rf_cal_full = rf_prod.predict_proba(X_cal_full_winner_s)[:, 1]
 p_xgb_cal_full = xgb_prod.predict_proba(X_cal_full_winner_s)[:, 1]
-p_mlp_cal_full = mlp_prod.predict_proba(X_cal_full_winner_s)[:, 1]
-p_ens_cal_full = (p_lr_cal_full + p_rf_cal_full + p_xgb_cal_full + p_mlp_cal_full) / 4
+
+# Fit the calibrator on exactly what it will be applied to. This previously
+# averaged four models including mlp_prod, while predict_fight_prod averages
+# three, so the calibrator mapped from a distribution it had never seen.
+# Measured effect is small - the MLP moves the average by 0.021 on average -
+# but a calibrator fitted on one quantity and applied to another is wrong
+# regardless of how little it currently costs.
+# Including the MLP on both sides was also measured, and was worse
+# (ECE 0.149 against 0.123). See experiments/calibrator_mismatch.py.
+p_ens_cal_full = (p_lr_cal_full + p_rf_cal_full + p_xgb_cal_full) / 3
 
 platt_prod = LogisticRegression(C=1e10, solver='lbfgs', max_iter=1000)
 platt_prod.fit(p_ens_cal_full.reshape(-1, 1), y_cal_full)
