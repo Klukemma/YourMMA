@@ -62,7 +62,10 @@ jobs:
       - name: Commit the updated dataset
         if: ${{ (inputs.mode == 'sync' || inputs.mode == 'fetch-odds') && !inputs.dry_run }}
         run: |
-          if git diff --quiet -- engine/data/; then
+          # --porcelain sees untracked files; `git diff` does not, so a
+          # brand-new file (data/odds.csv) reported "nothing to commit" and
+          # was discarded with the runner.
+          if [ -z "$(git status --porcelain -- engine/data/)" ]; then
             echo "No dataset changes to commit."
             exit 0
           fi
