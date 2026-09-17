@@ -3940,7 +3940,11 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
     return {
         'red': r_resolved or red_name,
         'blue': b_resolved or blue_name,
-        'red_win_prob': p_win,
+        # Diagnostics: the win probability before each adjustment layer, so the
+        # layers can be measured against outcomes rather than assumed to help.
+        'p_ensemble': float(p_ens),          # raw LR+RF+XGB average
+        'p_platt': float(p_win_base),        # after Platt calibration
+        'red_win_prob': p_win,               # after context adjustment
         'blue_win_prob': 1 - p_win,
         'winner': (r_resolved or red_name) if p_win > 0.5 else (b_resolved or blue_name),
         'win_prob': max(p_win, 1 - p_win),

@@ -144,6 +144,56 @@ history, so rows the model was trained on never move. Exact historical
 reproduction is not possible from this file: same-day bouts have no recorded
 order, and the dedup step appears to postdate the rating build.
 
+## Measured performance
+
+Backtest, walk-forward (retrains per year on all prior fights):
+
+| year | 2022 | 2023 | 2024 | 2025 | **2026** |
+| --- | --- | --- | --- | --- | --- |
+| accuracy | 70.6% | 73.0% | 73.5% | 72.9% | **60.4%** |
+| Brier | 0.186 | 0.182 | 0.178 | 0.187 | **0.241** |
+
+Live, graded against real results (145 unique bouts, 2025-12 to 2026-06):
+**59.3%**, Brier 0.264. See `grade.py`.
+
+**The live number matches the 2026 backtest.** The model is not degrading in
+production - 2026 is simply harder for it than any year since 2017. Comparing
+live 59.3% against the 69.7% eleven-year walk-forward mean is the wrong
+comparison; against 2026's own 60.4% it is in line.
+
+### What the drop is not
+
+`experiments/adjustment_ablation.py` scores each layer of the live stack on
+the same bouts, with the model trained only on pre-cutoff data:
+
+| variant | accuracy | Brier |
+| --- | --- | --- |
+| raw ensemble (LR+RF+XGB) | 58.5% | 0.2583 |
+| + Platt calibration | 59.2% | 0.2688 |
+| + context adjustment | 59.9% | 0.2597 |
+
+All within 1.4 points. The adjustment layers are not the cause, and the raw
+ensemble is just as miscalibrated (its 80-90% band wins 61.5%), so the
+overconfidence comes from the base model rather than from anything layered on
+top.
+
+### What it looks like instead
+
+Accuracy on the graded bouts, split by the less experienced fighter's prior
+UFC bouts:
+
+| prior bouts | n | accuracy |
+| --- | --- | --- |
+| 0 (debut) | 2 | 50.0% |
+| 1-2 | 45 | 57.8% |
+| 3-5 | 41 | 56.1% |
+| **6+** | **53** | **66.0%** |
+
+And 2026 has far more thin-history bouts than recent years: **27.7%** of 2026
+fights involve a UFC debutant, against 16.5% across 2024-2025. So the harder
+cases are both more common and much less predictable. On experienced matchups
+the model still performs near its historical level.
+
 ## Known issues
 
 - **`TRUESKILL_BETA = 4.17` contradicts the data** (β ≈ 5.0, above). It feeds
