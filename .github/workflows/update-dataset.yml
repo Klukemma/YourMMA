@@ -1,0 +1,71 @@
+name: Update UFC dataset
+
+# Runs on GitHub's runners, which can reach the Kaggle API.
+# Trigger from the GitHub mobile app: Actions -> Update UFC dataset -> Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Report what would change without committing"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "0 6 * * MON"   # Mondays 06:00 UTC, after the weekend's cards
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r engine/requirements.txt kaggle
+
+      - name: Sync from Kaggle
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+        run: |
+          if [ -z "$KAGGLE_API_TOKEN" ]; then
+            echo "::error::KAGGLE_API_TOKEN secret is not set."
+            echo "Add it under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+          python engine/sync_kaggle.py sync \
+            ${{ inputs.dry_run && '--dry-run' || '' }} | tee sync.log
+
+      - name: Verify the dataset still loads and ratings are consistent
+        if: ${{ !inputs.dry_run }}
+        run: |
+          pip install pytest
+          python -m pytest engine/tests/ -q
+
+      - name: Commit the updated dataset
+        if: ${{ !inputs.dry_run }}
+        run: |
+          if git diff --quiet -- engine/data/; then
+            echo "No dataset changes to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add engine/data/
+          THROUGH=$(python -c "import pandas as pd;d=pd.read_csv('engine/data/UFC_with_mmr_rebuilt_dedup.csv',usecols=['date'],low_memory=False);print(pd.to_datetime(d['date']).max().date())")
+          NEW=$(grep -oP 'New fights: \K[0-9,]+' sync.log || echo "?")
+          git commit -m "Update UFC dataset: +${NEW} fights through ${THROUGH}"
+          git push
+
+      - name: Upload sync log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sync-log
+          path: sync.log
+          if-no-files-found: ignore
