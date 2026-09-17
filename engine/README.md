@@ -216,6 +216,49 @@ because the problem is that 2026 differs from everything before it. No
 calibrator fitted on the past anticipates that. What would work is refitting as
 results arrive - now possible, since `grade.py` closes that loop.
 
+### Selective prediction works; the meta-model adds nothing
+
+`experiments/meta_model.py` trains a second model on 2024 to predict whether
+the base model's pick is right, chooses a variant on 2025, and looks at the
+held-out period once.
+
+On the 352 held-out bouts, accuracy over the top slice by each ranking:
+
+| ranking | top 50% | top 30% | top 20% |
+| --- | --- | --- | --- |
+| no selection (58.0% base) | 56.8% | 57.5% | 60.0% |
+| **the model's own confidence** | **69.3%** | **78.3%** | 81.4% |
+| meta-model (GBM) | 68.2% | 75.5% | 82.9% |
+
+**Skipping fights is worth far more than any modelling.** The base model is 58%
+on everything and 78% on the third of fights it is most sure about.
+
+**The meta-model does not beat sorting by confidence.** Its single largest
+feature is `confidence` at 0.466 importance - it mostly rediscovers the sort.
+Not worth the machinery.
+
+Simple thresholds on the held-out period:
+
+| rule | coverage | accuracy |
+| --- | --- | --- |
+| confidence >= 0.2 | 68.5% | 64.7% |
+| confidence >= 0.4 | 43.8% | 72.7% |
+| confidence >= 0.6 | 23.0% | 79.0% |
+
+**Accuracy is not edge.** High-confidence picks are heavy favourites, and 79%
+on fighters the market prices at -400 still loses money. Nothing here has been
+measured against odds; these figures say which picks are *reliable*, not which
+are *profitable*. That needs the odds data joined to the graded results.
+
+### The experience gate does not replicate
+
+An earlier look at the 145 graded live predictions showed 66.0% where both
+fighters had 6+ prior UFC bouts. On the full held-out set with a fixed base
+model that does not hold: the gate covers 27.6% of bouts at **59.8%**, against a
+58.0% base. The original figure came from a smaller sample and a differently
+trained model. Experience is a weak selector on its own; confidence is the
+strong one.
+
 ## Known issues
 
 - **`TRUESKILL_BETA = 4.17` contradicts the data** (β ≈ 5.0, above). It feeds
