@@ -111,6 +111,81 @@ def cmd_inspect(args):
         print("COLUMN_MAP alone is not enough for a relational source.")
 
 
+def _canon(col):
+    """Reduce a column name to a comparable token set.
+
+    Upstream and local disagree on wording, not meaning:
+    r_total_sig_str_landed_head  vs  r_head_landed
+    """
+    c = col.lower()
+    for noise in ('_total', 'total_', 'seconds', '_no'):
+        c = c.replace(noise, '_')
+    c = (c.replace('atmp', 'atmpted').replace('atmptedted', 'atmpted')
+           .replace('success', 'landed').replace('sig_str', 'sig')
+           .replace('significant', 'sig').replace('distance', 'dist'))
+    return frozenset(t for t in c.split('_') if t and t not in ('str',))
+
+
+def cmd_propose_map(args):
+    """Emit a candidate COLUMN_MAP by matching upstream columns to local ones.
+
+    Prints only the proposal and the unmatched local columns, so the output is
+    reviewable. Nothing is written - the mapping is committed by hand after
+    checking it.
+    """
+    local = pd.read_csv(LOCAL_CSV, low_memory=False, nrows=5)
+    local_cols = list(local.columns)
+
+    with tempfile.TemporaryDirectory() as tmp:
+        files = {f.name: pd.read_csv(f, low_memory=False, nrows=200)
+                 for f in download(Path(tmp))}
+
+    wide = files.get('master.csv')
+    if wide is None:
+        sys.exit(f"master.csv not found. Got: {list(files)}")
+
+    remote_cols = list(wide.columns)
+    remote_by_canon = {}
+    for rc in remote_cols:
+        remote_by_canon.setdefault(_canon(rc), []).append(rc)
+
+    exact, canon, unmatched = {}, {}, []
+    for lc in local_cols:
+        if lc in remote_cols:
+            exact[lc] = lc
+            continue
+        hits = remote_by_canon.get(_canon(lc), [])
+        if len(hits) == 1:
+            canon[hits[0]] = lc
+        else:
+            unmatched.append((lc, hits))
+
+    print(f"\nmaster.csv: {len(wide.columns)} columns   local: {len(local_cols)} columns")
+    print(f"identical names      : {len(exact)}")
+    print(f"matched by meaning   : {len(canon)}")
+    print(f"unmatched local cols : {len(unmatched)}")
+
+    print("\n# --- proposed COLUMN_MAP (kaggle_name -> local_name) ---")
+    print("COLUMN_MAP = {")
+    for rc, lc in sorted(canon.items(), key=lambda kv: kv[1]):
+        print(f'    {rc!r}: {lc!r},')
+    print("}")
+
+    print("\n# --- local columns with no confident source ---")
+    for lc, hits in unmatched:
+        note = f"  ambiguous: {hits}" if hits else ""
+        print(f"    {lc}{note}")
+
+    print("\n# --- upstream columns we would not use ---")
+    used = set(exact) | set(canon)
+    print(sorted(c for c in remote_cols if c not in used))
+
+    for name in ('fighter.csv', 'event.csv'):
+        if name in files:
+            print(f"\n# --- {name} columns ---")
+            print(sorted(files[name].columns))
+
+
 # Fill this in once `inspect` shows the upstream names. {kaggle_name: local_name}
 COLUMN_MAP = {}
 
@@ -192,10 +267,12 @@ def main():
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("inspect", help="download and report the upstream schema")
+    sub.add_parser("propose-map", help="suggest a COLUMN_MAP from upstream to local")
     s = sub.add_parser("sync", help="merge new fights into the local CSV")
     s.add_argument("--dry-run", action="store_true", help="report without writing")
     args = ap.parse_args()
-    {"inspect": cmd_inspect, "sync": cmd_sync}[args.cmd](args)
+    {"inspect": cmd_inspect, "propose-map": cmd_propose_map,
+     "sync": cmd_sync}[args.cmd](args)
 
 
 if __name__ == "__main__":
