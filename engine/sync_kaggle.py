@@ -63,34 +63,52 @@ def download(dest):
     return files
 
 
-def describe(path):
-    df = pd.read_csv(path, low_memory=False, nrows=5000)
-    return {"path": path, "columns": list(df.columns), "sample_rows": len(df)}
+def series_is_datelike(series):
+    """Cheap check: does this column parse as dates?"""
+    sample = series.dropna().head(20)
+    if sample.empty or sample.dtype.kind in 'if':
+        return False
+    try:
+        return pd.to_datetime(sample, errors='coerce', format='mixed').notna().mean() > 0.8
+    except Exception:
+        return False
 
 
 def cmd_inspect(args):
+    """Dump enough of the upstream schema to design a join against our layout.
+
+    The upstream dataset is relational (event / fight / fighter / round tables)
+    while the local file is one wide row per bout, so this prints every column
+    of every table with sample values, not just a column diff.
+    """
     with tempfile.TemporaryDirectory() as tmp:
         files = download(Path(tmp))
-        local = pd.read_csv(LOCAL_CSV, low_memory=False, nrows=5)
-        local_cols = set(local.columns)
+        local = pd.read_csv(LOCAL_CSV, low_memory=False, nrows=3)
 
-        print(f"\nLocal file: {LOCAL_CSV.name} ({len(local.columns)} columns)\n")
-        for f in files:
-            info = describe(f)
-            remote_cols = set(info["columns"])
-            shared = local_cols & remote_cols
-            print("=" * 70)
-            print(f"{f.name}: {len(info['columns'])} columns")
-            print(f"  shared with local : {len(shared)}")
-            print(f"  missing key cols  : {[c for c in KEY_COLUMNS if c not in remote_cols] or 'none'}")
-            only_remote = sorted(remote_cols - local_cols)
-            only_local = sorted(local_cols - remote_cols)
-            if only_remote:
-                print(f"  only in Kaggle    : {only_remote[:15]}{' ...' if len(only_remote) > 15 else ''}")
-            if only_local:
-                print(f"  only in local     : {only_local[:15]}{' ...' if len(only_local) > 15 else ''}")
-        print("\nIf key columns are named differently upstream, add a mapping to "
-              "COLUMN_MAP in this file before running sync.")
+        print(f"\nLOCAL: {LOCAL_CSV.name}")
+        print(f"  {len(local.columns)} columns, one row per bout")
+        print(f"  key columns: {KEY_COLUMNS}")
+
+        for f in sorted(files):
+            df = pd.read_csv(f, low_memory=False)
+            print("\n" + "=" * 72)
+            print(f"{f.name}   {len(df):,} rows x {len(df.columns)} columns")
+            print("-" * 72)
+            for col in df.columns:
+                sr = df[col]
+                sample = [str(x)[:26] for x in sr.dropna().head(2).tolist()]
+                print(f"  {col:<26} {str(sr.dtype):<8} nulls={sr.isna().mean():5.1%} "
+                      f"uniq={sr.nunique():<7} {sample}")
+            ids = [c for c in df.columns if c.lower().endswith('id')]
+            dates = [c for c in df.columns if 'date' in c.lower() or series_is_datelike(df[c])]
+            if ids:
+                print(f"  -> id-like   : {ids}")
+            if dates:
+                print(f"  -> date-like : {dates}")
+
+        print("\n" + "=" * 72)
+        print("Next: decide which tables join to reproduce one wide row per bout.")
+        print("COLUMN_MAP alone is not enough for a relational source.")
 
 
 # Fill this in once `inspect` shows the upstream names. {kaggle_name: local_name}

@@ -5,8 +5,13 @@ name: Update UFC dataset
 on:
   workflow_dispatch:
     inputs:
+      mode:
+        description: "inspect = report upstream schema only; sync = merge new fights"
+        type: choice
+        options: [sync, inspect]
+        default: sync
       dry_run:
-        description: "Report what would change without committing"
+        description: "sync only: report what would change without committing"
         type: boolean
         default: false
   schedule:
@@ -32,23 +37,30 @@ jobs:
       - name: Sync from Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+        # pipefail matters: without it the step's status is tee's, so a failing
+        # sync reports green.
         run: |
+          set -o pipefail
           if [ -z "$KAGGLE_API_TOKEN" ]; then
             echo "::error::KAGGLE_API_TOKEN secret is not set."
             echo "Add it under Settings -> Secrets and variables -> Actions."
             exit 1
           fi
-          python engine/sync_kaggle.py sync \
-            ${{ inputs.dry_run && '--dry-run' || '' }} | tee sync.log
+          if [ "${{ inputs.mode }}" = "inspect" ]; then
+            python engine/sync_kaggle.py inspect 2>&1 | tee sync.log
+          else
+            python engine/sync_kaggle.py sync \
+              ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee sync.log
+          fi
 
       - name: Verify the dataset still loads and ratings are consistent
-        if: ${{ !inputs.dry_run }}
+        if: ${{ inputs.mode != 'inspect' && !inputs.dry_run }}
         run: |
           pip install pytest
           python -m pytest engine/tests/ -q
 
       - name: Commit the updated dataset
-        if: ${{ !inputs.dry_run }}
+        if: ${{ inputs.mode != 'inspect' && !inputs.dry_run }}
         run: |
           if git diff --quiet -- engine/data/; then
             echo "No dataset changes to commit."
