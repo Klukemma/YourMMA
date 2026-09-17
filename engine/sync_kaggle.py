@@ -335,6 +335,54 @@ def cmd_search_odds(args):
     print("  kaggle datasets files <ref>")
 
 
+# Shortlisted by `search-odds`. The rest of the 23 results end in 2024/2025,
+# before the period we need to price.
+ODDS_CANDIDATES = [
+    'p0p0xyz/ufc-fights-ml-with-odds-csv',            # "ml" = moneyline, updated 2026-01-14
+    'oliviersportsdata/ufc-multimarket-sample-2025',  # updated 2026-06-24
+    'martnoisrodgz/ufc-events-fight-results-2026',    # 2026 events
+    'juanpez24/ufc-fight-outcome-prediction-1994-2025',
+]
+
+
+def cmd_inspect_odds(args):
+    """Download each candidate and report whether it can price our predictions."""
+    history = json.loads((DATA_DIR / 'prediction_history.json').read_text())
+    need = pd.to_datetime([p['event_date'] for p in history['predictions']])
+    print(f"predictions to price: {need.min().date()} -> {need.max().date()}\n")
+
+    for ref in ODDS_CANDIDATES:
+        print("=" * 72)
+        print(ref)
+        with tempfile.TemporaryDirectory() as tmp:
+            result = subprocess.run(
+                ['kaggle', 'datasets', 'download', '-d', ref, '-p', tmp, '--unzip'],
+                capture_output=True, text=True)
+            if result.returncode != 0:
+                print(f"  download failed: {result.stderr.strip()[:160]}")
+                continue
+            for f in sorted(Path(tmp).rglob('*.csv')):
+                try:
+                    df = pd.read_csv(f, low_memory=False)
+                except Exception as exc:
+                    print(f"  {f.name}: unreadable ({exc})")
+                    continue
+                odds_cols = [c for c in df.columns if any(
+                    k in c.lower() for k in ('odd', 'moneyline', 'ml_', 'line', 'price', 'book'))]
+                date_cols = [c for c in df.columns if 'date' in c.lower()]
+                print(f"  {f.name}: {len(df):,} rows x {len(df.columns)} cols")
+                print(f"    odds-like : {odds_cols[:8] or 'NONE'}")
+                if not odds_cols:
+                    continue
+                for dc in date_cols[:1]:
+                    parsed = pd.to_datetime(df[dc], errors='coerce')
+                    if parsed.notna().any():
+                        print(f"    {dc}: {parsed.min().date()} -> {parsed.max().date()}")
+                        covers = ((parsed >= need.min()) & (parsed <= need.max())).sum()
+                        print(f"    rows inside our window: {covers:,}")
+                print(f"    columns   : {sorted(df.columns)[:24]}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -342,11 +390,13 @@ def main():
     sub.add_parser("inspect", help="download and report the upstream schema")
     sub.add_parser("propose-map", help="suggest a COLUMN_MAP from upstream to local")
     sub.add_parser("search-odds", help="look for a Kaggle dataset with historical odds")
+    sub.add_parser("inspect-odds", help="check whether shortlisted odds datasets cover our window")
     s = sub.add_parser("sync", help="merge new fights into the local CSV")
     s.add_argument("--dry-run", action="store_true", help="report without writing")
     args = ap.parse_args()
     {"inspect": cmd_inspect, "propose-map": cmd_propose_map,
-     "search-odds": cmd_search_odds, "sync": cmd_sync}[args.cmd](args)
+     "search-odds": cmd_search_odds, "inspect-odds": cmd_inspect_odds,
+     "sync": cmd_sync}[args.cmd](args)
 
 
 if __name__ == "__main__":
