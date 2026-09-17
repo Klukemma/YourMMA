@@ -61,9 +61,15 @@ def test_shipped_dataset_is_clean():
 
 
 def test_repaired_row_has_the_flyweight_not_the_middleweight():
+    """Located by content, not row number - a data sync shifts the index."""
     df = pd.read_csv(ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv",
                      low_memory=False)
-    row = df.loc[8138]
+    match = df[(df["date"] == "2025-10-18")
+               & (df["r_name"] == "Bruno Silva")
+               & (df["b_name"] == "HyunSung Park")]
+    assert len(match) == 1, "the repaired bout should appear exactly once"
+    row = match.iloc[0]
     assert row["division"] == "flyweight"
     assert float(row["r_height"]) == 162.56
     assert float(row["r_weight"]) == 56.7
+    assert float(row["r_wins"]) == 14
