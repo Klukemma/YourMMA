@@ -57,17 +57,32 @@ def test_every_subcommand_is_wired_to_a_real_function():
 
 
 def test_parser_accepts_each_documented_mode(monkeypatch):
-    """Every mode offered by the workflow must parse."""
+    """Every mode the workflow offers must parse and reach a command.
+
+    Commands are stubbed by discovery rather than by name, so adding a new
+    cmd_* does not silently leave this test calling the real one.
+    """
+    workflow = (ENGINE.parent / ".github" / "workflows" / "update-dataset.yml").read_text()
+    line = next(l for l in workflow.splitlines() if "options:" in l)
+    modes = [m.strip() for m in line.split("[", 1)[1].rstrip("]").split(",")]
+    assert modes, "no modes found in the workflow"
+
+    commands = [n for n in dir(sync_kaggle) if n.startswith("cmd_")]
+    for mode in modes:
+        monkeypatch.setattr(sys, "argv", ["sync_kaggle.py", mode])
+        called = {}
+        for name in commands:
+            monkeypatch.setattr(sync_kaggle, name,
+                                lambda a, _n=name: called.setdefault("ran", _n))
+        sync_kaggle.main()
+        assert called, f"workflow offers mode {mode!r} but nothing ran"
+
+
+def test_every_workflow_mode_has_a_command():
+    """A mode in the dropdown with no matching cmd_ function fails at runtime."""
     workflow = (ENGINE.parent / ".github" / "workflows" / "update-dataset.yml").read_text()
     line = next(l for l in workflow.splitlines() if "options:" in l)
     modes = [m.strip() for m in line.split("[", 1)[1].rstrip("]").split(",")]
     for mode in modes:
-        monkeypatch.setattr(sys, "argv", ["sync_kaggle.py", mode])
-        called = {}
-        monkeypatch.setattr(sync_kaggle, "cmd_inspect", lambda a: called.setdefault("x", 1))
-        monkeypatch.setattr(sync_kaggle, "cmd_propose_map", lambda a: called.setdefault("x", 1))
-        monkeypatch.setattr(sync_kaggle, "cmd_search_odds", lambda a: called.setdefault("x", 1))
-        monkeypatch.setattr(sync_kaggle, "cmd_inspect_odds", lambda a: called.setdefault("x", 1))
-        monkeypatch.setattr(sync_kaggle, "cmd_sync", lambda a: called.setdefault("x", 1))
-        sync_kaggle.main()
-        assert called, f"workflow offers mode {mode!r} but nothing ran"
+        expected = "cmd_" + mode.replace("-", "_")
+        assert hasattr(sync_kaggle, expected), f"mode {mode!r} needs {expected}()"
