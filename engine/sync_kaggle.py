@@ -26,6 +26,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from ratings import DEFAULT, extend
+from transform import carry_forward_records, transform
 
 DATASET = "neelagiriaditya/ufc-datasets-1994-2025"
 ENGINE_DIR = Path(__file__).resolve().parent
@@ -111,19 +112,29 @@ def cmd_inspect(args):
         print("COLUMN_MAP alone is not enough for a relational source.")
 
 
-def _canon(col):
-    """Reduce a column name to a comparable token set.
+# Positional strike columns: upstream keeps a "sig" token that local drops.
+#   local     r_head_landed
+#   upstream  r_total_sig_str_landed_head
+_POSITIONS = {'head', 'body', 'leg', 'dist', 'clinch', 'ground'}
 
-    Upstream and local disagree on wording, not meaning:
-    r_total_sig_str_landed_head  vs  r_head_landed
-    """
-    c = col.lower()
-    for noise in ('_total', 'total_', 'seconds', '_no'):
-        c = c.replace(noise, '_')
-    c = (c.replace('atmp', 'atmpted').replace('atmptedted', 'atmpted')
-           .replace('success', 'landed').replace('sig_str', 'sig')
-           .replace('significant', 'sig').replace('distance', 'dist'))
-    return frozenset(t for t in c.split('_') if t and t not in ('str',))
+# Tokens that carry no meaning for matching, only house style.
+_NOISE = {'total', 'str', 'fighter', 'inches', 'lbs', 'seconds', 'no'}
+
+_SYNONYM = {
+    'atmp': 'atmpted', 'attempted': 'atmpted', 'attempts': 'atmpted',
+    'success': 'landed', 'distance': 'dist', 'slpm': 'splm',
+    'percent': 'per', 'pct': 'per', 'rnd': 'round',
+}
+
+
+def _canon(col):
+    """Reduce a column name to a comparable token set."""
+    tokens = [_SYNONYM.get(t, t) for t in str(col).lower().split('_')]
+    tokens = [t for t in tokens if t and t not in _NOISE]
+    # A positional breakdown column is already unambiguous without "sig".
+    if _POSITIONS & set(tokens):
+        tokens = [t for t in tokens if t != 'sig']
+    return frozenset(tokens)
 
 
 def cmd_propose_map(args):
@@ -176,6 +187,9 @@ def cmd_propose_map(args):
         note = f"  ambiguous: {hits}" if hits else ""
         print(f"    {lc}{note}")
 
+    print("\n# --- every master.csv column, for writing the map by hand ---")
+    print(sorted(remote_cols))
+
     print("\n# --- upstream columns we would not use ---")
     used = set(exact) | set(canon)
     print(sorted(c for c in remote_cols if c not in used))
@@ -204,57 +218,81 @@ def _fight_key(df):
             + df["b_name"].astype(str).str.strip().str.lower())
 
 
+def _load_upstream(tmpdir):
+    """Download and return {filename: DataFrame}."""
+    return {f.name: pd.read_csv(f, low_memory=False) for f in download(Path(tmpdir))}
+
+
+def _excluded_fight_ids(tables):
+    """fight_ids upstream flagged as incompletely parsed.
+
+    scrape_error.csv records PartialFightParse failures. Importing those rows
+    would add bouts with missing round data, which reads as a real zero to
+    every downstream feature.
+    """
+    errors = tables.get('scrape_error.csv')
+    if errors is None or 'entity_id' not in errors.columns:
+        return set()
+    unresolved = errors
+    if 'resolved' in errors.columns:
+        unresolved = errors[errors['resolved'].fillna(0).astype(int) == 0]
+    if 'entity_type' in unresolved.columns:
+        unresolved = unresolved[unresolved['entity_type'].astype(str) == 'fight']
+    return set(unresolved['entity_id'].dropna().astype(str))
+
+
 def cmd_sync(args):
     local = pd.read_csv(LOCAL_CSV, low_memory=False)
-    local["date"] = pd.to_datetime(local["date"], errors="coerce")
-    print(f"Local: {len(local):,} fights through {local['date'].max().date()}")
+    local['date'] = pd.to_datetime(local['date'], errors='coerce')
+    cutoff = local['date'].max()
+    print(f"Local:  {len(local):,} fights through {cutoff.date()}")
 
     with tempfile.TemporaryDirectory() as tmp:
-        files = download(Path(tmp))
-        frames = []
-        for f in files:
-            df = pd.read_csv(f, low_memory=False)
-            if COLUMN_MAP:
-                df = df.rename(columns=COLUMN_MAP)
-            if all(c in df.columns for c in KEY_COLUMNS):
-                frames.append(_normalise(df))
-            else:
-                missing = [c for c in KEY_COLUMNS if c not in df.columns]
-                print(f"  skipping {f.name}: missing {missing}")
-        if not frames:
-            sys.exit("No downloaded file had the required columns. Run `inspect` "
-                     "and fill in COLUMN_MAP.")
-        remote = pd.concat(frames, ignore_index=True)
+        tables = _load_upstream(tmp)
 
-    print(f"Kaggle: {len(remote):,} fights through {remote['date'].max().date()}")
+    master = tables.get('master.csv')
+    if master is None:
+        sys.exit(f"master.csv not found upstream. Got: {sorted(tables)}")
+
+    rows = transform(master, tables.get('fighter.csv'))
+    print(f"Kaggle: {len(rows):,} fights through {rows['date'].max().date()}")
+
+    skip = _excluded_fight_ids(tables)
+    if skip and 'fight_id' in rows.columns:
+        bad = rows['fight_id'].astype(str).isin(skip)
+        if bad.any():
+            print(f"  excluding {bad.sum():,} fights flagged as partially parsed upstream")
+            rows = rows[~bad]
 
     known = set(_fight_key(local))
-    new = remote[~_fight_key(remote).isin(known)].copy()
-    # Only bouts after our last date - avoids back-filling gaps that the dedup
-    # step deliberately removed.
-    new = new[new["date"] > local["date"].max()]
+    new = rows[~_fight_key(rows).isin(known)]
+    new = new[new['date'] > cutoff].copy()
     print(f"New fights: {len(new):,}")
     if new.empty:
         print("Already up to date.")
         return
 
     print(f"  {new['date'].min().date()} -> {new['date'].max().date()}")
-    for ev, n in new.groupby("event_name").size().sort_values(ascending=False).items():
-        print(f"    {n:3d}  {ev}")
+    counts = new.groupby('event_name').size().sort_values(ascending=False)
+    for event, n in counts.items():
+        print(f"    {n:3d}  {event}")
 
-    missing_ratings = [c for c in RATING_COLUMNS if c not in new.columns or new[c].isna().all()]
-    if missing_ratings:
-        print(f"\nRating columns absent upstream (expected): computing with "
-              f"TrueSkill beta={DEFAULT.beta}, tau={DEFAULT.tau}")
+    new = carry_forward_records(local, new)
 
+    # Ratings continue each fighter's existing series; existing rows never move.
     combined = extend(local, new)
+    combined = combined.reindex(columns=list(local.columns))
     print(f"Combined: {len(combined):,} fights through {combined['date'].max().date()}")
+
+    blank = [c for c in local.columns if combined.tail(len(new))[c].isna().all()]
+    if blank:
+        print(f"  columns with no data in the new rows: {blank}")
 
     if args.dry_run:
         print("\n--dry-run: nothing written.")
         return
 
-    backup = LOCAL_CSV.with_suffix(f".backup-{local['date'].max().date()}.csv")
+    backup = LOCAL_CSV.with_suffix(f".backup-{cutoff.date()}.csv")
     if not backup.exists():
         shutil.copy2(LOCAL_CSV, backup)
         print(f"Backed up to {backup.name}")
