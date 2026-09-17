@@ -300,17 +300,53 @@ def cmd_sync(args):
     print(f"Wrote {LOCAL_CSV}")
 
 
+def cmd_search_odds(args):
+    """Look for a Kaggle dataset carrying historical UFC betting odds.
+
+    The Odds API serves upcoming events only, so it cannot price fights that
+    have already happened. Without a historical source there is no way to
+    compute ROI on the 2026 predictions.
+    """
+    queries = ['ufc odds', 'ufc betting odds', 'mma odds', 'ufc moneyline',
+               'ufc betting', 'ufc fights odds']
+    seen = {}
+    for q in queries:
+        print(f"\n--- searching: {q!r} ---")
+        result = subprocess.run(['kaggle', 'datasets', 'list', '-s', q, '--csv'],
+                                capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"  failed: {result.stderr.strip()[:200]}")
+            continue
+        lines = [l for l in result.stdout.splitlines() if l.strip()]
+        if len(lines) < 2:
+            print("  no results")
+            continue
+        import csv as _csv
+        for row in _csv.DictReader(lines):
+            ref = row.get('ref')
+            if ref and ref not in seen:
+                seen[ref] = row
+                print(f"  {ref}")
+                print(f"      {row.get('title','')[:70]}  "
+                      f"size={row.get('size','?')}  updated={row.get('lastUpdated','')[:10]}")
+
+    print(f"\n{'='*70}")
+    print(f"{len(seen)} candidate datasets. Inspect one with:")
+    print("  kaggle datasets files <ref>")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("inspect", help="download and report the upstream schema")
     sub.add_parser("propose-map", help="suggest a COLUMN_MAP from upstream to local")
+    sub.add_parser("search-odds", help="look for a Kaggle dataset with historical odds")
     s = sub.add_parser("sync", help="merge new fights into the local CSV")
     s.add_argument("--dry-run", action="store_true", help="report without writing")
     args = ap.parse_args()
     {"inspect": cmd_inspect, "propose-map": cmd_propose_map,
-     "sync": cmd_sync}[args.cmd](args)
+     "search-odds": cmd_search_odds, "sync": cmd_sync}[args.cmd](args)
 
 
 if __name__ == "__main__":

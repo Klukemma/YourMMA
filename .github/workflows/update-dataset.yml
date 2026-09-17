@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, inspect, propose-map]
+        options: [sync, inspect, propose-map, search-odds]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
