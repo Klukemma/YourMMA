@@ -145,6 +145,27 @@ FIGHT_CONTEXTS = {
 }
 
 # ==============================================================================
+# 5. NAME RESOLUTION SAFETY
+# ==============================================================================
+# STRICT_NAMES = True means the engine refuses to predict a fighter it cannot
+# identify with confidence, instead of quietly substituting someone else or
+# inventing average stats. Leave this on unless you know why you want it off.
+STRICT_NAMES = True
+
+# A fuzzy match is auto-accepted as a typo ONLY at or above this ratio AND when
+# the surname matches exactly. Everything below is offered as a suggestion.
+FUZZY_AUTO_ACCEPT_RATIO = 0.90
+
+# Ratio above which near-misses are offered as "did you mean...".
+FUZZY_SUGGEST_RATIO = 0.60
+
+# Fighters with fewer recorded fights than this are refused outright.
+MIN_FIGHTS_FOR_PREDICTION = 1
+
+# Below this, predict but flag the result as thin data.
+LOW_DATA_FIGHT_COUNT = 3
+
+# ==============================================================================
 # END OF USER SETTINGS
 # ==============================================================================
 
@@ -168,8 +189,12 @@ from sklearn.metrics import accuracy_score, log_loss, brier_score_loss, classifi
 import warnings
 import json
 import os
+import sys
 from pathlib import Path
 from datetime import datetime
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from name_resolution import NameResolver, load_aliases, format_failure, norm_name as _norm_name
 warnings.filterwarnings('ignore')
 
 # ==============================================================================
@@ -181,6 +206,7 @@ UFC_CSV = Path(os.environ.get("UFC_CSV", DATA_DIR / "UFC_with_mmr_rebuilt_dedup.
 PREDICTIONS_LOG_FILE = Path(
     os.environ.get("PREDICTIONS_LOG", DATA_DIR / "prediction_history.json")
 )
+FIGHTER_ALIASES_FILE = DATA_DIR / "fighter_aliases.json"
 
 print("="*70)
 print("MMA PREDICTION SYSTEM v4 - FULL UPGRADE")
@@ -2368,18 +2394,6 @@ for _, row in bayesian_imp.iterrows():
 print("\n[11] BUILDING FIGHTER LOOKUP WITH FUZZY NAME MATCHING...")
 
 # --- Name normalization for matching ---
-def _norm_name(s):
-    """Normalize a fighter name for matching."""
-    if s is None:
-        return ""
-    s = str(s).strip().lower()
-    s = unicodedata.normalize("NFKD", s)
-    s = "".join(c for c in s if not unicodedata.combining(c))
-    s = s.replace("-", " ")
-    s = re.sub(r"[^a-z0-9\s]", " ", s)
-    s = re.sub(r"\s+", " ", s).strip()
-    return s
-
 # Build name universe from data
 all_fighters = set(ufc['r_name'].dropna()) | set(ufc['b_name'].dropna())
 all_fighters_list = sorted([str(f) for f in all_fighters if f])
@@ -2395,69 +2409,42 @@ for nm in all_fighters_list:
     for t in set(key.split()):
         token_index.setdefault(t, set()).add(nm)
 
+# --- Name resolution (see engine/name_resolution.py) ---
+_fighter_appearances = {}
+for _col in ('r_name', 'b_name'):
+    for _nm, _cnt in ufc[_col].dropna().value_counts().items():
+        _fighter_appearances[_nm] = _fighter_appearances.get(_nm, 0) + int(_cnt)
+
+NAME_RESOLVER = NameResolver(
+    names=all_fighters_list,
+    appearances=_fighter_appearances,
+    aliases=load_aliases(FIGHTER_ALIASES_FILE),
+    auto_accept_ratio=FUZZY_AUTO_ACCEPT_RATIO,
+    suggest_ratio=FUZZY_SUGGEST_RATIO,
+    strict=STRICT_NAMES,
+)
+print(f"    Name resolver ready: {len(NAME_RESOLVER.names):,} fighters, "
+      f"{len(NAME_RESOLVER.aliases)} alias(es), strict={STRICT_NAMES}")
+
+
+def resolve_fighter_detailed(user_input):
+    return NAME_RESOLVER.resolve(user_input)
+
+
+def format_resolution_failure(user_input, res):
+    return format_failure(user_input, res)
+
+
 def resolve_fighter_name(user_input):
-    """
-    Resolve user input to canonical fighter name.
-    Uses fuzzy matching fallback for typos/variations.
-    """
-    raw = "" if user_input is None else str(user_input)
-    q = _norm_name(raw)
-    if not q:
-        return None, f"Empty fighter name provided"
-    
-    # Exact normalized match
-    if q in norm_to_canon:
-        cands = sorted(norm_to_canon[q])
-        if len(cands) == 1:
-            return cands[0], None
-        return cands[0], f"Note: Multiple matches for '{raw}', using '{cands[0]}'"
-    
-    toks = q.split()
-    
-    # Token-based matching (all tokens must be present)
-    def _cands_all_tokens(tokens):
-        pool = None
-        for t in tokens:
-            hits = token_index.get(t, set())
-            pool = hits if pool is None else (pool & hits)
-        pool = pool or set()
-        out = []
-        for nm in pool:
-            nn = _norm_name(nm).split()
-            if all(t in nn for t in tokens):
-                out.append(nm)
-        return sorted(set(out))
-    
-    if len(toks) >= 2:
-        cands = _cands_all_tokens(toks)
-        if len(cands) == 1:
-            return cands[0], None
-        if len(cands) > 1:
-            return cands[0], f"Note: Multiple matches for '{raw}', using '{cands[0]}'"
-    
-    # Single token matching
-    if len(toks) == 1:
-        t = toks[0]
-        cands = sorted(token_index.get(t, set()))
-        if len(cands) == 1:
-            return cands[0], None
-    
-    # Fuzzy matching fallback
-    normalized_names = [_norm_name(nm) for nm in all_fighters_list]
-    close_matches = difflib.get_close_matches(q, normalized_names, n=5, cutoff=0.6)
-    
-    if close_matches:
-        # Map back to original names
-        fuzzy_cands = []
-        for match in close_matches:
-            if match in norm_to_canon:
-                fuzzy_cands.extend(norm_to_canon[match])
-        
-        if len(fuzzy_cands) >= 1:
-            best = sorted(fuzzy_cands)[0]
-            return best, f"Fuzzy matched: '{raw}' -> '{best}'"
-    
-    return None, f"Fighter not found: '{raw}'"
+    """Back-compatible wrapper returning (canonical_name_or_None, note)."""
+    res = NAME_RESOLVER.resolve(user_input)
+    if res['status'] == 'OK':
+        return res['name'], res['note']
+    if not STRICT_NAMES and res['suggestions']:
+        ratio, name = res['suggestions'][0]
+        return name, f"WARNING: guessed '{name}' for '{user_input}' ({ratio:.0%} match)."
+    return None, format_failure(user_input, res)
+
 
 # Build fighter stats lookup from latest fight (including Bayesian skill values)
 fighter_stats = {}
@@ -2804,6 +2791,56 @@ print(f"    Available adjustments: {list(CONTEXT_ADJUSTMENTS.keys())}")
 # ============================================================================
 # SECTION 13: PREDICTION FUNCTION (WITH BAYESIAN SKILL MODEL)
 # ============================================================================
+def _no_data_result(red_name, blue_name, problems):
+    """A refusal, shaped like a prediction so callers can pass it around safely.
+
+    Every probability is None on purpose. There is no number to report when we
+    do not know who the fighter is - a plausible-looking 50% would be a lie.
+    """
+    return {
+        'status': 'NO_DATA',
+        'red': str(red_name), 'blue': str(blue_name),
+        'problems': problems,
+        'reason': "; ".join(problems),
+        'red_win_prob': None, 'blue_win_prob': None,
+        'winner': None, 'win_prob': None, 'confidence': None,
+        'method': None, 'method_prob': None, 'method_probs': {},
+        'round': None, 'round_prob': None, 'round_probs': {},
+        'is_finish': None, 'finish_prob': None,
+        'finish_timing': None, 'finish_timing_prob': None,
+        'cage_control': {},
+    }
+
+
+def _check_fighters(red_name, blue_name):
+    """Resolve both corners. Returns (red_stats, blue_stats, problems, warnings).
+
+    problems non-empty means refuse to predict.
+    """
+    problems, warnings, resolved = [], [], {}
+    for corner, raw in (('red', red_name), ('blue', blue_name)):
+        res = resolve_fighter_detailed(raw)
+        if res['status'] != 'OK':
+            problems.append(format_resolution_failure(raw, res))
+            continue
+        stats = fighter_stats.get(_norm_name(res['name']))
+        if stats is None:
+            problems.append(f"NO DATA: '{res['name']}' has no usable fight record.")
+            continue
+        n_fights = stats.get('fight_count') or 0
+        if n_fights < MIN_FIGHTS_FOR_PREDICTION:
+            problems.append(
+                f"NO DATA: '{res['name']}' has {n_fights} recorded fight(s), "
+                f"minimum is {MIN_FIGHTS_FOR_PREDICTION}.")
+            continue
+        if n_fights < LOW_DATA_FIGHT_COUNT:
+            warnings.append(f"THIN DATA: '{res['name']}' has only {n_fights} recorded fight(s).")
+        if res['note']:
+            warnings.append(res['note'])
+        resolved[corner] = (res['name'], stats)
+    return resolved, problems, warnings
+
+
 def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=False, context=None):
     """
     Predict fight outcome between two fighters using Bayesian skill model.
@@ -2827,39 +2864,19 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
         except:
             return d
     
-    # Resolve fighter names with fuzzy matching
-    r_resolved, r_note = resolve_fighter_name(red_name)
-    b_resolved, b_note = resolve_fighter_name(blue_name)
+    # Resolve both corners, or refuse. No silent substitution, no invented stats.
+    resolved, problems, warnings = _check_fighters(red_name, blue_name)
+    for msg in warnings:
+        print(f"    {msg}")
+    if problems:
+        for msg in problems:
+            print(f"    {msg}")
+        return _no_data_result(red_name, blue_name, problems)
+
+    r_resolved, r = resolved['red']
+    b_resolved, b = resolved['blue']
     
-    if r_note:
-        print(f"    {r_note}")
-    if b_note:
-        print(f"    {b_note}")
     
-    # Get fighter stats
-    r = fighter_stats.get(_norm_name(r_resolved)) if r_resolved else None
-    b = fighter_stats.get(_norm_name(b_resolved)) if b_resolved else None
-    
-    # Default stats with Bayesian priors
-    default = {'mmr_pre': 1500, 'mu': TRUESKILL_DEFAULT_MU, 'sigma': TRUESKILL_DEFAULT_SIGMA,
-               'wins': 5, 'losses': 2, 'draws': 0, 'dob': None, 'stance': 'Orthodox',
-               'splm': 3, 'str_acc': 45, 'sapm': 3, 'str_def': 55, 'td_avg': 1.5, 'td_def': 60,
-               'td_acc': 40, 'sub_avg': 0.5, 'kd': 0, 'won_L3': 0.5, 'momentum': 0,
-               'splm_L3': 3, 'str_acc_L3': 45, 'td_avg_L3': 1.5, 'layoff': 500, 'streak': 0,
-               'last_fight_date': None,
-               # NEW: Physical/style/durability
-               'height': 70, 'reach': 70, 'ko_rate': 0, 'sub_rate': 0,
-               'ko_losses': 0, 'been_finished': 0, 'absorption_eff': 16.67, 'footwork_proxy': 1.0,
-               'opp_quality': 1500,
-               # ADVANCED FEATURES
-               'cardio': 0.5, 'archetype': 0, 'wc_move': 0, 'sub_def_score': 0.5, 'mom_quality': 0.0, 'fight_count': 5, 'striking_trajectory': 0, 'accuracy_trajectory': 0, 'career_damage': 36}
-    
-    if r is None:
-        print(f"    Warning: '{red_name}' not found, using defaults")
-        r = default
-    if b is None:
-        print(f"    Warning: '{blue_name}' not found, using defaults")
-        b = default
     
     # --- Bayesian Skill Features ---
     r_mu = safe(r.get('mu'), TRUESKILL_DEFAULT_MU)
@@ -3097,57 +3114,73 @@ print("="*70)
 
 # Example 1: Basic prediction with Bayesian analysis
 print("\n--- Example 1: Basic Prediction with Bayesian Skill Analysis ---")
-result = predict_fight("Islam Makhachev", "Charles Oliveira", is_title=True, is_5rnd=True)
+def _demo_basic_prediction():
+    """Illustrative example. Skipped if the demo fighters are not in the data."""
+    result = predict_fight("Islam Makhachev", "Charles Oliveira", is_title=True, is_5rnd=True)
+    if result.get('status') == 'NO_DATA':
+        print(f"    Demo skipped: {result['reason']}")
+        return
 
-print(f"\n{result['red']} vs {result['blue']}")
-print(f"\nWINNER PREDICTION:")
-print(f"  {result['red']:25s}: {result['red_win_prob']*100:5.1f}%")
-print(f"  {result['blue']:25s}: {result['blue_win_prob']*100:5.1f}%")
-print(f"  Predicted: {result['winner']} (confidence: {result['confidence']*100:.1f}%)")
+    print(f"\n{result['red']} vs {result['blue']}")
+    print(f"\nWINNER PREDICTION:")
+    print(f"  {result['red']:25s}: {result['red_win_prob']*100:5.1f}%")
+    print(f"  {result['blue']:25s}: {result['blue_win_prob']*100:5.1f}%")
+    print(f"  Predicted: {result['winner']} (confidence: {result['confidence']*100:.1f}%)")
 
-print(f"\nBAYESIAN SKILL ANALYSIS:")
-ba = result['bayesian_analysis']
-print(f"  {result['red']}:")
-print(f"    Skill (mu):        {ba['red_skill']['mu']:.2f}")
-print(f"    Uncertainty (Ïƒ):   {ba['red_skill']['sigma']:.2f}")
-print(f"    Consistency:       {ba['red_skill']['consistency']*100:.0f}%")
-print(f"  {result['blue']}:")
-print(f"    Skill (mu):        {ba['blue_skill']['mu']:.2f}")
-print(f"    Uncertainty (Ïƒ):   {ba['blue_skill']['sigma']:.2f}")
-print(f"    Consistency:       {ba['blue_skill']['consistency']*100:.0f}%")
-print(f"  Bayesian Win Prob:   {ba['bayesian_win_prob']*100:.1f}% (red)")
-print(f"  Skill Gap:           {ba['skill_gap']:+.2f}")
-print(f"  Conservative Gap:    {ba['conservative_skill_gap']:+.2f}")
-print(f"  Combined Uncertainty:{ba['combined_uncertainty']:.2f}")
+    print(f"\nBAYESIAN SKILL ANALYSIS:")
+    ba = result['bayesian_analysis']
+    print(f"  {result['red']}:")
+    print(f"    Skill (mu):        {ba['red_skill']['mu']:.2f}")
+    print(f"    Uncertainty (Ïƒ):   {ba['red_skill']['sigma']:.2f}")
+    print(f"    Consistency:       {ba['red_skill']['consistency']*100:.0f}%")
+    print(f"  {result['blue']}:")
+    print(f"    Skill (mu):        {ba['blue_skill']['mu']:.2f}")
+    print(f"    Uncertainty (Ïƒ):   {ba['blue_skill']['sigma']:.2f}")
+    print(f"    Consistency:       {ba['blue_skill']['consistency']*100:.0f}%")
+    print(f"  Bayesian Win Prob:   {ba['bayesian_win_prob']*100:.1f}% (red)")
+    print(f"  Skill Gap:           {ba['skill_gap']:+.2f}")
+    print(f"  Conservative Gap:    {ba['conservative_skill_gap']:+.2f}")
+    print(f"  Combined Uncertainty:{ba['combined_uncertainty']:.2f}")
 
-print(f"\nMETHOD PREDICTION:")
-for m, p in sorted(result['method_probs'].items(), key=lambda x: -x[1]):
-    print(f"  {m:12s}: {p*100:5.1f}%")
-print(f"  Predicted: {result['method']}")
+    print(f"\nMETHOD PREDICTION:")
+    for m, p in sorted(result['method_probs'].items(), key=lambda x: -x[1]):
+        print(f"  {m:12s}: {p*100:5.1f}%")
+    print(f"  Predicted: {result['method']}")
 
-print(f"\nROUND PREDICTION:")
-for r, p in result['round_probs'].items():
-    print(f"  {r}: {p*100:5.1f}%")
-print(f"  Predicted: {result['round']}")
+    print(f"\nROUND PREDICTION:")
+    for r, p in result['round_probs'].items():
+        print(f"  {r}: {p*100:5.1f}%")
+    print(f"  Predicted: {result['round']}")
+
+
+_demo_basic_prediction()
 
 # Example 2: With context adjustments
 print("\n--- Example 2: With Context Adjustments ---")
-context = {
-    'red_home': True,  # Makhachev fighting in Abu Dhabi (close to home)
-    'blue_short_notice': False,
-    'red_pressure_fighter': True,
-    'cage_size': 'small'
-}
-result2 = predict_fight("Islam Makhachev", "Charles Oliveira", is_title=True, is_5rnd=True, context=context)
+def _demo_context_prediction():
+    """Illustrative example. Skipped if the demo fighters are not in the data."""
+    context = {
+        'red_home': True,  # Makhachev fighting in Abu Dhabi (close to home)
+        'blue_short_notice': False,
+        'red_pressure_fighter': True,
+        'cage_size': 'small'
+    }
+    result2 = predict_fight("Islam Makhachev", "Charles Oliveira", is_title=True, is_5rnd=True, context=context)
+    if result2.get('status') == 'NO_DATA':
+        print(f"    Demo skipped: {result2['reason']}")
+        return
 
-print(f"\n{result2['red']} vs {result2['blue']} (with context)")
-print(f"\nWINNER PREDICTION:")
-print(f"  Base probability:     {result2['red_win_prob_base']*100:5.1f}%")
-print(f"  Adjusted probability: {result2['red_win_prob']*100:5.1f}%")
-if result2['context_adjustments']:
-    print(f"\n  Context adjustments applied:")
-    for adj in result2['context_adjustments']:
-        print(f"    - {adj}")
+    print(f"\n{result2['red']} vs {result2['blue']} (with context)")
+    print(f"\nWINNER PREDICTION:")
+    print(f"  Base probability:     {result2['red_win_prob_base']*100:5.1f}%")
+    print(f"  Adjusted probability: {result2['red_win_prob']*100:5.1f}%")
+    if result2['context_adjustments']:
+        print(f"\n  Context adjustments applied:")
+        for adj in result2['context_adjustments']:
+            print(f"    - {adj}")
+
+
+_demo_context_prediction()
 
 # ============================================================================
 # FINAL SUMMARY
@@ -3691,33 +3724,21 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
             return d
     
     # Resolve fighter names
-    r_resolved, r_note = resolve_fighter_name(red_name)
-    b_resolved, b_note = resolve_fighter_name(blue_name)
-    
+    # Resolve both corners, or refuse. No silent substitution, no invented stats.
+    resolved, problems, warnings = _check_fighters(red_name, blue_name)
     if verbose:
-        if r_note: print(f"    {r_note}")
-        if b_note: print(f"    {b_note}")
+        for msg in warnings:
+            print(f"    {msg}")
+    if problems:
+        if verbose:
+            for msg in problems:
+                print(f"    {msg}")
+        return _no_data_result(red_name, blue_name, problems)
+
+    r_resolved, r = resolved['red']
+    b_resolved, b = resolved['blue']
     
-    # Get fighter stats
-    r = fighter_stats.get(_norm_name(r_resolved)) if r_resolved else None
-    b = fighter_stats.get(_norm_name(b_resolved)) if b_resolved else None
     
-    # Default stats
-    default = {'mmr_pre': 1500, 'mu': TRUESKILL_DEFAULT_MU, 'sigma': TRUESKILL_DEFAULT_SIGMA,
-               'wins': 5, 'losses': 2, 'draws': 0, 'dob': None, 'stance': 'Orthodox',
-               'splm': 3, 'str_acc': 45, 'sapm': 3, 'str_def': 55, 'td_avg': 1.5, 'td_def': 60,
-               'td_acc': 40, 'sub_avg': 0.5, 'kd': 0, 'won_L3': 0.5, 'momentum': 0,
-               'splm_L3': 3, 'str_acc_L3': 45, 'td_avg_L3': 1.5, 'layoff': 500, 'streak': 0,
-               'last_fight_date': None,
-               # NEW: Physical/style/durability
-               'height': 70, 'reach': 70, 'ko_rate': 0, 'sub_rate': 0,
-               'ko_losses': 0, 'been_finished': 0, 'absorption_eff': 16.67, 'footwork_proxy': 1.0,
-               'opp_quality': 1500,
-               # ADVANCED FEATURES
-               'cardio': 0.5, 'archetype': 0, 'wc_move': 0, 'sub_def_score': 0.5, 'mom_quality': 0.0, 'fight_count': 5, 'striking_trajectory': 0, 'accuracy_trajectory': 0, 'career_damage': 36}
-    
-    r = r if r else default
-    b = b if b else default
     
     # Bayesian Skill Features
     r_mu = safe(r.get('mu'), TRUESKILL_DEFAULT_MU)
@@ -3978,7 +3999,16 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
             is_title = fight[3] if len(fight) > 3 else False
         
         pred = predict_fight_prod(red, blue, event_date=event_date, is_5rnd=is_5rnd, is_title=is_title, verbose=False)
-        
+
+        if pred.get('status') == 'NO_DATA':
+            results.append({
+                'Fight': f"{red} vs {blue}",
+                'Winner': 'NO DATA', 'Win%': '-', 'Confidence': '-',
+                'Method': '-', 'Method%': '-', 'Round': '-', 'Round%': '-',
+            })
+            print(f"    [{i+1}] SKIPPED - {pred['reason']}")
+            continue
+
         results.append({
             'Fight': f"{pred['red']} vs {pred['blue']}",
             'Winner': pred['winner'],
@@ -4034,7 +4064,14 @@ for i, fight in enumerate(FIGHT_CARD):
     is_title = fight[3] if len(fight) > 3 else False
     fight_context = FIGHT_CONTEXTS.get(i, None) if FIGHT_CONTEXTS else None
     pred = predict_fight_prod(red, blue, event_date=EVENT_DATE, is_5rnd=is_5rnd, is_title=is_title, context=fight_context, verbose=False)
-    
+
+    if pred.get('status') == 'NO_DATA':
+        compact_results.append({
+            '#': i+1, 'Matchup': f"{red} vs {blue}", 'Pick': 'NO DATA',
+            'Prob': '-', 'Conf': '-', 'Method': '-', 'Finish': '-',
+        })
+        continue
+
     winner_short = pred['winner'].split()[-1]  # Last name only
 
     # Simplified finish output
@@ -4728,6 +4765,7 @@ print("-"*80)
 
 bet_analysis = []
 parlay_candidates = []
+skipped_fights = []
 
 for i, fight in enumerate(FIGHT_CARD):
     red = fight[0]
@@ -4737,6 +4775,16 @@ for i, fight in enumerate(FIGHT_CARD):
     fight_context = FIGHT_CONTEXTS.get(i, None) if FIGHT_CONTEXTS else None
 
     pred = predict_fight_prod(red, blue, event_date=EVENT_DATE, is_5rnd=is_5rnd, is_title=is_title, context=fight_context, verbose=False)
+
+    # A refusal never reaches bettability, Kelly sizing, parlays or the log.
+    if pred.get('status') == 'NO_DATA':
+        skipped_fights.append({'fight_num': i + 1, 'matchup': f"{red} vs {blue}",
+                               'problems': pred['problems']})
+        print(f"\nFight {i+1}: {red} vs {blue}")
+        for msg in pred['problems']:
+            print(f"  {msg}")
+        print("  -> No prediction made.")
+        continue
 
     # Get fighter stats for additional analysis
     r_resolved, _ = resolve_fighter_name(red)
@@ -4913,6 +4961,15 @@ for ba in bet_analysis:
 enhanced_df = pd.DataFrame(enhanced_results)
 print(enhanced_df.to_string(index=False))
 
+if skipped_fights:
+    print("\n" + "-"*80)
+    print(f"NOT PREDICTED - {len(skipped_fights)} of {len(FIGHT_CARD)} fights lack usable data:")
+    for s in skipped_fights:
+        print(f"  [{s['fight_num']}] {s['matchup']}")
+        for msg in s['problems']:
+            print(f"        {msg}")
+    print("  Add a mapping to engine/data/fighter_aliases.json if a name is just spelled differently.")
+
 print("\n" + "="*80)
 print("LEGEND:")
 print("  Score: Bettability score (0-100, higher = safer bet)")
@@ -4949,7 +5006,9 @@ print("="*80)
 
 
 print(f"\n{'='*70}")
-print(f"Total fights predicted: {len(FIGHT_CARD)}")
+print(f"Fights on card:         {len(FIGHT_CARD)}")
+print(f"Predicted:              {len(bet_analysis)}")
+print(f"Refused (no data):      {len(skipped_fights)}")
 print(f"Model training data: {len(X_train_full):,} fights (90% of dataset)")
 print(f"Dataset end date: {ufc_valid['date'].max().date()}")
 print(f"{'='*70}")

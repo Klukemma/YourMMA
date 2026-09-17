@@ -71,15 +71,52 @@ Optional per-fight context: home/away, cage size, altitude, short notice.
 | `data/UFC_with_mmr_rebuilt_dedup.csv` | Fight history, 130 columns per bout. |
 | `data/prediction_history.json` | Logged predictions and running accuracy. |
 
+## Name resolution
+
+The engine refuses to predict a fighter it cannot identify. It will **not**
+substitute a similar name or fall back to invented "average fighter" stats.
+
+Resolution order: curated alias → exact match → all-tokens match → unique
+surname → high-confidence typo. A typo is only auto-accepted at
+`FUZZY_AUTO_ACCEPT_RATIO` (0.90) **and** when the surname matches exactly, so a
+wrong first name can never pull in a different fighter. Anything else returns
+`NO DATA` with ranked suggestions.
+
+Settings live in the USER SETTINGS block:
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| `STRICT_NAMES` | `True` | Refuse unidentifiable fighters. Off = best guess with a loud warning. |
+| `FUZZY_AUTO_ACCEPT_RATIO` | `0.90` | Typo acceptance threshold (surname must also match). |
+| `FUZZY_SUGGEST_RATIO` | `0.60` | Threshold for "did you mean...". |
+| `MIN_FIGHTS_FOR_PREDICTION` | `1` | Refuse fighters with fewer recorded bouts. |
+| `LOW_DATA_FIGHT_COUNT` | `3` | Below this, predict but flag as thin data. |
+
+If a fighter is simply spelled differently in the dataset, add a mapping to
+`data/fighter_aliases.json` rather than loosening the thresholds:
+
+```json
+{ "Bones Jones": "Jon Jones" }
+```
+
+## Tests
+
+```bash
+pip install pytest
+python -m pytest engine/tests/ -q
+```
+
+23 tests covering resolution, refusals, ranking, aliases and search. They run
+against the real fighter list from the CSV, not a fixture.
+
 ## Known issues
 
-- **Unknown names are silently fuzzy-matched to the wrong fighter.** A name
-  absent from the CSV resolves to the closest match instead of erroring, and
-  the engine then predicts that fight with full confidence. In the committed
-  example card, `Leon Shahbazyan vs Levan Chokheli` resolved to
-  `Cameron Saaiman vs Levan Makashvili`, and `Shane Collins` to `Jared Rollins`.
-  Always check the names echoed in the output against the card you entered.
-- **All 270 logged predictions are still `pending`** — `update_prediction_result()`
-  exists but has never been called, so the tracked accuracy is unmeasured.
+- **All 270 logged predictions are still `pending`.** `update_prediction_result()`
+  exists but has never been called, so tracked accuracy is unmeasured. Their
+  results are not yet obtainable: the predictions cover 2025-12-14 → 2026-06-20
+  while the dataset ends 2025-12-06.
 - The dataset ends 2025-12-06, so any 2026 fight is predicted from stats that
   omit the fighter's most recent bouts.
+- `predict_fight_prod()` is called three times per fight per run (card table,
+  compact summary, bettability analysis). Harmless now, worth caching before
+  this sits behind an API.
