@@ -78,7 +78,12 @@ def find_result(prediction, index):
 
 
 def deduplicate(predictions):
-    """One prediction per bout - the most recent."""
+    """One prediction per logged bout - the most recent.
+
+    This is a first pass only. It cannot catch a bout logged twice under
+    different event dates, which happens when a card is re-logged after being
+    renamed; deduplicate_graded does that once the real bout is known.
+    """
     latest = {}
     for pred in predictions:
         key = (norm_name(pred['red_corner']), norm_name(pred['blue_corner']),
@@ -86,6 +91,24 @@ def deduplicate(predictions):
         stamp = pred.get('timestamp') or ''
         if key not in latest or stamp > (latest[key].get('timestamp') or ''):
             latest[key] = pred
+    return list(latest.values())
+
+
+def deduplicate_graded(graded):
+    """One row per real bout, keyed on the outcome it matched.
+
+    The same fight was logged under both "UFC 325 - Australia" and
+    "UFC 325 - Sydney, Australia" with different event dates, so keying on
+    what was logged leaves duplicates. Keying on the matched bout - its actual
+    date and the two fighters - cannot.
+    """
+    latest = {}
+    for row in graded:
+        pair = tuple(sorted((norm_name(row['red_corner']), norm_name(row['blue_corner']))))
+        key = (str(row['actual_date'])[:10], pair)
+        stamp = row.get('timestamp') or ''
+        if key not in latest or stamp > (latest[key].get('timestamp') or ''):
+            latest[key] = row
     return list(latest.values())
 
 
@@ -232,6 +255,11 @@ def main():
     unique = deduplicate(predictions)
     index = load_results(UFC_CSV)
     graded, ungraded = grade(unique, index)
+    before = len(graded)
+    graded = deduplicate_graded(graded)
+    if len(graded) != before:
+        print(f"collapsed {before - len(graded)} bouts logged twice under "
+              f"different event names\n")
     report(graded, ungraded, len(predictions))
     if args.write:
         write_back(graded, ungraded, HISTORY)

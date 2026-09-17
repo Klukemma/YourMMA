@@ -25,7 +25,8 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from grade import (DATE_TOLERANCE, deduplicate, grade, load_results)
+from grade import (DATE_TOLERANCE, deduplicate, deduplicate_graded, grade,
+                   load_results)
 from name_resolution import norm_name
 
 ENGINE_DIR = Path(__file__).resolve().parent
@@ -189,6 +190,7 @@ def main():
     start = pd.Timestamp(args.start)
     history = json.loads(HISTORY.read_text())
     graded, _ = grade(deduplicate(history['predictions']), load_results(UFC_CSV))
+    graded = deduplicate_graded(graded)
     bets = build_bets(graded, start, args.min_confidence)
     print(f"graded picks from {start.date()}: {len(bets)}")
     if not bets:

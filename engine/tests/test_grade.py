@@ -112,3 +112,47 @@ def test_the_shipped_history_grades():
     graded, ungraded = grade(unique, index)
     assert len(graded) > 100, "most logged bouts should now be gradeable"
     assert all(isinstance(r['correct'], bool) for r in graded)
+
+
+# --- deduplication on the matched bout ------------------------------------
+
+def test_same_bout_logged_under_two_event_names_counts_once():
+    """The real case: one card logged as both "UFC 325 - Australia" and
+    "UFC 325 - Sydney, Australia", with different event dates. Keying on what
+    was logged leaves both; keying on the matched bout does not."""
+    from grade import deduplicate_graded
+    rows = [
+        {'red_corner': 'A One', 'blue_corner': 'B Two', 'event_name': 'UFC 325 - Australia',
+         'actual_date': pd.Timestamp('2026-01-31'), 'timestamp': '2026-01-20T00:00:00',
+         'correct': True},
+        {'red_corner': 'A One', 'blue_corner': 'B Two',
+         'event_name': 'UFC 325 - Sydney, Australia',
+         'actual_date': pd.Timestamp('2026-01-31'), 'timestamp': '2026-01-28T00:00:00',
+         'correct': False},
+    ]
+    out = deduplicate_graded(rows)
+    assert len(out) == 1
+    assert out[0]['event_name'] == 'UFC 325 - Sydney, Australia', "keep the most recent"
+
+
+def test_dedup_ignores_which_corner_is_which():
+    from grade import deduplicate_graded
+    rows = [
+        {'red_corner': 'A', 'blue_corner': 'B', 'actual_date': pd.Timestamp('2026-01-31'),
+         'timestamp': '1', 'correct': True},
+        {'red_corner': 'B', 'blue_corner': 'A', 'actual_date': pd.Timestamp('2026-01-31'),
+         'timestamp': '2', 'correct': True},
+    ]
+    assert len(deduplicate_graded(rows)) == 1
+
+
+def test_a_rematch_on_a_different_date_is_kept():
+    """Two fighters can meet twice. Those are distinct bouts."""
+    from grade import deduplicate_graded
+    rows = [
+        {'red_corner': 'A', 'blue_corner': 'B', 'actual_date': pd.Timestamp('2026-01-31'),
+         'timestamp': '1', 'correct': True},
+        {'red_corner': 'A', 'blue_corner': 'B', 'actual_date': pd.Timestamp('2026-06-20'),
+         'timestamp': '2', 'correct': False},
+    ]
+    assert len(deduplicate_graded(rows)) == 2

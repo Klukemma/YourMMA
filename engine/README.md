@@ -259,6 +259,31 @@ model that does not hold: the gate covers 27.6% of bouts at **59.8%**, against a
 trained model. Experience is a weak selector on its own; confidence is the
 strong one.
 
+### ROI: the picks lose money
+
+`roi.py` settles one unit per pick against historical odds
+(`data/odds.csv`, fetched by `sync_kaggle.py fetch-odds`).
+
+From 2026-01-01, of 130 graded picks the 65 that could be priced:
+
+| strategy | bets | won | ROI |
+| --- | ---: | ---: | ---: |
+| every pick | 65 | 56.9% | **−8.9%** |
+| confidence >= 0.2 | 52 | 59.6% | −7.0% |
+| confidence >= 0.4 | 38 | 60.5% | −9.2% |
+| confidence >= 0.6 | 19 | 63.2% | **−13.3%** |
+
+**Every strategy loses, and tightening confidence makes it worse.** The hit
+rate rises with confidence (56.9% to 63.2%) while the return falls, because
+the confident picks are shorter favourites: you win more often and are paid
+less each time, and the second effect is larger. This is what "accuracy is not
+edge" means in practice.
+
+Caveats: only half the picks could be priced - the odds source covers 275 of
+the ~358 bouts in the window and spells some names differently - and 19 bets at
+the tightest filter is a small sample. The direction is consistent across every
+tier, which is the part worth trusting.
+
 ## Known issues
 
 - **`TRUESKILL_BETA = 4.17` contradicts the data** (β ≈ 5.0, above). It feeds
