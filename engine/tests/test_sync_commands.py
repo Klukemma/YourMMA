@@ -56,15 +56,38 @@ def test_every_subcommand_is_wired_to_a_real_function():
         assert callable(getattr(sync_kaggle, name)), f"{name} missing"
 
 
+# Modes the workflow handles in shell rather than by calling sync_kaggle.
+# Listed explicitly so a genuinely missing command still fails the test.
+MODES_NOT_HANDLED_BY_SYNC_KAGGLE = {"experiment"}
+
+
+WORKFLOW = ENGINE.parent / ".github" / "workflows" / "update-dataset.yml"
+
+
+def _workflow_inputs():
+    """Parse the workflow properly.
+
+    An earlier version split the raw text and picked up the cron schedule as
+    if it were an experiment name.
+    """
+    import yaml
+    doc = yaml.safe_load(WORKFLOW.read_text())
+    # PyYAML reads the `on:` key as the boolean True.
+    triggers = doc.get("on") or doc.get(True)
+    return triggers["workflow_dispatch"]["inputs"]
+
+
+def _workflow_modes():
+    return list(_workflow_inputs()["mode"]["options"])
+
+
 def test_parser_accepts_each_documented_mode(monkeypatch):
-    """Every mode the workflow offers must parse and reach a command.
+    """Every mode the workflow routes to sync_kaggle must parse and dispatch.
 
     Commands are stubbed by discovery rather than by name, so adding a new
     cmd_* does not silently leave this test calling the real one.
     """
-    workflow = (ENGINE.parent / ".github" / "workflows" / "update-dataset.yml").read_text()
-    line = next(l for l in workflow.splitlines() if "options:" in l)
-    modes = [m.strip() for m in line.split("[", 1)[1].rstrip("]").split(",")]
+    modes = [m for m in _workflow_modes() if m not in MODES_NOT_HANDLED_BY_SYNC_KAGGLE]
     assert modes, "no modes found in the workflow"
 
     commands = [n for n in dir(sync_kaggle) if n.startswith("cmd_")]
@@ -80,9 +103,17 @@ def test_parser_accepts_each_documented_mode(monkeypatch):
 
 def test_every_workflow_mode_has_a_command():
     """A mode in the dropdown with no matching cmd_ function fails at runtime."""
-    workflow = (ENGINE.parent / ".github" / "workflows" / "update-dataset.yml").read_text()
-    line = next(l for l in workflow.splitlines() if "options:" in l)
-    modes = [m.strip() for m in line.split("[", 1)[1].rstrip("]").split(",")]
-    for mode in modes:
+    for mode in _workflow_modes():
+        if mode in MODES_NOT_HANDLED_BY_SYNC_KAGGLE:
+            continue
         expected = "cmd_" + mode.replace("-", "_")
         assert hasattr(sync_kaggle, expected), f"mode {mode!r} needs {expected}()"
+
+
+def test_each_named_experiment_exists():
+    """The experiment dropdown must not name a script that is not there."""
+    names = _workflow_inputs()["experiment"]["options"]
+    assert names, "no experiments listed"
+    for name in names:
+        script = ENGINE / "experiments" / f"{name}.py"
+        assert script.exists(), f"workflow offers {name!r} but {script} is missing"

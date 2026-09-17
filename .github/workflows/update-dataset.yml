@@ -8,12 +8,24 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, inspect, propose-map, search-odds, inspect-odds, fetch-odds]
+        options: [sync, inspect, propose-map, search-odds, inspect-odds, fetch-odds, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
         type: boolean
         default: false
+      experiment:
+        description: "experiment mode: which engine/experiments/*.py to run"
+        type: choice
+        options:
+          - feature_pruning
+          - feature_audit
+          - meta_model
+          - recalibration
+          - calibration_selection
+          - calibrator_mismatch
+          - adjustment_ablation
+        default: feature_pruning
   schedule:
     - cron: "0 6 * * MON"   # Mondays 06:00 UTC, after the weekend's cards
 
@@ -37,6 +49,7 @@ jobs:
       - name: Sync from Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          PREDICTIONS_LOG: /tmp/experiment_scratch.json
         # pipefail matters: without it the step's status is tee's, so a failing
         # sync reports green.
         run: |
@@ -46,7 +59,11 @@ jobs:
             echo "Add it under Settings -> Secrets and variables -> Actions."
             exit 1
           fi
-          if [ "${{ inputs.mode }}" != "sync" ]; then
+          if [ "${{ inputs.mode }}" = "experiment" ]; then
+            # Model experiments need ~10 uninterrupted minutes, which the dev
+            # container cannot give: it suspends between turns and kills them.
+            python engine/experiments/${{ inputs.experiment }}.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" != "sync" ]; then
             python engine/sync_kaggle.py "${{ inputs.mode }}" 2>&1 | tee sync.log
           else
             python engine/sync_kaggle.py sync \
