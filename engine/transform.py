@@ -154,6 +154,27 @@ def transform(master, fighters=None):
     return out
 
 
+def _as_number(value):
+    """Coerce a cell to a float, or None if it is not one.
+
+    Cells are not always numbers: the dataset shipped one row where a
+    name lookup matched two fighters and wrote a whole Series repr into the
+    field (see data_quality.py). A bad cell should read as unknown, not stop
+    the sync.
+    """
+    if value is None:
+        return None
+    try:
+        if pd.isna(value):
+            return None
+    except (TypeError, ValueError):
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def carry_forward_records(existing, new_rows):
     """Fill win/loss/draw records, which upstream does not carry.
 
@@ -170,11 +191,11 @@ def carry_forward_records(existing, new_rows):
             name = getattr(row, f'{corner}_name', None)
             if not isinstance(name, str) or not name:
                 continue
-            wins = getattr(row, f'{corner}_wins', None)
-            losses = getattr(row, f'{corner}_losses', None)
-            draws = getattr(row, f'{corner}_draws', None)
-            if pd.notna(wins):
-                record[name] = [float(wins), float(losses or 0), float(draws or 0)]
+            wins = _as_number(getattr(row, f'{corner}_wins', None))
+            losses = _as_number(getattr(row, f'{corner}_losses', None))
+            draws = _as_number(getattr(row, f'{corner}_draws', None))
+            if wins is not None:
+                record[name] = [wins, losses or 0.0, draws or 0.0]
 
     out = new_rows.sort_values('date', kind='mergesort').copy()
     cols = {f'{c}_{k}': [] for c in ('r', 'b') for k in ('wins', 'losses', 'draws')}
