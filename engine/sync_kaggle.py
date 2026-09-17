@@ -254,7 +254,7 @@ def cmd_sync(args):
     if master is None:
         sys.exit(f"master.csv not found upstream. Got: {sorted(tables)}")
 
-    rows = transform(master, tables.get('fighter.csv'))
+    rows = transform(master, tables.get('fighter.csv'), tables.get('round.csv'))
     print(f"Kaggle: {len(rows):,} fights through {rows['date'].max().date()}")
 
     skip = _excluded_fight_ids(tables)

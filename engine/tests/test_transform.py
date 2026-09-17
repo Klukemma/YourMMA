@@ -211,3 +211,47 @@ def test_unknown_fighter_record_is_blank_not_zero():
     out = carry_forward_records(existing, new).reset_index(drop=True)
     assert pd.isna(out.loc[0, 'r_wins']), "a debutant's record is unknown, not 0-0"
     assert out.loc[0, 'b_wins'] == 10.0
+
+
+# --- total strikes, aggregated from the per-round table -------------------
+
+def test_total_strikes_summed_across_rounds():
+    from transform import aggregate_total_strikes
+    rounds = pd.DataFrame({
+        'fight_id': ['f1', 'f1', 'f1', 'f2'],
+        'round_no': [1, 2, 3, 1],
+        'r_total_str_landed': [37, 20, 11, 5],
+        'r_total_str_atmp': [40, 31, 15, 8],
+        'b_total_str_landed': [20, 10, 4, 3],
+        'b_total_str_atmp': [31, 15, 9, 6],
+    })
+    out = aggregate_total_strikes(rounds)
+    assert out.loc['f1', 'r_total_str_landed'] == 68
+    assert out.loc['f1', 'r_total_str_atmpted'] == 86
+    assert out.loc['f2', 'b_total_str_landed'] == 3
+
+
+def test_missing_round_table_is_tolerated(master, fighters):
+    """No round.csv means those columns stay absent, not wrong."""
+    out = transform(master, fighters, rounds=None)
+    assert 'r_head_landed' in out.columns
+
+
+def test_total_strike_columns_are_filled_when_rounds_given(master, fighters):
+    rounds = pd.DataFrame({
+        'fight_id': ['f1', 'f1', 'f2'],
+        'round_no': [1, 2, 1],
+        'r_total_str_landed': [37, 20, 5], 'r_total_str_atmp': [40, 31, 8],
+        'b_total_str_landed': [20, 10, 3], 'b_total_str_atmp': [31, 15, 6],
+    })
+    out = transform(master, fighters, rounds)
+    assert out.loc[0, 'r_total_str_landed'] == 57
+    assert out.loc[0, 'r_total_str_atmpted'] == 71
+    # and the accuracy derived from them
+    assert out.loc[0, 'r_total_str_acc'] == pytest.approx(57 / 71 * 100, abs=0.01)
+
+
+def test_round_table_without_the_columns_is_ignored(master, fighters):
+    rounds = pd.DataFrame({'fight_id': ['f1'], 'round_no': [1]})
+    out = transform(master, fighters, rounds)
+    assert 'r_total_str_landed' not in out.columns or out['r_total_str_landed'].isna().all()

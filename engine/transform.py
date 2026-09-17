@@ -82,12 +82,34 @@ def _clean_division(weight_class):
     return ' '.join(text.split()).strip() or np.nan
 
 
-def transform(master, fighters=None):
+def aggregate_total_strikes(rounds):
+    """Sum total strikes per fight from the per-round table.
+
+    master.csv carries significant strikes but not total strikes; round.csv
+    has them per round. Without this the six r_/b_total_str_* columns arrive
+    empty, which every downstream feature would read as zero offence.
+    """
+    needed = ['fight_id', 'r_total_str_landed', 'r_total_str_atmp',
+              'b_total_str_landed', 'b_total_str_atmp']
+    missing = [c for c in needed if c not in rounds.columns]
+    if missing:
+        return None
+    totals = rounds.groupby('fight_id', as_index=True)[needed[1:]].sum(min_count=1)
+    return totals.rename(columns={
+        'r_total_str_landed': 'r_total_str_landed',
+        'r_total_str_atmp': 'r_total_str_atmpted',
+        'b_total_str_landed': 'b_total_str_landed',
+        'b_total_str_atmp': 'b_total_str_atmpted',
+    })
+
+
+def transform(master, fighters=None, rounds=None):
     """Build local-schema rows from upstream tables.
 
     Args:
         master: master.csv as a DataFrame
         fighters: fighter.csv as a DataFrame, for career profile columns
+        rounds: round.csv as a DataFrame, for total-strike aggregates
 
     Returns:
         DataFrame in the local schema. Rating columns are absent - they are
@@ -140,7 +162,14 @@ def transform(master, fighters=None):
                 if upstream_col in profile.columns:
                     out[local_col] = master[id_col].map(profile[upstream_col])
 
-    # 6. Percentages computed from landed/attempted, not read.
+    # 6. Total strikes come from the per-round table, not master.csv.
+    if rounds is not None and 'fight_id' in master.columns:
+        totals = aggregate_total_strikes(rounds)
+        if totals is not None:
+            for col in totals.columns:
+                out[col] = master['fight_id'].map(totals[col])
+
+    # 7. Percentages computed from landed/attempted, not read.
     for corner in ('r', 'b'):
         for local_col, (landed, attempted) in sm.accuracy_columns(corner).items():
             if landed in out.columns and attempted in out.columns:
