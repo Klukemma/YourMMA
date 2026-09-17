@@ -384,6 +384,80 @@ def cmd_inspect_odds(args):
                 print(f"    columns   : {sorted(df.columns)[:24]}")
 
 
+ODDS_DATASET = 'martnoisrodgz/ufc-events-fight-results-2026'
+ODDS_FILE = DATA_DIR / 'odds.csv'
+
+
+def detect_odds_format(values):
+    """American (-150, +130) or decimal (1.67, 2.30)?
+
+    Guessing wrong silently inverts every payout, so this decides from the
+    values and says which it picked.
+    """
+    v = pd.to_numeric(pd.Series(values), errors='coerce').dropna()
+    if v.empty:
+        return 'unknown'
+    if (v.abs() >= 100).mean() > 0.8:
+        return 'american'
+    if ((v > 1.0) & (v < 60)).mean() > 0.8:
+        return 'decimal'
+    return 'unknown'
+
+
+def decimal_to_american(d):
+    d = float(d)
+    if d <= 1.0:
+        return None
+    return round((d - 1) * 100) if d >= 2.0 else -round(100 / (d - 1))
+
+
+def cmd_fetch_odds(args):
+    """Pull historical odds and write them in the schema roi.py expects."""
+    with tempfile.TemporaryDirectory() as tmp:
+        result = subprocess.run(
+            ['kaggle', 'datasets', 'download', '-d', ODDS_DATASET, '-p', tmp, '--unzip'],
+            capture_output=True, text=True)
+        if result.returncode != 0:
+            sys.exit(f"download failed: {result.stderr.strip()[:300]}")
+        files = sorted(Path(tmp).rglob('*.csv'))
+        frames = [pd.read_csv(f, low_memory=False) for f in files]
+
+    df = next((f for f in frames if {'RedOdds', 'BlueOdds', 'RedCorner',
+                                     'BlueCorner', 'Date'} <= set(f.columns)), None)
+    if df is None:
+        sys.exit(f"no file had the expected columns. Got: "
+                 f"{[sorted(f.columns)[:8] for f in frames]}")
+
+    fmt_red = detect_odds_format(df['RedOdds'])
+    fmt_blue = detect_odds_format(df['BlueOdds'])
+    print(f"odds format: RedOdds={fmt_red}, BlueOdds={fmt_blue}")
+    print(f"sample: {df[['RedOdds', 'BlueOdds']].head(3).to_dict('records')}")
+    if fmt_red != fmt_blue or fmt_red == 'unknown':
+        sys.exit(f"cannot determine the odds format ({fmt_red}/{fmt_blue}); "
+                 f"refusing to guess, since guessing inverts every payout")
+
+    out = pd.DataFrame({
+        'date': pd.to_datetime(df['Date'], errors='coerce'),
+        'fighter_a': df['RedCorner'].astype(str).str.strip(),
+        'fighter_b': df['BlueCorner'].astype(str).str.strip(),
+        'odds_a': pd.to_numeric(df['RedOdds'], errors='coerce'),
+        'odds_b': pd.to_numeric(df['BlueOdds'], errors='coerce'),
+    })
+    if fmt_red == 'decimal':
+        print("converting decimal odds to American")
+        out['odds_a'] = out['odds_a'].map(lambda d: decimal_to_american(d) if pd.notna(d) else None)
+        out['odds_b'] = out['odds_b'].map(lambda d: decimal_to_american(d) if pd.notna(d) else None)
+
+    before = len(out)
+    out = out.dropna(subset=['date', 'odds_a', 'odds_b'])
+    print(f"rows: {before} -> {len(out)} with a date and both prices")
+    if len(out):
+        print(f"range: {out['date'].min().date()} -> {out['date'].max().date()}")
+    ODDS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    out.to_csv(ODDS_FILE, index=False)
+    print(f"wrote {ODDS_FILE}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -392,12 +466,13 @@ def main():
     sub.add_parser("propose-map", help="suggest a COLUMN_MAP from upstream to local")
     sub.add_parser("search-odds", help="look for a Kaggle dataset with historical odds")
     sub.add_parser("inspect-odds", help="check whether shortlisted odds datasets cover our window")
+    sub.add_parser("fetch-odds", help="download historical odds into data/odds.csv")
     s = sub.add_parser("sync", help="merge new fights into the local CSV")
     s.add_argument("--dry-run", action="store_true", help="report without writing")
     args = ap.parse_args()
     {"inspect": cmd_inspect, "propose-map": cmd_propose_map,
      "search-odds": cmd_search_odds, "inspect-odds": cmd_inspect_odds,
-     "sync": cmd_sync}[args.cmd](args)
+     "fetch-odds": cmd_fetch_odds, "sync": cmd_sync}[args.cmd](args)
 
 
 if __name__ == "__main__":
