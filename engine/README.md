@@ -312,6 +312,42 @@ The practical conclusion: **do not prune, and do not rewrite the weak features
 one at a time.** Their individual contributions are too small for that work to
 pay, and the measurement says removing them costs accuracy.
 
+### The model does not beat the market
+
+`edge.py` compares the model's probability against the bookmaker's own, on the
+same 65 fights, with the market de-vigged first.
+
+| | Brier | log loss |
+| --- | ---: | ---: |
+| model | 0.2661 | 0.7417 |
+| **market (de-vigged)** | **0.2057** | **0.5993** |
+
+The market is substantially better calibrated. And the decisive number:
+
+**On the 24 fights where the model and the market picked different fighters,
+the model's pick won 9 — 37.5%.**
+
+If the model held information the market lacked, its disagreements should win
+*more* often than the market's. They win considerably less. Those
+disagreements are not edge; they are the model being wrong in a way the market
+already knows about.
+
+| segment | n | won | model said | market said | ROI |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| backing a favourite | 44 | 70.5% | 73.6% | 68.8% | −0.4% |
+| backing an underdog | 21 | 28.6% | 68.3% | 36.4% | **−26.7%** |
+| heavy favourites (≤ −300) | 22 | 81.8% | 73.9% | 77.9% | +0.7% |
+| long underdogs (≥ +200) | 7 | 14.3% | 61.3% | 27.6% | **−41.4%** |
+
+The underdog rows are where it breaks. The model thinks a +200 underdog wins
+61% of the time; they won 14%. Backing favourites is roughly break-even, but
+that is just following the market and paying the vig.
+
+Caveats: 65 fights, half the picks unpriced, and the source does not say
+whether these are opening or closing lines. The direction is consistent across
+every segment and the disagreement result points the wrong way for an edge
+thesis, so the burden of proof sits with anyone claiming otherwise.
+
 ## Known issues
 
 - **`TRUESKILL_BETA = 4.17` contradicts the data** (β ≈ 5.0, above). It feeds
