@@ -18,6 +18,7 @@ on:
         description: "experiment mode: which engine/experiments/*.py to run"
         type: choice
         options:
+          - auc_by_year
           - feature_pruning
           - feature_audit
           - meta_model
