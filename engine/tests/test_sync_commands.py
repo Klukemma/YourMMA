@@ -58,7 +58,7 @@ def test_every_subcommand_is_wired_to_a_real_function():
 
 # Modes the workflow handles in shell rather than by calling sync_kaggle.
 # Listed explicitly so a genuinely missing command still fails the test.
-MODES_NOT_HANDLED_BY_SYNC_KAGGLE = {"experiment"}
+MODES_NOT_HANDLED_BY_SYNC_KAGGLE = {"experiment", "backtest"}  # run directly in the workflow shell
 
 
 WORKFLOW = ENGINE.parent / ".github" / "workflows" / "update-dataset.yml"

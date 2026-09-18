@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, search-mma, inspect-fighter, experiment]
+        options: [sync, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -67,6 +67,8 @@ jobs:
             # Model experiments need ~10 uninterrupted minutes, which the dev
             # container cannot give: it suspends between turns and kills them.
             python engine/experiments/${{ inputs.experiment }}.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "backtest" ]; then
+            python engine/backtest.py 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "repair" ]; then
             python engine/sync_kaggle.py repair \
               ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee sync.log
@@ -108,7 +110,7 @@ jobs:
           git push
 
       - name: Commit experiment output
-        if: ${{ inputs.mode == 'experiment' }}
+        if: ${{ inputs.mode == 'experiment' || inputs.mode == 'backtest' }}
         run: |
           if [ -z "$(git status --porcelain -- engine/experiments/)" ]; then
             echo "No experiment output to commit."
@@ -117,7 +119,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add engine/experiments/
-          git commit -m "Results: ${{ inputs.experiment }}"
+          git commit -m "Results: ${{ inputs.mode == 'backtest' && 'backtest' || inputs.experiment }}"
           git push
 
       - name: Upload sync log
