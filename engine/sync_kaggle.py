@@ -26,6 +26,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import schema_map
 from ratings import DEFAULT, extend
 from transform import carry_forward_records, transform
 
@@ -240,6 +241,128 @@ def _excluded_fight_ids(tables):
     if 'entity_type' in unresolved.columns:
         unresolved = unresolved[unresolved['entity_type'].astype(str) == 'fight']
     return set(unresolved['entity_id'].dropna().astype(str))
+
+
+
+# Ratings sit on a continuous per-fighter series and the win/loss records are
+# point-in-time, both computed from local history rather than from any single
+# upstream row. A repair must not touch either.
+PROTECTED_FROM_REPAIR = (set(schema_map.RATING_COLUMNS)
+                         | set(schema_map.CARRIED_FORWARD)
+                         | {"date", "r_name", "b_name"})
+
+# Absence of this column is how a bout with no scraped statistics announces
+# itself: it is recorded for every fight that has any statistics at all.
+STAT_PROBE = "r_total_str_landed"
+
+
+def blank_stat_rows(local, probe=STAT_PROBE):
+    """Boolean mask of bouts whose measured statistics never arrived."""
+    if probe not in local.columns:
+        return pd.Series(False, index=local.index)
+    return local[probe].isna()
+
+
+def repair_blank_stats(local, fresh, probe=STAT_PROBE):
+    """Fill cells that are empty locally but present upstream.
+
+    cmd_sync only ever appends: it takes the rows it has not seen and whose
+    date is past the local cutoff, so a bout published before its statistics
+    were scraped keeps its blanks permanently, even once upstream backfills
+    them. That is how 145 fights between 2025-09-13 and 2025-12-06 ended up
+    with no striking, takedown or control data at all.
+
+    Only null cells are filled. A value that is already present is never
+    overwritten, so nothing the ratings or any earlier analysis depend on can
+    move underneath them.
+
+    Returns (repaired, report).
+    """
+    mask = blank_stat_rows(local, probe)
+    report = {"blank_rows": int(mask.sum()), "matched": 0,
+              "cells_filled": 0, "rows_repaired": 0, "unmatched": []}
+    if not mask.any():
+        return local, report
+
+    upstream = fresh.set_index(_fight_key(fresh))
+    upstream = upstream[~upstream.index.duplicated(keep="first")]
+
+    repaired = local.copy()
+    keys = _fight_key(local)
+    fillable = [c for c in local.columns
+                if c in fresh.columns and c not in PROTECTED_FROM_REPAIR]
+
+    for idx in local.index[mask]:
+        key = keys.loc[idx]
+        if key not in upstream.index:
+            report["unmatched"].append(key)
+            continue
+        report["matched"] += 1
+        source = upstream.loc[key]
+        filled = 0
+        for col in fillable:
+            if pd.isna(repaired.at[idx, col]) and not pd.isna(source[col]):
+                repaired.at[idx, col] = source[col]
+                filled += 1
+        report["cells_filled"] += filled
+        if filled and not pd.isna(repaired.at[idx, probe]):
+            report["rows_repaired"] += 1
+
+    return repaired, report
+
+
+def cmd_repair(args):
+    """Re-fetch upstream and fill in bouts whose statistics never arrived."""
+    local = pd.read_csv(LOCAL_CSV, low_memory=False)
+    local["date"] = pd.to_datetime(local["date"], errors="coerce")
+
+    mask = blank_stat_rows(local)
+    print(f"Local: {len(local):,} fights, {int(mask.sum()):,} with no statistics")
+    if not mask.any():
+        print("Nothing to repair.")
+        return
+    blank_dates = local.loc[mask, "date"]
+    print(f"  spanning {blank_dates.min().date()} -> {blank_dates.max().date()}")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        tables = _load_upstream(tmp)
+    master = tables.get("master.csv")
+    if master is None:
+        sys.exit(f"master.csv not found upstream. Got: {sorted(tables)}")
+
+    fresh = transform(master, tables.get("fighter.csv"), tables.get("round.csv"))
+    print(f"Kaggle: {len(fresh):,} fights through {fresh['date'].max().date()}")
+
+    repaired, report = repair_blank_stats(local, fresh)
+    print("")
+    print(f"Blank rows        : {report['blank_rows']:,}")
+    print(f"Matched upstream  : {report['matched']:,}")
+    print(f"Fully repaired    : {report['rows_repaired']:,}")
+    print(f"Cells filled      : {report['cells_filled']:,}")
+    if report["unmatched"]:
+        print(f"Not found upstream: {len(report['unmatched']):,}")
+        for key in report["unmatched"][:10]:
+            print(f"    {key}")
+
+    if report["cells_filled"] == 0:
+        print("")
+        print("Upstream has no data for these bouts either; nothing written.")
+        return
+
+    still = int(blank_stat_rows(repaired).sum())
+    print(f"Still blank after : {still:,}")
+
+    if args.dry_run:
+        print("")
+        print("--dry-run: nothing written.")
+        return
+
+    backup = LOCAL_CSV.with_suffix(".backup-before-repair.csv")
+    if not backup.exists():
+        shutil.copy2(LOCAL_CSV, backup)
+        print(f"Backed up to {backup.name}")
+    repaired.to_csv(LOCAL_CSV, index=False)
+    print(f"Wrote {LOCAL_CSV}")
 
 
 def cmd_sync(args):
@@ -522,13 +645,16 @@ def main():
     sub.add_parser("inspect-odds", help="check whether shortlisted odds datasets cover our window")
     sub.add_parser("search-mma", help="find non-UFC fight data on Kaggle")
     sub.add_parser("fetch-odds", help="download historical odds into data/odds.csv")
+    r = sub.add_parser("repair", help="refill bouts whose statistics never arrived")
+    r.add_argument("--dry-run", action="store_true", help="report without writing")
     s = sub.add_parser("sync", help="merge new fights into the local CSV")
     s.add_argument("--dry-run", action="store_true", help="report without writing")
     args = ap.parse_args()
     {"inspect": cmd_inspect, "propose-map": cmd_propose_map,
      "search-odds": cmd_search_odds, "inspect-odds": cmd_inspect_odds,
      "search-mma": cmd_search_mma,
-     "fetch-odds": cmd_fetch_odds, "sync": cmd_sync}[args.cmd](args)
+     "fetch-odds": cmd_fetch_odds, "repair": cmd_repair,
+     "sync": cmd_sync}[args.cmd](args)
 
 
 if __name__ == "__main__":

@@ -24,6 +24,31 @@ A placebo runs the same split on 2025 using the equivalent window a year earlier
 where no data is missing. If the placebo also separates, the grouping is picking
 up something about the fighters rather than the missing data, and the result
 means nothing.
+
+RESULT: the hypothesis is wrong. Fights where neither fighter touched the blank
+window score AUC 0.637, slightly WORSE than the exposed ones at 0.657:
+
+    all 2026            341   61.9%   0.646
+      neither fighter   148   60.1%   0.637
+      one fighter       142   63.4%   0.653
+      both fighters      51   62.7%   0.660
+
+Clean 2026 fights are just as broken as affected ones, so the four-month hole is
+a genuine data defect but not the cause of the collapse. It is still worth
+repairing - 145 fights of real statistics is 145 fights - but repairing it
+should not be expected to move 2026 accuracy.
+
+The direction of that difference is itself a clue. A fighter who competed in
+late 2025 is by definition active, so the exposed group is made of established
+names while the unexposed group is where debutants and long-absent returners
+land. 2026 roughly doubled the share of first-time fighters, from 9.4% of
+fighter slots in 2025 to 18.4%.
+
+So the second split here asks the question that matters directly: bucket each
+fight by how many prior bouts its LESS experienced fighter has, and see where
+the ranking ability goes. 2024 runs alongside as a reference year, because a
+model that is simply worse on debutants everywhere is a different finding from
+one that broke specifically in 2026.
 """
 
 import os
@@ -99,12 +124,65 @@ def report(title, groups):
               f"{s['auc']:>9.3f}{s['brier']:>9.4f}")
 
 
+
+def period_mask(years, target_year, dates, cutoff=None):
+    """Rows in `target_year`, optionally stopping before `cutoff`.
+
+    Built with a fresh array rather than in place: the arrays behind a pandas
+    comparison are read-only, and an in-place `&=` raises on them.
+    """
+    mask = np.asarray(years == target_year, dtype=bool).copy()
+    if cutoff is not None:
+        mask &= np.asarray(dates < cutoff, dtype=bool)
+    return mask
+
+
+def prior_bout_counts(ufc):
+    """How many bouts each fighter had before each row, in date order.
+
+    Returns the smaller of the two counts per fight: a bout is only as
+    well-informed as its less-known fighter.
+    """
+    seen = {}
+    fewest = []
+    for r_name, b_name in zip(ufc["r_name"], ufc["b_name"]):
+        fewest.append(min(seen.get(r_name, 0), seen.get(b_name, 0)))
+        seen[r_name] = seen.get(r_name, 0) + 1
+        seen[b_name] = seen.get(b_name, 0) + 1
+    return pd.Series(fewest, index=ufc.index)
+
+
+EXPERIENCE_BUCKETS = [
+    ("debut (0 prior bouts)", 0, 0),
+    ("1-2 prior bouts", 1, 2),
+    ("3-5 prior bouts", 3, 5),
+    ("6+ prior bouts", 6, 10_000),
+]
+
+
+def split_by_experience(X, y, ufc, years, target_year, priors):
+    """Score `target_year` bucketed by the less-experienced fighter's record."""
+    train = np.asarray(years < target_year)
+    test = period_mask(years, target_year, ufc["date"])
+    if train.sum() < 500 or test.sum() < 50:
+        return None
+
+    models = fit_models(X[train], y[train])
+    p = proba(models, X[test], 3)
+    yt = y[test]
+    pr = priors[test].to_numpy()
+
+    groups = [(f"all {target_year}", score(p, yt))]
+    for label, lo, hi in EXPERIENCE_BUCKETS:
+        m = (pr >= lo) & (pr <= hi)
+        groups.append((f"  {label}", score(p[m], yt[m]) if m.sum() >= 30 else None))
+    return groups
+
+
 def split_year(X, y, ufc, years, target_year, affected, cutoff=None):
     """Train on everything before `target_year`, score it split by exposure."""
-    train = (years < target_year).values
-    test = (years == target_year).values
-    if cutoff is not None:
-        test &= (ufc["date"] < cutoff).values
+    train = np.asarray(years < target_year)
+    test = period_mask(years, target_year, ufc["date"], cutoff)
     if train.sum() < 500 or test.sum() < 50:
         return None
 
@@ -161,6 +239,14 @@ def main():
         report(f"PLACEBO: 2025 before {BLANK_START.date()}, "
                f"split by the {PLACEBO_START.year} window", sham)
 
+    priors = prior_bout_counts(ufc)
+    exp26 = split_by_experience(X, y, ufc, years, 2026, priors)
+    if exp26:
+        report("2026, split by the less-experienced fighter's record", exp26)
+    exp24 = split_by_experience(X, y, ufc, years, 2024, priors)
+    if exp24:
+        report("2024 for reference, same split", exp24)
+
     print("\n" + "=" * 63)
     if real:
         by = dict(real)
@@ -183,7 +269,8 @@ def main():
                   f"{pc['auc'] - pd_['auc']:+.3f}")
 
     rows = []
-    for tag, groups in [("2026", real), ("placebo-2025", sham)]:
+    for tag, groups in [("2026", real), ("placebo-2025", sham),
+                        ("experience-2026", exp26), ("experience-2024", exp24)]:
         for label, s in (groups or []):
             if s:
                 rows.append({"period": tag, "group": label.strip(), **s})

@@ -119,3 +119,62 @@ def test_placebo_window_is_a_year_before_and_the_same_length():
     assert sham == real, "the placebo must cover the same span to be comparable"
     assert stale_form.PLACEBO_END < stale_form.BLANK_START, \
         "the placebo window must not overlap the real one"
+
+
+# ---------------------------------------------------------------------------
+# period_mask and prior_bout_counts, added after the first run crashed
+# ---------------------------------------------------------------------------
+
+from experiments.stale_form import period_mask, prior_bout_counts  # noqa: E402
+
+
+def test_period_mask_accepts_read_only_input():
+    """The first run died here: pandas comparisons expose read-only arrays and
+    an in-place `&=` raises on them."""
+    dates = pd.Series(pd.to_datetime(["2026-01-01", "2026-06-01", "2025-01-01"]))
+    years = dates.dt.year
+    ro = np.asarray(years == 2026)
+    ro.flags.writeable = False
+    mask = period_mask(years, 2026, dates, pd.Timestamp("2026-03-01"))
+    assert list(mask) == [True, False, False]
+
+
+def test_period_mask_without_a_cutoff_keeps_the_whole_year():
+    dates = pd.Series(pd.to_datetime(["2026-01-01", "2026-06-01", "2025-01-01"]))
+    assert list(period_mask(dates.dt.year, 2026, dates)) == [True, True, False]
+
+
+def test_period_mask_does_not_mutate_its_input():
+    dates = pd.Series(pd.to_datetime(["2026-01-01", "2026-06-01"]))
+    years = dates.dt.year
+    before = list(years == 2026)
+    period_mask(years, 2026, dates, pd.Timestamp("2026-03-01"))
+    assert list(years == 2026) == before
+
+
+def test_prior_bouts_counts_the_less_experienced_fighter():
+    bouts = frame([
+        ("2026-01-01", "A", "B"),   # both debuting -> 0
+        ("2026-01-02", "A", "C"),   # A has 1, C has 0 -> 0
+        ("2026-01-03", "A", "B"),   # A has 2, B has 1 -> 1
+    ])
+    assert list(prior_bout_counts(bouts)) == [0, 0, 1]
+
+
+def test_prior_bouts_counts_both_corners():
+    """Fighting from the blue corner still counts as a bout."""
+    bouts = frame([
+        ("2026-01-01", "A", "B"),
+        ("2026-01-02", "B", "A"),   # corners swapped; both now have 1
+    ])
+    assert list(prior_bout_counts(bouts)) == [0, 1]
+
+
+def test_experience_buckets_are_contiguous_and_start_at_debut():
+    from experiments.stale_form import EXPERIENCE_BUCKETS
+
+    los = [lo for _, lo, _ in EXPERIENCE_BUCKETS]
+    his = [hi for _, _, hi in EXPERIENCE_BUCKETS]
+    assert los[0] == 0, "the first bucket must be the debutants"
+    for prev_hi, next_lo in zip(his, los[1:]):
+        assert next_lo == prev_hi + 1, "buckets must not overlap or leave a gap"
