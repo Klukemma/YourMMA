@@ -46,6 +46,9 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--from", dest="start", default="2026-01-01")
     ap.add_argument("--min-confidence", type=float, default=0.0)
+    ap.add_argument("--split", action="store_true",
+                    help="choose the flag threshold on the first half of the "
+                         "bets and report the second half only")
     args = ap.parse_args()
 
     graded, total = load_graded()
@@ -77,6 +80,35 @@ def main():
         actually = sum(1 for r in rows if r["actually_failed"])
         print(f"  picks that did fail     {actually} of {len(rows)} "
               f"({actually / len(rows):.1%})")
+
+    threshold = 0.5
+    confirm_only = None
+    if args.split:
+        # The threshold and the feature list were picked by hand while looking
+        # at the result, which flatters it. Choosing the threshold on the first
+        # half and reporting only the second is the cheap correction: the
+        # sample is small, so this is a check rather than a proof.
+        scored = sorted(rows, key=lambda r: pd.to_datetime(r["date"]))
+        cut = len(scored) // 2
+        tune, confirm = scored[:cut], scored[cut:]
+        best, best_lift = 0.5, -9e9
+        for candidate in [x / 20 for x in range(4, 17)]:
+            picked = [r for r in tune if r["p_fail"] >= candidate]
+            if len(picked) < 5:
+                continue
+            lift = sum(1 for r in picked if r["actually_failed"]) / len(picked)
+            if lift > best_lift:
+                best, best_lift = candidate, lift
+        threshold = best
+        confirm_from = pd.to_datetime(confirm[0]["date"])
+        confirm_only = {r["key"] for r in confirm if r["p_fail"] >= threshold}
+        print(f"\n  --split: threshold {threshold:.2f} chosen on the first "
+              f"{len(tune)} scored picks")
+        print(f"  reporting only the {len(confirm)} from "
+              f"{confirm_from.date()} onward")
+        flagged = confirm_only
+        bets = [b for b in bets
+                if pd.to_datetime(b["date"]) >= confirm_from]
 
     print("\n" + "=" * 79)
     print("THREE STRATEGIES, ONE UNIT PER BET")

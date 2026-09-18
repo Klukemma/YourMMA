@@ -626,9 +626,18 @@ def cmd_search_odds(args):
 ODDS_CANDIDATES = [
     'p0p0xyz/ufc-fights-ml-with-odds-csv',            # "ml" = moneyline, updated 2026-01-14
     'oliviersportsdata/ufc-multimarket-sample-2025',  # updated 2026-06-24
-    'martnoisrodgz/ufc-events-fight-results-2026',    # 2026 events
+    'martnoisrodgz/ufc-events-fight-results-2026',    # what we currently use
     'juanpez24/ufc-fight-outcome-prediction-1994-2025',
+    'valihameed/ufc-stats',                           # "Fights, Stats, and Odds"
+    'mmaodds/ufc-odds',
+    'maksbasher/ufc-complete-dataset-all-events-1996-2024',
 ]
+
+# The file in use covers 2026 only: 275 prices against 8,587 fights. That is
+# what limits the backtest to 131 bets, and no amount of held-out training data
+# can lift it - a return cannot be computed without a price. Historical depth is
+# the thing worth finding, so it is what gets reported first.
+BACKTEST_START = pd.Timestamp('2010-01-01')
 
 
 def cmd_inspect_odds(args):
@@ -662,10 +671,24 @@ def cmd_inspect_odds(args):
                     continue
                 for dc in date_cols[:1]:
                     parsed = pd.to_datetime(df[dc], errors='coerce')
-                    if parsed.notna().any():
-                        print(f"    {dc}: {parsed.min().date()} -> {parsed.max().date()}")
-                        covers = ((parsed >= need.min()) & (parsed <= need.max())).sum()
-                        print(f"    rows inside our window: {covers:,}")
+                    if not parsed.notna().any():
+                        continue
+                    print(f"    {dc}: {parsed.min().date()} -> {parsed.max().date()}")
+                    covers = ((parsed >= need.min()) & (parsed <= need.max())).sum()
+                    print(f"    rows inside our prediction window: {covers:,}")
+
+                    # The number that matters: priced fights before 2026, which
+                    # is where a bigger backtest would come from.
+                    priced = df[odds_cols[0]].notna()
+                    deep = ((parsed >= BACKTEST_START) & (parsed < '2026-01-01')
+                            & priced).sum()
+                    print(f"    PRICED FIGHTS 2010-2025: {deep:,}"
+                          f"   (we currently have 0)")
+                    if deep:
+                        years = parsed[(parsed >= BACKTEST_START) & priced].dt.year
+                        counts = years.value_counts().sort_index()
+                        span = ', '.join(f'{y}:{n}' for y, n in counts.items())
+                        print(f"    by year: {span[:200]}")
                 print(f"    columns   : {sorted(df.columns)[:24]}")
 
 
