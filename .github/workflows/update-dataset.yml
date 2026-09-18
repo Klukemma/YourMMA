@@ -18,6 +18,7 @@ on:
         description: "experiment mode: which engine/experiments/*.py to run"
         type: choice
         options:
+          - feature_health
           - adversarial_rows
           - stale_form
           - auc_by_year
@@ -104,6 +105,19 @@ jobs:
             NEW=$(grep -oP 'New fights: \K[0-9,]+' sync.log || echo "?")
             git commit -m "Update UFC dataset: +${NEW} fights through ${THROUGH}"
           fi
+          git push
+
+      - name: Commit experiment output
+        if: ${{ inputs.mode == 'experiment' }}
+        run: |
+          if [ -z "$(git status --porcelain -- engine/experiments/)" ]; then
+            echo "No experiment output to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add engine/experiments/
+          git commit -m "Results: ${{ inputs.experiment }}"
           git push
 
       - name: Upload sync log
