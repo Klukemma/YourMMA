@@ -18,6 +18,7 @@ on:
         description: "experiment mode: which engine/experiments/*.py to run"
         type: choice
         options:
+          - historical_backtest
           - feature_health
           - adversarial_rows
           - stale_form
