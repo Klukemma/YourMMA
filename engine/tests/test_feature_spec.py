@@ -184,3 +184,33 @@ def test_every_spec_carries_a_reason():
     specs = [Paired("acc", "r_acc", "b_acc", why="striking accuracy")]
     for spec in specs:
         assert spec.why and len(spec.why) > 3
+
+
+def test_a_spec_can_be_built_from_an_earlier_spec():
+    """The trajectory differences read the trajectory columns above them."""
+    df = pd.DataFrame({"r_a": [5.0], "r_b": [2.0]})
+    specs = [
+        Derived("r_delta", lambda d: d["r_a"] - d["r_b"], why="an earlier step"),
+        Derived("doubled", lambda d: d["r_delta"] * 2, why="reads the step above"),
+    ]
+    built = build_all(specs, df)
+    assert built.loc[0, "r_delta"] == 3.0
+    assert built.loc[0, "doubled"] == 6.0
+
+
+def test_a_later_spec_does_not_fall_through_to_a_stale_input_column():
+    """A stale column of the same name on the input must not win. That is how
+    a dead feature would survive a rebuild that was meant to replace it."""
+    df = pd.DataFrame({"r_a": [5.0], "r_b": [2.0], "r_delta": [999.0]})
+    specs = [
+        Derived("r_delta", lambda d: d["r_a"] - d["r_b"], why="recomputed"),
+        Derived("doubled", lambda d: d["r_delta"] * 2, why="must see 3, not 999"),
+    ]
+    built = build_all(specs, df)
+    assert built.loc[0, "doubled"] == 6.0
+
+
+def test_build_all_does_not_mutate_the_input_frame():
+    df = pd.DataFrame({"r_a": [1.0], "r_b": [2.0]})
+    build_all([Derived("added", lambda d: d["r_a"], why="x")], df)
+    assert list(df.columns) == ["r_a", "r_b"]

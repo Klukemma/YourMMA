@@ -160,14 +160,27 @@ class Derived:
 
 
 def build_all(specs, df):
-    """Apply every spec to a frame and return one DataFrame.
+    """Apply every spec in order and return one DataFrame.
+
+    Each spec sees the input frame plus everything built before it, so a
+    feature can be defined in terms of an earlier one - the trajectory
+    differences are built from the trajectory columns above them.
+
+    That ordering matters for more than convenience. Without it a spec reading
+    an earlier spec's output would silently fall through to a stale column of
+    the same name left on the input frame, which is exactly how three dead
+    trajectory features would have survived this rebuild.
 
     Building training rows and a single fight through the same code is what
     stops the two definitions drifting apart.
     """
+    working = df.copy()
     out = {}
     for spec in specs:
-        out.update(spec.build(df))
+        produced = spec.build(working)
+        for name, values in produced.items():
+            working[name] = values
+        out.update(produced)
     return pd.DataFrame(out, index=df.index)
 
 

@@ -50,7 +50,7 @@ GRAPPLING = [
            why="submission attempts per fifteen minutes"),
     Paired("sub_def", "r_sub_def_score", "b_sub_def_score", known=True,
            why="submission defence; weak alone but the counterpart to sub"),
-    Paired("cage_control", "r_ctrl_rate_ewm", "b_ctrl_rate_ewm", level=True,
+    Paired("cage_control_cap", "r_ctrl_rate_ewm", "b_ctrl_rate_ewm", level=True,
            why="share of fight time in controlling position"),
     Paired("clinch_activity", "r_clinch_activity_ewm", "b_clinch_activity_ewm",
            why="how much of the work happens in the clinch"),
@@ -137,6 +137,10 @@ FORM = [
            why="time since the last bout"),
     Paired("mom_quality", "r_mom_quality", "b_mom_quality",
            why="momentum weighted by who the wins came against"),
+    Paired("prime_wc", "r_prime_wc", "b_prime_wc",
+           why="how close to the prime age for this weight class"),
+    Paired("wc_move", "r_wc_move", "b_wc_move",
+           why="recent move up or down in weight"),
 ]
 
 # The trajectory differences, built from the four Derived columns above.

@@ -398,6 +398,9 @@ print("\n[3.5] BUILDING BAYESIAN SKILL FEATURES...")
 # Rating-derived variables live in skill_features.py so they can be tested
 # without importing this file, which runs the whole pipeline. That is how a set
 # of Elo-era constants survived the switch to TrueSkill unnoticed.
+from feature_inventory import all_specs
+from feature_spec import build_all, emitted_names
+from prediction_row import build_prediction_frame, required_suffixes
 from skill_features import (
     MMR_SCALE,
     TRUESKILL_DEFAULT_MMR,
@@ -1684,118 +1687,72 @@ print("    [3.95] Advanced features complete!")
 
 
 # ============================================================================
+# SECTION 3.99: BUILD THE DECLARED FEATURES
+# ============================================================================
+# feature_inventory declares every paired feature, level, known flag and
+# matchup interaction; feature_spec builds them. Assigning them here overwrites
+# the hand-written versions of the same names, which is the point: fifteen of
+# them filled each operand with 0 before subtracting, so a debutant's missing
+# 45% striking accuracy read as "lands nothing" and handed the opponent a fake
+# maximal advantage.
+print("\n[3.99] BUILDING DECLARED FEATURES...")
+
+SPECS = all_specs()
+_declared = build_all(SPECS, ufc)
+for _col in _declared.columns:
+    ufc[_col] = _declared[_col]
+print(f"    {len(SPECS)} specs -> {len(_declared.columns)} columns")
+_new = [c for c in _declared.columns if c not in ufc.columns]
+print(f"    replaced hand-written definitions where names matched")
+
+# ============================================================================
 # SECTION 4: DEFINE FEATURE COLUMNS
 # ============================================================================
 print("\n[4] DEFINING FEATURE SET...")
 
-# Bayesian skill features (NEW - state-space model)
-bayesian_features = [
-    'bayesian_prob',           # TrueSkill win probability (properly handles uncertainty)
-    'mu_diff',                 # Raw skill estimate difference
-    'consistency_diff',        # Rating reliability difference
-    'skill_conservative_diff', # Conservative skill gap (mu - sigma)
-    'combined_uncertainty',    # Total uncertainty in matchup (lower = more confident)
-    'mu_sum',                  # How good the fight is, not just how lopsided
-    'mu_diff_z',               # Skill gap in units of its own uncertainty
+# Every name the declaration emits. Cage-control features stay out of the
+# winner model, as they were before, and are listed separately for that.
+CAGE_CONTROL_FEATURES = [
+    'cage_control_cap_diff', 'cage_control_cap_level',
+    'clinch_activity_diff', 'grind_tendency_diff',
+]
+SPEC_FEATURES = [n for n in emitted_names(SPECS) if n not in CAGE_CONTROL_FEATURES]
+
+# Features the declaration does not cover: context flags, transforms of the
+# rating, and the archetype terms. Three of the old names are gone:
+#
+#   same_cluster         AUC 0.500 - constant
+#   stance_interaction   correlated 1.0000 with southpaw_diff, a copy
+#   trajectory_diff      exactly 0 on 100% of rows
+#
+# Removing a constant cannot change a tree model, and removing an exact
+# duplicate cannot either, so unlike importance-based pruning - which made this
+# model worse every time it was tried - these three are free.
+bespoke_features = [
+    'bayesian_prob',          # TrueSkill win probability
+    'combined_uncertainty',   # Total uncertainty in the matchup
+    'mu_sum',                 # How good the fight is, not just how lopsided
+    'mu_diff_z',              # Skill gap in units of its own uncertainty
+    'base_prob',              # Logistic of the rating difference
+    'mmr_diff',               # Conservative rating difference
+    'power_diff',             # Weighted striking composite
+    'finish_rate_diff',       # KO plus submission rate
+    'archetype_matchup',      # Stylistic matchup advantage
+    'archetype_clash',        # Whether the archetypes differ
+    'combined_pace',          # Fight tempo, AUC 0.416 - a level that works
+    'high_pace',              # Binary: high-pace fight likely
+    'opp_history_known',      # Both schedules known
+    'is_womens', 'is_heavyweight', 'is_5rnd', 'is_title',
 ]
 
-# Base features (matching original + enhancements)
-base_features = [
-    'base_prob', 'mmr_diff',
-    'exp_diff', 'age_diff',  # prime_diff replaced by prime_wc_diff in advanced
-    'off_striking_diff', 'acc_diff', 'def_diff',
-    'power_diff',
-    'td_off_diff', 'td_def_diff', 'sub_diff',
-    'same_cluster', 'southpaw_diff',
-    'stance_mismatch',      # Different stances (creates awkward angles)
-    'stance_interaction',    # Southpaw advantage when stances differ
-    # layoff_diff replaced by ring_rust_diff, streak_diff replaced by mom_quality_diff
-]
-
-# Physical features (NEW)
-physical_features = [
-    'height_diff',          # Height advantage
-    'reach_diff',           # Reach advantage
-    'ape_index_diff',       # Reach relative to height
-]
-
-# Style/Finish rate features (NEW)
-style_features = [
-    'ko_rate_diff',         # KO win rate difference
-    'sub_rate_diff',        # Submission win rate difference
-    'finish_rate_diff',     # Overall finish rate difference
-    'footwork_diff',        # Evasion efficiency differential (SLpM / SAPM ratio)
-]
-
-# Durability features (NEW)
-durability_features = [
-    'ko_vulnerability_diff',  # Has been KO'd before
-    'been_finished_diff',     # Times been finished
-    'absorption_eff_diff',    # Defensive efficiency
-    'career_damage_diff',        # Cumulative career damage (log-scaled)
-]
-
-# Opponent quality features (NEW)
-opponent_quality_features = [
-    'opp_quality_diff',       # Strength of schedule difference (mu scale)
-    'opp_history_known',      # Both schedules known; without it a NaN-turned-0
-                              # diff is indistinguishable from an even matchup
-]
-
-# Weight class features (NEW)
-weight_class_features = [
-    'is_womens',              # Women's division (more decisions)
-    'is_heavyweight',         # Heavyweight (more early KOs)
-]
-
-# Additional features (improvements)
-additional_features = [
-    'winrate_diff', 'td_acc_diff', 'sapm_diff',
-    'data_sparsity_diff',     # Data reliability gap (log fight count differential)
-    'is_5rnd', 'is_title',
-]
-
-# Time-aware features
-time_aware_features = [
-    'recent_form_diff',  # momentum_diff replaced by mom_quality_diff
-    'splm_L3_diff', 'str_acc_L3_diff', 'td_avg_L3_diff',
-    'striking_trajectory_diff',  # Recent striking output vs career average
-    'accuracy_trajectory_diff',   # Recent accuracy vs career average
-    'trajectory_diff',            # Combined trajectory (improvement/decline)
-]
-
-# All features
-# Cage control features
-cage_control_features = [
-    'cage_control_cap_diff',   # Control time rate differential (EWM)
-    'clinch_activity_diff',    # Clinch strike attempts differential (EWM)
-    'grind_tendency_diff',     # Grind rate differential (% of fights that are grinds)
-]
-
-
-# Advanced features (NEW - Section 3.95)
-advanced_new_features = [
-    'cardio_diff',           # Gas tank / cardio sustainability
-    'archetype_matchup',     # Stylistic matchup advantage
-    'archetype_clash',       # Whether archetypes differ (more uncertainty)
-    'combined_pace',         # Fight tempo prediction
-    'high_pace',             # Binary: high-pace fight likely
-    'wc_move_diff',          # Weight class movement difference
-    'prime_wc_diff',         # Weight-class-specific age curve
-    'ring_rust_diff',        # Non-linear ring rust penalty
-    'sub_def_diff',          # Submission defense differential
-    'mom_quality_diff',      # Momentum quality (weighted by impressiveness)
-]
-
-
-feature_cols = bayesian_features + base_features + physical_features + style_features + durability_features + opponent_quality_features + weight_class_features + additional_features + time_aware_features + cage_control_features + advanced_new_features
+feature_cols = SPEC_FEATURES + bespoke_features + CAGE_CONTROL_FEATURES
 
 # Winner model uses features WITHOUT cage control (to avoid noisy signal in winner prediction)
 # Cage control features are only used by method/round/finish models
-feature_cols_winner = bayesian_features + base_features + physical_features + style_features + durability_features + opponent_quality_features + weight_class_features + additional_features + time_aware_features + advanced_new_features
-print(f"    Total features: {len(feature_cols)}")
-print(f"    Bayesian: {len(bayesian_features)}, Base: {len(base_features)}, Physical: {len(physical_features)}")
-print(f"    Style: {len(style_features)}, Durability: {len(durability_features)}, Additional: {len(additional_features)}, Time-aware: {len(time_aware_features)}, Advanced: {len(advanced_new_features)}")
+feature_cols_winner = SPEC_FEATURES + bespoke_features
+print(f"    Total features: {len(feature_cols)} "
+      f"({len(SPEC_FEATURES)} declared + {len(bespoke_features)} bespoke "
+      f"+ {len(CAGE_CONTROL_FEATURES)} cage control)")
 
 # Build feature matrix
 X = ufc[feature_cols].copy()
@@ -2437,9 +2394,14 @@ print("\n    Top 15 features:")
 for i, (_, row) in enumerate(feat_imp.head(15).iterrows()):
     print(f"    {i+1:2d}. {row['feature']:25s}: {row['importance']:.4f}")
 
-# Highlight Bayesian features
-bayesian_imp = feat_imp[feat_imp['feature'].isin(bayesian_features)]
-print("\n    Bayesian skill features importance:")
+# Highlight the rating-derived features
+RATING_FEATURE_NAMES = [
+    'bayesian_prob', 'mu_diff', 'mu_level', 'mu_sum', 'mu_diff_z',
+    'consistency_diff', 'skill_conservative_diff', 'combined_uncertainty',
+    'base_prob', 'mmr_diff',
+]
+bayesian_imp = feat_imp[feat_imp['feature'].isin(RATING_FEATURE_NAMES)]
+print("\n    Rating feature importance:")
 for _, row in bayesian_imp.iterrows():
     print(f"        {row['feature']:25s}: {row['importance']:.4f}")
 
@@ -2755,6 +2717,48 @@ CONTEXT_ADJUSTMENTS = {
     'cage_size_large': -0.02,    # ~2% boost for volume strikers in large cage (inverse for pressure)
     'weight_cut_hard': -0.03,    # ~3% penalty for fighters with known hard weight cuts
 }
+
+
+def _corner_extras(stats, age, exp, winrate, southpaw, consistency,
+                   skill_conservative, weight_class):
+    """Attributes the prediction function works out rather than stores.
+
+    reach and height are both centimetres, so their ratio is the ape index
+    directly. The training-side version divided a column mislabelled inches by
+    another mislabelled inches, filling each with 70, which turned 9.4% of
+    fights into an ape index of 0.39 or 2.60 against a real value near 1.02.
+    """
+    reach = stats.get("reach")
+    height = stats.get("height")
+    try:
+        ape = float(reach) / float(height) if reach and height else np.nan
+    except (TypeError, ValueError, ZeroDivisionError):
+        ape = np.nan
+    return {
+        "age": age,
+        "exp": exp,
+        "winrate": winrate,
+        "southpaw": southpaw,
+        "consistency": consistency,
+        "skill_conservative": skill_conservative,
+        "ape_index": ape,
+        "ring_rust": ring_rust_transform(stats.get("layoff")),
+        "prime_wc": age_prime_score_wc(age, weight_class),
+    }
+
+
+def _declared_features(r, b, r_extra, b_extra):
+    """Run the feature declaration over a single fight.
+
+    The same build_all that makes the training matrix, so the two definitions
+    cannot drift. What the stats dict cannot supply becomes NaN, which the
+    specs turn into a neutral difference and a _known flag of 0.
+    """
+    frame = build_prediction_frame(r, b, required_suffixes(SPECS),
+                                   red_extra=r_extra, blue_extra=b_extra)
+    built = build_all(SPECS, frame)
+    return {col: built.iloc[0][col] for col in built.columns}
+
 
 def apply_context_adjustments(base_prob, context=None):
     """
@@ -3092,6 +3096,13 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
     }
 
     # Create feature vector
+    feat.update(_declared_features(
+        r, b,
+        _corner_extras(r, r_age, r_exp, r_winrate, r_southpaw, r_consistency,
+                       r_skill_cons, context.get('weight_class') if context else None),
+        _corner_extras(b, b_age, b_exp, b_winrate, b_southpaw, b_consistency,
+                       b_skill_cons, context.get('weight_class') if context else None)))
+
     # Match the training matrix, which is built with .fillna(0). Without
     # this a single unknown feature turns every model output into NaN.
     X_pred = pd.DataFrame([feat])[feature_cols].replace(
@@ -3262,10 +3273,9 @@ DATASET:
 
 FEATURES:
   Total: {len(feature_cols)}
-  Bayesian: {len(bayesian_features)} (mu, sigma, consistency, conservative gap, uncertainty)
-  Base: {len(base_features)} (mmr, striking, grappling, stance, layoff, streak, prime)
-  Additional: {len(additional_features)} (winrate, title, 5rnd)
-  Time-aware: {len(time_aware_features)} (L3/L5 rolling, momentum)
+  Declared: {len(SPEC_FEATURES)} (paired diffs, levels, known flags, matchup interactions)
+  Bespoke: {len(bespoke_features)} (rating transforms, context flags, archetypes)
+  Cage control: {len(CAGE_CONTROL_FEATURES)} (method/round models only)
 
 WIN PREDICTION (Test Set):
   Accuracy:  {acc:.4f} ({acc*100:.1f}%)
@@ -3953,6 +3963,13 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
     # Predict using PRODUCTION models
     # Winner model: feature_cols_winner (no cage control) with scaler_winner
     # Method/round/finish: full feature_cols with scaler_prod
+    feat.update(_declared_features(
+        r, b,
+        _corner_extras(r, r_age, r_exp, r_winrate, r_southpaw, r_consistency,
+                       r_skill_cons, context.get('weight_class') if context else None),
+        _corner_extras(b, b_age, b_exp, b_winrate, b_southpaw, b_consistency,
+                       b_skill_cons, context.get('weight_class') if context else None)))
+
     _feat_frame = pd.DataFrame([feat]).replace([np.inf, -np.inf], np.nan).fillna(0)
     X_pred = _feat_frame[feature_cols]
     X_pred_winner = _feat_frame[feature_cols_winner]
