@@ -51,8 +51,27 @@ leaked ones, because the leaked ones were reading the answer. The backtest
 should fall from 68.6% / +16.2% toward the honest 2026 figure of 61.5% /
 -3.2%. That drop is the module working.
 
-This module never reads winner, winner_id or method, so it carries no outcome
-information at all and cannot leak the target by a second route.
+THIS MODULE READS winner_id AND method, AND THAT IS A DELIBERATE CHANGE. It
+used to read neither, and said so here as a safety argument: carrying no
+outcome information at all, it could not leak the target by a second route.
+
+That argument was too strong, and it cost real signal. A fighter's prior
+RECORD and how their prior bouts ENDED are facts known before the opening
+bell, and refusing to read them did not make the pipeline safe - r_wins, the
+lifetime record joined on from the fighter table, leaked far worse than
+anything here while this module abstained. Meanwhile the simulator imputed
+every one of its five durability rates from the league average, so it
+simulated two league-average fighters wearing the right names.
+
+What makes an outcome column safe here is the same thing that makes a strike
+count safe: STRICTLY PRIOR BOUTS ONLY, by the same accumulator, verified by
+the same brute-force recomputation over all 34 columns. verify_no_lookahead
+and verify_truncation_invariance cover the outcome columns exactly as they
+cover the rest, and cd_win_rate scores AUC 0.62 in 2026 - the year that
+exposed both leaks - against the 0.58 of the leaked lifetime record.
+
+The rule is not "never touch the outcome". It is "never read a row you would
+not have had".
 """
 
 import numpy as np
@@ -128,6 +147,12 @@ CAREER_COLUMNS = {
     "cd_ctrl_share": "control seconds / fight seconds (FRACTION in [0,1])",
     "cd_opp_ctrl_share": "control seconds CONCEDED / fight seconds [0,1]",
     "cd_opp_sub_per15": "submission attempts CONCEDED per 15 minutes",
+    "cd_opp_kd_per15": "knockdowns SUFFERED per 15 minutes",
+    "cd_opp_head_per15": "head strikes ABSORBED per 15 minutes",
+    "cd_ko_for_per15": "KO/TKO wins per 15 minutes",
+    "cd_ko_against_per15": "KO/TKO losses per 15 minutes (a chin measure)",
+    "cd_sub_for_per15": "submission wins per 15 minutes",
+    "cd_sub_against_per15": "submission losses per 15 minutes",
     "cd_head_share": "share of landed significant strikes to the head [0,1]",
     "cd_body_share": "share of landed significant strikes to the body [0,1]",
     "cd_leg_share": "share of landed significant strikes to the legs [0,1]",
@@ -155,7 +180,7 @@ _COUNT_COLUMNS = (
 )
 
 _REQUIRED_SHARED = ("date", "match_time_sec", "finish_round", "total_rounds",
-                    "winner_id")
+                    "winner_id", "method")
 
 # Every ratio is accumulated as a numerator/denominator PAIR over exactly the
 # bouts where both operands are present. That is what lets the 145 bouts with a
@@ -172,6 +197,12 @@ _PAIRS = (
     ("ctrl", "ctrl", "dur"),
     ("opp_ctrl", "opp_ctrl", "dur"),
     ("opp_sub15", "opp_sub_att", "dur"),
+    ("opp_kd15", "opp_kd", "dur"),
+    ("opp_head15", "opp_head_landed", "dur"),
+    ("ko_for15", "ko_for", "dur"),
+    ("ko_against15", "ko_against", "dur"),
+    ("sub_for15", "sub_for", "dur"),
+    ("sub_against15", "sub_against", "dur"),
     ("str_acc", "sig_str_landed", "sig_str_atmpted"),
     ("str_def", "opp_sig_str_landed", "opp_sig_str_atmpted"),
     ("td_acc", "td_landed", "td_atmpted"),
@@ -290,7 +321,7 @@ def _corner_counts(df, corner, elapsed):
     # Absorbed strikes and stuffed takedowns are the OPPONENT's counts in the
     # same bout, which is why no join is needed to get defensive statistics.
     for col in ("sig_str_landed", "sig_str_atmpted", "td_landed", "td_atmpted",
-                "ctrl", "sub_att"):
+                "ctrl", "sub_att", "kd", "head_landed"):
         counts[f"opp_{col}"] = pd.to_numeric(
             df.get(f"{other}_{col}"), errors="coerce").to_numpy(dtype=float)
     # 150 bouts name no winner - draws, no-contests and overturned results.
@@ -299,8 +330,23 @@ def _corner_counts(df, corner, elapsed):
     winner = df.get("winner_id").to_numpy(dtype=object)
     mine = df.get(f"{corner}_id").to_numpy(dtype=object)
     theirs = df.get(f"{other}_id").to_numpy(dtype=object)
-    counts["won"] = (winner == mine).astype(float)
-    counts["lost"] = (winner == theirs).astype(float)
+    won = (winner == mine).astype(float)
+    lost = (winner == theirs).astype(float)
+    counts["won"] = won
+    counts["lost"] = lost
+    # How a bout ended, for the finish hazards the simulator and
+    # matchup.Durability both need and nothing else could supply. 113 bouts are
+    # a DQ, a no-contest or an overturned result: they are neither a knockout
+    # nor a submission and are counted as neither.
+    method = df.get("method")
+    text = (pd.Series([""] * len(df)) if method is None
+            else method.fillna("").astype(str).str.upper()).to_numpy()
+    by_ko = np.array([t.startswith(("KO", "TKO")) for t in text], dtype=float)
+    by_sub = np.array([t.startswith("SUB") for t in text], dtype=float)
+    counts["ko_for"] = won * by_ko
+    counts["ko_against"] = lost * by_ko
+    counts["sub_for"] = won * by_sub
+    counts["sub_against"] = lost * by_sub
     return counts
 
 
@@ -380,6 +426,12 @@ def _derive(state):
         "cd_opp_ctrl_share": _safe_ratio(col["opp_ctrl_num"],
                                          col["opp_ctrl_den"]),
         "cd_opp_sub_per15": per_15("opp_sub15"),
+        "cd_opp_kd_per15": per_15("opp_kd15"),
+        "cd_opp_head_per15": per_15("opp_head15"),
+        "cd_ko_for_per15": per_15("ko_for15"),
+        "cd_ko_against_per15": per_15("ko_against15"),
+        "cd_sub_for_per15": per_15("sub_for15"),
+        "cd_sub_against_per15": per_15("sub_against15"),
         "cd_sig_atmpted": col["str_acc_den"],
         "cd_opp_sig_atmpted": col["str_def_den"],
         "cd_td_atmpted": col["td_acc_den"],
@@ -606,6 +658,15 @@ def _naive_stats(history):
     opp_sub_num, opp_sub_den = paired("opp_sub_att", "dur")
     stats["cd_opp_sub_per15"] = PER_15_MINUTES * divide(
         opp_sub_num, opp_sub_den / SECONDS_PER_MINUTE)
+
+    for out_name, field in {"cd_opp_kd_per15": "opp_kd",
+                            "cd_opp_head_per15": "opp_head_landed",
+                            "cd_ko_for_per15": "ko_for",
+                            "cd_ko_against_per15": "ko_against",
+                            "cd_sub_for_per15": "sub_for",
+                            "cd_sub_against_per15": "sub_against"}.items():
+        num, den = paired(field, "dur")
+        stats[out_name] = PER_15_MINUTES * divide(num, den / SECONDS_PER_MINUTE)
 
     acc_num, acc_den = paired("sig_str_landed", "sig_str_atmpted")
     stats["cd_str_acc"] = divide(acc_num, acc_den)

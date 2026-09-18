@@ -706,3 +706,85 @@ def test_the_accumulation_hazard_is_constant_per_head_strike():
     # A constant hazard keeps finishing at a steady clip; the real distribution
     # front-loads far harder than this.
     assert late > 0.10
+
+
+# ---------------------------------------------------------------------------
+# The five outcome-derived rates. These were imputed from the league for every
+# fighter until career_stats began reading winner_id and method, which meant
+# the simulator gave two fighters the same chin regardless of who they were.
+# ---------------------------------------------------------------------------
+
+import math
+
+import pandas as pd
+
+
+@pytest.fixture(scope="module")
+def ufc():
+    path = ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
+    if not path.exists():
+        pytest.skip(f"dataset not present at {path}")
+    return pd.read_csv(path, low_memory=False)
+
+
+def _career_row(**values):
+    """A red-corner career_stats row carrying only what a test names."""
+    row = {f"r_{k}": v for k, v in values.items()}
+    row.setdefault("r_name", "Fighter")
+    return row
+
+
+def test_a_fighter_who_has_never_been_knocked_down_has_no_knockout_rate():
+    """0/0 is unknown, not zero. Zero would assert a fighter who cannot be
+    stopped however often he is hurt."""
+    rates = sim.rates_from_career_stats(
+        _career_row(cd_opp_kd_per15=0.0, cd_ko_against_per15=0.0), "r")
+    assert math.isnan(rates.ko_loss_per_kd_absorbed)
+
+
+def test_a_fighter_knocked_down_and_never_stopped_has_a_rate_of_zero():
+    """A real 0 is different from a missing one and must survive as 0."""
+    rates = sim.rates_from_career_stats(
+        _career_row(cd_opp_kd_per15=2.0, cd_ko_against_per15=0.0), "r")
+    assert rates.ko_loss_per_kd_absorbed == 0.0
+
+
+def test_the_submission_rates_divide_by_the_matching_exposure():
+    """Wins per attempt made, losses per attempt faced - not per bout, and not
+    crossed over, which would read a fighter's offence as his defence."""
+    rates = sim.rates_from_career_stats(
+        _career_row(cd_sub_per15=4.0, cd_sub_for_per15=1.0,
+                    cd_opp_sub_per15=2.0, cd_sub_against_per15=1.0), "r")
+    assert rates.sub_success_per_att == pytest.approx(0.25)
+    assert rates.sub_loss_per_sub_faced == pytest.approx(0.5)
+
+
+def test_knockdowns_absorbed_divide_by_strikes_absorbed_not_landed():
+    """cd_sapm is per MINUTE and cd_opp_kd_per15 is per fifteen, so this is
+    the conversion most likely to be wrong by a factor of fifteen."""
+    rates = sim.rates_from_career_stats(
+        _career_row(cd_sapm=4.0, cd_opp_kd_per15=3.0), "r")
+    assert rates.kd_abs_per_str_absorbed == pytest.approx(3.0 / 60.0)
+
+
+def test_the_five_rates_are_measured_for_most_fighters_on_real_data(ufc):
+    """The point of the change. Every one of these was imputed from the league
+    for 100% of fighters beforehand."""
+    import career_stats as cs
+    df = ufc.sort_values("date").reset_index(drop=True)
+    careers = cs.career_stats(df)
+    merged = pd.concat([df.reset_index(drop=True),
+                        careers.reset_index(drop=True)], axis=1)
+    experienced = merged[careers["r_cd_bouts"].to_numpy() >= 3].head(1500)
+
+    measured = {f: 0 for f in ("sub_success_per_att", "kd_abs_per_str_absorbed",
+                               "ko_loss_per_kd_absorbed",
+                               "tko_loss_per_head_absorbed",
+                               "sub_loss_per_sub_faced")}
+    for _, row in experienced.iterrows():
+        rates = sim.rates_from_career_stats(row.to_dict(), "r")
+        for field in measured:
+            if not math.isnan(getattr(rates, field)):
+                measured[field] += 1
+    for field, count in measured.items():
+        assert count / len(experienced) > 0.4, (field, count)

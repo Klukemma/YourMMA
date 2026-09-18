@@ -30,24 +30,29 @@ get a beautifully calibrated simulation of the future.
 
 WHAT CAREER_STATS ACTUALLY SUPPLIES, AND WHAT IT DOES NOT
 
-career_stats.py deliberately reads no outcome column at all ("never reads
-winner, winner_id or method, so it carries no outcome information"). Five of
-the thirteen rates this simulator needs are outcome-derived and therefore
-CANNOT come from it:
+This section used to say career_stats read no outcome column, so that five of
+the thirteen rates below could not come from it and were imputed from the
+league for EVERY fighter. It reads winner_id and method now - point-in-time,
+prior bouts only, verified against the brute-force recomputation like every
+other column - so all five are measured per fighter:
 
-    sub_success_per_att         needs method
-    ko_loss_per_kd_absorbed     needs method + winner
-    tko_loss_per_head_absorbed  needs method + winner
-    sub_loss_per_sub_faced      needs method + winner
-    kd_abs_per_str_absorbed     needs the opponent's knockdown count
+    sub_success_per_att         cd_sub_for_per15 / cd_sub_per15
+    ko_loss_per_kd_absorbed     cd_ko_against_per15 / cd_opp_kd_per15
+    tko_loss_per_head_absorbed  cd_ko_against_per15 / cd_opp_head_per15
+    sub_loss_per_sub_faced      cd_sub_against_per15 / cd_opp_sub_per15
+    kd_abs_per_str_absorbed     cd_opp_kd_per15 / (cd_sapm * 15)
 
-rates_from_career_stats leaves those five NaN. resolve_rates then fills them
-from the caller's divisional default (or league_rates() as a last resort) and
-names every one of them in FightDistribution.imputed_a / imputed_b, so a
-caller can always see that a fighter's durability was assumed rather than
-measured. That is the honest handling: the alternative is either a silent zero
-(a fighter who never finishes anyone and is never finished) or building a
-second leaking career table.
+This is the difference between simulating two fighters and simulating two
+league-average fighters wearing their names. A chin is not a league constant:
+being knocked out is the single most fighter-specific thing in the sport.
+
+The NaN rule is unchanged and still matters, because a ratio needs its
+denominator. A fighter who has never been knocked down has no measurable
+"knockouts per knockdown absorbed" - that is 0/0, not zero - so it stays NaN,
+resolve_rates fills it from the caller's divisional default, and it is named
+in FightDistribution.imputed_a / imputed_b. A caller can still always see
+which parts of a fighter's durability were assumed. What has changed is how
+often the answer is "all of them".
 
 MEASURED ON engine/data/UFC_with_mmr_rebuilt_dedup.csv (8,587 bouts,
 2000-11-17 to 2026-08-08). Every constant below carries its own provenance
@@ -645,22 +650,41 @@ def rates_from_career_stats(row, corner, *, name=None):
     bouts = row.get(f"{corner}_cd_bouts")
     reach = row.get(f"{corner}_reach")
 
+    # The five outcome-derived rates. Each is a ratio whose denominator is the
+    # exposure that could have produced it, so a fighter who has never faced
+    # the event has no rate rather than a rate of zero: never knocked down is
+    # not the same as unknockoutable, and 0/0 is NaN, not 0.
+    def ratio(top, bottom):
+        numerator, denominator = get(top), get(bottom)
+        if not (denominator > 0) or numerator != numerator:
+            return float("nan")
+        return numerator / denominator
+
+    sapm = get("cd_sapm")
+    absorbed_per15 = sapm * PER_15_MINUTES
+    opp_kd_per15 = get("cd_opp_kd_per15")
+    kd_abs_per_absorbed = (opp_kd_per15 / absorbed_per15
+                           if absorbed_per15 > 0 else float("nan"))
+
     return FighterRates(
         name=str(name),
         slpm=slpm,
         str_acc=get("cd_str_acc"),
-        sapm=get("cd_sapm"),
+        sapm=sapm,
         str_def=get("cd_str_def"),
         td_att_per15=td_att_per15,
         td_acc=td_acc,
         td_def=get("cd_td_def"),
         sub_att_per15=get("cd_sub_per15"),
-        sub_success_per_att=float("nan"),
+        sub_success_per_att=ratio("cd_sub_for_per15", "cd_sub_per15"),
         kd_per_str_landed=kd_per_landed,
-        kd_abs_per_str_absorbed=float("nan"),
-        ko_loss_per_kd_absorbed=float("nan"),
-        tko_loss_per_head_absorbed=float("nan"),
-        sub_loss_per_sub_faced=float("nan"),
+        kd_abs_per_str_absorbed=kd_abs_per_absorbed,
+        ko_loss_per_kd_absorbed=ratio("cd_ko_against_per15",
+                                      "cd_opp_kd_per15"),
+        tko_loss_per_head_absorbed=ratio("cd_ko_against_per15",
+                                         "cd_opp_head_per15"),
+        sub_loss_per_sub_faced=ratio("cd_sub_against_per15",
+                                     "cd_opp_sub_per15"),
         reach_cm=float("nan") if reach is None else float(reach),
         bouts=0 if bouts is None or bouts != bouts else int(bouts),
     )

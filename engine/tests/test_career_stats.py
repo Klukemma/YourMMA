@@ -45,7 +45,8 @@ def bout(date, r_id, b_id, **counts):
     # because None would silently make every fixture a no-contest.
     row = {"date": date, "match_time_sec": 300.0, "finish_round": 1,
            "total_rounds": 3, "r_id": r_id, "b_id": b_id,
-           "r_name": r_id, "b_name": b_id, "winner_id": r_id}
+           "r_name": r_id, "b_name": b_id, "winner_id": r_id,
+           "method": "Decision - Unanimous"}
     for corner in cs.CORNERS:
         for column in cs._COUNT_COLUMNS:
             row[f"{corner}_{column}"] = 0.0
@@ -341,7 +342,7 @@ def test_the_output_carries_exactly_the_declared_columns():
 
 
 def test_career_columns_names_both_corners():
-    assert len(cs.career_columns()) == 2 * len(cs.CAREER_COLUMNS) == 56
+    assert len(cs.career_columns()) == 2 * len(cs.CAREER_COLUMNS) == 68
 
 
 def test_career_columns_rejects_a_corner_that_does_not_exist():
@@ -564,6 +565,7 @@ def _three_bout_career(**overrides):
         "finish_round": [1.0] * n,
         "total_rounds": [3.0] * n,
         "winner_id": ["F1"] * n,
+        "method": ["Decision - Unanimous"] * n,
     }
     for corner in ("r", "b"):
         frame[f"{corner}_id"] = (["F1"] * n if corner == "r"
@@ -780,3 +782,69 @@ def test_final_stats_covers_every_fighter_in_the_file(ufc):
     df = ufc.sort_values("date").reset_index(drop=True)
     everyone = set(df["r_id"]) | set(df["b_id"])
     assert set(cs.final_stats(df).index) == everyone
+
+
+# ---------------------------------------------------------------------------
+# Finish rates. These are what the simulator and matchup.Durability both need
+# and what career_stats could not produce while it read no outcome column.
+# ---------------------------------------------------------------------------
+
+def test_a_knockout_win_counts_for_the_winner_and_against_the_loser():
+    df = frame(bout("2020-01-01", "F1", "A", method="KO/TKO"),
+               bout("2020-06-01", "F1", "B"))
+    out = cs.career_stats(df)
+    assert out.loc[1, "r_cd_ko_for_per15"] > 0
+    assert out.loc[1, "r_cd_ko_against_per15"] == 0.0
+    # And the opposite corner of that same bout carries the reverse.
+    reverse = cs.career_stats(frame(bout("2020-01-01", "A", "F1", winner_id="A",
+                                         method="KO/TKO"),
+                                    bout("2020-06-01", "F1", "B")))
+    assert reverse.loc[1, "r_cd_ko_against_per15"] > 0
+    assert reverse.loc[1, "r_cd_ko_for_per15"] == 0.0
+
+
+def test_a_decision_is_neither_a_knockout_nor_a_submission():
+    df = frame(bout("2020-01-01", "F1", "A", method="Decision - Split"),
+               bout("2020-06-01", "F1", "B"))
+    out = cs.career_stats(df).loc[1]
+    for column in ("r_cd_ko_for_per15", "r_cd_ko_against_per15",
+                   "r_cd_sub_for_per15", "r_cd_sub_against_per15"):
+        assert out[column] == 0.0, column
+
+
+def test_an_overturned_result_counts_as_no_finish_at_all():
+    """113 bouts are a DQ, a no-contest or overturned. Counting one as a
+    knockout would credit a finish nobody scored."""
+    df = frame(bout("2020-01-01", "F1", "A", method="Overturned",
+                    winner_id=None),
+               bout("2020-06-01", "F1", "B"))
+    out = cs.career_stats(df).loc[1]
+    assert out["r_cd_ko_for_per15"] == 0.0
+    assert out["r_cd_sub_for_per15"] == 0.0
+    assert out["r_cd_wins"] == 0.0
+
+
+def test_the_pooled_finish_rates_reproduce_the_league_constants(ufc):
+    """matchup.py measured these from the raw dataset by a different route.
+
+    Two independent derivations landing on the same number is the evidence
+    that the method classification and the accumulation are both right; a
+    mis-parsed method string could not agree to four decimal places.
+    """
+    import matchup as mu
+    final = cs.final_stats(ufc.sort_values("date").reset_index(drop=True))
+    minutes = final["cd_minutes"]
+    for column, league in (("cd_ko_for_per15", mu.LEAGUE_KO_FOR_PER_MIN),
+                           ("cd_sub_for_per15", mu.LEAGUE_SUB_FOR_PER_MIN)):
+        pooled = (final[column] * minutes / 15.0).sum() / minutes.sum()
+        assert pooled == pytest.approx(league, rel=0.01), column
+
+
+def test_a_knockout_win_is_somebody_elses_knockout_loss(ufc):
+    final = cs.final_stats(ufc.sort_values("date").reset_index(drop=True))
+    minutes = final["cd_minutes"]
+    for won, lost in (("cd_ko_for_per15", "cd_ko_against_per15"),
+                      ("cd_sub_for_per15", "cd_sub_against_per15")):
+        a = (final[won] * minutes).sum()
+        b = (final[lost] * minutes).sum()
+        assert a == pytest.approx(b, rel=1e-9)
