@@ -242,16 +242,28 @@ REACH_DIFF_SD_CM = 8.26
 APE_DIFF_SD_CM = 6.58
 WEIGHT_DIFF_SD_KG = 4.99
 
-# PARTLY ARBITRARY, AND SAYING SO IS THE POINT. A joint logit of the red-corner
-# win on both differences gives height +0.00419 and reach +0.01198 log-odds per
-# cm. Converted to per-SD and bootstrapped over 400 resamples, height's share
-# of the combined effect has mean 0.207 with a 90% interval of [-0.223,
-# +0.598], and the raw height coefficient flips sign across eras (-0.00034 for
-# 2000-2015, +0.00737 for 2016-2026) because the two differences correlate at
-# r = 0.62. 0.20 is the rounded bootstrap mean. ANYTHING FROM 0.0 TO 0.55 FITS
-# THE DATA EQUALLY WELL; this is a choice inside a band, not a measurement.
-SIZE_W_HEIGHT = 0.20
-SIZE_W_REACH = 0.80
+# NOT IDENTIFIABLE, AND THE SPLIT IS THEREFORE NOT FITTED AT ALL. The previous
+# 0.20/0.80 came from a joint logit over the WHOLE 2000-2026 sample, which is
+# the calibration leak simulate.py removes by fitting only before 2019. Refit
+# honestly, the answer does not merely move - it leaves the range:
+#
+#   window                        height's share of the combined per-SD effect
+#   full sample 2000-2026                  +0.207   90% [-0.223, +0.598]
+#   calibration only, pre-2019             -1.358   90% [-3.342, +0.276]
+#   held-out 2019-2026, by ranking          ~1.0
+#
+# Three windows, three answers spanning the entire line. Height and reach
+# correlate at r = 0.62 and the combined effect is worth AUC 0.52 to 0.54 out
+# of sample, so the split is a rounding error on a near-null quantity dressed
+# up as a measurement.
+#
+# 0.50 IS THE MAXIMUM-IGNORANCE CHOICE, NOT A FIT. It was NOT selected by the
+# held-out AUC above - that column is reported to show the estimate is
+# unstable, and choosing by it would turn the held-out period into a tuning
+# set, which is exactly the mistake that produced a +5.6% edge that vanished.
+# An equal split is what "we cannot resolve this" looks like written down.
+SIZE_W_HEIGHT = 0.50
+SIZE_W_REACH = 0.50
 
 # MEASURED, NOT ASSUMED. Ape index alone is worth +0.0092 log-odds per cm;
 # entered alongside reach difference its coefficient is -0.0042. Reach already
@@ -363,28 +375,50 @@ SUB_ROUND_SHAPE = {
 
 
 # --- observed spreads of the four advantages -------------------------------
-# Standard deviations over the 5,085 fights where both fighters had 15 or more
-# prior minutes, computed strictly from bouts before each fight. Units are
-# real: strikes per minute, takedowns per minute, control seconds per minute,
-# submission attempts per minute.
-STRIKE_ADV_SD = 0.7722   # 5th-95th percentile -1.22 to +1.27 strikes/min
-TD_ADV_SD = 0.0805       # 1.21 takedowns over a 15-minute fight
-CTRL_ADV_SD = 8.3891     # 2.10 minutes of control over a 15-minute fight
-SUB_ADV_SD = 0.0285      # 0.43 submission attempts over 15 minutes
+# Standard deviations over the 2,551 fights BEFORE 2019 where both fighters had
+# 15 or more prior minutes, computed strictly from bouts before each fight.
+# Units are real: strikes per minute, takedowns per minute, control seconds per
+# minute, submission attempts per minute.
+#
+# These are spreads of a feature, not fits to an outcome, so they carry no
+# calibration leak either way. They are nonetheless measured on the same window
+# as the weights, so that every constant in this section has one provenance and
+# a reader need not check which. test_matchup.py recomputes all four from the
+# dataset through matchup_inputs and fails if any drifts, which is what stops
+# them from silently ageing as the dataset grows.
+CALIBRATION_CUTOFF = "2019-01-01"   # the same cutoff simulate.py calibrates on
+STRIKE_ADV_SD = 0.6828   # strikes per minute
+TD_ADV_SD = 0.0842       # 1.26 takedowns over a 15-minute fight
+CTRL_ADV_SD = 8.8567     # 2.21 minutes of control over a 15-minute fight
+SUB_ADV_SD = 0.0338      # 0.51 submission attempts over 15 minutes
 
-# The control and submission weights come from a logistic fit of the red-corner
-# win on the three standardised grappling advantages over those 5,085 fights,
-# which gave control +0.2325 and submission +0.0949 log-odds per SD - a 71:29
-# split, which 0.60:0.25 reproduces to within half a point.
+# REFIT ON THE CALIBRATION WINDOW ALONE. The previous 0.60/0.25 came from a
+# logistic fit over all 5,085 qualifying fights, outcomes from 2000 to 2026
+# included - the same calibration leak simulate.py removes with a 2019 cutoff.
+# Refitting on the 2,162 qualifying fights before 2019 gives control +0.2663
+# and submission +0.0779 log-odds per SD, a 77:23 split of the non-takedown
+# weight rather than 71:29.
+#
+# THE SIZE OF THAT CORRECTION IS WORTH RECORDING, because it is the opposite
+# of what the win-rate leak did. Scored on the held-out 2019-2026 fights:
+#
+#   0.60/0.25/0.15  (leaked fit)      AUC 0.5675
+#   0.66/0.19/0.15  (honest refit)    AUC 0.5667
+#   0.77/0.23/0.00  (no takedown)     AUC 0.5676
+#   1.00/0.00/0.00  (control only)    AUC 0.5642
+#
+# Every weighting lands within 0.0034 of every other. The leak was real and is
+# removed on principle - no constant here should trace to a fit that saw the
+# future - but unlike r_wins it was never carrying the result.
 #
 # THE TAKEDOWN WEIGHT IS ARBITRARY AND THIS COMMENT IS THE ONLY HONEST
-# JUSTIFICATION FOR IT. The same fit gave takedowns -0.0093, which is not a
+# JUSTIFICATION FOR IT. The honest fit gives takedowns -0.0771, which is not a
 # real negative effect but the signature of collinearity with control time at
 # r = 0.739. Alone, takedown advantage is worth +0.170 per SD. 0.15 is a FLOOR
 # CHOSEN BY JUDGEMENT so that the one grappling signal directly observable
 # before a fight is not zeroed out on the strength of an unstable coefficient.
-GRAP_W_CTRL = 0.60
-GRAP_W_SUB = 0.25
+GRAP_W_CTRL = 0.66
+GRAP_W_SUB = 0.19
 GRAP_W_TD = 0.15
 
 

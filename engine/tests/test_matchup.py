@@ -356,25 +356,35 @@ def test_the_grappling_weights_sum_to_one():
     assert mu.GRAP_W_CTRL + mu.GRAP_W_SUB + mu.GRAP_W_TD == pytest.approx(1.0)
 
 
-def test_the_control_to_submission_split_matches_the_measured_ratio():
-    """0.233 : 0.095 is 71:29, and 0.60 : 0.25 of the non-takedown weight is 71:29."""
-    measured = 0.2325 / (0.2325 + 0.0949)
+def test_the_control_to_submission_split_matches_the_calibration_window_fit():
+    """+0.2663 : +0.0779 is 77:23, fitted on pre-2019 outcomes ONLY.
+
+    The superseded 0.60 : 0.25 was 71:29 from a fit over the whole 2000-2026
+    sample. This test exists to keep the constants tied to the honest window:
+    restoring the old pair fails it.
+    """
+    measured = 0.2663 / (0.2663 + 0.0779)
     chosen = mu.GRAP_W_CTRL / (mu.GRAP_W_CTRL + mu.GRAP_W_SUB)
     assert chosen == pytest.approx(measured, abs=0.01)
+
+
+def test_the_grappling_weights_sum_to_one():
+    assert mu.GRAP_W_CTRL + mu.GRAP_W_SUB + mu.GRAP_W_TD == pytest.approx(1.0)
 
 
 def test_the_size_weights_sum_to_one_with_ape_excluded():
     assert mu.SIZE_W_HEIGHT + mu.SIZE_W_REACH + mu.SIZE_W_APE == pytest.approx(1.0)
 
 
-def test_reach_is_weighted_above_height_as_the_joint_fit_found():
-    """Joint logit: reach +0.0120 log-odds per cm against height's +0.0042."""
-    assert mu.SIZE_W_REACH > mu.SIZE_W_HEIGHT
+def test_the_height_reach_split_is_equal_because_it_cannot_be_measured():
+    """Three windows put height's share at +0.21, -1.36 and ~1.0.
 
-
-def test_the_chosen_height_weight_lies_inside_the_bootstrap_interval():
-    """Bootstrap mean 0.207, 90% interval [-0.223, +0.598]. 0.20 is a choice."""
-    assert -0.223 <= mu.SIZE_W_HEIGHT <= 0.598
+    An estimate that spans the whole line under three reasonable windows is
+    not an estimate. The equal split is the stated maximum-ignorance choice,
+    and this test is what stops a future fit on one window from being written
+    back in as though it had settled the question.
+    """
+    assert mu.SIZE_W_HEIGHT == mu.SIZE_W_REACH
 
 
 # --- duration repair -------------------------------------------------------
@@ -743,3 +753,94 @@ def test_the_module_reads_none_of_the_eight_leaking_profile_columns():
               "r_td_def", "r_td_avg_acc", "r_sub_avg")
     used = [c for c in leaked if f'"{c}"' in source or f"'{c}'" in source]
     assert used == []
+
+
+# ---------------------------------------------------------------------------
+# The four advantage SDs were unpinned: nothing recomputed them, so they could
+# drift from the data as the dataset grew and no test would notice. These run
+# the real pipeline - career_stats through matchup_inputs into the advantage
+# functions - which also makes them the only end-to-end check that the input
+# contract in Form's docstring is actually being met.
+# ---------------------------------------------------------------------------
+
+@pytest.fixture(scope="module")
+def advantages(ufc):
+    import career_stats as cs
+    import matchup_inputs as mi
+    df = ufc.sort_values("date").reset_index(drop=True)
+    careers = cs.career_stats(df)
+    red, blue = mi.forms(careers, "r"), mi.forms(careers, "b")
+    rows = {
+        "strike": [mu.striking_advantage(a, b) for a, b in zip(red, blue)],
+        "td": [mu.takedown_advantage(a, b) for a, b in zip(red, blue)],
+        "ctrl": [mu.control_advantage(a, b) for a, b in zip(red, blue)],
+        "sub": [mu.submission_advantage(a, b) for a, b in zip(red, blue)],
+    }
+    frame = pd.DataFrame(rows, index=df.index)
+    frame["date"] = pd.to_datetime(df["date"])
+    frame["qualifies"] = ((careers["r_cd_minutes"] >= 15)
+                          & (careers["b_cd_minutes"] >= 15))
+    return frame
+
+
+def test_each_advantage_spread_still_matches_its_published_constant(advantages):
+    """Recomputed on the window the constants name: pre-2019, both corners
+    carrying 15 or more prior minutes."""
+    window = advantages[advantages["qualifies"]
+                        & (advantages["date"]
+                           < pd.Timestamp(mu.CALIBRATION_CUTOFF))]
+    published = {"strike": mu.STRIKE_ADV_SD, "td": mu.TD_ADV_SD,
+                 "ctrl": mu.CTRL_ADV_SD, "sub": mu.SUB_ADV_SD}
+    for name, constant in published.items():
+        measured = window[name].std()
+        assert measured == pytest.approx(constant, rel=0.02), (
+            f"{name}: published {constant}, measured {measured:.4f}")
+
+
+def test_a_league_average_fighter_scores_zero_advantage_against_himself():
+    """The unit check Form's docstring promises. If a caller ever supplies
+    per-15-minute rates where per-minute are meant, every rate_ratio is wrong
+    by 15x and nothing else in the module would fail."""
+    league = mu.Form(
+        sig_att_per_min=mu.LEAGUE_SIG_ATT_PER_MIN,
+        sig_att_faced_per_min=mu.LEAGUE_SIG_ATT_PER_MIN,
+        sig_accuracy=mu.LEAGUE_SIG_ACC,
+        sig_accuracy_conceded=mu.LEAGUE_SIG_ACC,
+        td_att_per_min=mu.LEAGUE_TD_ATT_PER_MIN,
+        td_att_faced_per_min=mu.LEAGUE_TD_ATT_PER_MIN,
+        td_accuracy=mu.LEAGUE_TD_ACC,
+        td_accuracy_conceded=mu.LEAGUE_TD_ACC,
+        ctrl_sec_per_min=mu.LEAGUE_CTRL_SEC_PER_MIN,
+        ctrl_sec_conceded_per_min=mu.LEAGUE_CTRL_SEC_PER_MIN,
+        sub_att_per_min=mu.LEAGUE_SUB_ATT_PER_MIN,
+        sub_att_conceded_per_min=mu.LEAGUE_SUB_ATT_PER_MIN)
+    for advantage in (mu.striking_advantage, mu.takedown_advantage,
+                      mu.control_advantage, mu.submission_advantage):
+        assert advantage(league, league) == pytest.approx(0.0, abs=1e-9)
+
+
+def test_the_adapter_reproduces_the_league_baselines_it_was_not_given(ufc):
+    """matchup measured its league constants from the raw dataset; the adapter
+    reaches them from career_stats by a different route. That the two agree is
+    the evidence the units line up - a 15x or 60x slip would show here."""
+    import career_stats as cs
+    import matchup_inputs as mi
+    df = ufc.sort_values("date").reset_index(drop=True)
+    forms = mi.form_frame(cs.career_stats(df), "r")
+    for field, league in (
+            ("sig_att_per_min", mu.LEAGUE_SIG_ATT_PER_MIN),
+            ("td_att_per_min", mu.LEAGUE_TD_ATT_PER_MIN),
+            ("ctrl_sec_per_min", mu.LEAGUE_CTRL_SEC_PER_MIN),
+            ("sub_att_per_min", mu.LEAGUE_SUB_ATT_PER_MIN),
+            ("sig_accuracy", mu.LEAGUE_SIG_ACC),
+            ("td_accuracy", mu.LEAGUE_TD_ACC)):
+        mean = forms[field].mean()
+        assert mean == pytest.approx(league, rel=0.12), (
+            f"{field}: league {league}, adapter mean {mean:.4f}")
+
+
+def test_a_fighter_with_no_exposure_gets_no_rate_rather_than_the_league_one():
+    """Shrinkage must not manufacture an average fighter out of nothing."""
+    import matchup_inputs as mi
+    assert np.isnan(mi._shrink([np.nan], [0.0], 1.0, 50.0)[0])
+    assert np.isnan(mi._shrink([10.0], [0.0], 1.0, 50.0)[0])
