@@ -365,6 +365,71 @@ def cmd_repair(args):
     print(f"Wrote {LOCAL_CSV}")
 
 
+
+# Words a professional-record column would be named with. The record counts
+# bouts outside the UFC, so it cannot be recomputed from this dataset - if
+# upstream does not carry it, a debutant's record is genuinely unavailable.
+#
+# Long words are matched anywhere in the name; short ones only as a whole
+# token, because a substring test on them is useless - "nc" appears inside
+# "stance", which is a profile column, not a record.
+RECORD_SUBSTRINGS = ("win", "loss", "lose", "draw", "record", "no_contest")
+RECORD_EXACT_TOKENS = ("nc", "w", "l", "d")
+
+
+def record_like_columns(df):
+    """Columns in a fighter table that could hold a professional record."""
+    out = []
+    for col in df.columns:
+        low = str(col).lower()
+        tokens = low.split("_")
+        if any(w in low for w in RECORD_SUBSTRINGS) or \
+                any(t in RECORD_EXACT_TOKENS for t in tokens):
+            out.append(col)
+    return out
+
+
+def cmd_inspect_fighter(args):
+    """Report fighter.csv alone, to settle whether records can be restored.
+
+    carry_forward_records leaves a fighter it has never seen blank rather than
+    assuming 0-0. The dataset as first committed had records for debutants, so
+    they came from somewhere; this says whether that somewhere is still there.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        tables = _load_upstream(tmp)
+
+    fighters = tables.get("fighter.csv")
+    if fighters is None:
+        print(f"fighter.csv not found upstream. Got: {sorted(tables)}")
+        return
+
+    print(f"fighter.csv   {len(fighters):,} rows x {len(fighters.columns)} columns")
+    print("-" * 72)
+    for col in fighters.columns:
+        nulls = fighters[col].isna().mean()
+        sample = fighters[col].dropna().head(2).tolist()
+        print(f"  {str(col):<26} {str(fighters[col].dtype):<9} "
+              f"nulls={nulls:6.1%}  {sample}")
+
+    hits = record_like_columns(fighters)
+    print("")
+    print("=" * 72)
+    if hits:
+        print(f"Record-like columns present: {hits}")
+        for col in hits:
+            vals = fighters[col].dropna()
+            print(f"  {col}: {len(vals):,} non-null, "
+                  f"e.g. {vals.head(5).tolist()}")
+        print("")
+        print("A debutant's professional record can be restored from these.")
+    else:
+        print("No record-like column upstream.")
+        print("Debutant records cannot be restored from this source; leaving")
+        print("them blank is then the only honest option, and the non-UFC")
+        print("history would have to come from elsewhere.")
+
+
 def cmd_sync(args):
     local = pd.read_csv(LOCAL_CSV, low_memory=False)
     local['date'] = pd.to_datetime(local['date'], errors='coerce')
@@ -644,6 +709,7 @@ def main():
     sub.add_parser("search-odds", help="look for a Kaggle dataset with historical odds")
     sub.add_parser("inspect-odds", help="check whether shortlisted odds datasets cover our window")
     sub.add_parser("search-mma", help="find non-UFC fight data on Kaggle")
+    sub.add_parser("inspect-fighter", help="report fighter.csv and whether it carries records")
     sub.add_parser("fetch-odds", help="download historical odds into data/odds.csv")
     r = sub.add_parser("repair", help="refill bouts whose statistics never arrived")
     r.add_argument("--dry-run", action="store_true", help="report without writing")
@@ -652,7 +718,7 @@ def main():
     args = ap.parse_args()
     {"inspect": cmd_inspect, "propose-map": cmd_propose_map,
      "search-odds": cmd_search_odds, "inspect-odds": cmd_inspect_odds,
-     "search-mma": cmd_search_mma,
+     "search-mma": cmd_search_mma, "inspect-fighter": cmd_inspect_fighter,
      "fetch-odds": cmd_fetch_odds, "repair": cmd_repair,
      "sync": cmd_sync}[args.cmd](args)
 

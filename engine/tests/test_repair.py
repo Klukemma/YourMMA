@@ -151,3 +151,34 @@ def test_duplicate_upstream_keys_do_not_raise():
 
 def test_repair_is_a_registered_command():
     assert hasattr(sync_kaggle, "cmd_repair")
+
+
+# ---------------------------------------------------------------------------
+# inspect-fighter: can a debutant's professional record be restored?
+# ---------------------------------------------------------------------------
+
+from sync_kaggle import record_like_columns  # noqa: E402
+
+
+def test_record_columns_are_recognised():
+    df = pd.DataFrame(columns=["fighter_id", "name", "wins", "losses", "draws"])
+    assert record_like_columns(df) == ["wins", "losses", "draws"]
+
+
+def test_profile_columns_are_not_mistaken_for_records():
+    df = pd.DataFrame(columns=["height", "dob", "stance", "str_acc", "td_avg"])
+    assert record_like_columns(df) == []
+
+
+def test_a_single_record_string_column_is_found():
+    df = pd.DataFrame(columns=["name", "record"])
+    assert record_like_columns(df) == ["record"]
+
+
+def test_no_contest_variants_are_found():
+    df = pd.DataFrame(columns=["name", "no_contest", "w", "l"])
+    assert "no_contest" in record_like_columns(df)
+
+
+def test_inspect_fighter_is_a_registered_command():
+    assert hasattr(sync_kaggle, "cmd_inspect_fighter")

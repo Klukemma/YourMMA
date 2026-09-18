@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, search-mma, experiment]
+        options: [sync, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
