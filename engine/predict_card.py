@@ -476,6 +476,12 @@ from feature_inventory import all_specs
 from feature_spec import build_all, emitted_names
 from prediction_row import build_prediction_frame, required_suffixes
 from matchup_inputs import matchup_extra
+from fight_report import (
+    CARD_SIMULATIONS,
+    format_line,
+    simulate_matchup,
+    summarise,
+)
 from skill_features import (
     MMR_SCALE,
     TRUESKILL_DEFAULT_MMR,
@@ -4178,7 +4184,8 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
         DataFrame with predictions
     """
     results = []
-    
+    simulations = []
+
     print(f"\n    Predicting {len(fights)} fights...")
     
     for i, fight in enumerate(fights):
@@ -4213,6 +4220,18 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
             'Round': pred['round'],
             'Round%': f"{pred['round_prob']*100:.1f}%",
         })
+
+        # The simulation layer. Reported BESIDE the model, never instead of it:
+        # standalone it picks winners at AUC 0.559 against the model's 0.66.
+        # What it is the only source for is how the fight ends.
+        simulations.append((
+            f"{pred['red']} vs {pred['blue']}",
+            summarise(
+                simulate_matchup(fighter_stats.get(_norm_name(pred['red']), {}),
+                                 fighter_stats.get(_norm_name(pred['blue']), {}),
+                                 rounds=5 if is_5rnd else 3),
+                pred['red'], pred['blue']),
+        ))
     
     df = pd.DataFrame(results)
     
@@ -4230,8 +4249,40 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
     
     print(df.to_string(index=False))
     print(f"{'='*120}\n")
-    
+
+    _print_simulations(simulations)
+
     return df
+
+
+def _print_simulations(simulations):
+    """The Monte Carlo layer, printed under the table it does not replace."""
+    if not simulations:
+        return
+    print(f"{'='*120}")
+    print(f"  SIMULATION - each matchup run {CARD_SIMULATIONS:,} times from "
+          f"both fighters' measured rates")
+    print("  Reported beside the model, not instead of it: on its own this "
+          "picks winners at AUC 0.559")
+    print("  against the model's 0.66. Where it is the only source is method, "
+          "round and duration.")
+    print("  It finishes 55% of fights where the sport finishes 47%, so read "
+          "a DEC call as firmer")
+    print("  than it looks and a SUB call as softer.")
+    print(f"{'='*120}")
+    for label, summary in simulations:
+        print(f"  {label}")
+        print(format_line(summary))
+        if summary is None:
+            continue
+        parts = " ".join(f"R{i+1} {p*100:.0f}%"
+                         for i, p in enumerate(summary["finish_by_round"]))
+        print(f"      finish by round: {parts}"
+              f"   decision {summary['decision_share']*100:.0f}%")
+        assumed = set(summary["imputed_red"]) | set(summary["imputed_blue"])
+        if assumed:
+            print(f"      assumed from the league: {', '.join(sorted(assumed))}")
+    print(f"{'='*120}\n")
 
 # ============================================================================
 # FIGHT CARD INPUT

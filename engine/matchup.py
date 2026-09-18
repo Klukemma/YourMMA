@@ -307,6 +307,12 @@ LEAGUE_SUB_ATT_PER_MIN = 0.034627
 # least reliable statistics measured (split-half r = +0.316).
 LEAGUE_KD_PER_MIN = 0.020453
 
+# 2.2202 head strikes landed per fighter-minute, pooled the same way, so the
+# absorbed direction is identical by the same argument as the KO rates below.
+# Carried for the simulator's accumulated-damage hazard, which needs a league
+# anchor to shrink a thin fighter's absorbed-head rate toward.
+LEAGUE_HEAD_ABSORBED_PER_MIN = 2.2202
+
 # 2,787 KO/TKO finishes over 183,687.2 fighter-minutes, one winner and one
 # loser each, so the two directions are equal by construction.
 LEAGUE_KO_FOR_PER_MIN = 0.015173

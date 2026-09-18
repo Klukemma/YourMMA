@@ -734,19 +734,49 @@ def _career_row(**values):
     return row
 
 
-def test_a_fighter_who_has_never_been_knocked_down_has_no_knockout_rate():
-    """0/0 is unknown, not zero. Zero would assert a fighter who cannot be
-    stopped however often he is hurt."""
+def test_being_knocked_out_more_often_than_knocked_down_is_possible():
+    """The defect that broke 533 of 2,052 fights.
+
+    A doctor stoppage or ground-and-pound needs no knockdown, so KO losses
+    divided by knockdowns absorbed is NOT a share and ran to 1.61 on Charles
+    Oliveira. Both knockout hazards now scale off the fighter's total KO-loss
+    rate instead, which is identified, and neither may leave [0, 1].
+    """
     rates = sim.rates_from_career_stats(
-        _career_row(cd_opp_kd_per15=0.0, cd_ko_against_per15=0.0), "r")
+        _career_row(cd_opp_kd_per15=0.5, cd_ko_against_per15=3.0), "r")
+    assert 0.0 <= rates.ko_loss_per_kd_absorbed <= 1.0
+    assert 0.0 <= rates.tko_loss_per_head_absorbed <= 1.0
+
+
+def test_a_fighter_stopped_more_often_than_the_league_is_easier_to_stop():
+    """The whole point of measuring a chin: it has to move the hazard."""
+    league_per15 = sim.KO_AGAINST_PER_MIN_LEAGUE * sim.PER_15_MINUTES
+    fragile = sim.rates_from_career_stats(
+        _career_row(cd_ko_against_per15=league_per15 * 2.0), "r")
+    durable = sim.rates_from_career_stats(
+        _career_row(cd_ko_against_per15=league_per15 * 0.5), "r")
+    assert fragile.ko_loss_per_kd_absorbed > durable.ko_loss_per_kd_absorbed
+    assert (fragile.tko_loss_per_head_absorbed
+            > durable.tko_loss_per_head_absorbed)
+
+
+def test_a_league_average_chin_reproduces_the_league_constants():
+    """Scaling by one means changing nothing, which is what a multiplier that
+    is really a multiplier does."""
+    rates = sim.rates_from_career_stats(
+        _career_row(cd_ko_against_per15=sim.KO_AGAINST_PER_MIN_LEAGUE
+                    * sim.PER_15_MINUTES), "r")
+    assert rates.ko_loss_per_kd_absorbed == pytest.approx(
+        sim.KD_TO_FINISH_LEAGUE)
+    assert rates.tko_loss_per_head_absorbed == pytest.approx(
+        sim.TKO_ACCUM_PER_HEAD_STRIKE_LEAGUE)
+
+
+def test_a_fighter_with_no_recorded_knockout_history_gets_no_chin():
+    """NaN so resolve_rates fills it from the default AND reports it imputed;
+    a silent league value would claim a chin nobody measured."""
+    rates = sim.rates_from_career_stats(_career_row(), "r")
     assert math.isnan(rates.ko_loss_per_kd_absorbed)
-
-
-def test_a_fighter_knocked_down_and_never_stopped_has_a_rate_of_zero():
-    """A real 0 is different from a missing one and must survive as 0."""
-    rates = sim.rates_from_career_stats(
-        _career_row(cd_opp_kd_per15=2.0, cd_ko_against_per15=0.0), "r")
-    assert rates.ko_loss_per_kd_absorbed == 0.0
 
 
 def test_the_submission_rates_divide_by_the_matching_exposure():

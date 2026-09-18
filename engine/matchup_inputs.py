@@ -293,3 +293,78 @@ def matchup_extra(red_stats, blue_stats):
     out["mx_grappling_known"] = mu.advantage_known(out["mx_grappling_adv"])
     out["mx_size_known"] = mu.size_advantage_known(rb, bb)
     return out
+
+
+# --- shrunk career rows, for the simulator ---------------------------------
+# simulate.py refuses a rate of exactly 0 or 1 - a two-fight fighter with 100%
+# takedown defence would otherwise be invulnerable for the whole fight - and
+# career_stats emits unshrunk ratios by design. This is the same shrinkage the
+# Form adapter above applies, expressed over career_stats' own column names so
+# simulate.rates_from_career_stats can consume the result unchanged and stay
+# independent of matchup.
+#
+# (column, league value IN THE COLUMN'S OWN UNIT, prior weight, exposure column)
+# An exposure of None means minutes; anything else is an attempt count.
+
+_SHRUNK_COLUMNS = (
+    ("cd_slpm", mu.LEAGUE_SIG_LANDED_PER_MIN, mu.K_STRIKE_VOLUME_MIN, None),
+    ("cd_sapm", mu.LEAGUE_SIG_LANDED_PER_MIN, mu.K_STRIKE_ABSORBED_MIN, None),
+    ("cd_td_per15", mu.LEAGUE_TD_ATT_PER_MIN * mu.LEAGUE_TD_ACC * PER_15_MINUTES,
+     mu.K_TD_RATE_MIN, None),
+    ("cd_sub_per15", mu.LEAGUE_SUB_ATT_PER_MIN * PER_15_MINUTES,
+     mu.K_SUB_ATT_MIN, None),
+    ("cd_opp_sub_per15", mu.LEAGUE_SUB_ATT_PER_MIN * PER_15_MINUTES,
+     mu.K_SUB_CONCEDED_MIN, None),
+    ("cd_kd_per15", mu.LEAGUE_KD_PER_MIN * PER_15_MINUTES, mu.K_KD_MIN, None),
+    ("cd_opp_kd_per15", mu.LEAGUE_KD_PER_MIN * PER_15_MINUTES,
+     mu.K_KD_MIN, None),
+    ("cd_opp_head_per15", mu.LEAGUE_HEAD_ABSORBED_PER_MIN * PER_15_MINUTES,
+     mu.K_STRIKE_ABSORBED_MIN, None),
+    ("cd_ko_for_per15", mu.LEAGUE_KO_FOR_PER_MIN * PER_15_MINUTES,
+     mu.K_FINISH_MIN, None),
+    ("cd_ko_against_per15", mu.LEAGUE_KO_AGAINST_PER_MIN * PER_15_MINUTES,
+     mu.K_FINISH_MIN, None),
+    ("cd_sub_for_per15", mu.LEAGUE_SUB_FOR_PER_MIN * PER_15_MINUTES,
+     mu.K_FINISH_MIN, None),
+    ("cd_sub_against_per15", mu.LEAGUE_SUB_AGAINST_PER_MIN * PER_15_MINUTES,
+     mu.K_FINISH_MIN, None),
+    ("cd_str_acc", mu.LEAGUE_SIG_ACC, mu.K_SIG_ACC_ATT, "cd_sig_atmpted"),
+    ("cd_str_def", 1.0 - mu.LEAGUE_SIG_ACC, mu.K_SIG_DEF_ATT,
+     "cd_opp_sig_atmpted"),
+    ("cd_td_acc", mu.LEAGUE_TD_ACC, mu.K_TD_ACC_ATT, "cd_td_atmpted"),
+    ("cd_td_def", 1.0 - mu.LEAGUE_TD_ACC, mu.K_TD_DEF_ATT, "cd_opp_td_atmpted"),
+)
+
+
+def shrunk_career_row(row, corner):
+    """One corner's career_stats values, shrunk, keyed as career_stats emits.
+
+    Returns a dict with r_/b_ prefixed keys so it drops straight into
+    simulate.rates_from_career_stats. Columns not listed above pass through
+    unchanged: counts and evidence denominators are not rates and must not be
+    pulled toward anything.
+
+    A fighter with NO exposure keeps NaN rather than becoming league-average,
+    exactly as everywhere else - simulate.resolve_rates then fills it from the
+    caller's default and REPORTS it as imputed, which a silent league value
+    here would hide.
+    """
+    out = dict(row)
+    minutes = _numeric(row.get(f"{corner}_cd_minutes"))
+    for column, league, weight, exposure in _SHRUNK_COLUMNS:
+        value = _numeric(row.get(f"{corner}_{column}"))
+        denominator = (minutes if exposure is None
+                       else _numeric(row.get(f"{corner}_{exposure}")))
+        if not (denominator > 0) or value != value:
+            out[f"{corner}_{column}"] = np.nan
+            continue
+        out[f"{corner}_{column}"] = float(
+            _shrink([value * denominator], [denominator], league, weight)[0])
+    return out
+
+
+def _numeric(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return np.nan

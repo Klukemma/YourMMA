@@ -37,10 +37,30 @@ prior bouts only, verified against the brute-force recomputation like every
 other column - so all five are measured per fighter:
 
     sub_success_per_att         cd_sub_for_per15 / cd_sub_per15
-    ko_loss_per_kd_absorbed     cd_ko_against_per15 / cd_opp_kd_per15
-    tko_loss_per_head_absorbed  cd_ko_against_per15 / cd_opp_head_per15
     sub_loss_per_sub_faced      cd_sub_against_per15 / cd_opp_sub_per15
     kd_abs_per_str_absorbed     cd_opp_kd_per15 / (cd_sapm * 15)
+
+THE TWO KNOCKOUT-PATH RATES ARE NOT SEPARATELY IDENTIFIABLE, and the first
+attempt at them was wrong in a way worth recording. This model finishes a
+fighter down two routes - a knockdown that gets followed up, and accumulated
+head damage - and the dataset records only that a bout ended in KO/TKO, never
+which route it took. Dividing a fighter's KO losses by their knockdowns
+absorbed therefore does not produce a share: 533 of 2,052 eligible fights had
+a fighter KO'd MORE often than knocked down, Charles Oliveira at 1.61 and Jose
+Aldo at 1.05, because a doctor stoppage or ground-and-pound needs no knockdown
+at all. It also charged the same losses to the accumulation path a second time.
+
+What IS identified is a fighter's TOTAL rate of being knocked out, so both
+hazards are scaled by it together:
+
+    durability   = shrunk cd_ko_against_per15 / the league's own rate
+    ko_loss_per_kd_absorbed     = KD_TO_FINISH_LEAGUE * durability
+    tko_loss_per_head_absorbed  = TKO_ACCUM_PER_HEAD_STRIKE_LEAGUE * durability
+
+A fighter stopped twice as often as the league is twice as easy to stop by
+either route, and the league's split between the two routes is left alone
+because nothing here can improve on it. This personalises the chin - the whole
+point - without inventing a decomposition the data cannot support.
 
 This is the difference between simulating two fighters and simulating two
 league-average fighters wearing their names. A chin is not a league constant:
@@ -321,6 +341,21 @@ HEAD_SHARE_OF_SIG = 0.6301
 # multiple knockdowns in one fight. Needs `method` and `winner`, so it is
 # fitted pre-2019; the whole-file value is 0.5188.
 KD_TO_FINISH_LEAGUE = 0.5075
+
+# 2,789 KO/TKO losses over 183,687.2 fighter-minutes. Identical to the KO-for
+# rate by construction, since every knockout has one of each, and it agrees
+# with matchup.LEAGUE_KO_FOR_PER_MIN (0.015173) to four decimal places from a
+# completely separate derivation.
+KO_AGAINST_PER_MIN_LEAGUE = 0.015183
+
+# How far a single fighter's durability may depart from the league before it is
+# treated as a small-sample artefact rather than a chin. Shrinkage with
+# K_FINISH_MIN already pulls a thin record most of the way back; this bounds
+# what survives it. 0.25 to 3.0 spans "stopped a quarter as often as the
+# league" to "three times as often", which covers every real career and nothing
+# beyond one.
+DURABILITY_FLOOR = 0.25
+DURABILITY_CAP = 3.0
 
 # KO/TKO losses in which the loser absorbed zero recorded knockdowns, divided
 # by all head strikes landed: 501 / 194,009 inside the calibration window.
@@ -666,6 +701,20 @@ def rates_from_career_stats(row, corner, *, name=None):
     kd_abs_per_absorbed = (opp_kd_per15 / absorbed_per15
                            if absorbed_per15 > 0 else float("nan"))
 
+    # One durability multiplier for both knockout routes; see the docstring.
+    # Clipped at the top because a probability cannot exceed 1 however fragile
+    # the fighter, and at the bottom away from 0 because nobody is unstoppable.
+    league_ko_against_per15 = KO_AGAINST_PER_MIN_LEAGUE * PER_15_MINUTES
+    ko_against = get("cd_ko_against_per15")
+    if ko_against == ko_against and league_ko_against_per15 > 0:
+        durability = ko_against / league_ko_against_per15
+        durability = min(max(durability, DURABILITY_FLOOR), DURABILITY_CAP)
+        ko_per_kd = min(KD_TO_FINISH_LEAGUE * durability, 1.0)
+        tko_per_head = min(TKO_ACCUM_PER_HEAD_STRIKE_LEAGUE * durability, 1.0)
+    else:
+        ko_per_kd = float("nan")
+        tko_per_head = float("nan")
+
     return FighterRates(
         name=str(name),
         slpm=slpm,
@@ -679,10 +728,8 @@ def rates_from_career_stats(row, corner, *, name=None):
         sub_success_per_att=ratio("cd_sub_for_per15", "cd_sub_per15"),
         kd_per_str_landed=kd_per_landed,
         kd_abs_per_str_absorbed=kd_abs_per_absorbed,
-        ko_loss_per_kd_absorbed=ratio("cd_ko_against_per15",
-                                      "cd_opp_kd_per15"),
-        tko_loss_per_head_absorbed=ratio("cd_ko_against_per15",
-                                         "cd_opp_head_per15"),
+        ko_loss_per_kd_absorbed=ko_per_kd,
+        tko_loss_per_head_absorbed=tko_per_head,
         sub_loss_per_sub_faced=ratio("cd_sub_against_per15",
                                      "cd_opp_sub_per15"),
         reach_cm=float("nan") if reach is None else float(reach),
