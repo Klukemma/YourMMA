@@ -36,6 +36,16 @@ UNAVAILABLE = {
     "damage_log": "cumulative career damage, accumulated across all bouts",
     "striking_trajectory": "needs the rolling window it is measured against",
     "accuracy_trajectory": "needs the rolling window it is measured against",
+    # career_stats accumulates a fighter's whole prior record in date order
+    # across both corners. A live prediction holds one rebuilt snapshot of the
+    # fighter, not their bout history, so these cannot be reconstructed from
+    # it. They become NaN, which the specs turn into a neutral difference and
+    # a _known flag of 0 - the honest reading of "we did not compute this".
+    "cd_bouts": "needs the fighter's full prior bout list, not a snapshot",
+    "cd_minutes": "needs the fighter's full prior bout list",
+    "cd_kd_per15": "needs the fighter's full prior bout list",
+    "cd_ctrl_share": "needs the fighter's full prior bout list",
+    "cd_head_share": "needs the fighter's full prior bout list",
 }
 
 

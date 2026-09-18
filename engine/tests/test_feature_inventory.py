@@ -62,15 +62,26 @@ def test_every_source_column_is_produced_somewhere():
         nrows=5, low_memory=False).columns)
     source = (ENGINE / "predict_card.py").read_text()
 
+    # career_stats assigns its columns in a loop, which no regex over the
+    # source can see, so career_columns() is its declared interface.
+    from career_stats import career_columns
+    produced_by_career_stats = set(career_columns("r")) | set(career_columns("b"))
+
     missing = []
     for col in sorted(source_columns()):
-        if col in dataset:
+        if col in dataset or col in produced_by_career_stats:
             continue
         assigned = re.search(r"ufc\[.%s.\]\s*=" % re.escape(col), source)
         renamed = re.search(r"'\s*:\s*'%s'" % re.escape(col), source)
         if not (assigned or renamed):
             missing.append(col)
     assert missing == [], f"no column produces: {missing}"
+
+
+def test_career_stats_is_actually_invoked_by_the_pipeline():
+    """The exemption above is only honest if the pipeline really calls it."""
+    source = (ENGINE / "predict_card.py").read_text()
+    assert "career_stats" in source, "cd_ columns are exempted but never built"
 
 
 def test_both_corners_are_referenced_for_every_paired_feature():

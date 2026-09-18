@@ -226,6 +226,45 @@ ufc['date'] = pd.to_datetime(ufc['date'], errors='coerce')
 # Post-2001 filter
 ufc = ufc[ufc['date'] >= '2001-01-01'].copy()
 ufc = ufc.sort_values('date').reset_index(drop=True)
+
+# ============================================================================
+# POINT-IN-TIME CAREER STATISTICS
+# ============================================================================
+# r_splm, r_str_acc, r_sapm, r_str_def, r_td_avg, r_td_def, r_td_avg_acc and
+# r_sub_avg come from the upstream fighter profile, which publishes CAREER
+# AVERAGES AS OF THE DATA PULL and joins them onto every bout that fighter
+# ever had. 80-90% of fighters with five or more bouts carry one value for
+# their whole career, so a 2014 fight was described by a striking accuracy
+# computed over 2014-2026 - including the fight being predicted.
+#
+# That inflated a walk-forward backtest to 68.6% and +16.2% over 5,943 priced
+# bets. The only honest year was 2026, at 61.5% and -3.2%, because the data
+# ends in August of it and there was almost no career left to leak.
+#
+# career_stats rebuilds every one of them from PRIOR FIGHTS ONLY, accumulating
+# across both corners in date order. Expect the measured numbers to fall.
+print("\n[1.5] BUILDING POINT-IN-TIME CAREER STATISTICS...")
+from career_stats import career_stats as _career_stats
+
+_careers = _career_stats(ufc)
+for _col in _careers.columns:
+    ufc[_col] = _careers[_col]
+_known = ufc['r_cd_bouts'].notna() & ufc['b_cd_bouts'].notna()
+print(f"    {len(_careers.columns)} point-in-time columns")
+print(f"    both corners have prior history on {_known.mean():.1%} of fights")
+
+# The profile columns are percentages (46.5); the honest ones are fractions
+# (0.465). Rescaling here keeps every downstream feature on the scale its
+# thresholds and comments were written for.
+for _corner in ('r', 'b'):
+    ufc[f'{_corner}_splm'] = ufc[f'{_corner}_cd_slpm']
+    ufc[f'{_corner}_sapm'] = ufc[f'{_corner}_cd_sapm']
+    ufc[f'{_corner}_str_acc'] = ufc[f'{_corner}_cd_str_acc'] * 100.0
+    ufc[f'{_corner}_str_def'] = ufc[f'{_corner}_cd_str_def'] * 100.0
+    ufc[f'{_corner}_td_avg'] = ufc[f'{_corner}_cd_td_per15']
+    ufc[f'{_corner}_td_def'] = ufc[f'{_corner}_cd_td_def'] * 100.0
+    ufc[f'{_corner}_td_avg_acc'] = ufc[f'{_corner}_cd_td_acc'] * 100.0
+    ufc[f'{_corner}_sub_avg'] = ufc[f'{_corner}_cd_sub_per15']
 print(f"    After post-2001 filter: {len(ufc):,} fights")
 print(f"    Date range: {ufc['date'].min().date()} to {ufc['date'].max().date()}")
 
@@ -754,8 +793,11 @@ print(f"      Absorption eff diff range: [{ufc['absorption_eff_diff'].min():.2f}
 # Measures how efficiently a fighter lands strikes relative to what they absorb.
 # High value = good footwork/movement (lands a lot, absorbs little).
 # Low value = flat-footed / hittable (e.g. Derrick Lewis: high SAPM, moderate SLpM).
-ufc['r_footwork_proxy'] = ufc['r_splm'].fillna(3) / (ufc['r_sapm'].fillna(3).clip(lower=0.5))
-ufc['b_footwork_proxy'] = ufc['b_splm'].fillna(3) / (ufc['b_sapm'].fillna(3).clip(lower=0.5))
+# The rates are point-in-time now, so a debutant genuinely has none. Filling
+# with 3 invented an average fighter; the ratio is NaN instead and the _known
+# flag on the paired feature tells the model which it is.
+ufc['r_footwork_proxy'] = ufc['r_splm'] / ufc['r_sapm'].clip(lower=0.5)
+ufc['b_footwork_proxy'] = ufc['b_splm'] / ufc['b_sapm'].clip(lower=0.5)
 ufc['footwork_diff'] = ufc['r_footwork_proxy'] - ufc['b_footwork_proxy']
 _lo, _hi = ufc['footwork_diff'].min(), ufc['footwork_diff'].max()
 print(f'      Footwork diff range: [{_lo:.2f}, {_hi:.2f}]')

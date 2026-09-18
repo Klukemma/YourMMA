@@ -82,6 +82,23 @@ RECORD = [
            why="professional bouts, including those outside the UFC"),
     Paired("data_sparsity", "r_data_reliability", "b_data_reliability",
            why="how much history each stat is averaged over"),
+    # Point-in-time columns from career_stats. These carry information the
+    # leaking profile never could: it reported one career-long number per
+    # fighter, so it could not say how much of that career had happened yet.
+    Paired("cd_bouts", "r_cd_bouts", "b_cd_bouts", level=True, known=True,
+           why="prior UFC bouts at the time of this fight, not career total"),
+    Paired("cd_minutes", "r_cd_minutes", "b_cd_minutes", level=True,
+           why="prior cage time in minutes; twenty rounds of experience is not "
+               "the same as twenty first-round knockouts"),
+    Paired("cd_kd_per15", "r_cd_kd_per15", "b_cd_kd_per15", level=True, known=True,
+           why="knockdowns per fifteen minutes - power, which the profile "
+               "columns never reported at all"),
+    Paired("cd_ctrl_share", "r_cd_ctrl_share", "b_cd_ctrl_share", level=True,
+           known=True,
+           why="share of prior fight time spent in control"),
+    Paired("cd_head_share", "r_cd_head_share", "b_cd_head_share",
+           why="share of landed strikes aimed at the head - a head-hunter and "
+               "a leg-kicker with equal volume are different fights"),
     Paired("ko_rate", "r_ko_rate", "b_ko_rate",
            why="share of wins by knockout - a style marker more than a "
                "predictor of who wins"),
