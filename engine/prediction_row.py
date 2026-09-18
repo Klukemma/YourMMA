@@ -46,6 +46,11 @@ UNAVAILABLE = {
     "cd_kd_per15": "needs the fighter's full prior bout list",
     "cd_ctrl_share": "needs the fighter's full prior bout list",
     "cd_head_share": "needs the fighter's full prior bout list",
+    "cd_opp_ctrl_share": "needs the fighter's full prior bout list",
+    "cd_opp_sub_per15": "needs the fighter's full prior bout list",
+    "cd_wins": "needs the fighter's full prior bout list",
+    "cd_losses": "needs the fighter's full prior bout list",
+    "cd_win_rate": "needs the fighter's full prior bout list",
 }
 
 
@@ -60,18 +65,45 @@ def _value(stats, suffix, extra):
     return np.nan if value is None else value
 
 
-def build_prediction_frame(red, blue, suffixes, red_extra=None, blue_extra=None):
+def build_prediction_frame(red, blue, suffixes, red_extra=None, blue_extra=None,
+                           fight_extra=None):
     """A one-row frame carrying r_<suffix> and b_<suffix> for each suffix.
 
     `red_extra` and `blue_extra` carry values the caller has already computed -
     age, experience, win rate and the rest are worked out in the prediction
     function rather than stored on the fighter.
+
+    `fight_extra` carries columns that belong to the FIGHT rather than to
+    either corner, and so have no r_/b_ prefix to derive them from. The matchup
+    advantages are the case that needed it: a striking advantage is one signed
+    number about a pairing, not a property of one fighter.
     """
     row = {}
     for suffix in suffixes:
         row[f"r_{suffix}"] = _value(red, suffix, red_extra)
         row[f"b_{suffix}"] = _value(blue, suffix, blue_extra)
+    if fight_extra:
+        row.update(fight_extra)
     return pd.DataFrame([row])
+
+
+def fight_level_columns(specs):
+    """Input columns a spec declares it needs that carry no corner prefix.
+
+    A Paired spec's inputs are r_/b_ columns and build_prediction_frame derives
+    them from the two stats dicts. A Derived spec that reads a whole-fight
+    column - a matchup advantage is one signed number about a PAIRING, not a
+    property of either fighter - has no such route, so it declares the column
+    in `needs` and the caller supplies it through `fight_extra`.
+
+    Reading this off the spec list rather than a hand-written constant is what
+    stops a newly declared fight-level feature from reaching the prediction
+    path as a KeyError, which is how mmr_diff and mu_sum broke CI.
+    """
+    out = set()
+    for spec in specs:
+        out.update(getattr(spec, "needs", ()) or ())
+    return sorted(out)
 
 
 def required_suffixes(specs):

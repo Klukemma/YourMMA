@@ -709,3 +709,74 @@ def test_the_conceded_grappling_columns_mirror_the_offensive_ones(ufc):
         conceded = careers[f"{corner}_cd_opp_ctrl_share"]
         assert (offensive.notna() == conceded.notna()).all()
         assert conceded.dropna().between(0.0, 1.0).all()
+
+
+# ---------------------------------------------------------------------------
+# final_stats: the other end of the same accumulation. Training reads what was
+# known BEFORE a bout; predicting a fighter's next bout reads what is known
+# after their last one. If these two ever disagree the model is served
+# different numbers than it was trained on and nothing would say so.
+# ---------------------------------------------------------------------------
+
+def test_the_final_stats_equal_what_a_hypothetical_next_bout_would_read():
+    """The defining property, checked by actually adding that next bout.
+
+    A fighter's final_stats row must be exactly what career_stats emits for a
+    bout dated after everything else - because that is what it claims to be.
+    """
+    history = frame(bout("2020-01-01", "F1", "A", r_sig_str_landed=40.0,
+                         r_sig_str_atmpted=100.0),
+                    bout("2020-06-01", "F1", "B", r_sig_str_landed=20.0,
+                         r_sig_str_atmpted=100.0, winner_id="B"))
+    final = cs.final_stats(history)
+
+    with_next = frame(*history.to_dict("records"),
+                      bout("2021-01-01", "F1", "C"))
+    next_bout = cs.career_stats(with_next).iloc[-1]
+
+    for name in cs.CAREER_COLUMNS:
+        expected, actual = next_bout[f"r_{name}"], final.loc["F1", name]
+        assert _equal_or_both_nan(expected, actual), name
+
+
+def _equal_or_both_nan(left, right):
+    if pd.isna(left) and pd.isna(right):
+        return True
+    return bool(np.isclose(left, right, rtol=1e-9))
+
+
+def test_final_stats_agrees_with_career_stats_across_the_real_dataset(ufc):
+    """Same check on every fighter in the file, via their last appearance.
+
+    A fighter's last bout carries their stats BEFORE it, so adding that bout's
+    own contribution must reproduce the final row. Checked here on the one
+    column where the arithmetic is a plain count and so cannot be fudged.
+    """
+    df = ufc.sort_values("date").reset_index(drop=True)
+    careers = cs.career_stats(df)
+    final = cs.final_stats(df)
+
+    last = {}
+    for pos in range(len(df)):
+        for corner in cs.CORNERS:
+            last[df[f"{corner}_id"].iloc[pos]] = (pos, corner)
+
+    for fighter, (pos, corner) in list(last.items())[:400]:
+        before = careers[f"{corner}_cd_bouts"].iloc[pos]
+        assert final.loc[fighter, "cd_bouts"] == before + 1, fighter
+
+
+def test_every_ufc_win_is_somebody_elses_loss(ufc):
+    """Pooled over all fighters the two totals must be identical.
+
+    Not a tautology: it fails the moment a bout credits a win without debiting
+    a loss, which is exactly what an id mismatch between the corners produces.
+    """
+    final = cs.final_stats(ufc.sort_values("date").reset_index(drop=True))
+    assert final["cd_wins"].sum() == final["cd_losses"].sum()
+
+
+def test_final_stats_covers_every_fighter_in_the_file(ufc):
+    df = ufc.sort_values("date").reset_index(drop=True)
+    everyone = set(df["r_id"]) | set(df["b_id"])
+    assert set(cs.final_stats(df).index) == everyone

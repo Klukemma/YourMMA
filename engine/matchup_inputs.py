@@ -146,3 +146,150 @@ def physiques(df, corner):
     """One matchup.Physique per row."""
     frame = physique_frame(df, corner)
     return [mu.Physique(**record) for record in frame.to_dict("records")]
+
+
+# --- the features the pipeline consumes ------------------------------------
+# Every one of these is red-minus-blue already, so they are single signed
+# columns rather than Paired specs. What makes them worth having is that they
+# are not differences: striking_advantage crosses red's attempt rate and
+# accuracy against BLUE's defence through log5, so it says how the fight goes
+# rather than which fighter has the better profile. A wrestler's takedown rate
+# means one thing against a sprawler and another against a debutant, and no
+# subtraction of two career averages can express that.
+
+ADVANTAGE_COLUMNS = {
+    "mx_strike_adv": "expected significant strikes landed per minute, red "
+                     "over blue, each crossed against the other's defence",
+    "mx_td_adv": "expected takedowns landed per minute, both directions",
+    "mx_ctrl_adv": "expected control seconds per minute, both directions",
+    "mx_sub_adv": "expected submission attempts per minute, both directions",
+    "mx_grappling_adv": "the three grappling advantages standardised and "
+                        "weighted 0.66/0.19/0.15",
+    "mx_size_adv": "height and reach, standardised and weighted equally "
+                   "because the split is not identifiable",
+    "mx_mass_adv": "listed weight difference, which fires on catchweights and "
+                   "short-notice replacements and is otherwise 0",
+}
+
+KNOWN_COLUMNS = {
+    "mx_striking_known": "1.0 when both corners have a striking profile",
+    "mx_grappling_known": "1.0 when both corners have a grappling profile",
+    "mx_size_known": "1.0 when both corners have a plausible height and reach",
+}
+
+
+def matchup_features(df, careers):
+    """Every matchup advantage for every bout, as one DataFrame.
+
+    NaN wherever an input is missing, never 0.0. An even matchup and an unknown
+    one are different facts and the _known columns are what separates them; a
+    zero-filled advantage would tell the model the fighters were level.
+    """
+    red_form, blue_form = forms(careers, "r"), forms(careers, "b")
+    red_body, blue_body = physiques(df, "r"), physiques(df, "b")
+
+    out = {name: np.full(len(df), np.nan) for name in ADVANTAGE_COLUMNS}
+    known = {name: np.zeros(len(df)) for name in KNOWN_COLUMNS}
+    for i in range(len(df)):
+        rf, bf = red_form[i], blue_form[i]
+        rb, bb = red_body[i], blue_body[i]
+        out["mx_strike_adv"][i] = mu.striking_advantage(rf, bf)
+        out["mx_td_adv"][i] = mu.takedown_advantage(rf, bf)
+        out["mx_ctrl_adv"][i] = mu.control_advantage(rf, bf)
+        out["mx_sub_adv"][i] = mu.submission_advantage(rf, bf)
+        out["mx_grappling_adv"][i] = mu.grappling_advantage(rf, bf)
+        out["mx_size_adv"][i] = mu.size_advantage(rb, bb)
+        out["mx_mass_adv"][i] = mu.mass_advantage(rb, bb)
+        known["mx_striking_known"][i] = mu.advantage_known(
+            out["mx_strike_adv"][i])
+        known["mx_grappling_known"][i] = mu.advantage_known(
+            out["mx_grappling_adv"][i])
+        known["mx_size_known"][i] = mu.size_advantage_known(rb, bb)
+    out.update(known)
+    return pd.DataFrame(out, index=df.index)
+
+
+def _form_from_stats(stats):
+    """One matchup.Form from a fighter snapshot carrying cd_ columns.
+
+    The prediction-time counterpart of form_frame. A snapshot holds ONE
+    fighter's final career state - career_stats.final_stats - so this goes
+    through the same shrinkage with the same constants, and a missing column
+    gives NaN rather than a league-average stand-in.
+    """
+    def get(name):
+        value = stats.get(name)
+        try:
+            value = float(value)
+        except (TypeError, ValueError):
+            return np.nan
+        return value
+
+    minutes = get("cd_minutes")
+    fields = {}
+    for field, source, league, weight, scale in _RATE_FIELDS:
+        value = get(source)
+        numerator = value if scale is None else value * scale * minutes
+        fields[field] = float(_shrink([numerator], [minutes], league, weight)[0])
+    for field, source, evidence, league, weight, invert in _ACCURACY_FIELDS:
+        attempts = get(evidence)
+        fraction = get(source)
+        if invert:
+            fraction = 1.0 - fraction
+        fields[field] = float(
+            _shrink([fraction * attempts], [attempts], league, weight)[0])
+    return mu.Form(**fields)
+
+
+def _physique_from_stats(stats):
+    """One matchup.Physique from a snapshot, in CENTIMETRES.
+
+    The snapshot stores height and reach in INCHES, under keys named for the
+    unit they are not in. That mismatch already cost this project a fake
+    110-unit reach gap on 9.4% of fights, so the conversion is explicit and
+    named here rather than assumed anywhere.
+    """
+    def cm(key):
+        value = stats.get(key)
+        try:
+            return float(value) * CM_PER_INCH
+        except (TypeError, ValueError):
+            return np.nan
+
+    return mu.Physique(height_cm=mu.plausible_height_cm(cm("height")),
+                       reach_cm=mu.plausible_reach_cm(cm("reach")),
+                       weight_kg=_as_float(stats.get("weight")))
+
+
+CM_PER_INCH = 2.54
+
+
+def _as_float(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return np.nan
+
+
+def matchup_extra(red_stats, blue_stats):
+    """The fight-level matchup columns for one pairing, as a plain dict.
+
+    Same functions, same constants and same NaN rule as matchup_features uses
+    over the training frame, so a fight predicted live is described the way the
+    model was taught to read it.
+    """
+    rf, bf = _form_from_stats(red_stats), _form_from_stats(blue_stats)
+    rb, bb = _physique_from_stats(red_stats), _physique_from_stats(blue_stats)
+    out = {
+        "mx_strike_adv": mu.striking_advantage(rf, bf),
+        "mx_td_adv": mu.takedown_advantage(rf, bf),
+        "mx_ctrl_adv": mu.control_advantage(rf, bf),
+        "mx_sub_adv": mu.submission_advantage(rf, bf),
+        "mx_grappling_adv": mu.grappling_advantage(rf, bf),
+        "mx_size_adv": mu.size_advantage(rb, bb),
+        "mx_mass_adv": mu.mass_advantage(rb, bb),
+    }
+    out["mx_striking_known"] = mu.advantage_known(out["mx_strike_adv"])
+    out["mx_grappling_known"] = mu.advantage_known(out["mx_grappling_adv"])
+    out["mx_size_known"] = mu.size_advantage_known(rb, bb)
+    return out

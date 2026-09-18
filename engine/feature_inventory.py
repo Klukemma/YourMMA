@@ -228,7 +228,71 @@ INTERACTIONS = [
 ]
 
 
+# --- matchup advantages ----------------------------------------------------
+# Prefixed mx_, not mu_: mu_diff and mu_level already exist and are the
+# TrueSkill rating mean. Two unrelated families sharing a prefix is how a
+# reader ends up believing a size advantage is a rating term.
+#
+# Built by matchup_inputs.matchup_features from point-in-time career stats and
+# assigned upstream, so these specs only name and justify them. They are
+# already signed red-minus-blue, which is why they are Derived rather than
+# Paired.
+#
+# They are NOT more differences. striking_advantage crosses red's attempt rate
+# and accuracy against BLUE's defence through log5, so it answers how this
+# fight goes rather than which fighter has the better profile - the same gap
+# INTERACTIONS below exists to close, but computed from a measured league
+# baseline instead of a raw product of two columns.
+#
+# Measured standalone on held-out 2019-2026 fights: strike 0.582, ctrl 0.563,
+# grappling composite 0.563, sub 0.548, td 0.543, size 0.527, mass 0.516. The
+# striking advantage holds 0.56 to 0.62 in EVERY year from 2015 to 2026,
+# 2026 included, which is the shape of a real effect rather than a leak.
+
+def _column(name):
+    return lambda df: to_number(df[name])
+
+
+MATCHUP = [
+    Derived("mx_strike_adv", _column("mx_strike_adv"),
+            needs=("mx_strike_adv",),
+            why="expected strikes landed per minute, each fighter's offence "
+                "crossed against the other's defence; AUC 0.582 held out"),
+    Derived("mx_td_adv", _column("mx_td_adv"),
+            needs=("mx_td_adv",),
+            why="expected takedowns per minute, both directions"),
+    Derived("mx_ctrl_adv", _column("mx_ctrl_adv"),
+            needs=("mx_ctrl_adv",),
+            why="expected control seconds per minute, both directions"),
+    Derived("mx_sub_adv", _column("mx_sub_adv"),
+            needs=("mx_sub_adv",),
+            why="expected submission attempts per minute, both directions"),
+    Derived("mx_grappling_adv", _column("mx_grappling_adv"),
+            needs=("mx_grappling_adv",),
+            why="the three grappling advantages standardised and weighted on "
+                "pre-2019 outcomes only"),
+    Derived("mx_size_adv", _column("mx_size_adv"),
+            needs=("mx_size_adv",),
+            why="height and reach weighted equally, because three windows put "
+                "the split at +0.21, -1.36 and 1.0 and it cannot be resolved"),
+    Derived("mx_mass_adv", _column("mx_mass_adv"),
+            needs=("mx_mass_adv",),
+            why="listed weight gap; fires on catchweights and short-notice "
+                "replacements and is 0 on two thirds of fights"),
+    Derived("mx_striking_known", _column("mx_striking_known"),
+            needs=("mx_striking_known",),
+            why="separates an even striking matchup from an unmeasured one"),
+    Derived("mx_grappling_known", _column("mx_grappling_known"),
+            needs=("mx_grappling_known",),
+            why="the same for grappling, which is missing more often"),
+    Derived("mx_size_known", _column("mx_size_known"),
+            needs=("mx_size_known",),
+            why="blue-corner reach is absent on 7.7% of fights"),
+]
+
+
 def all_specs():
     """Every spec, in the order the features are emitted."""
     return (STRIKING + GRAPPLING + PHYSICAL + RECORD + DURABILITY
-            + FORM + TRAJECTORY_DIFFS + RATING + STANCE + INTERACTIONS)
+            + FORM + TRAJECTORY_DIFFS + RATING + STANCE + INTERACTIONS
+            + MATCHUP)

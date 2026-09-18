@@ -247,6 +247,12 @@ print("\n[1.5] BUILDING POINT-IN-TIME CAREER STATISTICS...")
 from career_stats import career_stats as _career_stats
 
 _careers = _career_stats(ufc)
+# The other end of the same accumulation: what is known AFTER each fighter's
+# last bout, which is what predicting their NEXT one needs. Without it every
+# cd_ column reaches the prediction path as "unknown" while the model was
+# trained on fights where it was known.
+from career_stats import final_stats as _final_stats
+_final = _final_stats(ufc)
 for _col in _careers.columns:
     ufc[_col] = _careers[_col]
 _known = ufc['r_cd_bouts'].notna() & ufc['b_cd_bouts'].notna()
@@ -278,6 +284,20 @@ for _corner in ('r', 'b'):
     ufc[f'{_corner}_wins'] = ufc[f'{_corner}_cd_wins']
     ufc[f'{_corner}_losses'] = ufc[f'{_corner}_cd_losses']
     ufc[f'{_corner}_draws'] = 0.0
+
+# The matchup advantages. These cross one fighter's offence against the other's
+# defence through a measured league baseline, which is the one thing a frame of
+# differences cannot say: a takedown rate means one thing against a sprawler
+# and another against a debutant.
+from matchup_inputs import matchup_features as _matchup_features
+
+_matchups = _matchup_features(ufc, _careers)
+for _col in _matchups.columns:
+    ufc[_col] = _matchups[_col]
+print(f"    {len(_matchups.columns)} matchup advantage columns")
+print(f"    striking advantage available on "
+      f"{ufc['mx_striking_known'].mean():.1%} of fights, grappling on "
+      f"{ufc['mx_grappling_known'].mean():.1%}")
 print(f"    After post-2001 filter: {len(ufc):,} fights")
 print(f"    Date range: {ufc['date'].min().date()} to {ufc['date'].max().date()}")
 
@@ -455,6 +475,7 @@ print("\n[3.5] BUILDING BAYESIAN SKILL FEATURES...")
 from feature_inventory import all_specs
 from feature_spec import build_all, emitted_names
 from prediction_row import build_prediction_frame, required_suffixes
+from matchup_inputs import matchup_extra
 from skill_features import (
     MMR_SCALE,
     TRUESKILL_DEFAULT_MMR,
@@ -2694,6 +2715,11 @@ for fighter in all_fighters:
             'career_damage': L.get('b_sapm', 3) * 12.0 * (len(red_fights) + len(blue_fights)),
         })
     
+    # Their career state after the last bout in the file, which is what a
+    # prediction of their next fight reads.
+    _fid = L.get('r_id') if L.get('r_name') == fighter else L.get('b_id')
+    if _fid in _final.index:
+        stats.update(_final.loc[_fid].to_dict())
     fighter_stats[_norm_name(fighter)] = stats
 
 print(f"    Fighter lookup built: {len(fighter_stats):,} fighters")
@@ -2814,7 +2840,8 @@ def _declared_features(r, b, r_extra, b_extra):
     specs turn into a neutral difference and a _known flag of 0.
     """
     frame = build_prediction_frame(r, b, required_suffixes(SPECS),
-                                   red_extra=r_extra, blue_extra=b_extra)
+                                   red_extra=r_extra, blue_extra=b_extra,
+                                   fight_extra=matchup_extra(r, b))
     built = build_all(SPECS, frame)
     return {col: built.iloc[0][col] for col in built.columns}
 

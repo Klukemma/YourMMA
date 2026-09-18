@@ -18,15 +18,18 @@ sys.path.insert(0, str(ENGINE))
 
 from feature_inventory import all_specs
 from feature_spec import build_all, emitted_names
+from matchup_inputs import matchup_extra
 from prediction_row import (
     ALIASES,
     UNAVAILABLE,
     build_prediction_frame,
+    fight_level_columns,
     required_suffixes,
 )
 
 SPECS = all_specs()
 SUFFIXES = required_suffixes(SPECS)
+FIGHT_COLUMNS = fight_level_columns(SPECS)
 
 # What a rebuilt fighter actually carries, as the stats builder produces it.
 STATS_KEYS = set(
@@ -106,15 +109,71 @@ def test_a_prediction_emits_exactly_the_training_features():
     stats = {k: 1.0 for k in STATS_KEYS}
     extra = {k: 1.0 for k in EXTRA_KEYS}
     frame = build_prediction_frame(stats, stats, SUFFIXES,
-                                   red_extra=extra, blue_extra=extra)
+                                   red_extra=extra, blue_extra=extra,
+                                   fight_extra={c: 1.0 for c in FIGHT_COLUMNS})
     built = build_all(SPECS, frame)
     assert list(built.columns) == emitted_names(SPECS)
 
 
 def test_a_prediction_with_nothing_known_still_builds_every_column():
     """An unknown fighter must produce a full, neutral row rather than raise."""
-    frame = build_prediction_frame({}, {}, SUFFIXES)
+    frame = build_prediction_frame({}, {}, SUFFIXES,
+                                   fight_extra=matchup_extra({}, {}))
     built = build_all(SPECS, frame)
     assert list(built.columns) == emitted_names(SPECS)
     known = [c for c in built.columns if c.endswith("_known")]
     assert known and all(built.iloc[0][c] == 0.0 for c in known)
+
+
+# ---------------------------------------------------------------------------
+# Train/serve agreement for the matchup columns. The training frame computes
+# them from career_stats; a live prediction computes them from final_stats.
+# Two routes to one number is exactly where a silent skew lives.
+# ---------------------------------------------------------------------------
+
+def test_the_two_routes_to_a_matchup_advantage_agree():
+    """A fighter's next fight, predicted both ways, must read the same.
+
+    Training reads career_stats at a bout - what was known before it. A
+    prediction reads final_stats - what is known after the last one. Give the
+    training path a real next bout and the two must produce identical matchup
+    columns, or the model is served numbers it was never trained on.
+    """
+    import numpy as np
+    import pandas as pd
+    import career_stats as cs
+    import matchup_inputs as mi
+
+    UFC_CSV = ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
+    if not UFC_CSV.exists():
+        pytest.skip("dataset not present")
+    df = pd.read_csv(UFC_CSV, low_memory=False).sort_values("date")
+    df = df.reset_index(drop=True)
+
+    history, last = df.iloc[:-1], df.iloc[[-1]]
+    # The training route: the final bout described by everything before it.
+    whole = pd.concat([history, last], ignore_index=True)
+    training = mi.matchup_features(whole, cs.career_stats(whole)).iloc[-1]
+
+    # The serving route: both fighters' state after every earlier bout.
+    final = cs.final_stats(history)
+    red = dict(final.loc[last["r_id"].iloc[0]])
+    blue = dict(final.loc[last["b_id"].iloc[0]])
+    for corner, stats in (("r", red), ("b", blue)):
+        stats["height"] = last[f"{corner}_height"].iloc[0] / 2.54
+        stats["reach"] = last[f"{corner}_reach"].iloc[0] / 2.54
+        stats["weight"] = last[f"{corner}_weight"].iloc[0]
+    served = mi.matchup_extra(red, blue)
+
+    for column in mi.ADVANTAGE_COLUMNS:
+        a, b = training[column], served[column]
+        if pd.isna(a) and pd.isna(b):
+            continue
+        assert a == pytest.approx(b, rel=1e-6, abs=1e-9), column
+
+
+def test_every_fight_level_column_is_supplied_by_the_prediction_path():
+    """A Derived spec that needs a whole-fight column and does not get one
+    raises KeyError at prediction time - the break that hit CI before."""
+    supplied = set(matchup_extra({}, {}))
+    assert set(FIGHT_COLUMNS) <= supplied, set(FIGHT_COLUMNS) - supplied

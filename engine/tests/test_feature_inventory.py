@@ -31,6 +31,9 @@ def source_columns():
             needed |= {spec.red, spec.blue}
         elif isinstance(spec, Interaction):
             needed |= {spec.red_attack, spec.blue_defence}
+        # A Derived spec reading a whole-fight column declares it in `needs`,
+        # which is the same list the prediction path supplies.
+        needed |= set(getattr(spec, "needs", ()) or ())
     return needed
 
 
@@ -67,9 +70,16 @@ def test_every_source_column_is_produced_somewhere():
     from career_stats import career_columns
     produced_by_career_stats = set(career_columns("r")) | set(career_columns("b"))
 
+    # The matchup advantages are assigned in a loop too, so they declare their
+    # interface the same way. An exemption is only honest if the thing it
+    # exempts is real, which the companion test below checks by running it.
+    from matchup_inputs import ADVANTAGE_COLUMNS, KNOWN_COLUMNS
+    produced_by_matchup = set(ADVANTAGE_COLUMNS) | set(KNOWN_COLUMNS)
+
     missing = []
     for col in sorted(source_columns()):
-        if col in dataset or col in produced_by_career_stats:
+        if (col in dataset or col in produced_by_career_stats
+                or col in produced_by_matchup):
             continue
         assigned = re.search(r"ufc\[.%s.\]\s*=" % re.escape(col), source)
         renamed = re.search(r"'\s*:\s*'%s'" % re.escape(col), source)
@@ -163,3 +173,28 @@ def test_a_missing_stat_never_becomes_a_maximal_disadvantage():
     assert pd.isna(built.loc[0, "acc_diff"])
     assert built.loc[0, "acc_known"] == 0.0
     assert built.loc[1, "acc_known"] == 1.0
+
+
+
+def test_matchup_features_really_produces_every_column_it_declares():
+    """The exemption above is a promise; this is the thing that keeps it.
+
+    A declared column that matchup_features does not actually emit would sail
+    through the source check and fail at runtime, which is precisely the class
+    of break the check exists to prevent.
+    """
+    import career_stats as cs
+    import matchup_inputs as mi
+    df = pd.read_csv(ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv",
+                     low_memory=False).sort_values("date").head(400)
+    df = df.reset_index(drop=True)
+    built = mi.matchup_features(df, cs.career_stats(df))
+    declared = set(mi.ADVANTAGE_COLUMNS) | set(mi.KNOWN_COLUMNS)
+    assert set(built.columns) == declared
+
+
+def test_the_pipeline_actually_invokes_matchup_features():
+    """Declaring the columns is not the same as computing them."""
+    source = (ENGINE / "predict_card.py").read_text()
+    assert "matchup_features" in source
+    assert "matchup_extra" in source, "the prediction path must use it too"

@@ -492,6 +492,62 @@ def career_stats(df, *, strict=True):
     return pd.DataFrame(out, index=index)
 
 
+def final_stats(df, *, strict=True):
+    """Each fighter's statistics AFTER their last recorded bout.
+
+    career_stats answers "what was known before this bout", which is what
+    training needs. Predicting a fighter's NEXT bout needs the other end of the
+    same accumulation: everything known after their most recent one. Without
+    this the prediction path has no source for any cd_ column and degrades
+    every one of them to "unknown", while the model was trained on fights where
+    they were known - a train/serve skew that nothing would report.
+
+    Returns a DataFrame indexed by fighter id, carrying the same columns as
+    career_stats emits per corner, with no r_/b_ prefix.
+
+    This is the SAME accumulator, so it cannot drift from the training values.
+    A fighter's row here is exactly what career_stats would emit for a
+    hypothetical next bout dated after everything in df.
+    """
+    missing = _require_columns(df, strict)
+    if missing:
+        return pd.DataFrame(columns=list(CAREER_COLUMNS))
+
+    dates = pd.to_datetime(df["date"], errors="coerce")
+    if dates.isna().any():
+        raise ValueError("final_stats cannot order rows with an unparseable date")
+    elapsed = fight_elapsed_seconds(df)
+    bad = duration_violations(df, elapsed)
+    if bad.any():
+        if strict:
+            raise ValueError(
+                f"{int(bad.sum())} rows have an impossible fight duration")
+        elapsed = elapsed.mask(bad)
+
+    n = len(df)
+    fighter_ids = np.concatenate(
+        [df[f"{c}_id"].to_numpy(dtype=object) for c in CORNERS])
+    contrib = np.vstack(
+        [_contributions(_corner_counts(df, c, elapsed), n) for c in CORNERS])
+
+    # Order does not matter for a total, unlike in career_stats where it is the
+    # whole point, so this is a plain sum per fighter rather than a dated pass.
+    totals = {}
+    for appearance in range(len(fighter_ids)):
+        key = fighter_ids[appearance]
+        running = totals.get(key)
+        if running is None:
+            totals[key] = contrib[appearance].copy()
+        else:
+            running += contrib[appearance]
+
+    keys = list(totals)
+    if not keys:
+        return pd.DataFrame(columns=list(CAREER_COLUMNS))
+    state = np.vstack([totals[key] for key in keys])
+    return pd.DataFrame(_derive(state), index=pd.Index(keys, name="fighter_id"))
+
+
 # --- the proofs ------------------------------------------------------------
 
 def _appearances(df, elapsed):
