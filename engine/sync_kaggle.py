@@ -763,6 +763,18 @@ def cmd_fetch_odds_history(args):
         agreement, n = verify_american(raw[side], raw[dec])
         print(f"  {side}: American in {agreement:.1%} of {n:,} checkable rows")
         if agreement < FORMAT_AGREEMENT:
+            # Show what the columns actually hold rather than guessing at the
+            # mismatch from a percentage.
+            sample = raw[[side, dec]].dropna().head(8)
+            print(f"\n  what {side} and {dec} actually contain:")
+            for row in sample.itertuples(index=False):
+                converted = float(american_to_decimal(pd.Series([row[0]]))[0])
+                print(f"    {side}={row[0]:>10}   {dec}={row[1]:>10}   "
+                      f"as-if-American -> {converted:.4f}")
+            for col in (side, dec):
+                values = pd.to_numeric(raw[col], errors="coerce").dropna()
+                print(f"    {col:<14} min {values.min():>9.2f}  "
+                      f"max {values.max():>9.2f}  median {values.median():>9.2f}")
             sys.exit(f"::error::{side} does not look like American odds "
                      f"({agreement:.1%} agreement). Refusing to write prices "
                      f"that would invert every favourite.")
