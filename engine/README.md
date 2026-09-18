@@ -459,6 +459,42 @@ constant changes, but monotonicity across eight independent years is not a
 selection artifact.
 
 
+### The features are not the constraint
+
+Three rounds of correctness work, measured the same way each time:
+
+    unit mismatch (reach, weight, height)   2026 AUC  0.646 -> 0.665   +0.019
+    Elo-era rating constants                          0.665 -> 0.666   +0.001
+    full feature rebuild                              0.666 -> 0.669   +0.003
+
+The rebuild was not cosmetic. It fixed the fill rule on fifteen features,
+where a missing percentage became 0 and told the model a debutant lands
+nothing; it added levels, known flags and eight matchup interactions the
+old difference-only design could not express at all; it computed the
+trajectory features that had been a constant; and it corrected an ape index
+that read 0.39 or 2.60 instead of 1.02 on 9.4% of fights. 63 features became
+111. Nine of eleven historical years improved and 2024 accuracy rose from
+72.1% to 75.8%.
+
+The headline is still +0.002 on the historical mean.
+
+    2015-2025 mean AUC   0.777 -> 0.779
+    2026 AUC             0.666 -> 0.669
+
+2026 remains about 0.11 below its own history, and that gap has now survived
+adjustment layers, recalibration, the blank data window, missing fight
+history, unit errors, rating constants, and the whole feature layer. Every
+one of those was a real defect and fixing it was right. None of them was the
+reason.
+
+What that leaves is information rather than encoding. On the same 2026
+fights the market scores AUC 0.741 against the model's 0.669, and it is
+better in 98% of bootstrap resamples. The market prices things this dataset
+does not contain: camp changes, injuries, weight-cut trouble, late
+replacements. No amount of rearranging the columns we have will recover
+what was never recorded.
+
+
 ## Known issues
 
 - **`TRUESKILL_BETA = 4.17` contradicts the data** (β ≈ 5.0, above). It feeds
