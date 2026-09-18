@@ -25,7 +25,8 @@ where no data is missing. If the placebo also separates, the grouping is picking
 up something about the fighters rather than the missing data, and the result
 means nothing.
 
-RESULT: the hypothesis is wrong. Fights where neither fighter touched the blank
+RESULT (measured before the hole was repaired, on the 8,587-fight dataset
+ending 2026-08-08): the hypothesis is wrong. Fights where neither fighter touched the blank
 window score AUC 0.637, slightly WORSE than the exposed ones at 0.657:
 
     all 2026            341   61.9%   0.646

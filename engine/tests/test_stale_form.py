@@ -97,18 +97,26 @@ def test_score_reports_an_inverted_ranking():
     assert score(p, y)["auc"] == pytest.approx(0.0)
 
 
-def test_blank_window_matches_the_constants_in_the_module():
-    """If a future sync repairs or moves the hole, this test should fail loudly
-    rather than let the experiment keep splitting on a window that no longer
-    describes the data."""
+def test_the_recorded_window_still_covers_every_blank_row():
+    """The window must keep describing where the missing data actually is.
+
+    Repairing the hole shrinks it, which is fine and expected - sync_kaggle's
+    repair command recovers 144 of the 145 bouts. What must not happen quietly
+    is a NEW hole opening somewhere the window does not cover, because the
+    experiment would then split 2026 on a window that misses the very rows it
+    is meant to identify. So this asserts containment, not equality."""
     from experiments import stale_form
 
     start, end, n = blank_window_bounds()
     if start is None:
         pytest.skip("no blank statistics in the dataset any more")
-    assert start == stale_form.BLANK_START
-    assert end == stale_form.BLANK_END
     assert n > 0
+    assert start >= stale_form.BLANK_START, (
+        f"blank rows now start at {start.date()}, before the recorded window "
+        f"opens at {stale_form.BLANK_START.date()}")
+    assert end <= stale_form.BLANK_END, (
+        f"blank rows now run to {end.date()}, past the recorded window "
+        f"closing at {stale_form.BLANK_END.date()}")
 
 
 def test_placebo_window_is_a_year_before_and_the_same_length():
