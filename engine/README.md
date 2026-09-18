@@ -284,6 +284,34 @@ the ~358 bouts in the window and spells some names differently - and 19 bets at
 the tightest filter is a small sample. The direction is consistent across every
 tier, which is the part worth trusting.
 
+### Pruning the weak features makes it worse
+
+`experiments/feature_pruning.py`, choosing on 2025 and confirming once on 2026:
+
+| feature set | n | 2025 accuracy | Brier |
+| --- | ---: | ---: | ---: |
+| **all 57** | 57 | **73.8%** | 0.1863 |
+| drop negative-importance | 31 | 70.1% | 0.1869 |
+| drop negative and near-zero | 23 | 69.7% | 0.1878 |
+| top 20 | 20 | 68.3% | 0.1905 |
+| top 10 | 10 | 68.3% | 0.1922 |
+| top 5 | 5 | 71.6% | 0.1913 |
+| winrate_diff alone | 1 | 69.1% | 0.1984 |
+
+Every reduced set is worse. Dropping the 26 features with negative or
+near-zero importance costs **3.7 points**.
+
+This is not a contradiction of the audit. Permutation importance measures what
+one feature adds *given all the others*, so a feature can score zero or
+negative and still carry information the ensemble uses in combination with
+something else. Scoring near zero individually is not the same as being
+useless, and the 56 features around `winrate_diff` are collectively worth about
+4.7 points (69.1% alone against 73.8% together).
+
+The practical conclusion: **do not prune, and do not rewrite the weak features
+one at a time.** Their individual contributions are too small for that work to
+pay, and the measurement says removing them costs accuracy.
+
 ## Known issues
 
 - **`TRUESKILL_BETA = 4.17` contradicts the data** (β ≈ 5.0, above). It feeds
