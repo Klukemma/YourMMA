@@ -40,9 +40,12 @@ def bout(date, r_id, b_id, **counts):
     number that means something else - is about the emitted statistics, and is
     tested separately with explicit NaNs.
     """
+    # winner_id defaults to the red corner. A test that cares about the record
+    # passes it explicitly; one that does not still needs a decided bout,
+    # because None would silently make every fixture a no-contest.
     row = {"date": date, "match_time_sec": 300.0, "finish_round": 1,
            "total_rounds": 3, "r_id": r_id, "b_id": b_id,
-           "r_name": r_id, "b_name": b_id}
+           "r_name": r_id, "b_name": b_id, "winner_id": r_id}
     for corner in cs.CORNERS:
         for column in cs._COUNT_COLUMNS:
             row[f"{corner}_{column}"] = 0.0
@@ -113,9 +116,12 @@ def test_no_bout_in_the_file_has_an_impossible_duration(ufc):
 def test_a_debut_has_no_rates_at_all():
     careers = cs.career_stats(frame(bout("2020-01-01", "a", "b")))
     rates = [c for c in cs.career_columns("r")
+             # Counts, not rates. Zero prior wins is a true statement about a
+             # debutant; zero strikes per minute would not be.
              if c not in ("r_cd_bouts", "r_cd_minutes", "r_cd_sig_atmpted",
                           "r_cd_opp_sig_atmpted", "r_cd_td_atmpted",
-                          "r_cd_opp_td_atmpted", "r_cd_breakdown_bouts")]
+                          "r_cd_opp_td_atmpted", "r_cd_breakdown_bouts",
+                          "r_cd_wins", "r_cd_losses")]
     assert careers.loc[0, rates].isna().all()
 
 
@@ -335,7 +341,7 @@ def test_the_output_carries_exactly_the_declared_columns():
 
 
 def test_career_columns_names_both_corners():
-    assert len(cs.career_columns()) == 2 * len(cs.CAREER_COLUMNS) == 46
+    assert len(cs.career_columns()) == 2 * len(cs.CAREER_COLUMNS) == 56
 
 
 def test_career_columns_rejects_a_corner_that_does_not_exist():
@@ -557,6 +563,7 @@ def _three_bout_career(**overrides):
         "match_time_sec": [300.0] * n,
         "finish_round": [1.0] * n,
         "total_rounds": [3.0] * n,
+        "winner_id": ["F1"] * n,
     }
     for corner in ("r", "b"):
         frame[f"{corner}_id"] = (["F1"] * n if corner == "r"
@@ -614,3 +621,91 @@ def test_a_missing_required_column_is_refused_loudly():
     df = _three_bout_career().drop(columns=["r_ctrl"])
     with pytest.raises(KeyError, match="r_ctrl"):
         cs.career_stats(df)
+
+
+# ---------------------------------------------------------------------------
+# The prior record. r_wins/r_losses were the largest leak in the dataset and
+# these are their honest replacement, so the guarantee is worth stating twice.
+# ---------------------------------------------------------------------------
+
+def test_the_record_counts_only_bouts_already_fought():
+    """Three bouts, all won. The record read at each is 0-0, 1-0, 2-0."""
+    df = frame(bout("2020-01-01", "F1", "A"),
+               bout("2020-06-01", "F1", "B"),
+               bout("2020-12-01", "F1", "C"))
+    out = cs.career_stats(df)
+    assert list(out["r_cd_wins"]) == [0.0, 1.0, 2.0]
+    assert list(out["r_cd_losses"]) == [0.0, 0.0, 0.0]
+
+
+def test_a_loss_is_counted_against_the_fighter_who_lost_it():
+    df = frame(bout("2020-01-01", "F1", "A", winner_id="A"),
+               bout("2020-06-01", "F1", "B", winner_id="F1"),
+               bout("2020-12-01", "F1", "C"))
+    out = cs.career_stats(df)
+    assert list(out["r_cd_wins"]) == [0.0, 0.0, 1.0]
+    assert list(out["r_cd_losses"]) == [0.0, 1.0, 1.0]
+    assert out.loc[2, "r_cd_win_rate"] == pytest.approx(0.5)
+
+
+def test_the_record_follows_a_fighter_into_the_other_corner():
+    """A fighter's history is their bouts, not their red-corner bouts."""
+    df = frame(bout("2020-01-01", "A", "F1", winner_id="F1"),
+               bout("2020-06-01", "F1", "B"))
+    out = cs.career_stats(df)
+    assert out.loc[1, "r_cd_wins"] == 1.0
+    assert out.loc[1, "r_cd_losses"] == 0.0
+
+
+def test_a_bout_nobody_won_counts_as_neither_a_win_nor_a_loss():
+    """150 bouts name no winner - draws, no-contests and overturned results.
+
+    They are real bouts and real cage time, so they must reach cd_bouts, and
+    they decided nothing, so they must not reach the win rate.
+    """
+    df = frame(bout("2020-01-01", "F1", "A", winner_id=None),
+               bout("2020-06-01", "F1", "B"))
+    out = cs.career_stats(df)
+    assert out.loc[1, "r_cd_bouts"] == 1.0
+    assert out.loc[1, "r_cd_wins"] == 0.0
+    assert out.loc[1, "r_cd_losses"] == 0.0
+    assert pd.isna(out.loc[1, "r_cd_win_rate"])
+
+
+def test_a_fighter_with_no_decided_bout_has_no_win_rate():
+    """NaN, never 0.5. A coin-flip fighter is a claim; "unknown" is the fact."""
+    out = cs.career_stats(frame(bout("2020-01-01", "F1", "A")))
+    assert pd.isna(out.loc[0, "r_cd_win_rate"])
+    assert out.loc[0, "r_cd_wins"] == 0.0
+
+
+def test_the_win_rate_never_sees_the_bout_it_describes(ufc):
+    """The property the leak violated, asserted on the real dataset.
+
+    If cd_win_rate could see the current bout, the red corner's rate would be
+    lifted on every row the red corner won. Regressing the winner on the rate
+    is allowed to find skill; what it must not find is the perfect separation
+    that a career total produces.
+    """
+    careers = cs.career_stats(ufc)
+    won = ufc["winner_id"] == ufc["r_id"]
+    rate = careers["r_cd_win_rate"]
+    seen = rate.notna()
+    # A leaked rate scores far above this; the honest one sits near 0.60.
+    from sklearn.metrics import roc_auc_score
+    auc = roc_auc_score(won[seen], rate[seen])
+    assert 0.50 < auc < 0.70, auc
+
+
+def test_the_conceded_grappling_columns_mirror_the_offensive_ones(ufc):
+    """Control conceded is the opponent's control, so the two pool equally.
+
+    Every second one fighter controls, another is controlled, so across all
+    fighter-appearances the two shares must have the same total exposure.
+    """
+    careers = cs.career_stats(ufc)
+    for corner in cs.CORNERS:
+        offensive = careers[f"{corner}_cd_ctrl_share"]
+        conceded = careers[f"{corner}_cd_opp_ctrl_share"]
+        assert (offensive.notna() == conceded.notna()).all()
+        assert conceded.dropna().between(0.0, 1.0).all()

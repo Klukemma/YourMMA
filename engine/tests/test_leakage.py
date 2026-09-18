@@ -16,7 +16,17 @@ import pytest
 ENGINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ENGINE))
 
+import leakage
 from leakage import PROFILE_COLUMNS, constant_across_career, scan
+
+UFC_CSV = ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
+
+
+@pytest.fixture(scope="module")
+def ufc():
+    if not UFC_CSV.exists():
+        pytest.skip(f"dataset not present at {UFC_CSV}")
+    return pd.read_csv(UFC_CSV, low_memory=False)
 
 
 def career(name, values, column="r_splm"):
@@ -84,3 +94,47 @@ def test_the_real_dataset_still_shows_the_leak():
     findings = {r["column"]: r["constant_share"] for r in scan(df, PROFILE_COLUMNS)}
     assert "r_splm" in findings, "the known leak has vanished; verify the fix"
     assert findings["r_splm"] > 0.5
+
+
+# ---------------------------------------------------------------------------
+# scan_all exists because a hand-written list missed r_wins and r_losses.
+# ---------------------------------------------------------------------------
+
+def test_the_scan_examines_every_numeric_column_not_a_chosen_few():
+    """The regression that matters: PROFILE_COLUMNS named eight columns and
+    r_wins was not among them, so the worst leak in the dataset went unseen
+    for the whole life of the module."""
+    df = pd.DataFrame({
+        "r_name": ["a"] * 5 + ["b"] * 5,
+        "r_career_total": [7.0] * 5 + [3.0] * 5,      # never moves
+        "r_point_in_time": list(range(10)),            # moves every bout
+    })
+    found = {row["column"] for row in leakage.scan_all(df, exempt={})}
+    assert "r_career_total" in found
+    assert "r_point_in_time" not in found
+
+
+def test_a_non_numeric_column_is_not_reported_as_a_leak():
+    """Stance is constant across a career and is not a leak; it is also not a
+    number, and nunique() on it would otherwise fire."""
+    df = pd.DataFrame({
+        "r_name": ["a"] * 5 + ["b"] * 5,
+        "r_stance": ["Orthodox"] * 5 + ["Southpaw"] * 5,
+    })
+    assert leakage.scan_all(df, exempt={}) == []
+
+
+def test_every_exemption_carries_a_written_reason():
+    """An allowlist without reasons becomes the hand-written list again."""
+    for column, reason in leakage.STATIC_ATTRIBUTES.items():
+        assert column.startswith("r_")
+        assert len(reason) > 20, column
+
+
+def test_the_frame_columns_are_exempt_because_a_body_does_not_change(ufc):
+    """The exemptions must be exempt for the stated reason, not for
+    convenience: each really is constant, so removing it from the allowlist
+    would produce a finding rather than nothing."""
+    for column in ("r_height", "r_reach"):
+        row = leakage.constant_across_career(ufc, column)
+        assert row["constant_share"] > 0.9, row

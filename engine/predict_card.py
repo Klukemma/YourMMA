@@ -265,6 +265,19 @@ for _corner in ('r', 'b'):
     ufc[f'{_corner}_td_def'] = ufc[f'{_corner}_cd_td_def'] * 100.0
     ufc[f'{_corner}_td_avg_acc'] = ufc[f'{_corner}_cd_td_acc'] * 100.0
     ufc[f'{_corner}_sub_avg'] = ufc[f'{_corner}_cd_sub_per15']
+    # r_wins/r_losses are the fighter's LIFETIME record as of the data pull,
+    # one value repeated over every bout of their career - 98.1% and 97.8%
+    # constant across careers with five or more bouts, the same signature as
+    # the eight profile columns above. Alone, the win rate built from them
+    # scores AUC 0.80 in 2024 and 0.58 in 2026, because by 2026 there is no
+    # future career left to leak. The point-in-time record scores 0.62 in both.
+    # r_draws has no honest equivalent here: a bout with no recorded winner is
+    # a draw, a no-contest or an overturned result and the dataset does not
+    # separate them, so it is zeroed rather than guessed. It was worth nothing
+    # anyway - 99.9% constant, mean 0.22.
+    ufc[f'{_corner}_wins'] = ufc[f'{_corner}_cd_wins']
+    ufc[f'{_corner}_losses'] = ufc[f'{_corner}_cd_losses']
+    ufc[f'{_corner}_draws'] = 0.0
 print(f"    After post-2001 filter: {len(ufc):,} fights")
 print(f"    Date range: {ufc['date'].min().date()} to {ufc['date'].max().date()}")
 
@@ -361,8 +374,10 @@ ufc['b_prime'] = ufc['b_age'].apply(age_prime_score)
 ufc['prime_diff'] = ufc['r_prime'] - ufc['b_prime']
 
 # --- EXPERIENCE ---
-ufc['r_exp'] = ufc['r_wins'].fillna(0) + ufc['r_losses'].fillna(0) + ufc['r_draws'].fillna(0)
-ufc['b_exp'] = ufc['b_wins'].fillna(0) + ufc['b_losses'].fillna(0) + ufc['b_draws'].fillna(0)
+# Prior UFC bouts, which is a count and so is genuinely 0 on a debut - that is
+# a fact about the fighter, not a filled-in unknown.
+ufc['r_exp'] = ufc['r_cd_wins'] + ufc['r_cd_losses']
+ufc['b_exp'] = ufc['b_cd_wins'] + ufc['b_cd_losses']
 
 # --- LAYOFF DAYS AND WIN/LOSS STREAKS ---
 print("    Calculating layoff days and streaks...")
@@ -604,8 +619,10 @@ ufc['is_title'] = ufc['title_fight'].fillna(0).astype(int)
 
 # --- ADDITIONAL FEATURES (improvements) ---
 # Win rate
-ufc['r_winrate'] = np.where(ufc['r_exp'] > 0, ufc['r_wins'].fillna(0) / ufc['r_exp'], 0.5)
-ufc['b_winrate'] = np.where(ufc['b_exp'] > 0, ufc['b_wins'].fillna(0) / ufc['b_exp'], 0.5)
+# NaN, not 0.5, for a fighter with no decided prior bout. 0.5 asserts a
+# coin-flip fighter; the paired feature's _known flag says "unknown" instead.
+ufc['r_winrate'] = ufc['r_cd_win_rate']
+ufc['b_winrate'] = ufc['b_cd_win_rate']
 ufc['winrate_diff'] = ufc['r_winrate'] - ufc['b_winrate']
 
 # TD accuracy diff
@@ -3021,8 +3038,9 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
     b_prime = age_prime_score(b_age)
     
     # Experience
-    r_exp = safe(r.get('wins')) + safe(r.get('losses')) + safe(r.get('draws'))
-    b_exp = safe(b.get('wins')) + safe(b.get('losses')) + safe(b.get('draws'))
+    # Decided UFC bouts only, matching ufc['r_exp'] in the training frame.
+    r_exp = safe(r.get('wins')) + safe(r.get('losses'))
+    b_exp = safe(b.get('wins')) + safe(b.get('losses'))
     
     # MMR (legacy)
     mmr_diff = (safe(r.get('mmr_pre'), TRUESKILL_DEFAULT_MMR)
@@ -3030,8 +3048,8 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
     base_prob = float(base_probability(mmr_diff))
     
     # Win rates
-    r_winrate = safe(r.get('wins')) / r_exp if r_exp > 0 else 0.5
-    b_winrate = safe(b.get('wins')) / b_exp if b_exp > 0 else 0.5
+    r_winrate = safe(r.get('wins')) / r_exp if r_exp > 0 else np.nan
+    b_winrate = safe(b.get('wins')) / b_exp if b_exp > 0 else np.nan
     
     # Southpaw
     r_southpaw = 1 if 'southpaw' in str(r.get('stance', '')).lower() else 0
@@ -3899,15 +3917,16 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
     r_prime = age_prime_score(r_age)
     b_prime = age_prime_score(b_age)
     
-    r_exp = safe(r.get('wins')) + safe(r.get('losses')) + safe(r.get('draws'))
-    b_exp = safe(b.get('wins')) + safe(b.get('losses')) + safe(b.get('draws'))
+    # Decided UFC bouts only, matching ufc['r_exp'] in the training frame.
+    r_exp = safe(r.get('wins')) + safe(r.get('losses'))
+    b_exp = safe(b.get('wins')) + safe(b.get('losses'))
     
     mmr_diff = (safe(r.get('mmr_pre'), TRUESKILL_DEFAULT_MMR)
                 - safe(b.get('mmr_pre'), TRUESKILL_DEFAULT_MMR))
     base_prob = float(base_probability(mmr_diff))
     
-    r_winrate = safe(r.get('wins')) / r_exp if r_exp > 0 else 0.5
-    b_winrate = safe(b.get('wins')) / b_exp if b_exp > 0 else 0.5
+    r_winrate = safe(r.get('wins')) / r_exp if r_exp > 0 else np.nan
+    b_winrate = safe(b.get('wins')) / b_exp if b_exp > 0 else np.nan
     
     r_southpaw = 1 if 'southpaw' in str(r.get('stance', '')).lower() else 0
     b_southpaw = 1 if 'southpaw' in str(b.get('stance', '')).lower() else 0

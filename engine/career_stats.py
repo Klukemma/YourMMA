@@ -112,6 +112,9 @@ VERIFY_SAMPLE_DEFAULT = 400
 # denominators rather than hidden by pulling the estimate toward a mean.
 CAREER_COLUMNS = {
     "cd_bouts": "prior UFC bouts (count; 0 on a debut)",
+    "cd_wins": "prior UFC bouts won (count)",
+    "cd_losses": "prior UFC bouts lost (count)",
+    "cd_win_rate": "cd_wins / (cd_wins + cd_losses) (FRACTION in [0,1])",
     "cd_minutes": "prior UFC fight time (minutes)",
     "cd_slpm": "significant strikes landed per minute",
     "cd_str_acc": "significant striking accuracy (FRACTION in [0,1], not %)",
@@ -123,6 +126,8 @@ CAREER_COLUMNS = {
     "cd_sub_per15": "submission attempts per 15 minutes",
     "cd_kd_per15": "knockdowns per 15 minutes",
     "cd_ctrl_share": "control seconds / fight seconds (FRACTION in [0,1])",
+    "cd_opp_ctrl_share": "control seconds CONCEDED / fight seconds [0,1]",
+    "cd_opp_sub_per15": "submission attempts CONCEDED per 15 minutes",
     "cd_head_share": "share of landed significant strikes to the head [0,1]",
     "cd_body_share": "share of landed significant strikes to the body [0,1]",
     "cd_leg_share": "share of landed significant strikes to the legs [0,1]",
@@ -149,7 +154,8 @@ _COUNT_COLUMNS = (
     "dist_landed", "clinch_landed", "ground_landed",
 )
 
-_REQUIRED_SHARED = ("date", "match_time_sec", "finish_round", "total_rounds")
+_REQUIRED_SHARED = ("date", "match_time_sec", "finish_round", "total_rounds",
+                    "winner_id")
 
 # Every ratio is accumulated as a numerator/denominator PAIR over exactly the
 # bouts where both operands are present. That is what lets the 145 bouts with a
@@ -164,6 +170,8 @@ _PAIRS = (
     ("sub15", "sub_att", "dur"),
     ("kd15", "kd", "dur"),
     ("ctrl", "ctrl", "dur"),
+    ("opp_ctrl", "opp_ctrl", "dur"),
+    ("opp_sub15", "opp_sub_att", "dur"),
     ("str_acc", "sig_str_landed", "sig_str_atmpted"),
     ("str_def", "opp_sig_str_landed", "opp_sig_str_atmpted"),
     ("td_acc", "td_landed", "td_atmpted"),
@@ -178,6 +186,7 @@ _STATE_FIELDS = (
     + tuple(f"{name}_{half}" for name, _, _ in _PAIRS for half in ("num", "den"))
     + tuple(f"bd_{part}" for part in _BREAKDOWN)
     + ("bd_total", "bd_bouts")
+    + ("wins", "losses")
 )
 _STATE_INDEX = {field: i for i, field in enumerate(_STATE_FIELDS)}
 _STATE_WIDTH = len(_STATE_FIELDS)
@@ -280,9 +289,18 @@ def _corner_counts(df, corner, elapsed):
             df.get(f"{corner}_{col}"), errors="coerce").to_numpy(dtype=float)
     # Absorbed strikes and stuffed takedowns are the OPPONENT's counts in the
     # same bout, which is why no join is needed to get defensive statistics.
-    for col in ("sig_str_landed", "sig_str_atmpted", "td_landed", "td_atmpted"):
+    for col in ("sig_str_landed", "sig_str_atmpted", "td_landed", "td_atmpted",
+                "ctrl", "sub_att"):
         counts[f"opp_{col}"] = pd.to_numeric(
             df.get(f"{other}_{col}"), errors="coerce").to_numpy(dtype=float)
+    # 150 bouts name no winner - draws, no-contests and overturned results.
+    # They count as a prior bout and as prior cage time, but as neither a win
+    # nor a loss, so cd_win_rate is a share of DECIDED bouts.
+    winner = df.get("winner_id").to_numpy(dtype=object)
+    mine = df.get(f"{corner}_id").to_numpy(dtype=object)
+    theirs = df.get(f"{other}_id").to_numpy(dtype=object)
+    counts["won"] = (winner == mine).astype(float)
+    counts["lost"] = (winner == theirs).astype(float)
     return counts
 
 
@@ -311,6 +329,9 @@ def _contributions(counts, n):
     total = parts[0] + parts[1] + parts[2]  # head + body + leg
     contrib[:, _STATE_INDEX["bd_total"]] = np.where(present, total, 0.0)
     contrib[:, _STATE_INDEX["bd_bouts"]] = np.where(present, 1.0, 0.0)
+
+    contrib[:, _STATE_INDEX["wins"]] = counts["won"]
+    contrib[:, _STATE_INDEX["losses"]] = counts["lost"]
     return contrib
 
 
@@ -342,6 +363,9 @@ def _derive(state):
 
     out = {
         "cd_bouts": col["bouts"],
+        "cd_wins": col["wins"],
+        "cd_losses": col["losses"],
+        "cd_win_rate": _safe_ratio(col["wins"], col["wins"] + col["losses"]),
         "cd_minutes": col["sec"] / SECONDS_PER_MINUTE,
         "cd_slpm": per_minute("slpm"),
         "cd_str_acc": _safe_ratio(col["str_acc_num"], col["str_acc_den"]),
@@ -353,6 +377,9 @@ def _derive(state):
         "cd_sub_per15": per_15("sub15"),
         "cd_kd_per15": per_15("kd15"),
         "cd_ctrl_share": _safe_ratio(col["ctrl_num"], col["ctrl_den"]),
+        "cd_opp_ctrl_share": _safe_ratio(col["opp_ctrl_num"],
+                                         col["opp_ctrl_den"]),
+        "cd_opp_sub_per15": per_15("opp_sub15"),
         "cd_sig_atmpted": col["str_acc_den"],
         "cd_opp_sig_atmpted": col["str_def_den"],
         "cd_td_atmpted": col["td_acc_den"],
@@ -496,8 +523,13 @@ def _naive_stats(history):
         return num / den if den > 0 else float("nan")
 
     seconds = float(history["dur"].fillna(0.0).sum())
+    wins = float(history["won"].sum())
+    losses = float(history["lost"].sum())
     stats = {"cd_bouts": float(len(history)),
-             "cd_minutes": seconds / SECONDS_PER_MINUTE}
+             "cd_minutes": seconds / SECONDS_PER_MINUTE,
+             "cd_wins": wins,
+             "cd_losses": losses,
+             "cd_win_rate": divide(wins, wins + losses)}
 
     rates = {"cd_slpm": "sig_str_landed", "cd_sapm": "opp_sig_str_landed"}
     for out_name, field in rates.items():
@@ -511,6 +543,13 @@ def _naive_stats(history):
 
     ctrl_num, ctrl_den = paired("ctrl", "dur")
     stats["cd_ctrl_share"] = divide(ctrl_num, ctrl_den)
+
+    opp_ctrl_num, opp_ctrl_den = paired("opp_ctrl", "dur")
+    stats["cd_opp_ctrl_share"] = divide(opp_ctrl_num, opp_ctrl_den)
+
+    opp_sub_num, opp_sub_den = paired("opp_sub_att", "dur")
+    stats["cd_opp_sub_per15"] = PER_15_MINUTES * divide(
+        opp_sub_num, opp_sub_den / SECONDS_PER_MINUTE)
 
     acc_num, acc_den = paired("sig_str_landed", "sig_str_atmpted")
     stats["cd_str_acc"] = divide(acc_num, acc_den)

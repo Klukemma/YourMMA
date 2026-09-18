@@ -20,6 +20,35 @@ This matters beyond tidiness. The walk-forward backtest returned 68.6% and
 return against a liquid market. The one year that behaves normally is 2026, at
 61.5% and -3.2% - and 2026 is the year with almost no career left to leak,
 because the data ends in August of it.
+
+WHAT THE FIRST VERSION OF THIS MODULE MISSED, AND WHY.
+
+Fixing the eight profile columns moved the walk-forward AUC by nothing at all:
+2015-2025 stayed at ~0.77 and 2026 FELL to 0.604. A fix that changes nothing is
+evidence the diagnosis was incomplete, so the scan was repeated over every
+numeric column instead of the eight this module had been told to look at.
+
+r_wins is constant across 98.1% of careers and r_losses across 97.8% - a
+stronger signature than any of the eight. They are the fighter's LIFETIME
+professional record as of the data pull, which the pipeline turned into
+winrate_diff and exp_diff. On its own that one feature scores:
+
+    year   2015   2018   2021   2024   2025   2026
+    AUC    0.639  0.672  0.725  0.803  0.778  0.583
+
+Rising for a decade and then collapsing in the only year with no future left to
+leak. The point-in-time record built from prior bouts alone scores 0.53 to 0.63
+in EVERY year, 2026 included, which is what a real effect looks like.
+
+THE PRE-UFC RECORD CANNOT BE RECOVERED SAFELY, and the attempt is recorded here
+so it is not retried. career_total minus every UFC result in the dataset should
+leave the record a fighter brought with them, which IS known before their debut
+and would be legitimate. It reconstructs to a median 10-2, exactly right. But
+the profile totals are pulled at one moment and some are stale, so for a
+fighter whose recent bouts postdate the pull the subtraction removes wins that
+were never in the total. That error is anti-correlated with winning, and the
+reconstructed feature scores AUC 0.335 in 2026 - inverted, and worst in exactly
+the period predictions are made for. It is not used.
 """
 
 import os
@@ -73,6 +102,39 @@ def scan(df, columns, corner="r"):
 PROFILE_COLUMNS = ["r_splm", "r_str_acc", "r_sapm", "r_str_def",
                    "r_td_avg", "r_td_def", "r_td_avg_acc", "r_sub_avg"]
 
+# A HAND-WRITTEN LIST IS WHY THIS MODULE MISSED THE WORST LEAK IN THE DATASET.
+# PROFILE_COLUMNS named the eight striking and grappling rates and nothing
+# else, so r_wins and r_losses - the fighter's LIFETIME record as of the data
+# pull, 98.1% and 97.8% constant across careers - were never examined. The win
+# rate built from them scores AUC 0.80 in 2024 and 0.58 in 2026, and carried
+# the whole apparent skill of the model. scan_all() therefore checks EVERY
+# numeric column and the caller must justify each exemption below.
+#
+# A fighter's frame is genuinely fixed. Being constant across a career is the
+# correct behaviour for these, not a leak: nobody's reach changes between
+# fights. They are the only columns allowed to be constant without comment.
+STATIC_ATTRIBUTES = {
+    "r_height": "a fighter's height does not change between bouts",
+    "r_reach": "a fighter's reach does not change between bouts",
+    "r_weight": "a division label, constant by definition - see matchup.py",
+    "r_draws": "near-universally 0; kept only so the exemption is explicit",
+}
+
+
+def scan_all(df, corner="r", exempt=None):
+    """Every numeric column that looks like a career total, not a snapshot.
+
+    Exhaustive by construction. A new leaking column added to the dataset
+    upstream is caught the next time this runs, without anyone remembering to
+    add it to a list - which is exactly the failure that let r_wins through.
+    """
+    exempt = STATIC_ATTRIBUTES if exempt is None else exempt
+    columns = [c for c in df.columns
+               if c.startswith(f"{corner}_")
+               and c not in exempt
+               and pd.api.types.is_numeric_dtype(df[c])]
+    return scan(df, columns, corner)
+
 
 def report(findings):
     print("=" * 74)
@@ -90,7 +152,12 @@ def report(findings):
 
 def main():
     df = pd.read_csv(UFC_CSV, low_memory=False)
-    report(scan(df, PROFILE_COLUMNS))
+    findings = scan_all(df)
+    report(findings)
+    print()
+    print(f"  exempt as genuinely static: "
+          f"{', '.join(sorted(STATIC_ATTRIBUTES))}")
+    return findings
 
 
 if __name__ == "__main__":
