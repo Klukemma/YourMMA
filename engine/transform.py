@@ -65,6 +65,151 @@ def _safe_ratio(numerator, denominator, scale=100.0):
     return pd.Series(out, index=num.index).round(2)
 
 
+
+# The local dataset stores metric: reach and height in centimetres, weight in
+# kilograms. Upstream publishes imperial, and says so in its column names
+# (r_reach_inches, r_weight_lbs). Renaming those straight across wrote inches
+# into a centimetres column, which is how 358 synced rows ended up with a mean
+# reach of 71.5 against the 181.9 of every row before them.
+INCHES_TO_CM = 2.54
+LBS_TO_KG = 0.45359237
+
+
+def _inches_to_cm(value):
+    """71.5 -> 181.6. Blank stays blank. Takes a Series or a single value."""
+    number = pd.to_numeric(value, errors='coerce')
+    return np.round(number * INCHES_TO_CM, 2)
+
+
+def _lbs_to_kg(value):
+    """155 -> 70.31. Blank stays blank. Takes a Series or a single value."""
+    number = pd.to_numeric(value, errors='coerce')
+    return np.round(number * LBS_TO_KG, 2)
+
+
+def _height_to_cm(value):
+    """Upstream writes height as `6' 3"`; the local column holds centimetres.
+
+    Accepts a plain number too, which is treated as centimetres already, so
+    re-running over converted data is a no-op rather than a second conversion.
+    """
+    if pd.isna(value):
+        return np.nan
+    text = str(value).strip()
+    if not text:
+        return np.nan
+    if "'" not in text and '"' not in text:
+        try:
+            return round(float(text), 2)
+        except ValueError:
+            return np.nan
+    feet, _, rest = text.partition("'")
+    try:
+        total_inches = int(feet.strip())* 12
+    except ValueError:
+        return np.nan
+    inches = rest.replace('"', '').strip()
+    if inches:
+        try:
+            total_inches += int(inches)
+        except ValueError:
+            return np.nan
+    return round(total_inches * INCHES_TO_CM, 2)
+
+
+def _normalise_dob(value):
+    """Upstream writes 1987-08-03; the local column uses 1992/07/17."""
+    if pd.isna(value):
+        return np.nan
+    stamp = pd.to_datetime(str(value).strip(), errors='coerce')
+    if pd.isna(stamp):
+        return np.nan
+    return stamp.strftime('%Y/%m/%d')
+
+
+# local column -> the function that puts upstream's value in our units
+PROFILE_CONVERTERS = {
+    'height': _height_to_cm,
+    'reach': _inches_to_cm,
+    'weight': _lbs_to_kg,
+    'dob': _normalise_dob,
+}
+
+
+
+def _apply_converter(series, converter):
+    """Vectorised where the converter is, element-wise where it is not."""
+    if converter in (_inches_to_cm, _lbs_to_kg):
+        return converter(series)
+    return series.map(converter)
+
+
+
+# A reach in centimetres is never below about 150; one in inches is never
+# above about 90. Nothing real sits between, so the magnitude identifies the
+# unit on its own.
+IMPERIAL_REACH_CEILING = 110.0
+
+
+def rows_in_imperial_units(df):
+    """Rows written by the transform before it converted units.
+
+    A height like `6' 3"` is unambiguous - the local column holds a number of
+    centimetres, so a quote mark can only come from the imperial format. Reach
+    magnitude is the fallback for rows whose height is missing.
+    """
+    flag = pd.Series(False, index=df.index)
+    for corner in ('r', 'b'):
+        height = df.get(f'{corner}_height')
+        if height is not None:
+            flag |= height.astype(str).str.contains("'", regex=False, na=False)
+        reach = df.get(f'{corner}_reach')
+        if reach is not None:
+            numeric = pd.to_numeric(reach, errors='coerce')
+            flag |= (numeric < IMPERIAL_REACH_CEILING) & numeric.notna()
+    return flag
+
+
+def fix_units(df):
+    """Convert imperial rows in place to the metric the dataset stores.
+
+    Needed because the conversion was added after those rows were written, and
+    they are wrong rather than missing, so the repair path - which only fills
+    blanks - cannot touch them.
+
+    Idempotent: a row already in metric matches nothing and is left alone.
+    Returns (fixed, report).
+    """
+    flag = rows_in_imperial_units(df)
+    report = {'rows': int(flag.sum()), 'cells': 0, 'columns': []}
+    if not flag.any():
+        return df, report
+
+    out = df.copy()
+    for corner in ('r', 'b'):
+        for suffix, converter in (('height', _height_to_cm),
+                                  ('reach', _inches_to_cm),
+                                  ('weight', _lbs_to_kg),
+                                  ('dob', _normalise_dob)):
+            col = f'{corner}_{suffix}'
+            if col not in out.columns:
+                continue
+            # height and dob are stored as text, so the column arrives as a
+            # string dtype that refuses a float. Widen it before writing.
+            out[col] = out[col].astype(object)
+            before = out.loc[flag, col]
+            if converter in (_inches_to_cm, _lbs_to_kg):
+                after = converter(before)
+            else:
+                after = before.map(converter)
+            changed = int((before.astype(str) != after.astype(str)).sum())
+            if changed:
+                report['cells'] += changed
+                report['columns'].append(col)
+            out.loc[flag, col] = after
+    return out, report
+
+
 def _is_title_fight(weight_class):
     if pd.isna(weight_class):
         return 0
@@ -122,9 +267,15 @@ def transform(master, fighters=None, rounds=None):
 
     out = pd.DataFrame(index=master.index)
 
-    # 1. Straight renames.
+    # 1. Straight renames, with unit conversions where upstream is imperial
+    #    and the local column is metric.
     for upstream, local in sm.COLUMN_MAP.items():
-        if upstream in master.columns:
+        if upstream not in master.columns:
+            continue
+        converter = PROFILE_CONVERTERS.get(local.split('_', 1)[-1])
+        if converter is not None and local.split('_', 1)[0] in ('r', 'b'):
+            out[local] = _apply_converter(master[upstream], converter)
+        else:
             out[local] = master[upstream]
 
     # 2. Unit conversions.
@@ -159,8 +310,13 @@ def transform(master, fighters=None, rounds=None):
             if id_col not in master.columns:
                 continue
             for local_col, upstream_col in sm.profile_columns(corner).items():
-                if upstream_col in profile.columns:
-                    out[local_col] = master[id_col].map(profile[upstream_col])
+                if upstream_col not in profile.columns:
+                    continue
+                values = master[id_col].map(profile[upstream_col])
+                converter = PROFILE_CONVERTERS.get(local_col.split('_', 1)[-1])
+                if converter is not None:
+                    values = _apply_converter(values, converter)
+                out[local_col] = values
 
     # 6. Total strikes come from the per-round table, not master.csv.
     if rounds is not None and 'fight_id' in master.columns:

@@ -127,7 +127,9 @@ def test_renames_and_winner_resolution(master, fighters):
     assert out.loc[0, 'r_sig_str_landed'] == 50
     assert out.loc[0, 'r_head_landed'] == 30
     assert out.loc[0, 'r_ctrl'] == 120
-    assert out.loc[0, 'r_reach'] == 72.0
+    # 72 inches upstream, 182.88cm locally. This asserted 72.0 until the
+    # conversion was added, which is exactly how the bug survived.
+    assert out.loc[0, 'r_reach'] == pytest.approx(182.88, abs=0.01)
     assert out.loc[0, 'r_splm'] == 4.2
 
 

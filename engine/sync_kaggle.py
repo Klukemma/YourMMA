@@ -23,12 +23,13 @@ import sys
 import tempfile
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import schema_map
 from ratings import DEFAULT, extend
-from transform import carry_forward_records, transform
+from transform import carry_forward_records, fix_units, transform
 
 DATASET = "neelagiriaditya/ufc-datasets-1994-2025"
 ENGINE_DIR = Path(__file__).resolve().parent
@@ -430,6 +431,93 @@ def cmd_inspect_fighter(args):
         print("history would have to come from elsewhere.")
 
 
+
+# A column whose new values sit this many standard deviations from the
+# existing ones is not drift, it is a different measurement. The reach bug
+# scored 9.3 and the weight bug 5.6, while the largest genuine year-on-year
+# move among real columns was 0.33, so the two are not close.
+SHIFT_THRESHOLD = 2.0
+MIN_ROWS_FOR_SHIFT = 30
+
+
+def distribution_shift(existing, new, threshold=SHIFT_THRESHOLD):
+    """Numeric columns whose new values look nothing like the existing ones.
+
+    Renaming an upstream column straight across is silent when the units
+    differ: r_reach_inches went into a centimetres column and 358 rows landed
+    with a mean reach of 71.5 against 181.9 for every row before them. Nothing
+    was null, nothing raised, and the sync committed it.
+
+    Returns a list of dicts, worst first.
+    """
+    out = []
+    for col in existing.columns:
+        if col not in new.columns:
+            continue
+        if not pd.api.types.is_numeric_dtype(existing[col]):
+            continue
+        if not pd.api.types.is_numeric_dtype(new[col]):
+            continue
+        old_values = existing[col].dropna()
+        new_values = new[col].dropna()
+        if len(old_values) < MIN_ROWS_FOR_SHIFT or len(new_values) < MIN_ROWS_FOR_SHIFT:
+            continue
+        spread = float(old_values.std())
+        if not np.isfinite(spread) or spread == 0:
+            continue
+        shift = (float(new_values.mean()) - float(old_values.mean())) / spread
+        if abs(shift) >= threshold:
+            out.append({"column": col, "shift": shift,
+                        "existing_mean": float(old_values.mean()),
+                        "new_mean": float(new_values.mean())})
+    out.sort(key=lambda r: abs(r["shift"]), reverse=True)
+    return out
+
+
+def report_distribution_shift(shifts):
+    print(f"\n::error::{len(shifts)} column(s) differ from existing rows by "
+          f"{SHIFT_THRESHOLD}+ standard deviations:")
+    for row in shifts:
+        print(f"    {row['column']:<24} existing mean {row['existing_mean']:>10.2f}"
+              f"   new mean {row['new_mean']:>10.2f}   ({row['shift']:+.1f} SD)")
+    print("\n  This is what a unit or format mismatch looks like: the values are")
+    print("  present and numeric, just measured differently. Check schema_map")
+    print("  and transform before writing these rows.")
+    print("  Pass --allow-shift if the change is real and expected.")
+
+
+
+def cmd_fix_units(args):
+    """Convert already-written imperial rows to metric. Needs no network."""
+    local = pd.read_csv(LOCAL_CSV, low_memory=False)
+    fixed, report = fix_units(local)
+    print(f"Local: {len(local):,} fights")
+    print(f"Rows in imperial units : {report['rows']:,}")
+    if not report['rows']:
+        print("Nothing to convert.")
+        return
+    print(f"Cells converted        : {report['cells']:,}")
+    print(f"Columns                : {sorted(set(report['columns']))}")
+
+    for col in ('r_reach', 'r_weight'):
+        if col in local.columns:
+            before = pd.to_numeric(local[col], errors='coerce').mean()
+            after = pd.to_numeric(fixed[col], errors='coerce').mean()
+            print(f"  {col:<10} mean {before:8.2f} -> {after:8.2f}")
+
+    if args.dry_run:
+        print("")
+        print("--dry-run: nothing written.")
+        return
+
+    backup = LOCAL_CSV.with_suffix(".backup-before-units.csv")
+    if not backup.exists():
+        shutil.copy2(LOCAL_CSV, backup)
+        print(f"Backed up to {backup.name}")
+    fixed.to_csv(LOCAL_CSV, index=False)
+    print(f"Wrote {LOCAL_CSV}")
+
+
 def cmd_sync(args):
     local = pd.read_csv(LOCAL_CSV, low_memory=False)
     local['date'] = pd.to_datetime(local['date'], errors='coerce')
@@ -476,6 +564,15 @@ def cmd_sync(args):
     blank = [c for c in local.columns if combined.tail(len(new))[c].isna().all()]
     if blank:
         print(f"  columns with no data in the new rows: {blank}")
+
+    # A blank column is easy to notice. A column silently in the wrong units
+    # is not, so compare the new rows against the ones already here.
+    shifts = distribution_shift(local, combined.tail(len(new)))
+    if shifts:
+        report_distribution_shift(shifts)
+        if not getattr(args, "allow_shift", False):
+            sys.exit(1)
+        print("  --allow-shift: continuing anyway.")
 
     if args.dry_run:
         print("\n--dry-run: nothing written.")
@@ -711,15 +808,20 @@ def main():
     sub.add_parser("search-mma", help="find non-UFC fight data on Kaggle")
     sub.add_parser("inspect-fighter", help="report fighter.csv and whether it carries records")
     sub.add_parser("fetch-odds", help="download historical odds into data/odds.csv")
+    u = sub.add_parser("fix-units", help="convert imperial rows to metric (offline)")
+    u.add_argument("--dry-run", action="store_true", help="report without writing")
     r = sub.add_parser("repair", help="refill bouts whose statistics never arrived")
     r.add_argument("--dry-run", action="store_true", help="report without writing")
     s = sub.add_parser("sync", help="merge new fights into the local CSV")
     s.add_argument("--dry-run", action="store_true", help="report without writing")
+    s.add_argument("--allow-shift", action="store_true",
+                   help="write even if new rows differ distributionally")
     args = ap.parse_args()
     {"inspect": cmd_inspect, "propose-map": cmd_propose_map,
      "search-odds": cmd_search_odds, "inspect-odds": cmd_inspect_odds,
      "search-mma": cmd_search_mma, "inspect-fighter": cmd_inspect_fighter,
      "fetch-odds": cmd_fetch_odds, "repair": cmd_repair,
+     "fix-units": cmd_fix_units,
      "sync": cmd_sync}[args.cmd](args)
 
 
