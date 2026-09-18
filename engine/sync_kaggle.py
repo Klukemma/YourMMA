@@ -458,6 +458,60 @@ def cmd_fetch_odds(args):
     print(f"wrote {ODDS_FILE}")
 
 
+# Non-UFC promotions and general MMA databases. The model knows nothing about
+# a fighter until their second UFC bout, which is when it is weakest, so records
+# from everywhere else are the gap worth filling.
+MMA_QUERIES = [
+    'bellator', 'pfl mma', 'one championship mma', 'rizin mma',
+    'cage warriors', 'ksw mma', 'invicta fc',
+    'mma fighters dataset', 'mma fight results', 'sherdog',
+    'professional mma records', 'mixed martial arts dataset',
+]
+
+
+def cmd_search_mma(args):
+    """Find non-UFC fight data on Kaggle.
+
+    Reports rows and last-updated for each hit so a big, current database is
+    distinguishable from a one-event scrape, which the titles alone do not tell
+    you.
+    """
+    import csv as _csv
+    seen = {}
+    for query in MMA_QUERIES:
+        result = subprocess.run(['kaggle', 'datasets', 'list', '-s', query, '--csv'],
+                                capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"  {query!r}: failed - {result.stderr.strip()[:120]}")
+            continue
+        lines = [l for l in result.stdout.splitlines() if l.strip()]
+        if len(lines) < 2:
+            continue
+        for row in _csv.DictReader(lines):
+            ref = row.get('ref')
+            if not ref or ref in seen:
+                continue
+            seen[ref] = row
+            title = (row.get('title') or '')[:58]
+            try:
+                size = int(row.get('size') or 0)
+            except ValueError:
+                size = 0
+            print(f"  {ref}")
+            print(f"      {title}")
+            print(f"      size={size:>10,}  updated={(row.get('lastUpdated') or '')[:10]}"
+                  f"  votes={row.get('voteCount', '?')}  query={query!r}")
+
+    print(f"\n{'=' * 72}")
+    print(f"{len(seen)} distinct datasets.")
+    big = {k: v for k, v in seen.items()
+           if (v.get('size') or '0').isdigit() and int(v['size']) > 200_000}
+    print(f"{len(big)} over 200KB, i.e. plausibly a real database rather than "
+          f"one event:")
+    for ref in sorted(big):
+        print(f"  {ref}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -466,12 +520,14 @@ def main():
     sub.add_parser("propose-map", help="suggest a COLUMN_MAP from upstream to local")
     sub.add_parser("search-odds", help="look for a Kaggle dataset with historical odds")
     sub.add_parser("inspect-odds", help="check whether shortlisted odds datasets cover our window")
+    sub.add_parser("search-mma", help="find non-UFC fight data on Kaggle")
     sub.add_parser("fetch-odds", help="download historical odds into data/odds.csv")
     s = sub.add_parser("sync", help="merge new fights into the local CSV")
     s.add_argument("--dry-run", action="store_true", help="report without writing")
     args = ap.parse_args()
     {"inspect": cmd_inspect, "propose-map": cmd_propose_map,
      "search-odds": cmd_search_odds, "inspect-odds": cmd_inspect_odds,
+     "search-mma": cmd_search_mma,
      "fetch-odds": cmd_fetch_odds, "sync": cmd_sync}[args.cmd](args)
 
 
