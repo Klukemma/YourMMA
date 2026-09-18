@@ -11,6 +11,7 @@ import importlib.util
 import sys
 from pathlib import Path
 
+import pandas as pd
 import pytest
 
 ENGINE = Path(__file__).resolve().parents[1]
@@ -117,3 +118,49 @@ def test_each_named_experiment_exists():
     for name in names:
         script = ENGINE / "experiments" / f"{name}.py"
         assert script.exists(), f"workflow offers {name!r} but {script} is missing"
+
+
+# ---------------------------------------------------------------------------
+# historical odds: the format check that stops a catastrophic misread
+# ---------------------------------------------------------------------------
+
+import numpy as np  # noqa: E402
+
+from sync_kaggle import american_to_decimal, verify_american  # noqa: E402
+
+
+def test_american_converts_to_decimal():
+    assert american_to_decimal(pd.Series([-150.0]))[0] == pytest.approx(1.6667, abs=1e-3)
+    assert american_to_decimal(pd.Series([130.0]))[0] == pytest.approx(2.30, abs=1e-3)
+    assert american_to_decimal(pd.Series([100.0]))[0] == pytest.approx(2.00, abs=1e-3)
+
+
+def test_a_genuine_american_column_verifies():
+    american = pd.Series([-150.0, 130.0, -200.0, 250.0])
+    decimal = pd.Series([1.6667, 2.30, 1.50, 3.50])
+    agreement, n = verify_american(american, decimal)
+    assert agreement == pytest.approx(1.0)
+    assert n == 4
+
+
+def test_decimal_odds_mislabelled_as_american_are_rejected():
+    """Reading decimal prices as American would invert every favourite."""
+    decimal = pd.Series([1.6667, 2.30, 1.50, 3.50])
+    agreement, _ = verify_american(decimal, decimal)
+    assert agreement < 0.5
+
+
+def test_a_column_of_zeros_makes_no_claim():
+    agreement, n = verify_american(pd.Series([0.0, 0.0]), pd.Series([1.5, 2.0]))
+    assert n == 0 and agreement == 0.0
+
+
+def test_missing_values_are_skipped_not_counted():
+    american = pd.Series([-150.0, np.nan])
+    decimal = pd.Series([1.6667, 2.30])
+    agreement, n = verify_american(american, decimal)
+    assert n == 1 and agreement == pytest.approx(1.0)
+
+
+def test_fetch_odds_history_is_a_registered_command():
+    assert hasattr(sync_kaggle, "cmd_fetch_odds_history")

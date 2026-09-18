@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, search-mma, inspect-fighter, experiment]
+        options: [sync, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -69,6 +69,9 @@ jobs:
             python engine/experiments/${{ inputs.experiment }}.py 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "backtest" ]; then
             python engine/backtest.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "fetch-odds-history" ]; then
+            python engine/sync_kaggle.py fetch-odds-history \
+              ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "repair" ]; then
             python engine/sync_kaggle.py repair \
               ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee sync.log
@@ -80,13 +83,13 @@ jobs:
           fi
 
       - name: Verify the dataset still loads and ratings are consistent
-        if: ${{ (inputs.mode == 'sync' || inputs.mode == 'repair' || inputs.mode == 'fetch-odds') && !inputs.dry_run }}
+        if: ${{ (inputs.mode == 'sync' || inputs.mode == 'repair' || inputs.mode == 'fetch-odds' || inputs.mode == 'fetch-odds-history') && !inputs.dry_run }}
         run: |
           pip install pytest
           python -m pytest engine/tests/ -q
 
       - name: Commit the updated dataset
-        if: ${{ (inputs.mode == 'sync' || inputs.mode == 'repair' || inputs.mode == 'fetch-odds') && !inputs.dry_run }}
+        if: ${{ (inputs.mode == 'sync' || inputs.mode == 'repair' || inputs.mode == 'fetch-odds' || inputs.mode == 'fetch-odds-history') && !inputs.dry_run }}
         run: |
           # --porcelain sees untracked files; `git diff` does not, so a
           # brand-new file (data/odds.csv) reported "nothing to commit" and
@@ -99,7 +102,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add engine/data/
           THROUGH=$(python -c "import pandas as pd;d=pd.read_csv('engine/data/UFC_with_mmr_rebuilt_dedup.csv',usecols=['date'],low_memory=False);print(pd.to_datetime(d['date']).max().date())")
-          if [ "${{ inputs.mode }}" = "repair" ]; then
+          if [ "${{ inputs.mode }}" = "fetch-odds-history" ]; then
+            PRICED=$(grep -oP 'priced fights: \K[0-9,]+' sync.log || echo "?")
+            git commit -m "Add historical moneylines: ${PRICED} priced fights"
+          elif [ "${{ inputs.mode }}" = "repair" ]; then
             FILLED=$(grep -oP 'Cells filled\s+: \K[0-9,]+' sync.log || echo "?")
             ROWS=$(grep -oP 'Fully repaired\s+: \K[0-9,]+' sync.log || echo "?")
             git commit -m "Repair ${ROWS} bouts with missing statistics (${FILLED} cells)"

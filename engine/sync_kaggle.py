@@ -696,6 +696,113 @@ ODDS_DATASET = 'martnoisrodgz/ufc-events-fight-results-2026'
 ODDS_FILE = DATA_DIR / 'odds.csv'
 
 
+
+# 6,301 priced fights from 2010 to 2025, against the 275 we had - all of them
+# 2026. The backtest was capped at 131 bets by odds coverage alone, so this is
+# the difference between "no evidence either way" and a measurable answer.
+HISTORY_ODDS_DATASET = 'valihameed/ufc-stats'
+HISTORY_ODDS_FILE = 'ufc-master.csv'
+
+# It publishes both American and decimal prices for the same fight, so the
+# format can be checked rather than assumed. Treating decimal odds as American
+# would invert every favourite and every backtest built on them.
+AMERICAN_VS_DECIMAL_TOLERANCE = 0.02
+FORMAT_AGREEMENT = 0.95
+
+
+def american_to_decimal(american):
+    """-150 -> 1.667, +130 -> 2.30."""
+    value = pd.to_numeric(american, errors='coerce')
+    return np.where(value > 0, value / 100.0 + 1.0, 100.0 / np.abs(value) + 1.0)
+
+
+def verify_american(american, decimal):
+    """Share of rows where the American column really is American.
+
+    Returns (agreement, n_checked). A low agreement means the column is
+    something else and must not be used.
+    """
+    a = pd.to_numeric(american, errors='coerce')
+    d = pd.to_numeric(decimal, errors='coerce')
+    usable = a.notna() & d.notna() & (a != 0)
+    if not usable.any():
+        return 0.0, 0
+    implied = pd.Series(american_to_decimal(a[usable]), index=a[usable].index)
+    close = (implied - d[usable]).abs() <= AMERICAN_VS_DECIMAL_TOLERANCE
+    return float(close.mean()), int(usable.sum())
+
+
+def cmd_fetch_odds_history(args):
+    """Pull historical moneylines and merge them into data/odds.csv."""
+    with tempfile.TemporaryDirectory() as tmp:
+        result = subprocess.run(
+            ['kaggle', 'datasets', 'download', '-d', HISTORY_ODDS_DATASET,
+             '-p', tmp, '--unzip'], capture_output=True, text=True)
+        if result.returncode != 0:
+            sys.exit(f"download failed: {result.stderr.strip()[:300]}")
+        source = Path(tmp) / HISTORY_ODDS_FILE
+        if not source.exists():
+            found = [f.name for f in Path(tmp).rglob('*.csv')]
+            sys.exit(f"{HISTORY_ODDS_FILE} not found. Got: {found}")
+        raw = pd.read_csv(source, low_memory=False)
+
+    needed = ['Date', 'RedFighter', 'BlueFighter', 'RedOdds', 'BlueOdds']
+    if 'RedFighter' not in raw.columns:
+        needed[1:3] = ['RedCorner', 'BlueCorner']
+    missing = [c for c in needed if c not in raw.columns]
+    if missing:
+        sys.exit(f"upstream is missing {missing}. Got: {sorted(raw.columns)[:40]}")
+
+    print(f"upstream: {len(raw):,} rows")
+
+    # Refuse to guess the format, the way the 2026 source already does.
+    for side, dec in (('RedOdds', 'RedDecOdds'), ('BlueOdds', 'BlueDecOdds')):
+        if dec not in raw.columns:
+            print(f"  {side}: no decimal column to check against; not assuming")
+            continue
+        agreement, n = verify_american(raw[side], raw[dec])
+        print(f"  {side}: American in {agreement:.1%} of {n:,} checkable rows")
+        if agreement < FORMAT_AGREEMENT:
+            sys.exit(f"::error::{side} does not look like American odds "
+                     f"({agreement:.1%} agreement). Refusing to write prices "
+                     f"that would invert every favourite.")
+
+    date_col, red_col, blue_col = needed[0], needed[1], needed[2]
+    out = pd.DataFrame({
+        'date': pd.to_datetime(raw[date_col], errors='coerce'),
+        'fighter_a': raw[red_col],
+        'fighter_b': raw[blue_col],
+        'odds_a': pd.to_numeric(raw['RedOdds'], errors='coerce'),
+        'odds_b': pd.to_numeric(raw['BlueOdds'], errors='coerce'),
+    })
+    out = out.dropna(subset=['date', 'fighter_a', 'fighter_b',
+                             'odds_a', 'odds_b'])
+    print(f"priced fights: {len(out):,}  "
+          f"({out['date'].min().date()} -> {out['date'].max().date()})")
+
+    if ODDS_FILE.exists():
+        existing = pd.read_csv(ODDS_FILE)
+        existing['date'] = pd.to_datetime(existing['date'], errors='coerce')
+        before = len(existing)
+        out = pd.concat([existing, out], ignore_index=True)
+        out = out.drop_duplicates(subset=['date', 'fighter_a', 'fighter_b'],
+                                  keep='first')
+        print(f"merged with the {before:,} prices already held "
+              f"-> {len(out):,} total")
+
+    out = out.sort_values('date')
+    by_year = out.groupby(out['date'].dt.year).size()
+    print("\nprices per year:")
+    for year, count in by_year.items():
+        print(f"  {int(year)}  {count:,}")
+
+    if args.dry_run:
+        print("\n--dry-run: nothing written.")
+        return
+    out.to_csv(ODDS_FILE, index=False)
+    print(f"\nWrote {ODDS_FILE}")
+
+
 def detect_odds_format(values):
     """American (-150, +130) or decimal (1.67, 2.30)?
 
@@ -830,7 +937,10 @@ def main():
     sub.add_parser("inspect-odds", help="check whether shortlisted odds datasets cover our window")
     sub.add_parser("search-mma", help="find non-UFC fight data on Kaggle")
     sub.add_parser("inspect-fighter", help="report fighter.csv and whether it carries records")
-    sub.add_parser("fetch-odds", help="download historical odds into data/odds.csv")
+    sub.add_parser("fetch-odds", help="download 2026 odds into data/odds.csv")
+    fh = sub.add_parser("fetch-odds-history",
+                        help="add 2010-2025 moneylines to data/odds.csv")
+    fh.add_argument("--dry-run", action="store_true", help="report without writing")
     u = sub.add_parser("fix-units", help="convert imperial rows to metric (offline)")
     u.add_argument("--dry-run", action="store_true", help="report without writing")
     r = sub.add_parser("repair", help="refill bouts whose statistics never arrived")
@@ -843,7 +953,8 @@ def main():
     {"inspect": cmd_inspect, "propose-map": cmd_propose_map,
      "search-odds": cmd_search_odds, "inspect-odds": cmd_inspect_odds,
      "search-mma": cmd_search_mma, "inspect-fighter": cmd_inspect_fighter,
-     "fetch-odds": cmd_fetch_odds, "repair": cmd_repair,
+     "fetch-odds": cmd_fetch_odds,
+     "fetch-odds-history": cmd_fetch_odds_history, "repair": cmd_repair,
      "fix-units": cmd_fix_units,
      "sync": cmd_sync}[args.cmd](args)
 
