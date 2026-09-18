@@ -18,6 +18,7 @@ on:
         description: "experiment mode: which engine/experiments/*.py to run"
         type: choice
         options:
+          - stale_form
           - auc_by_year
           - feature_pruning
           - feature_audit
@@ -26,7 +27,7 @@ on:
           - calibration_selection
           - calibrator_mismatch
           - adjustment_ablation
-        default: feature_pruning
+        default: stale_form
   schedule:
     - cron: "0 6 * * MON"   # Mondays 06:00 UTC, after the weekend's cards
 
