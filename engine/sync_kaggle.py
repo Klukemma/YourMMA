@@ -703,11 +703,27 @@ ODDS_FILE = DATA_DIR / 'odds.csv'
 HISTORY_ODDS_DATASET = 'valihameed/ufc-stats'
 HISTORY_ODDS_FILE = 'ufc-master.csv'
 
-# It publishes both American and decimal prices for the same fight, so the
-# format can be checked rather than assumed. Treating decimal odds as American
-# would invert every favourite and every backtest built on them.
+# The prices must be proved American before anything is written: reading
+# decimal odds as American inverts every favourite and the backtest still
+# looks plausible.
+#
+# The first attempt checked RedOdds against RedDecOdds, assuming "Dec" meant
+# decimal, and got 0.0% agreement on 5,435 rows. It does not. The column family
+# is RKOOdds, RSubOdds, RedDecOdds - prop bets on the fight ending by knockout,
+# by submission, or by DECISION. RedDecOdds carries negative values, which a
+# decimal price cannot, so it was never a conversion of anything.
+#
+# The guard fired correctly on a reference column that was wrong. With no
+# genuine decimal column to compare against, the format is decided from the
+# values themselves, which is what detect_odds_format already does.
 AMERICAN_VS_DECIMAL_TOLERANCE = 0.02
 FORMAT_AGREEMENT = 0.95
+
+# The prop columns - odds on the fight ending by knockout, submission or
+# decision. Not taken here, but they are the natural input for the method
+# model, which currently has no market information at all.
+PROP_ODDS_COLUMNS = ['RKOOdds', 'BKOOdds', 'RSubOdds', 'BSubOdds',
+                     'RedDecOdds', 'BlueDecOdds']
 
 
 def american_to_decimal(american):
@@ -756,28 +772,24 @@ def cmd_fetch_odds_history(args):
     print(f"upstream: {len(raw):,} rows")
 
     # Refuse to guess the format, the way the 2026 source already does.
-    for side, dec in (('RedOdds', 'RedDecOdds'), ('BlueOdds', 'BlueDecOdds')):
-        if dec not in raw.columns:
-            print(f"  {side}: no decimal column to check against; not assuming")
-            continue
-        agreement, n = verify_american(raw[side], raw[dec])
-        print(f"  {side}: American in {agreement:.1%} of {n:,} checkable rows")
-        if agreement < FORMAT_AGREEMENT:
-            # Show what the columns actually hold rather than guessing at the
-            # mismatch from a percentage.
-            sample = raw[[side, dec]].dropna().head(8)
-            print(f"\n  what {side} and {dec} actually contain:")
-            for row in sample.itertuples(index=False):
-                converted = float(american_to_decimal(pd.Series([row[0]]))[0])
-                print(f"    {side}={row[0]:>10}   {dec}={row[1]:>10}   "
-                      f"as-if-American -> {converted:.4f}")
-            for col in (side, dec):
-                values = pd.to_numeric(raw[col], errors="coerce").dropna()
-                print(f"    {col:<14} min {values.min():>9.2f}  "
-                      f"max {values.max():>9.2f}  median {values.median():>9.2f}")
-            sys.exit(f"::error::{side} does not look like American odds "
-                     f"({agreement:.1%} agreement). Refusing to write prices "
-                     f"that would invert every favourite.")
+    for side in ('RedOdds', 'BlueOdds'):
+        values = pd.to_numeric(raw[side], errors='coerce').dropna()
+        detected = detect_odds_format(values)
+        # No American price sits strictly between -100 and +100; a decimal one
+        # lives almost entirely there. This separates them even when the
+        # magnitude test is borderline.
+        impossible = ((values > -100) & (values < 100) & (values != 0)).mean()
+        print(f"  {side}: detected {detected}  "
+              f"({impossible:.1%} of values in the impossible band -100..100)")
+        if detected != 'american' or impossible > 0.05:
+            # Show what the column actually holds rather than only a verdict.
+            print(f"\n  what {side} contains:")
+            print(f"    first values: {list(values.head(8))}")
+            print(f"    min {values.min():.2f}  max {values.max():.2f}  "
+                  f"median {values.median():.2f}")
+            sys.exit(f"::error::{side} is not American odds (detected "
+                     f"{detected}). Refusing to write prices that would "
+                     f"invert every favourite.")
 
     date_col, red_col, blue_col = needed[0], needed[1], needed[2]
     out = pd.DataFrame({

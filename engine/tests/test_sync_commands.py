@@ -164,3 +164,35 @@ def test_missing_values_are_skipped_not_counted():
 
 def test_fetch_odds_history_is_a_registered_command():
     assert hasattr(sync_kaggle, "cmd_fetch_odds_history")
+
+
+def test_real_moneylines_are_detected_as_american():
+    """The actual RedOdds values from valihameed/ufc-stats."""
+    real = pd.Series([-250.0, -210.0, -380.0, -950.0, -130.0, 775.0, -150.0])
+    assert sync_kaggle.detect_odds_format(real) == "american"
+
+
+def test_real_decimal_prices_are_detected_as_decimal():
+    assert sync_kaggle.detect_odds_format(
+        pd.Series([1.40, 1.48, 2.30, 3.50, 1.67])) == "decimal"
+
+
+def test_no_american_price_sits_between_minus_100_and_100():
+    """The property the fetch guard leans on: an American price of -50 or +80
+    cannot exist, while a decimal price is almost always in that band."""
+    american = pd.Series([-250.0, 775.0, -130.0, 100.0, -100.0])
+    inside = ((american > -100) & (american < 100) & (american != 0)).mean()
+    assert inside == 0.0
+
+    decimal = pd.Series([1.40, 2.30, 3.50])
+    inside_dec = ((decimal > -100) & (decimal < 100) & (decimal != 0)).mean()
+    assert inside_dec == 1.0
+
+
+def test_the_prop_columns_are_named_and_excluded():
+    """RedDecOdds is the DECISION prop, not a decimal conversion - it carries
+    negative values. Comparing a moneyline against it gave 0% agreement and
+    correctly refused the download."""
+    assert "RedDecOdds" in sync_kaggle.PROP_ODDS_COLUMNS
+    assert "RKOOdds" in sync_kaggle.PROP_ODDS_COLUMNS
+    assert "RedOdds" not in sync_kaggle.PROP_ODDS_COLUMNS
