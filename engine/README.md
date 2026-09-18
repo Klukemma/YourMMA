@@ -348,6 +348,117 @@ whether these are opening or closing lines. The direction is consistent across
 every segment and the disagreement result points the wrong way for an edge
 thesis, so the burden of proof sits with anyone claiming otherwise.
 
+### What the 2026 drop actually was, in part
+
+`auc_by_year` walks a model forward year by year, training on everything before
+each year and scoring it:
+
+    2015-2025   AUC 0.749-0.826, mean 0.776, std 0.023
+    2026        AUC 0.646  ->  5.6 standard deviations below its own mean
+
+Eleven years of real ranking ability then a cliff, which is a break rather than
+a model that never worked. Three candidate explanations were tested and two
+were ruled out.
+
+**Not the blank window.** The dataset has a four-month hole where every
+striking, takedown and control statistic is missing (2025-09-13 to 2025-12-06,
+145 fights, October and November 100% blank). 56.6% of 2026 fights involve a
+fighter who fought inside it, which looked decisive. It is not:
+
+    2026, split by exposure       n   accuracy    AUC
+      neither fighter           148      60.1%  0.637
+      one fighter               142      63.4%  0.653
+      both fighters              51      62.7%  0.660
+
+Unexposed fights rank slightly *worse*. A placebo running the same split on
+2025 against the equivalent 2024 window separates by +0.027, confirming the
+method rather than the hypothesis.
+
+**Not missing fight history.** Bucketing by the less-experienced fighter's
+record, against 2024 as a reference:
+
+    bucket                2026            2024
+    debut            54.3%  0.650     82.1%  0.892
+    1-2 prior        61.9%  0.664     69.6%  0.795
+    3-5 prior        63.8%  0.630     72.6%  0.823
+    6+ prior         67.7%  0.694     69.4%  0.817
+
+Debutants were the model's *best* bucket in 2024 at AUC 0.892, so non-UFC
+history cannot improve them. And 2026 is worse in every bucket including 6+,
+where extra history adds nothing. This is what closed Path B in its original
+form.
+
+**Partly a unit mismatch, which was ours.** `schema_map` mapped
+`r_reach_inches` onto `r_reach` and `r_weight_lbs` onto `r_weight` as straight
+renames into columns holding metric. Height arrived as `6' 3"` into a
+centimetres column and dob with a different separator:
+
+    r_reach    before 181.88     after  71.54     (inches -> cm)
+    r_weight   before  72.20     after 160.60     (lbs -> kg)
+
+358 rows, every one this project synced. Fixed in `transform`, with `fix-units`
+converting the rows already written (2,864 cells) and `sync` now refusing a
+column that sits 2+ SD from existing rows. Worth **+0.019 AUC**:
+
+    2026 before   61.9%   AUC 0.646   Brier 0.2433
+    2026 after    63.0%   AUC 0.665   Brier 0.2366
+
+That is about 15% of the gap. The rest is still open.
+
+### The professional record is missing from every synced row
+
+`adversarial_rows` trains a classifier to tell our rows from the original
+builder's, with a same-builder pair as control:
+
+    CONTROL  2024 vs 2025 (same builder)   AUC 0.477
+    TEST     2025 vs 2026 (transform)      AUC 0.670   excess +0.193
+
+    top distinguishing columns:
+      b_losses  b_wins  r_wins  r_losses  b_draws  r_draws
+
+Same-builder rows are interchangeable. Every column still giving 2026 away is
+the professional win/loss/draw record: 69.9% of 2026 debutants have none, where
+the same bucket in 2024 has none missing.
+
+`carry_forward_records` carries each fighter's record forward from local history
+and leaves a fighter it has never seen blank rather than assuming 0-0. That is
+correct given its inputs - `inspect-fighter` confirms upstream's `fighter.csv`
+carries only `height, dob, stance, str_acc, sapm, str_def, td_avg, td_acc,
+td_def, sub_avg` and **no record column at all**.
+
+So the record has to come from somewhere else, and this is the one place a
+non-UFC source is genuinely needed - not to model debutants better, which 2024
+shows was never the weakness, but because the record counts bouts outside the
+UFC and 358 rows are structurally unlike the other 8,229 without it.
+
+Candidates found by `search-mma`, not yet inspected for a record column or for
+name overlap with the 2,584-fighter roster:
+
+    binduvr/pro-mma-fighters                    273KB  2021-08-12
+    cullenwatson/every-ufc-bellator-one-fc-pfl  151KB  2023-10-29
+    leandroiber/mmastats                        9.2MB  2026-06-02
+
+### The MMR formula costs more than it adds
+
+`mmr = mu - 3*sigma`. Sweeping the constant, as AUC of the rating difference
+alone:
+
+    k       2021    2022    2023    2024    2025    2026
+    0      0.558   0.593   0.574   0.621   0.587   0.603
+    1.0    0.538   0.578   0.548   0.593   0.549   0.543
+    2.0    0.520   0.559   0.519   0.564   0.523   0.497
+    3.0    0.504   0.542   0.498   0.541   0.506   0.466
+
+**k=0 wins in every year and k=3 loses in every year.** Sigma spans 2.54-8.49,
+so the penalty swings 7.6-25.5 points against a mu spread of 14-48 and
+dominates the rating. The rating the model actually consumes is below chance in
+2026 (0.466) while the skill estimate underneath it is at 0.603.
+
+This is an in-sample sweep and needs a walk-forward confirmation before the
+constant changes, but monotonicity across eight independent years is not a
+selection artifact.
+
+
 ## Known issues
 
 - **`TRUESKILL_BETA = 4.17` contradicts the data** (β ≈ 5.0, above). It feeds
@@ -361,9 +472,15 @@ thesis, so the burden of proof sits with anyone claiming otherwise.
   Elo-like scale. With actual `mmr_diff` spanning −25…+31, `base_prob` only
   spans 0.448–0.565 (std 0.015), so a documented headline feature carries
   almost no signal.
-- **All 270 logged predictions are still `pending`.** Their results are not yet
-  obtainable: predictions cover 2025-12-14 → 2026-06-20, the dataset ends
-  2025-12-06. Fixed by running the sync.
+- **No professional record on synced rows.** 69.9% of 2026 debutants have no
+  win/loss/draw record, and `adversarial_rows` makes it the dominant structural
+  difference between our rows and the original builder's. Upstream carries no
+  record column, so it needs another source (above).
+- **`mmr = mu - 3*sigma` is worse than `mu` alone** in every year measured
+  (above). The constant has not been changed yet, pending a walk-forward test.
+- **One bout is still missing its statistics**, `2025-10-04 Ateba Gautier vs
+  Tre'ston Vines`, which `repair` could not match upstream. It refuses rather
+  than guessing.
 - `predict_fight_prod()` is called three times per fight per run (card table,
   compact summary, bettability analysis). Worth caching before this sits behind
   an API.
