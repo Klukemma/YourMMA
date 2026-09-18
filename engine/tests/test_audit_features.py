@@ -135,3 +135,78 @@ def test_the_pipeline_has_no_unexplained_scale_constants():
     dead, defaults = audit(ENGINE / "predict_card.py", column_ranges())
     assert dead == [], f"dead thresholds: {dead}"
     assert defaults == [], f"defaults outside the column range: {defaults}"
+
+
+# ---------------------------------------------------------------------------
+# training / prediction feature agreement
+# ---------------------------------------------------------------------------
+
+from audit_features import (  # noqa: E402
+    declared_features,
+    feature_group_lists,
+    missing_prediction_features,
+)
+
+SAMPLE = '''
+bayesian_features = ['mu_diff', 'mu_sum']
+base_features = ['f00', 'f01', 'f02', 'f03', 'f04', 'f05', 'f06', 'f07',
+                 'f08', 'f09', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15',
+                 'f16', 'f17', 'f18', 'f19']
+feature_cols = bayesian_features + base_features
+
+def predict(r, b):
+    feat = {
+        'mu_diff': 1.0,
+        'f00': 1.0, 'f01': 1.0, 'f02': 1.0, 'f03': 1.0, 'f04': 1.0,
+        'f05': 1.0, 'f06': 1.0, 'f07': 1.0, 'f08': 1.0, 'f09': 1.0,
+        'f10': 1.0, 'f11': 1.0, 'f12': 1.0, 'f13': 1.0, 'f14': 1.0,
+        'f15': 1.0, 'f16': 1.0, 'f17': 1.0, 'f18': 1.0, 'f19': 1.0,
+    }
+    return feat
+'''
+
+
+def test_feature_groups_are_collected():
+    groups = feature_group_lists(ast.parse(SAMPLE))
+    assert groups["bayesian_features"] == ["mu_diff", "mu_sum"]
+
+
+def test_declared_features_follows_the_concatenation():
+    declared = declared_features(ast.parse(SAMPLE))
+    assert {"mu_diff", "mu_sum", "f00", "f19"} <= declared
+    assert len(declared) == 22
+
+
+def test_a_feature_the_prediction_never_sets_is_caught(tmp_path):
+    """The exact break: mu_sum added to training, absent from the dict."""
+    path = tmp_path / "sample.py"
+    path.write_text(SAMPLE)
+    findings = missing_prediction_features(path)
+    assert len(findings) == 1
+    assert findings[0]["missing"] == ["mu_sum"]
+
+
+def test_a_matching_dict_is_not_flagged(tmp_path):
+    path = tmp_path / "sample.py"
+    path.write_text(SAMPLE.replace("'mu_diff': 1.0,\n", "'mu_diff': 1.0, 'mu_sum': 3.0,\n", 1))
+    assert missing_prediction_features(path) == []
+
+
+def test_an_unrelated_dict_is_ignored(tmp_path):
+    """A big dict that is not a feature row must not be mistaken for one."""
+    path = tmp_path / "sample.py"
+    path.write_text(SAMPLE + "\nconfig = {'a%d' % i: i for i in range(30)}\n")
+    assert len(missing_prediction_features(path)) == 1
+
+
+def test_a_file_with_no_feature_list_reports_nothing(tmp_path):
+    path = tmp_path / "sample.py"
+    path.write_text("x = 1\n")
+    assert missing_prediction_features(path) == []
+
+
+def test_every_trained_feature_is_supplied_at_prediction_time():
+    """Guard: a feature added to the model but not to the per-fight dict is a
+    KeyError that only shows up ten minutes into a real run."""
+    findings = missing_prediction_features(ENGINE / "predict_card.py")
+    assert findings == [], f"prediction cannot supply: {findings}"

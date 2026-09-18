@@ -3011,6 +3011,9 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
         'consistency_diff': r_consistency - b_consistency,
         'skill_conservative_diff': r_skill_cons - b_skill_cons,
         'combined_uncertainty': combined_unc,
+        'mu_sum': r_mu + b_mu,
+        'mu_diff_z': float(standardised_skill_gap(
+            r_mu, r_sigma, b_mu, b_sigma, TRUESKILL_BETA)),
         # Base features
         'base_prob': base_prob,
         'mmr_diff': mmr_diff,
@@ -3873,6 +3876,9 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
         'consistency_diff': r_consistency - b_consistency,
         'skill_conservative_diff': r_skill_cons - b_skill_cons,
         'combined_uncertainty': combined_unc,
+        'mu_sum': r_mu + b_mu,
+        'mu_diff_z': float(standardised_skill_gap(
+            r_mu, r_sigma, b_mu, b_sigma, TRUESKILL_BETA)),
         'base_prob': base_prob, 'mmr_diff': mmr_diff,
         'exp_diff': r_exp - b_exp, 'age_diff': safe(r_age, 30) - safe(b_age, 30),
         # prime_diff removed (replaced by prime_wc_diff)

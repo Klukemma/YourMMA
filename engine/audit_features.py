@@ -179,7 +179,82 @@ def audit(path=None, ranges=None, include_benign=False):
             [f for f in collector.defaults if not is_benign(f)])
 
 
-def report(dead, defaults):
+
+# A per-fight prediction builds its features as a hand-written dict, which has
+# to match the training feature list exactly. Nothing enforced that, so adding
+# mu_sum and mu_diff_z to the list broke every prediction with a KeyError - and
+# only when the pipeline was actually run, ten minutes in.
+MIN_KEYS_FOR_FEATURE_DICT = 20
+FEATURE_DICT_MATCH = 0.5
+
+
+def feature_group_lists(tree):
+    """{name: [feature names]} for every `something_features = [...]` list."""
+    groups = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, ast.Name) or not target.id.endswith("_features"):
+            continue
+        if not isinstance(node.value, ast.List):
+            continue
+        names = [_string_literal(e) for e in node.value.elts]
+        groups[target.id] = [n for n in names if n]
+    return groups
+
+
+def declared_features(tree):
+    """Every feature name reachable from a `feature_cols*` assignment."""
+    groups = feature_group_lists(tree)
+    wanted = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, ast.Name) or not target.id.startswith("feature_cols"):
+            continue
+        for part in ast.walk(node.value):
+            if isinstance(part, ast.Name) and part.id in groups:
+                wanted.update(groups[part.id])
+    return wanted
+
+
+def prediction_feature_dicts(tree, known):
+    """Dict literals that look like a hand-built feature row."""
+    found = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Dict):
+            continue
+        keys = {_string_literal(k) for k in node.keys if k is not None}
+        keys.discard(None)
+        if len(keys) < MIN_KEYS_FOR_FEATURE_DICT:
+            continue
+        overlap = len(keys & known) / len(keys)
+        if overlap >= FEATURE_DICT_MATCH:
+            found.append((node.lineno, keys))
+    return found
+
+
+def missing_prediction_features(path=None):
+    """Features the model is trained on that a prediction never supplies.
+
+    Returns [{line, missing}] - one entry per hand-built feature dict.
+    """
+    path = Path(path or DEFAULT_TARGET)
+    tree = ast.parse(path.read_text())
+    wanted = declared_features(tree)
+    if not wanted:
+        return []
+    out = []
+    for lineno, keys in prediction_feature_dicts(tree, wanted):
+        missing = sorted(wanted - keys)
+        if missing:
+            out.append({"line": lineno, "missing": missing})
+    return out
+
+
+def report(dead, defaults, missing=None):
     print("=" * 72)
     print(f"DEAD THRESHOLDS: {len(dead)}")
     print("  a literal the column never reaches, so the branch cannot run")
@@ -202,7 +277,20 @@ def report(dead, defaults):
               f"   (column runs {low:,.2f} to {high:,.2f})")
     if not defaults:
         print("  none")
-    return len(dead) + len(defaults)
+
+    missing = missing or []
+    print()
+    print("=" * 72)
+    print(f"FEATURES A PREDICTION CANNOT SUPPLY: {len(missing)}")
+    print("  trained on it, but the per-fight dict never sets it")
+    print("=" * 72)
+    for f in missing:
+        print(f"  line {f['line']:>5}  missing {len(f['missing'])}: "
+              f"{', '.join(f['missing'])}")
+    if not missing:
+        print("  none")
+
+    return len(dead) + len(defaults) + len(missing)
 
 
 def main():
@@ -213,7 +301,7 @@ def main():
                     help="exit non-zero when anything is found")
     args = ap.parse_args()
     dead, defaults = audit(args.target)
-    total = report(dead, defaults)
+    total = report(dead, defaults, missing_prediction_features(args.target))
     if args.strict and total:
         sys.exit(1)
 
