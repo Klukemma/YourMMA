@@ -113,3 +113,52 @@ def test_the_engine_redacts_on_its_network_path_too():
     block = source[source.index("def fetch_mma_odds"):]
     block = block[:block.index("def match_fighter_to_odds")]
     assert "<redacted>" in block, "predict_card prints the raw exception"
+
+
+def test_a_rejected_key_triggers_a_probe_rather_than_a_dead_end():
+    """Several services ship under near-identical names and issue different
+    key shapes. A 401 says the key is wrong HERE, not that it is wrong."""
+    result = check_odds.describe(401, {}, {})
+    assert result.get("probe") is True
+    assert "similar names" in result["problem"]
+
+
+def test_the_probe_covers_both_auth_styles_and_the_lookalike_services():
+    """A key passed the wrong way looks exactly like a key that is invalid."""
+    labels = [p[0] for p in check_odds.PROBES]
+    styles = {p[2] for p in check_odds.PROBES}
+    assert styles == {"query", "header"}
+    joined = " ".join(labels)
+    for service in ("the-odds-api.com", "odds-api.io", "theoddsapi.com"):
+        assert service in joined
+
+
+def test_the_probe_never_prints_the_key_even_when_a_request_explodes():
+    """The probe touches four hosts, so it has four more chances to leak."""
+    source = (ENGINE / "check_odds.py").read_text()
+    block = source[source.index("def probe("):source.index("def describe(")]
+    assert "redact(error, key)" in block, "probe prints a raw exception"
+
+
+def test_a_probe_result_names_the_service_that_accepted_the_key(capsys):
+    check_odds.report({
+        "status": 401, "remaining": None, "used": None, "events": 0,
+        "books": 0, "fighters": [], "problem": "rejected here",
+        "probes": [("the-odds-api.com (query param)", 401),
+                   ("odds-api.io (query param)", 200)],
+    })
+    printed = capsys.readouterr().out
+    assert "THIS ONE" in printed
+    assert "odds-api.io" in printed
+
+
+def test_a_key_that_works_nowhere_says_what_to_check(capsys):
+    check_odds.report({
+        "status": 401, "remaining": None, "used": None, "events": 0,
+        "books": 0, "fighters": [], "problem": "rejected here",
+        "probes": [("the-odds-api.com (query param)", 401),
+                   ("odds-api.io (query param)", 401)],
+    })
+    printed = capsys.readouterr().out
+    assert "None of them" in printed
+    assert "confirmed" in printed or "newline" in printed

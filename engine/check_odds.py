@@ -44,6 +44,46 @@ def redact(text, key):
 # The free tier's 500 credits are therefore 500 real calls, not 83.
 PARAMS = {"regions": "us", "markets": "h2h", "oddsFormat": "american"}
 
+# SEVERAL SERVICES SHIP UNDER CONFUSINGLY SIMILAR NAMES and issue differently
+# shaped keys: the-odds-api.com, theoddsapi.com, odds-api.io, oddspapi.io. A
+# key from one is rejected by another with a plain 401, which says nothing
+# about which door it does open.
+#
+# So a 401 is not the end of the check. The key is offered to each candidate,
+# in both the query-parameter and header styles, and the one that answers 200
+# is named. That is a handful of requests on a key that is not working anyway,
+# and it turns "rejected" into "you signed up at a different site, here it is".
+PROBES = (
+    ("the-odds-api.com (query param)",
+     "https://api.the-odds-api.com/v4/sports", "query", "apiKey"),
+    ("the-odds-api.com (x-api-key header)",
+     "https://api.the-odds-api.com/v4/sports", "header", "x-api-key"),
+    ("odds-api.io (query param)",
+     "https://api.odds-api.io/v3/sports", "query", "apiKey"),
+    ("theoddsapi.com (x-api-key header)",
+     "https://api.theoddsapi.com/v1/sports", "header", "x-api-key"),
+)
+
+
+def probe(key, timeout=15):
+    """Offer the key to each candidate service. Returns [(label, status)]."""
+    import requests
+
+    results = []
+    for label, url, style, name in PROBES:
+        params, headers = {}, {}
+        if style == "query":
+            params[name] = key
+        else:
+            headers[name] = key
+        try:
+            response = requests.get(url, params=params, headers=headers,
+                                    timeout=timeout)
+            results.append((label, response.status_code))
+        except Exception as error:                  # noqa: BLE001
+            results.append((label, redact(error, key)[:60]))
+    return results
+
 
 def describe(status, headers, payload):
     """Turn one API response into something worth printing."""
@@ -53,8 +93,9 @@ def describe(status, headers, payload):
            "events": 0, "books": 0, "fighters": []}
 
     if status == 401:
-        out["problem"] = ("The key was rejected. Check it was copied whole, "
-                          "and that it is the key rather than the account id.")
+        out["problem"] = ("The key was rejected by this endpoint. Probing the "
+                          "other services that ship under similar names.")
+        out["probe"] = True
         return out
     if status == 429:
         out["problem"] = ("Quota is spent for this period. It resets on the "
@@ -94,6 +135,16 @@ def report(result):
     print(f"  bookmakers       {result['books']}")
     if result.get("problem"):
         print(f"\n  {result['problem']}")
+    if result.get("probes"):
+        print("\n  Which service accepts this key:")
+        for label, status in result["probes"]:
+            mark = "  <-- THIS ONE" if status == 200 else ""
+            print(f"    {str(status):<8} {label}{mark}")
+        if not any(s == 200 for _, s in result["probes"]):
+            print("\n  None of them. The key is not active anywhere tried:")
+            print("    - a new key can take a few minutes to become live")
+            print("    - some plans need the email address confirmed first")
+            print("    - check for a space or newline pasted into the secret")
     for line in result["fighters"][:12]:
         print(f"    {line}")
     if len(result["fighters"]) > 12:
@@ -126,8 +177,10 @@ def main():
         payload = response.json()
     except json.JSONDecodeError:
         payload = []
-    return 0 if report(describe(response.status_code, response.headers,
-                                payload)) else 1
+    result = describe(response.status_code, response.headers, payload)
+    if result.pop("probe", False):
+        result["probes"] = probe(key)
+    return 0 if report(result) else 1
 
 
 if __name__ == "__main__":
