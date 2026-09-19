@@ -4499,41 +4499,71 @@ def implied_prob_to_american(prob):
     else:
         return int(100 * (1 - prob) / prob)
 
+# A SURNAME IS NOT AN IDENTITY, and treating it as one priced the wrong
+# fighter. The previous rule accepted any odds entry sharing a last name if the
+# whole-string similarity cleared 0.5, which on a card carrying Bruno Silva
+# matched Anderson Silva at 0.64, Jean Silva at 0.67 and Erick Silva at 0.64.
+# The dataset itself contains two different fighters named Bruno Silva.
+#
+# That is not a near miss. The edge and value columns would have been computed
+# against a price belonging to somebody else, and a fabricated edge looks
+# exactly like a real one. It stayed harmless only because no odds key was ever
+# set; it becomes live the moment one is.
+#
+# So a match now needs the last name AND a compatible first name: equal, or one
+# an initial or prefix of the other ("Jon" for "Jonathan", "T.J." for "TJ").
+# Anything else is a different person and gets no price rather than a wrong one.
+FIRST_NAME_MIN_RATIO = 0.85
+
+
+def _names_of(text):
+    return [part for part in re.split(r"[^a-z0-9]+", text.lower()) if part]
+
+
+def _compatible_first_names(a, b):
+    """Same person, allowing for an initial or a shortened form."""
+    if a == b:
+        return True
+    if not a or not b:
+        return False
+    if a.startswith(b) or b.startswith(a):
+        return True
+    return SequenceMatcher(None, a, b).ratio() >= FIRST_NAME_MIN_RATIO
+
+
 def match_fighter_to_odds(fighter_name, odds_data):
-    """
-    Find the best match for a fighter name in odds data.
-    Uses fuzzy matching to handle name variations.
+    """The odds entry for this exact fighter, or None.
+
+    None is the right answer for an unmatched fighter: the card then shows no
+    price, which is visibly missing. A wrong price is invisible.
     """
     if not odds_data:
         return None
 
-    fighter_lower = fighter_name.lower()
-    fighter_parts = fighter_lower.split()
-
-    # Exact match
+    fighter_lower = fighter_name.lower().strip()
     if fighter_lower in odds_data:
         return odds_data[fighter_lower]
 
-    # Try last name only
-    if len(fighter_parts) > 1:
-        last_name = fighter_parts[-1]
-        for key, data in odds_data.items():
-            if last_name in key.split():
-                # Verify it's the right person by checking similarity
-                ratio = SequenceMatcher(None, fighter_lower, key).ratio()
-                if ratio > 0.5:
-                    return data
+    parts = _names_of(fighter_lower)
+    if not parts:
+        return None
+    last_name, first_name = parts[-1], parts[0]
 
-    # Fuzzy match
-    best_match = None
-    best_ratio = 0.6  # Minimum threshold
+    for key, data in odds_data.items():
+        other = _names_of(key)
+        if not other or other[-1] != last_name:
+            continue
+        if _compatible_first_names(first_name, other[0]):
+            return data
 
+    # No surname match. A whole-string near-identity is still allowed, for a
+    # spelling or accent difference, but the bar is high enough that two
+    # different people cannot clear it.
+    best_match, best_ratio = None, 0.90
     for key, data in odds_data.items():
         ratio = SequenceMatcher(None, fighter_lower, key).ratio()
         if ratio > best_ratio:
-            best_ratio = ratio
-            best_match = data
-
+            best_ratio, best_match = ratio, data
     return best_match
 
 def calculate_value(predicted_prob, american_odds):

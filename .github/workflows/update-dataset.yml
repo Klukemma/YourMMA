@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
+        options: [sync, predict, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -55,6 +55,11 @@ jobs:
       - name: Sync from Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          # Without this the engine still predicts; the odds, edge and value
+          # columns simply stay empty. The secret was never passed through, so
+          # they had been empty on every run regardless of whether a key
+          # existed. Free key at https://the-odds-api.com/
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           PREDICTIONS_LOG: /tmp/experiment_scratch.json
         # pipefail matters: without it the step's status is tee's, so a failing
         # sync reports green.
@@ -65,7 +70,17 @@ jobs:
             echo "Add it under Settings -> Secrets and variables -> Actions."
             exit 1
           fi
-          if [ "${{ inputs.mode }}" = "experiment" ]; then
+          if [ "${{ inputs.mode }}" = "predict" ]; then
+            # The only mode that produces a fresh card for the app. Odds are
+            # fetched here or not at all: the runner has open internet, and
+            # a live price cannot be carried in the dataset.
+            if [ -z "$ODDS_API_KEY" ]; then
+              echo "::warning::ODDS_API_KEY is not set - the card will have no"
+              echo "::warning::odds, edge or value. Add it under Settings ->"
+              echo "::warning::Secrets and variables -> Actions."
+            fi
+            python engine/predict_card.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "experiment" ]; then
             # Model experiments need ~10 uninterrupted minutes, which the dev
             # container cannot give: it suspends between turns and kills them.
             python engine/experiments/${{ inputs.experiment }}.py 2>&1 | tee sync.log
@@ -124,6 +139,7 @@ jobs:
         if: ${{ !inputs.dry_run }}
         run: python engine/build_app_data.py
 
+      # predict mode writes app/data/card.json itself, at the end of the run.
       - name: Commit the app data
         if: ${{ !inputs.dry_run }}
         run: |
@@ -134,7 +150,12 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add app/data/
-          git commit -m "Refresh app data"
+          if [ "${{ inputs.mode }}" = "predict" ]; then
+            PRICED=$(grep -c 'best_odds' app/data/card.json || echo 0)
+            git commit -m "Refresh app data: new card, ${PRICED} priced picks"
+          else
+            git commit -m "Refresh app data"
+          fi
           git push
 
       - name: Commit experiment output
