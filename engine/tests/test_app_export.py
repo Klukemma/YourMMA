@@ -212,3 +212,15 @@ def test_no_roi_figure_is_hardcoded_in_the_builder():
     # Any float that looks like a ROI or hit rate sitting in a dict literal.
     suspects = re.findall(r'"(?:roi|hit_rate|bets)":\s*[-0-9]', source)
     assert not suspects, f"hand-typed strategy numbers are back: {suspects}"
+
+
+def test_a_strategy_that_placed_no_bets_serialises_as_null_not_a_crash():
+    """summarise() returns NaN for an empty strategy and json.dumps writes a
+    bare NaN, which is not valid JSON. It took down the whole backtest run in
+    CI after the strategy writer was added."""
+    from strategies import summarise
+    empty = summarise([], "EMPTY")
+    assert empty["roi"] != empty["roi"], "fixture assumes NaN"
+    payload = {"strategies": [{k: ax._clean(v) for k, v in empty.items()}]}
+    text = json.dumps(payload, allow_nan=False)   # must not raise
+    assert json.loads(text)["strategies"][0]["roi"] is None

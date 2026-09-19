@@ -177,6 +177,18 @@ def main():
     # meant re-running this experiment left the phone showing the old ones with
     # nothing to say so. Written here instead, from the same objects that were
     # just printed, so the two cannot disagree.
+    def clean(value):
+        # summarise() returns NaN for a strategy that placed no bets, and
+        # json.dumps writes a bare NaN that JSON.parse rejects - a blank screen
+        # on a phone. null is the honest carrier: not measured, not zero.
+        if isinstance(value, float) and value != value:
+            return None
+        if isinstance(value, dict):
+            return {k: clean(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [clean(v) for v in value]
+        return value
+
     confirm_label = f"confirm period ({len(confirm):,} predictions)"
     summary = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -189,7 +201,7 @@ def main():
         "parlays": parlay_rows,
     }
     path = ENGINE / "experiments" / "strategies.json"
-    path.write_text(json.dumps(summary, indent=1, sort_keys=True,
+    path.write_text(json.dumps(clean(summary), indent=1, sort_keys=True,
                                allow_nan=False) + "\n")
     print(f"wrote {path}")
 

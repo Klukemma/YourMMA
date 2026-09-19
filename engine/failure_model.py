@@ -19,6 +19,30 @@ making a mistake, and which one it is can be learned from history.
 Training is walk-forward: for each bet, the model is fitted only on bets that
 had already settled. A flag on the first few dozen is therefore unavailable
 rather than guessed, which is why those come back unflagged.
+
+THIS LAYER CANNOT RUN ON AN UNPRICED FIGHT, AND THAT WAS MEASURED RATHER THAN
+ASSUMED. Three of the five features above are market-derived, so features()
+returns None on a live card and the layer is skipped. experiments/live_flags.py
+asked whether anything available before the bell could replace them - in
+particular the Monte Carlo simulator's probability, on the theory that two
+systems reading the same fighters through completely different machinery
+disagree informatively, the way the model and the market do.
+
+Over 3,278 walk-forward predictions from 2020, flag quality:
+
+    ODDS (these five features)              0.703
+    MODEL + CONFIDENCE                      0.609
+    CONFIDENCE only                         0.609
+    NO-ODDS (adds simulator + record)       0.605
+
+The simulator disagreement carries nothing. The no-odds flagger is WORSE than
+confidence on its own, so it does not ship and the card shows no flag without
+a price. The market features are the layer, not a convenience.
+
+ONE CLAIM ABOVE IS NOW WRONG AND IS LEFT STANDING BECAUSE IT SHAPED THE
+DESIGN: the opening paragraph says confidence is "barely better than a coin
+toss", measured on 136 graded bouts. On 3,278 it is worth 0.609. Confidence is
+a real if modest guide to correctness; it is simply far short of 0.703.
 """
 
 import numpy as np

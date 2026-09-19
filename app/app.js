@@ -22,7 +22,14 @@ const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+// Two ways in. Served from a directory, this fetches data/<name>.json. Built
+// as the standalone file, the data is already on the page and there is nothing
+// to fetch - which matters because a phone opening a file:// page is not
+// allowed to fetch its own neighbours, so the served build simply cannot work
+// offline and the standalone one cannot use fetch at all.
 async function load(name) {
+  const embedded = window.__YOURMMA_DATA__;
+  if (embedded && embedded[name]) return embedded[name];
   const res = await fetch(`data/${name}.json`, { cache: "no-cache" });
   if (!res.ok) throw new Error(`${name}.json — ${res.status}`);
   return res.json();

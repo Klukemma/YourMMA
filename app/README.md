@@ -66,3 +66,25 @@ Any static host. Locally:
 
 On GitHub Pages, enable Pages for the repository (Settings -> Pages, deploy
 from a branch, root) and the app is at `/app/`.
+
+## The standalone build
+
+`app/yourmma.html` is the whole app in one file - page, code and data - with
+nothing to fetch. That shape exists because a phone opening a `file://` page is
+not allowed to fetch its neighbouring files and cannot import an ES module
+either, so the served build simply cannot work offline.
+
+    python3 engine/build_standalone.py
+
+Save the file to a phone and open it. It works in aeroplane mode. The fonts are
+still linked, so online they load and offline the page falls back to the system
+stack it already declares.
+
+It is built by transforming the served files rather than duplicating them: the
+module syntax is stripped and the JSON injected as `window.__YOURMMA_DATA__`,
+which `load()` already prefers over `fetch`. A change to the app reaches both
+builds or neither, and the builder refuses rather than guessing if either file
+stops looking the way it expects.
+
+Rebuild it whenever the data moves - it is a snapshot, and the footer says when
+it was taken.
