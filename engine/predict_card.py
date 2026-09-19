@@ -4374,6 +4374,11 @@ from difflib import SequenceMatcher
 # Get a free key at https://the-odds-api.com/
 ODDS_API_KEY = os.environ.get("ODDS_API_KEY", "")
 
+# What the last call returned, for the cache. Empty until one is made.
+_LAST_ODDS_PAYLOAD = []
+_LAST_ODDS_STATUS = None
+_LAST_ODDS_REMAINING = None
+
 # Sportsbooks to fetch (in order of preference)
 PREFERRED_BOOKS = ['draftkings', 'fanduel', 'betmgm', 'caesars', 'pointsbetus', 'bovada', 'betonlineag']
 
@@ -4402,8 +4407,14 @@ def fetch_mma_odds(api_key=None):
         'oddsFormat': 'american'
     }
 
+    global _LAST_ODDS_PAYLOAD, _LAST_ODDS_STATUS, _LAST_ODDS_REMAINING
     try:
         response = requests.get(url, params=params, timeout=10)
+        _LAST_ODDS_STATUS = response.status_code
+        # The quota rides on every response and nothing was reading it, so a
+        # spent balance would have shown up as a card that quietly had no
+        # prices rather than as anything anyone could act on.
+        _LAST_ODDS_REMAINING = response.headers.get("x-requests-remaining")
 
         if response.status_code == 401:
             print("  [Odds] Invalid API key")
@@ -4416,6 +4427,9 @@ def fetch_mma_odds(api_key=None):
             return None
 
         data = response.json()
+        # Kept whole so the cache stores what the API actually said, rather
+        # than a re-derivation of the parsed form below.
+        _LAST_ODDS_PAYLOAD = data
 
         # Parse into fighter -> odds mapping
         odds_data = {}
@@ -4616,14 +4630,49 @@ def load_odds(api_key=None):
     return CURRENT_ODDS
 
 # Try to load odds if API key is set
-if ODDS_API_KEY:
-    print("\n[Odds] Fetching current MMA odds...")
-    load_odds()
-else:
+# The cache decides whether to spend a credit. One call returns every upcoming
+# MMA event, so there is no cheaper request to make - the only lever is whether
+# to call at all, and a card already priced on file needs no call.
+# ODDS_REFRESH=1 overrides it for the day of the card, when the line that
+# matters is the current one rather than the one taken ten days out.
+import odds_cache as _odds_cache
+
+_cache = _odds_cache.load()
+_card_fights = [(f[0], f[1], str(EVENT_DATE)) for f in FIGHT_CARD]
+_refresh = os.environ.get("ODDS_REFRESH", "").strip() not in ("", "0", "false")
+_should_fetch, _why = _odds_cache.decide(_card_fights, _cache, refresh=_refresh)
+
+if not ODDS_API_KEY:
     print("\n[Odds] No API key set. To enable odds:")
-    print("       1. Get free key at https://the-odds-api.com/")
-    print("       2. Set ODDS_API_KEY = 'your_key' in the notebook")
-    print("       3. Or call load_odds('your_key') to fetch")
+    print("       1. Free key at https://the-odds-api.com/")
+    print("       2. Add ODDS_API_KEY as a repository secret, or export it")
+    print("       3. Verify it with: python3 engine/check_odds.py")
+elif not _should_fetch:
+    print(f"\n[Odds] No request made - {_why}.")
+    print(f"       {len(_cache['fights']):,} fights on file. "
+          f"Set ODDS_REFRESH=1 to fetch anyway.")
+else:
+    print(f"\n[Odds] Fetching: {_why}.")
+    load_odds()
+    _parsed = _odds_cache.parse_events(_LAST_ODDS_PAYLOAD)
+    _added, _refreshed = _odds_cache.merge(_cache, _parsed)
+    _odds_cache.record_fetch(_cache, _LAST_ODDS_STATUS, len(_parsed),
+                             _LAST_ODDS_REMAINING)
+    print(f"       {_added} new, {_refreshed} already known. "
+          f"Credits left: {_LAST_ODDS_REMAINING or 'unknown'}")
+
+# Serve the card from the cache, so a fight priced on an earlier run is still
+# priced on this one without another call.
+if _cache["fights"]:
+    CURRENT_ODDS = _odds_cache.as_current_odds(_cache, CURRENT_ODDS)
+
+# A settled fight's line can never change, so it graduates into the historical
+# file the backtest reads. odds.csv has no 2025 prices at all; every card
+# watched from here fills that gap instead of being thrown away with the runner.
+_new_history = _odds_cache.flush_settled(_cache)
+if _new_history:
+    print(f"       {_new_history} settled fights added to odds.csv")
+_odds_cache.save(_cache)
 
 
 
