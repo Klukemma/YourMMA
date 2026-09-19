@@ -88,3 +88,28 @@ def test_no_key_exits_with_instructions_rather_than_a_traceback(monkeypatch,
     printed = capsys.readouterr().out
     assert "the-odds-api.com" in printed
     assert "Secrets and variables" in printed
+
+
+def test_the_key_is_never_printed_in_an_error():
+    """requests puts the whole URL, query string included, into its exception
+    text. A connection failure printed the key in clear."""
+    error = ("HTTPSConnectionPool(host='api.the-odds-api.com', port=443): "
+             "Max retries exceeded with url: /v4/sports/x/odds"
+             "?apiKey=EXAMPLE-KEY-NOT-REAL&regions=us (Caused by ProxyError)")
+    cleaned = check_odds.redact(error, "EXAMPLE-KEY-NOT-REAL")
+    assert "EXAMPLE-KEY-NOT-REAL" not in cleaned
+    assert "<redacted>" in cleaned
+    assert "ProxyError" in cleaned, "the useful part must survive"
+
+
+def test_redacting_without_a_key_changes_nothing():
+    assert check_odds.redact("plain message", "") == "plain message"
+    assert check_odds.redact("plain message", None) == "plain message"
+
+
+def test_the_engine_redacts_on_its_network_path_too():
+    """check_odds is not the only thing that calls the API."""
+    source = (ENGINE / "predict_card.py").read_text()
+    block = source[source.index("def fetch_mma_odds"):]
+    block = block[:block.index("def match_fighter_to_odds")]
+    assert "<redacted>" in block, "predict_card prints the raw exception"

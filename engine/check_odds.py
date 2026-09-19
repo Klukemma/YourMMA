@@ -24,6 +24,21 @@ sys.path.insert(0, str(ENGINE))
 ENDPOINT = ("https://api.the-odds-api.com/v4/sports/"
             "mma_mixed_martial_arts/odds")
 
+
+def redact(text, key):
+    """Take the key out of anything about to be printed.
+
+    requests puts the full URL in its exception text, query string included, so
+    a connection failure prints the key in clear. GitHub masks registered
+    secrets in its own logs, but that does not cover a terminal, an uploaded
+    sync.log, or anyone running this locally - and a key is not worth trusting
+    to one layer of masking.
+    """
+    text = str(text)
+    if key:
+        text = text.replace(key, "<redacted>")
+    return text
+
 # The same shape predict_card asks for, and the cheapest one available: a call
 # costs markets x regions credits, so one market in one region is 1 credit.
 # The free tier's 500 credits are therefore 500 real calls, not 83.
@@ -103,7 +118,7 @@ def main():
         response = requests.get(ENDPOINT, params={**PARAMS, "apiKey": key},
                                 timeout=20)
     except Exception as error:                      # noqa: BLE001
-        print(f"Could not reach the API: {error}")
+        print(f"Could not reach the API: {redact(error, key)}")
         print("A sandbox may block this host; a CI runner will not.")
         return 3
 

@@ -4496,7 +4496,10 @@ def fetch_mma_odds(api_key=None):
         return odds_data
 
     except requests.RequestException as e:
-        print(f"  [Odds] Network error: {e}")
+        # requests embeds the full URL - api key and all - in its exception
+        # text, so the key is taken out before anything is printed.
+        detail = str(e).replace(key, "<redacted>") if key else str(e)
+        print(f"  [Odds] Network error: {detail}")
         return None
 
 def american_to_implied_prob(american_odds):
