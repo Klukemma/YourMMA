@@ -116,6 +116,26 @@ jobs:
           fi
           git push
 
+      # The phone app reads these files. Rebuilt whenever the dataset or the
+      # experiment output moved, so the app never shows numbers from a data
+      # pull two weeks older than the one the engine is using.
+      - name: Refresh the app data
+        if: ${{ !inputs.dry_run }}
+        run: python engine/build_app_data.py
+
+      - name: Commit the app data
+        if: ${{ !inputs.dry_run }}
+        run: |
+          if [ -z "$(git status --porcelain -- app/data/)" ]; then
+            echo "App data unchanged."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/data/
+          git commit -m "Refresh app data"
+          git push
+
       - name: Commit experiment output
         if: ${{ inputs.mode == 'experiment' || inputs.mode == 'backtest' }}
         run: |

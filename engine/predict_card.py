@@ -476,6 +476,10 @@ from feature_inventory import all_specs
 from feature_spec import build_all, emitted_names
 from prediction_row import build_prediction_frame, required_suffixes
 from matchup_inputs import matchup_extra
+
+# Where the phone app reads its data from.
+APP_DATA_DIR = Path(__file__).resolve().parent.parent / "app" / "data"
+_card_simulations = []
 from fight_report import (
     CARD_SIMULATIONS,
     format_line,
@@ -4252,6 +4256,12 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
 
     _print_simulations(simulations)
 
+    # Handed to the app export at the end of the run, so the phone shows the
+    # same simulation that was printed rather than a second one that could
+    # disagree with it.
+    global _card_simulations
+    _card_simulations = simulations
+
     return df
 
 
@@ -5064,6 +5074,10 @@ for i, fight in enumerate(FIGHT_CARD):
     # Store for summary
     bet_analysis.append({
         'fight_num': i + 1,
+        # Carried rather than re-derived: the prediction dict does not keep it,
+        # and the app export read a 5-round main event as a 3-round bout.
+        'is_5rnd': bool(is_5rnd),
+        'is_title': bool(is_title),
         'matchup': f"{pred['red'].split()[-1]} vs {pred['blue'].split()[-1]}",
         'pick': pred['winner'].split()[-1],
         'prob': pred['win_prob'],
@@ -5257,3 +5271,57 @@ print(f"Refused (no data):      {len(skipped_fights)}")
 print(f"Model training data: {len(X_train_full):,} fights (90% of dataset)")
 print(f"Dataset end date: {ufc_valid['date'].max().date()}")
 print(f"{'='*70}")
+
+# ============================================================================
+# APP EXPORT
+# ============================================================================
+# The only thing that crosses from this engine to the phone. Written last, so
+# it carries whatever the run actually produced rather than a second
+# computation that could disagree with what was printed above.
+
+import app_export as _app_export
+
+_app_fights = []
+for _ba in bet_analysis:
+    _pred = _ba['pred_full']
+    _vi = _ba.get('value_info') or {}
+    _sim = None
+    for _label, _summary in _card_simulations:
+        if _label == f"{_pred['red']} vs {_pred['blue']}":
+            _sim = _summary
+            break
+    _app_fights.append({
+        'number': _ba['fight_num'],
+        'red': _pred['red'],
+        'blue': _pred['blue'],
+        'pick': _pred['winner'],
+        'win_prob': _pred['win_prob'],
+        'confidence': _ba.get('calibrated_conf', _pred.get('confidence')),
+        'method': _pred.get('method'),
+        'method_prob': _pred.get('method_prob'),
+        'round': _pred.get('round'),
+        'recommendation': _ba.get('recommendation'),
+        'parlay_tier': _ba.get('parlay_tier'),
+        'odds': _vi.get('best_odds'),
+        'edge': _vi.get('edge'),
+        'rounds_scheduled': 5 if _ba.get('is_5rnd') else 3,
+        'title_fight': bool(_ba.get('is_title')),
+        'simulation': _sim,
+    })
+
+_app_card = _app_export.card_payload(
+    EVENT_NAME, str(EVENT_DATE),
+    _app_fights,
+    # skipped_fights carries 'matchup' and a LIST of 'problems'; reading it as
+    # 'fight'/'reason' silently exported a pair of nulls and the app showed a
+    # refusal with no fighters and no reason, which is worse than not showing
+    # it - the reason is usually a misspelling the user can fix.
+    skipped=[{'fight': _s.get('matchup'),
+              'reason': ' '.join(_s.get('problems') or []) or None}
+             for _s in skipped_fights],
+    parlays=_app_export.parlay_payload(parlay_candidates),
+    dataset_end=str(ufc_valid['date'].max().date()),
+    trained_on=int(len(X_train_full)))
+
+for _path in _app_export.write_all(APP_DATA_DIR, {'card': _app_card}):
+    print(f"\nApp data: {_path}")
