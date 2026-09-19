@@ -61,7 +61,8 @@ def test_every_subcommand_is_wired_to_a_real_function():
 # Listed explicitly so a genuinely missing command still fails the test.
 # "predict" runs predict_card.py, which is the only mode that produces a fresh
 # card for the app and the only one that needs the odds key.
-MODES_NOT_HANDLED_BY_SYNC_KAGGLE = {"experiment", "backtest", "predict"}
+MODES_NOT_HANDLED_BY_SYNC_KAGGLE = {"experiment", "backtest", "predict",
+                                    "check-odds"}
 
 
 WORKFLOW = ENGINE.parent / ".github" / "workflows" / "update-dataset.yml"

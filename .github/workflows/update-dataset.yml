@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, predict, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
+        options: [sync, predict, check-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -70,7 +70,10 @@ jobs:
             echo "Add it under Settings -> Secrets and variables -> Actions."
             exit 1
           fi
-          if [ "${{ inputs.mode }}" = "predict" ]; then
+          if [ "${{ inputs.mode }}" = "check-odds" ]; then
+            # One request, so a key can be verified without predicting a card.
+            python engine/check_odds.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "predict" ]; then
             # The only mode that produces a fresh card for the app. Odds are
             # fetched here or not at all: the runner has open internet, and
             # a live price cannot be carried in the dataset.
