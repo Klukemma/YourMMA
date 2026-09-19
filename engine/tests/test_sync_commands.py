@@ -59,7 +59,9 @@ def test_every_subcommand_is_wired_to_a_real_function():
 
 # Modes the workflow handles in shell rather than by calling sync_kaggle.
 # Listed explicitly so a genuinely missing command still fails the test.
-MODES_NOT_HANDLED_BY_SYNC_KAGGLE = {"experiment", "backtest"}  # run directly in the workflow shell
+# "predict" runs predict_card.py, which is the only mode that produces a fresh
+# card for the app and the only one that needs the odds key.
+MODES_NOT_HANDLED_BY_SYNC_KAGGLE = {"experiment", "backtest", "predict"}
 
 
 WORKFLOW = ENGINE.parent / ".github" / "workflows" / "update-dataset.yml"
@@ -196,3 +198,32 @@ def test_the_prop_columns_are_named_and_excluded():
     assert "RedDecOdds" in sync_kaggle.PROP_ODDS_COLUMNS
     assert "RKOOdds" in sync_kaggle.PROP_ODDS_COLUMNS
     assert "RedOdds" not in sync_kaggle.PROP_ODDS_COLUMNS
+
+
+# ---------------------------------------------------------------------------
+# The odds key. It existed, the code to use it existed, and the workflow never
+# passed it - so odds were empty on every run regardless of whether a secret
+# was set. Nothing reported that, because an absent key is a supported state.
+# ---------------------------------------------------------------------------
+
+def test_the_workflow_passes_the_odds_key_to_the_runner():
+    source = WORKFLOW.read_text()
+    assert "ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}" in source, (
+        "the odds key is not passed through; the engine will fetch nothing")
+
+
+def test_a_mode_exists_that_produces_a_card():
+    """Every other mode syncs data or runs an experiment. Without this one the
+    app's card only refreshes as a side effect of an experiment importing
+    predict_card, which is not something to rely on."""
+    assert "predict" in _workflow_modes()
+    source = WORKFLOW.read_text()
+    assert "python engine/predict_card.py" in source
+
+
+def test_a_missing_odds_key_warns_rather_than_failing_the_run():
+    """A card with no odds is still a card, and the model still predicts."""
+    source = WORKFLOW.read_text()
+    block = source[source.index('= "predict"'):]
+    assert "::warning::" in block[:600]
+    assert "exit 1" not in block[:600]
