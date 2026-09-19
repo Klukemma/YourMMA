@@ -180,3 +180,35 @@ def test_a_five_round_fight_is_exported_as_five_rounds():
     assert fight["rounds_scheduled"] == 5
     assert fight["title_fight"] is True
     assert len(fight["simulation"]["finish_by_round"]) == fight["rounds_scheduled"]
+
+
+def test_the_strategy_table_is_read_from_disk_not_carried_as_constants(tmp_path,
+                                                                       monkeypatch):
+    """The app used to carry three hand-typed ROI figures. Re-running the
+    backtest left the phone showing the old ones with nothing to say so."""
+    import build_app_data as bad
+    monkeypatch.setattr(bad, "EXPERIMENTS", tmp_path)
+    rows, meta = bad.strategies()
+    assert rows == [] and meta == {}, "missing file must yield nothing, not defaults"
+
+    (tmp_path / "strategies.json").write_text(json.dumps({
+        "confirm_from": 2020, "flag_quality": 0.7, "flagged": 565,
+        "generated": "2026-09-19T00:00:00Z",
+        "strategies": [{"label": "MODEL", "bets": 10, "hit_rate": 0.6,
+                        "roi": -0.02, "roi_low": -0.1, "roi_high": 0.06}],
+        "parlays": [],
+    }))
+    rows, meta = bad.strategies()
+    assert rows[0]["name"] == "MODEL"
+    assert rows[0]["roi"] == -0.02
+    assert rows[0]["description"], "a strategy with no description is unreadable"
+    assert meta["flag_quality"] == 0.7
+
+
+def test_no_roi_figure_is_hardcoded_in_the_builder():
+    """A regression guard with teeth: the numbers must come from a file."""
+    import re
+    source = (ENGINE / "build_app_data.py").read_text()
+    # Any float that looks like a ROI or hit rate sitting in a dict literal.
+    suspects = re.findall(r'"(?:roi|hit_rate|bets)":\s*[-0-9]', source)
+    assert not suspects, f"hand-typed strategy numbers are back: {suspects}"

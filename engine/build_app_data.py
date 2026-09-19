@@ -104,11 +104,13 @@ def build(out_dir=DEFAULT_OUT):
         row.extend(ax._clean(measurements.get(key)) for key in extra)
 
     history = json.loads(HISTORY.read_text()) if HISTORY.exists() else {}
+    rows, meta = strategies()
     performance = ax.performance_payload(
         history,
         auc_by_year=_read_csv("auc_by_year.csv"),
         backtest=_read_csv("historical_backtest.csv"),
-        strategies=STRATEGIES)
+        strategies=rows)
+    performance["strategy_meta"] = meta
     performance["dataset_end"] = str(df["date"].max())[:10]
     performance["bouts"] = int(len(df))
 
@@ -123,21 +125,49 @@ def build(out_dir=DEFAULT_OUT):
     return written
 
 
-# From the walk-forward backtest on honest point-in-time statistics, confirm
-# period only (2020 onward). The tune-period figures are deliberately absent:
-# they were used to choose how the strategies work and are not a forecast.
-STRATEGIES = [
-    {"name": "MODEL", "description": "Bet every confident pick",
-     "bets": 2339, "hit_rate": 0.616, "roi": -0.018,
-     "interval": [-0.053, 0.017]},
-    {"name": "FADE", "description": "Bet against the picks the second model "
-                                    "flags as likely wrong",
-     "bets": 565, "hit_rate": 0.632, "roi": -0.017,
-     "interval": [-0.083, 0.047]},
-    {"name": "COMBINED", "description": "Model picks, minus the flagged ones",
-     "bets": 2339, "hit_rate": 0.680, "roi": 0.003,
-     "interval": [-0.026, 0.032]},
-]
+# WHAT THESE USED TO BE. Three dicts of hand-typed numbers, transcribed from a
+# backtest log. Re-running the backtest left the phone showing the old figures
+# with nothing anywhere to say they had gone stale - a hand-copied result is
+# the same defect as a hand-copied constant, one layer further out, and this
+# file's whole job is not to overstate what is known.
+#
+# They are read from experiments/strategies.json now, which the backtest writes
+# from the same objects it prints. If that file is missing the app shows no
+# strategy table at all, rather than one that might be from any era.
+
+DESCRIPTIONS = {
+    "MODEL": "Bet every confident pick",
+    "FADE (flagged only)": "Bet against the picks the second model flags as "
+                           "likely wrong",
+    "COMBINED": "Model picks, minus the flagged ones",
+}
+
+
+def strategies():
+    """The confirm-period strategy results, or [] when none were computed."""
+    path = EXPERIMENTS / "strategies.json"
+    if not path.exists():
+        return [], {}
+    data = json.loads(path.read_text())
+    out = []
+    for row in data.get("strategies", []):
+        label = row.get("label", "")
+        out.append({
+            "name": label,
+            "description": DESCRIPTIONS.get(label, ""),
+            "bets": row.get("bets"),
+            "hit_rate": row.get("hit_rate"),
+            "roi": row.get("roi"),
+            "interval": [row.get("roi_low"), row.get("roi_high")],
+        })
+    meta = {
+        "confirm_from": data.get("confirm_from"),
+        "flag_quality": data.get("flag_quality"),
+        "flagged": data.get("flagged"),
+        "parlays": data.get("parlays", []),
+        "measured": data.get("generated"),
+    }
+    return out, meta
 
 
 def main():

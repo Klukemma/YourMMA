@@ -19,7 +19,9 @@ holdout, so the confirm period is reported separately and it is the number
 worth believing.
 """
 
+import json
 import os
+from datetime import datetime, timezone
 import sys
 from pathlib import Path
 
@@ -41,6 +43,10 @@ from strategies import (report as report_strategies, settle_all,
 ODDS = Path(os.environ.get("ODDS_CSV", ENGINE / "data" / "odds.csv"))
 FIRST_PREDICTED_YEAR = 2011      # 2010 is the first priced year, so it trains
 CONFIRM_FROM = 2020              # tune before this, confirm from it
+
+# Every run() call records itself here so main() can write the confirm-period
+# numbers out without recomputing them by a second route that could disagree.
+RUNS = {}
 MIN_TRAIN = 500
 
 
@@ -77,6 +83,8 @@ def walk_forward_predictions(X, y, ufc):
 def run(bets, odds_index, label, min_confidence=0.0):
     flagged, flag_rows = walk_forward_flags(bets, odds_index)
     quality = flag_quality(flag_rows)
+    RUNS[label] = {"flag_quality": quality, "flags_scored": len(flag_rows),
+                   "flagged": len(flagged)}
     runs = {
         "MODEL": strategy_model(bets, min_confidence),
         "FADE (flagged only)": strategy_fade(bets, flagged),
@@ -87,6 +95,7 @@ def run(bets, odds_index, label, min_confidence=0.0):
         priced, _ = settle_all(selection, odds_index)
         priced_by_label[name] = priced
         summaries.append(summarise(priced, name))
+    RUNS[label]["strategies"] = summaries
     print(f"\n{label}")
     print(f"  flags scored {len(flag_rows):,}, quality {quality:.3f} "
           f"(0.5 is a coin toss), {len(flagged):,} flagged")
@@ -163,6 +172,26 @@ def main():
     out = ENGINE / "experiments" / "historical_backtest.csv"
     pd.DataFrame(rows).to_csv(out, index=False)
     print(f"\nwrote {out}")
+
+    # The app used to carry these three numbers as hand-typed constants, which
+    # meant re-running this experiment left the phone showing the old ones with
+    # nothing to say so. Written here instead, from the same objects that were
+    # just printed, so the two cannot disagree.
+    confirm_label = f"confirm period ({len(confirm):,} predictions)"
+    summary = {
+        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "confirm_from": CONFIRM_FROM,
+        "first_predicted_year": FIRST_PREDICTED_YEAR,
+        "flag_quality": RUNS[confirm_label]["flag_quality"],
+        "flags_scored": RUNS[confirm_label]["flags_scored"],
+        "flagged": RUNS[confirm_label]["flagged"],
+        "strategies": RUNS[confirm_label]["strategies"],
+        "parlays": parlay_rows,
+    }
+    path = ENGINE / "experiments" / "strategies.json"
+    path.write_text(json.dumps(summary, indent=1, sort_keys=True,
+                               allow_nan=False) + "\n")
+    print(f"wrote {path}")
 
 
 if __name__ == "__main__":

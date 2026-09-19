@@ -87,7 +87,7 @@
  ],
  "bouts": 8587,
  "dataset_end": "2026-08-08",
- "generated": "2026-09-19T04:17:20Z",
+ "generated": "2026-09-19T05:37:47Z",
  "notes": {
   "leak": "Figures published before 2026-09-18 came from a model that could see each fighter's final career record, which inflated historical accuracy to 78% and backtests to +16.2%. Those numbers were fiction and are not shown here.",
   "which_number_counts": "The confirm period is 2020 onward. Anything before it was used to choose how the strategies work, so its +6.1% is not a forecast. The confirm number is."
@@ -245,48 +245,15 @@
   }
  ],
  "schema": 3,
- "strategies": [
-  {
-   "bets": 2339,
-   "description": "Bet every confident pick",
-   "hit_rate": 0.616,
-   "interval": [
-    -0.053,
-    0.017
-   ],
-   "name": "MODEL",
-   "roi": -0.018
-  },
-  {
-   "bets": 565,
-   "description": "Bet against the picks the second model flags as likely wrong",
-   "hit_rate": 0.632,
-   "interval": [
-    -0.083,
-    0.047
-   ],
-   "name": "FADE",
-   "roi": -0.017
-  },
-  {
-   "bets": 2339,
-   "description": "Model picks, minus the flagged ones",
-   "hit_rate": 0.68,
-   "interval": [
-    -0.026,
-    0.032
-   ],
-   "name": "COMBINED",
-   "roi": 0.003
-  }
- ],
+ "strategies": [],
+ "strategy_meta": {},
  "track_record": {
   "accuracy": 0.5931,
   "accuracy_basis": "unique bouts",
   "correct": 128,
   "graded": 204,
-  "pending": 110,
-  "predictions": 314,
+  "pending": 121,
+  "predictions": 325,
   "unique_bouts": 145
  }
 }

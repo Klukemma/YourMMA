@@ -438,6 +438,7 @@ BOOT.record = async () => {
   catch (e) { return fail(el, e, "the record"); }
 
   const t = d.track_record;
+  const meta = d.strategy_meta || {};
   const strategies = (d.strategies || []).map((s) => `
     <tr><td><b>${esc(s.name)}</b><br><span class="mini">${esc(s.description)}</span></td>
       <td class="n">${s.bets.toLocaleString()}</td>
@@ -471,14 +472,24 @@ BOOT.record = async () => {
 
     <div class="card">
       <h2 style="font-size:19px">The three strategies</h2>
-      <div class="mini">Confirm period only — 2020 onward. Flat stake, one unit
-        a bet.</div>
-      <div class="scroll"><table>
-        <thead><tr><th>Strategy</th><th class="n">Bets</th><th class="n">Hit</th>
-          <th class="n">Return</th></tr></thead>
-        <tbody>${strategies}</tbody>
-      </table></div>
-      <div class="note warnbox">${esc(d.notes.which_number_counts)}</div>
+      ${strategies ? `
+        <div class="mini">Confirm period only — ${meta.confirm_from ?? "2020"}
+          onward. Flat stake, one unit a bet.${
+            meta.flag_quality != null
+              ? ` The flag that drives FADE and COMBINED scores
+                  ${meta.flag_quality.toFixed(3)}, where 0.5 is a coin toss.`
+              : ""}</div>
+        <div class="scroll"><table>
+          <thead><tr><th>Strategy</th><th class="n">Bets</th><th class="n">Hit</th>
+            <th class="n">Return</th></tr></thead>
+          <tbody>${strategies}</tbody>
+        </table></div>
+        <div class="note warnbox">${esc(d.notes.which_number_counts)}</div>`
+      : `<div class="note warnbox"><b>Not measured yet.</b> These numbers are
+          read from a backtest the engine has to run; they are deliberately not
+          carried in the app as constants, because a hand-copied result goes
+          stale silently. Run the <code>historical_backtest</code> experiment
+          to fill this in.</div>`}
     </div>
 
     ${roi.length ? `<div class="card">
