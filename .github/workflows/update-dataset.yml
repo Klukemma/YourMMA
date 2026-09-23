@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, predict, check-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
+        options: [sync, predict, check-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -70,7 +70,11 @@ jobs:
             echo "Add it under Settings -> Secrets and variables -> Actions."
             exit 1
           fi
-          if [ "${{ inputs.mode }}" = "check-odds" ]; then
+          if [ "${{ inputs.mode }}" = "describe-odds" ]; then
+            # Reads the provider's response shape off a real call, because
+            # their docs are unreachable from the sandbox this is written in.
+            python engine/describe_odds_api.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "check-odds" ]; then
             # One request, so a key can be verified without predicting a card.
             python engine/check_odds.py 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "predict" ]; then
