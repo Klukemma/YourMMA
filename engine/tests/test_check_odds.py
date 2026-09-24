@@ -136,29 +136,55 @@ def test_the_probe_covers_both_auth_styles_and_the_lookalike_services():
 def test_the_probe_never_prints_the_key_even_when_a_request_explodes():
     """The probe touches four hosts, so it has four more chances to leak."""
     source = (ENGINE / "check_odds.py").read_text()
-    block = source[source.index("def probe("):source.index("def describe(")]
-    assert "redact(error, key)" in block, "probe prints a raw exception"
+    # _call is where the request actually happens; probe delegates to it.
+    block = source[source.index("def _call("):source.index("def describe(")]
+    assert "redact(error," in block, "the probe prints a raw exception"
 
 
-def test_a_probe_result_names_the_service_that_accepted_the_key(capsys):
+def _report(probes, capsys):
     check_odds.report({
         "status": 401, "remaining": None, "used": None, "events": 0,
         "books": 0, "fighters": [], "problem": "rejected here",
-        "probes": [("the-odds-api.com (query param)", 401),
-                   ("odds-api.io (query param)", 200)],
+        "probes": probes,
     })
-    printed = capsys.readouterr().out
+    return capsys.readouterr().out
+
+
+def test_a_probe_result_names_the_service_that_accepted_the_key(capsys):
+    printed = _report([
+        ("the-odds-api.com (query param)", 401, 401, "rejected"),
+        ("odds-api.io (query param)", 200, 401, "accepted"),
+    ], capsys)
     assert "THIS ONE" in printed
     assert "odds-api.io" in printed
 
 
+def test_a_public_endpoint_is_never_reported_as_accepting_the_key(capsys):
+    """THE BUG THIS FILE EXISTS FOR. odds-api.io's /v3/sports answers 200 to
+    anybody, so the first probe announced a key that authenticates nowhere as
+    belonging to that provider - and the engine was nearly pointed at it."""
+    printed = _report([
+        ("odds-api.io (query param)", 200, 200, "endpoint is public "
+                                                "- proves nothing"),
+    ], capsys)
+    assert "THIS ONE" not in printed
+    assert "public" in printed
+    assert "None of them" in printed
+
+
 def test_a_key_that_works_nowhere_says_what_to_check(capsys):
-    check_odds.report({
-        "status": 401, "remaining": None, "used": None, "events": 0,
-        "books": 0, "fighters": [], "problem": "rejected here",
-        "probes": [("the-odds-api.com (query param)", 401),
-                   ("odds-api.io (query param)", 401)],
-    })
-    printed = capsys.readouterr().out
+    printed = _report([
+        ("the-odds-api.com (query param)", 401, 401, "rejected"),
+        ("odds-api.io (query param)", 401, 401, "rejected"),
+    ], capsys)
     assert "None of them" in printed
     assert "confirmed" in printed or "newline" in printed
+
+
+def test_every_probe_carries_a_no_key_control():
+    """Without the control a public endpoint is indistinguishable from one
+    that accepted the key."""
+    import inspect
+    source = inspect.getsource(check_odds.probe)
+    assert "without = _call(session, url, style, name, None, timeout)" in source
+    assert "endpoint is public" in source

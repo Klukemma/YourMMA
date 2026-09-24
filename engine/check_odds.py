@@ -49,39 +49,70 @@ PARAMS = {"regions": "us", "markets": "h2h", "oddsFormat": "american"}
 # key from one is rejected by another with a plain 401, which says nothing
 # about which door it does open.
 #
-# So a 401 is not the end of the check. The key is offered to each candidate,
-# in both the query-parameter and header styles, and the one that answers 200
-# is named. That is a handful of requests on a key that is not working anyway,
-# and it turns "rejected" into "you signed up at a different site, here it is".
+# A PROBE IS ONLY EVIDENCE IF THE ENDPOINT ACTUALLY CHECKS THE KEY, and the
+# first version of this got that wrong. It called odds-api.io's /v3/sports,
+# which answers 200 to anybody, and reported "THIS ONE" - so a key that in
+# fact authenticates nowhere was announced as belonging to that provider. The
+# endpoint list is public, so returning it costs them nothing; it simply is
+# not an authentication test.
+#
+# Every probe therefore runs TWICE, once with the key and once without. A 200
+# only counts when the same request WITHOUT a key is refused. If both succeed
+# the endpoint is public and the probe reports exactly that instead of a
+# result it cannot support.
 PROBES = (
     ("the-odds-api.com (query param)",
      "https://api.the-odds-api.com/v4/sports", "query", "apiKey"),
     ("the-odds-api.com (x-api-key header)",
      "https://api.the-odds-api.com/v4/sports", "header", "x-api-key"),
     ("odds-api.io (query param)",
-     "https://api.odds-api.io/v3/sports", "query", "apiKey"),
+     "https://api.odds-api.io/v3/events", "query", "apiKey"),
+    ("odds-api.io (x-api-key header)",
+     "https://api.odds-api.io/v3/events", "header", "x-api-key"),
     ("theoddsapi.com (x-api-key header)",
      "https://api.theoddsapi.com/v1/sports", "header", "x-api-key"),
 )
 
+# Sent alongside so an endpoint that needs a sport does not fail for that
+# reason and get mistaken for an authentication failure.
+PROBE_EXTRAS = {"sport": "mma"}
 
-def probe(key, timeout=15):
-    """Offer the key to each candidate service. Returns [(label, status)]."""
-    import requests
 
-    results = []
-    for label, url, style, name in PROBES:
-        params, headers = {}, {}
+def _call(session, url, style, name, key, timeout):
+    params, headers = dict(PROBE_EXTRAS), {}
+    if key is not None:
         if style == "query":
             params[name] = key
         else:
             headers[name] = key
-        try:
-            response = requests.get(url, params=params, headers=headers,
-                                    timeout=timeout)
-            results.append((label, response.status_code))
-        except Exception as error:                  # noqa: BLE001
-            results.append((label, redact(error, key)[:60]))
+    try:
+        return session.get(url, params=params, headers=headers,
+                           timeout=timeout).status_code
+    except Exception as error:                      # noqa: BLE001
+        return redact(error, key or "")[:60]
+
+
+def probe(key, timeout=15):
+    """Offer the key to each candidate, with a no-key control on every one.
+
+    Returns [(label, with_key, without_key, verdict)], where verdict is one of
+    "accepted", "rejected", or "endpoint is public" - the last being the case
+    the first version silently reported as success.
+    """
+    import requests
+
+    session = requests.Session()
+    results = []
+    for label, url, style, name in PROBES:
+        with_key = _call(session, url, style, name, key, timeout)
+        without = _call(session, url, style, name, None, timeout)
+        if with_key == 200 and without == 200:
+            verdict = "endpoint is public - proves nothing"
+        elif with_key == 200:
+            verdict = "accepted"
+        else:
+            verdict = "rejected"
+        results.append((label, with_key, without, verdict))
     return results
 
 
@@ -136,11 +167,15 @@ def report(result):
     if result.get("problem"):
         print(f"\n  {result['problem']}")
     if result.get("probes"):
-        print("\n  Which service accepts this key:")
-        for label, status in result["probes"]:
-            mark = "  <-- THIS ONE" if status == 200 else ""
-            print(f"    {str(status):<8} {label}{mark}")
-        if not any(s == 200 for _, s in result["probes"]):
+        print("\n  Which service accepts this key")
+        print("  (a 200 only counts if the same call WITHOUT a key is "
+              "refused):")
+        print(f"    {'with key':<9}{'no key':<8}{'service':<38}verdict")
+        for label, with_key, without, verdict in result["probes"]:
+            mark = "  <-- THIS ONE" if verdict == "accepted" else ""
+            print(f"    {str(with_key):<9}{str(without):<8}{label:<38}"
+                  f"{verdict}{mark}")
+        if not any(v == "accepted" for _, _, _, v in result["probes"]):
             print("\n  None of them. The key is not active anywhere tried:")
             print("    - a new key can take a few minutes to become live")
             print("    - some plans need the email address confirmed first")
