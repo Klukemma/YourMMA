@@ -24,6 +24,7 @@ Secrets and paths come from the environment — copy `.env.example` to `.env`:
 | Variable | Purpose |
 | --- | --- |
 | `ODDS_API_KEY` | [The Odds API](https://the-odds-api.com/) key. Without it the engine still predicts, but the odds / edge / value columns stay empty. Free tier is 500 credits a month; a credit is `markets x regions` and this engine asks for one of each, so that is 500 real calls. Verify a key with `python3 engine/check_odds.py`, or the `check-odds` workflow mode. Prices are cached in `data/odds_cache.json` and a fully priced card makes no request at all; set `ODDS_REFRESH=1` to fetch anyway. |
+| `ODDS_PROVIDER` | Which odds service the key belongs to. Defaults to `the-odds-api`; see `engine/odds_provider.py` for the table. A provider whose response shape has never been read is marked unverified and says so when used. |
 | `UFC_CSV` | Override the fight-history CSV path. |
 | `PREDICTIONS_LOG` | Override the prediction log path — useful for test runs you don't want recorded. |
 

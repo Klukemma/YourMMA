@@ -71,6 +71,23 @@ PROBES = (
      "https://api.odds-api.io/v3/events", "header", "x-api-key"),
     ("theoddsapi.com (x-api-key header)",
      "https://api.theoddsapi.com/v1/sports", "header", "x-api-key"),
+    ("oddspapi.io (query param)",
+     "https://api.oddspapi.io/v1/events", "query", "apiKey"),
+    ("oddspapi.io (x-api-key header)",
+     "https://api.oddspapi.io/v1/events", "header", "x-api-key"),
+    ("opticodds.com (x-api-key header)",
+     "https://api.opticodds.com/api/v3/fixtures", "header", "x-api-key"),
+    ("sharpapi.io (bearer)",
+     "https://api.sharpapi.io/v1/odds", "bearer", "Authorization"),
+    ("therundown.io (rapidapi key)",
+     "https://therundown-therundown-v1.p.rapidapi.com/sports",
+     "header", "x-rapidapi-key"),
+    ("odds-api.net (query param)",
+     "https://api.odds-api.net/v1/events", "query", "apiKey"),
+    ("generic: api_key query param",
+     "https://api.odds-api.io/v3/events", "query", "api_key"),
+    ("generic: Authorization bearer",
+     "https://api.the-odds-api.com/v4/sports", "bearer", "Authorization"),
 )
 
 # Sent alongside so an endpoint that needs a sport does not fail for that
@@ -83,6 +100,8 @@ def _call(session, url, style, name, key, timeout):
     if key is not None:
         if style == "query":
             params[name] = key
+        elif style == "bearer":
+            headers[name] = f"Bearer {key}"
         else:
             headers[name] = key
     try:
@@ -200,8 +219,19 @@ def main():
         return 2
 
     import requests
+    import odds_provider
+
     try:
-        response = requests.get(ENDPOINT, params={**PARAMS, "apiKey": key},
+        provider = odds_provider.selected()
+    except KeyError as error:
+        print(error)
+        return 2
+    odds_provider.warn_if_unverified(provider)
+    url, params, headers = odds_provider.request_for(key, provider)
+    print(f"  provider: {odds_provider.name()}")
+
+    try:
+        response = requests.get(url, params=params, headers=headers,
                                 timeout=20)
     except Exception as error:                      # noqa: BLE001
         print(f"Could not reach the API: {redact(error, key)}")

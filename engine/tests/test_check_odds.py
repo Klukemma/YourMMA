@@ -127,7 +127,7 @@ def test_the_probe_covers_both_auth_styles_and_the_lookalike_services():
     """A key passed the wrong way looks exactly like a key that is invalid."""
     labels = [p[0] for p in check_odds.PROBES]
     styles = {p[2] for p in check_odds.PROBES}
-    assert styles == {"query", "header"}
+    assert styles == {"query", "header", "bearer"}
     joined = " ".join(labels)
     for service in ("the-odds-api.com", "odds-api.io", "theoddsapi.com"):
         assert service in joined
