@@ -50,8 +50,8 @@ RUN_OPTUNA = False
 # ==============================================================================
 # 2. EVENT DETAILS
 # ==============================================================================
-EVENT_NAME = "UFC Fight Night: Kape vs. Horiguchi"
-EVENT_DATE = "2026-06-20"  # Format: YYYY-MM-DD
+EVENT_NAME = "UFC Fight Night: Rosas Jr. vs. Barcelos"
+EVENT_DATE = "2026-09-26"  # Format: YYYY-MM-DD
 
 # ==============================================================================
 # 3. FIGHT CARD
@@ -61,25 +61,25 @@ EVENT_DATE = "2026-06-20"  # Format: YYYY-MM-DD
 # - is_title_fight: True if fighting for a championship
 
 FIGHT_CARD = [
-    # Main Event (5 rounds, non-title) - Flyweight
-    ("Manel Kape", "Kyoji Horiguchi", True, False),            # 0 - Main Event, Flyweight (5 rounds)
+    # Main Event (5 rounds, non-title) - Bantamweight
+    ("Raul Rosas Jr.", "Raoni Barcelos", True, False),         # 0 - Main Event, Bantamweight (5 rounds)
 
-    # Co-Main Event - Light Heavyweight
-    ("Ion Cutelaba", "Navajo Stirling"),                       # 1 - Co-Main, Light Heavyweight
+    # Co-Main Event - Women's Bantamweight
+    ("Norma Dumont", "Ailin Perez"),                           # 1 - Co-Main, Women's Bantamweight
 
     # Main Card
-    ("Hyder Amil", "Christian Rodriguez"),                     # 2 - Featherweight
-    ("Melsik Baghdasaryan", "Murtazali Magomedov"),            # 3 - Featherweight
-    ("Andre Fili", "Vinicius Oliveira"),                       # 4 - Featherweight
+    ("Luis Hernandez", "Sedriques Dumas"),                     # 2 - Middleweight (Hernandez: short-notice UFC debut)
+    ("Mehemmedeli Osmanli", "Ilimbek Akylbek Uulu"),           # 3 - TUF 34 Bantamweight final
+    ("Melissa Amaya", "Valesca Machado"),                      # 4 - TUF 34 Women's Strawweight final
 
     # Preliminary Card
-    ("Andre Lima", "Kevin Borjas"),                            # 5 - Catchweight (129 lb)
-    ("Beatriz Mesquita", "Melissa Mullins"),                   # 6 - Women's Bantamweight
-    ("Allan Nascimento", "Mitch Raposo"),                      # 7 - Flyweight
-    ("Gaston Bolanos", "Michael Aswell Jr."),                  # 8 - Featherweight
-    ("Leon Shahbazyan", "Levan Chokheli"),                     # 9 - Welterweight
-    ("Karol Rosa", "Luana Santos"),                            # 10 - Women's Bantamweight
-    ("Shane Collins", "Otari Tanzilovi"),                      # 11 - Featherweight
+    ("Brady Hiestand", "Rinya Nakamura"),                      # 5 - Bantamweight
+    ("Rodolfo Vieira", "Robert Bryczek"),                      # 6 - Middleweight
+    ("Rodolfo Bellato", "Christian Edwards"),                  # 7 - Light Heavyweight
+    ("Elves Brener", "Josiah Harrell"),                        # 8 - Lightweight
+    ("Montel Jackson", "Ricky Simon"),                         # 9 - Bantamweight
+    ("John Castaneda", "Alatengheili"),                        # 10 - Bantamweight
+    ("Yazmin Jauregui", "Vanessa Demopoulos"),                 # 11 - Women's Strawweight
 ]
 
 # ==============================================================================
@@ -88,60 +88,60 @@ FIGHT_CARD = [
 # Home advantage only counts when ONE fighter is home and the other is NOT.
 # If both fighters are "home" (e.g., both USA-based), no advantage.
 #
-# UFC Fight Night: Kape vs. Horiguchi - UFC Apex, Enterprise (Las Vegas), NV (SMALL cage)
+# UFC Fight Night: Rosas Jr. vs. Barcelos - Meta Apex, Enterprise (Las Vegas), NV (SMALL cage)
 #
 # Home/Away Analysis (event in USA):
-#   Fight 0: Kape (Angola/Portugal, Away) vs Horiguchi (Japan, Away) -> no advantage
-#   Fight 1: Cutelaba (Moldova, Away) vs Stirling (New Zealand, Away) -> no advantage
-#   Fight 2: Amil (USA, Home) vs Rodriguez (USA, Home) -> no advantage (both home)
-#   Fight 3: Baghdasaryan (Armenia, Away) vs Magomedov (Russia, Away) -> no advantage
-#   Fight 4: Fili (USA, Home) vs Oliveira (Brazil, Away) -> red_home
-#   Fight 5: Lima (Brazil, Away) vs Borjas (Peru, Away) -> no advantage
-#   Fight 6: Mesquita (Brazil, Away) vs Mullins (USA, Home) -> blue_home
-#   Fight 7: Nascimento (Brazil, Away) vs Raposo (USA, Home) -> blue_home
-#   Fight 8: Bolanos (USA-based, Home) vs Aswell (USA, Home) -> no advantage (both home)
-#   Fight 9: Shahbazyan (USA, Home) vs Chokheli (Georgia, Away) -> red_home
-#   Fight 10: Rosa (Brazil, Away) vs Santos (Brazil, Away) -> no advantage
-#   Fight 11: Collins (USA, Home) vs Tanzilovi (Russia, Away) -> red_home
+#   Fight 0: Rosas Jr. (fights out of Las Vegas, Home) vs Barcelos (Brazil, Away) -> red_home
+#   Fight 1: Dumont (Brazil, Away) vs Perez (Argentina, Away) -> no advantage
+#   Fight 2: Hernandez (UFC debut, no data) vs Dumas (USA, Home) -> not predicted
+#   Fight 3: Osmanli vs Akylbek Uulu (TUF 34 final, both debuting) -> not predicted
+#   Fight 4: Amaya vs Machado (TUF 34 final, both debuting) -> not predicted
+#   Fight 5: Hiestand (USA, Home) vs Nakamura (Japan, Away) -> red_home
+#   Fight 6: Vieira (Brazil, Away) vs Bryczek (Poland, Away) -> no advantage
+#   Fight 7: Bellato (Brazil, Away) vs Edwards (USA, Home) -> blue_home
+#   Fight 8: Brener (Brazil, Away) vs Harrell (USA, Home) -> blue_home
+#   Fight 9: Jackson (USA, Home) vs Simon (USA, Home) -> no advantage (both home)
+#   Fight 10: Castaneda (USA, Home) vs Alatengheili (China, Away) -> red_home
+#   Fight 11: Jauregui (Mexico, Away) vs Demopoulos (USA, Home) -> blue_home
 #
-# NOTE: All bouts at the UFC Apex use the SMALL cage -> cage_size: 'small' for every fight.
+# NOTE: All bouts at the Apex use the SMALL cage -> cage_size: 'small' for every fight.
 
 FIGHT_CONTEXTS = {
-    # Fight 0: Both Away - no advantage (small cage)
-    0: {'cage_size': 'small'},
+    # Fight 0: Rosas Jr. (Home) - red corner
+    0: {'red_home': True, 'cage_size': 'small'},
 
     # Fight 1: Both Away - no advantage
     1: {'cage_size': 'small'},
 
-    # Fight 2: Both Home - no advantage
+    # Fight 2: Hernandez debuting - no data either way
     2: {'cage_size': 'small'},
 
-    # Fight 3: Both Away - no advantage
+    # Fight 3: TUF final, both debuting
     3: {'cage_size': 'small'},
 
-    # Fight 4: Fili (Home) - red corner
-    4: {'red_home': True, 'cage_size': 'small'},
+    # Fight 4: TUF final, both debuting
+    4: {'cage_size': 'small'},
 
-    # Fight 5: Both Away - no advantage
-    5: {'cage_size': 'small'},
+    # Fight 5: Hiestand (Home) - red corner
+    5: {'red_home': True, 'cage_size': 'small'},
 
-    # Fight 6: Mullins (Home) - blue corner
-    6: {'blue_home': True, 'cage_size': 'small'},
+    # Fight 6: Both Away - no advantage
+    6: {'cage_size': 'small'},
 
-    # Fight 7: Raposo (Home) - blue corner
+    # Fight 7: Edwards (Home) - blue corner
     7: {'blue_home': True, 'cage_size': 'small'},
 
-    # Fight 8: Both Home - no advantage
-    8: {'cage_size': 'small'},
+    # Fight 8: Harrell (Home) - blue corner
+    8: {'blue_home': True, 'cage_size': 'small'},
 
-    # Fight 9: Shahbazyan (Home) - red corner
-    9: {'red_home': True, 'cage_size': 'small'},
+    # Fight 9: Both Home - no advantage
+    9: {'cage_size': 'small'},
 
-    # Fight 10: Both Away - no advantage
-    10: {'cage_size': 'small'},
+    # Fight 10: Castaneda (Home) - red corner
+    10: {'red_home': True, 'cage_size': 'small'},
 
-    # Fight 11: Collins (Home) - red corner
-    11: {'red_home': True, 'cage_size': 'small'},
+    # Fight 11: Demopoulos (Home) - blue corner
+    11: {'blue_home': True, 'cage_size': 'small'},
 }
 
 # ==============================================================================
