@@ -569,3 +569,17 @@ let initial = "card";
 try { initial = localStorage.getItem("yourmma.tab") || "card"; } catch (e) { /* ignore */ }
 if (!TABS.includes(initial)) initial = "card";
 show(initial);
+
+/* --------------------------------------------------------- installable */
+// The service worker is what makes this installable and what makes it open
+// with no signal. It is skipped on file:// because a file:// page has no
+// origin to scope one to - the standalone build carries its data on the page
+// and needs no cache.
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {
+      // No worker means no offline copy. The app still works online, so this
+      // is not worth a message on the page.
+    });
+  });
+}

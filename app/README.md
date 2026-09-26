@@ -8,6 +8,9 @@ deployed but files.
       index.html     the page
       app.js         rendering, tab by tab
       matchup.js     a checked port of engine/matchup.py
+      manifest.json  what a phone reads before offering to install it
+      sw.js          the service worker: offline, and the install prompt
+      icons/*.png    drawn by scripts/make_icons.py
       data/*.json    written by the engine, never edited by hand
 
 ## Where the data comes from
@@ -67,6 +70,44 @@ Any static host. Locally:
 On GitHub Pages, enable Pages for the repository (Settings -> Pages, deploy
 from a branch, root) and the app is at `/app/`.
 
+## Installing it on a phone
+
+Open the hosted page and the browser offers to install it: Chrome shows
+"Install app" in the ⋮ menu, Safari has "Add to Home Screen" under Share. It
+then opens without browser chrome and works with no signal.
+
+A browser only makes that offer when a short list of things is all true at
+once, and the failure is silent - the button just does not appear, with no
+console error saying why. So the list is asserted in
+`engine/tests/test_installable.py`:
+
+- a linked manifest that parses, with a name, a `start_url` and
+  `display: standalone`
+- a PNG icon of at least 192px and one of at least 512px, each really the
+  size the manifest claims
+- a maskable icon, or Android crops the square one and clips the mark
+- a registered service worker **with a fetch handler** - without the handler
+  the prompt never appears, however complete the manifest is
+- HTTPS, which Pages gives you
+
+iOS reads none of the manifest. It reads `apple-touch-icon` and the
+`apple-mobile-web-app-*` meta tags, so those are checked too.
+
+The icons are drawn without an image library, because adding Pillow to this
+project to draw four circles would be a poor trade:
+
+    python3 scripts/make_icons.py
+
+They are committed, since a build step that needs Python is a build step the
+phone cannot run.
+
+`sw.js` caches the shell stale-while-revalidate, so the app opens instantly
+and offline, but fetches `data/*.json` network-first: the card and the record
+change whenever the workflow runs, and showing yesterday's card as though it
+were today's is exactly the sort of quiet lie the rest of this project is
+built to avoid. Offline it falls back to the cached copy, and the stamp in the
+header says how old it is.
+
 ## The standalone build
 
 `app/yourmma.html` is the whole app in one file - page, code and data - with
@@ -85,6 +126,11 @@ module syntax is stripped and the JSON injected as `window.__YOURMMA_DATA__`,
 which `load()` already prefers over `fetch`. A change to the app reaches both
 builds or neither, and the builder refuses rather than guessing if either file
 stops looking the way it expects.
+
+It also drops the manifest and icon links, which a `file://` page cannot
+resolve - a broken manifest link is worse than none, because it is what the
+browser reads before deciding whether to offer Add to Home Screen. The meta
+tags stay, since they are self-contained and iOS reads them.
 
 Rebuild it whenever the data moves - it is a snapshot, and the footer says when
 it was taken.
