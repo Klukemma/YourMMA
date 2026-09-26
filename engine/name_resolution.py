@@ -28,6 +28,28 @@ def norm_name(s):
     return re.sub(r"\s+", " ", s).strip()
 
 
+# A generational suffix is not a surname. Taking the last token of "Raul Rosas
+# Jr." labels the fight "Jr. vs Barcelos" and the pick "Jr.", which is how the
+# main event of a card can end up named after a suffix.
+_SUFFIXES = {"jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v"}
+
+
+def short_name(full):
+    """The name to show where there is no room for the full one.
+
+    The surname, plus any generational suffix, so two brothers on one card stay
+    distinguishable. Falls back to the whole string rather than an empty one:
+    a fighter known by a single name (Alatengheili) has no surname to take.
+    """
+    parts = str(full or "").split()
+    if not parts:
+        return ""
+    if len(parts) >= 2 and parts[-1].lower().strip(".") in {
+            s.strip(".") for s in _SUFFIXES}:
+        return " ".join(parts[-2:])
+    return parts[-1]
+
+
 def load_aliases(path):
     """Load {typed name: canonical name}. Keys starting with _ are comments."""
     try:
