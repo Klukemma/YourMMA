@@ -194,7 +194,7 @@ from pathlib import Path
 from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from name_resolution import NameResolver, load_aliases, format_failure, norm_name as _norm_name
+from name_resolution import NameResolver, load_aliases, format_failure, short_name, norm_name as _norm_name
 warnings.filterwarnings('ignore')
 
 # ==============================================================================
@@ -4327,7 +4327,7 @@ for i, fight in enumerate(FIGHT_CARD):
         })
         continue
 
-    winner_short = pred['winner'].split()[-1]  # Last name only
+    winner_short = short_name(pred['winner'])  # surname, keeping any Jr./III
 
     # Simplified finish output
     if pred.get('is_finish', False):
@@ -4337,7 +4337,7 @@ for i, fight in enumerate(FIGHT_CARD):
 
     compact_results.append({
         '#': i+1,
-        'Matchup': f"{pred['red'].split()[-1]} vs {pred['blue'].split()[-1]}",
+        'Matchup': f"{short_name(pred['red'])} vs {short_name(pred['blue'])}",
         'Pick': winner_short,
         'Prob': f"{pred['win_prob']*100:.0f}%",
         'Conf': f"{pred['confidence']*100:.0f}%",
@@ -5160,8 +5160,8 @@ for i, fight in enumerate(FIGHT_CARD):
         # and the app export read a 5-round main event as a 3-round bout.
         'is_5rnd': bool(is_5rnd),
         'is_title': bool(is_title),
-        'matchup': f"{pred['red'].split()[-1]} vs {pred['blue'].split()[-1]}",
-        'pick': pred['winner'].split()[-1],
+        'matchup': f"{short_name(pred['red'])} vs {short_name(pred['blue'])}",
+        'pick': short_name(pred['winner']),
         'prob': pred['win_prob'],
         'conf': pred['confidence'],
         'calibrated_conf': calibrated_conf,
@@ -5179,8 +5179,8 @@ for i, fight in enumerate(FIGHT_CARD):
     if parlay_tier:
         parlay_candidates.append({
             'fight_num': i + 1,
-            'matchup': f"{pred['red'].split()[-1]} vs {pred['blue'].split()[-1]}",
-            'pick': pred['winner'].split()[-1],
+            'matchup': f"{short_name(pred['red'])} vs {short_name(pred['blue'])}",
+            'pick': short_name(pred['winner']),
             'prob': pred['win_prob'],
             'tier': parlay_tier,
             'score': bet_info['score']

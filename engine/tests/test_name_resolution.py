@@ -16,6 +16,7 @@ ENGINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ENGINE))
 
 from name_resolution import NameResolver, norm_name, load_aliases, format_failure
+import name_resolution as nr
 
 CSV_PATH = ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
 
@@ -181,3 +182,39 @@ def test_search_on_empty_query(resolver):
     assert resolver.search("") == []
 
 
+
+
+# --------------------------------------------------------------- short_name
+# A generational suffix is not a surname. Taking the last token of "Raul Rosas
+# Jr." labels the main event "Jr. vs Barcelos" and the pick "Jr.", which is
+# what the card and the parlay legs showed before short_name existed.
+
+def test_short_name_keeps_a_generational_suffix_with_the_surname():
+    assert nr.short_name("Raul Rosas Jr.") == "Rosas Jr."
+    assert nr.short_name("Khalil Rountree Jr.") == "Rountree Jr."
+    assert nr.short_name("Kai Kamaka III") == "Kamaka III"
+    assert nr.short_name("Jose Aldo Jr") == "Aldo Jr"
+
+
+def test_short_name_is_the_surname_when_there_is_no_suffix():
+    assert nr.short_name("Raoni Barcelos") == "Barcelos"
+    assert nr.short_name("Vanessa Demopoulos") == "Demopoulos"
+
+
+def test_short_name_never_returns_empty_for_a_mononym():
+    """Alatengheili has no surname to take; the whole name is the short one."""
+    assert nr.short_name("Alatengheili") == "Alatengheili"
+
+
+def test_short_name_survives_nothing():
+    assert nr.short_name("") == ""
+    assert nr.short_name(None) == ""
+
+
+def test_every_suffixed_fighter_in_the_dataset_keeps_a_real_surname():
+    """The guard that matters: no shown name may be a bare suffix."""
+    for name in ("Michael Aswell Jr.", "Lance Gibson Jr.", "Carlo Pedersoli Jr.",
+                 "Allen Frye Jr.", "Khalil Rountree Jr.", "Levi Rodrigues Jr.",
+                 "Kai Kamaka III", "Raul Rosas Jr."):
+        short = nr.short_name(name)
+        assert short.split()[0].lower().strip(".") not in {"jr", "sr", "ii", "iii", "iv"}
