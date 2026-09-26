@@ -12,3 +12,8 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Dataset backups written by sync/repair/fix-units. Every pre-change state is
+# already recoverable from git history, so tracking them doubles the repo for
+# nothing.
+engine/data/*.backup-*.csv

@@ -1,0 +1,503 @@
+{
+ "caveats": {
+  "model": "Walk-forward accuracy 61.7%, AUC 0.66. Flat-stake ROI on the confirm period (2020 onward, 2,339 priced bets) is -1.8%. Treat a pick as an opinion, not an edge.",
+  "parlay": "Combined probability multiplies the legs, which assumes the fights are independent; they are not quite. Backtested on the confirm period, 3-leg parlays returned +21.8% over 224 parlays - promising but about 1.5 standard deviations, and those parlays share legs, so this is NOT an established edge.",
+  "simulation": "20,000 simulations from both fighters' measured rates. As a winner picker this is weaker than the model (AUC 0.559 against 0.66), so the model's probability is the headline. Method and round are where the simulation is the only source, and there it finishes 55% of fights where the sport finishes 47% - read DEC as firmer and SUB as softer."
+ },
+ "dataset_end": "2026-08-08",
+ "event": {
+  "date": "2026-06-20",
+  "name": "UFC Fight Night: Kape vs. Horiguchi"
+ },
+ "fights": [
+  {
+   "blue": "Kyoji Horiguchi",
+   "confidence": 0.713636,
+   "edge": null,
+   "method": "Decision",
+   "method_prob": 0.478392,
+   "number": 1,
+   "odds": null,
+   "parlay_tier": "VALUE",
+   "pick": "Manel Kape",
+   "recommendation": "LEAN",
+   "red": "Manel Kape",
+   "round": "R5",
+   "rounds_scheduled": 5,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.37495,
+    "decision": 0.4296,
+    "decision_share": 0.46525,
+    "draw": 0.03565,
+    "finish_by_round": [
+     0.1416,
+     0.1227,
+     0.10175,
+     0.089,
+     0.0797
+    ],
+    "ko": 0.40075,
+    "mean_seconds": 1050.32605,
+    "median_seconds": 1360.0,
+    "red_win": 0.5894,
+    "simulations": 20000,
+    "standard_error": 0.003479,
+    "sub": 0.134
+   },
+   "title_fight": false,
+   "win_prob": 0.683797
+  },
+  {
+   "blue": "Navajo Stirling",
+   "confidence": 0.544643,
+   "edge": null,
+   "method": "KO/TKO",
+   "method_prob": 0.499092,
+   "number": 2,
+   "odds": null,
+   "parlay_tier": null,
+   "pick": "Navajo Stirling",
+   "recommendation": "LEAN",
+   "red": "Ion Cutelaba",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.7087,
+    "decision": 0.4038,
+    "decision_share": 0.4252,
+    "draw": 0.0214,
+    "finish_by_round": [
+     0.2469,
+     0.18645,
+     0.14145
+    ],
+    "ko": 0.3729,
+    "mean_seconds": 607.15448,
+    "median_seconds": 735.0,
+    "red_win": 0.2699,
+    "simulations": 20000,
+    "standard_error": 0.003139,
+    "sub": 0.2019
+   },
+   "title_fight": false,
+   "win_prob": 0.564644
+  },
+  {
+   "blue": "Christian Rodriguez",
+   "confidence": 0.519149,
+   "edge": null,
+   "method": "Decision",
+   "method_prob": 0.45374,
+   "number": 3,
+   "odds": null,
+   "parlay_tier": null,
+   "pick": "Christian Rodriguez",
+   "recommendation": "RISKY",
+   "red": "Hyder Amil",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.4769,
+    "decision": 0.469,
+    "decision_share": 0.4959,
+    "draw": 0.0269,
+    "finish_by_round": [
+     0.2048,
+     0.16425,
+     0.13505
+    ],
+    "ko": 0.26695,
+    "mean_seconds": 653.342224,
+    "median_seconds": 895.0,
+    "red_win": 0.4962,
+    "simulations": 20000,
+    "standard_error": 0.003535,
+    "sub": 0.23715
+   },
+   "title_fight": false,
+   "win_prob": 0.524505
+  },
+  {
+   "blue": "Murtazali Magomedov",
+   "confidence": 0.544643,
+   "edge": null,
+   "method": "KO/TKO",
+   "method_prob": 0.365615,
+   "number": 4,
+   "odds": null,
+   "parlay_tier": null,
+   "pick": "Melsik Baghdasaryan",
+   "recommendation": "RISKY",
+   "red": "Melsik Baghdasaryan",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [
+     "td_acc",
+     "td_att_per15",
+     "td_def"
+    ],
+    "blue_win": 0.5869,
+    "decision": 0.3123,
+    "decision_share": 0.33735,
+    "draw": 0.02505,
+    "finish_by_round": [
+     0.3075,
+     0.2099,
+     0.14525
+    ],
+    "ko": 0.31165,
+    "mean_seconds": 553.114502,
+    "median_seconds": 575.0,
+    "red_win": 0.38805,
+    "simulations": 20000,
+    "standard_error": 0.003446,
+    "sub": 0.351
+   },
+   "title_fight": false,
+   "win_prob": 0.554334
+  },
+  {
+   "blue": "Vinicius Oliveira",
+   "confidence": 0.733333,
+   "edge": null,
+   "method": "KO/TKO",
+   "method_prob": 0.44063,
+   "number": 5,
+   "odds": null,
+   "parlay_tier": "VALUE",
+   "pick": "Vinicius Oliveira",
+   "recommendation": "GOOD BET",
+   "red": "Andre Fili",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.69615,
+    "decision": 0.52685,
+    "decision_share": 0.56,
+    "draw": 0.03315,
+    "finish_by_round": [
+     0.17525,
+     0.14295,
+     0.1218
+    ],
+    "ko": 0.3222,
+    "mean_seconds": 684.710266,
+    "median_seconds": 900.0,
+    "red_win": 0.2707,
+    "simulations": 20000,
+    "standard_error": 0.003142,
+    "sub": 0.1178
+   },
+   "title_fight": false,
+   "win_prob": 0.717846
+  },
+  {
+   "blue": "Kevin Borjas",
+   "confidence": 0.702899,
+   "edge": null,
+   "method": "Decision",
+   "method_prob": 0.525324,
+   "number": 6,
+   "odds": null,
+   "parlay_tier": "STRONG",
+   "pick": "Andre Lima",
+   "recommendation": "GOOD BET",
+   "red": "Andre Lima",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.3413,
+    "decision": 0.51145,
+    "decision_share": 0.5488,
+    "draw": 0.03735,
+    "finish_by_round": [
+     0.1842,
+     0.14635,
+     0.12065
+    ],
+    "ko": 0.31065,
+    "mean_seconds": 676.510986,
+    "median_seconds": 900.0,
+    "red_win": 0.62135,
+    "simulations": 20000,
+    "standard_error": 0.00343,
+    "sub": 0.14055
+   },
+   "title_fight": false,
+   "win_prob": 0.788039
+  },
+  {
+   "blue": "Mitch Raposo",
+   "confidence": 0.58371,
+   "edge": null,
+   "method": "Decision",
+   "method_prob": 0.470478,
+   "number": 8,
+   "odds": null,
+   "parlay_tier": null,
+   "pick": "Allan Nascimento",
+   "recommendation": "LEAN",
+   "red": "Allan Nascimento",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.4035,
+    "decision": 0.5706,
+    "decision_share": 0.61515,
+    "draw": 0.04455,
+    "finish_by_round": [
+     0.14895,
+     0.1245,
+     0.1114
+    ],
+    "ko": 0.19165,
+    "mean_seconds": 717.546021,
+    "median_seconds": 900.0,
+    "red_win": 0.55195,
+    "simulations": 20000,
+    "standard_error": 0.003516,
+    "sub": 0.1932
+   },
+   "title_fight": false,
+   "win_prob": 0.64036
+  },
+  {
+   "blue": "Michael Aswell Jr.",
+   "confidence": 0.544643,
+   "edge": null,
+   "method": "Decision",
+   "method_prob": 0.457244,
+   "number": 9,
+   "odds": null,
+   "parlay_tier": null,
+   "pick": "Michael Aswell Jr.",
+   "recommendation": "LEAN",
+   "red": "Gaston Bolanos",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.66395,
+    "decision": 0.54175,
+    "decision_share": 0.57855,
+    "draw": 0.0368,
+    "finish_by_round": [
+     0.16845,
+     0.13875,
+     0.11425
+    ],
+    "ko": 0.2737,
+    "mean_seconds": 693.896484,
+    "median_seconds": 900.0,
+    "red_win": 0.29925,
+    "simulations": 20000,
+    "standard_error": 0.003238,
+    "sub": 0.14775
+   },
+   "title_fight": false,
+   "win_prob": 0.556151
+  },
+  {
+   "blue": "Levan Chokheli",
+   "confidence": 0.733333,
+   "edge": null,
+   "method": "KO/TKO",
+   "method_prob": 0.433557,
+   "number": 10,
+   "odds": null,
+   "parlay_tier": "VALUE",
+   "pick": "Leon Shahbazyan",
+   "recommendation": "LEAN",
+   "red": "Leon Shahbazyan",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [
+     "td_acc",
+     "td_att_per15",
+     "td_def"
+    ],
+    "blue_win": 0.5917,
+    "decision": 0.3249,
+    "decision_share": 0.35205,
+    "draw": 0.02715,
+    "finish_by_round": [
+     0.2924,
+     0.20645,
+     0.1491
+    ],
+    "ko": 0.4906,
+    "mean_seconds": 559.719971,
+    "median_seconds": 605.0,
+    "red_win": 0.38115,
+    "simulations": 20000,
+    "standard_error": 0.003434,
+    "sub": 0.15735
+   },
+   "title_fight": false,
+   "win_prob": 0.700314
+  },
+  {
+   "blue": "Luana Santos",
+   "confidence": 0.519149,
+   "edge": null,
+   "method": "Decision",
+   "method_prob": 0.640966,
+   "number": 11,
+   "odds": null,
+   "parlay_tier": null,
+   "pick": "Karol Rosa",
+   "recommendation": "LEAN",
+   "red": "Karol Rosa",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.31595,
+    "decision": 0.6593,
+    "decision_share": 0.69535,
+    "draw": 0.03605,
+    "finish_by_round": [
+     0.11345,
+     0.10225,
+     0.08895
+    ],
+    "ko": 0.1392,
+    "mean_seconds": 758.007751,
+    "median_seconds": 900.0,
+    "red_win": 0.648,
+    "simulations": 20000,
+    "standard_error": 0.003377,
+    "sub": 0.16545
+   },
+   "title_fight": false,
+   "win_prob": 0.507407
+  },
+  {
+   "blue": "Otari Tanzilovi",
+   "confidence": 0.702899,
+   "edge": null,
+   "method": "Submission",
+   "method_prob": 0.433913,
+   "number": 12,
+   "odds": null,
+   "parlay_tier": "STRONG",
+   "pick": "Shane Collins",
+   "recommendation": "GOOD BET",
+   "red": "Shane Collins",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.51495,
+    "decision": 0.52285,
+    "decision_share": 0.56145,
+    "draw": 0.0386,
+    "finish_by_round": [
+     0.1754,
+     0.1443,
+     0.11885
+    ],
+    "ko": 0.2903,
+    "mean_seconds": 685.193726,
+    "median_seconds": 900.0,
+    "red_win": 0.44645,
+    "simulations": 20000,
+    "standard_error": 0.003515,
+    "sub": 0.14825
+   },
+   "title_fight": false,
+   "win_prob": 0.752758
+  }
+ ],
+ "generated": "2026-09-19T17:33:48Z",
+ "parlays": [
+  {
+   "combined_prob": 0.5932026615620001,
+   "fair_odds": 69,
+   "legs": [
+    {
+     "fight": "Lima vs Borjas",
+     "pick": "Lima",
+     "prob": 0.788039,
+     "tier": "STRONG"
+    },
+    {
+     "fight": "Collins vs Tanzilovi",
+     "pick": "Collins",
+     "prob": 0.752758,
+     "tier": "STRONG"
+    }
+   ]
+  },
+  {
+   "combined_prob": 0.405630200368111,
+   "fair_odds": 147,
+   "legs": [
+    {
+     "fight": "Lima vs Borjas",
+     "pick": "Lima",
+     "prob": 0.788039,
+     "tier": "STRONG"
+    },
+    {
+     "fight": "Collins vs Tanzilovi",
+     "pick": "Collins",
+     "prob": 0.752758,
+     "tier": "STRONG"
+    },
+    {
+     "fight": "Kape vs Horiguchi",
+     "pick": "Kape",
+     "prob": 0.683797,
+     "tier": "VALUE"
+    }
+   ]
+  },
+  {
+   "combined_prob": 0.29118001681344696,
+   "fair_odds": 243,
+   "legs": [
+    {
+     "fight": "Lima vs Borjas",
+     "pick": "Lima",
+     "prob": 0.788039,
+     "tier": "STRONG"
+    },
+    {
+     "fight": "Collins vs Tanzilovi",
+     "pick": "Collins",
+     "prob": 0.752758,
+     "tier": "STRONG"
+    },
+    {
+     "fight": "Kape vs Horiguchi",
+     "pick": "Kape",
+     "prob": 0.683797,
+     "tier": "VALUE"
+    },
+    {
+     "fight": "Fili vs Oliveira",
+     "pick": "Oliveira",
+     "prob": 0.717846,
+     "tier": "VALUE"
+    }
+   ]
+  }
+ ],
+ "schema": 3,
+ "skipped": [
+  {
+   "fight": "Beatriz Mesquita vs Melissa Mullins",
+   "reason": "NO DATA: No data for 'Beatriz Mesquita'.  Did you mean: Bia Mesquita (79%)?"
+  }
+ ],
+ "trained_on": 7580
+}

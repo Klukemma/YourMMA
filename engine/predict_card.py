@@ -226,6 +226,78 @@ ufc['date'] = pd.to_datetime(ufc['date'], errors='coerce')
 # Post-2001 filter
 ufc = ufc[ufc['date'] >= '2001-01-01'].copy()
 ufc = ufc.sort_values('date').reset_index(drop=True)
+
+# ============================================================================
+# POINT-IN-TIME CAREER STATISTICS
+# ============================================================================
+# r_splm, r_str_acc, r_sapm, r_str_def, r_td_avg, r_td_def, r_td_avg_acc and
+# r_sub_avg come from the upstream fighter profile, which publishes CAREER
+# AVERAGES AS OF THE DATA PULL and joins them onto every bout that fighter
+# ever had. 80-90% of fighters with five or more bouts carry one value for
+# their whole career, so a 2014 fight was described by a striking accuracy
+# computed over 2014-2026 - including the fight being predicted.
+#
+# That inflated a walk-forward backtest to 68.6% and +16.2% over 5,943 priced
+# bets. The only honest year was 2026, at 61.5% and -3.2%, because the data
+# ends in August of it and there was almost no career left to leak.
+#
+# career_stats rebuilds every one of them from PRIOR FIGHTS ONLY, accumulating
+# across both corners in date order. Expect the measured numbers to fall.
+print("\n[1.5] BUILDING POINT-IN-TIME CAREER STATISTICS...")
+from career_stats import career_stats as _career_stats
+
+_careers = _career_stats(ufc)
+# The other end of the same accumulation: what is known AFTER each fighter's
+# last bout, which is what predicting their NEXT one needs. Without it every
+# cd_ column reaches the prediction path as "unknown" while the model was
+# trained on fights where it was known.
+from career_stats import final_stats as _final_stats
+_final = _final_stats(ufc)
+for _col in _careers.columns:
+    ufc[_col] = _careers[_col]
+_known = ufc['r_cd_bouts'].notna() & ufc['b_cd_bouts'].notna()
+print(f"    {len(_careers.columns)} point-in-time columns")
+print(f"    both corners have prior history on {_known.mean():.1%} of fights")
+
+# The profile columns are percentages (46.5); the honest ones are fractions
+# (0.465). Rescaling here keeps every downstream feature on the scale its
+# thresholds and comments were written for.
+for _corner in ('r', 'b'):
+    ufc[f'{_corner}_splm'] = ufc[f'{_corner}_cd_slpm']
+    ufc[f'{_corner}_sapm'] = ufc[f'{_corner}_cd_sapm']
+    ufc[f'{_corner}_str_acc'] = ufc[f'{_corner}_cd_str_acc'] * 100.0
+    ufc[f'{_corner}_str_def'] = ufc[f'{_corner}_cd_str_def'] * 100.0
+    ufc[f'{_corner}_td_avg'] = ufc[f'{_corner}_cd_td_per15']
+    ufc[f'{_corner}_td_def'] = ufc[f'{_corner}_cd_td_def'] * 100.0
+    ufc[f'{_corner}_td_avg_acc'] = ufc[f'{_corner}_cd_td_acc'] * 100.0
+    ufc[f'{_corner}_sub_avg'] = ufc[f'{_corner}_cd_sub_per15']
+    # r_wins/r_losses are the fighter's LIFETIME record as of the data pull,
+    # one value repeated over every bout of their career - 98.1% and 97.8%
+    # constant across careers with five or more bouts, the same signature as
+    # the eight profile columns above. Alone, the win rate built from them
+    # scores AUC 0.80 in 2024 and 0.58 in 2026, because by 2026 there is no
+    # future career left to leak. The point-in-time record scores 0.62 in both.
+    # r_draws has no honest equivalent here: a bout with no recorded winner is
+    # a draw, a no-contest or an overturned result and the dataset does not
+    # separate them, so it is zeroed rather than guessed. It was worth nothing
+    # anyway - 99.9% constant, mean 0.22.
+    ufc[f'{_corner}_wins'] = ufc[f'{_corner}_cd_wins']
+    ufc[f'{_corner}_losses'] = ufc[f'{_corner}_cd_losses']
+    ufc[f'{_corner}_draws'] = 0.0
+
+# The matchup advantages. These cross one fighter's offence against the other's
+# defence through a measured league baseline, which is the one thing a frame of
+# differences cannot say: a takedown rate means one thing against a sprawler
+# and another against a debutant.
+from matchup_inputs import matchup_features as _matchup_features
+
+_matchups = _matchup_features(ufc, _careers)
+for _col in _matchups.columns:
+    ufc[_col] = _matchups[_col]
+print(f"    {len(_matchups.columns)} matchup advantage columns")
+print(f"    striking advantage available on "
+      f"{ufc['mx_striking_known'].mean():.1%} of fights, grappling on "
+      f"{ufc['mx_grappling_known'].mean():.1%}")
 print(f"    After post-2001 filter: {len(ufc):,} fights")
 print(f"    Date range: {ufc['date'].min().date()} to {ufc['date'].max().date()}")
 
@@ -322,8 +394,10 @@ ufc['b_prime'] = ufc['b_age'].apply(age_prime_score)
 ufc['prime_diff'] = ufc['r_prime'] - ufc['b_prime']
 
 # --- EXPERIENCE ---
-ufc['r_exp'] = ufc['r_wins'].fillna(0) + ufc['r_losses'].fillna(0) + ufc['r_draws'].fillna(0)
-ufc['b_exp'] = ufc['b_wins'].fillna(0) + ufc['b_losses'].fillna(0) + ufc['b_draws'].fillna(0)
+# Prior UFC bouts, which is a count and so is genuinely 0 on a debut - that is
+# a fact about the fighter, not a filled-in unknown.
+ufc['r_exp'] = ufc['r_cd_wins'] + ufc['r_cd_losses']
+ufc['b_exp'] = ufc['b_cd_wins'] + ufc['b_cd_losses']
 
 # --- LAYOFF DAYS AND WIN/LOSS STREAKS ---
 print("    Calculating layoff days and streaks...")
@@ -395,6 +469,35 @@ ufc['streak_diff'] = ufc['r_streak'] - ufc['b_streak']
 # ============================================================================
 print("\n[3.5] BUILDING BAYESIAN SKILL FEATURES...")
 
+# Rating-derived variables live in skill_features.py so they can be tested
+# without importing this file, which runs the whole pipeline. That is how a set
+# of Elo-era constants survived the switch to TrueSkill unnoticed.
+from feature_inventory import all_specs
+from feature_spec import build_all, emitted_names
+from prediction_row import build_prediction_frame, required_suffixes
+from matchup_inputs import matchup_extra
+
+# Where the phone app reads its data from.
+APP_DATA_DIR = Path(__file__).resolve().parent.parent / "app" / "data"
+_card_simulations = []
+from fight_report import (
+    CARD_SIMULATIONS,
+    format_line,
+    simulate_matchup,
+    summarise,
+)
+from skill_features import (
+    MMR_SCALE,
+    TRUESKILL_DEFAULT_MMR,
+    base_probability,
+    loss_penalty_scale,
+    standardised_skill_gap,
+    trueskill_post_fight,
+    weighted_opponent_quality,
+)
+
+
+
 # TrueSkill parameters (standard values)
 TRUESKILL_BETA = 4.17  # Performance variance (~sigma_perf)
 TRUESKILL_DEFAULT_MU = 25.0
@@ -457,11 +560,41 @@ print(f"    Bayesian prob range: [{ufc['bayesian_prob'].min():.3f}, {ufc['bayesi
 print(f"    Mu diff range: [{ufc['mu_diff'].min():.2f}, {ufc['mu_diff'].max():.2f}]")
 print(f"    Combined uncertainty range: [{ufc['combined_uncertainty'].min():.2f}, {ufc['combined_uncertainty'].max():.2f}]")
 
-# --- MMR FEATURES (legacy, kept for ensemble) ---
-MMR_SCALE = 120.0  # from original code
-ufc['mmr_diff'] = ufc['r_mmr_pre'].fillna(1500) - ufc['b_mmr_pre'].fillna(1500)
-ufc['base_prob'] = 1.0 / (1.0 + np.exp(-(ufc['mmr_diff'] / MMR_SCALE)))
+# --- MMR FEATURES ---
+# These carried two constants from an era when the rating was Elo-like and
+# centred on 1500. The rating is TrueSkill now: mmr = mu - 3*sigma, which spans
+# -25..+31 with a difference std of 7.3. Both constants were left behind.
+#
+#   MMR_SCALE = 120.0 squashed a variable of std 7.3 through a logistic scaled
+#   for hundreds of points, so base_prob only ever spanned 0.448-0.565 with a
+#   std of 0.0153 - a documented headline feature that was nearly a constant.
+#
+#   fillna(1500) never fires here (no rating is null in the dataset) but the
+#   same default is live in the prediction path, where one missing rating
+#   produces an mmr_diff of +/-1500 against a normal +/-25 and saturates
+#   base_prob to 0 or 1.
+#
+# The scale now matches the variable's own spread, so base_prob covers a usable
+# range. Choosing a scale from a feature's spread uses no outcome information,
+# so it is not leakage.
+# MMR_SCALE and TRUESKILL_DEFAULT_MMR come from skill_features.
+
+ufc['mmr_diff'] = (ufc['r_mmr_pre'].fillna(TRUESKILL_DEFAULT_MMR)
+                   - ufc['b_mmr_pre'].fillna(TRUESKILL_DEFAULT_MMR))
+ufc['base_prob'] = base_probability(ufc['mmr_diff'])
 ufc['base_prob'] = ufc['base_prob'].clip(1e-6, 1 - 1e-6)
+
+# --- Additional skill variables ---
+# The model is told how far apart two fighters are but never how good the
+# fight is. A title bout between two elites and a prelim between two novices
+# can share a skill gap while behaving nothing alike.
+ufc['mu_sum'] = ufc['r_mu'] + ufc['b_mu']
+
+# The skill gap in units of its own uncertainty. bayesian_prob is Phi() of
+# exactly this, but a linear model cannot invert Phi, so the raw z is worth
+# exposing alongside it.
+ufc['mu_diff_z'] = standardised_skill_gap(
+    ufc['r_mu'], ufc['r_sigma'], ufc['b_mu'], ufc['b_sigma'], TRUESKILL_BETA)
 
 # --- DIFF FEATURES (matching original) ---
 ufc['exp_diff'] = ufc['r_exp'] - ufc['b_exp']
@@ -517,8 +650,10 @@ ufc['is_title'] = ufc['title_fight'].fillna(0).astype(int)
 
 # --- ADDITIONAL FEATURES (improvements) ---
 # Win rate
-ufc['r_winrate'] = np.where(ufc['r_exp'] > 0, ufc['r_wins'].fillna(0) / ufc['r_exp'], 0.5)
-ufc['b_winrate'] = np.where(ufc['b_exp'] > 0, ufc['b_wins'].fillna(0) / ufc['b_exp'], 0.5)
+# NaN, not 0.5, for a fighter with no decided prior bout. 0.5 asserts a
+# coin-flip fighter; the paired feature's _known flag says "unknown" instead.
+ufc['r_winrate'] = ufc['r_cd_win_rate']
+ufc['b_winrate'] = ufc['b_cd_win_rate']
 ufc['winrate_diff'] = ufc['r_winrate'] - ufc['b_winrate']
 
 # TD accuracy diff
@@ -706,8 +841,11 @@ print(f"      Absorption eff diff range: [{ufc['absorption_eff_diff'].min():.2f}
 # Measures how efficiently a fighter lands strikes relative to what they absorb.
 # High value = good footwork/movement (lands a lot, absorbs little).
 # Low value = flat-footed / hittable (e.g. Derrick Lewis: high SAPM, moderate SLpM).
-ufc['r_footwork_proxy'] = ufc['r_splm'].fillna(3) / (ufc['r_sapm'].fillna(3).clip(lower=0.5))
-ufc['b_footwork_proxy'] = ufc['b_splm'].fillna(3) / (ufc['b_sapm'].fillna(3).clip(lower=0.5))
+# The rates are point-in-time now, so a debutant genuinely has none. Filling
+# with 3 invented an average fighter; the ratio is NaN instead and the _known
+# flag on the paired feature tells the model which it is.
+ufc['r_footwork_proxy'] = ufc['r_splm'] / ufc['r_sapm'].clip(lower=0.5)
+ufc['b_footwork_proxy'] = ufc['b_splm'] / ufc['b_sapm'].clip(lower=0.5)
 ufc['footwork_diff'] = ufc['r_footwork_proxy'] - ufc['b_footwork_proxy']
 _lo, _hi = ufc['footwork_diff'].min(), ufc['footwork_diff'].max()
 print(f'      Footwork diff range: [{_lo:.2f}, {_hi:.2f}]')
@@ -740,71 +878,77 @@ _lo, _hi = ufc['career_damage_diff'].min(), ufc['career_damage_diff'].max()
 print(f'      Career damage diff range: [{_lo:.2f}, {_hi:.2f}]')
 
 # --- OPPONENT QUALITY (STRENGTH OF SCHEDULE) ---
+
 print("    Calculating opponent quality (strength of schedule)...")
 
 def calc_opponent_quality(df):
+    """Average quality of opponents faced, with recency weighting.
+
+    Two things were wrong here and both came from the Elo era.
+
+    It averaged past opponents' *mmr* (mu - 3*sigma). That rating is dominated
+    by uncertainty rather than skill - the penalty term's spread (4.88) is
+    larger than the skill difference it adjusts (4.47) - so strength of
+    schedule was being measured with the weakest available ruler. It averages
+    mu now, which is the skill estimate itself.
+
+    And a fighter with no recorded opponents was given the constant 1500, on a
+    scale where real values run about -3 to 31. That fires on 24.5% of fights,
+    turning opp_quality_diff into a debut flag multiplied by roughly 1486: its
+    std is 628.8 overall against 6.30 among fights where both fighters have
+    history. Whatever genuine signal strength of schedule carries was drowned.
+
+    An unknown schedule is now NaN, which the feature matrix turns into 0 - the
+    neutral value for a difference - alongside an explicit flag per corner so
+    the model can tell "no history" from "equally matched schedules" instead of
+    being handed a number that means neither.
+
+    Last 4 fights are weighted 2x, which is unchanged.
     """
-    Calculate average quality of opponents faced, with recency weighting.
-    Last 4 fights weighted 2x higher than older fights.
-    """
-    fighter_history = {}  # fighter -> list of (date, opponent_mmr)
+    fighter_history = {}  # fighter -> list of (date, opponent_mu)
     opponent_quality_r, opponent_quality_b = [], []
+    has_history_r, has_history_b = [], []
 
     for idx, row in df.iterrows():
         r_name = row['r_name']
         b_name = row['b_name']
-        r_mmr = row.get('r_mmr_pre', 1500)
-        b_mmr = row.get('b_mmr_pre', 1500)
+        r_mu = row.get('r_mu', TRUESKILL_DEFAULT_MU)
+        b_mu = row.get('b_mu', TRUESKILL_DEFAULT_MU)
         fight_date = row.get('date')
 
-        # Get opponent quality for red corner (weighted avg of past opponents' MMR)
         r_hist = fighter_history.get(r_name, [])
-        if len(r_hist) > 0:
-            # Weight last 4 fights 2x
-            weights = []
-            mmrs = []
-            for i, (d, opp_mmr) in enumerate(reversed(r_hist)):
-                weight = 2.0 if i < 4 else 1.0
-                weights.append(weight)
-                mmrs.append(opp_mmr)
-            r_opp_quality = sum(w * m for w, m in zip(weights, mmrs)) / sum(weights)
-        else:
-            r_opp_quality = 1500  # Default
-
-        # Get opponent quality for blue corner
         b_hist = fighter_history.get(b_name, [])
-        if len(b_hist) > 0:
-            weights = []
-            mmrs = []
-            for i, (d, opp_mmr) in enumerate(reversed(b_hist)):
-                weight = 2.0 if i < 4 else 1.0
-                weights.append(weight)
-                mmrs.append(opp_mmr)
-            b_opp_quality = sum(w * m for w, m in zip(weights, mmrs)) / sum(weights)
-        else:
-            b_opp_quality = 1500  # Default
+        opponent_quality_r.append(
+            weighted_opponent_quality([mu for _, mu in r_hist]))
+        opponent_quality_b.append(
+            weighted_opponent_quality([mu for _, mu in b_hist]))
+        has_history_r.append(1.0 if r_hist else 0.0)
+        has_history_b.append(1.0 if b_hist else 0.0)
 
-        opponent_quality_r.append(r_opp_quality)
-        opponent_quality_b.append(b_opp_quality)
+        # Update after recording, so a fight never sees its own opponent.
+        fighter_history.setdefault(r_name, []).append((fight_date, b_mu))
+        fighter_history.setdefault(b_name, []).append((fight_date, r_mu))
 
-        # Update history: red fought blue (opponent was blue), blue fought red
-        if r_name not in fighter_history:
-            fighter_history[r_name] = []
-        fighter_history[r_name].append((fight_date, b_mmr))
+    return (opponent_quality_r, opponent_quality_b,
+            has_history_r, has_history_b, fighter_history)
 
-        if b_name not in fighter_history:
-            fighter_history[b_name] = []
-        fighter_history[b_name].append((fight_date, r_mmr))
-
-    return opponent_quality_r, opponent_quality_b, fighter_history
-
-opp_quality_r, opp_quality_b, OPP_QUALITY_HISTORY = calc_opponent_quality(ufc)
+(opp_quality_r, opp_quality_b, opp_hist_r, opp_hist_b,
+ OPP_QUALITY_HISTORY) = calc_opponent_quality(ufc)
 
 ufc['r_opp_quality'] = opp_quality_r
 ufc['b_opp_quality'] = opp_quality_b
+ufc['r_has_opp_history'] = opp_hist_r
+ufc['b_has_opp_history'] = opp_hist_b
 ufc['opp_quality_diff'] = ufc['r_opp_quality'] - ufc['b_opp_quality']
+# Both schedules known: the only rows where opp_quality_diff means anything.
+ufc['opp_history_known'] = ufc['r_has_opp_history'] * ufc['b_has_opp_history']
 
-print(f"      Opponent quality diff range: [{ufc['opp_quality_diff'].min():.0f}, {ufc['opp_quality_diff'].max():.0f}]")
+_known = ufc['opp_quality_diff'].notna()
+print(f"      Opponent quality known for {_known.mean():.1%} of fights")
+print(f"      Opponent quality diff range (known rows): "
+      f"[{ufc.loc[_known, 'opp_quality_diff'].min():.2f}, "
+      f"{ufc.loc[_known, 'opp_quality_diff'].max():.2f}]  "
+      f"std {ufc.loc[_known, 'opp_quality_diff'].std():.2f}")
 
 # --- WEIGHT CLASS FEATURES ---
 print("    Adding weight class features...")
@@ -1598,8 +1742,8 @@ def calc_momentum_quality(df):
                 if b_name not in fighter_momentum:
                     fighter_momentum[b_name] = []
                 # Scale loss penalty by opponent quality (losing to elite = minor hit)
-                opp_mmr_val = row.get('r_mmr_pre', 1500)
-                loss_scale = 0.3 if opp_mmr_val > 1600 else (0.5 if opp_mmr_val > 1550 else (0.7 if opp_mmr_val > 1450 else 1.0))
+                loss_scale = loss_penalty_scale(
+                    row.get('r_mu', TRUESKILL_DEFAULT_MU))
                 fighter_momentum[b_name].append(-win_quality * loss_scale)
             elif winner == b_name:
                 if b_name not in fighter_momentum:
@@ -1608,8 +1752,8 @@ def calc_momentum_quality(df):
                 if r_name not in fighter_momentum:
                     fighter_momentum[r_name] = []
                 # Scale loss penalty by opponent quality
-                opp_mmr_val = row.get('b_mmr_pre', 1500)
-                loss_scale = 0.3 if opp_mmr_val > 1600 else (0.5 if opp_mmr_val > 1550 else (0.7 if opp_mmr_val > 1450 else 1.0))
+                loss_scale = loss_penalty_scale(
+                    row.get('b_mu', TRUESKILL_DEFAULT_MU))
                 fighter_momentum[r_name].append(-win_quality * loss_scale)
         else:
             # Draw/NC/Unknown
@@ -1633,114 +1777,72 @@ print("    [3.95] Advanced features complete!")
 
 
 # ============================================================================
+# SECTION 3.99: BUILD THE DECLARED FEATURES
+# ============================================================================
+# feature_inventory declares every paired feature, level, known flag and
+# matchup interaction; feature_spec builds them. Assigning them here overwrites
+# the hand-written versions of the same names, which is the point: fifteen of
+# them filled each operand with 0 before subtracting, so a debutant's missing
+# 45% striking accuracy read as "lands nothing" and handed the opponent a fake
+# maximal advantage.
+print("\n[3.99] BUILDING DECLARED FEATURES...")
+
+SPECS = all_specs()
+_declared = build_all(SPECS, ufc)
+for _col in _declared.columns:
+    ufc[_col] = _declared[_col]
+print(f"    {len(SPECS)} specs -> {len(_declared.columns)} columns")
+_new = [c for c in _declared.columns if c not in ufc.columns]
+print(f"    replaced hand-written definitions where names matched")
+
+# ============================================================================
 # SECTION 4: DEFINE FEATURE COLUMNS
 # ============================================================================
 print("\n[4] DEFINING FEATURE SET...")
 
-# Bayesian skill features (NEW - state-space model)
-bayesian_features = [
-    'bayesian_prob',           # TrueSkill win probability (properly handles uncertainty)
-    'mu_diff',                 # Raw skill estimate difference
-    'consistency_diff',        # Rating reliability difference
-    'skill_conservative_diff', # Conservative skill gap (mu - sigma)
-    'combined_uncertainty',    # Total uncertainty in matchup (lower = more confident)
+# Every name the declaration emits. Cage-control features stay out of the
+# winner model, as they were before, and are listed separately for that.
+CAGE_CONTROL_FEATURES = [
+    'cage_control_cap_diff', 'cage_control_cap_level',
+    'clinch_activity_diff', 'grind_tendency_diff',
+]
+SPEC_FEATURES = [n for n in emitted_names(SPECS) if n not in CAGE_CONTROL_FEATURES]
+
+# Features the declaration does not cover: context flags, transforms of the
+# rating, and the archetype terms. Three of the old names are gone:
+#
+#   same_cluster         AUC 0.500 - constant
+#   stance_interaction   correlated 1.0000 with southpaw_diff, a copy
+#   trajectory_diff      exactly 0 on 100% of rows
+#
+# Removing a constant cannot change a tree model, and removing an exact
+# duplicate cannot either, so unlike importance-based pruning - which made this
+# model worse every time it was tried - these three are free.
+bespoke_features = [
+    'bayesian_prob',          # TrueSkill win probability
+    'combined_uncertainty',   # Total uncertainty in the matchup
+    'mu_sum',                 # How good the fight is, not just how lopsided
+    'mu_diff_z',              # Skill gap in units of its own uncertainty
+    'base_prob',              # Logistic of the rating difference
+    'mmr_diff',               # Conservative rating difference
+    'power_diff',             # Weighted striking composite
+    'finish_rate_diff',       # KO plus submission rate
+    'archetype_matchup',      # Stylistic matchup advantage
+    'archetype_clash',        # Whether the archetypes differ
+    'combined_pace',          # Fight tempo, AUC 0.416 - a level that works
+    'high_pace',              # Binary: high-pace fight likely
+    'opp_history_known',      # Both schedules known
+    'is_womens', 'is_heavyweight', 'is_5rnd', 'is_title',
 ]
 
-# Base features (matching original + enhancements)
-base_features = [
-    'base_prob', 'mmr_diff',
-    'exp_diff', 'age_diff',  # prime_diff replaced by prime_wc_diff in advanced
-    'off_striking_diff', 'acc_diff', 'def_diff',
-    'power_diff',
-    'td_off_diff', 'td_def_diff', 'sub_diff',
-    'same_cluster', 'southpaw_diff',
-    'stance_mismatch',      # Different stances (creates awkward angles)
-    'stance_interaction',    # Southpaw advantage when stances differ
-    # layoff_diff replaced by ring_rust_diff, streak_diff replaced by mom_quality_diff
-]
-
-# Physical features (NEW)
-physical_features = [
-    'height_diff',          # Height advantage
-    'reach_diff',           # Reach advantage
-    'ape_index_diff',       # Reach relative to height
-]
-
-# Style/Finish rate features (NEW)
-style_features = [
-    'ko_rate_diff',         # KO win rate difference
-    'sub_rate_diff',        # Submission win rate difference
-    'finish_rate_diff',     # Overall finish rate difference
-    'footwork_diff',        # Evasion efficiency differential (SLpM / SAPM ratio)
-]
-
-# Durability features (NEW)
-durability_features = [
-    'ko_vulnerability_diff',  # Has been KO'd before
-    'been_finished_diff',     # Times been finished
-    'absorption_eff_diff',    # Defensive efficiency
-    'career_damage_diff',        # Cumulative career damage (log-scaled)
-]
-
-# Opponent quality features (NEW)
-opponent_quality_features = [
-    'opp_quality_diff',       # Strength of schedule difference
-]
-
-# Weight class features (NEW)
-weight_class_features = [
-    'is_womens',              # Women's division (more decisions)
-    'is_heavyweight',         # Heavyweight (more early KOs)
-]
-
-# Additional features (improvements)
-additional_features = [
-    'winrate_diff', 'td_acc_diff', 'sapm_diff',
-    'data_sparsity_diff',     # Data reliability gap (log fight count differential)
-    'is_5rnd', 'is_title',
-]
-
-# Time-aware features
-time_aware_features = [
-    'recent_form_diff',  # momentum_diff replaced by mom_quality_diff
-    'splm_L3_diff', 'str_acc_L3_diff', 'td_avg_L3_diff',
-    'striking_trajectory_diff',  # Recent striking output vs career average
-    'accuracy_trajectory_diff',   # Recent accuracy vs career average
-    'trajectory_diff',            # Combined trajectory (improvement/decline)
-]
-
-# All features
-# Cage control features
-cage_control_features = [
-    'cage_control_cap_diff',   # Control time rate differential (EWM)
-    'clinch_activity_diff',    # Clinch strike attempts differential (EWM)
-    'grind_tendency_diff',     # Grind rate differential (% of fights that are grinds)
-]
-
-
-# Advanced features (NEW - Section 3.95)
-advanced_new_features = [
-    'cardio_diff',           # Gas tank / cardio sustainability
-    'archetype_matchup',     # Stylistic matchup advantage
-    'archetype_clash',       # Whether archetypes differ (more uncertainty)
-    'combined_pace',         # Fight tempo prediction
-    'high_pace',             # Binary: high-pace fight likely
-    'wc_move_diff',          # Weight class movement difference
-    'prime_wc_diff',         # Weight-class-specific age curve
-    'ring_rust_diff',        # Non-linear ring rust penalty
-    'sub_def_diff',          # Submission defense differential
-    'mom_quality_diff',      # Momentum quality (weighted by impressiveness)
-]
-
-
-feature_cols = bayesian_features + base_features + physical_features + style_features + durability_features + opponent_quality_features + weight_class_features + additional_features + time_aware_features + cage_control_features + advanced_new_features
+feature_cols = SPEC_FEATURES + bespoke_features + CAGE_CONTROL_FEATURES
 
 # Winner model uses features WITHOUT cage control (to avoid noisy signal in winner prediction)
 # Cage control features are only used by method/round/finish models
-feature_cols_winner = bayesian_features + base_features + physical_features + style_features + durability_features + opponent_quality_features + weight_class_features + additional_features + time_aware_features + advanced_new_features
-print(f"    Total features: {len(feature_cols)}")
-print(f"    Bayesian: {len(bayesian_features)}, Base: {len(base_features)}, Physical: {len(physical_features)}")
-print(f"    Style: {len(style_features)}, Durability: {len(durability_features)}, Additional: {len(additional_features)}, Time-aware: {len(time_aware_features)}, Advanced: {len(advanced_new_features)}")
+feature_cols_winner = SPEC_FEATURES + bespoke_features
+print(f"    Total features: {len(feature_cols)} "
+      f"({len(SPEC_FEATURES)} declared + {len(bespoke_features)} bespoke "
+      f"+ {len(CAGE_CONTROL_FEATURES)} cage control)")
 
 # Build feature matrix
 X = ufc[feature_cols].copy()
@@ -2382,9 +2484,14 @@ print("\n    Top 15 features:")
 for i, (_, row) in enumerate(feat_imp.head(15).iterrows()):
     print(f"    {i+1:2d}. {row['feature']:25s}: {row['importance']:.4f}")
 
-# Highlight Bayesian features
-bayesian_imp = feat_imp[feat_imp['feature'].isin(bayesian_features)]
-print("\n    Bayesian skill features importance:")
+# Highlight the rating-derived features
+RATING_FEATURE_NAMES = [
+    'bayesian_prob', 'mu_diff', 'mu_level', 'mu_sum', 'mu_diff_z',
+    'consistency_diff', 'skill_conservative_diff', 'combined_uncertainty',
+    'base_prob', 'mmr_diff',
+]
+bayesian_imp = feat_imp[feat_imp['feature'].isin(RATING_FEATURE_NAMES)]
+print("\n    Rating feature importance:")
 for _, row in bayesian_imp.iterrows():
     print(f"        {row['feature']:25s}: {row['importance']:.4f}")
 
@@ -2486,23 +2593,22 @@ for fighter in all_fighters:
         post_losses = L.get('r_losses', 0) + (1 if won_last == False else 0)
 
         # POST-FIGHT MMR adjustment (approximate - actual MMR depends on opponent)
-        pre_mmr = L.get('r_mmr_pre', 1500)
-        opp_mmr = L.get('b_mmr_pre', 1500)  # Opponent's MMR
-        if won_last == True:
-            # Winner gains MMR based on opponent strength
-            mmr_gain = max(10, min(50, 32 + (opp_mmr - pre_mmr) * 0.04))
-            post_mmr = pre_mmr + mmr_gain
-        elif won_last == False:
-            # Loser loses MMR based on opponent strength
-            mmr_loss = max(10, min(50, 32 - (opp_mmr - pre_mmr) * 0.04))
-            post_mmr = pre_mmr - mmr_loss
-        else:
-            post_mmr = pre_mmr  # Unknown result
+        # Post-fight rating. This used an Elo K-factor update, adding or
+        # subtracting 10-50 points to a rating whose entire range is 56 wide,
+        # so a single fight could move a fighter across most of the scale.
+        # TrueSkill has its own update and ratings.rate_1v1 already implements
+        # it, which is what produced every stored rating in the dataset.
+        post_mu, post_sigma, post_mmr = trueskill_post_fight(
+            L.get('r_mu', TRUESKILL_DEFAULT_MU),
+            L.get('r_sigma', TRUESKILL_DEFAULT_SIGMA),
+            L.get('b_mu', TRUESKILL_DEFAULT_MU),
+            L.get('b_sigma', TRUESKILL_DEFAULT_SIGMA),
+            won_last)
 
         stats.update({
-            'mmr_pre': post_mmr,  # POST-FIGHT adjusted MMR
-            'mu': L.get('r_mu', TRUESKILL_DEFAULT_MU),      # Bayesian skill mean
-            'sigma': L.get('r_sigma', TRUESKILL_DEFAULT_SIGMA),  # Bayesian uncertainty
+            'mmr_pre': post_mmr,      # POST-FIGHT rating, mu - 3*sigma
+            'mu': post_mu,            # POST-FIGHT Bayesian skill mean
+            'sigma': post_sigma,      # POST-FIGHT Bayesian uncertainty
             'wins': post_wins, 'losses': post_losses, 'draws': L.get('r_draws', 0),
             'dob': L.get('r_dob'), 'stance': L.get('r_stance', 'Orthodox'),
             'splm': L.get('r_splm', 0), 'str_acc': L.get('r_str_acc', 0),
@@ -2527,7 +2633,7 @@ for fighter in all_fighters:
             'absorption_eff': L.get('r_absorption_eff', 16.67),
             'footwork_proxy': L.get('r_splm', 3) / max(L.get('r_sapm', 3), 0.5),
             # NEW: Opponent quality
-            'opp_quality': L.get('r_opp_quality', 1500),
+            'opp_quality': L.get('r_opp_quality'),
             # NEW: Cage control stats
             'ctrl_rate_ewm': L.get('r_ctrl_rate_ewm', 0),
             'grind_score_ewm': L.get('r_grind_score_ewm', 0),
@@ -2559,21 +2665,22 @@ for fighter in all_fighters:
         post_losses = L.get('b_losses', 0) + (1 if won_last == False else 0)
 
         # POST-FIGHT MMR adjustment
-        pre_mmr = L.get('b_mmr_pre', 1500)
-        opp_mmr = L.get('r_mmr_pre', 1500)  # Opponent's MMR
-        if won_last == True:
-            mmr_gain = max(10, min(50, 32 + (opp_mmr - pre_mmr) * 0.04))
-            post_mmr = pre_mmr + mmr_gain
-        elif won_last == False:
-            mmr_loss = max(10, min(50, 32 - (opp_mmr - pre_mmr) * 0.04))
-            post_mmr = pre_mmr - mmr_loss
-        else:
-            post_mmr = pre_mmr
+        # Post-fight rating. This used an Elo K-factor update, adding or
+        # subtracting 10-50 points to a rating whose entire range is 56 wide,
+        # so a single fight could move a fighter across most of the scale.
+        # TrueSkill has its own update and ratings.rate_1v1 already implements
+        # it, which is what produced every stored rating in the dataset.
+        post_mu, post_sigma, post_mmr = trueskill_post_fight(
+            L.get('b_mu', TRUESKILL_DEFAULT_MU),
+            L.get('b_sigma', TRUESKILL_DEFAULT_SIGMA),
+            L.get('r_mu', TRUESKILL_DEFAULT_MU),
+            L.get('r_sigma', TRUESKILL_DEFAULT_SIGMA),
+            won_last)
 
         stats.update({
-            'mmr_pre': post_mmr,  # POST-FIGHT adjusted MMR
-            'mu': L.get('b_mu', TRUESKILL_DEFAULT_MU),      # Bayesian skill mean
-            'sigma': L.get('b_sigma', TRUESKILL_DEFAULT_SIGMA),  # Bayesian uncertainty
+            'mmr_pre': post_mmr,      # POST-FIGHT rating, mu - 3*sigma
+            'mu': post_mu,            # POST-FIGHT Bayesian skill mean
+            'sigma': post_sigma,      # POST-FIGHT Bayesian uncertainty
             'wins': post_wins, 'losses': post_losses, 'draws': L.get('b_draws', 0),
             'dob': L.get('b_dob'), 'stance': L.get('b_stance', 'Orthodox'),
             'splm': L.get('b_splm', 0), 'str_acc': L.get('b_str_acc', 0),
@@ -2598,7 +2705,7 @@ for fighter in all_fighters:
             'absorption_eff': L.get('b_absorption_eff', 16.67),
             'footwork_proxy': L.get('b_splm', 3) / max(L.get('b_sapm', 3), 0.5),
             # NEW: Opponent quality
-            'opp_quality': L.get('b_opp_quality', 1500),
+            'opp_quality': L.get('b_opp_quality'),
             # NEW: Cage control stats
             'ctrl_rate_ewm': L.get('b_ctrl_rate_ewm', 0),
             'grind_score_ewm': L.get('b_grind_score_ewm', 0),
@@ -2618,6 +2725,11 @@ for fighter in all_fighters:
             'career_damage': L.get('b_sapm', 3) * 12.0 * (len(red_fights) + len(blue_fights)),
         })
     
+    # Their career state after the last bout in the file, which is what a
+    # prediction of their next fight reads.
+    _fid = L.get('r_id') if L.get('r_name') == fighter else L.get('b_id')
+    if _fid in _final.index:
+        stats.update(_final.loc[_fid].to_dict())
     fighter_stats[_norm_name(fighter)] = stats
 
 print(f"    Fighter lookup built: {len(fighter_stats):,} fighters")
@@ -2700,6 +2812,49 @@ CONTEXT_ADJUSTMENTS = {
     'cage_size_large': -0.02,    # ~2% boost for volume strikers in large cage (inverse for pressure)
     'weight_cut_hard': -0.03,    # ~3% penalty for fighters with known hard weight cuts
 }
+
+
+def _corner_extras(stats, age, exp, winrate, southpaw, consistency,
+                   skill_conservative, weight_class):
+    """Attributes the prediction function works out rather than stores.
+
+    reach and height are both centimetres, so their ratio is the ape index
+    directly. The training-side version divided a column mislabelled inches by
+    another mislabelled inches, filling each with 70, which turned 9.4% of
+    fights into an ape index of 0.39 or 2.60 against a real value near 1.02.
+    """
+    reach = stats.get("reach")
+    height = stats.get("height")
+    try:
+        ape = float(reach) / float(height) if reach and height else np.nan
+    except (TypeError, ValueError, ZeroDivisionError):
+        ape = np.nan
+    return {
+        "age": age,
+        "exp": exp,
+        "winrate": winrate,
+        "southpaw": southpaw,
+        "consistency": consistency,
+        "skill_conservative": skill_conservative,
+        "ape_index": ape,
+        "ring_rust": ring_rust_transform(stats.get("layoff")),
+        "prime_wc": age_prime_score_wc(age, weight_class),
+    }
+
+
+def _declared_features(r, b, r_extra, b_extra):
+    """Run the feature declaration over a single fight.
+
+    The same build_all that makes the training matrix, so the two definitions
+    cannot drift. What the stats dict cannot supply becomes NaN, which the
+    specs turn into a neutral difference and a _known flag of 0.
+    """
+    frame = build_prediction_frame(r, b, required_suffixes(SPECS),
+                                   red_extra=r_extra, blue_extra=b_extra,
+                                   fight_extra=matchup_extra(r, b))
+    built = build_all(SPECS, frame)
+    return {col: built.iloc[0][col] for col in built.columns}
+
 
 def apply_context_adjustments(base_prob, context=None):
     """
@@ -2920,16 +3075,18 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
     b_prime = age_prime_score(b_age)
     
     # Experience
-    r_exp = safe(r.get('wins')) + safe(r.get('losses')) + safe(r.get('draws'))
-    b_exp = safe(b.get('wins')) + safe(b.get('losses')) + safe(b.get('draws'))
+    # Decided UFC bouts only, matching ufc['r_exp'] in the training frame.
+    r_exp = safe(r.get('wins')) + safe(r.get('losses'))
+    b_exp = safe(b.get('wins')) + safe(b.get('losses'))
     
     # MMR (legacy)
-    mmr_diff = safe(r.get('mmr_pre'), 1500) - safe(b.get('mmr_pre'), 1500)
-    base_prob = 1.0 / (1.0 + np.exp(-(mmr_diff / 120.0)))
+    mmr_diff = (safe(r.get('mmr_pre'), TRUESKILL_DEFAULT_MMR)
+                - safe(b.get('mmr_pre'), TRUESKILL_DEFAULT_MMR))
+    base_prob = float(base_probability(mmr_diff))
     
     # Win rates
-    r_winrate = safe(r.get('wins')) / r_exp if r_exp > 0 else 0.5
-    b_winrate = safe(b.get('wins')) / b_exp if b_exp > 0 else 0.5
+    r_winrate = safe(r.get('wins')) / r_exp if r_exp > 0 else np.nan
+    b_winrate = safe(b.get('wins')) / b_exp if b_exp > 0 else np.nan
     
     # Southpaw
     r_southpaw = 1 if 'southpaw' in str(r.get('stance', '')).lower() else 0
@@ -2955,6 +3112,9 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
         'consistency_diff': r_consistency - b_consistency,
         'skill_conservative_diff': r_skill_cons - b_skill_cons,
         'combined_uncertainty': combined_unc,
+        'mu_sum': r_mu + b_mu,
+        'mu_diff_z': float(standardised_skill_gap(
+            r_mu, r_sigma, b_mu, b_sigma, TRUESKILL_BETA)),
         # Base features
         'base_prob': base_prob,
         'mmr_diff': mmr_diff,
@@ -3005,7 +3165,12 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
         # Career damage accumulation
         'career_damage_diff': np.log1p(safe(r.get('career_damage'), 36)) - np.log1p(safe(b.get('career_damage'), 36)),
         # NEW: Opponent quality features
-        'opp_quality_diff': safe(r.get('opp_quality'), 1500) - safe(b.get('opp_quality'), 1500),
+        # Unknown schedule stays unknown; the flag below tells the model which
+        # it is, instead of a constant that means neither.
+        'opp_quality_diff': (safe(r.get('opp_quality'), np.nan)
+                             - safe(b.get('opp_quality'), np.nan)),
+        'opp_history_known': float(pd.notna(r.get('opp_quality'))
+                                   and pd.notna(b.get('opp_quality'))),
         # NEW: Weight class features (default to 0 for unknown)
         'is_womens': 0,  # Will be overridden if division info available
         'is_heavyweight': 0,  # Will be overridden if division info available
@@ -3028,7 +3193,17 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
     }
 
     # Create feature vector
-    X_pred = pd.DataFrame([feat])[feature_cols]
+    feat.update(_declared_features(
+        r, b,
+        _corner_extras(r, r_age, r_exp, r_winrate, r_southpaw, r_consistency,
+                       r_skill_cons, context.get('weight_class') if context else None),
+        _corner_extras(b, b_age, b_exp, b_winrate, b_southpaw, b_consistency,
+                       b_skill_cons, context.get('weight_class') if context else None)))
+
+    # Match the training matrix, which is built with .fillna(0). Without
+    # this a single unknown feature turns every model output into NaN.
+    X_pred = pd.DataFrame([feat])[feature_cols].replace(
+        [np.inf, -np.inf], np.nan).fillna(0)
     X_pred_s = scaler.transform(X_pred)
     
     # Win prediction (ensemble + calibration)
@@ -3195,10 +3370,9 @@ DATASET:
 
 FEATURES:
   Total: {len(feature_cols)}
-  Bayesian: {len(bayesian_features)} (mu, sigma, consistency, conservative gap, uncertainty)
-  Base: {len(base_features)} (mmr, striking, grappling, stance, layoff, streak, prime)
-  Additional: {len(additional_features)} (winrate, title, 5rnd)
-  Time-aware: {len(time_aware_features)} (L3/L5 rolling, momentum)
+  Declared: {len(SPEC_FEATURES)} (paired diffs, levels, known flags, matchup interactions)
+  Bespoke: {len(bespoke_features)} (rating transforms, context flags, archetypes)
+  Cage control: {len(CAGE_CONTROL_FEATURES)} (method/round models only)
 
 WIN PREDICTION (Test Set):
   Accuracy:  {acc:.4f} ({acc*100:.1f}%)
@@ -3360,8 +3534,16 @@ print("    Fitting Platt calibration on full data (winner features)...")
 p_lr_cal_full = lr_prod.predict_proba(X_cal_full_winner_s)[:, 1]
 p_rf_cal_full = rf_prod.predict_proba(X_cal_full_winner_s)[:, 1]
 p_xgb_cal_full = xgb_prod.predict_proba(X_cal_full_winner_s)[:, 1]
-p_mlp_cal_full = mlp_prod.predict_proba(X_cal_full_winner_s)[:, 1]
-p_ens_cal_full = (p_lr_cal_full + p_rf_cal_full + p_xgb_cal_full + p_mlp_cal_full) / 4
+
+# Fit the calibrator on exactly what it will be applied to. This previously
+# averaged four models including mlp_prod, while predict_fight_prod averages
+# three, so the calibrator mapped from a distribution it had never seen.
+# Measured effect is small - the MLP moves the average by 0.021 on average -
+# but a calibrator fitted on one quantity and applied to another is wrong
+# regardless of how little it currently costs.
+# Including the MLP on both sides was also measured, and was worse
+# (ECE 0.149 against 0.123). See experiments/calibrator_mismatch.py.
+p_ens_cal_full = (p_lr_cal_full + p_rf_cal_full + p_xgb_cal_full) / 3
 
 platt_prod = LogisticRegression(C=1e10, solver='lbfgs', max_iter=1000)
 platt_prod.fit(p_ens_cal_full.reshape(-1, 1), y_cal_full)
@@ -3772,14 +3954,16 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
     r_prime = age_prime_score(r_age)
     b_prime = age_prime_score(b_age)
     
-    r_exp = safe(r.get('wins')) + safe(r.get('losses')) + safe(r.get('draws'))
-    b_exp = safe(b.get('wins')) + safe(b.get('losses')) + safe(b.get('draws'))
+    # Decided UFC bouts only, matching ufc['r_exp'] in the training frame.
+    r_exp = safe(r.get('wins')) + safe(r.get('losses'))
+    b_exp = safe(b.get('wins')) + safe(b.get('losses'))
     
-    mmr_diff = safe(r.get('mmr_pre'), 1500) - safe(b.get('mmr_pre'), 1500)
-    base_prob = 1.0 / (1.0 + np.exp(-(mmr_diff / 120.0)))
+    mmr_diff = (safe(r.get('mmr_pre'), TRUESKILL_DEFAULT_MMR)
+                - safe(b.get('mmr_pre'), TRUESKILL_DEFAULT_MMR))
+    base_prob = float(base_probability(mmr_diff))
     
-    r_winrate = safe(r.get('wins')) / r_exp if r_exp > 0 else 0.5
-    b_winrate = safe(b.get('wins')) / b_exp if b_exp > 0 else 0.5
+    r_winrate = safe(r.get('wins')) / r_exp if r_exp > 0 else np.nan
+    b_winrate = safe(b.get('wins')) / b_exp if b_exp > 0 else np.nan
     
     r_southpaw = 1 if 'southpaw' in str(r.get('stance', '')).lower() else 0
     b_southpaw = 1 if 'southpaw' in str(b.get('stance', '')).lower() else 0
@@ -3800,6 +3984,9 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
         'consistency_diff': r_consistency - b_consistency,
         'skill_conservative_diff': r_skill_cons - b_skill_cons,
         'combined_uncertainty': combined_unc,
+        'mu_sum': r_mu + b_mu,
+        'mu_diff_z': float(standardised_skill_gap(
+            r_mu, r_sigma, b_mu, b_sigma, TRUESKILL_BETA)),
         'base_prob': base_prob, 'mmr_diff': mmr_diff,
         'exp_diff': r_exp - b_exp, 'age_diff': safe(r_age, 30) - safe(b_age, 30),
         # prime_diff removed (replaced by prime_wc_diff)
@@ -3844,7 +4031,12 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
         # Career damage accumulation
         'career_damage_diff': np.log1p(safe(r.get('career_damage'), 36)) - np.log1p(safe(b.get('career_damage'), 36)),
         # NEW: Opponent quality features
-        'opp_quality_diff': safe(r.get('opp_quality'), 1500) - safe(b.get('opp_quality'), 1500),
+        # Unknown schedule stays unknown; the flag below tells the model which
+        # it is, instead of a constant that means neither.
+        'opp_quality_diff': (safe(r.get('opp_quality'), np.nan)
+                             - safe(b.get('opp_quality'), np.nan)),
+        'opp_history_known': float(pd.notna(r.get('opp_quality'))
+                                   and pd.notna(b.get('opp_quality'))),
         # NEW: Weight class features (default to 0 for unknown)
         'is_womens': 0,  # Will be overridden if division info available
         'is_heavyweight': 0,  # Will be overridden if division info available
@@ -3869,8 +4061,16 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
     # Predict using PRODUCTION models
     # Winner model: feature_cols_winner (no cage control) with scaler_winner
     # Method/round/finish: full feature_cols with scaler_prod
-    X_pred = pd.DataFrame([feat])[feature_cols]
-    X_pred_winner = pd.DataFrame([feat])[feature_cols_winner]
+    feat.update(_declared_features(
+        r, b,
+        _corner_extras(r, r_age, r_exp, r_winrate, r_southpaw, r_consistency,
+                       r_skill_cons, context.get('weight_class') if context else None),
+        _corner_extras(b, b_age, b_exp, b_winrate, b_southpaw, b_consistency,
+                       b_skill_cons, context.get('weight_class') if context else None)))
+
+    _feat_frame = pd.DataFrame([feat]).replace([np.inf, -np.inf], np.nan).fillna(0)
+    X_pred = _feat_frame[feature_cols]
+    X_pred_winner = _feat_frame[feature_cols_winner]
     X_pred_s = scaler_prod.transform(X_pred)          # For method/round/finish
     X_pred_winner_s = scaler_winner.transform(X_pred_winner)  # For winner models
     
@@ -3940,7 +4140,11 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
     return {
         'red': r_resolved or red_name,
         'blue': b_resolved or blue_name,
-        'red_win_prob': p_win,
+        # Diagnostics: the win probability before each adjustment layer, so the
+        # layers can be measured against outcomes rather than assumed to help.
+        'p_ensemble': float(p_ens),          # raw LR+RF+XGB average
+        'p_platt': float(p_win_base),        # after Platt calibration
+        'red_win_prob': p_win,               # after context adjustment
         'blue_win_prob': 1 - p_win,
         'winner': (r_resolved or red_name) if p_win > 0.5 else (b_resolved or blue_name),
         'win_prob': max(p_win, 1 - p_win),
@@ -3984,7 +4188,8 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
         DataFrame with predictions
     """
     results = []
-    
+    simulations = []
+
     print(f"\n    Predicting {len(fights)} fights...")
     
     for i, fight in enumerate(fights):
@@ -4019,6 +4224,18 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
             'Round': pred['round'],
             'Round%': f"{pred['round_prob']*100:.1f}%",
         })
+
+        # The simulation layer. Reported BESIDE the model, never instead of it:
+        # standalone it picks winners at AUC 0.559 against the model's 0.66.
+        # What it is the only source for is how the fight ends.
+        simulations.append((
+            f"{pred['red']} vs {pred['blue']}",
+            summarise(
+                simulate_matchup(fighter_stats.get(_norm_name(pred['red']), {}),
+                                 fighter_stats.get(_norm_name(pred['blue']), {}),
+                                 rounds=5 if is_5rnd else 3),
+                pred['red'], pred['blue']),
+        ))
     
     df = pd.DataFrame(results)
     
@@ -4036,8 +4253,46 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
     
     print(df.to_string(index=False))
     print(f"{'='*120}\n")
-    
+
+    _print_simulations(simulations)
+
+    # Handed to the app export at the end of the run, so the phone shows the
+    # same simulation that was printed rather than a second one that could
+    # disagree with it.
+    global _card_simulations
+    _card_simulations = simulations
+
     return df
+
+
+def _print_simulations(simulations):
+    """The Monte Carlo layer, printed under the table it does not replace."""
+    if not simulations:
+        return
+    print(f"{'='*120}")
+    print(f"  SIMULATION - each matchup run {CARD_SIMULATIONS:,} times from "
+          f"both fighters' measured rates")
+    print("  Reported beside the model, not instead of it: on its own this "
+          "picks winners at AUC 0.559")
+    print("  against the model's 0.66. Where it is the only source is method, "
+          "round and duration.")
+    print("  It finishes 55% of fights where the sport finishes 47%, so read "
+          "a DEC call as firmer")
+    print("  than it looks and a SUB call as softer.")
+    print(f"{'='*120}")
+    for label, summary in simulations:
+        print(f"  {label}")
+        print(format_line(summary))
+        if summary is None:
+            continue
+        parts = " ".join(f"R{i+1} {p*100:.0f}%"
+                         for i, p in enumerate(summary["finish_by_round"]))
+        print(f"      finish by round: {parts}"
+              f"   decision {summary['decision_share']*100:.0f}%")
+        assumed = set(summary["imputed_red"]) | set(summary["imputed_blue"])
+        if assumed:
+            print(f"      assumed from the league: {', '.join(sorted(assumed))}")
+    print(f"{'='*120}\n")
 
 # ============================================================================
 # FIGHT CARD INPUT
@@ -4119,6 +4374,11 @@ from difflib import SequenceMatcher
 # Get a free key at https://the-odds-api.com/
 ODDS_API_KEY = os.environ.get("ODDS_API_KEY", "")
 
+# What the last call returned, for the cache. Empty until one is made.
+_LAST_ODDS_PAYLOAD = []
+_LAST_ODDS_STATUS = None
+_LAST_ODDS_REMAINING = None
+
 # Sportsbooks to fetch (in order of preference)
 PREFERRED_BOOKS = ['draftkings', 'fanduel', 'betmgm', 'caesars', 'pointsbetus', 'bovada', 'betonlineag']
 
@@ -4147,8 +4407,14 @@ def fetch_mma_odds(api_key=None):
         'oddsFormat': 'american'
     }
 
+    global _LAST_ODDS_PAYLOAD, _LAST_ODDS_STATUS, _LAST_ODDS_REMAINING
     try:
         response = requests.get(url, params=params, timeout=10)
+        _LAST_ODDS_STATUS = response.status_code
+        # The quota rides on every response and nothing was reading it, so a
+        # spent balance would have shown up as a card that quietly had no
+        # prices rather than as anything anyone could act on.
+        _LAST_ODDS_REMAINING = response.headers.get("x-requests-remaining")
 
         if response.status_code == 401:
             print("  [Odds] Invalid API key")
@@ -4161,6 +4427,9 @@ def fetch_mma_odds(api_key=None):
             return None
 
         data = response.json()
+        # Kept whole so the cache stores what the API actually said, rather
+        # than a re-derivation of the parsed form below.
+        _LAST_ODDS_PAYLOAD = data
 
         # Parse into fighter -> odds mapping
         odds_data = {}
@@ -4227,7 +4496,10 @@ def fetch_mma_odds(api_key=None):
         return odds_data
 
     except requests.RequestException as e:
-        print(f"  [Odds] Network error: {e}")
+        # requests embeds the full URL - api key and all - in its exception
+        # text, so the key is taken out before anything is printed.
+        detail = str(e).replace(key, "<redacted>") if key else str(e)
+        print(f"  [Odds] Network error: {detail}")
         return None
 
 def american_to_implied_prob(american_odds):
@@ -4244,41 +4516,71 @@ def implied_prob_to_american(prob):
     else:
         return int(100 * (1 - prob) / prob)
 
+# A SURNAME IS NOT AN IDENTITY, and treating it as one priced the wrong
+# fighter. The previous rule accepted any odds entry sharing a last name if the
+# whole-string similarity cleared 0.5, which on a card carrying Bruno Silva
+# matched Anderson Silva at 0.64, Jean Silva at 0.67 and Erick Silva at 0.64.
+# The dataset itself contains two different fighters named Bruno Silva.
+#
+# That is not a near miss. The edge and value columns would have been computed
+# against a price belonging to somebody else, and a fabricated edge looks
+# exactly like a real one. It stayed harmless only because no odds key was ever
+# set; it becomes live the moment one is.
+#
+# So a match now needs the last name AND a compatible first name: equal, or one
+# an initial or prefix of the other ("Jon" for "Jonathan", "T.J." for "TJ").
+# Anything else is a different person and gets no price rather than a wrong one.
+FIRST_NAME_MIN_RATIO = 0.85
+
+
+def _names_of(text):
+    return [part for part in re.split(r"[^a-z0-9]+", text.lower()) if part]
+
+
+def _compatible_first_names(a, b):
+    """Same person, allowing for an initial or a shortened form."""
+    if a == b:
+        return True
+    if not a or not b:
+        return False
+    if a.startswith(b) or b.startswith(a):
+        return True
+    return SequenceMatcher(None, a, b).ratio() >= FIRST_NAME_MIN_RATIO
+
+
 def match_fighter_to_odds(fighter_name, odds_data):
-    """
-    Find the best match for a fighter name in odds data.
-    Uses fuzzy matching to handle name variations.
+    """The odds entry for this exact fighter, or None.
+
+    None is the right answer for an unmatched fighter: the card then shows no
+    price, which is visibly missing. A wrong price is invisible.
     """
     if not odds_data:
         return None
 
-    fighter_lower = fighter_name.lower()
-    fighter_parts = fighter_lower.split()
-
-    # Exact match
+    fighter_lower = fighter_name.lower().strip()
     if fighter_lower in odds_data:
         return odds_data[fighter_lower]
 
-    # Try last name only
-    if len(fighter_parts) > 1:
-        last_name = fighter_parts[-1]
-        for key, data in odds_data.items():
-            if last_name in key.split():
-                # Verify it's the right person by checking similarity
-                ratio = SequenceMatcher(None, fighter_lower, key).ratio()
-                if ratio > 0.5:
-                    return data
+    parts = _names_of(fighter_lower)
+    if not parts:
+        return None
+    last_name, first_name = parts[-1], parts[0]
 
-    # Fuzzy match
-    best_match = None
-    best_ratio = 0.6  # Minimum threshold
+    for key, data in odds_data.items():
+        other = _names_of(key)
+        if not other or other[-1] != last_name:
+            continue
+        if _compatible_first_names(first_name, other[0]):
+            return data
 
+    # No surname match. A whole-string near-identity is still allowed, for a
+    # spelling or accent difference, but the bar is high enough that two
+    # different people cannot clear it.
+    best_match, best_ratio = None, 0.90
     for key, data in odds_data.items():
         ratio = SequenceMatcher(None, fighter_lower, key).ratio()
         if ratio > best_ratio:
-            best_ratio = ratio
-            best_match = data
-
+            best_ratio, best_match = ratio, data
     return best_match
 
 def calculate_value(predicted_prob, american_odds):
@@ -4331,14 +4633,49 @@ def load_odds(api_key=None):
     return CURRENT_ODDS
 
 # Try to load odds if API key is set
-if ODDS_API_KEY:
-    print("\n[Odds] Fetching current MMA odds...")
-    load_odds()
-else:
+# The cache decides whether to spend a credit. One call returns every upcoming
+# MMA event, so there is no cheaper request to make - the only lever is whether
+# to call at all, and a card already priced on file needs no call.
+# ODDS_REFRESH=1 overrides it for the day of the card, when the line that
+# matters is the current one rather than the one taken ten days out.
+import odds_cache as _odds_cache
+
+_cache = _odds_cache.load()
+_card_fights = [(f[0], f[1], str(EVENT_DATE)) for f in FIGHT_CARD]
+_refresh = os.environ.get("ODDS_REFRESH", "").strip() not in ("", "0", "false")
+_should_fetch, _why = _odds_cache.decide(_card_fights, _cache, refresh=_refresh)
+
+if not ODDS_API_KEY:
     print("\n[Odds] No API key set. To enable odds:")
-    print("       1. Get free key at https://the-odds-api.com/")
-    print("       2. Set ODDS_API_KEY = 'your_key' in the notebook")
-    print("       3. Or call load_odds('your_key') to fetch")
+    print("       1. Free key at https://the-odds-api.com/")
+    print("       2. Add ODDS_API_KEY as a repository secret, or export it")
+    print("       3. Verify it with: python3 engine/check_odds.py")
+elif not _should_fetch:
+    print(f"\n[Odds] No request made - {_why}.")
+    print(f"       {len(_cache['fights']):,} fights on file. "
+          f"Set ODDS_REFRESH=1 to fetch anyway.")
+else:
+    print(f"\n[Odds] Fetching: {_why}.")
+    load_odds()
+    _parsed = _odds_cache.parse_events(_LAST_ODDS_PAYLOAD)
+    _added, _refreshed = _odds_cache.merge(_cache, _parsed)
+    _odds_cache.record_fetch(_cache, _LAST_ODDS_STATUS, len(_parsed),
+                             _LAST_ODDS_REMAINING)
+    print(f"       {_added} new, {_refreshed} already known. "
+          f"Credits left: {_LAST_ODDS_REMAINING or 'unknown'}")
+
+# Serve the card from the cache, so a fight priced on an earlier run is still
+# priced on this one without another call.
+if _cache["fights"]:
+    CURRENT_ODDS = _odds_cache.as_current_odds(_cache, CURRENT_ODDS)
+
+# A settled fight's line can never change, so it graduates into the historical
+# file the backtest reads. odds.csv has no 2025 prices at all; every card
+# watched from here fills that gap instead of being thrown away with the runner.
+_new_history = _odds_cache.flush_settled(_cache)
+if _new_history:
+    print(f"       {_new_history} settled fights added to odds.csv")
+_odds_cache.save(_cache)
 
 
 
@@ -4819,6 +5156,10 @@ for i, fight in enumerate(FIGHT_CARD):
     # Store for summary
     bet_analysis.append({
         'fight_num': i + 1,
+        # Carried rather than re-derived: the prediction dict does not keep it,
+        # and the app export read a 5-round main event as a 3-round bout.
+        'is_5rnd': bool(is_5rnd),
+        'is_title': bool(is_title),
         'matchup': f"{pred['red'].split()[-1]} vs {pred['blue'].split()[-1]}",
         'pick': pred['winner'].split()[-1],
         'prob': pred['win_prob'],
@@ -5012,3 +5353,57 @@ print(f"Refused (no data):      {len(skipped_fights)}")
 print(f"Model training data: {len(X_train_full):,} fights (90% of dataset)")
 print(f"Dataset end date: {ufc_valid['date'].max().date()}")
 print(f"{'='*70}")
+
+# ============================================================================
+# APP EXPORT
+# ============================================================================
+# The only thing that crosses from this engine to the phone. Written last, so
+# it carries whatever the run actually produced rather than a second
+# computation that could disagree with what was printed above.
+
+import app_export as _app_export
+
+_app_fights = []
+for _ba in bet_analysis:
+    _pred = _ba['pred_full']
+    _vi = _ba.get('value_info') or {}
+    _sim = None
+    for _label, _summary in _card_simulations:
+        if _label == f"{_pred['red']} vs {_pred['blue']}":
+            _sim = _summary
+            break
+    _app_fights.append({
+        'number': _ba['fight_num'],
+        'red': _pred['red'],
+        'blue': _pred['blue'],
+        'pick': _pred['winner'],
+        'win_prob': _pred['win_prob'],
+        'confidence': _ba.get('calibrated_conf', _pred.get('confidence')),
+        'method': _pred.get('method'),
+        'method_prob': _pred.get('method_prob'),
+        'round': _pred.get('round'),
+        'recommendation': _ba.get('recommendation'),
+        'parlay_tier': _ba.get('parlay_tier'),
+        'odds': _vi.get('best_odds'),
+        'edge': _vi.get('edge'),
+        'rounds_scheduled': 5 if _ba.get('is_5rnd') else 3,
+        'title_fight': bool(_ba.get('is_title')),
+        'simulation': _sim,
+    })
+
+_app_card = _app_export.card_payload(
+    EVENT_NAME, str(EVENT_DATE),
+    _app_fights,
+    # skipped_fights carries 'matchup' and a LIST of 'problems'; reading it as
+    # 'fight'/'reason' silently exported a pair of nulls and the app showed a
+    # refusal with no fighters and no reason, which is worse than not showing
+    # it - the reason is usually a misspelling the user can fix.
+    skipped=[{'fight': _s.get('matchup'),
+              'reason': ' '.join(_s.get('problems') or []) or None}
+             for _s in skipped_fights],
+    parlays=_app_export.parlay_payload(parlay_candidates),
+    dataset_end=str(ufc_valid['date'].max().date()),
+    trained_on=int(len(X_train_full)))
+
+for _path in _app_export.write_all(APP_DATA_DIR, {'card': _app_card}):
+    print(f"\nApp data: {_path}")

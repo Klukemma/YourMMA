@@ -5,10 +5,33 @@ name: Update UFC dataset
 on:
   workflow_dispatch:
     inputs:
+      mode:
+        description: "inspect = report upstream schema only; sync = merge new fights"
+        type: choice
+        options: [sync, predict, check-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
+        default: sync
       dry_run:
-        description: "Report what would change without committing"
+        description: "sync only: report what would change without committing"
         type: boolean
         default: false
+      experiment:
+        description: "experiment mode: which engine/experiments/*.py to run"
+        type: choice
+        options:
+          - historical_backtest
+          - feature_health
+          - adversarial_rows
+          - stale_form
+          - auc_by_year
+          - feature_pruning
+          - feature_audit
+          - meta_model
+          - recalibration
+          - calibration_selection
+          - calibrator_mismatch
+          - adjustment_ablation
+          - live_flags
+        default: stale_form
   schedule:
     - cron: "0 6 * * MON"   # Mondays 06:00 UTC, after the weekend's cards
 
@@ -32,25 +55,70 @@ jobs:
       - name: Sync from Kaggle
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          # Without this the engine still predicts; the odds, edge and value
+          # columns simply stay empty. The secret was never passed through, so
+          # they had been empty on every run regardless of whether a key
+          # existed. Free key at https://the-odds-api.com/
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          PREDICTIONS_LOG: /tmp/experiment_scratch.json
+        # pipefail matters: without it the step's status is tee's, so a failing
+        # sync reports green.
         run: |
+          set -o pipefail
           if [ -z "$KAGGLE_API_TOKEN" ]; then
             echo "::error::KAGGLE_API_TOKEN secret is not set."
             echo "Add it under Settings -> Secrets and variables -> Actions."
             exit 1
           fi
-          python engine/sync_kaggle.py sync \
-            ${{ inputs.dry_run && '--dry-run' || '' }} | tee sync.log
+          if [ "${{ inputs.mode }}" = "describe-odds" ]; then
+            # Reads the provider's response shape off a real call, because
+            # their docs are unreachable from the sandbox this is written in.
+            python engine/describe_odds_api.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "check-odds" ]; then
+            # One request, so a key can be verified without predicting a card.
+            python engine/check_odds.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "predict" ]; then
+            # The only mode that produces a fresh card for the app. Odds are
+            # fetched here or not at all: the runner has open internet, and
+            # a live price cannot be carried in the dataset.
+            if [ -z "$ODDS_API_KEY" ]; then
+              echo "::warning::ODDS_API_KEY is not set - the card will have no"
+              echo "::warning::odds, edge or value. Add it under Settings ->"
+              echo "::warning::Secrets and variables -> Actions."
+            fi
+            python engine/predict_card.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "experiment" ]; then
+            # Model experiments need ~10 uninterrupted minutes, which the dev
+            # container cannot give: it suspends between turns and kills them.
+            python engine/experiments/${{ inputs.experiment }}.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "backtest" ]; then
+            python engine/backtest.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "fetch-odds-history" ]; then
+            python engine/sync_kaggle.py fetch-odds-history \
+              ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "repair" ]; then
+            python engine/sync_kaggle.py repair \
+              ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" != "sync" ]; then
+            python engine/sync_kaggle.py "${{ inputs.mode }}" 2>&1 | tee sync.log
+          else
+            python engine/sync_kaggle.py sync \
+              ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee sync.log
+          fi
 
       - name: Verify the dataset still loads and ratings are consistent
-        if: ${{ !inputs.dry_run }}
+        if: ${{ (inputs.mode == 'sync' || inputs.mode == 'repair' || inputs.mode == 'fetch-odds' || inputs.mode == 'fetch-odds-history') && !inputs.dry_run }}
         run: |
           pip install pytest
           python -m pytest engine/tests/ -q
 
       - name: Commit the updated dataset
-        if: ${{ !inputs.dry_run }}
+        if: ${{ (inputs.mode == 'sync' || inputs.mode == 'repair' || inputs.mode == 'fetch-odds' || inputs.mode == 'fetch-odds-history') && !inputs.dry_run }}
         run: |
-          if git diff --quiet -- engine/data/; then
+          # --porcelain sees untracked files; `git diff` does not, so a
+          # brand-new file (data/odds.csv) reported "nothing to commit" and
+          # was discarded with the runner.
+          if [ -z "$(git status --porcelain -- engine/data/)" ]; then
             echo "No dataset changes to commit."
             exit 0
           fi
@@ -58,8 +126,56 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add engine/data/
           THROUGH=$(python -c "import pandas as pd;d=pd.read_csv('engine/data/UFC_with_mmr_rebuilt_dedup.csv',usecols=['date'],low_memory=False);print(pd.to_datetime(d['date']).max().date())")
-          NEW=$(grep -oP 'New fights: \K[0-9,]+' sync.log || echo "?")
-          git commit -m "Update UFC dataset: +${NEW} fights through ${THROUGH}"
+          if [ "${{ inputs.mode }}" = "fetch-odds-history" ]; then
+            PRICED=$(grep -oP 'priced fights: \K[0-9,]+' sync.log || echo "?")
+            git commit -m "Add historical moneylines: ${PRICED} priced fights"
+          elif [ "${{ inputs.mode }}" = "repair" ]; then
+            FILLED=$(grep -oP 'Cells filled\s+: \K[0-9,]+' sync.log || echo "?")
+            ROWS=$(grep -oP 'Fully repaired\s+: \K[0-9,]+' sync.log || echo "?")
+            git commit -m "Repair ${ROWS} bouts with missing statistics (${FILLED} cells)"
+          else
+            NEW=$(grep -oP 'New fights: \K[0-9,]+' sync.log || echo "?")
+            git commit -m "Update UFC dataset: +${NEW} fights through ${THROUGH}"
+          fi
+          git push
+
+      # The phone app reads these files. Rebuilt whenever the dataset or the
+      # experiment output moved, so the app never shows numbers from a data
+      # pull two weeks older than the one the engine is using.
+      - name: Refresh the app data
+        if: ${{ !inputs.dry_run }}
+        run: python engine/build_app_data.py
+
+      # predict mode writes app/data/card.json itself, at the end of the run.
+      - name: Commit the app data
+        if: ${{ !inputs.dry_run }}
+        run: |
+          if [ -z "$(git status --porcelain -- app/data/)" ]; then
+            echo "App data unchanged."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/data/
+          if [ "${{ inputs.mode }}" = "predict" ]; then
+            PRICED=$(grep -c 'best_odds' app/data/card.json || echo 0)
+            git commit -m "Refresh app data: new card, ${PRICED} priced picks"
+          else
+            git commit -m "Refresh app data"
+          fi
+          git push
+
+      - name: Commit experiment output
+        if: ${{ inputs.mode == 'experiment' || inputs.mode == 'backtest' }}
+        run: |
+          if [ -z "$(git status --porcelain -- engine/experiments/)" ]; then
+            echo "No experiment output to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add engine/experiments/
+          git commit -m "Results: ${{ inputs.mode == 'backtest' && 'backtest' || inputs.experiment }}"
           git push
 
       - name: Upload sync log

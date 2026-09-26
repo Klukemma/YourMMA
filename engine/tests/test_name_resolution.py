@@ -34,27 +34,56 @@ def resolver():
 
 
 # --- the regression that started this ------------------------------------
+#
+# These pin the BEHAVIOUR, not the contents of the CSV. The original bug was
+# found via "Leon Shahbazyan", who was absent from the data at the time and so
+# resolved to "Cameron Saaiman" (ratio 0.60) because candidates were sorted
+# alphabetically instead of by match quality - "Edmen Shahbazyan" (0.84) was in
+# the same list, one position lower.
+#
+# Asserting that those particular names are absent would tie the test to a
+# snapshot of the dataset: once a data sync adds them, the test fails while the
+# code is still correct. That is exactly what happened. So the roster is built
+# here instead.
 
-def test_unknown_fighter_is_refused_not_substituted(resolver):
-    """'Leon Shahbazyan' used to silently resolve to 'Cameron Saaiman'."""
-    res = resolver.resolve("Leon Shahbazyan")
+BUG_ROSTER = ["Edmen Shahbazyan", "Cameron Saaiman", "Levan Makashvili",
+              "Shane Carwin", "Shane Howell", "Shane Roller", "Jared Rollins"]
+
+
+@pytest.fixture(scope="module")
+def bug_resolver():
+    return NameResolver(names=BUG_ROSTER)
+
+
+def test_unknown_fighter_is_refused_not_substituted(bug_resolver):
+    res = bug_resolver.resolve("Leon Shahbazyan")
     assert res["status"] == "NOT_FOUND"
     assert res["name"] is None
 
 
-def test_suggestions_are_ranked_by_quality_not_alphabetically(resolver):
-    """The old code sorted candidates A-Z, so 0.60 beat 0.84."""
-    res = resolver.resolve("Leon Shahbazyan")
+def test_suggestions_are_ranked_by_quality_not_alphabetically(bug_resolver):
+    """The exact ordering bug: 0.60 must not beat 0.84 on alphabetical order."""
+    res = bug_resolver.resolve("Leon Shahbazyan")
     names = [n for _, n in res["suggestions"]]
-    assert "Edmen Shahbazyan" in names
     assert names[0] == "Edmen Shahbazyan", f"best match should lead, got {names}"
-    if "Cameron Saaiman" in names:
-        assert names.index("Edmen Shahbazyan") < names.index("Cameron Saaiman")
+    assert names.index("Edmen Shahbazyan") < names.index("Cameron Saaiman")
 
 
 @pytest.mark.parametrize("typed", ["Levan Chokheli", "Shane Collins"])
-def test_other_known_bad_cards_are_refused(resolver, typed):
-    assert resolver.resolve(typed)["status"] == "NOT_FOUND"
+def test_other_names_from_that_card_are_refused(bug_resolver, typed):
+    assert bug_resolver.resolve(typed)["status"] == "NOT_FOUND"
+
+
+def test_failure_message_includes_suggestions(bug_resolver):
+    res = bug_resolver.resolve("Leon Shahbazyan")
+    msg = format_failure("Leon Shahbazyan", res)
+    assert "NO DATA" in msg and "Did you mean" in msg
+
+
+def test_a_name_absent_from_any_roster_is_refused(resolver):
+    """Against the real dataset, using a name no sync will ever add."""
+    res = resolver.resolve("Zzzqqq Notarealfighter")
+    assert res["status"] == "NOT_FOUND" and res["name"] is None
 
 
 # --- names that must still work -------------------------------------------
@@ -152,7 +181,3 @@ def test_search_on_empty_query(resolver):
     assert resolver.search("") == []
 
 
-def test_failure_message_includes_suggestions(resolver):
-    res = resolver.resolve("Leon Shahbazyan")
-    msg = format_failure("Leon Shahbazyan", res)
-    assert "NO DATA" in msg and "Did you mean" in msg
