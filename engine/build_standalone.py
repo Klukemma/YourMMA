@@ -59,8 +59,24 @@ def strip_modules(matchup_js, app_js):
     return matchup, app
 
 
+# The served page links a manifest and icon files. A file:// page cannot
+# resolve either, and a broken manifest link is worse than none: it is what
+# the browser reads before deciding whether to offer Add to Home Screen. The
+# meta tags stay - they are self-contained and iOS reads them.
+NEIGHBOUR_LINKS = re.compile(
+    r'^[ \t]*<link rel="(?:manifest|icon|apple-touch-icon)"[^>]*>\n',
+    flags=re.MULTILINE)
+
+
+def drop_neighbour_links(html):
+    stripped = NEIGHBOUR_LINKS.sub("", html)
+    if 'rel="manifest"' in stripped:
+        raise ValueError("index.html links a manifest this cannot strip")
+    return stripped
+
+
 def build(out=OUT):
-    html = (APP / "index.html").read_text()
+    html = drop_neighbour_links((APP / "index.html").read_text())
     matchup, app = strip_modules((APP / "matchup.js").read_text(),
                                  (APP / "app.js").read_text())
 
