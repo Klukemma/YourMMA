@@ -62,6 +62,45 @@ const TAG_TONE = {
   RISKY: "warn", AVOID: "warn", LOCK: "good", STRONG: "good", VALUE: "warn",
 };
 
+
+/* --------------------------------------------------- the second layer */
+// A separate model, fitted only on bets that had already settled, guessing
+// whether each pick is wrong. Above DOUBT_FLAG it is saying the pick is more
+// likely wrong than right; below DOUBT_CLEAR it is as close to a vote of
+// confidence as this project is willing to print.
+const DOUBT_FLAG = 0.5;
+const DOUBT_CLEAR = 0.4;
+const doubtTone = (p) => (p >= DOUBT_FLAG ? "warn" : p <= DOUBT_CLEAR ? "good" : "flat");
+
+function doubtCard(fights, caveat) {
+  const scored = fights.filter((f) => f.p_fail != null);
+  const unscored = fights.length - scored.length;
+  if (!scored.length) {
+    return `<div class="note"><b>No second-layer check on this card.</b>
+      Most of what it reads is the gap between this model and the market, so
+      it cannot run on fights nobody has priced.</div>`;
+  }
+  const ranked = [...scored].sort((a, b) => b.p_fail - a.p_fail);
+  const flagged = ranked.filter((f) => f.p_fail >= DOUBT_FLAG);
+
+  const row = (f) => `<li>
+      <b>${esc(f.pick)}</b> <span class="mini">over ${esc(f.pick === f.red ? f.blue : f.red)}</span>
+      <span class="num ${doubtTone(f.p_fail)}">${Math.round(f.p_fail * 100)}%</span>
+    </li>`;
+
+  return `<div class="card">
+    <h2 style="font-size:18px">Which of these is it likely to get wrong?</h2>
+    <div class="mini">Chance each pick is wrong, most doubtful first.</div>
+    <ul class="plain doubt">${ranked.map(row).join("")}</ul>
+    <div class="mini">${flagged.length
+      ? `<b>${flagged.length} flagged</b> — the layer rates ${
+          flagged.length === 1 ? "this one" : "these"} more likely wrong than right.`
+      : `<b>Nothing flagged.</b> No pick on this card is rated more likely wrong than right.`}${
+      unscored ? ` ${unscored} not scored — no price to read.` : ""}</div>
+    ${caveat ? `<div class="note" style="margin-top:10px">${esc(caveat)}</div>` : ""}
+  </div>`;
+}
+
 function boutRow(f) {
   const p = f.win_prob;
   const redPicked = f.pick === f.red;
@@ -85,6 +124,13 @@ function boutRow(f) {
     tags.push(`<span class="tag flat">5 rounds</span>`);
   if (f.odds != null)
     tags.push(`<span class="tag flat num">${f.odds > 0 ? "+" : ""}${f.odds}</span>`);
+  // The second layer. Shown on every scored pick, not only the flagged ones:
+  // "the model thinks it is right about this" is information too. A pick it
+  // could not score gets no tag at all rather than a reassuring one.
+  if (f.p_fail != null)
+    tags.push(`<span class="tag ${doubtTone(f.p_fail)} num"
+      title="A second model's estimate that this pick is wrong">
+      ${Math.round(f.p_fail * 100)}% wrong</span>`);
 
   let detail = "";
   if (sim) {
@@ -188,6 +234,7 @@ BOOT.card = async () => {
         d.trained_on ? ` · model trained on ${d.trained_on.toLocaleString()} fights` : ""}</div>
     </div>
     <div class="note warnbox">${esc(d.caveats.model)}</div>
+    ${doubtCard(d.fights, d.caveats.flag)}
     <div class="bouts">${d.fights.map(boutRow).join("")}</div>
     ${skipped}
     ${parlayCard(d.parlays, d.caveats.parlay)}

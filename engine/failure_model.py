@@ -85,6 +85,30 @@ COLUMNS = ["model_p", "confidence", "market_fair", "disagreement",
            "backing_underdog"]
 
 
+def fit(history, min_train=MIN_TRAIN):
+    """Fit the flagger on settled bets. None when there is too little to fit.
+
+    `history` is (bet, features) pairs whose bets carry a `won` flag. Returning
+    None rather than a model is the point: a flagger fitted on twenty bets, or
+    on twenty bets that all won, would still produce a confident percentage for
+    every fight on the card, and that percentage would be noise.
+    """
+    if len(history) < min_train:
+        return None
+    y = np.array([0.0 if b["won"] else 1.0 for b, _ in history])
+    if len(np.unique(y)) < 2:
+        return None
+    X = pd.DataFrame([f for _, f in history])[COLUMNS]
+    model = LogisticRegression(max_iter=1000)
+    model.fit(X, y)
+    return model
+
+
+def score(model, feat):
+    """Probability that a pick with these features is wrong."""
+    return float(model.predict_proba(pd.DataFrame([feat])[COLUMNS])[0, 1])
+
+
 def walk_forward_flags(bets, odds_index, threshold=FLAG_THRESHOLD,
                        min_train=MIN_TRAIN):
     """Flag the picks a model trained on earlier bets expects to fail.
@@ -101,24 +125,49 @@ def walk_forward_flags(bets, odds_index, threshold=FLAG_THRESHOLD,
 
     flagged, rows = set(), []
     for i, (bet, feat) in enumerate(usable):
-        history = usable[:i]
-        # Only bets that had settled before this one, and only if there are
-        # enough of them and both outcomes are present.
-        if len(history) < min_train:
+        # Only bets that had settled before this one - the same fit the live
+        # card gets, given only the history that existed at the time.
+        model = fit(usable[:i], min_train=min_train)
+        if model is None:
             continue
-        X = pd.DataFrame([f for _, f in history])[COLUMNS]
-        y = np.array([0.0 if b["won"] else 1.0 for b, _ in history])
-        if len(np.unique(y)) < 2:
-            continue
-        model = LogisticRegression(max_iter=1000)
-        model.fit(X, y)
-        p_fail = float(model.predict_proba(
-            pd.DataFrame([feat])[COLUMNS])[0, 1])
+        p_fail = score(model, feat)
         rows.append({"key": key_of(bet), "date": bet["date"],
                      "p_fail": p_fail, "actually_failed": not bet["won"]})
         if p_fail >= threshold:
             flagged.add(key_of(bet))
     return flagged, rows
+
+
+def live_flags(picks, odds_index, settled, min_train=MIN_TRAIN):
+    """Score tonight's picks against every bet that has already settled.
+
+    This is the layer running where it was always meant to and never had:
+    on a card nobody knows the result of. `picks` are live picks carrying
+    pick/opponent/date/win_probability/confidence; `settled` are past bets
+    carrying the same plus `won`.
+
+    Returns {key_of(pick): p_fail}. A pick is absent rather than guessed when
+    it has no price - three of the five features are market-derived, and the
+    measurement that said so is in this module's docstring. Absent, not 0.5:
+    the app must be able to tell "the layer says this one is safe" from "the
+    layer could not run".
+    """
+    history = []
+    for bet in sorted(settled, key=lambda b: pd.to_datetime(b["date"])):
+        feat = features(bet, odds_index)
+        if feat is not None:
+            history.append((bet, feat))
+
+    model = fit(history, min_train=min_train)
+    if model is None:
+        return {}
+
+    out = {}
+    for pick in picks:
+        feat = features(pick, odds_index)
+        if feat is not None:
+            out[key_of(pick)] = score(model, feat)
+    return out
 
 
 def flag_quality(rows):

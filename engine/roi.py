@@ -65,6 +65,23 @@ def probability_to_american(p):
     return round(100 * (1 - p) / p)
 
 
+def index_odds(rows, into=None):
+    """{(norm_a, norm_b): [(date, odds_a, odds_b)]}, both corner orders.
+
+    `rows` are (date, fighter_a, fighter_b, odds_a, odds_b) tuples. Passing
+    `into` adds to an existing index, which is how a live card's prices join
+    the historical file: the second layer fits on settled bets from odds.csv
+    and then scores tonight's fights, and find_odds takes one index, not two.
+    """
+    index = into if into is not None else {}
+    for date, a, b, odds_a, odds_b in rows:
+        ka, kb = norm_name(a), norm_name(b)
+        date = pd.to_datetime(date)
+        index.setdefault((ka, kb), []).append((date, odds_a, odds_b))
+        index.setdefault((kb, ka), []).append((date, odds_b, odds_a))
+    return index
+
+
 def load_odds(path):
     """{(norm_a, norm_b): [(date, odds_a, odds_b)]}, both corner orders."""
     df = pd.read_csv(path)
@@ -73,12 +90,9 @@ def load_odds(path):
     if missing:
         sys.exit(f"odds file is missing columns: {sorted(missing)}")
     df['date'] = pd.to_datetime(df['date'], errors='coerce')
-    index = {}
-    for row in df.itertuples(index=False):
-        a, b = norm_name(row.fighter_a), norm_name(row.fighter_b)
-        index.setdefault((a, b), []).append((row.date, row.odds_a, row.odds_b))
-        index.setdefault((b, a), []).append((row.date, row.odds_b, row.odds_a))
-    return index
+    return index_odds(
+        (r.date, r.fighter_a, r.fighter_b, r.odds_a, r.odds_b)
+        for r in df.itertuples(index=False))
 
 
 def find_odds(bet, odds_index):
