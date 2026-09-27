@@ -118,6 +118,15 @@ def main():
     print(f"\n{len(bets):,} predictions across "
           f"{FIRST_PREDICTED_YEAR}-{max(b['year'] for b in bets)}")
 
+    # These rows are the second layer's training set, and they are written here
+    # because here is the only place they exist honestly: every one was
+    # predicted by a model that had not seen its year. predict_card.py fits the
+    # live flagger on this file. Recomputing it inside a card run would mean
+    # walking the model forward across sixteen years to flag twelve fights.
+    settled = ENGINE / "experiments" / "settled_bets.csv"
+    pd.DataFrame(bets).to_csv(settled, index=False)
+    print(f"wrote {settled} ({len(bets):,} settled bets)")
+
     odds_index = load_odds(ODDS)
     priced, unpriced = settle_all(strategy_model(bets), odds_index)
     print(f"priced against real odds: {len(priced):,}   "

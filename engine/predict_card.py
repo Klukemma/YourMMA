@@ -5391,6 +5391,121 @@ for _ba in bet_analysis:
         'simulation': _sim,
     })
 
+# ------------------------------------------------------------------ 2c
+# THE SECOND LAYER, ON A CARD NOBODY KNOWS THE RESULT OF.
+#
+# failure_model has always worked and has always been measured - its flags
+# score about 0.70 where 0.5 is a coin toss - and until now it had never once
+# run on a prediction anybody would see. Three of its five features are
+# market-derived, so it needed a priced card, and there were no live prices.
+# There are now.
+#
+# It fits on settled_bets.csv: walk-forward predictions, each made by a model
+# that had not seen its year, written by experiments/historical_backtest.py.
+# Fitting on anything else here would mean walking the model forward across
+# sixteen years to flag twelve fights.
+#
+# A fight is left UNFLAGGED rather than given 0.5 when it has no price or when
+# the history is too thin to fit. The app has to be able to tell "the layer
+# says this one looks safe" from "the layer could not run", and a default of
+# 0.5 destroys that distinction while looking like an answer.
+import failure_model as _failure
+import roi as _roi
+import strategies as _strategies
+
+_flag_scores, _flag_note, _flag_quality = {}, None, None
+_settled_path = Path(__file__).resolve().parent / "experiments" / "settled_bets.csv"
+
+if not _settled_path.exists():
+    _flag_note = ("no settled-bet history on disk; run "
+                  "experiments/historical_backtest.py to write settled_bets.csv")
+else:
+    _settled_df = pd.read_csv(_settled_path)
+    _settled_bets = _settled_df.to_dict("records")
+
+    # One index carrying both the historical prices the fit needs and
+    # tonight's, because find_odds takes one.
+    _odds_csv = _odds_cache.ODDS_CSV
+    _flag_index = _roi.load_odds(_odds_csv) if _odds_csv.exists() else {}
+    _live_rows = []
+    for _ba in bet_analysis:
+        _pred = _ba['pred_full']
+        _vi = _ba.get('value_info') or {}
+        _pick = _pred['winner']
+        _opp = _pred['blue'] if _pick == _pred['red'] else _pred['red']
+        _opp_vi = (analyze_fight_value(_pred, _opp, CURRENT_ODDS)
+                   if CURRENT_ODDS else None) or {}
+        if _vi.get('best_odds') is not None and _opp_vi.get('best_odds') is not None:
+            _live_rows.append((EVENT_DATE, _pick, _opp,
+                               _vi['best_odds'], _opp_vi['best_odds']))
+    _roi.index_odds(_live_rows, into=_flag_index)
+
+    _live_picks = [{'date': EVENT_DATE,
+                    'pick': _ba['pred_full']['winner'],
+                    'opponent': (_ba['pred_full']['blue']
+                                 if _ba['pred_full']['winner'] == _ba['pred_full']['red']
+                                 else _ba['pred_full']['red']),
+                    'win_probability': _ba['pred_full']['win_prob'],
+                    'confidence': _ba.get('calibrated_conf',
+                                          _ba['pred_full'].get('confidence'))}
+                   for _ba in bet_analysis]
+
+    _flag_scores = _failure.live_flags(_live_picks, _flag_index, _settled_bets)
+    if not _flag_scores:
+        _flag_note = ("the layer could not run: no live prices matched, or too "
+                      "few settled bets to fit")
+    else:
+        # What the flags are worth, measured the same way the experiment
+        # measures them, so the app can show the number beside the flag rather
+        # than asking anyone to take it on trust.
+        _hist = []
+        for _b in sorted(_settled_bets, key=lambda b: pd.to_datetime(b['date'])):
+            _f = _failure.features(_b, _flag_index)
+            if _f is not None:
+                _hist.append((_b, _f))
+        _split = int(len(_hist) * 0.6)
+        _m = _failure.fit(_hist[:_split])
+        if _m is not None:
+            _flag_quality = _failure.flag_quality(
+                [{'p_fail': _failure.score(_m, _f),
+                  'actually_failed': not _b['won']} for _b, _f in _hist[_split:]])
+
+print("\n" + "=" * 70)
+print("SECOND LAYER - WHICH PICKS IS THE MODEL LIKELY TO GET WRONG")
+print("=" * 70)
+if _flag_note:
+    print(f"  Not shown: {_flag_note}")
+else:
+    print(f"  Fitted on {len(_settled_bets):,} settled bets."
+          + (f"  Flag quality {_flag_quality:.3f} (0.5 is a coin toss)."
+             if _flag_quality == _flag_quality else ""))
+    for _ba in sorted(bet_analysis,
+                      key=lambda b: -_flag_scores.get(
+                          _strategies.key_of({
+                              'date': EVENT_DATE,
+                              'pick': b['pred_full']['winner'],
+                              'opponent': (b['pred_full']['blue']
+                                           if b['pred_full']['winner'] == b['pred_full']['red']
+                                           else b['pred_full']['red'])}), -1)):
+        _pred = _ba['pred_full']
+        _opp = _pred['blue'] if _pred['winner'] == _pred['red'] else _pred['red']
+        _pf = _flag_scores.get(_strategies.key_of(
+            {'date': EVENT_DATE, 'pick': _pred['winner'], 'opponent': _opp}))
+        if _pf is None:
+            print(f"  {_pred['winner']:24s} no price - not scored")
+        else:
+            print(f"  {_pred['winner']:24s} {_pf:6.1%} chance this pick is wrong"
+                  + ("   <-- FLAGGED" if _pf >= _failure.FLAG_THRESHOLD else ""))
+
+
+# Onto what the phone gets. A fight the layer could not score keeps p_fail
+# absent, which the app renders as "not scored" rather than as a safe pick.
+for _fight in _app_fights:
+    _p = _fight['pick']
+    _o = _fight['blue'] if _p == _fight['red'] else _fight['red']
+    _fight['p_fail'] = _flag_scores.get(
+        _strategies.key_of({'date': EVENT_DATE, 'pick': _p, 'opponent': _o}))
+
 _app_card = _app_export.card_payload(
     EVENT_NAME, str(EVENT_DATE),
     _app_fights,

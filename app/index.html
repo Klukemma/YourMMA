@@ -211,6 +211,17 @@ svg{display:block;max-width:100%;height:auto}
 ul.plain{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2);
   line-height:1.6}
 ul.plain li{margin-bottom:5px}
+/* The second-layer list. Teal and orange rather than green and red: the
+   green/red pair failed the deutan check at dE 4.3, this one clears 11.6. */
+ul.plain.doubt{list-style:none;padding-left:0;margin-top:8px}
+ul.plain.doubt li{display:flex;align-items:baseline;gap:8px;margin-bottom:0;
+  padding:6px 0;border-bottom:1px solid var(--line-soft)}
+ul.plain.doubt li:last-child{border-bottom:0}
+ul.plain.doubt li b{color:var(--ink)}
+ul.plain.doubt li .num{margin-left:auto;font-weight:600;font-size:14.5px}
+ul.plain.doubt .num.warn{color:var(--loss)}
+ul.plain.doubt .num.good{color:var(--gain)}
+ul.plain.doubt .num.flat{color:var(--ink-3)}
 @media (prefers-reduced-motion:no-preference){
   .bout{transition:border-color .15s ease}
 }

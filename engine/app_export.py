@@ -34,6 +34,14 @@ SIMULATION_CAVEAT = (
     "where the sport finishes 47% - read DEC as firmer and SUB as softer."
 )
 
+FLAG_CAVEAT = (
+    "A second model, fitted only on bets that had already settled, guessing "
+    "whether each pick is wrong. Its flags score about 0.70 where 0.5 is a "
+    "coin toss - real, not decisive. Most of what it reads is the gap between "
+    "this model and the market, so a fight nobody has priced cannot be "
+    "scored and is shown as such rather than assumed safe."
+)
+
 PARLAY_CAVEAT = (
     "Combined probability multiplies the legs, which assumes the fights are "
     "independent; they are not quite. Backtested on the confirm period, "
@@ -92,6 +100,9 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
             "parlay_tier": fight.get("parlay_tier"),
             "odds": fight.get("odds"),
             "edge": _clean(fight.get("edge")),
+            # The second layer. Absent, never 0.5, when it could not run: the
+            # app must be able to tell a safe-looking pick from an unscored one.
+            "p_fail": _clean(fight.get("p_fail")),
             "rounds_scheduled": fight.get("rounds_scheduled"),
             "title_fight": bool(fight.get("title_fight")),
             "simulation": _simulation_payload(simulation),
@@ -106,7 +117,7 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
         "skipped": [{"fight": s.get("fight"), "reason": s.get("reason")}
                     for s in skipped],
         "caveats": {"model": MODEL_CAVEAT, "simulation": SIMULATION_CAVEAT,
-                    "parlay": PARLAY_CAVEAT},
+                    "parlay": PARLAY_CAVEAT, "flag": FLAG_CAVEAT},
         "parlays": parlays or [],
     }
 

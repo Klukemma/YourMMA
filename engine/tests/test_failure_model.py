@@ -15,7 +15,8 @@ import pytest
 ENGINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ENGINE))
 
-from failure_model import COLUMNS, features, flag_quality, walk_forward_flags
+from failure_model import (COLUMNS, MIN_TRAIN, features, fit, flag_quality,
+                           live_flags, score, walk_forward_flags)
 from strategies import key_of
 
 
@@ -147,3 +148,108 @@ def test_too_few_scored_picks_makes_no_claim():
 def test_all_one_outcome_makes_no_claim():
     rows = [{"p_fail": 0.5, "actually_failed": True} for _ in range(30)]
     assert np.isnan(flag_quality(rows))
+
+
+# --- the live path ---------------------------------------------------------
+# This is the layer running where it was always meant to and never had: on a
+# card nobody knows the result of. The refusals are the point. A pick that
+# cannot be scored must come back ABSENT, not 0.5 - the app has to be able to
+# tell "rated safe" from "could not run", and a default destroys that while
+# looking like an answer.
+
+def _synthetic(n=200, seed=5):
+    """A market that is roughly right and a model that drifts off it."""
+    rng = np.random.default_rng(seed)
+    pairs, settled = {}, []
+    for i in range(n):
+        a, b = f"Alpha{i}", f"Beta{i}"
+        true_p = float(rng.uniform(0.3, 0.7))
+        mine = -round(100 * true_p / (1 - true_p)) if true_p >= 0.5 \
+            else round(100 * (1 - true_p) / true_p)
+        theirs = -round(100 * (1 - true_p) / true_p) if true_p >= 0.5 \
+            else round(100 * true_p / (1 - true_p))
+        pairs[(a.lower(), b.lower())] = ("2026-01-24", float(mine), float(theirs))
+        model_p = float(np.clip(true_p + rng.normal(0, 0.15), 0.05, 0.95))
+        settled.append(bet(a, b, bool(rng.random() < true_p), p=model_p))
+    return odds_for(pairs), settled
+
+
+def _live(settled):
+    return [{k: v for k, v in b.items() if k != "won"} for b in settled]
+
+
+def test_live_flags_scores_every_priced_pick():
+    odds, settled = _synthetic()
+    picks = _live(settled[:6])
+    flags = live_flags(picks, odds, settled)
+    assert len(flags) == len(picks)
+    assert all(0.0 <= v <= 1.0 for v in flags.values())
+
+
+def test_an_unpriced_pick_is_absent_not_a_default():
+    odds, settled = _synthetic()
+    ghost = [{"date": pd.Timestamp("2026-01-24"), "pick": "Nobody A",
+              "opponent": "Nobody B", "win_probability": 0.7, "confidence": 0.4}]
+    assert live_flags(ghost, odds, settled) == {}
+
+
+def test_too_little_settled_history_flags_nothing():
+    odds, settled = _synthetic()
+    assert live_flags(_live(settled), odds, settled[:MIN_TRAIN - 1]) == {}
+
+
+def test_a_history_with_only_wins_flags_nothing():
+    """Nothing to learn failure from; a fit on one class is not a flagger."""
+    odds, settled = _synthetic()
+    won_only = [{**b, "won": True} for b in settled]
+    assert live_flags(_live(settled), odds, won_only) == {}
+
+
+def test_fit_returns_none_rather_than_an_unfittable_model():
+    odds, settled = _synthetic()
+    history = [(b, features(b, odds)) for b in settled]
+    history = [(b, f) for b, f in history if f is not None]
+    assert fit(history[:MIN_TRAIN - 1]) is None
+    assert fit([(dict(b, won=True), f) for b, f in history]) is None
+    assert fit(history) is not None
+
+
+def test_the_live_fit_matches_the_walk_forward_fit_on_the_same_history():
+    """One fitting path. If these diverge, the flag the user sees is not the
+    flag the backtest measured."""
+    odds, settled = _synthetic()
+    history = [(b, features(b, odds)) for b in settled]
+    history = [(b, f) for b, f in history if f is not None]
+    model = fit(history)
+    from sklearn.linear_model import LogisticRegression
+    reference = LogisticRegression(max_iter=1000).fit(
+        pd.DataFrame([f for _, f in history])[COLUMNS],
+        np.array([0.0 if b["won"] else 1.0 for b, _ in history]))
+    for _, feat in history[:5]:
+        expected = float(reference.predict_proba(
+            pd.DataFrame([feat])[COLUMNS])[0, 1])
+        assert score(model, feat) == pytest.approx(expected, abs=1e-12)
+
+
+def test_the_flags_actually_track_failure_out_of_sample():
+    """A flagger that emits numbers carrying no information would pass every
+    test above. This is the one that would fail."""
+    odds, settled = _synthetic(n=400, seed=11)
+    history = [(b, features(b, odds)) for b in settled]
+    history = [(b, f) for b, f in history if f is not None]
+    model = fit(history[:250])
+    rows = [{"p_fail": score(model, f), "actually_failed": not b["won"]}
+            for b, f in history[250:]]
+    assert flag_quality(rows) > 0.55
+
+
+def test_live_flags_does_not_read_the_outcome_of_what_it_scores():
+    """The pick dicts carry no `won` key at all, and inverting every settled
+    outcome must move the scores - proving they came from the history."""
+    odds, settled = _synthetic()
+    picks = _live(settled[:6])
+    assert all("won" not in p for p in picks)
+    normal = live_flags(picks, odds, settled)
+    flipped = live_flags(picks, odds, [{**b, "won": not b["won"]} for b in settled])
+    assert normal.keys() == flipped.keys()
+    assert any(abs(normal[k] - flipped[k]) > 0.05 for k in normal)
