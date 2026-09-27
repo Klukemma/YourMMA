@@ -101,6 +101,13 @@ function doubtCard(fights, caveat) {
   </div>`;
 }
 
+// A labelled slice of a KO/SUB/DEC bar. Below 7% there is no room for the
+// label and printing it anyway overflows the slice into its neighbour.
+const segment = (cls, v, label) =>
+  !v ? "" : v > 0.07
+    ? `<i class="${cls}" style="flex:${v}">${label} ${Math.round(v * 100)}</i>`
+    : `<i class="${cls}" style="flex:${v}"></i>`;
+
 function boutRow(f) {
   const p = f.win_prob;
   const redPicked = f.pick === f.red;
@@ -132,12 +139,27 @@ function boutRow(f) {
       title="A second model's estimate that this pick is wrong">
       ${Math.round(f.p_fail * 100)}% wrong</span>`);
 
+  // The model's own method view, as a distribution. Its top class alone is
+  // right 47.2% of the time where always saying "Decision" is right 49.4%,
+  // so the single word is the least defensible thing it produces; the shape
+  // is what it is worth. Shown beside the simulator's, because the two are
+  // different machinery on the same fight and where they disagree that is
+  // worth seeing rather than hiding behind whichever one the summary picked.
+  const mp = f.method_probs;
+  const methodModel = mp ? `
+    <div>
+      <div class="eyebrow">Model: how it ends</div>
+      <div class="method" role="img" aria-label="KO ${pct(mp["KO/TKO"])}, submission ${pct(mp.Submission)}, decision ${pct(mp.Decision)}">
+        ${segment("ko", mp["KO/TKO"], "KO")}${segment("sb", mp.Submission, "SUB")}${segment("dc", mp.Decision, "DEC")}
+      </div>
+      <div class="mini" style="margin-top:6px">
+        KO ${pct(mp["KO/TKO"])} · Submission ${pct(mp.Submission)} · Decision ${pct(mp.Decision)}
+      </div>
+    </div>` : "";
+
   let detail = "";
   if (sim) {
     const ko = sim.ko ?? 0, sb = sim.sub ?? 0, dc = sim.decision ?? 0;
-    const seg = (cls, v, label) =>
-      v > 0.07 ? `<i class="${cls}" style="flex:${v}">${label} ${Math.round(v * 100)}</i>`
-               : `<i class="${cls}" style="flex:${v}"></i>`;
     const peak = Math.max(...(sim.finish_by_round || [0]), 0.0001);
     const rounds = (sim.finish_by_round || [])
       .map((v, i) => `<div><b style="height:${Math.max(3, (v / peak) * 34)}px"></b>
@@ -157,21 +179,22 @@ function boutRow(f) {
           </dl>
         </div>
         <div>
-          <div class="eyebrow">How it ends</div>
+          <div class="eyebrow">Simulated: how it ends</div>
           <div class="method" role="img"
                aria-label="KO ${pct(ko)}, submission ${pct(sb)}, decision ${pct(dc)}">
-            ${seg("ko", ko, "KO")}${seg("sb", sb, "SUB")}${seg("dc", dc, "DEC")}
+            ${segment("ko", ko, "KO")}${segment("sb", sb, "SUB")}${segment("dc", dc, "DEC")}
           </div>
           <div class="mini" style="margin-top:6px">
             KO ${pct(ko)} · Submission ${pct(sb)} · Decision ${pct(dc)}
           </div>
         </div>
+        ${methodModel}
         ${rounds ? `<div><div class="eyebrow">Finish by round</div>
           <div class="rounds">${rounds}</div></div>` : ""}
         ${assumed}
       </div>`;
   } else {
-    detail = `<div class="detail"><div class="mini">
+    detail = `<div class="detail">${methodModel}<div class="mini">
       No simulation: too much of these fighters' record is unmeasured, so the
       only honest answer is nothing.</div></div>`;
   }
