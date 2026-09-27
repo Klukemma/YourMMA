@@ -74,6 +74,14 @@ def _now():
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def _method_probs(probs):
+    """KO/TKO, Submission and Decision, or None if the model had no view."""
+    if not probs:
+        return None
+    out = {k: _clean(v) for k, v in probs.items()}
+    return out if any(v is not None for v in out.values()) else None
+
+
 def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
                  dataset_end=None, trained_on=None):
     """The card: one entry per fight, with the model and the simulation.
@@ -95,6 +103,13 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
             "confidence": _clean(fight.get("confidence")),
             "method": fight.get("method"),
             "method_prob": _clean(fight.get("method_prob")),
+            # The whole distribution, not just its argmax. The top class on
+            # its own is the least defensible thing this model produces:
+            # walk-forward on the confirm period it is right 47.2% of the
+            # time, where saying "Decision" every time is right 49.4%. What
+            # the model is actually worth is the shape - it finds 53% of the
+            # finishes at 58% precision, which a single word cannot carry.
+            "method_probs": _method_probs(fight.get("method_probs")),
             "round": fight.get("round"),
             "recommendation": fight.get("recommendation"),
             "parlay_tier": fight.get("parlay_tier"),

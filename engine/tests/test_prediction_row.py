@@ -16,6 +16,7 @@ import pytest
 ENGINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ENGINE))
 
+from career_stats import CAREER_COLUMNS
 from feature_inventory import all_specs
 from feature_spec import build_all, emitted_names
 from matchup_inputs import matchup_extra
@@ -32,13 +33,20 @@ SUFFIXES = required_suffixes(SPECS)
 FIGHT_COLUMNS = fight_level_columns(SPECS)
 
 # What a rebuilt fighter actually carries, as the stats builder produces it.
-STATS_KEYS = set(
+HAND_BUILT = set(
     "mmr_pre mu sigma wins losses draws dob stance splm str_acc sapm str_def "
     "td_avg td_def td_acc sub_avg kd momentum layoff streak won_last_fight "
     "last_fight_date height reach ko_rate sub_rate ko_losses been_finished "
     "absorption_eff footwork_proxy archetype cage_ctrl_fights cardio "
     "clinch_activity_ewm ctrl_rate_ewm grind_rate grind_score_ewm mom_quality "
     "opp_quality sub_def_score wc_move".split())
+
+# predict_card merges career_stats.final_stats() into the same dict, so every
+# career column is on it too. Read off career_stats rather than copied here:
+# the copy is what drifted, and a list nobody updates is a list that lies.
+FROM_FINAL_STATS = {c for c in CAREER_COLUMNS}
+
+STATS_KEYS = HAND_BUILT | FROM_FINAL_STATS
 
 # What the prediction function computes rather than stores.
 EXTRA_KEYS = {"age", "exp", "winrate", "southpaw", "consistency",

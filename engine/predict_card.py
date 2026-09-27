@@ -472,7 +472,8 @@ print("\n[3.5] BUILDING BAYESIAN SKILL FEATURES...")
 # Rating-derived variables live in skill_features.py so they can be tested
 # without importing this file, which runs the whole pipeline. That is how a set
 # of Elo-era constants survived the switch to TrueSkill unnoticed.
-from feature_inventory import all_specs
+from feature_inventory import (all_specs, finish_level_names,
+                               method_rate_names)
 from feature_spec import build_all, emitted_names
 from prediction_row import build_prediction_frame, required_suffixes
 from matchup_inputs import matchup_extra
@@ -1806,7 +1807,18 @@ CAGE_CONTROL_FEATURES = [
     'cage_control_cap_diff', 'cage_control_cap_level',
     'clinch_activity_diff', 'grind_tendency_diff',
 ]
-SPEC_FEATURES = [n for n in emitted_names(SPECS) if n not in CAGE_CONTROL_FEATURES]
+
+# How a fight ends is a different question from who wins it, and these answer
+# the first. They stay out of the winner model for the same reason cage
+# control does - not because they leak, but because the winner model's numbers
+# are what everything downstream is calibrated against, and this change was
+# measured on the method model alone. Adding columns to the winner model would
+# move the AUC, the ROI and the flag quality all at once, none of it measured.
+METHOD_RATE_FEATURES = method_rate_names() + finish_level_names()
+METHOD_ONLY_FEATURES = CAGE_CONTROL_FEATURES + METHOD_RATE_FEATURES
+
+SPEC_FEATURES = [n for n in emitted_names(SPECS)
+                 if n not in METHOD_ONLY_FEATURES]
 
 # Features the declaration does not cover: context flags, transforms of the
 # rating, and the archetype terms. Three of the old names are gone:
@@ -1835,14 +1847,17 @@ bespoke_features = [
     'is_womens', 'is_heavyweight', 'is_5rnd', 'is_title',
 ]
 
-feature_cols = SPEC_FEATURES + bespoke_features + CAGE_CONTROL_FEATURES
+feature_cols = SPEC_FEATURES + bespoke_features + METHOD_ONLY_FEATURES
 
-# Winner model uses features WITHOUT cage control (to avoid noisy signal in winner prediction)
-# Cage control features are only used by method/round/finish models
+# The winner model gets neither the cage-control columns nor the finish rates.
+# The method, finish and round models get everything.
 feature_cols_winner = SPEC_FEATURES + bespoke_features
 print(f"    Total features: {len(feature_cols)} "
       f"({len(SPEC_FEATURES)} declared + {len(bespoke_features)} bespoke "
-      f"+ {len(CAGE_CONTROL_FEATURES)} cage control)")
+      f"+ {len(CAGE_CONTROL_FEATURES)} cage control "
+      f"+ {len(METHOD_RATE_FEATURES)} finish rates)")
+print(f"    Winner model sees {len(feature_cols_winner)}; "
+      f"method, finish and round see all {len(feature_cols)}")
 
 # Build feature matrix
 X = ufc[feature_cols].copy()
@@ -5381,6 +5396,7 @@ for _ba in bet_analysis:
         'confidence': _ba.get('calibrated_conf', _pred.get('confidence')),
         'method': _pred.get('method'),
         'method_prob': _pred.get('method_prob'),
+        'method_probs': _pred.get('method_probs'),
         'round': _pred.get('round'),
         'recommendation': _ba.get('recommendation'),
         'parlay_tier': _ba.get('parlay_tier'),

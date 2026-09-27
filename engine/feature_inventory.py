@@ -49,6 +49,7 @@ GRAPPLING = [
     Paired("sub", "r_sub_avg", "b_sub_avg", known=True,
            why="submission attempts per fifteen minutes"),
     Paired("sub_def", "r_sub_def_score", "b_sub_def_score", known=True,
+           level=True,
            why="submission defence; weak alone but the counterpart to sub"),
     Paired("cage_control_cap", "r_ctrl_rate_ewm", "b_ctrl_rate_ewm", level=True,
            why="share of fight time in controlling position"),
@@ -99,19 +100,24 @@ RECORD = [
     Paired("cd_head_share", "r_cd_head_share", "b_cd_head_share",
            why="share of landed strikes aimed at the head - a head-hunter and "
                "a leg-kicker with equal volume are different fights"),
-    Paired("ko_rate", "r_ko_rate", "b_ko_rate",
+    Paired("ko_rate", "r_ko_rate", "b_ko_rate", level=True,
            why="share of wins by knockout - a style marker more than a "
-               "predictor of who wins"),
-    Paired("sub_rate", "r_sub_rate", "b_sub_rate",
-           why="share of wins by submission, same caveat as ko_rate"),
+               "predictor of who wins. The LEVEL is for the method model: two "
+               "knockout artists and two point-fighters have the same "
+               "difference and are not the same fight"),
+    Paired("sub_rate", "r_sub_rate", "b_sub_rate", level=True,
+           why="share of wins by submission, same caveat and same level as "
+               "ko_rate"),
 ]
 
 # --- durability ------------------------------------------------------------
 
 DURABILITY = [
     Paired("ko_vulnerability", "r_has_been_kod", "b_has_been_kod",
-           why="has been knocked out before"),
-    Paired("been_finished", "r_been_finished", "b_been_finished",
+           level=True,
+           why="has been knocked out before - the level says whether either "
+               "chin has ever gone, which is what decides a finish"),
+    Paired("been_finished", "r_been_finished", "b_been_finished", level=True,
            why="times finished, however it happened"),
     Paired("absorption_eff", "r_absorption_eff", "b_absorption_eff", level=True,
            why="damage taken relative to output"),
@@ -290,9 +296,88 @@ MATCHUP = [
             why="blue-corner reach is absent on 7.7% of fights"),
 ]
 
+# --- how a fight ends ------------------------------------------------------
+#
+# These are for the METHOD, FINISH and ROUND models, and predict_card keeps
+# them out of the winner model the way it keeps cage control out.
+#
+# They exist because the method model had no features of its own. It was
+# trained on the matrix built and audited for "who wins", where almost every
+# column is a difference between the corners. For who wins that is the right
+# shape. For how it ends it is close to the wrong one:
+#
+#     ko_rate_diff   0.0   two men who knock everyone out
+#     ko_rate_diff   0.0   two men who have never knocked anyone out
+#
+# Same number, opposite fights - and on 2026-09-26 the model called Hiestand
+# vs Nakamura a decision at 55%, a fight in which the two between them attempt
+# 2.4 submissions per fifteen minutes and neither has ever been finished. It
+# ended by submission in the second.
+#
+# Every one of these carries more signal as a level than as a difference,
+# measured over 7,219 fights from 2011 (AUC against "was this fight
+# finished"): KO wins 0.575 against 0.553, knockdowns 0.568 against 0.552,
+# being knocked out 0.572 against 0.561. Summed across both corners they sort
+# the finish rate from 40.7% in the bottom fifth to 61.6% in the top.
+#
+# These are rates per fifteen minutes, which is what ko_rate is not: ko_rate
+# is the share of WINS that were knockouts, undefined for a fighter with no
+# wins and silent about how fast anything happens.
+#
+# cd_kd_per15 belongs here by rights and is declared under RECORD already,
+# with its level, so it is not repeated.
+METHOD_RATES = [
+    Paired("cd_ko_for_per15", "r_cd_ko_for_per15", "b_cd_ko_for_per15",
+           level=True, known=True,
+           why="knockouts landed per fifteen minutes - how often this fighter "
+               "ends it, as a rate rather than a share of wins"),
+    Paired("cd_ko_against_per15", "r_cd_ko_against_per15",
+           "b_cd_ko_against_per15", level=True,
+           why="knockouts suffered per fifteen minutes - a chin, measured"),
+    Paired("cd_sub_for_per15", "r_cd_sub_for_per15", "b_cd_sub_for_per15",
+           level=True, known=True,
+           why="submissions landed per fifteen minutes"),
+    Paired("cd_sub_against_per15", "r_cd_sub_against_per15",
+           "b_cd_sub_against_per15", level=True,
+           why="submissions suffered per fifteen minutes"),
+    Paired("cd_sub_per15", "r_cd_sub_per15", "b_cd_sub_per15", level=True,
+           why="submission ATTEMPTS per fifteen minutes - the grappler who "
+               "keeps hunting is a different fight from the one who does not, "
+               "whether or not the attempts land"),
+    Paired("cd_opp_sub_per15", "r_cd_opp_sub_per15", "b_cd_opp_sub_per15",
+           level=True,
+           why="submission attempts faced per fifteen minutes"),
+    Paired("cd_opp_kd_per15", "r_cd_opp_kd_per15", "b_cd_opp_kd_per15",
+           level=True,
+           why="knockdowns conceded per fifteen minutes"),
+]
+
 
 def all_specs():
     """Every spec, in the order the features are emitted."""
     return (STRIKING + GRAPPLING + PHYSICAL + RECORD + DURABILITY
             + FORM + TRAJECTORY_DIFFS + RATING + STANCE + INTERACTIONS
-            + MATCHUP)
+            + MATCHUP + METHOD_RATES)
+
+
+# The five columns above whose LEVEL was added for the method model. Their
+# differences stay in the winner model where they have always been; only the
+# levels are new, and only the method, finish and round models see them.
+FINISH_LEVELS = ("ko_rate_level", "sub_rate_level", "ko_vulnerability_level",
+                 "been_finished_level", "sub_def_level")
+
+
+def finish_level_names():
+    """The finish-family levels, checked against what the specs really emit."""
+    emitted = {n for spec in all_specs() for n in spec.emits}
+    missing = [n for n in FINISH_LEVELS if n not in emitted]
+    if missing:
+        raise KeyError(f"declared as method-only but never emitted: {missing}")
+    return list(FINISH_LEVELS)
+
+
+def method_rate_names():
+    """What METHOD_RATES emits. predict_card keeps these out of the winner
+    model, and experiments/method_model.py measures exactly this set, so the
+    thing that was measured and the thing that ships cannot drift apart."""
+    return [n for spec in METHOD_RATES for n in spec.emits]

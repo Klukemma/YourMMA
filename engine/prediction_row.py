@@ -36,21 +36,35 @@ UNAVAILABLE = {
     "damage_log": "cumulative career damage, accumulated across all bouts",
     "striking_trajectory": "needs the rolling window it is measured against",
     "accuracy_trajectory": "needs the rolling window it is measured against",
-    # career_stats accumulates a fighter's whole prior record in date order
-    # across both corners. A live prediction holds one rebuilt snapshot of the
-    # fighter, not their bout history, so these cannot be reconstructed from
-    # it. They become NaN, which the specs turn into a neutral difference and
-    # a _known flag of 0 - the honest reading of "we did not compute this".
-    "cd_bouts": "needs the fighter's full prior bout list, not a snapshot",
-    "cd_minutes": "needs the fighter's full prior bout list",
-    "cd_kd_per15": "needs the fighter's full prior bout list",
-    "cd_ctrl_share": "needs the fighter's full prior bout list",
-    "cd_head_share": "needs the fighter's full prior bout list",
-    "cd_opp_ctrl_share": "needs the fighter's full prior bout list",
-    "cd_opp_sub_per15": "needs the fighter's full prior bout list",
-    "cd_wins": "needs the fighter's full prior bout list",
-    "cd_losses": "needs the fighter's full prior bout list",
-    "cd_win_rate": "needs the fighter's full prior bout list",
+    # THESE ENTRIES ARE STALE AND COST REAL ACCURACY. They were written when a
+    # live prediction held one rebuilt snapshot of a fighter and could not
+    # replay their bout history. career_stats.final_stats() was added later
+    # and does exactly that - it carries each fighter's accumulated state
+    # after their last bout - and predict_card merges it into the stats dict
+    # before any of this is read. The values are present; _value throws them
+    # away because their names are listed here.
+    #
+    # The cost is a training/live mismatch on THIRTEEN features the winner
+    # model was trained with and never sees at prediction time: cd_bouts,
+    # cd_ctrl_share, cd_head_share, cd_kd_per15 and cd_minutes, each as a
+    # difference, a level and a _known flag.
+    #
+    # They are left in place here deliberately. Removing them changes what the
+    # deployed winner model reads, and the winner model's probability is what
+    # the ROI, the calibration and the failure model are all measured against;
+    # that is a change to make with a walk-forward measurement in hand, not as
+    # a side effect of a method-model commit. cd_opp_sub_per15 is off the list
+    # because it feeds the method model alone, so unlisting it cannot move any
+    # of those numbers.
+    "cd_bouts": "STALE - final_stats supplies this; see the note above",
+    "cd_minutes": "STALE - final_stats supplies this; see the note above",
+    "cd_kd_per15": "STALE - final_stats supplies this; see the note above",
+    "cd_ctrl_share": "STALE - final_stats supplies this; see the note above",
+    "cd_head_share": "STALE - final_stats supplies this; see the note above",
+    "cd_opp_ctrl_share": "STALE - final_stats supplies this; see the note above",
+    "cd_wins": "STALE - final_stats supplies this; see the note above",
+    "cd_losses": "STALE - final_stats supplies this; see the note above",
+    "cd_win_rate": "STALE - final_stats supplies this; see the note above",
 }
 
 
