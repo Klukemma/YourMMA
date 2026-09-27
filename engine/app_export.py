@@ -110,6 +110,10 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
             # the model is actually worth is the shape - it finds 53% of the
             # finishes at 58% precision, which a single word cannot carry.
             "method_probs": _method_probs(fight.get("method_probs")),
+            # The binary, calibrated, plus what it was before the correction.
+            # The app leads with the first and explains itself with the pair.
+            "p_finish": _clean(fight.get("p_finish")),
+            "p_finish_raw": _clean(fight.get("p_finish_raw")),
             "round": fight.get("round"),
             "recommendation": fight.get("recommendation"),
             "parlay_tier": fight.get("parlay_tier"),

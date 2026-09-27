@@ -252,6 +252,9 @@ _careers = _career_stats(ufc)
 # cd_ column reaches the prediction path as "unknown" while the model was
 # trained on fights where it was known.
 from career_stats import final_stats as _final_stats
+from method_calibration import apply_calibrator as _apply_finish_calibrator
+from method_calibration import fit_calibrator as _fit_finish_calibrator
+from method_calibration import rebuild_three_way as _rebuild_three_way
 _final = _final_stats(ufc)
 for _col in _careers.columns:
     ufc[_col] = _careers[_col]
@@ -348,6 +351,7 @@ def categorize_method(m):
     return 'Other'
 
 ufc['target_method'] = ufc['method'].apply(categorize_method)
+
 print(f"    Method distribution: {ufc['target_method'].value_counts().to_dict()}")
 
 # Round target
@@ -1814,6 +1818,17 @@ CAGE_CONTROL_FEATURES = [
 # are what everything downstream is calibrated against, and this change was
 # measured on the method model alone. Adding columns to the winner model would
 # move the AUC, the ROI and the flag quality all at once, none of it measured.
+# A division finish prior was built, measured and REJECTED. Heavyweight
+# finishes 63.9% of the time and women's strawweight 33.6%, so it looked like
+# the largest single effect available - and over eight seeds on the confirm
+# period it beats the old feature set (+0.0060 log loss) and LOSES to the one
+# already shipping (1.0281 against 1.0266; macro-F1 0.4017 against 0.4036).
+# Clearing the baseline is not the test. Beating what is already there is.
+#
+# division_prior.py, its tests and the measurement all stay, so the decision
+# can be re-examined rather than re-derived; it is simply not computed here,
+# because a rejected feature should not cost every production run. See
+# experiments/method_noise.py.
 METHOD_RATE_FEATURES = method_rate_names() + finish_level_names()
 METHOD_ONLY_FEATURES = CAGE_CONTROL_FEATURES + METHOD_RATE_FEATURES
 
@@ -3590,6 +3605,66 @@ xgb_method_prod = XGBClassifier(
 )
 xgb_method_prod.fit(X_train_m_full, y_train_m_full, sample_weight=sw_train_m_prod, eval_set=[(X_cal_m_full, y_cal_m_full)], verbose=False)
 
+# --- calibrate P(finish) ---------------------------------------------------
+# The method model ranks fights well and prices them badly. Walk-forward over
+# the confirm period it said 79% and 64% happened, said 31% and 36% happened -
+# monotone, so the ordering is real; stretched outward by the class weights,
+# so the numbers are not. An isotonic fit pulls the ends back and cannot
+# reorder anything, because isotonic regression is monotone by construction.
+#
+# Measured in experiments/method_model.py, confirm period: Brier on P(finish)
+# 0.2498 -> 0.2432, and the reliability goes from 31->36 / 79->64 to
+# 39->38, 48->48, 52->52, 56->56, 62->60. The cost is about 1.4 points of
+# binary accuracy, because a correctly humble probability crosses a half less
+# often. That is the right trade for a number the app prints as a percentage.
+#
+# Fitted on the calibration split, which is also the early-stopping eval set,
+# so the model has seen it once - the same arrangement the winner model's
+# Platt calibration already uses.
+print("    Calibrating P(finish) on the calibration split...")
+_DECISION_INDEX = list(le_method.classes_).index('Decision')
+_cal_raw_finish = 1.0 - xgb_method_prod.predict_proba(X_cal_m_full)[:, _DECISION_INDEX]
+_cal_real_finish = (y_cal_m_full != _DECISION_INDEX).astype(float)
+FINISH_CALIBRATOR = _fit_finish_calibrator(_cal_raw_finish, _cal_real_finish)
+if FINISH_CALIBRATOR is None:
+    print("      Not calibrated: too few rows, or one outcome only.")
+else:
+    _before = _cal_raw_finish.mean()
+    _after = _apply_finish_calibrator(FINISH_CALIBRATOR, _cal_raw_finish).mean()
+    print(f"      On the calibration split it said {_before:.1%} finishes, "
+          f"now says {_after:.1%}; {_cal_real_finish.mean():.1%} really were.")
+
+
+def calibrate_method_probs(method_probs):
+    """Calibrated three-way, with the KO/submission split left alone.
+
+    Calibration was measured on the binary and says nothing about whether a
+    finish arrives by knockout or by submission, so moving that split would
+    be inventing a correction nobody measured.
+
+    NOTE ON ORDER: this runs on the raw model output, which is exactly what
+    the calibrator was fitted on. The cage-control adjustment runs afterwards
+    and can move P(finish) a little off the calibrated value. Fitting the
+    calibrator on cage-adjusted history instead would mean replaying that
+    adjustment across eight thousand fights; applying it to a quantity it was
+    not fitted on is the mismatch this file already fixed once for the winner
+    model, so the order is this way round and the residual is documented
+    rather than hidden.
+    """
+    if FINISH_CALIBRATOR is None:
+        return method_probs
+    order = list(le_method.classes_)
+    raw = np.array([[method_probs.get(c, 0.0) for c in order]], dtype=float)
+    # rebuild_three_way expects Decision first; reorder both ways around it.
+    decision = raw[:, _DECISION_INDEX]
+    ko = raw[:, order.index('KO/TKO')]
+    sub = raw[:, order.index('Submission')]
+    packed = np.column_stack([decision, ko, sub])
+    calibrated = _apply_finish_calibrator(FINISH_CALIBRATOR, 1.0 - decision)
+    out = _rebuild_three_way(packed, calibrated)[0]
+    return {'Decision': float(out[0]), 'KO/TKO': float(out[1]),
+            'Submission': float(out[2])}
+
 # Retrain IsFinish model (Finish vs Decision)
 print("    Retraining IsFinish prediction model...")
 y_finish_full = (ufc_method['target_method'] != 'Decision').astype(int).values
@@ -4106,7 +4181,7 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
     
     # Method
     p_method = xgb_method_prod.predict_proba(X_pred_s)[0]
-    method_probs = dict(zip(le_method.classes_, p_method))
+    method_probs = calibrate_method_probs(dict(zip(le_method.classes_, p_method)))
     
     # Round
     p_round = xgb_round_prod.predict_proba(X_pred_s)[0]
@@ -4167,6 +4242,12 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
         'method_probs': method_probs,
         'method': max(method_probs, key=method_probs.get),
         'method_prob': max(method_probs.values()),
+        # The binary is the call worth making. The three-way top class lands
+        # on Decision more often than fights actually go the distance, not
+        # because the model leans that way but because a decision is one
+        # bucket and a finish is two.
+        'p_finish': 1.0 - method_probs.get('Decision', 0.0),
+        'p_finish_raw': float(1.0 - p_method[_DECISION_INDEX]),
         'round_probs': round_probs,
         'round': max(round_probs, key=round_probs.get),
         'round_prob': max(round_probs.values()),
@@ -5397,6 +5478,8 @@ for _ba in bet_analysis:
         'method': _pred.get('method'),
         'method_prob': _pred.get('method_prob'),
         'method_probs': _pred.get('method_probs'),
+        'p_finish': _pred.get('p_finish'),
+        'p_finish_raw': _pred.get('p_finish_raw'),
         'round': _pred.get('round'),
         'recommendation': _ba.get('recommendation'),
         'parlay_tier': _ba.get('parlay_tier'),
