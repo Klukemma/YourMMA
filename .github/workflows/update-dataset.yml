@@ -147,19 +147,33 @@ jobs:
         run: python engine/build_app_data.py
 
       # predict mode writes app/data/card.json itself, at the end of the run.
+      #
+      # THE ODDS FILES COMMIT TOO, AND THAT IS NOT HOUSEKEEPING. A runner is
+      # thrown away when the job ends, so a price fetched and not committed is
+      # a price bought and binned: the next run asks the API for it again, and
+      # the cache whose whole job is "never buy the same price twice" never
+      # once did that job in CI. Worse, a line is only available while the
+      # market is open - once a fight starts the bookmakers pull it - so an
+      # uncommitted price is not merely re-bought, it is gone.
       - name: Commit the app data
         if: ${{ !inputs.dry_run }}
         run: |
-          if [ -z "$(git status --porcelain -- app/data/)" ]; then
-            echo "App data unchanged."
+          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv"
+          if [ -z "$(git status --porcelain -- $PATHS)" ]; then
+            echo "App data and odds unchanged."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add app/data/
+          git add $PATHS
           if [ "${{ inputs.mode }}" = "predict" ]; then
-            PRICED=$(grep -c 'best_odds' app/data/card.json || echo 0)
-            git commit -m "Refresh app data: new card, ${PRICED} priced picks"
+            # Count the fights that actually carry a price. The old count
+            # grepped for "best_odds", which is what the engine calls the field
+            # internally and not what the export writes, so it read 0 on a
+            # fully priced card and said so in the commit log.
+            PRICED=$(python -c "import json;d=json.load(open('app/data/card.json'));print(sum(1 for f in d['fights'] if f.get('odds') is not None))")
+            TOTAL=$(python -c "import json;print(len(json.load(open('app/data/card.json'))['fights']))")
+            git commit -m "Refresh app data: new card, ${PRICED} of ${TOTAL} picks priced"
           else
             git commit -m "Refresh app data"
           fi
