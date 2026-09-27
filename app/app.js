@@ -129,6 +129,17 @@ function boutRow(f) {
     tags.push(`<span class="tag ${TAG_TONE[f.parlay_tier] || "flat"}">Parlay ${esc(f.parlay_tier)}</span>`);
   if (f.rounds_scheduled === 5)
     tags.push(`<span class="tag flat">5 rounds</span>`);
+  // The call worth making, rather than the three-way word that reads
+  // "Decision" on fights the model thinks are more likely to end early.
+  {
+    const mpTag = f.method_probs;
+    const fin = f.p_finish != null ? f.p_finish
+      : mpTag ? mpTag["KO/TKO"] + mpTag.Submission : null;
+    if (fin != null)
+      tags.push(`<span class="tag flat num">${
+        fin >= 0.5 ? `FINISH ${Math.round(fin * 100)}` :
+                     `DISTANCE ${Math.round((1 - fin) * 100)}`}%</span>`);
+  }
   if (f.odds != null)
     tags.push(`<span class="tag flat num">${f.odds > 0 ? "+" : ""}${f.odds}</span>`);
   // The second layer. Shown on every scored pick, not only the flagged ones:
@@ -146,16 +157,39 @@ function boutRow(f) {
   // different machinery on the same fight and where they disagree that is
   // worth seeing rather than hiding behind whichever one the summary picked.
   const mp = f.method_probs;
-  const methodModel = mp ? `
+  // FINISH OR DISTANCE FIRST, then how the finish arrives.
+  //
+  // The three-way top class is right 47.2% of the time where saying
+  // "Decision" every time is right 49.4%, and it lands on Decision 54% of the
+  // time against a real 49.4% - not because the model leans that way (it puts
+  // 66% of its mass on finishes) but because a decision is one bucket and a
+  // finish is two. KO .27 / SUB .24 / DEC .49 is more likely than not to end
+  // early and prints "Decision".
+  //
+  // As a binary the same numbers are 57.7% accurate, AUC 0.606. So the binary
+  // leads and the KO/SUB split is reported underneath it, as a split of the
+  // finish rather than as a third competitor to it.
+  const pFin = f.p_finish != null ? f.p_finish
+    : mp ? mp["KO/TKO"] + mp.Submission : null;
+  const koShare = mp && (mp["KO/TKO"] + mp.Submission) > 0
+    ? mp["KO/TKO"] / (mp["KO/TKO"] + mp.Submission) : null;
+
+  const methodModel = pFin == null ? "" : `
     <div>
-      <div class="eyebrow">Model: how it ends</div>
-      <div class="method" role="img" aria-label="KO ${pct(mp["KO/TKO"])}, submission ${pct(mp.Submission)}, decision ${pct(mp.Decision)}">
-        ${segment("ko", mp["KO/TKO"], "KO")}${segment("sb", mp.Submission, "SUB")}${segment("dc", mp.Decision, "DEC")}
+      <div class="eyebrow">Model: finish or distance</div>
+      <div class="method" role="img"
+           aria-label="finish ${pct(pFin)}, goes to decision ${pct(1 - pFin)}">
+        ${segment("ko", pFin, "FINISH")}${segment("dc", 1 - pFin, "DISTANCE")}
       </div>
       <div class="mini" style="margin-top:6px">
-        KO ${pct(mp["KO/TKO"])} · Submission ${pct(mp.Submission)} · Decision ${pct(mp.Decision)}
+        <b>${pFin >= 0.5 ? "Finish" : "Goes the distance"} ${pct(Math.max(pFin, 1 - pFin))}</b>${
+          koShare == null ? "" : ` · if it ends early, KO ${pct(koShare)} / submission ${pct(1 - koShare)}`}
       </div>
-    </div>` : "";
+      ${f.p_finish_raw != null && Math.abs(f.p_finish_raw - pFin) > 0.02
+        ? `<div class="mini">Calibrated from ${pct(f.p_finish_raw)}: the model
+             ranks fights well and prices them high, and this is the
+             correction measured on fights it had not seen.</div>` : ""}
+    </div>`;
 
   let detail = "";
   if (sim) {
