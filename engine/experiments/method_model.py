@@ -59,7 +59,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (accuracy_score, brier_score_loss, f1_score,
-                             log_loss)
+                             log_loss, roc_auc_score)
 from xgboost import XGBClassifier
 
 ENGINE = Path(__file__).resolve().parents[1]
@@ -202,11 +202,33 @@ def score(label, proba, y_true):
         "finish_rate_real": float(finished.mean()),
         # What the app actually prints: the top class and its percentage.
         "called_finish": int((pred != 0).sum()),
+        # The binary on its own, thresholded at a half. This is what leading
+        # with "finish or distance" would print, and it is not the same thing
+        # as the argmax: a fight at KO .27 / SUB .24 / DEC .49 is more likely
+        # than not to be finished and prints "Decision", because a decision is
+        # one bucket and a finish is two.
+        "binary_accuracy": float(((p_finish > 0.5) == (finished == 1)).mean()),
+        "binary_auc": float(roc_auc_score(finished, p_finish)),
+        "binary_says_finish": float((p_finish > 0.5).mean()),
         "finish_recall": float(((pred != 0) & (y_true != 0)).sum()
                                / max((y_true != 0).sum(), 1)),
         "finish_precision": float(((pred != 0) & (y_true != 0)).sum()
                                   / max((pred != 0).sum(), 1)),
     }
+
+
+def reliability(proba, y_true, bins=5):
+    """Is P(finish) worth its face value? Said against happened, by bucket."""
+    p = 1.0 - proba[:, 0]
+    real = (y_true != 0).astype(float)
+    edges = np.quantile(p, np.linspace(0, 1, bins + 1))
+    out = []
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        m = (p >= lo) & (p <= hi if hi == edges[-1] else p < hi)
+        if m.sum() < 20:
+            continue
+        out.append((float(p[m].mean()), float(real[m].mean()), int(m.sum())))
+    return out
 
 
 def report(rows, title):
@@ -304,6 +326,20 @@ def main():
         all_rows.append(score(label, proba, y[idx]))
         keep = (years.to_numpy()[idx] >= CONFIRM_FROM)
         confirm_rows.append(score(label, proba[keep], y[idx][keep]))
+
+    print("\n  finish-or-distance, as a binary at a half (confirm period)")
+    print(f"    {'variant':<14}{'accuracy':>10}{'AUC':>8}{'says finish':>13}{'really':>8}")
+    print("    " + "-" * 53)
+    for r in confirm_rows:
+        print(f"    {r['label']:<14}{r['binary_accuracy']:>10.3f}{r['binary_auc']:>8.3f}"
+              f"{r['binary_says_finish']:>13.1%}{r['finish_rate_real']:>8.1%}")
+
+    print("\n  is P(finish) worth its face value? (BOTH+W, confirm period)")
+    both, idx = runs["BOTH+W"]
+    keep = (years.to_numpy()[idx] >= CONFIRM_FROM)
+    print(f"    {'said':>8}{'happened':>10}{'n':>7}")
+    for said, real, n in reliability(both[keep], y[idx][keep]):
+        print(f"    {said:>7.0%}{real:>10.0%}{n:>7}")
 
     report(all_rows, f"EVERYTHING, {FIRST_PREDICTED_YEAR} ONWARD")
     report(confirm_rows, f"CONFIRM PERIOD, {CONFIRM_FROM} ONWARD "
