@@ -65,8 +65,21 @@ KINDS = {
     "new_camp": None,
     "layoff_return": None,
     "personal": None,
+    # Who this fighter was ORIGINALLY matched against, before the switch.
+    # The interesting half of a late replacement is not the notice, it is
+    # that a camp spent eight weeks preparing for a wrestler and walks in
+    # against a counter-striker. That is not a judgement a researcher has to
+    # make: predict_card already classifies every fighter into one of five
+    # archetypes - pressure boxer, counter-striker, wrestler, submission
+    # artist, point fighter - so the engine can measure the switch itself
+    # from two names. See `replaced_opponent` on the record.
+    "opponent_switch": None,
     "other": None,
 }
+
+# The fields a kind needs beyond the common ones. An opponent_switch with no
+# name of the original opponent is just a short-notice note.
+EXTRA_FIELDS = {"opponent_switch": ("replaced_opponent",)}
 
 # How sure the researcher is. Kept coarse on purpose: a model asked for a
 # number between 0 and 1 will produce 0.85 for everything.
@@ -82,12 +95,16 @@ def _now():
 
 
 def observation(*, fighter, event_date, kind, confidence, note, source,
-                gathered=None, applies=False):
+                gathered=None, applies=False, **extra):
     """One checked fact about one fighter for one fight.
 
     `applies` is False unless a weight has been measured for this kind. It is
     accepted as an argument so a future, fitted version has somewhere to say
     so - not so that today's caller can switch it on.
+
+    Some kinds need a field of their own; `opponent_switch` needs the name of
+    the fighter who was replaced, because the whole value of that observation
+    is the comparison between two styles and one name cannot make it.
     """
     if not fighter or not str(fighter).strip():
         raise IntelError("an observation needs a fighter")
@@ -106,6 +123,16 @@ def observation(*, fighter, event_date, kind, confidence, note, source,
         raise IntelError(
             f"{kind!r} has no context hook to drive, so it cannot apply to a "
             f"probability; record it as a note")
+    required = EXTRA_FIELDS.get(kind, ())
+    missing = [f for f in required if not str(extra.get(f) or "").strip()]
+    if missing:
+        raise IntelError(
+            f"{kind!r} needs {', '.join(missing)}: without it this records "
+            f"only that something changed, which the engine cannot measure")
+    unexpected = set(extra) - set(required)
+    if unexpected:
+        raise IntelError(f"{kind!r} takes no {sorted(unexpected)}")
+
     return {
         "fighter": str(fighter).strip(),
         "event_date": str(event_date),
@@ -115,6 +142,7 @@ def observation(*, fighter, event_date, kind, confidence, note, source,
         "source": source,
         "gathered": gathered or _now(),
         "applies": bool(applies),
+        **{f: str(extra[f]).strip() for f in required},
     }
 
 
@@ -217,8 +245,11 @@ def _report(store, event_date=None):
         return
     for o in sorted(rows, key=lambda o: (o["event_date"], o["gathered"])):
         flag = " [APPLIES]" if o["applies"] else ""
+        switched = (f"  (was matched with {o['replaced_opponent']})"
+                    if o.get("replaced_opponent") else "")
         print(f"  {o['event_date']}  {o['fighter']:<24} {o['kind']:<16} "
-              f"{o['confidence']:<10} gathered {o['gathered'][:10]}{flag}")
+              f"{o['confidence']:<10} gathered {o['gathered'][:10]}{flag}"
+              f"{switched}")
         print(f"      {o['note']}")
         print(f"      {o['source']}")
 
@@ -248,6 +279,9 @@ def main(argv=None):
     parser.add_argument("--confidence", choices=CONFIDENCE, default="reported")
     parser.add_argument("--note")
     parser.add_argument("--source")
+    parser.add_argument("--replaced-opponent",
+                        help="opponent_switch only: who this fighter was "
+                             "originally matched against")
     args = parser.parse_args(argv)
 
     store = load()
@@ -256,10 +290,12 @@ def main(argv=None):
                    if not getattr(args, n)]
         if missing:
             parser.error("--add needs " + ", ".join("--" + n for n in missing))
+        extra = ({"replaced_opponent": args.replaced_opponent}
+                 if args.kind in EXTRA_FIELDS else {})
         try:
             record = observation(fighter=args.fighter, event_date=args.event,
                                  kind=args.kind, confidence=args.confidence,
-                                 note=args.note, source=args.source)
+                                 note=args.note, source=args.source, **extra)
         except IntelError as err:
             # A refusal is the expected outcome of a careless entry, not a
             # crash. Printing a stack trace at somebody trying to record a

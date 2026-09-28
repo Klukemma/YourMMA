@@ -186,3 +186,42 @@ def test_a_store_from_a_future_schema_is_refused(tmp_path):
     path.write_text(json.dumps({"schema": 99, "observations": []}))
     with pytest.raises(fi.IntelError, match="schema"):
         fi.load(path)
+
+
+# --- the opponent switch ---------------------------------------------------
+# "He prepared for a wrestler and walked in against a counter-striker" is the
+# most interesting thing about a late replacement, and it is not a judgement
+# anybody has to make by hand: predict_card already sorts every fighter into
+# one of five archetypes, so two names are enough for the engine to measure
+# the switch itself. Which is why the name is mandatory.
+
+def test_an_opponent_switch_without_the_replaced_name_is_refused():
+    with pytest.raises(fi.IntelError, match="replaced_opponent"):
+        good(kind="opponent_switch")
+
+
+def test_an_opponent_switch_keeps_the_replaced_name():
+    record = good(kind="opponent_switch", replaced_opponent="Mickey Gall")
+    assert record["replaced_opponent"] == "Mickey Gall"
+
+
+def test_a_blank_replaced_name_is_not_a_name():
+    with pytest.raises(fi.IntelError, match="replaced_opponent"):
+        good(kind="opponent_switch", replaced_opponent="   ")
+
+
+def test_a_kind_that_needs_nothing_extra_refuses_extras():
+    """Otherwise a typo becomes a field nobody reads."""
+    with pytest.raises(fi.IntelError, match="takes no"):
+        good(kind="injury", replaced_oponent="Mickey Gall")
+
+
+def test_the_switch_still_moves_nothing():
+    record = good(kind="opponent_switch", replaced_opponent="Mickey Gall")
+    assert fi.context_from([record], "Brady Hiestand", "Rinya Nakamura") == {}
+
+
+def test_every_kind_needing_extra_fields_is_declared():
+    """A required field that is not in EXTRA_FIELDS is never enforced."""
+    for kind in fi.EXTRA_FIELDS:
+        assert kind in fi.KINDS
