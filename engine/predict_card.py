@@ -5627,6 +5627,23 @@ print(f"{'='*70}")
 
 import app_export as _app_export
 
+# --- what the model cannot read from a record -----------------------------
+# Sourced observations gathered before the bell, by the scout (see
+# .claude/skills/scout and engine/intel_search.py). Every one carries
+# applies=False because no weight is fitted for any kind, so this cannot and
+# does not move win_prob - it rides along beside it so a reader can see what
+# the record does not contain. `known_by` is the event date, which is the
+# honest cutoff: a prediction made before a fight may only read what was
+# gathered before it.
+try:
+    import fight_intel as _intel
+    _intel_store = _intel.load()
+    print(f"    Scouted intel on file: "
+          f"{len(_intel_store['observations'])} observation(s).")
+except Exception as _err:                                      # noqa: BLE001
+    _intel_store = None
+    print(f"    No intel store ({type(_err).__name__}); the card carries none.")
+
 _app_fights = []
 for _ba in bet_analysis:
     _pred = _ba['pred_full']
@@ -5660,6 +5677,9 @@ for _ba in bet_analysis:
         'rounds_scheduled': 5 if _ba.get('is_5rnd') else 3,
         'title_fight': bool(_ba.get('is_title')),
         'simulation': _sim,
+        'intel': (_intel.for_fight(_intel_store, _pred['red'], _pred['blue'],
+                                   EVENT_DATE, known_by=EVENT_DATE)
+                  if _intel_store else []),
     })
 
 # ------------------------------------------------------------------ 2c
