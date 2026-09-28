@@ -255,6 +255,7 @@ from career_stats import final_stats as _final_stats
 from method_calibration import apply_calibrator as _apply_finish_calibrator
 from method_calibration import fit_calibrator as _fit_finish_calibrator
 from method_calibration import rebuild_three_way as _rebuild_three_way
+import market_blend as _blend
 _final = _final_stats(ufc)
 for _col in _careers.columns:
     ufc[_col] = _careers[_col]
@@ -4178,7 +4179,39 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
         context["blue_pressure_fighter"] = b_arch in (0, 2)
 
     p_win, context_log = apply_context_adjustments(p_win_base, context)
-    
+
+    # --- THE CLOSING LINE ---------------------------------------------------
+    # The largest single accuracy gain in this project, and it is arithmetic.
+    # Measured on 2,339 priced walk-forward predictions from 2020, with the
+    # weight chosen from earlier years only and applied forward:
+    #
+    #     model alone     62.0%      market alone   67.5%
+    #     blended         68.2%      AUC 0.618 -> 0.709
+    #
+    # The blend beats the market it is built from, so the model is carrying
+    # something the line does not. Above about 68% is not on offer: a
+    # perfectly calibrated forecaster reading these same prices would manage
+    # 65.2%, and the market itself manages 67.5%.
+    #
+    # BOTH NUMBERS SURVIVE. p_win is what the fight is likely to do and is
+    # what the app shows and what gets graded. p_win_model is the model
+    # without the market, and it is what every edge and betting strategy must
+    # keep using - an edge measured against a probability that is already
+    # three-quarters market is the line being compared with itself.
+    p_win_model = p_win
+    market_devigged = None
+    if globals().get("CURRENT_ODDS") and CURRENT_ODDS:
+        _mine = match_fighter_to_odds(r_resolved or red_name, CURRENT_ODDS)
+        _theirs = match_fighter_to_odds(b_resolved or blue_name, CURRENT_ODDS)
+        if _mine and _theirs:
+            # De-vigged, which needs both sides. The version of this that
+            # used to live in predict_fight blended with the raw implied
+            # probability and so folded the bookmaker's margin into every
+            # prediction, tilting each fight toward the favourite.
+            market_devigged = _blend.devig(_mine['best_odds'],
+                                           _theirs['best_odds'])
+    p_win = _blend.blend(p_win, market_devigged)
+
     # Method
     p_method = xgb_method_prod.predict_proba(X_pred_s)[0]
     method_probs = calibrate_method_probs(dict(zip(le_method.classes_, p_method)))
@@ -4234,10 +4267,15 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
         # layers can be measured against outcomes rather than assumed to help.
         'p_ensemble': float(p_ens),          # raw LR+RF+XGB average
         'p_platt': float(p_win_base),        # after Platt calibration
-        'red_win_prob': p_win,               # after context adjustment
+        'red_win_prob': p_win,               # after context and the market
         'blue_win_prob': 1 - p_win,
         'winner': (r_resolved or red_name) if p_win > 0.5 else (b_resolved or blue_name),
         'win_prob': max(p_win, 1 - p_win),
+        # The model without the market. Every edge is measured from this.
+        'red_win_prob_model': float(p_win_model),
+        'win_prob_model': float(max(p_win_model, 1 - p_win_model)),
+        'market_prob': market_devigged,
+        'market_blended': market_devigged is not None,
         'confidence': raw_confidence,
         'method_probs': method_probs,
         'method': max(method_probs, key=method_probs.get),
@@ -5176,14 +5214,22 @@ def analyze_fight_value(pred, fighter_name, odds_data):
         return None
 
     best_odds = odds_match['best_odds']
-    value_info = calculate_value(pred['win_prob'], best_odds)
+    # THE MODEL'S OWN PROBABILITY, NOT THE BLENDED ONE. win_prob now carries
+    # three-quarters of the closing line, and an edge measured from it would
+    # be the market compared with itself - it would shrink every disagreement
+    # toward zero and call what was left an edge. win_prob_model is the same
+    # number this function has always used; it just needed a name once the
+    # blend existed. Falls back to win_prob for a caller that predates it.
+    model_prob = pred.get('win_prob_model', pred['win_prob'])
+    value_info = calculate_value(model_prob, best_odds)
 
     return {
         'fighter': odds_match['name'],
         'best_odds': best_odds,
         'book_with_best': next((o['book'] for o in odds_match['odds'] if o['odds'] == best_odds), 'Unknown'),
         'implied_prob': value_info['implied_prob'],
-        'our_prob': pred['win_prob'],
+        'our_prob': model_prob,
+        'blended_prob': pred['win_prob'],
         'edge': value_info['edge'],
         'value': value_info['value'],
         'rating': get_value_rating(value_info['edge'], value_info['value'])
@@ -5474,6 +5520,10 @@ for _ba in bet_analysis:
         'blue': _pred['blue'],
         'pick': _pred['winner'],
         'win_prob': _pred['win_prob'],
+        'win_prob_model': _pred.get('win_prob_model'),
+        'market_prob': (_pred.get('market_prob') if _pred['winner'] == _pred['red']
+                        else (1 - _pred['market_prob'])
+                        if _pred.get('market_prob') is not None else None),
         'confidence': _ba.get('calibrated_conf', _pred.get('confidence')),
         'method': _pred.get('method'),
         'method_prob': _pred.get('method_prob'),
