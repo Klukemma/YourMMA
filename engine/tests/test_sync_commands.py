@@ -65,7 +65,7 @@ def test_every_subcommand_is_wired_to_a_real_function():
 # sync_kaggle's dispatcher. Each is a line in the workflow that names a file.
 MODES_NOT_HANDLED_BY_SYNC_KAGGLE = {"experiment", "backtest", "predict",
                                     "check-odds", "check-markets",
-                                    "describe-odds"}
+                                    "check-line-history", "describe-odds"}
 
 
 WORKFLOW = ENGINE.parent / ".github" / "workflows" / "update-dataset.yml"

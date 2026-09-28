@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, predict, check-odds, check-markets, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
+        options: [sync, predict, check-odds, check-markets, check-line-history, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -77,6 +77,12 @@ jobs:
           elif [ "${{ inputs.mode }}" = "check-odds" ]; then
             # One request, so a key can be verified without predicting a card.
             python engine/check_odds.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "check-line-history" ]; then
+            # Does any reachable source carry an OPENING line as well as a
+            # closing one? The move between them is what the market learned
+            # in the fortnight before the bell, and it cannot be measured
+            # without both ends.
+            python engine/check_line_history.py 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "check-markets" ]; then
             # Is there a "goes the distance" market on this plan? The method
             # question has no market anchor, and the wrongness layer on the
