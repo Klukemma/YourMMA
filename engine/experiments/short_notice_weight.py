@@ -265,20 +265,45 @@ def main():
     blend_row = next((r for r in results if "the app prints" in r["label"]
                       and "replacement" in r["label"]), None)
     if model_row and blend_row:
-        if blend_row["high"] >= 0 >= blend_row["low"]:
-            print("  The hook must not ship. Whatever short notice is worth")
-            print("  against the raw model, the market has already taken it:")
-            print("  against the probability the app actually prints, the")
-            print("  effect is inside the noise. Applying a penalty on top")
-            print("  would double-count the single most visible thing that")
-            print("  can happen to a fight.")
-        elif blend_row["high"] < 0:
+        # SAY WHAT THE NUMBERS SAY, not what was expected of them. The first
+        # version of this block printed "the market has already taken it"
+        # whenever the blended interval spanned zero - a canned mechanism that
+        # fired without ever comparing the two arms. It fired on this run,
+        # where the blended effect is if anything LARGER than the model's, and
+        # would have shipped a confident explanation of something that did not
+        # happen. A verdict that cannot come out wrong is not a verdict.
+        if blend_row["high"] < 0:
             print(f"  A weight of {blend_row['mean']:+.3f} is earned on top of")
             print(f"  the blend, interval [{blend_row['low']:+.3f}, "
-                  f"{blend_row['high']:+.3f}].")
-            print(f"  The shipped constant is -0.040.")
-        else:
+                  f"{blend_row['high']:+.3f}]. The shipped constant is -0.040.")
+        elif blend_row["low"] > 0:
             print("  The effect points the wrong way. Do not ship a penalty.")
+        else:
+            width = blend_row["high"] - blend_row["low"]
+            print(f"  NO WEIGHT SHIPS. Both intervals span zero, so nothing")
+            print(f"  here distinguishes the hand-typed -0.040 from doing")
+            print(f"  nothing at all. The point estimates are "
+                  f"{model_row['mean']:+.3f} against the model and "
+                  f"{blend_row['mean']:+.3f} against the blend,")
+            print(f"  on {blend_row['n']} fighters over {blend_row['events']} "
+                  f"events, and the interval is {width:.3f} wide - it would")
+            print(f"  take roughly {int(blend_row['n'] * (width / 0.04) ** 2):,}"
+                  f" labelled fighters to resolve an effect this size.")
+            # Whether the market absorbs it is a SEPARATE question with its
+            # own answer in these two numbers, and it is worth stating because
+            # the obvious prior - the closing line has read the injury news -
+            # predicts the opposite of what came out.
+            if abs(blend_row["mean"]) < abs(model_row["mean"]):
+                print(f"  The blend does shrink it ({model_row['mean']:+.3f} "
+                      f"-> {blend_row['mean']:+.3f}), which is what a market")
+                print(f"  that has already priced the replacement would do.")
+            else:
+                print(f"  It does NOT shrink against the blend "
+                      f"({model_row['mean']:+.3f} -> {blend_row['mean']:+.3f}),")
+                print(f"  so there is no sign here of the market having")
+                print(f"  absorbed it - contrary to the obvious expectation.")
+                print(f"  That difference is far inside the noise too, and is")
+                print(f"  a direction to check later, not a finding.")
 
     OUT.write_text(json.dumps({
         "generated": datetime.now(timezone.utc).isoformat(),
