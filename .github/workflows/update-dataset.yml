@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, predict, check-odds, check-markets, check-line-history, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
+        options: [sync, predict, check-odds, check-markets, check-line-history, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -105,6 +105,13 @@ jobs:
             python engine/experiments/${{ inputs.experiment }}.py 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "backtest" ]; then
             python engine/backtest.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "fetch-method-odds" ]; then
+            # The market's own price on HOW a fight ends, on ~5,200 historical
+            # bouts. The method model has never had a market to be measured
+            # against; the live api prices none, and nobody had checked
+            # whether history did.
+            python engine/sync_kaggle.py fetch-method-odds \
+               2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "fetch-odds-history" ]; then
             python engine/sync_kaggle.py fetch-odds-history \
               ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee sync.log
@@ -170,7 +177,7 @@ jobs:
       - name: Commit the app data
         if: ${{ !inputs.dry_run }}
         run: |
-          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv"
+          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv engine/data/method_odds.csv"
           if [ -z "$(git status --porcelain -- $PATHS)" ]; then
             echo "App data and odds unchanged."
             exit 0
