@@ -70,7 +70,12 @@ AGENT = ("YourMMA-research/1.0 "
          "(https://github.com/Klukemma/YourMMA; fight-change labelling)")
 TIMEOUT = 30         # seconds per request
 SEARCH_LIMIT = 3     # candidate articles considered per event
-PAUSE = 0.20         # seconds between calls, to be a good citizen
+# TWO REQUESTS A SECOND, NOT FIVE. A full 755-event harvest at 0.2s spent
+# fifty minutes in Wikipedia's rate limiter and had to be cancelled: every
+# 429 costs a 2s then a 4s backoff before it even raises, so hurrying is
+# slower than going steadily. A runner's IP is shared and may already be hot
+# before this starts.
+PAUSE = 0.50         # seconds between calls
 BATCH = 40           # titles per query; the API allows 50
 RETRIES = 3          # on 429, which is what hammering it looks like
 
@@ -238,12 +243,23 @@ def infobox_date(text):
         return None
 
 
-def search_titles(name):
-    """Article titles Wikipedia thinks match this event name."""
-    body = get({"action": "query", "list": "search", "srsearch": name,
-                "srlimit": SEARCH_LIMIT})
-    return [hit["title"] for hit in
-            body.get("query", {}).get("search", [])]
+def search_pages(name):
+    """{title: wikitext} for the articles search thinks match this name.
+
+    ONE call, not two. `generator=search` feeds the search results straight
+    into the content query, where the old pair of calls searched for titles
+    and then fetched them separately - twice the requests at the exact point
+    in the run where requests were already being refused.
+    """
+    body = get({"action": "query", "generator": "search", "gsrsearch": name,
+                "gsrlimit": SEARCH_LIMIT, "prop": "revisions",
+                "rvslots": "main", "rvprop": "content", "redirects": 1})
+    found = {}
+    for page in body.get("query", {}).get("pages", {}).values():
+        if "missing" in page or not page.get("revisions"):
+            continue
+        found[page["title"]] = page["revisions"][0]["slots"]["main"]["*"]
+    return found
 
 
 def resolve_all(sample):
@@ -273,10 +289,10 @@ def resolve_all(sample):
 
     for name in missing:
         try:
-            titles = search_titles(name)
+            pages = search_pages(name)
         except (urllib.error.URLError, OSError, TimeoutError):
             continue
-        for title, text in fetch_many(titles).items():
+        for title, text in pages.items():
             if _dated(text, wanted[name]):
                 resolved[name] = (title, text)
                 break
@@ -375,7 +391,7 @@ def main(argv=None):
     # Exception` here turned a NameError in this file into "Wikipedia cannot
     # be read from here", which is a lie that costs a CI round trip to catch.
     try:
-        search_titles("UFC 300")
+        search_pages("UFC 300")
     except (urllib.error.URLError, OSError, TimeoutError) as err:
         print(f"\n  UNREACHABLE: {type(err).__name__}: {err}")
         print("  Wikipedia cannot be read from here. This container's egress")

@@ -23,7 +23,7 @@ replaced fighter usually never fought, so they are not on the card to match
 against, and their name is recorded as written.
 
     python engine/fetch_fight_changes.py              (needs network)
-    python engine/fetch_fight_changes.py --limit 50
+    python engine/fetch_fight_changes.py --from-year 2011 --limit 50
 
 Writes engine/data/fight_changes.csv. Run it from the workflow; this
 container's egress proxy refuses Wikipedia.
@@ -31,6 +31,7 @@ container's egress proxy refuses Wikipedia.
 
 import argparse
 import sys
+import urllib.error
 from pathlib import Path
 
 import pandas as pd
@@ -44,7 +45,17 @@ from name_resolution import norm_name, short_name
 OUT = ENGINE / "data" / "fight_changes.csv"
 COLUMNS = ("event_date", "event_name", "stepped_in", "stepped_in_raw",
            "replaced", "days_notice", "article")
-CHUNK = 60          # events resolved per round trip group
+CHUNK = 40          # events resolved per round trip group
+
+# WRITTEN AFTER EVERY CHUNK, not at the end. The first full run spent fifty
+# minutes on Wikipedia's rate limiter and had to be cancelled, and everything
+# it had gathered went with it - the logs of a running job are not even
+# readable until it finishes, so there was nothing to show for the time
+# either. Partial output that survives a cancellation is worth more than
+# tidy output that does not.
+FROM_YEAR = 2011    # odds.csv starts here, and an unpriced label cannot be
+                    # used by the arm that matters - the one that asks
+                    # whether the effect survives the market
 
 
 def card_names(archive, event_name):
@@ -73,12 +84,18 @@ def match_to_card(name, names):
     return hits[0] if len(hits) == 1 else None
 
 
-def harvest(events, archive, *, verbose=True):
+def harvest(events, archive, *, verbose=True, out=None):
     rows, stats = [], {"resolved": 0, "found": 0, "unmatched": 0,
                        "quantified": 0}
     for start in range(0, len(events), CHUNK):
         block = events.iloc[start:start + CHUNK]
-        resolved = resolve_all(block)
+        try:
+            resolved = resolve_all(block)
+        except (urllib.error.URLError, OSError, TimeoutError) as err:
+            # Keep what has been gathered. A rate limiter that gives up
+            # halfway through 2014 should not cost the 2011-2013 labels too.
+            print(f"    stopped at event {start}: {err}")
+            break
         stats["resolved"] += len(resolved)
         for event in block.itertuples():
             title, text = resolved.get(event.event_name, (None, None))
@@ -102,9 +119,12 @@ def harvest(events, archive, *, verbose=True):
                     "days_notice": change["days_notice"],
                     "article": title,
                 })
+        frame = pd.DataFrame(rows, columns=list(COLUMNS))
+        if out is not None and not frame.empty:
+            frame.to_csv(out, index=False)
         if verbose:
             print(f"    {min(start + CHUNK, len(events)):>4}/{len(events)} "
-                  f"events, {len(rows):,} labels so far")
+                  f"events, {len(rows):,} labels so far", flush=True)
     return pd.DataFrame(rows, columns=list(COLUMNS)), stats
 
 
@@ -112,6 +132,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__[:200])
     parser.add_argument("--limit", type=int, default=0,
                         help="only the first N events, for a smoke test")
+    parser.add_argument("--from-year", type=int, default=FROM_YEAR,
+                        help="skip events before this year")
     args = parser.parse_args(argv)
 
     archive = pd.read_csv(ARCHIVE, usecols=["event_name", "date", "r_name",
@@ -121,13 +143,14 @@ def main(argv=None):
               .drop_duplicates("event_name")
               .sort_values("date")[["event_name", "date"]]
               .reset_index(drop=True))
+    events = events[events.date.dt.year >= args.from_year].reset_index(drop=True)
     if args.limit:
         events = events.head(args.limit)
 
     print("=" * 74)
     print(f"HARVESTING LATE REPLACEMENTS FROM {len(events):,} EVENTS")
     print("=" * 74)
-    frame, stats = harvest(events, archive)
+    frame, stats = harvest(events, archive, out=OUT)
 
     print(f"\n  {'events resolved':<34}{stats['resolved']:>8}"
           f"  of {len(events):,}")
