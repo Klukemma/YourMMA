@@ -100,6 +100,12 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
             "blue": fight.get("blue"),
             "pick": fight.get("pick"),
             "win_prob": _clean(fight.get("win_prob")),
+            # The model without the closing line, and the line itself. The
+            # headline is blended and is what gets graded; these two are what
+            # the edge is made of and are kept so a reader can see how much of
+            # the prediction is the market.
+            "win_prob_model": _clean(fight.get("win_prob_model")),
+            "market_prob": _clean(fight.get("market_prob")),
             "confidence": _clean(fight.get("confidence")),
             "method": fight.get("method"),
             "method_prob": _clean(fight.get("method_prob")),
