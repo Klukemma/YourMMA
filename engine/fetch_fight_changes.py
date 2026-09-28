@@ -47,12 +47,13 @@ COLUMNS = ("event_date", "event_name", "stepped_in", "stepped_in_raw",
            "replaced", "days_notice", "article")
 CHUNK = 40          # events resolved per round trip group
 
-# WRITTEN AFTER EVERY CHUNK, not at the end. The first full run spent fifty
-# minutes on Wikipedia's rate limiter and had to be cancelled, and everything
-# it had gathered went with it - the logs of a running job are not even
-# readable until it finishes, so there was nothing to show for the time
-# either. Partial output that survives a cancellation is worth more than
-# tidy output that does not.
+# WRITTEN AFTER EVERY CHUNK, not at the end. The first full run was cancelled
+# part way and everything it had gathered went with it. A running job's logs
+# cannot be read until it finishes, so there was no way to tell whether it was
+# progressing or stuck - and, as it turned out, it was progressing, and the
+# cancellation was a misjudgement made in the dark. Partial output that
+# survives is worth more than tidy output that does not, and a chunk count
+# printed as it goes is worth more than both.
 FROM_YEAR = 2011    # odds.csv starts here, and an unpriced label cannot be
                     # used by the arm that matters - the one that asks
                     # whether the effect survives the market

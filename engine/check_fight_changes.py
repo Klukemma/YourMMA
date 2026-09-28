@@ -70,11 +70,11 @@ AGENT = ("YourMMA-research/1.0 "
          "(https://github.com/Klukemma/YourMMA; fight-change labelling)")
 TIMEOUT = 30         # seconds per request
 SEARCH_LIMIT = 3     # candidate articles considered per event
-# TWO REQUESTS A SECOND, NOT FIVE. A full 755-event harvest at 0.2s spent
-# fifty minutes in Wikipedia's rate limiter and had to be cancelled: every
-# 429 costs a 2s then a 4s backoff before it even raises, so hurrying is
-# slower than going steadily. A runner's IP is shared and may already be hot
-# before this starts.
+# TWO REQUESTS A SECOND, NOT FIVE. At 0.2s a 40-event probe was answered with
+# 429 on most of its calls, and every 429 costs a 2s then a 4s backoff before
+# it even raises - so hurrying is slower than going steadily, and a run that
+# is being refused looks exactly like a run that is working. A runner's IP is
+# shared and may already be hot before this starts.
 PAUSE = 0.50         # seconds between calls
 BATCH = 40           # titles per query; the API allows 50
 RETRIES = 3          # on 429, which is what hammering it looks like
