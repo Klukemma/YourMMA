@@ -63,10 +63,16 @@ ENGINE = Path(__file__).resolve().parent
 ARCHIVE = ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
 
 API = "https://en.wikipedia.org/w/api.php"
-AGENT = "YourMMA-research/1.0 (fight-change labelling probe)"
+# Wikipedia asks that a bot identify itself and say where to complain. An
+# agent string it does not like is answered with 403, which arrives looking
+# exactly like every other HTTPError.
+AGENT = ("YourMMA-research/1.0 "
+         "(https://github.com/Klukemma/YourMMA; fight-change labelling)")
 TIMEOUT = 30         # seconds per request
 SEARCH_LIMIT = 3     # candidate articles considered per event
-PAUSE = 0.15         # seconds between calls, to be a good citizen
+PAUSE = 0.20         # seconds between calls, to be a good citizen
+BATCH = 40           # titles per query; the API allows 50
+RETRIES = 3          # on 429, which is what hammering it looks like
 
 # The sentence shapes Wikipedia uses for a change. Deliberately several
 # patterns rather than one clever regex: these are written by hundreds of
@@ -99,10 +105,91 @@ WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
 
 
 def get(params):
+    """One API call, paced, and retried when the API says to slow down.
+
+    THE PACING IS NOT POLITENESS, IT IS CORRECTNESS. The first version slept
+    only when a candidate's date did not match, which meant a run that
+    resolved nothing fired 120 requests in four seconds and was answered with
+    429 on 35 of 40 events. That came out as "FETCH FAILED HTTPError" and then
+    as "TOO THIN", which reads like a fact about Wikipedia and is a fact about
+    this function.
+    """
     url = API + "?" + urllib.parse.urlencode({**params, "format": "json"})
     request = urllib.request.Request(url, headers={"User-Agent": AGENT})
-    with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
-        return json.loads(response.read().decode())
+    for attempt in range(RETRIES):
+        try:
+            time.sleep(PAUSE)
+            with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+                return json.loads(response.read().decode())
+        except urllib.error.HTTPError as err:
+            # A status is diagnosable; "HTTPError" is not. 429 means back off,
+            # 403 means the agent string was refused, 404 means wrong title -
+            # three completely different problems behind one word.
+            if err.code == 429 and attempt < RETRIES - 1:
+                time.sleep(2.0 * (attempt + 1))
+                continue
+            raise urllib.error.HTTPError(
+                err.url, err.code, f"HTTP {err.code} from the Wikipedia API",
+                err.headers, None)
+    raise RuntimeError("unreachable")
+
+
+def title_candidates(name):
+    """Article titles this event might live at, best guess first.
+
+    Most events need no search at all: "UFC 182: Jones vs Cormier" is at
+    "UFC 182", and a Fight Night is usually at its own full name give or take
+    a full stop after "vs". Guessing first and searching only for the misses
+    turns 755 searches into about twenty batched lookups.
+    """
+    name = str(name).strip()
+    out = [name]
+    numbered = re.match(r"^(UFC\s+\d+)\b", name)
+    if numbered:
+        out.append(numbered.group(1))
+    if " vs " in name:
+        out.append(name.replace(" vs ", " vs. "))
+    elif " vs. " in name:
+        out.append(name.replace(" vs. ", " vs "))
+    seen, unique = set(), []
+    for title in out:
+        if title and title not in seen:
+            seen.add(title)
+            unique.append(title)
+    return unique
+
+
+def fetch_many(titles):
+    """{title: wikitext} for up to BATCH titles in one call.
+
+    Titles that do not exist come back under "missing" and are simply absent
+    here, which is the answer to "is this the right title" for free.
+    """
+    found = {}
+    for start in range(0, len(titles), BATCH):
+        chunk = [t for t in titles[start:start + BATCH] if t]
+        if not chunk:
+            continue
+        body = get({"action": "query", "prop": "revisions", "rvslots": "main",
+                    "rvprop": "content", "redirects": 1,
+                    "titles": "|".join(chunk)})
+        query = body.get("query", {})
+        # A redirect or a normalisation means the page came back under a
+        # different name than we asked for; both maps are needed to put the
+        # text back against the title the caller knows.
+        alias = {}
+        for kind in ("normalized", "redirects"):
+            for hop in query.get(kind, []):
+                alias[hop["to"]] = alias.get(hop["from"], hop["from"])
+        for page in query.get("pages", {}).values():
+            if "missing" in page or not page.get("revisions"):
+                continue
+            text = page["revisions"][0]["slots"]["main"]["*"]
+            title = page["title"]
+            found[title] = text
+            if title in alias:
+                found[alias[title]] = text
+    return found
 
 
 def wikitext(title):
@@ -113,7 +200,11 @@ def wikitext(title):
     return body["parse"]["wikitext"]["*"]
 
 
-INFOBOX_DATE = re.compile(r"\|\s*date\s*=\s*([^\n|]+)", re.I)
+# To END OF LINE, not to the next pipe. Infobox dates are very often written
+# {{Start date|2024|4|13}}, and a pattern that stops at the first pipe reads
+# that as "{{Start date" and gives up - silently, on what is probably the
+# commonest form there is.
+INFOBOX_DATE = re.compile(r"\|\s*date\s*=\s*([^\n]+)", re.I)
 
 
 def infobox_date(text):
@@ -126,18 +217,25 @@ def infobox_date(text):
     hit = INFOBOX_DATE.search(text or "")
     if not hit:
         return None
-    raw = re.sub(r"\{\{[^{}]*\|([^{}|]+)\}\}", r"\1", hit.group(1))
-    raw = re.sub(r"[\[\]']", "", raw).strip()
-    # {{Start date|2024|4|13}} survives the line above as "2024|4|13"
-    numbers = re.findall(r"\d+", raw)
-    for attempt in (raw, "-".join(numbers[:3]) if len(numbers) >= 3 else ""):
-        if not attempt:
-            continue
-        try:
-            return pd.Timestamp(attempt).date()
-        except (ValueError, TypeError):
-            continue
-    return None
+    raw = hit.group(1)
+    template = re.search(r"\{\{\s*[Ss]tart date[^}]*\}\}", raw)
+    if template:
+        # {{Start date|2024|4|13|...}} - the first three numbers are the date,
+        # anything after them is a time or a flag.
+        numbers = re.findall(r"\d+", template.group(0))
+        if len(numbers) >= 3:
+            try:
+                return pd.Timestamp(year=int(numbers[0]), month=int(numbers[1]),
+                                    day=int(numbers[2])).date()
+            except (ValueError, TypeError):
+                return None
+    # Plain prose: "April 13, 2024", possibly followed by another field on the
+    # same line, and possibly wrapped in link or italic markup.
+    raw = re.sub(r"[\[\]']", "", raw).split("|")[0].strip()
+    try:
+        return pd.Timestamp(raw).date()
+    except (ValueError, TypeError):
+        return None
 
 
 def search_titles(name):
@@ -148,44 +246,56 @@ def search_titles(name):
             body.get("query", {}).get("search", [])]
 
 
-def resolve(name, when):
-    """(title, wikitext) for this event, or (None, None).
+def resolve_all(sample):
+    """{event name: (title, wikitext)} for a frame of events.
 
-    SEARCH THEN VERIFY, rather than either alone. An earlier version of this
-    built a date -> title map by reading links and dates out of a list page's
-    table rows, which paired whichever link came first in a row with whichever
-    date did: it resolved 10% of our events and dated UFC 16 - a 1998 card -
-    to 2009. Both halves of that failure were invisible in the output; the
-    fetches simply 404'd and the coverage number came out low, which would
-    have been read as "Wikipedia does not carry this" and killed the work.
-
-    So the title comes from search, which is good at names, and the DATE comes
-    from the article's own infobox, which cannot be wrong about when its event
-    happened. A candidate whose date disagrees with ours is the wrong article
-    and is dropped rather than used.
+    GUESS, BATCH, VERIFY, THEN SEARCH THE REST. The title comes from the event
+    name where that works and from search where it does not; the DATE always
+    comes from the article's own infobox, which cannot be wrong about when its
+    own event happened. A candidate whose date disagrees with ours is the
+    wrong article and is dropped rather than used - an earlier version skipped
+    that check and confidently dated UFC 16, a 1998 card, to 2009.
     """
-    for title in search_titles(name):
+    wanted = {row.event_name: row.date.date() for row in sample.itertuples()}
+    candidates = {name: title_candidates(name) for name in wanted}
+    pages = fetch_many(sorted({t for group in candidates.values()
+                               for t in group}))
+
+    resolved, missing = {}, []
+    for name, when in wanted.items():
+        for title in candidates[name]:
+            text = pages.get(title)
+            if text and _dated(text, when):
+                resolved[name] = (title, text)
+                break
+        else:
+            missing.append(name)
+
+    for name in missing:
         try:
-            text = wikitext(title)
+            titles = search_titles(name)
         except (urllib.error.URLError, OSError, TimeoutError):
             continue
-        if not text:
-            continue
-        theirs = infobox_date(text)
-        if theirs and abs((theirs - when).days) <= 1:
-            return title, text
-        time.sleep(PAUSE)
-    return None, None
+        for title, text in fetch_many(titles).items():
+            if _dated(text, wanted[name]):
+                resolved[name] = (title, text)
+                break
+    return resolved
+
+
+def _dated(text, when):
+    theirs = infobox_date(text)
+    return bool(theirs) and abs((theirs - when).days) <= 1
 
 
 def _clean(name):
     """Trim the sentence's punctuation off a captured name.
 
     The name pattern has to allow a full stop so that "Jr." and initials
-    survive, which means a name at the end of a sentence swallows the sentence's
-    own full stop and comes back as "Carl Brown." - close enough to look right
-    in a printout and wrong enough to never join to a fighter. Caught by a test,
-    not by reading the output.
+    survive, which means a name at the end of a sentence swallows the
+    sentence's own full stop and comes back as "Carl Brown." - close enough to
+    look right in a printout and wrong enough to never join to a fighter.
+    Caught by a test, not by reading the output.
     """
     return str(name or "").strip().strip(".,;:!?'\u2019\"").strip()
 
@@ -275,15 +385,16 @@ def main(argv=None):
 
     total, with_changes, quantified, failures, surname_only = 0, 0, 0, 0, 0
     examples = []
+    try:
+        resolved = resolve_all(sample)
+    except (urllib.error.URLError, OSError, TimeoutError) as err:
+        print(f"\n  FETCHING FAILED: {err}")
+        return 1
+
     unresolved = []
     for event in sample.itertuples():
         when = event.date.date()
-        try:
-            title, text = resolve(event.event_name, when)
-        except (urllib.error.URLError, OSError, TimeoutError) as err:
-            failures += 1
-            print(f"    {when}  FETCH FAILED  {type(err).__name__}")
-            continue
+        title, text = resolved.get(event.event_name, (None, None))
         if not text:
             unresolved.append((when, event.event_name))
             continue

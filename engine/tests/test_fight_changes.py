@@ -9,6 +9,7 @@ viable. A false negative here is more expensive than a false positive.
 import sys
 from pathlib import Path
 
+import pandas as pd
 import pytest
 
 ENGINE = Path(__file__).resolve().parents[1]
@@ -124,3 +125,57 @@ def test_a_lowercase_word_is_not_taken_for_a_name():
     a row that cannot be joined to a fight."""
     assert cfc.changes_in("Bob Jones withdrew and was replaced by a "
                           "promotional newcomer.") == []
+
+
+# --- resolving an event to an article -------------------------------------
+# Every failure this probe has had so far was here, not in the parser, and
+# each one came out of CI looking like a fact about Wikipedia's coverage.
+
+def test_a_numbered_event_offers_its_bare_number_as_a_title():
+    """"UFC 182: Jones vs Cormier" lives at "UFC 182". Guessing that saves a
+    search for roughly half of all events."""
+    assert "UFC 182" in cfc.title_candidates("UFC 182: Jones vs Cormier")
+
+
+def test_a_fight_night_offers_both_spellings_of_vs():
+    got = cfc.title_candidates("UFC Fight Night: McGregor vs Siver")
+    assert "UFC Fight Night: McGregor vs Siver" in got
+    assert "UFC Fight Night: McGregor vs. Siver" in got
+
+
+def test_candidates_are_unique_and_keep_the_best_guess_first():
+    got = cfc.title_candidates("UFC 300")
+    assert got[0] == "UFC 300"
+    assert len(got) == len(set(got))
+
+
+def test_a_plain_infobox_date_is_read():
+    assert cfc.infobox_date("| date = April 13, 2024") == \
+        pd.Timestamp("2024-04-13").date()
+
+
+def test_a_start_date_template_is_read():
+    assert cfc.infobox_date("| date = {{Start date|2024|4|13}}") == \
+        pd.Timestamp("2024-04-13").date()
+
+
+def test_no_date_field_returns_None():
+    assert cfc.infobox_date("| venue = T-Mobile Arena") is None
+
+
+def test_an_article_whose_date_disagrees_is_not_a_match():
+    """The check that would have caught UFC 16 - a 1998 card - being resolved
+    to a 2009 event. Without it the probe fetched the wrong articles, found
+    nothing in them, and reported that Wikipedia does not carry this."""
+    text = "| date = May 13, 1998"
+    assert not cfc._dated(text, pd.Timestamp("2009-04-18").date())
+    assert cfc._dated(text, pd.Timestamp("1998-05-13").date())
+
+
+def test_a_day_either_side_is_allowed():
+    """A card that starts late on the 13th local time is the 14th in UTC, and
+    the archive and Wikipedia do not always agree which they mean."""
+    assert cfc._dated("| date = April 13, 2024",
+                      pd.Timestamp("2024-04-14").date())
+    assert not cfc._dated("| date = April 13, 2024",
+                          pd.Timestamp("2024-04-16").date())
