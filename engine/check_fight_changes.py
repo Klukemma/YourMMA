@@ -442,15 +442,35 @@ def main(argv=None):
     if unresolved:
         print(f"\n  {len(unresolved)} did not resolve, e.g. "
               + "; ".join(f"{d} {n}" for d, n in unresolved[:3]))
-    if projected < 400:
-        print("  TOO THIN. A hand-typed 4% cannot be told from 0% at this N.")
-        print("  The honest move is to delete the hook, not tune it.")
+    if projected < MIN_LABELS_USEFUL:
+        print("  TOO THIN at this parser's recall. A hand-typed 4% cannot be")
+        print("  told from 0% at this N. Note this is a FLOOR: more sentence")
+        print("  patterns would find more, so it is a fact about the parser")
+        print("  as much as about Wikipedia.")
     elif projected < 1000:
         print("  MARGINAL. Enough to rule out a large effect, not enough to")
-        print("  confirm a 4% one. Worth gathering; report the interval, and")
-        print("  do not ship a weight whose interval spans zero.")
+        print("  confirm a 4% one. Report the interval, and do not ship a")
+        print("  weight whose interval spans zero.")
     else:
         print("  ENOUGH. A 4% effect would be distinguishable from zero.")
+
+    # THE BINDING CONSTRAINT IS NOT THE COUNT. The hook being fitted is
+    # `short_notice`, and a replacement is not the same thing as short notice.
+    # One of the examples above reads "Magomedov pulled out of the fight in
+    # early March ... and was replaced by Rustam Khabilov" - for a fight on
+    # 8 May. That replacement had a nine-week camp. Treating him as short
+    # notice would be labelling noise and calling it evidence.
+    share = quantified / total if total else 0.0
+    print(f"\n  OF THOSE, {quantified} of {total} say how much notice was "
+          f"given ({share:.0%}).")
+    if share < 0.25:
+        print("  This is the real blocker, and it is worse than the count. A")
+        print("  replacement announced in early March for a fight in May had")
+        print("  a full camp; calling that short notice would label noise and")
+        print("  call it evidence. What Wikipedia reliably supports is a")
+        print("  WEAKER label - 'this fighter was a late replacement' - which")
+        print("  is a different question from the one 'short_notice' asks.")
+        print("  Fit that one, or fit nothing.")
 
     if examples:
         print("\n  a few, to eyeball the parser:")
