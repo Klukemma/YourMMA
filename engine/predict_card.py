@@ -185,7 +185,7 @@ import optuna
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 from xgboost import XGBClassifier
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.metrics import accuracy_score, log_loss, brier_score_loss, classification_report
+from sklearn.metrics import accuracy_score, log_loss, brier_score_loss, classification_report, roc_auc_score
 import warnings
 import json
 import os
@@ -256,6 +256,7 @@ from method_calibration import apply_calibrator as _apply_finish_calibrator
 from method_calibration import fit_calibrator as _fit_finish_calibrator
 from method_calibration import rebuild_three_way as _rebuild_three_way
 import market_blend as _blend
+import finish_distil as _distil
 _final = _final_stats(ufc)
 for _col in _careers.columns:
     ufc[_col] = _careers[_col]
@@ -3606,6 +3607,99 @@ xgb_method_prod = XGBClassifier(
 )
 xgb_method_prod.fit(X_train_m_full, y_train_m_full, sample_weight=sw_train_m_prod, eval_set=[(X_cal_m_full, y_cal_m_full)], verbose=False)
 
+# --- the distilled finish model -------------------------------------------
+# P(finish) learned from the market's price rather than from the result.
+# Measured walk-forward over 4,764 fights carrying both: AUC 0.577 trained on
+# the outcome, 0.630 trained on the market, +0.053 with a 95% interval of
+# [+0.038, +0.068]. That closes 63% of the distance to the market itself
+# (0.661), and the weight chosen from earlier years came back 1.00 every
+# year - no share of the raw outcome at all.
+#
+# THAT BASELINE IS NOT THIS FILE'S MODEL. It is a binary classifier trained
+# on the outcome over the priced fights alone, so the experiment shows that
+# distilling beats outcome-training on the same features - not that it beats
+# the three-way model below, which trains with class weights on every fight
+# in the archive. Against THAT, on the held-out split, the student is ahead
+# on AUC, Brier, accuracy and balanced accuracy and behind on none, with
+# every difference inside a paired bootstrap's interval. 841 fights cannot
+# resolve a gap that size. finish_distil's docstring carries the table.
+#
+# It needs no price to predict, which is the point: this market does not
+# exist live, so blending was never available and the information can only
+# reach a card inside a model's weights.
+#
+# The three-way model stays, and keeps its job. This supplies the binary; the
+# split between knockout and submission is still its.
+print("    Distilling P(finish) from the historical method market...")
+_METHOD_ODDS_PATH = ENGINE_DIR / 'data' / 'method_odds.csv' \
+    if 'ENGINE_DIR' in dir() else Path(__file__).resolve().parent / 'data' / 'method_odds.csv'
+
+
+def _fight_key(red, blue, date):
+    return tuple(sorted((_norm_name(red), _norm_name(blue)))) + \
+        (pd.Timestamp(date).date(),)
+
+
+FINISH_STUDENT = None
+if _METHOD_ODDS_PATH.exists():
+    _targets = _distil.load_targets(_METHOD_ODDS_PATH, _fight_key)
+    _rows = [_targets.get(_fight_key(r, b, d), float('nan'))
+             for r, b, d in zip(ufc_method['r_name'], ufc_method['b_name'],
+                                ufc_method['date'])]
+    _rows = np.asarray(_rows, dtype=float)
+    # Only the training window. A price from a fight in the calibration split
+    # is a price from after what the model is fitted on.
+    _student_targets = np.full(len(_rows), np.nan)
+    _student_targets[:train_end_m_full] = _rows[:train_end_m_full]
+    # SCALED, because that is what it will be asked to predict on. The first
+    # version of this line fitted on the raw frame and then received
+    # scaler_prod's output at prediction time, so every split threshold it had
+    # learned was in the wrong units: AUC fell from 0.630 to 0.582 and the
+    # spread collapsed to a ten-point band around a coin flip, because inputs
+    # far outside the training range all fall into the same few leaves. The
+    # card printed 44-54% for nine fights in a row, which is what caught it.
+    FINISH_STUDENT = _distil.fit(scaler_prod.transform(X_method),
+                                 _student_targets)
+    _matched = int(np.isfinite(_student_targets).sum())
+    if FINISH_STUDENT is None:
+        print(f"      Not distilled: only {_matched:,} fights in the training "
+              f"window carry a usable price.")
+    else:
+        print(f"      Trained on {_matched:,} market prices.")
+
+    # IT SHIPS ONLY IF IT BEATS WHAT IT REPLACES, here, today, on the split
+    # it was not fitted on. A measurement in an experiment file says the idea
+    # works; it does not say that THIS build wired it up correctly. The
+    # scaling bug above produced a student that was worse than the model it
+    # was replacing and still printed a confident number for every fight, and
+    # nothing in the output said so. This is the check that would have caught
+    # it on the first run.
+    #
+    # The comparison is tilted AGAINST the student: the three-way model used
+    # this same split as its early-stopping eval set, so it has seen it once
+    # and the student has not. A student that wins anyway has earned the job.
+    if FINISH_STUDENT is not None:
+        _decision_at = list(le_method.classes_).index('Decision')
+        _s_cal = _distil.predict(FINISH_STUDENT, X_cal_m_full)
+        _t_cal = 1.0 - xgb_method_prod.predict_proba(X_cal_m_full)[:, _decision_at]
+        _real = (y_cal_m_full != _decision_at)
+        if len(np.unique(_real)) < 2:
+            FINISH_STUDENT = None
+            print("      Not used: the calibration split is one outcome only, "
+                  "so nothing can be compared.")
+        else:
+            _auc_s = roc_auc_score(_real, _s_cal)
+            _auc_t = roc_auc_score(_real, _t_cal)
+            print(f"      Held-out AUC: student {_auc_s:.3f}, "
+                  f"three-way {_auc_t:.3f}.")
+            if _auc_s <= _auc_t:
+                FINISH_STUDENT = None
+                print("      NOT USED: it does not beat the model it would "
+                      "replace. The three-way model supplies P(finish).")
+else:
+    print(f"      No {_METHOD_ODDS_PATH.name}; the three-way model supplies "
+          f"P(finish) as before. Run the fetch-method-odds mode.")
+
 # --- calibrate P(finish) ---------------------------------------------------
 # The method model ranks fights well and prices them badly. Walk-forward over
 # the confirm period it said 79% and 64% happened, said 31% and 36% happened -
@@ -3624,15 +3718,29 @@ xgb_method_prod.fit(X_train_m_full, y_train_m_full, sample_weight=sw_train_m_pro
 # Platt calibration already uses.
 print("    Calibrating P(finish) on the calibration split...")
 _DECISION_INDEX = list(le_method.classes_).index('Decision')
-_cal_raw_finish = 1.0 - xgb_method_prod.predict_proba(X_cal_m_full)[:, _DECISION_INDEX]
 _cal_real_finish = (y_cal_m_full != _DECISION_INDEX).astype(float)
+
+# FITTED ON WHATEVER ACTUALLY SUPPLIES P(FINISH) AT PREDICTION TIME. Once the
+# student exists it is the student, and calibrating the three-way model's
+# output instead would map from a distribution nothing ever produces - the
+# same mismatch this file already fixed once for the winner model's Platt
+# calibration, and the reason the two are fitted here together rather than in
+# whichever order they were written.
+_student_cal = _distil.predict(FINISH_STUDENT, X_cal_m_full)
+if _student_cal is not None:
+    _cal_raw_finish = _student_cal
+    _cal_source = "the distilled student"
+else:
+    _cal_raw_finish = 1.0 - xgb_method_prod.predict_proba(
+        X_cal_m_full)[:, _DECISION_INDEX]
+    _cal_source = "the three-way model"
 FINISH_CALIBRATOR = _fit_finish_calibrator(_cal_raw_finish, _cal_real_finish)
 if FINISH_CALIBRATOR is None:
     print("      Not calibrated: too few rows, or one outcome only.")
 else:
     _before = _cal_raw_finish.mean()
     _after = _apply_finish_calibrator(FINISH_CALIBRATOR, _cal_raw_finish).mean()
-    print(f"      On the calibration split it said {_before:.1%} finishes, "
+    print(f"      Fitted on {_cal_source}: it said {_before:.1%} finishes, "
           f"now says {_after:.1%}; {_cal_real_finish.mean():.1%} really were.")
 
 
@@ -4214,7 +4322,21 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
 
     # Method
     p_method = xgb_method_prod.predict_proba(X_pred_s)[0]
-    method_probs = calibrate_method_probs(dict(zip(le_method.classes_, p_method)))
+    method_probs = dict(zip(le_method.classes_, p_method))
+
+    # THE DISTILLED BINARY REPLACES THE THREE-WAY MODEL'S P(FINISH), and the
+    # three-way model keeps the split between knockout and submission - which
+    # is the part the distillation never measured and must not silently move.
+    _student = _distil.predict(FINISH_STUDENT, X_pred_s)
+    if _student is not None:
+        _order = list(le_method.classes_)
+        _packed = np.array([[method_probs['Decision'], method_probs['KO/TKO'],
+                             method_probs['Submission']]], dtype=float)
+        _rebuilt = _rebuild_three_way(_packed, np.array([float(_student[0])]))[0]
+        method_probs = {'Decision': float(_rebuilt[0]),
+                        'KO/TKO': float(_rebuilt[1]),
+                        'Submission': float(_rebuilt[2])}
+    method_probs = calibrate_method_probs(method_probs)
     
     # Round
     p_round = xgb_round_prod.predict_proba(X_pred_s)[0]
