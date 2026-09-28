@@ -169,43 +169,51 @@ def test_the_differences_stay_in_the_winner_model():
             f"{name} has always been in the winner model and must stay")
 
 
-# --- the stale UNAVAILABLE list -------------------------------------------
-# Found while wiring the rate block: prediction_row.UNAVAILABLE forces a
-# suffix to NaN at prediction time, and its career-column entries were written
-# before career_stats.final_stats() existed. final_stats carries each
-# fighter's accumulated state after their last bout, predict_card merges it
-# into the stats dict, and _value then throws those values away because their
-# names are on the list.
+# --- the UNAVAILABLE list -------------------------------------------------
+# prediction_row.UNAVAILABLE forces a suffix to NaN at prediction time. Its
+# career-column entries were written before career_stats.final_stats()
+# existed, and for as long as they stayed there the winner model trained on
+# twelve features it could never read.
 #
-# Thirteen features the winner model trains on are NaN at prediction time
-# because of it. That is not fixed here - it changes what the deployed winner
-# model reads, and the winner model's probability is what the ROI, the
-# calibration and the failure model are measured against. These tests hold the
-# finding in place so it is not rediscovered from scratch.
+# They are off the list now. Restoring them was measured and is NOT a gain:
+# paired bootstrap over 3,318 confirm-period fights gives 95% [-1.5%, +0.1%]
+# and AUC moves by a thousandth. It is a correctness fix - a model should not
+# train on features it cannot read - and these tests keep it from drifting
+# back rather than claiming it bought anything.
 
-def test_the_stale_entries_are_marked_as_stale():
+def test_no_career_column_is_forced_to_nan():
+    from prediction_row import UNAVAILABLE
+
+    from career_stats import CAREER_COLUMNS
+
+    listed = sorted(set(CAREER_COLUMNS) & set(UNAVAILABLE))
+    assert not listed, (
+        f"final_stats supplies {listed} and predict_card merges them into the "
+        f"stats dict, so listing them here throws away values that are present")
+
+
+def test_what_remains_unavailable_really_is():
+    """A snapshot cannot rebuild a window over a fighter's last three bouts.
+    Everything still on the list must be of that kind."""
     from prediction_row import UNAVAILABLE
 
     from career_stats import CAREER_COLUMNS
 
     supplied = set(CAREER_COLUMNS)
-    for suffix, reason in UNAVAILABLE.items():
-        if suffix in supplied:
-            assert reason.startswith("STALE"), (
-                f"{suffix} is supplied by final_stats but its reason still "
-                f"claims it cannot be reconstructed: {reason!r}")
+    for suffix in UNAVAILABLE:
+        assert suffix not in supplied, suffix
 
 
-def test_a_listed_suffix_is_nan_even_when_the_value_is_present():
-    """The mechanism, so the claim above is demonstrated rather than asserted."""
+def test_a_listed_suffix_is_still_nan_even_when_a_value_is_present():
+    """The mechanism itself, on a suffix that is genuinely unavailable."""
     import numpy as np
 
     from prediction_row import UNAVAILABLE, _value
 
-    listed = next(s for s in UNAVAILABLE if s.startswith("cd_"))
+    listed = next(iter(UNAVAILABLE))
     assert np.isnan(_value({listed: 0.97}, listed, None))
-    # And an unlisted career column comes through.
-    assert _value({"cd_ko_for_per15": 0.64}, "cd_ko_for_per15", None) == 0.64
+    # And a career column now comes through rather than being discarded.
+    assert _value({"cd_kd_per15": 0.97}, "cd_kd_per15", None) == 0.97
 
 
 def test_the_method_rate_block_is_readable_at_prediction_time():

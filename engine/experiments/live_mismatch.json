@@ -1,19 +1,7 @@
 {
- "generated": "2026-09-28T13:05:06Z",
- "blanked": [
+ "generated": "2026-09-28T14:23:01Z",
+ "still_unavailable": [
   "data_sparsity_diff",
-  "cd_bouts_diff",
-  "cd_bouts_level",
-  "cd_bouts_known",
-  "cd_minutes_diff",
-  "cd_minutes_level",
-  "cd_kd_per15_diff",
-  "cd_kd_per15_level",
-  "cd_kd_per15_known",
-  "cd_ctrl_share_diff",
-  "cd_ctrl_share_level",
-  "cd_ctrl_share_known",
-  "cd_head_share_diff",
   "career_damage_diff",
   "career_damage_level",
   "recent_form_diff",
@@ -25,26 +13,62 @@
   "td_avg_L3_diff",
   "td_avg_L3_known"
  ],
+ "recovered": [
+  "cd_bouts_diff",
+  "cd_bouts_known",
+  "cd_bouts_level",
+  "cd_ctrl_share_diff",
+  "cd_ctrl_share_known",
+  "cd_ctrl_share_level",
+  "cd_head_share_diff",
+  "cd_kd_per15_diff",
+  "cd_kd_per15_known",
+  "cd_kd_per15_level",
+  "cd_minutes_diff",
+  "cd_minutes_level"
+ ],
  "results": [
   {
    "period": "2011 onward",
-   "n": 7184,
-   "accuracy_full": 0.6181792873051225,
-   "accuracy_live": 0.5995267260579065,
-   "auc_full": 0.6428767817342913,
-   "auc_live": 0.6290578915047622,
-   "logloss_full": 0.6715109350839241,
-   "logloss_live": 0.7201985017614743
+   "seeds": [
+    42,
+    7,
+    2024
+   ],
+   "accuracy_backtest": 0.6179008908685969,
+   "accuracy_before": 0.5999443207126949,
+   "accuracy_now": 0.5980883444691908,
+   "accuracy_sd": {
+    "p_full": 0.0007365677369333361,
+    "p_before": 0.0004175946547884113,
+    "p_live": 0.0005625629014932223
+   },
+   "auc_backtest": 0.6428912706091664,
+   "auc_before": 0.6293532314587962,
+   "auc_now": 0.6332189533342741
   },
   {
    "period": "2020 onward",
-   "n": 3318,
-   "accuracy_full": 0.6175406871609403,
-   "accuracy_live": 0.6042796865581676,
-   "auc_full": 0.655274356269133,
-   "auc_live": 0.6515336991046083,
-   "logloss_full": 0.6468111092023312,
-   "logloss_live": 0.6635916352239937
+   "seeds": [
+    42,
+    7,
+    2024
+   ],
+   "accuracy_backtest": 0.6170383765320474,
+   "accuracy_before": 0.6050833835643962,
+   "accuracy_now": 0.5982519590114527,
+   "accuracy_sd": {
+    "p_full": 0.0008700275304243894,
+    "p_before": 0.0007584724166436359,
+    "p_live": 0.000904159132007254
+   },
+   "auc_backtest": 0.6550843628762552,
+   "auc_before": 0.6519203609998078,
+   "auc_now": 0.6509979597651597,
+   "paired_interval": [
+    -0.015069318866787196,
+    0.0006027727546714656
+   ]
   }
  ]
 }

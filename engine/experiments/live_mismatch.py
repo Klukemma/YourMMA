@@ -43,17 +43,34 @@ CONFIRM_FROM = 2020
 MIN_TRAIN = 500
 
 
-def blanked_columns(columns):
-    """Every feature a live prediction cannot see, from the list itself."""
+# What the list held BEFORE the career columns came off it. Kept literal so
+# the cost of the old arrangement stays measurable after the fix - otherwise
+# "the fix recovered 1.3 points" becomes a claim nobody can re-run.
+BEFORE_THE_FIX = ("cd_bouts", "cd_minutes", "cd_kd_per15", "cd_ctrl_share",
+                  "cd_head_share", "cd_opp_ctrl_share", "cd_opp_sub_per15",
+                  "cd_wins", "cd_losses", "cd_win_rate",
+                  "won_L3", "splm_L3", "str_acc_L3", "td_avg_L3",
+                  "data_reliability", "damage_log",
+                  "striking_trajectory", "accuracy_trajectory")
+
+
+def features_for(suffixes, columns):
+    """Every emitted feature derived from any of these suffixes."""
     from feature_inventory import all_specs
-    from prediction_row import UNAVAILABLE
 
     out = []
     for spec in all_specs():
         red = getattr(spec, "red", None)
-        if red and red[2:] in UNAVAILABLE:
+        if red and red[2:] in suffixes:
             out.extend(spec.emits)
     return [c for c in out if c in columns]
+
+
+def blanked_columns(columns):
+    """Every feature a live prediction still cannot see."""
+    from prediction_row import UNAVAILABLE
+
+    return features_for(set(UNAVAILABLE), columns)
 
 
 def main():
@@ -68,83 +85,136 @@ def main():
     ufc = engine.ufc_valid.reset_index(drop=True).copy()
     years = pd.to_datetime(ufc["date"], errors="coerce").dt.year
 
-    blanked = blanked_columns(X.columns)
-    print(f"  {len(X.columns)} winner features; "
-          f"{len(blanked)} are NaN at prediction time:")
-    for name in blanked:
-        print(f"    {name}")
-    if not blanked:
+    now = blanked_columns(X.columns)
+    before = features_for(set(BEFORE_THE_FIX), X.columns)
+    recovered = sorted(set(before) - set(now))
+    print(f"  {len(X.columns)} winner features")
+    print(f"    {len(before)} were NaN at prediction time before the fix")
+    print(f"    {len(now)} still are - genuinely not reconstructable")
+    print(f"    {len(recovered)} recovered: {', '.join(recovered)}")
+    if not before:
         sys.exit("Nothing is being blanked, so there is nothing to measure.")
 
+    # THREE SEEDS. A single walk-forward of this scatters by about half a
+    # point, which is the size of the effect being measured - the method-model
+    # work in this repository already believed a one-run number once and had
+    # to take it back.
+    SEEDS = (42, 7, 2024)
     rows = []
-    for year in sorted(years.unique()):
+    for seed in SEEDS:
+      for year in sorted(years.unique()):
         if year < FIRST_PREDICTED_YEAR:
             continue
         train = (years < year).values
         test = (years == year).values
         if train.sum() < MIN_TRAIN or test.sum() < 20:
             continue
-        models = fit_models(X[train], y[train])
+        models = fit_models(X[train], y[train], seed=seed)
 
         honest = X[test]
         # The live path's arrangement: trained with, predicted without. 0 is
         # what X carries for a missing value after predict_card's fillna, and
         # is what a live prediction's NaN becomes on the same line.
-        crippled = honest.copy()
-        crippled[blanked] = 0.0
+        as_before = honest.copy()
+        as_before[before] = 0.0
+        as_now = honest.copy()
+        as_now[now] = 0.0
 
         rows.append({
+            "seed": seed,
             "year": int(year),
             "n": int(test.sum()),
             "p_full": proba(models, honest, 3),
-            "p_live": proba(models, crippled, 3),
+            "p_before": proba(models, as_before, 3),
+            "p_live": proba(models, as_now, 3),
             "y": y[test],
         })
-        print(f"    {year}: {test.sum():,}", flush=True)
+      print(f"    seed {seed} done", flush=True)
 
-    def gather(key, keep):
-        return np.concatenate([r[key] for r in rows if keep(r["year"])])
+    def gather(key, keep, seed):
+        return np.concatenate([r[key] for r in rows
+                               if keep(r["year"]) and r["seed"] == seed])
 
-    print(f"\n  {'period':<16}{'full':>10}{'as live':>10}{'cost':>9}")
-    print("  " + "-" * 45)
+    print(f"\n  {'period':<14}{'backtest':>10}{'live before':>13}"
+          f"{'live now':>10}{'recovered':>11}")
+    print("  " + "-" * 58)
     results = []
     for label, keep in (("2011 onward", lambda v: True),
                         (f"{CONFIRM_FROM} onward", lambda v: v >= CONFIRM_FROM)):
-        truth = gather("y", keep)
-        full = gather("p_full", keep)
-        live = gather("p_live", keep)
-        a_full = ((full > 0.5) == (truth == 1)).mean()
-        a_live = ((live > 0.5) == (truth == 1)).mean()
-        print(f"  {label + ' acc':<16}{a_full:>10.1%}{a_live:>10.1%}"
-              f"{a_full - a_live:>+9.1%}")
-        print(f"  {label + ' AUC':<16}{roc_auc_score(truth, full):>10.3f}"
-              f"{roc_auc_score(truth, live):>10.3f}"
-              f"{roc_auc_score(truth, full) - roc_auc_score(truth, live):>+9.3f}")
+        per_seed = {"p_full": [], "p_before": [], "p_live": []}
+        aucs = {"p_full": [], "p_before": [], "p_live": []}
+        for seed in SEEDS:
+            truth = gather("y", keep, seed)
+            for key in per_seed:
+                p = gather(key, keep, seed)
+                per_seed[key].append(float(((p > 0.5) == (truth == 1)).mean()))
+                aucs[key].append(float(roc_auc_score(truth, p)))
+        m = {k: float(np.mean(v)) for k, v in per_seed.items()}
+        sd = {k: float(np.std(v, ddof=1)) for k, v in per_seed.items()}
+        print(f"  {label + ' acc':<14}{m['p_full']:>10.1%}{m['p_before']:>13.1%}"
+              f"{m['p_live']:>10.1%}{m['p_live'] - m['p_before']:>+11.1%}")
+        print(f"  {'  +- over seeds':<14}{sd['p_full']:>10.1%}{sd['p_before']:>13.1%}"
+              f"{sd['p_live']:>10.1%}")
+        am = {k: float(np.mean(v)) for k, v in aucs.items()}
+        print(f"  {label + ' AUC':<14}{am['p_full']:>10.3f}{am['p_before']:>13.3f}"
+              f"{am['p_live']:>10.3f}{am['p_live'] - am['p_before']:>+11.3f}")
         results.append({
-            "period": label, "n": int(len(truth)),
-            "accuracy_full": float(a_full), "accuracy_live": float(a_live),
-            "auc_full": float(roc_auc_score(truth, full)),
-            "auc_live": float(roc_auc_score(truth, live)),
-            "logloss_full": float(log_loss(truth, np.clip(full, 1e-6, 1 - 1e-6))),
-            "logloss_live": float(log_loss(truth, np.clip(live, 1e-6, 1 - 1e-6))),
+            "period": label, "seeds": list(SEEDS),
+            "accuracy_backtest": m["p_full"], "accuracy_before": m["p_before"],
+            "accuracy_now": m["p_live"], "accuracy_sd": sd,
+            "auc_backtest": am["p_full"], "auc_before": am["p_before"],
+            "auc_now": am["p_live"],
         })
 
-    confirm = results[-1]
-    gap = confirm["accuracy_full"] - confirm["accuracy_live"]
-    print()
-    if gap > 0.005:
-        print(f"  THE BACKTEST IS FLATTERING THE PHONE BY {gap:.1%}. Every "
-              f"accuracy figure\n  this project quotes was measured with "
-              f"features the live card never sees.")
+    c = results[-1]
+    gained = c["accuracy_now"] - c["accuracy_before"]
+    left = c["accuracy_backtest"] - c["accuracy_now"]
+
+    # THE RIGHT UNCERTAINTY IS NOT THE SEED SPREAD. That measures how much the
+    # fitting wobbles; it says nothing about how much a 2,339-fight sample
+    # wobbles, which at 60% accuracy is about a point on its own. A first
+    # version of this compared a 0.7-point difference against a 0.1-point seed
+    # spread and announced that it cleared the noise.
+    #
+    # The two models are scored on the SAME fights, so the comparison is
+    # paired and a bootstrap over fights is what it needs.
+    keep = lambda v: v >= CONFIRM_FROM
+    truth = gather("y", keep, SEEDS[0])
+    before_p = np.mean([gather("p_before", keep, s) for s in SEEDS], axis=0)
+    now_p = np.mean([gather("p_live", keep, s) for s in SEEDS], axis=0)
+    hit_before = (before_p > 0.5) == (truth == 1)
+    hit_now = (now_p > 0.5) == (truth == 1)
+    rng_boot = np.random.default_rng(0)
+    diffs = [float(hit_now[i].mean() - hit_before[i].mean())
+             for i in (rng_boot.integers(0, len(truth), len(truth))
+                       for _ in range(4000))]
+    low, high = np.percentile(diffs, [2.5, 97.5])
+    disagree = int((hit_now != hit_before).sum())
+
+    print(f"\n  The fix moves the confirm period by {gained:+.1%}.")
+    print(f"  Paired bootstrap over the same {len(truth):,} fights: "
+          f"95% [{low:+.1%}, {high:+.1%}]")
+    print(f"  They disagree on {disagree:,} fights of {len(truth):,}.")
+    if low > 0 or high < 0:
+        print("  The interval excludes zero, so the difference is real.")
     else:
-        print(f"  The gap is {gap:+.1%}. The stale list costs little or "
-              f"nothing, so the\n  quoted figures are not flattered by it "
-              f"and fixing it is tidying, not a gain.")
+        print("  THE INTERVAL CROSSES ZERO. The career columns were not what "
+              "the mismatch\n  was costing, and restoring them neither helps "
+              "nor hurts measurably -\n  AUC moves by a thousandth. Keeping "
+              "the fix is a correctness argument,\n  that a model should not "
+              "train on features it cannot read, and not a\n  performance "
+              "one. It must not be sold as a gain.")
+    c["paired_interval"] = [float(low), float(high)]
+    print(f"\n  {left:.1%} still separates the backtest from the live card. "
+          f"That part is real:\n  a snapshot cannot rebuild a window over a "
+          f"fighter's last three bouts, and\n  every accuracy figure this "
+          f"project quotes is measured with those features.")
 
     out = ENGINE / "experiments" / "live_mismatch.json"
     out.write_text(json.dumps({
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "blanked": blanked,
+        "still_unavailable": now,
+        "recovered": recovered,
         "results": results,
     }, indent=1))
     print(f"\nwrote {out}")
