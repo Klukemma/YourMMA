@@ -1,0 +1,12 @@
+# Run on any server with Docker:  docker compose up -d --build
+services:
+  orchestrator:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - orchestrator-data:/data
+volumes:
+  orchestrator-data:

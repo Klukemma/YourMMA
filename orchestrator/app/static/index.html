@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>AI Team</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='10' cy='12' r='5' fill='%237c9cff'/%3E%3Ccircle cx='22' cy='12' r='5' fill='%2356d4a8'/%3E%3Ccircle cx='16' cy='22' r='5' fill='%23f5a35c'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #111318; --panel: #181b22; --panel-2: #1f232c; --line: #2a2f3a;
+  --text: #e8eaf0; --muted: #9aa1b2; --accent: #7c9cff; --accent-text: #0b1020;
+  --ok: #56d4a8; --warn: #f5c35c; --bad: #ff7a7a;
+  --user: #2b3550; --radius: 14px;
+  --a-lead: #7c9cff; --a-coder: #56d4a8; --a-researcher: #f5a35c; --a-critic: #e483e0; --a-other: #9aa1b2;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f6f8; --panel: #ffffff; --panel-2: #f0f2f5; --line: #dfe2e8;
+    --text: #151821; --muted: #5d6475; --accent: #3d63e0; --accent-text: #ffffff;
+    --ok: #13875f; --warn: #a86b00; --bad: #c83434; --user: #e3e9fb;
+    --a-lead: #3d63e0; --a-coder: #13875f; --a-researcher: #c26414; --a-critic: #a33aa0;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-text-size-adjust: 100%; }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+.hidden { display: none !important; }
+
+/* login */
+#login { min-height: 100%; display: grid; place-items: center; padding: 16px; }
+#login form { width: 100%; max-width: 340px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; display: grid; gap: 12px; }
+#login h1 { margin: 0 0 4px; font-size: 20px; }
+#login p { margin: 0; color: var(--muted); font-size: 14px; }
+input[type=password], input[type=text], input[type=number] { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); }
+.btn { border: 0; border-radius: 10px; padding: 10px 14px; background: var(--accent); color: var(--accent-text); font-weight: 600; }
+.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); font-weight: 500; }
+.btn.danger { background: transparent; color: var(--bad); border: 1px solid var(--line); }
+.err { color: var(--bad); font-size: 14px; min-height: 1em; }
+
+/* layout */
+#app { height: 100%; display: flex; }
+#sidebar { width: 280px; flex: none; background: var(--panel); border-right: 1px solid var(--line); display: flex; flex-direction: column; }
+#sidebar header { padding: 14px; display: flex; gap: 8px; }
+#sidebar header .btn { flex: 1; }
+#taskList { overflow-y: auto; flex: 1; padding: 0 8px 12px; }
+.task-item { display: block; width: 100%; text-align: left; background: none; border: 0; border-radius: 10px; padding: 10px; margin-bottom: 2px; }
+.task-item:hover { background: var(--panel-2); }
+.task-item.active { background: var(--panel-2); outline: 1px solid var(--line); }
+.task-item .t { font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.task-item .meta { font-size: 12px; color: var(--muted); display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+.mini-bar { flex: 1; height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.mini-bar i { display: block; height: 100%; background: var(--accent); }
+#sidebar footer { border-top: 1px solid var(--line); padding: 10px 14px; font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+#sidebar footer button { background: none; border: 0; color: var(--muted); padding: 0; text-decoration: underline; }
+
+#main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+#topbar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); min-height: 52px; }
+#menuBtn { display: none; background: none; border: 0; font-size: 22px; padding: 0 4px; line-height: 1; }
+#taskTitle { font-weight: 600; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip { font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.chip.running, .chip.queued { color: var(--accent); border-color: var(--accent); }
+.chip.done { color: var(--ok); border-color: var(--ok); }
+.chip.waiting, .chip.paused { color: var(--warn); border-color: var(--warn); }
+.chip.failed, .chip.cancelled { color: var(--bad); border-color: var(--bad); }
+.icon-btn { background: none; border: 1px solid var(--line); border-radius: 10px; padding: 5px 10px; color: var(--text); }
+
+#progress { padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); cursor: pointer; }
+#progress .row { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); gap: 12px; }
+#progress .row b { color: var(--text); font-weight: 600; }
+.bar { height: 8px; border-radius: 8px; background: var(--line); overflow: hidden; margin: 8px 0 6px; }
+.bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--ok)); transition: width .6s ease; }
+.bar.live i { background-size: 200% 100%; animation: shimmer 2s linear infinite; background-image: linear-gradient(90deg, var(--accent), var(--ok), var(--accent)); }
+@keyframes shimmer { to { background-position: -200% 0; } }
+#activity { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+#scroll { flex: 1; overflow-y: auto; }
+#thread { max-width: 820px; margin: 0 auto; padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+.msg { max-width: 92%; }
+.msg .who { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: flex; gap: 6px; align-items: center; }
+.msg .body { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; overflow-wrap: anywhere; }
+.msg.user { align-self: flex-end; }
+.msg.user .who { justify-content: flex-end; }
+.msg.user .body { background: var(--user); border-color: transparent; }
+.msg.system .body { background: transparent; border-style: dashed; color: var(--muted); font-size: 14px; }
+.body p { margin: 0 0 8px; } .body p:last-child { margin-bottom: 0; }
+.body pre { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px; overflow-x: auto; font-size: 13px; }
+.body code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; background: var(--panel-2); padding: 1px 4px; border-radius: 4px; }
+.body pre code { background: none; padding: 0; }
+.body ul, .body ol { margin: 4px 0 8px; padding-left: 22px; }
+.body h1, .body h2, .body h3, .body h4 { font-size: 15px; margin: 10px 0 6px; }
+.body a { color: var(--accent); }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
+
+.round { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); overflow: hidden; }
+.round > .rh { font-size: 12px; color: var(--muted); padding: 8px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; }
+.step { border-bottom: 1px solid var(--line); }
+.step:last-child { border-bottom: 0; }
+.step > button { width: 100%; background: none; border: 0; text-align: left; padding: 10px 14px; display: flex; gap: 10px; align-items: center; }
+.step .st { width: 20px; text-align: center; flex: none; }
+.step .tt { flex: 1; min-width: 0; }
+.step .tt .n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.step .tt .a { font-size: 12px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+.step .cost { font-size: 12px; color: var(--muted); }
+.step .detail { padding: 0 14px 12px 44px; font-size: 14px; }
+.step .detail .body { border: 0; padding: 0; background: none; }
+.log { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: var(--muted); max-height: 220px; overflow-y: auto; border-top: 1px dashed var(--line); margin-top: 10px; padding-top: 8px; }
+.log div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.log .blocked { color: var(--bad); } .log .review { color: var(--warn); } .log .error { color: var(--bad); }
+.spin { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: rot 0.9s linear infinite; }
+@keyframes rot { to { transform: rotate(360deg); } }
+
+#empty { text-align: center; color: var(--muted); margin: 12vh auto 0; max-width: 460px; padding: 0 16px; }
+#empty h2 { color: var(--text); font-size: 22px; margin-bottom: 6px; }
+.team-line { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+.team-line span { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; display: inline-flex; gap: 6px; align-items: center; }
+
+#composer { border-top: 1px solid var(--line); background: var(--panel); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); }
+#composer form { max-width: 820px; margin: 0 auto; display: flex; gap: 8px; align-items: flex-end; }
+#input { flex: 1; resize: none; max-height: 40vh; min-height: 44px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel-2); }
+#sendBtn { height: 44px; }
+#hint { max-width: 820px; margin: 6px auto 0; font-size: 12px; color: var(--muted); }
+
+/* sheets */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
+.sheet { background: var(--panel); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); }
+@media (min-width: 700px) { .overlay { align-items: center; } .sheet { border-radius: 16px; } }
+.sheet h3 { margin: 0 0 12px; display: flex; justify-content: space-between; align-items: center; }
+.sheet h3 button { background: none; border: 0; font-size: 22px; color: var(--muted); }
+.menu-list { display: grid; gap: 8px; }
+.menu-list .btn { text-align: left; }
+.agent-card { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+.agent-card .h { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 4px; }
+.agent-card p { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+.agent-card .row { display: flex; gap: 8px; }
+.file-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 4px; border-bottom: 1px solid var(--line); background: none; border-left: 0; border-right: 0; border-top: 0; width: 100%; text-align: left; font-size: 14px; }
+.file-row span:first-child { overflow-wrap: anywhere; }
+.file-row span:last-child { color: var(--muted); font-size: 12px; white-space: nowrap; }
+pre.file { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; background: var(--panel-2); padding: 10px; border-radius: 8px; }
+
+@media (max-width: 760px) {
+  #sidebar { position: fixed; inset: 0 auto 0 0; width: 84%; max-width: 320px; z-index: 15; transform: translateX(-100%); transition: transform .2s ease; }
+  #sidebar.open { transform: none; box-shadow: 0 0 0 100vmax rgba(0,0,0,.45); }
+  #menuBtn { display: block; }
+  .msg { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div id="login" class="hidden">
+  <form id="loginForm">
+    <h1>AI Team</h1>
+    <p>Enter the password you set as APP_PASSWORD.</p>
+    <input id="password" type="password" autocomplete="current-password" placeholder="Password" required>
+    <button class="btn" type="submit">Log in</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</div>
+
+<div id="app" class="hidden">
+  <aside id="sidebar">
+    <header><button class="btn" id="newBtn">+ New task</button></header>
+    <div id="taskList"></div>
+    <footer><span id="spend"></span><span><button id="teamBtn2">Team</button> · <button id="logoutBtn">Log out</button></span></footer>
+  </aside>
+
+  <main id="main">
+    <div id="topbar">
+      <button id="menuBtn" aria-label="Tasks">☰</button>
+      <div id="taskTitle">New task</div>
+      <span id="statusChip" class="chip hidden"></span>
+      <button class="icon-btn" id="teamBtn" title="Team">Team</button>
+      <button class="icon-btn hidden" id="moreBtn" title="Task options">⋯</button>
+    </div>
+    <div id="progress" class="hidden" title="Show steps">
+      <div class="row"><span id="progLabel"></span><span id="progCost"></span></div>
+      <div class="bar" id="bar"><i id="barFill" style="width:0"></i></div>
+      <div id="activity"></div>
+    </div>
+    <div id="scroll">
+      <div id="thread"></div>
+      <div id="empty">
+        <h2>What should the team work on?</h2>
+        <div>Describe the whole goal. The lead splits it into steps for the specialists, checks their work, and keeps going until it's done, even if that takes days.</div>
+        <div class="team-line" id="teamLine"></div>
+      </div>
+    </div>
+    <div id="composer">
+      <form id="sendForm">
+        <textarea id="input" rows="1" placeholder="Describe a task…"></textarea>
+        <button class="btn" id="sendBtn" type="submit">Send</button>
+      </form>
+      <div id="hint">Budget per task: <span id="budgetHint">$5</span>. You can message the lead at any time: new instructions, answers, or “continue”.</div>
+    </div>
+  </main>
+</div>
+
+<div id="overlay" class="overlay hidden"><div class="sheet" id="sheet"></div></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const state = { taskId: null, detail: null, tasks: [], team: null, open: new Set(), stepCache: {}, timer: null };
+const AGENT_COLORS = { lead: "var(--a-lead)", coder: "var(--a-coder)", researcher: "var(--a-researcher)", critic: "var(--a-critic)" };
+const color = (a) => AGENT_COLORS[a] || "var(--a-other)";
+const STATUS_LABEL = { queued: "Queued", running: "Working", waiting: "Needs you", paused: "Paused", done: "Done", failed: "Failed", cancelled: "Stopped" };
+const STEP_ICON = { pending: "○", done: "✓", failed: "✕", skipped: "–" };
+
+async function api(path, opts = {}) {
+  const res = await fetch(path, { credentials: "same-origin", headers: opts.body ? { "Content-Type": "application/json" } : {}, ...opts, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  if (res.status === 401 && path !== "/api/login") { showLogin(); throw new Error("login"); }
+  if (!res.ok) { let msg = res.statusText; try { msg = (await res.json()).detail || msg; } catch {} throw new Error(msg); }
+  return res.json();
+}
+
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+
+// Minimal, safe markdown: everything is escaped first, then a few constructs are re-enabled.
+function md(src) {
+  const blocks = [];
+  let s = esc(src).replace(/```[^\n]*\n([\s\S]*?)```/g, (_, code) => { blocks.push(code); return `\u0000${blocks.length - 1}\u0000`; });
+  s = s.replace(/`([^`\n]+)`/g, "<code>$1</code>")
+       .replace(/\*\*([^*\n]+)\*\*/g, "<b>$1</b>")
+       .replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,!?]|$)/g, "$1<i>$2</i>")
+       .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+       .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+  const out = []; let list = null;
+  for (const line of s.split("\n")) {
+    const ul = line.match(/^\s*[-*•]\s+(.*)/), ol = line.match(/^\s*\d+[.)]\s+(.*)/), h = line.match(/^(#{1,4})\s+(.*)/);
+    if (ul || ol) {
+      const kind = ul ? "ul" : "ol";
+      if (!list || list.kind !== kind) { if (list) out.push(`</${list.kind}>`); out.push(`<${kind}>`); list = { kind }; }
+      out.push(`<li>${(ul || ol)[1]}</li>`); continue;
+    }
+    if (list) { out.push(`</${list.kind}>`); list = null; }
+    if (/^\u0000\d+\u0000$/.test(line.trim())) out.push(`\n\n${line.trim()}\n\n`);
+    else if (h) out.push(`<h4>${h[2]}</h4>`);
+    else if (line.trim() === "") out.push("\n\n");
+    else out.push(line + "<br>");
+  }
+  if (list) out.push(`</${list.kind}>`);
+  let html = out.join("").split(/\n\n+/).map((p) => p.trim()).filter(Boolean)
+    .map((p) => /^(<(ul|ol|h4)|\u0000)/.test(p) ? p : `<p>${p.replace(/<br>$/, "")}</p>`).join("");
+  return html.replace(/<br>(<\/p>|<ul>|<ol>)/g, "$1").replace(/\u0000(\d+)\u0000/g, (_, i) => `<pre><code>${blocks[i]}</code></pre>`);
+}
+
+function money(x) { return "$" + (x || 0).toFixed(x >= 10 ? 1 : 2); }
+function ago(ts) {
+  const d = Date.now() / 1000 - ts;
+  if (d < 60) return "just now"; if (d < 3600) return Math.floor(d / 60) + "m ago";
+  if (d < 86400) return Math.floor(d / 3600) + "h ago"; return Math.floor(d / 86400) + "d ago";
+}
+function when(ts) { return new Date(ts * 1000).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); }
+
+// --- auth ---
+function showLogin() { $("app").classList.add("hidden"); $("login").classList.remove("hidden"); clearInterval(state.timer); }
+$("loginForm").onsubmit = async (e) => {
+  e.preventDefault(); $("loginErr").textContent = "";
+  try { await api("/api/login", { method: "POST", body: { password: $("password").value } }); boot(); }
+  catch (err) { $("loginErr").textContent = err.message; }
+};
+$("logoutBtn").onclick = async () => { await api("/api/logout", { method: "POST" }); showLogin(); };
+
+// --- task list ---
+async function loadTasks() {
+  state.tasks = await api("/api/tasks");
+  $("taskList").innerHTML = state.tasks.map((t) => `
+    <button class="task-item ${t.id === state.taskId ? "active" : ""}" data-id="${t.id}">
+      <div class="t">${esc(t.title)}</div>
+      <div class="meta"><span>${STATUS_LABEL[t.status] || t.status}</span>
+        <span class="mini-bar"><i style="width:${t.progress.percent}%"></i></span><span>${ago(t.updated_at)}</span></div>
+    </button>`).join("") || `<div style="color:var(--muted);font-size:14px;padding:10px">No tasks yet.</div>`;
+  document.querySelectorAll(".task-item").forEach((b) => b.onclick = () => { openTask(b.dataset.id); $("sidebar").classList.remove("open"); });
+}
+
+async function loadTeam() {
+  state.team = await api("/api/team");
+  $("teamLine").innerHTML = state.team.agents.map((a) => `<span><i class="dot" style="background:${color(a.name)}"></i>${esc(a.name)} · ${esc(a.model.split("/").pop())}</span>`).join("");
+  $("spend").textContent = `Today ${money(state.team.spent_today_usd)} / ${money(state.team.daily_budget_usd)}`;
+  $("budgetHint").textContent = money(state.team.task_budget_usd);
+  if (!state.team.api_key_set) $("hint").innerHTML = `<span style="color:var(--bad)">OPENROUTER_API_KEY is not set on the server, so agents can't run yet.</span>`;
+}
+
+// --- current task ---
+function newTask() {
+  state.taskId = null; state.detail = null; state.open.clear();
+  history.replaceState(null, "", "#");
+  render(); loadTasks(); $("input").focus();
+}
+$("newBtn").onclick = () => { newTask(); $("sidebar").classList.remove("open"); };
+$("menuBtn").onclick = () => $("sidebar").classList.toggle("open");
+$("sidebar").onclick = (e) => { if (e.target === $("sidebar") && innerWidth < 760) $("sidebar").classList.remove("open"); };
+
+async function openTask(id) {
+  if (state.taskId !== id) { state.open.clear(); state.stepCache = {}; }
+  state.taskId = id; history.replaceState(null, "", "#" + id);
+  await refresh(true); loadTasks();
+}
+
+async function refresh(scroll) {
+  if (!state.taskId) return;
+  const sc = $("scroll"), nearBottom = sc.scrollHeight - sc.scrollTop - sc.clientHeight < 120;
+  try { state.detail = await api(`/api/tasks/${state.taskId}`); }
+  catch (e) { if (e.message !== "login") { state.taskId = null; render(); } return; }
+  for (const id of state.open) { await loadStep(id); }
+  render();
+  if (scroll || nearBottom) sc.scrollTop = sc.scrollHeight;
+}
+
+async function loadStep(id) {
+  try { state.stepCache[id] = await api(`/api/tasks/${state.taskId}/steps/${id}`); } catch {}
+}
+
+function currentActivity(d) {
+  const t = d.task;
+  if (t.status === "paused") return `Paused: ${t.note || ""}. Resumes ${t.resume_at ? when(t.resume_at) : "later"}.`;
+  if (t.status === "waiting") return t.note || "Waiting for your reply";
+  if (t.status === "failed") return t.note || "Failed";
+  if (t.status === "done") return "Finished " + ago(t.updated_at);
+  if (t.status === "cancelled") return "Stopped";
+  const active = d.steps.filter((s) => s.status === "running" || s.status === "reviewing");
+  if (!active.length) return t.status === "queued" ? "Waiting for a free slot…" : "Lead is planning the next move…";
+  const last = d.events.slice().reverse().find((e) => e.kind !== "info");
+  return active.map((s) => `${s.agent} ${s.status === "reviewing" ? "is being reviewed" : "is working"}: ${s.title}`).join(" · ")
+    + (last && Date.now() / 1000 - last.created_at < 120 ? `  —  ${last.agent || ""} ${last.kind === "tool" ? "→" : ""} ${last.content}` : "");
+}
+
+function render() {
+  const d = state.detail;
+  $("empty").classList.toggle("hidden", !!d);
+  $("progress").classList.toggle("hidden", !d);
+  $("moreBtn").classList.toggle("hidden", !d);
+  $("statusChip").classList.toggle("hidden", !d);
+  $("input").placeholder = d ? "Message the lead…" : "Describe a task…";
+  if (!d) { $("thread").innerHTML = ""; $("taskTitle").textContent = "New task"; return; }
+  const t = d.task, p = t.progress;
+  $("taskTitle").textContent = t.title;
+  $("statusChip").className = "chip " + t.status; $("statusChip").textContent = STATUS_LABEL[t.status] || t.status;
+  $("progLabel").innerHTML = `<b>${p.percent}%</b> · ${p.total ? `${p.finished} of ${p.total} steps` : "planning"}${t.round ? ` · round ${t.round}` : ""}`;
+  $("progCost").textContent = `${money(t.cost_usd)} of ${money(t.budget_usd)}`;
+  $("barFill").style.width = Math.max(p.percent, 2) + "%";
+  $("bar").classList.toggle("live", t.status === "running");
+  $("activity").textContent = currentActivity(d);
+
+  // Interleave chat messages and rounds of steps by time.
+  const items = d.messages.map((m) => ({ ts: m.created_at, html: renderMessage(m) }));
+  const rounds = {};
+  d.steps.forEach((s) => (rounds[s.round] ||= []).push(s));
+  for (const [r, steps] of Object.entries(rounds)) {
+    const firstLead = d.messages.filter((m) => m.role === "lead" && m.created_at <= (steps[0].started_at || Infinity)).pop();
+    const ts = (firstLead ? firstLead.created_at : steps[0].started_at || 0) + 0.001;
+    items.push({ ts, html: renderRound(r, steps) });
+  }
+  items.sort((a, b) => a.ts - b.ts);
+  $("thread").innerHTML = items.map((i) => i.html).join("");
+  document.querySelectorAll(".step > button").forEach((b) => b.onclick = async () => {
+    const id = +b.dataset.id;
+    if (state.open.has(id)) state.open.delete(id); else { state.open.add(id); await loadStep(id); }
+    render();
+  });
+}
+
+function renderMessage(m) {
+  const who = m.role === "user" ? "You" : m.role === "lead" ? "Lead" : "System";
+  const dot = m.role === "lead" ? `<i class="dot" style="background:${color("lead")}"></i>` : "";
+  return `<div class="msg ${m.role}"><div class="who">${dot}${who} · ${when(m.created_at)}</div><div class="body">${md(m.content)}</div></div>`;
+}
+
+function renderRound(r, steps) {
+  const cost = steps.reduce((a, s) => a + s.cost_usd, 0);
+  return `<div class="round"><div class="rh"><span>Round ${r} · ${steps.length} step${steps.length > 1 ? "s" : ""}</span><span>${money(cost)}</span></div>
+    ${steps.map(renderStep).join("")}</div>`;
+}
+
+function renderStep(s) {
+  const busy = s.status === "running" || s.status === "reviewing";
+  const icon = busy ? `<span class="spin"></span>` : (STEP_ICON[s.status] || "○");
+  const iconColor = s.status === "done" ? "var(--ok)" : s.status === "failed" ? "var(--bad)" : "var(--muted)";
+  const open = state.open.has(s.id), full = state.stepCache[s.id];
+  let detail = "";
+  if (open) {
+    const out = full ? full.step.output : s.output;
+    const log = full ? full.events.map((e) => `<div class="${e.kind}" title="${esc(e.content)}">${e.kind === "review" ? "🔍" : e.kind === "blocked" ? "⛔" : e.kind === "error" ? "⚠" : "›"} ${esc(e.agent || "")}: ${esc(e.content)}</div>`).join("") : "";
+    detail = `<div class="detail"><div style="font-size:12px;color:var(--muted);margin-bottom:6px">Instructions</div>
+      <div class="body" style="color:var(--muted);font-size:13px">${md(s.instructions)}</div>
+      <div style="font-size:12px;color:var(--muted);margin:10px 0 6px">${busy ? "Latest report" : "Report"}</div>
+      <div class="body">${out ? md(out) : "<i>Nothing yet.</i>"}</div>${log ? `<div class="log">${log}</div>` : ""}</div>`;
+  }
+  const review = s.reviews ? ` · reviewed ${s.reviews}×` : "";
+  return `<div class="step"><button data-id="${s.id}">
+      <span class="st" style="color:${iconColor}">${icon}</span>
+      <span class="tt"><div class="n">${esc(s.title)}</div>
+        <div class="a"><i class="dot" style="background:${color(s.agent)}"></i>${esc(s.agent)} · ${s.status}${review}</div></span>
+      <span class="cost">${money(s.cost_usd)}</span></button>${detail}</div>`;
+}
+
+// --- sending ---
+const input = $("input");
+input.addEventListener("input", () => { input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, innerHeight * 0.4) + "px"; });
+input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && innerWidth > 760) { e.preventDefault(); $("sendForm").requestSubmit(); } });
+$("sendForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const text = input.value.trim(); if (!text) return;
+  $("sendBtn").disabled = true;
+  try {
+    if (state.taskId) await api(`/api/tasks/${state.taskId}/messages`, { method: "POST", body: { message: text } });
+    else { const t = await api("/api/tasks", { method: "POST", body: { message: text } }); state.taskId = t.id; history.replaceState(null, "", "#" + t.id); }
+    input.value = ""; input.style.height = "auto";
+    await refresh(true); loadTasks();
+  } catch (err) { if (err.message !== "login") alert(err.message); }
+  finally { $("sendBtn").disabled = false; }
+};
+
+// --- sheets ---
+function sheet(title, html) {
+  $("sheet").innerHTML = `<h3><span>${title}</span><button onclick="closeSheet()">×</button></h3>${html}`;
+  $("overlay").classList.remove("hidden");
+}
+function closeSheet() { $("overlay").classList.add("hidden"); }
+$("overlay").onclick = (e) => { if (e.target === $("overlay")) closeSheet(); };
+
+$("progress").onclick = () => {
+  const running = document.querySelector(".round:last-of-type");
+  if (running) running.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+$("moreBtn").onclick = () => {
+  const t = state.detail.task, active = t.status === "running" || t.status === "queued";
+  sheet(esc(t.title), `<div class="menu-list">
+    <div style="display:flex;gap:8px"><input type="number" id="budgetIn" min="0.5" step="0.5" value="${t.budget_usd}"><button class="btn ghost" id="budgetSave" style="white-space:nowrap">Set budget</button></div>
+    <button class="btn ghost" id="filesBtn">Browse files</button>
+    <a class="btn ghost" href="/api/tasks/${t.id}/download" style="text-decoration:none">Download all files (.zip)</a>
+    ${active ? `<button class="btn danger" id="stopBtn">Stop this task</button>` : ""}
+    <button class="btn danger" id="delBtn">Delete task and files</button></div>`);
+  $("budgetSave").onclick = async () => { await api(`/api/tasks/${t.id}/budget`, { method: "POST", body: { budget_usd: +$("budgetIn").value } }); closeSheet(); refresh(); };
+  $("filesBtn").onclick = () => showFiles(t.id);
+  if (active) $("stopBtn").onclick = async () => { await api(`/api/tasks/${t.id}/cancel`, { method: "POST" }); closeSheet(); refresh(); loadTasks(); };
+  $("delBtn").onclick = async () => { if (!confirm("Delete this task and everything in its workspace?")) return; await api(`/api/tasks/${t.id}`, { method: "DELETE" }); closeSheet(); newTask(); };
+};
+
+async function showFiles(tid) {
+  const files = await api(`/api/tasks/${tid}/files`);
+  sheet("Files", files.length ? files.map((f) => `<button class="file-row" data-p="${esc(f.path)}"><span>${esc(f.path)}</span><span>${(f.size / 1024).toFixed(1)} KB</span></button>`).join("") : `<p style="color:var(--muted)">No files yet.</p>`);
+  document.querySelectorAll(".file-row").forEach((b) => b.onclick = async () => {
+    try { const f = await api(`/api/tasks/${tid}/file?path=${encodeURIComponent(b.dataset.p)}`);
+      sheet(esc(f.path), `<button class="btn ghost" id="backBtn" style="margin-bottom:10px">← Files</button><pre class="file">${esc(f.content)}</pre>`);
+      $("backBtn").onclick = () => showFiles(tid);
+    } catch (e) { alert(e.message); }
+  });
+}
+
+async function showTeam() {
+  await loadTeam();
+  const tm = state.team;
+  sheet("Team", `<p style="margin-top:0;color:var(--muted);font-size:14px">Model IDs come from <a href="https://openrouter.ai/models" target="_blank" rel="noopener" style="color:var(--accent)">openrouter.ai/models</a>. Changes apply to the next step that starts. Clear the field to go back to the default in agents.yaml.</p>` +
+    tm.agents.map((a) => `<div class="agent-card"><div class="h"><i class="dot" style="background:${color(a.name)}"></i>${esc(a.name)}${a.overridden ? ` <span class="chip">custom</span>` : ""}</div>
+      <p>${esc(a.description)}<br>Tools: ${esc(a.tools.join(", ") || "none")}${a.review_by ? ` · checked by ${esc(a.review_by)}` : ""}</p>
+      <div class="row"><input type="text" value="${esc(a.model)}" data-agent="${esc(a.name)}" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="btn ghost" data-save="${esc(a.name)}">Save</button></div></div>`).join("") +
+    `<p style="color:var(--muted);font-size:13px">Spending caps: ${money(tm.task_budget_usd)} per task (changeable per task), ${money(tm.daily_budget_usd)} per day across all tasks. Today: ${money(tm.spent_today_usd)}.</p>`);
+  document.querySelectorAll("[data-save]").forEach((b) => b.onclick = async () => {
+    const inp = document.querySelector(`input[data-agent="${b.dataset.save}"]`);
+    await api("/api/team", { method: "POST", body: { agent: b.dataset.save, model: inp.value } });
+    b.textContent = "Saved"; setTimeout(showTeam, 600);
+  });
+}
+$("teamBtn").onclick = showTeam; $("teamBtn2").onclick = showTeam;
+
+// --- boot ---
+async function boot() {
+  try { await loadTeam(); } catch (e) { if (e.message === "login") return; }
+  $("login").classList.add("hidden"); $("app").classList.remove("hidden");
+  await loadTasks();
+  const id = location.hash.slice(1);
+  if (id) await openTask(id); else render();
+  clearInterval(state.timer);
+  let n = 0;
+  state.timer = setInterval(() => {
+    if (document.hidden) return;
+    n++;
+    refresh(false);
+    if (n % 4 === 0) { loadTasks(); loadTeam(); }
+  }, 3000);
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { refresh(false); loadTasks(); } });
+boot();
+</script>
+</body>
+</html>

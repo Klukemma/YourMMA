@@ -1,0 +1,71 @@
+# The team. Each agent is one AI model with a job and a set of tools.
+#
+# Model names are OpenRouter IDs - look them up at https://openrouter.ai/models
+# and paste the exact ID. You can also change a model without editing this file:
+#   - in the app: open the "Team" panel and type a new model ID, or
+#   - with an environment variable: MODEL_CODER=anthropic/claude-opus-5.5
+#
+# Tool groups:
+#   web   - search the web and read pages
+#   read  - list and read files in the project workspace
+#   write - create and edit files in the workspace
+#   shell - run commands in the workspace (git, python, node, tests, ...)
+#
+# review_by: another agent that checks this agent's work and sends it back
+# for fixes (up to max_revisions times) before the step counts as done.
+
+defaults:
+  base_url: https://openrouter.ai/api/v1
+  api_key_env: OPENROUTER_API_KEY
+
+max_revisions: 2
+
+agents:
+  lead:
+    model: anthropic/claude-opus-5.5
+    description: Splits your request into steps, assigns them, reviews results, and reports back.
+
+  coder:
+    model: anthropic/claude-opus-5.5
+    description: >-
+      Writes, edits, runs and tests code. Handles git, dependencies, builds,
+      debugging and anything that changes files in the project.
+    tools: [read, write, shell, web]
+    review_by: critic
+    prompt: >-
+      You are the team's software engineer. Write clean, working code, run it,
+      and run the tests before you report. Prefer small, verifiable changes. For
+      Python projects create a virtualenv in the workspace (python -m venv .venv).
+
+  researcher:
+    model: deepseek/deepseek-chat
+    description: >-
+      Web research: finds documentation, libraries, APIs, prices, comparisons
+      and facts, and writes them up with sources. Can save notes to files.
+    tools: [web, read, write]
+    prompt: >-
+      You are the team's researcher. Search broadly, open the primary sources,
+      cross-check facts, and always cite URLs. Save long findings to
+      research/<topic>.md in the workspace and summarise them in your report.
+
+  critic:
+    # Replace with the exact OpenAI (ChatGPT) reasoning model you want.
+    model: openai/gpt-5
+    description: >-
+      Critical reviewer with strong reasoning. Finds bugs, gaps, bad
+      assumptions and security problems in code, plans and research.
+    tools: [read, shell]
+    params:
+      reasoning: {effort: high}
+    prompt: >-
+      You are the team's critic. Be rigorous and specific: point to exact files,
+      lines and failure cases. Run the code or tests when you can instead of
+      guessing. Praise nothing; list what must change and why.
+
+# Model used for the web_search tool when no TAVILY_API_KEY is set
+# (OpenRouter's built-in web search). Leave empty to use the calling agent's model.
+web_search_model:
+
+# Extra domains agents may download from, on top of the built-in list of
+# official registries (pypi, npm, GitHub, crates.io, ...).
+trusted_domains: []
