@@ -34,6 +34,7 @@ MUST_PERSIST = (
     "app/data/",                     # what the phone reads
     "engine/data/odds_cache.json",   # prices already paid for
     "engine/data/odds.csv",          # settled lines the backtest scores against
+    "engine/data/method_odds.csv",   # the market's price on how a fight ends
 )
 
 

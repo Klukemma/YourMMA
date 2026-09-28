@@ -827,6 +827,86 @@ def cmd_fetch_odds_history(args):
     print(f"\nWrote {ODDS_FILE}")
 
 
+METHOD_ODDS_FILE = DATA_DIR / 'method_odds.csv'
+
+# What the same upstream file carries beside the moneyline, found by
+# check_line_history.py while it was looking for an opening price and finding
+# none. These are method-of-victory props - the market's own price on HOW a
+# fight ends - on roughly 5,200 fights.
+#
+# It matters because the method model has never had a market to be measured
+# against. experiments/method_doubt.py concluded that a wrongness layer for
+# the method call had no second opinion to read, and that was right about the
+# LIVE api, which prices no method market on this plan. It was wrong about
+# history, which was never checked.
+METHOD_COLUMNS = {
+    'dec_a': 'RedDecOdds', 'dec_b': 'BlueDecOdds',
+    'ko_a': 'RKOOdds', 'ko_b': 'BKOOdds',
+    'sub_a': 'RSubOdds', 'sub_b': 'BSubOdds',
+}
+
+
+def cmd_fetch_method_odds(args):
+    """Pull the historical method-of-victory props into data/method_odds.csv.
+
+    Kept out of odds.csv on purpose: that file is the moneyline, every reader
+    of it expects two prices per row, and widening it would quietly change
+    what load_odds returns to everything that already depends on it.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        result = subprocess.run(
+            ['kaggle', 'datasets', 'download', '-d', HISTORY_ODDS_DATASET,
+             '-p', tmp, '--unzip'], capture_output=True, text=True)
+        if result.returncode != 0:
+            sys.exit(f"download failed: {result.stderr.strip()[:300]}")
+        source = Path(tmp) / HISTORY_ODDS_FILE
+        if not source.exists():
+            sys.exit(f"{HISTORY_ODDS_FILE} not found")
+        raw = pd.read_csv(source, low_memory=False)
+
+    needed = ['Date', 'RedFighter', 'BlueFighter']
+    if 'RedFighter' not in raw.columns:
+        needed[1:3] = ['RedCorner', 'BlueCorner']
+    missing = [c for c in needed + list(METHOD_COLUMNS.values())
+               if c not in raw.columns]
+    if missing:
+        sys.exit(f"upstream is missing {missing}")
+
+    # The same refusal the moneyline fetch makes. A decimal price written into
+    # an American column inverts every favourite, and a prop is no different.
+    for name, column in METHOD_COLUMNS.items():
+        values = pd.to_numeric(raw[column], errors='coerce').dropna()
+        if values.empty:
+            sys.exit(f"::error::{column} is empty")
+        detected = detect_odds_format(values)
+        impossible = ((values > -100) & (values < 100) & (values != 0)).mean()
+        print(f"  {column:<14} {len(values):>6,} prices, detected {detected} "
+              f"({impossible:.1%} impossible)")
+        if detected != 'american' or impossible > 0.05:
+            sys.exit(f"::error::{column} is not American odds ({detected}).")
+
+    out = pd.DataFrame({
+        'date': pd.to_datetime(raw[needed[0]], errors='coerce'),
+        'fighter_a': raw[needed[1]],
+        'fighter_b': raw[needed[2]],
+        **{name: pd.to_numeric(raw[column], errors='coerce')
+           for name, column in METHOD_COLUMNS.items()},
+    })
+    out = out.dropna(subset=['date', 'fighter_a', 'fighter_b'])
+    # A row with no prop price at all carries nothing.
+    out = out.dropna(subset=list(METHOD_COLUMNS), how='all')
+    print(f"\nfights with at least one method price: {len(out):,}  "
+          f"({out['date'].min().date()} -> {out['date'].max().date()})")
+    complete = out.dropna(subset=list(METHOD_COLUMNS))
+    print(f"fights with all six: {len(complete):,}")
+
+    if args.dry_run:
+        print("\n--dry-run: nothing written.")
+        return
+    out.sort_values('date').to_csv(METHOD_ODDS_FILE, index=False)
+    print(f"\nWrote {METHOD_ODDS_FILE}")
+
+
 def detect_odds_format(values):
     """American (-150, +130) or decimal (1.67, 2.30)?
 
@@ -965,6 +1045,9 @@ def main():
     fh = sub.add_parser("fetch-odds-history",
                         help="add 2010-2025 moneylines to data/odds.csv")
     fh.add_argument("--dry-run", action="store_true", help="report without writing")
+    fm = sub.add_parser("fetch-method-odds",
+                        help="add historical method props to data/method_odds.csv")
+    fm.add_argument("--dry-run", action="store_true", help="report without writing")
     u = sub.add_parser("fix-units", help="convert imperial rows to metric (offline)")
     u.add_argument("--dry-run", action="store_true", help="report without writing")
     r = sub.add_parser("repair", help="refill bouts whose statistics never arrived")
@@ -978,7 +1061,8 @@ def main():
      "search-odds": cmd_search_odds, "inspect-odds": cmd_inspect_odds,
      "search-mma": cmd_search_mma, "inspect-fighter": cmd_inspect_fighter,
      "fetch-odds": cmd_fetch_odds,
-     "fetch-odds-history": cmd_fetch_odds_history, "repair": cmd_repair,
+     "fetch-odds-history": cmd_fetch_odds_history,
+     "fetch-method-odds": cmd_fetch_method_odds, "repair": cmd_repair,
      "fix-units": cmd_fix_units,
      "sync": cmd_sync}[args.cmd](args)
 
