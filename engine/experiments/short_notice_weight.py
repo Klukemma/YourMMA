@@ -148,6 +148,19 @@ def main():
     changes = changes.dropna(subset=["event_date", "stepped_in"])
     late = {(norm_name(n), d.date())
             for n, d in zip(changes.stepped_in, changes.event_date)}
+    # THE QUANTIFIED SUBSET, KEPT APART. Wikipedia states a notice period on
+    # very few replacements, so this will be small - but it is the only
+    # population that is actually SHORT NOTICE rather than merely a
+    # replacement, and pooling the two answers neither question. One of the
+    # harvested sentences has a man replaced in early March for a fight on 8
+    # May; folding his nine-week camp in with a nine-day one is how a null
+    # result gets manufactured.
+    quick = set()
+    if "days_notice" in changes.columns:
+        soon = changes[pd.to_numeric(changes.days_notice,
+                                     errors="coerce").between(1, 21)]
+        quick = {(norm_name(n), d.date())
+                 for n, d in zip(soon.stepped_in, soon.event_date)}
     # A fighter whose OPPONENT was swapped but who had a full camp: the other
     # half of the story, and a different mechanism - not tired, just prepared
     # for the wrong person.
@@ -155,8 +168,8 @@ def main():
                 for n, d in zip(changes.get("kept_fighter", []),
                                 changes.get("event_date", []))} \
         if "kept_fighter" in changes.columns else set()
-    print(f"  {len(late):,} late replacements, {len(switched):,} fighters "
-          f"whose opponent was swapped")
+    print(f"  {len(late):,} replacements, of which {len(quick):,} state a "
+          f"notice period inside three weeks")
 
     # --- walk-forward predictions ----------------------------------------
     rows = []
@@ -233,7 +246,8 @@ def main():
     print("  " + "-" * 96)
 
     results = []
-    for name, population in (("took the fight late", late),
+    for name, population in (("stepped in as a replacement", late),
+                             ("stepped in inside three weeks", quick),
                              ("opponent was swapped", switched)):
         if not population:
             continue
@@ -247,9 +261,9 @@ def main():
     # --- what it means ----------------------------------------------------
     print()
     model_row = next((r for r in results if "vs the model" in r["label"]
-                      and "late" in r["label"]), None)
+                      and "replacement" in r["label"]), None)
     blend_row = next((r for r in results if "the app prints" in r["label"]
-                      and "late" in r["label"]), None)
+                      and "replacement" in r["label"]), None)
     if model_row and blend_row:
         if blend_row["high"] >= 0 >= blend_row["low"]:
             print("  The hook must not ship. Whatever short notice is worth")
