@@ -179,3 +179,82 @@ def test_a_day_either_side_is_allowed():
                       pd.Timestamp("2024-04-14").date())
     assert not cfc._dated("| date = April 13, 2024",
                           pd.Timestamp("2024-04-16").date())
+
+
+# --- missed weight --------------------------------------------------------
+# A kind that exists at scale in Wikipedia and is pre-fight by construction:
+# the weigh-in is the day before. A parser that misses the common phrasing
+# would report the kind as rare and the measurement would never run.
+
+def miss(text):
+    rows = cfc.weigh_ins_in(text)
+    assert len(rows) == 1, rows
+    return rows[0]
+
+
+def test_the_standard_weigh_in_sentence():
+    row = miss("At the weigh-ins, Mackenzie Dern weighed in at 117 pounds, "
+               "one pound over the strawweight non-title fight limit.")
+    assert row["fighter"] == "Mackenzie Dern"
+    assert row["weighed_lbs"] == 117 and row["over_by_lbs"] == 1
+
+
+def test_the_convert_template_wikipedia_actually_uses():
+    """{{convert|159|lb|kg}} is how almost every weight is written. Stripping
+    templates before reading it would delete the number."""
+    row = miss("Kevin Lee weighed in at {{convert|158.5|lb|kg}}, "
+               "{{convert|2.5|lb|kg}} over the lightweight limit.")
+    assert row["weighed_lbs"] == 158.5 and row["over_by_lbs"] == 2.5
+
+
+def test_a_metric_parenthetical_is_skipped():
+    row = miss("Yoel Romero weighed in at 187.7 pounds (85.1 kg), "
+               "1.7 pounds over the middleweight title fight limit.")
+    assert row["over_by_lbs"] == 1.7
+
+
+def test_half_a_pound():
+    assert miss("Chris Barnett weighed in at 266.5 pounds, half a pound over "
+                "the heavyweight limit.")["over_by_lbs"] == 0.5
+
+
+def test_two_and_a_half_pounds():
+    assert miss("Jones weighed in at 158.5 pounds, two and a half pounds "
+                "over the limit.")["over_by_lbs"] == 2.5
+
+
+def test_missed_weight_with_no_margin_is_still_a_miss():
+    """Recorded with the margin blank, never with a guessed one."""
+    row = miss("Paulo Costa missed weight for the bout.")
+    assert row["fighter"] == "Paulo Costa" and row["over_by_lbs"] is None
+
+
+def test_a_linked_name_is_read():
+    assert miss("[[Mackenzie Dern]] weighed in at 117 pounds, one pound "
+                "over the limit.")["fighter"] == "Mackenzie Dern"
+
+
+def test_making_weight_is_not_a_miss():
+    assert cfc.weigh_ins_in("Dern weighed in at 116 pounds for the bout.") == []
+
+
+def test_a_pronoun_is_not_a_fighter():
+    assert cfc.weigh_ins_in("She weighed in at 117 pounds, one pound over "
+                            "the limit.") == []
+
+
+def test_a_weigh_in_inside_a_reference_is_ignored():
+    """A citation title is another page's sentence."""
+    assert cfc.weigh_ins_in(
+        "The event was held.<ref>Dern weighed in at 117 pounds, one pound "
+        "over the limit</ref>") == []
+
+
+def test_the_same_fighter_twice_on_a_page_is_counted_once():
+    text = ("Dern weighed in at 117 pounds, one pound over the limit. "
+            "Dern missed weight and was fined.")
+    assert len(cfc.weigh_ins_in(text)) == 1
+
+
+def test_a_pronoun_is_not_a_replacement_either():
+    assert cfc.changes_in("He replaced Bob Jones on the card.") == []

@@ -304,6 +304,20 @@ def _dated(text, when):
     return bool(theirs) and abs((theirs - when).days) <= 1
 
 
+# Capitalised because they start a sentence, not because they are names.
+# They would fall out at the card join anyway, but only after being counted
+# as "found, unmatched" - which is a statistic this probe reports and which
+# would then overstate how many labels were lost to name matching.
+NOT_NAMES = {"he", "she", "they", "it", "his", "her", "their", "however",
+             "the", "this", "that", "both", "each", "after", "before",
+             "then", "also", "later", "subsequently", "eventually"}
+
+
+def _is_name(name):
+    words = str(name or "").split()
+    return bool(words) and words[0].lower() not in NOT_NAMES
+
+
 def _clean(name):
     """Trim the sentence's punctuation off a captured name.
 
@@ -316,14 +330,104 @@ def _clean(name):
     return str(name or "").strip().strip(".,;:!?'\u2019\"").strip()
 
 
-def changes_in(text):
-    """Every (stepped in, replaced, days notice) this page states."""
-    # The prose lives outside the bout tables; drop the templates so a
-    # fighter's name in a results table is never read as a replacement.
-    prose = re.sub(r"\{\{[^{}]*\}\}", " ", text)
+# {{convert|159|lb|kg}} - how Wikipedia writes almost every weight. Rewritten
+# to "159 pounds" BEFORE templates are stripped, because stripping first would
+# delete the number and leave "weighed in at , three pounds over", which no
+# pattern can read and which would silently zero the missed-weight count.
+CONVERT = re.compile(r"\{\{\s*[Cc]onvert\s*\|\s*(\d+(?:\.\d+)?)\s*\|\s*lbs?\b[^{}]*\}\}")
+
+
+def _prose(text):
+    """Readable sentences from wikitext, with tables and references gone.
+
+    The prose lives outside the bout tables; the templates are dropped so a
+    fighter's name in a results table is never read as a replacement or a
+    missed weight. References go too - a citation's title is somebody else's
+    sentence and must not be parsed as this page's.
+    """
+    prose = CONVERT.sub(r"\1 pounds", text or "")
+    prose = re.sub(r"\{\{[^{}]*\}\}", " ", prose)
     prose = re.sub(r"\[\[([^\]|]*\|)?([^\]]*)\]\]", r"\2", prose)
     prose = re.sub(r"<ref[^>]*>.*?</ref>", " ", prose, flags=re.S)
+    prose = re.sub(r"<ref[^>]*/>", " ", prose)
     prose = re.sub(r"<[^>]+>", " ", prose)
+    return prose
+
+
+def _sentences(text):
+    return re.split(r"(?<=[.!?])\s+(?=[A-Z])", _prose(text))
+
+
+# --- missed weight -------------------------------------------------------
+# "At the weigh-ins, Mackenzie Dern weighed in at 117 pounds, one pound over
+# the strawweight non-title fight limit." Pre-fight by construction - the
+# weigh-in is the day before - and the market has it too, which is exactly
+# why it is worth measuring: it says whether the line prices a bad cut
+# correctly.
+_NAME = r"(?P<name>[A-Z][\w.'\u2019-]+(?: [A-Z][\w.'\u2019-]+){0,3})"
+_LBS = r"(?:[Pp]ounds?|lbs?\.?)"
+WEIGH_IN = re.compile(
+    _NAME + r"\s+(?:weighed|came)\s+in\s+at\s+"
+    r"(?P<weight>\d+(?:\.\d+)?)\s*" + _LBS +
+    r"(?:\s*\([^)]*\))?\s*,?\s*"
+    r"(?P<over>[\w.\s-]{1,30}?)\s+" + _LBS + r"\s+over\b")
+MISSED_WEIGHT = re.compile(_NAME + r"\s+missed\s+weight\b")
+
+
+def _pounds(phrase):
+    """"three", "2.5", "half a", "two and a half" -> pounds, or None.
+
+    None rather than a guess: a missed weight with an unreadable margin is
+    still a missed weight, and is recorded as one with the margin blank.
+    """
+    words = str(phrase or "").lower().replace("-", " ").split()
+    if not words:
+        return None
+    text = " ".join(words)
+    if text in ("half a", "a half", "half"):
+        return 0.5
+    half = 0.5 if text.endswith("and a half") else 0.0
+    head = text.replace("and a half", "").strip().split()
+    if not head:
+        return None
+    token = head[-1]
+    if token == "a":
+        return 1.0 + half
+    try:
+        return float(token) + half
+    except ValueError:
+        value = WORDS.get(token)
+        return value + half if value is not None else None
+
+
+def weigh_ins_in(text):
+    """Every fighter this page says missed weight, and by how much."""
+    rows, seen = [], set()
+    for sentence in _sentences(text):
+        if "weigh" not in sentence and "came in" not in sentence \
+                and "missed weight" not in sentence:
+            continue
+        for hit in WEIGH_IN.finditer(sentence):
+            name = _clean(hit.group("name"))
+            if _is_name(name) and name not in seen:
+                seen.add(name)
+                rows.append({"fighter": name,
+                             "weighed_lbs": float(hit.group("weight")),
+                             "over_by_lbs": _pounds(hit.group("over")),
+                             "sentence": sentence.strip()[:200]})
+        for hit in MISSED_WEIGHT.finditer(sentence):
+            name = _clean(hit.group("name"))
+            if _is_name(name) and name not in seen:
+                seen.add(name)
+                rows.append({"fighter": name, "weighed_lbs": None,
+                             "over_by_lbs": None,
+                             "sentence": sentence.strip()[:200]})
+    return rows
+
+
+def changes_in(text):
+    """Every (stepped in, replaced, days notice) this page states."""
+    prose = _prose(text)
 
     rows = []
     for sentence in re.split(r"(?<=[.!?])\s+", prose):
@@ -349,7 +453,7 @@ def changes_in(text):
                 days = 0            # said to be short, no period given
             stepped_in, replaced = (_clean(hit.group("in")),
                                     _clean(hit.group("out")))
-            if not stepped_in or not replaced:
+            if not _is_name(stepped_in) or not _is_name(replaced):
                 continue
             rows.append({"stepped_in": stepped_in,
                          "replaced": replaced,

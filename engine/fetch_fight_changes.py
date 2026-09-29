@@ -39,10 +39,18 @@ import pandas as pd
 ENGINE = Path(__file__).resolve().parent
 sys.path.insert(0, str(ENGINE))
 
-from check_fight_changes import ARCHIVE, changes_in, resolve_all
+from check_fight_changes import ARCHIVE, changes_in, resolve_all, weigh_ins_in
 from name_resolution import norm_name, short_name
 
 OUT = ENGINE / "data" / "fight_changes.csv"
+# Every kind in one file, one row per fighter per event. fight_changes.csv is
+# kept exactly as it was because short_notice_weight.py reads it; this is the
+# file the pooled measurement reads, where "adverse news" is estimated across
+# kinds rather than eight tiny groups one at a time.
+HISTORY = ENGINE / "data" / "intel_history.csv"
+HISTORY_COLUMNS = ("event_date", "event_name", "fighter", "kind",
+                   "fighter_raw", "withdrawn", "days_notice", "weighed_lbs",
+                   "over_by_lbs", "article")
 COLUMNS = ("event_date", "event_name", "stepped_in", "stepped_in_raw",
            "replaced", "days_notice", "article")
 CHUNK = 40          # events resolved per round trip group
@@ -54,15 +62,36 @@ CHUNK = 40          # events resolved per round trip group
 # cancellation was a misjudgement made in the dark. Partial output that
 # survives is worth more than tidy output that does not, and a chunk count
 # printed as it goes is worth more than both.
-FROM_YEAR = 2011    # odds.csv starts here, and an unpriced label cannot be
-                    # used by the arm that matters - the one that asks
-                    # whether the effect survives the market
+FROM_YEAR = 2010    # where the history starts. odds.csv begins in 2011, so
+                    # 2010 labels feed the arm measured against the model
+                    # and not the one measured against the blend - that is
+                    # a cost worth paying for a fifth more labels
 
 
 def card_names(archive, event_name):
     """Everyone who actually fought on this card."""
     rows = archive[archive.event_name == event_name]
     return sorted({*rows.r_name.dropna(), *rows.b_name.dropna()})
+
+
+def card_bouts(archive, event_name):
+    """Every (red, blue) that actually happened on this card."""
+    rows = archive[archive.event_name == event_name]
+    return [(r, b) for r, b in zip(rows.r_name, rows.b_name)
+            if isinstance(r, str) and isinstance(b, str)]
+
+
+def opponent_on_card(fighter, bouts):
+    """Who `fighter` actually fought on this card, or None.
+
+    This is how the KEPT fighter is found - the one whose opponent was
+    switched. "Brown replaced Jones" means somebody had spent a camp
+    preparing for Jones and fought Brown; that somebody is Brown's opponent
+    on the night, and nothing in the sentence names them.
+    """
+    found = [b if r == fighter else r for r, b in bouts
+             if fighter in (r, b)]
+    return found[0] if len(found) == 1 else None
 
 
 def match_to_card(name, names):
@@ -85,16 +114,23 @@ def match_to_card(name, names):
     return hits[0] if len(hits) == 1 else None
 
 
-def harvest(events, archive, *, verbose=True, out=None):
-    rows, stats = [], {"resolved": 0, "found": 0, "unmatched": 0,
-                       "quantified": 0}
+def harvest(events, archive, *, verbose=True, out=None, history_out=None):
+    """Replacements, switched opponents and missed weights, event by event.
+
+    Returns (fight_changes frame, history frame, stats). Both files are
+    written after every chunk, so a run that is cancelled or rate-limited
+    halfway keeps everything it had already gathered.
+    """
+    rows, history = [], []
+    stats = {"resolved": 0, "found": 0, "unmatched": 0, "quantified": 0,
+             "switched": 0, "weigh_ins": 0, "weigh_unmatched": 0}
     for start in range(0, len(events), CHUNK):
         block = events.iloc[start:start + CHUNK]
         try:
             resolved = resolve_all(block)
         except (urllib.error.URLError, OSError, TimeoutError) as err:
             # Keep what has been gathered. A rate limiter that gives up
-            # halfway through 2014 should not cost the 2011-2013 labels too.
+            # halfway through 2014 should not cost the 2010-2013 labels too.
             print(f"    stopped at event {start}: {err}")
             break
         stats["resolved"] += len(resolved)
@@ -103,6 +139,9 @@ def harvest(events, archive, *, verbose=True, out=None):
             if not text:
                 continue
             names = card_names(archive, event.event_name)
+            bouts = card_bouts(archive, event.event_name)
+            when = event.date.date()
+
             for change in changes_in(text):
                 stats["found"] += 1
                 matched = match_to_card(change["stepped_in"], names)
@@ -112,7 +151,7 @@ def harvest(events, archive, *, verbose=True, out=None):
                 if change["days_notice"]:
                     stats["quantified"] += 1
                 rows.append({
-                    "event_date": event.date.date(),
+                    "event_date": when,
                     "event_name": event.event_name,
                     "stepped_in": matched,
                     "stepped_in_raw": change["stepped_in"],
@@ -120,13 +159,61 @@ def harvest(events, archive, *, verbose=True, out=None):
                     "days_notice": change["days_notice"],
                     "article": title,
                 })
+                history.append({
+                    "event_date": when, "event_name": event.event_name,
+                    "fighter": matched, "kind": "stepped_in",
+                    "fighter_raw": change["stepped_in"],
+                    "withdrawn": change["replaced"],
+                    "days_notice": change["days_notice"],
+                    "weighed_lbs": None, "over_by_lbs": None,
+                    "article": title,
+                })
+                # The other half of the same change: the fighter who stayed
+                # and prepared for someone else. Silva's case, historically.
+                kept = opponent_on_card(matched, bouts)
+                if kept:
+                    stats["switched"] += 1
+                    history.append({
+                        "event_date": when, "event_name": event.event_name,
+                        "fighter": kept, "kind": "opponent_switch",
+                        "fighter_raw": kept,
+                        "withdrawn": change["replaced"],
+                        "days_notice": change["days_notice"],
+                        "weighed_lbs": None, "over_by_lbs": None,
+                        "article": title,
+                    })
+
+            for miss in weigh_ins_in(text):
+                matched = match_to_card(miss["fighter"], names)
+                if not matched:
+                    # Usually a bout that was cancelled after the miss - the
+                    # fighter is not on the card because the fight did not
+                    # happen, and there is nothing to label.
+                    stats["weigh_unmatched"] += 1
+                    continue
+                stats["weigh_ins"] += 1
+                history.append({
+                    "event_date": when, "event_name": event.event_name,
+                    "fighter": matched, "kind": "missed_weight",
+                    "fighter_raw": miss["fighter"], "withdrawn": None,
+                    "days_notice": None,
+                    "weighed_lbs": miss["weighed_lbs"],
+                    "over_by_lbs": miss["over_by_lbs"],
+                    "article": title,
+                })
+
         frame = pd.DataFrame(rows, columns=list(COLUMNS))
+        hist = pd.DataFrame(history, columns=list(HISTORY_COLUMNS))
         if out is not None and not frame.empty:
             frame.to_csv(out, index=False)
+        if history_out is not None and not hist.empty:
+            hist.to_csv(history_out, index=False)
         if verbose:
             print(f"    {min(start + CHUNK, len(events)):>4}/{len(events)} "
-                  f"events, {len(rows):,} labels so far", flush=True)
-    return pd.DataFrame(rows, columns=list(COLUMNS)), stats
+                  f"events, {len(rows):,} replacements, "
+                  f"{stats['weigh_ins']:,} missed weights", flush=True)
+    return (pd.DataFrame(rows, columns=list(COLUMNS)),
+            pd.DataFrame(history, columns=list(HISTORY_COLUMNS)), stats)
 
 
 def main(argv=None):
@@ -151,7 +238,8 @@ def main(argv=None):
     print("=" * 74)
     print(f"HARVESTING LATE REPLACEMENTS FROM {len(events):,} EVENTS")
     print("=" * 74)
-    frame, stats = harvest(events, archive, out=OUT)
+    frame, history, stats = harvest(events, archive, out=OUT,
+                                    history_out=HISTORY)
 
     print(f"\n  {'events resolved':<34}{stats['resolved']:>8}"
           f"  of {len(events):,}")
@@ -159,6 +247,16 @@ def main(argv=None):
     print(f"  {'joined to a fighter on the card':<34}{len(frame):>8}")
     print(f"  {'dropped, no unique match':<34}{stats['unmatched']:>8}")
     print(f"  {'with a notice period stated':<34}{stats['quantified']:>8}")
+    print(f"  {'opponents switched (kept fighter)':<34}{stats['switched']:>8}")
+    print(f"  {'missed weight, fighter on card':<34}{stats['weigh_ins']:>8}")
+    print(f"  {'missed weight, bout not on card':<34}"
+          f"{stats['weigh_unmatched']:>8}")
+    if not history.empty:
+        history.to_csv(HISTORY, index=False)
+        print(f"\n  wrote {HISTORY.relative_to(ENGINE.parent)} "
+              f"({len(history):,} rows)")
+        print("  " + ", ".join(f"{k}: {n}" for k, n in
+                               history.kind.value_counts().items()))
 
     if frame.empty:
         print("\n  Nothing to write.")

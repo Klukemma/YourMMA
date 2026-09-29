@@ -74,6 +74,10 @@ KINDS = {
     # artist, point fighter - so the engine can measure the switch itself
     # from two names. See `replaced_opponent` on the record.
     "opponent_switch": None,
+    # The fighter who took somebody else's place. Not "short_notice": the
+    # Wikipedia harvest found a notice period stated on 2 of 298, and one of
+    # them had a nine-week camp. A replacement is a replacement.
+    "stepped_in": None,
     "other": None,
 }
 

@@ -61,3 +61,29 @@ def test_card_names_gathers_both_corners():
     })
     assert ffc.card_names(archive, "UFC 1") == \
         ["A One", "B Two", "D Four", "E Five"]
+
+
+# --- the fighter whose opponent was switched --------------------------------
+
+BOUTS = [("Natalia Silva", "Wang Cong"), ("Deiveson Figueiredo",
+                                          "Payton Talbott")]
+
+
+def test_the_kept_fighter_is_the_replacements_opponent():
+    """"Wang replaced Shevchenko" says nothing about Silva. She is found as
+    Wang's opponent on the card - the one who prepared for someone else."""
+    assert ffc.opponent_on_card("Wang Cong", BOUTS) == "Natalia Silva"
+    assert ffc.opponent_on_card("Natalia Silva", BOUTS) == "Wang Cong"
+
+
+def test_a_fighter_not_on_the_card_has_no_opponent():
+    assert ffc.opponent_on_card("Valentina Shevchenko", BOUTS) is None
+
+
+def test_card_bouts_reads_pairs_and_skips_blanks():
+    archive = pd.DataFrame({
+        "event_name": ["UFC 1", "UFC 1", "UFC 2"],
+        "r_name": ["A One", None, "C Three"],
+        "b_name": ["B Two", "E Five", "D Four"],
+    })
+    assert ffc.card_bouts(archive, "UFC 1") == [("A One", "B Two")]
