@@ -170,8 +170,12 @@ def _last_name(tail):
 # with no period given at all - which is the commonest phrasing of the three
 # and was missed by the first version of this regex, because it demanded a
 # unit that sentence does not have.
-NOTICE = re.compile(r"on\s+(?:(?P<n>\d+|one|two|three|four|five|six|seven|"
-                    r"eight|nine|ten|eleven|twelve)\s+)?(?P<unit>day|week)s?'?\s*"
+# "on just 4 days notice", "on under one week's notice": the qualifier sits
+# between "on" and the number and used to hide it. "under" and "less than"
+# are upper bounds and are recorded as the bound.
+NOTICE = re.compile(r"on\s+(?:(?:just|only|under|less\s+than|about|roughly|"
+                    r"barely)\s+)?(?:(?P<n>\d+|one|two|three|four|five|six|seven|"
+                    r"eight|nine|ten|eleven|twelve)\s+)?(?P<unit>day|week)(?:'s|s'|s|\u2019s|s\u2019)?\s*"
                     r"(?:\s|-)?notice", re.I)
 SHORT_NOTICE = re.compile(r"\b(?:short|late)(?:\s|-)notice\b", re.I)
 WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
@@ -424,20 +428,30 @@ def _prose(text):
     return prose
 
 
-def _sentences(text):
-    """Sentences, never crossing a line break.
+# Where a sentence must end even without a full stop: a blank line (a new
+# paragraph), or a line that opens with wiki structure - an infobox field, a
+# list item, a heading, a table row. A lone newline anywhere else is a hard
+# wrap inside a sentence and is read as a space.
+_BREAK = re.compile(r"\n\s*\n|\n(?=\s*[|*#=!{}:;])")
 
-    A wikitext paragraph is one line, so a newline always ends something - a
-    paragraph, a list item, an infobox field, a heading. Splitting only on
-    ". Capital" let a clause run on into the next paragraph: at UFC 131
-    "...was replaced by Chris Weidman" (who never fought on that card) had no
-    full stop, so "replaced by" captured the next paragraph's "Dustin Poirier"
-    and labelled him a replacement. Found by reading harvested labels against
-    their evidence.
+
+def _sentences(text):
+    """Sentences, never crossing a paragraph or a line of wiki structure.
+
+    Splitting only on ". Capital" let a clause run on into the next
+    paragraph: at UFC 131 "...was replaced by Chris Weidman" has no full
+    stop, so "replaced by" read on into "Rani Yahya was scheduled face Dustin
+    Poirier" and labelled Poirier the replacement. Five labels were wrong that
+    way. Splitting on EVERY newline fixed them and broke three right ones,
+    because some pages hard-wrap a sentence ("withdrew due to an ankle
+    \ninjury and was replaced by Bobby Green") - so only a paragraph break or
+    a structural line ends a sentence. Found by reading harvested labels
+    against their evidence.
     """
     out = []
-    for line in _prose(text).split("\n"):
-        out.extend(part for part in re.split(r"(?<=[.!?])\s+(?=[A-Z])", line)
+    for block in _BREAK.split(_prose(text)):
+        block = re.sub(r"\s*\n\s*", " ", block)
+        out.extend(part for part in re.split(r"(?<=[.!?])\s+(?=[A-Z])", block)
                    if part.strip())
     return out
 

@@ -411,3 +411,39 @@ def test_an_infobox_line_is_not_part_of_the_first_sentence():
     sentences = cfc._sentences(text)
     assert not any("attendance" in s and "Hettes" in s for s in sentences)
     assert [r["stepped_in"] for r in cfc.changes_in(text)] == ["Kurt Holobaugh"]
+
+
+def test_a_hard_wrapped_sentence_is_still_one_sentence():
+    # UFC Fight Night: Makhachev vs. Green, verbatim, including the wrap.
+    text = ("However on February 16, it was reported that Dariush withdrew from "
+            "the event due to an ankle \ninjury and was replaced by Bobby Green "
+            "on just 10 days notice at a catchweight of 160 pounds.")
+    row = only(text)
+    assert row["stepped_in"] == "Bobby Green"
+    assert row["days_notice"] == 10
+
+
+def test_a_wrap_between_replaced_by_and_the_name_is_read_through():
+    # UFC 194, verbatim.
+    text = ("Jessica Rakoczy withdrew. She was replaced by\n"
+            "promotional newcomer Jocelyn Jones-Lybarger.")
+    assert only(text)["stepped_in"] == "Jocelyn Jones-Lybarger"
+
+
+def test_list_items_are_separate_sentences():
+    text = ("At the weigh-ins, two fighters missed weight:\n*Jose Miguel Delgado "
+            "weighed in at 147 pounds, one pound over the featherweight "
+            "non-title fight limit.\n*Azat Maksum weighed in at 129 pounds, "
+            "three pounds over the flyweight non-title fight limit.")
+    sentences = cfc._sentences(text)
+    assert not any("Delgado" in s and "Maksum" in s for s in sentences)
+
+
+@pytest.mark.parametrize("phrase,days", [
+    ("on just 4 days notice", 4),
+    ("on only two weeks' notice", 14),
+    ("on under one week's notice", 7),
+])
+def test_a_qualifier_before_the_number_does_not_hide_it(phrase, days):
+    text = f"Bob Jones withdrew and was replaced by Carl Brown {phrase}."
+    assert only(text)["days_notice"] == days
