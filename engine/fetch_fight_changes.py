@@ -48,9 +48,13 @@ OUT = ENGINE / "data" / "fight_changes.csv"
 # file the pooled measurement reads, where "adverse news" is estimated across
 # kinds rather than eight tiny groups one at a time.
 HISTORY = ENGINE / "data" / "intel_history.csv"
+# `evidence` is the sentence each label was parsed from. Without it the only
+# way to audit precision is to remember what happened at UFC 131, which is not
+# an audit; with it, anyone can read a random sample of labels against their
+# own evidence and count how many are right, with no network at all.
 HISTORY_COLUMNS = ("event_date", "event_name", "fighter", "kind",
                    "fighter_raw", "withdrawn", "days_notice", "weighed_lbs",
-                   "over_by_lbs", "article")
+                   "over_by_lbs", "article", "evidence")
 COLUMNS = ("event_date", "event_name", "stepped_in", "stepped_in_raw",
            "replaced", "days_notice", "article")
 CHUNK = 40          # events resolved per round trip group
@@ -179,7 +183,7 @@ def harvest(events, archive, *, verbose=True, out=None, history_out=None):
                     "withdrawn": change["replaced"],
                     "days_notice": change["days_notice"],
                     "weighed_lbs": None, "over_by_lbs": None,
-                    "article": title,
+                    "article": title, "evidence": change["sentence"],
                 })
                 # The other half of the same change: the fighter who stayed
                 # and prepared for someone else. Silva's case, historically.
@@ -193,7 +197,7 @@ def harvest(events, archive, *, verbose=True, out=None, history_out=None):
                         "withdrawn": change["replaced"],
                         "days_notice": change["days_notice"],
                         "weighed_lbs": None, "over_by_lbs": None,
-                        "article": title,
+                        "article": title, "evidence": change["sentence"],
                     })
 
             for miss in weigh_ins_in(text):
@@ -214,7 +218,7 @@ def harvest(events, archive, *, verbose=True, out=None, history_out=None):
                     "days_notice": None,
                     "weighed_lbs": miss["weighed_lbs"],
                     "over_by_lbs": miss["over_by_lbs"],
-                    "article": title,
+                    "article": title, "evidence": miss["sentence"],
                 })
 
         frame = pd.DataFrame(rows, columns=list(COLUMNS))
