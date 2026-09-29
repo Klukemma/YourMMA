@@ -223,7 +223,13 @@ jobs:
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add $PATHS
+          # Only paths that exist. A tracked data file a mode never created -
+          # the historical scout's pending queue, say, when nothing is
+          # pending - makes `git add` fatal, and the whole run fails at its
+          # last step with its work done and unsaved.
+          for p in $PATHS; do
+            if [ -e "$p" ]; then git add -- "$p"; fi
+          done
           if [ "${{ inputs.mode }}" = "predict" ]; then
             # Count the fights that actually carry a price. The old count
             # grepped for "best_odds", which is what the engine calls the field

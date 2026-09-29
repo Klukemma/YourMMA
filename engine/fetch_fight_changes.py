@@ -141,12 +141,25 @@ def harvest(events, archive, *, verbose=True, out=None, history_out=None):
             names = card_names(archive, event.event_name)
             bouts = card_bouts(archive, event.event_name)
             when = event.date.date()
+            # One label per fighter per kind per event. A page often tells the
+            # same fact twice - "Thiago Silva came in 2 lb over" and "Hamill
+            # received 25% of Silva's purse" are one miss - and both resolve
+            # to the same fighter on the card.
+            labelled = set()
+
+            def fresh(fighter, kind):
+                if (fighter, kind) in labelled:
+                    return False
+                labelled.add((fighter, kind))
+                return True
 
             for change in changes_in(text):
                 stats["found"] += 1
                 matched = match_to_card(change["stepped_in"], names)
                 if not matched:
                     stats["unmatched"] += 1
+                    continue
+                if not fresh(matched, "stepped_in"):
                     continue
                 if change["days_notice"]:
                     stats["quantified"] += 1
@@ -171,7 +184,7 @@ def harvest(events, archive, *, verbose=True, out=None, history_out=None):
                 # The other half of the same change: the fighter who stayed
                 # and prepared for someone else. Silva's case, historically.
                 kept = opponent_on_card(matched, bouts)
-                if kept:
+                if kept and fresh(kept, "opponent_switch"):
                     stats["switched"] += 1
                     history.append({
                         "event_date": when, "event_name": event.event_name,
@@ -190,6 +203,8 @@ def harvest(events, archive, *, verbose=True, out=None, history_out=None):
                     # fighter is not on the card because the fight did not
                     # happen, and there is nothing to label.
                     stats["weigh_unmatched"] += 1
+                    continue
+                if not fresh(matched, "missed_weight"):
                     continue
                 stats["weigh_ins"] += 1
                 history.append({

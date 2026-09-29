@@ -113,3 +113,15 @@ def test_card_json_carries_odds_under_the_name_the_count_reads():
                               [{"number": 1, "red": "A", "blue": "B",
                                 "pick": "A", "odds": -150}])
     assert payload["fights"][0]["odds"] == -150
+
+
+def test_the_commit_step_never_adds_a_path_that_may_not_exist():
+    """`git add` on a missing pathspec is fatal. A mode that does not create
+    every tracked data file - the scout's pending queue when nothing is
+    pending - would fail at the commit step with its work done and unsaved,
+    which is what happened on the first check-fight-changes run after the
+    scout's files were added to the list."""
+    text = (Path(__file__).resolve().parents[2] / ".github" / "workflows"
+            / "update-dataset.yml").read_text()
+    assert "git add $PATHS" not in text
+    assert '[ -e "$p" ]' in text

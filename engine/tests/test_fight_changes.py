@@ -265,3 +265,128 @@ def test_the_unparsed_dump_shows_what_was_missed_and_hides_what_was_read():
             "Smith was forced out of the bout with an injury.")
     misses = cfc.unparsed(text)
     assert len(misses) == 1 and "forced out" in misses[0]
+
+
+# --- sentences from real 2010-2016 Wikipedia pages -------------------------
+# Every one of these was printed by `check_fight_changes.py --unparsed` on the
+# runner as a sentence the first parser could not read. They are quoted
+# verbatim so the patterns stay fitted to what Wikipedia actually writes.
+
+def pairs(text):
+    return [(r["stepped_in"], r["replaced"]) for r in cfc.changes_in(text)]
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("However, Cane was forced out of the bout with an injury and replaced by "
+     "Rousimar Palhares.", ("Rousimar Palhares", "Cane")),
+    ("Palhares himself was forced out of the bout with Okami with an injury "
+     "and was replaced by Buddy Roberts.", ("Buddy Roberts", "Palhares")),
+    ("However, Hester was forced out of the bout with an injury and was "
+     "replaced by Thiago Santos.", ("Thiago Santos", "Hester")),
+    ("However, Lee had to pull out citing an undisclosed injury and was "
+     "replaced by Will Campuzano.", ("Will Campuzano", "Lee")),
+    ("However, on April 1, it was announced that Trujillo had pulled out of "
+     "the fight due to a broken arm and was replaced by promotional newcomer "
+     "Shane Campbell.", ("Shane Campbell", "Trujillo")),
+    ("Ray Borg was expected to face Fredy Serrano at the event, but pulled "
+     "out on July 21 due to injury and was replaced by Ryan Benoit.",
+     ("Ryan Benoit", "Ray Borg")),
+    ("However, in late January, Tavares pulled out of the bout citing injury "
+     "and was replaced five days later by promotional newcomer Levan "
+     "Makashvili.", ("Levan Makashvili", "Tavares")),
+    ("Daniel Roberts was originally scheduled to face TJ Waldburger, but "
+     "pulled out due to an injury and was replaced by Mike Stumpf.",
+     ("Mike Stumpf", "Daniel Roberts")),
+    ("Marcelo Guimarães was expected to face Hyun Gyu Lim at the event; "
+     "however, Guimarães was forced out of the bout with an injury and "
+     "replaced by David Mitchell.", ("David Mitchell", "Guimarães")),
+    ("Veteran fighter Carlo Prater stepped in as a replacement for "
+     "Bahadurzada.", ("Carlo Prater", "Bahadurzada")),
+    ("However, Soriano was forced to pull out due to injury and was replaced "
+     "by Mike Brown.", ("Mike Brown", "Soriano")),
+    ("However, Harris was forced out of the bout and Lineker faced "
+     "promotional newcomer José Maria Tomé.", ("José Maria Tomé", "Harris")),
+    ("Three days later the UFC announced that Jackson would be replaced by "
+     "former ice hockey player Steve Bossé and stated that he would appeal.",
+     ("Steve Bossé", "Jackson")),
+])
+def test_a_real_replacement_sentence_is_read(text, expected):
+    assert expected in pairs(text)
+
+
+def test_two_replacements_in_one_sentence_are_both_read():
+    got = pairs("Ortega was replaced by Andre Fili, while Green was replaced "
+                "by promotional newcomer Zak Ottow.")
+    assert ("Andre Fili", "Ortega") in got and ("Zak Ottow", "Green") in got
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("Nordine Taleb was expected to face Alan Jouban at the event, but pulled "
+     "out on June 7 due to injury. He was replaced by promotional newcomer "
+     "Belal Muhammad.", ("Belal Muhammad", "Nordine Taleb")),
+    ("Ryan Bader was expected to face Glover Teixeira at the event but "
+     "withdrew from the bout due to injury in March. He was replaced by James "
+     "Te Huna.", ("James Te Huna", "Ryan Bader")),
+    ("Antônio Rogério Nogueira was expected to face Alexander Gustafsson at "
+     "this event but pulled out due to injury. His replacement was Thiago "
+     "Silva.", ("Thiago Silva", "Antônio Rogério Nogueira")),
+    ("However, Chiesa pulled out due to a back injury on June 27. On the "
+     "following day, it was announced that promotional newcomer Lando Vannata "
+     "would replace him and the bout would be moved.",
+     ("Lando Vannata", "Chiesa")),
+    ("In turn, Thompson pulled out of the fight on January 30, citing a rib "
+     "injury. After UFC 183, it was announced that former WEC and UFC "
+     "Lightweight champion Benson Henderson agreed to step up as a "
+     "replacement.", ("Benson Henderson", "Thompson")),
+])
+def test_a_replacement_named_in_the_next_sentence_is_read(text, expected):
+    assert expected in pairs(text)
+
+
+def test_a_show_title_is_not_a_replacement():
+    """"replaced by The Ultimate Fighter: ..." names a TV series, not a man."""
+    assert pairs("However, LaFlare was removed from the fight in early June "
+                 "after sustaining an undisclosed injury and was replaced by "
+                 "The Ultimate Fighter: American Top Team vs.") == []
+
+
+def test_a_withdrawal_with_no_replacement_is_not_a_replacement():
+    assert pairs("Manny Gamburyan was expected to face Chad Mendes at the "
+                 "event; however, Gamburyan was forced out of the bout with a "
+                 "thumb and elbow injury.") == []
+
+
+def test_a_cancelled_bout_labels_nobody():
+    assert pairs("Lim was then pulled from the bout by doctors and the fight "
+                 "was subsequently cancelled.") == []
+
+
+@pytest.mark.parametrize("text, fighter, over", [
+    ("Johnson came in 11 pounds over the 186 lb weight allowance, was fined "
+     "20 percent of his earnings.", "Johnson", 11.0),
+    ("Thiago Silva came in 2 lb over the 206 lb weight limit and therefore "
+     "Matt Hamill received 25% of Silva's purse.", "Thiago Silva", 2.0),
+    ("Villefort had already agreed in advance to a catchweight bout and "
+     "received a portion of Burrell's purse.", "Burrell", None),
+    ("Nurmagomedov was given two hours to cut to the lightweight maximum of "
+     "156 pounds, but he elected instead to surrender a percentage of his "
+     "fight purse.", "Nurmagomedov", None),
+    ("At the weigh-ins, Melvin Guillard was the only one of 20 fighters who "
+     "missed weight.", "Melvin Guillard", None),
+])
+def test_a_real_missed_weight_sentence_is_read(text, fighter, over):
+    got = {r["fighter"]: r["over_by_lbs"] for r in cfc.weigh_ins_in(text)}
+    assert fighter in got and got[fighter] == over
+
+
+def test_a_fight_day_weight_check_is_not_a_miss():
+    assert cfc.weigh_ins_in("Johnson officially weighed in at 204.2 lb on "
+                            "fight day, and the bout took place as "
+                            "scheduled.") == []
+
+
+def test_surrendering_his_own_purse_names_nobody():
+    """"20 percent of his purse" - a pronoun, resolved elsewhere or not at
+    all, never guessed."""
+    assert cfc.weigh_ins_in("As a result, he surrendered 20 percent of his "
+                            "purse to his opponent, José Maria Tomé.") == []

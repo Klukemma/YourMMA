@@ -85,17 +85,86 @@ RETRIES = 3          # on 429, which is what hammering it looks like
 # different editors and a single pattern silently drops the variants it does
 # not happen to match, which would show up here as "too thin" and send the
 # whole project down the wrong road.
+# ---------------------------------------------------------------------------
+# REPLACEMENTS. Written against real sentences, not guessed. The first version
+# of this table held two patterns written from memory, and a dump of what it
+# failed to read on 2010-2016 pages turned up 80 plainly-replacement sentences
+# in six phrasings it had never seen. Every pattern below is here because of a
+# sentence in that dump; the tests quote them.
+#
+# A name: capitalised words, allowing the particles Brazilian and Dutch names
+# carry. Descriptors before a name ("promotional newcomer", "former ice hockey
+# player") are handled by reading the LAST name in a clause rather than by
+# listing descriptors, which would never be complete.
+_NM = (r"[A-Z][\w.'’-]+(?: (?:[A-Z][\w.'’-]+|de|da|dos|do|van|"
+       r"von|del|la|le)){0,3}")
+WITHDRAW = (r"(?:withdrew|withdraws|pulled out|pull out|had pulled out|"
+            r"had to (?:withdraw|pull out)|was forced out|were forced out|"
+            r"was forced to (?:withdraw|pull out)|was (?:forced )?to withdraw|"
+            r"was removed|was pulled from|was scratched)")
+_BUT_OUT = (r"(?:had\s+to\s+)?(?:withdrew|pulled out|pull out|was forced out|"
+            r"was forced to (?:withdraw|pull out)|was removed)")
+# "replaced by X", "replaced five days later by X"; the tail runs to the end of
+# the clause and the replacement is the last name in it.
+BY_TAIL = (r"replaced(?:\s+[\w-]+){0,3}?\s+by\s+(?P<tail>[^,.;:()\[\]]+?)"
+           r"(?=\s+(?:and|while|who|after|in|at|for|on|as|when|due|but)\b"
+           r"|[,.;:()]|$)")
+
 REPLACEMENT_PATTERNS = (
-    # "... was replaced by Brown"
-    re.compile(r"(?P<out>[A-Z][\w.'’-]+(?: [A-Z][\w.'’-]+){0,3})\s+"
-               r"(?:withdrew|pulled out|was (?:forced )?to withdraw|was removed)"
-               r"[^.]{0,120}?replaced by\s+"
-               r"(?P<in>[A-Z][\w.'’-]+(?: [A-Z][\w.'’-]+){0,3})"),
+    # "Ortega was replaced by Andre Fili, while Green was replaced by..."
+    re.compile(rf"(?P<out>{_NM})\s+(?:himself\s+|herself\s+)?(?:was|were|"
+               rf"would be|had been|will be)\s+" + BY_TAIL),
+    # "Carlo Prater stepped in as a replacement for Bahadurzada"
+    re.compile(rf"(?P<in>{_NM})\s+(?:stepped|steps|step)\s+(?:in|up)\s+"
+               rf"(?:as\s+(?:a|the)\s+replacement\s+)?(?:for|to replace)\s+"
+               rf"(?P<out>{_NM})"),
     # "Brown replaced Jones"
-    re.compile(r"(?P<in>[A-Z][\w.'’-]+(?: [A-Z][\w.'’-]+){0,3})\s+"
-               r"(?:stepped in for|replaced)\s+"
-               r"(?P<out>[A-Z][\w.'’-]+(?: [A-Z][\w.'’-]+){0,3})"),
+    re.compile(rf"(?P<in>{_NM})\s+replaced\s+(?P<out>{_NM})"),
+    # "Cane was forced out of the bout with an injury and replaced by ..."
+    re.compile(rf"(?P<out>{_NM})\s+(?:himself\s+|herself\s+)?{WITHDRAW}"
+               rf"[^.]{{0,160}}?" + BY_TAIL),
+    # "Ray Borg was expected to face Fredy Serrano at the event, but pulled
+    # out on July 21 due to injury and was replaced by Ryan Benoit."
+    re.compile(rf"(?P<out>{_NM})\s+was\s+(?:originally\s+|initially\s+)?"
+               rf"(?:expected|scheduled|set|booked)\s+to\s+(?:face|take on|"
+               rf"fight|meet)\s+{_NM}[^.;]*?,?\s*but\s+{_BUT_OUT}"
+               rf"[^.]{{0,160}}?" + BY_TAIL),
+    # "Harris was forced out of the bout and Lineker faced promotional
+    # newcomer José Maria Tomé."
+    re.compile(rf"(?P<out>{_NM})\s+{WITHDRAW}[^.]{{0,120}}?\s+and\s+{_NM}\s+"
+               rf"(?:instead\s+)?faced\s+(?P<tail>[^,.;:()]+?)(?=[,.;:()]|$)"),
 )
+
+# The replacement named in a LATER sentence than the withdrawal. "Nordine
+# Taleb was expected to face Alan Jouban at the event, but pulled out on June
+# 7 due to injury. He was replaced by promotional newcomer Belal Muhammad."
+# These resolve to the most recent withdrawal on the page; the card join
+# then drops anything that does not land on a real fighter.
+PRONOUN_PATTERNS = (
+    re.compile(r"^(?:He|She)\s+(?:was|had been)\s+" + BY_TAIL),
+    re.compile(r"^(?:His|Her)\s+replacement\s+(?:was|is|would be)\s+"
+               r"(?P<tail>[^,.;:()]+?)(?=[,.;:()]|$)"),
+    re.compile(rf"(?P<in>{_NM})\s+(?:would|will)\s+replace\s+(?:him|her)\b"),
+    re.compile(rf"(?P<in>{_NM})\s+(?:agreed\s+to\s+|would\s+|will\s+)?"
+               rf"(?:stepped|step)\s+(?:up|in)\s+as\s+(?:a|his|her|the)\s+"
+               rf"replacement\b(?!\s+for)"),
+)
+
+# Who withdrew, remembered for the pronoun forms above.
+WITHDRAWAL = (
+    re.compile(rf"(?P<out>{_NM})\s+was\s+(?:originally\s+|initially\s+)?"
+               rf"(?:expected|scheduled|set|booked)\s+to\s+(?:face|take on|"
+               rf"fight|meet)\s+{_NM}[^.;]*?,?\s*but\s+{_BUT_OUT}"),
+    re.compile(rf"(?P<out>{_NM})\s+(?:himself\s+|herself\s+)?{WITHDRAW}"),
+)
+
+
+def _last_name(tail):
+    """The last name in a clause: "promotional newcomer Shane Campbell" ->
+    "Shane Campbell". None when the clause names nobody."""
+    runs = re.findall(_NM, str(tail or ""))
+    return runs[-1] if runs else None
+
 
 # "on nine days' notice", "on two weeks notice", and bare "on short notice"
 # with no period given at all - which is the commonest phrasing of the three
@@ -373,6 +442,21 @@ WEIGH_IN = re.compile(
     r"(?:\s*\([^)]*\))?\s*,?\s*"
     r"(?P<over>[\w.\s-]{1,30}?)\s+" + _LBS + r"\s+over\b")
 MISSED_WEIGHT = re.compile(_NAME + r"\s+missed\s+weight\b")
+# The rest are from the dump of unread 2010-2016 sentences, each one real:
+#   "Thiago Silva came in 2 lb over the 206 lb weight limit"
+#   "Villefort ... received a portion of Burrell's purse"
+#   "Nurmagomedov was given two hours to cut to the lightweight maximum"
+#   "Melvin Guillard was the only one of 20 fighters who missed weight"
+CAME_IN_OVER = re.compile(_NAME + r"\s+came\s+in\s+(?P<over>[\w.\s-]{1,30}?)"
+                          r"\s+" + _LBS + r"\s+over\b")
+PURSE = re.compile(r"(?:received|was awarded|was given|went to)\s+"
+                   r"(?:a\s+(?:portion|percentage)|\d+(?:\.\d+)?\s*"
+                   r"(?:%|percent))\s+of\s+" + _NAME +
+                   r"(?:'s|\u2019s)\s+(?:fight\s+)?purse")
+HOURS_TO_CUT = re.compile(_NAME + r"\s+was\s+given\s+(?:\w+\s+){0,2}hours?"
+                          r"\s+to\s+(?:cut|make)")
+ONLY_ONE = re.compile(_NAME + r"\s+was\s+the\s+only\s+(?:one|fighter)\b"
+                      r"[^.]*?\bmissed\s+weight")
 
 
 def _pounds(phrase):
@@ -404,63 +488,82 @@ def _pounds(phrase):
 def weigh_ins_in(text):
     """Every fighter this page says missed weight, and by how much."""
     rows, seen = [], set()
+
+    def add(name, weighed, over, sentence):
+        name = _clean(name)
+        if _is_name(name) and name not in seen:
+            seen.add(name)
+            rows.append({"fighter": name, "weighed_lbs": weighed,
+                         "over_by_lbs": over, "sentence": sentence[:200]})
+
     for sentence in _sentences(text):
-        if "weigh" not in sentence and "came in" not in sentence \
-                and "missed weight" not in sentence:
-            continue
-        for hit in WEIGH_IN.finditer(sentence):
-            name = _clean(hit.group("name"))
-            if _is_name(name) and name not in seen:
-                seen.add(name)
-                rows.append({"fighter": name,
-                             "weighed_lbs": float(hit.group("weight")),
-                             "over_by_lbs": _pounds(hit.group("over")),
-                             "sentence": sentence.strip()[:200]})
-        for hit in MISSED_WEIGHT.finditer(sentence):
-            name = _clean(hit.group("name"))
-            if _is_name(name) and name not in seen:
-                seen.add(name)
-                rows.append({"fighter": name, "weighed_lbs": None,
-                             "over_by_lbs": None,
-                             "sentence": sentence.strip()[:200]})
+        clean = sentence.strip()
+        for hit in WEIGH_IN.finditer(clean):
+            add(hit.group("name"), float(hit.group("weight")),
+                _pounds(hit.group("over")), clean)
+        for hit in CAME_IN_OVER.finditer(clean):
+            add(hit.group("name"), None, _pounds(hit.group("over")), clean)
+        for pattern in (MISSED_WEIGHT, PURSE, HOURS_TO_CUT, ONLY_ONE):
+            for hit in pattern.finditer(clean):
+                add(hit.group("name"), None, None, clean)
     return rows
+
+
+def _notice(sentence):
+    notice = NOTICE.search(sentence)
+    if notice:
+        raw = notice.group("n")
+        count = WORDS.get((raw or "").lower(), None)
+        if count is None and raw and raw.isdigit():
+            count = int(raw)
+        if count is not None:
+            return count * (7 if notice.group("unit").lower() == "week" else 1)
+        return 0                    # a unit but no number
+    if SHORT_NOTICE.search(sentence):
+        return 0                    # said to be short, no period given
+    return None
 
 
 def changes_in(text):
     """Every (stepped in, replaced, days notice) this page states."""
-    prose = _prose(text)
-
-    rows = []
-    for sentence in re.split(r"(?<=[.!?])\s+", prose):
-        if "replac" not in sentence and "stepped in" not in sentence:
-            continue
+    rows, seen = [], set()
+    last_out = None
+    for sentence in _sentences(text):
+        clean = sentence.strip()
+        pairs = []
         for pattern in REPLACEMENT_PATTERNS:
-            hit = pattern.search(sentence)
-            if not hit:
+            for hit in pattern.finditer(clean):
+                groups = hit.groupdict()
+                stepped_in = (_clean(groups["in"]) if groups.get("in")
+                              else _clean(_last_name(groups.get("tail"))))
+                pairs.append((stepped_in, _clean(groups["out"])))
+        # Pronoun forms name the replacement here and the withdrawal in an
+        # earlier sentence, so they read `last_out` BEFORE it is updated.
+        if last_out:
+            for pattern in PRONOUN_PATTERNS:
+                for hit in pattern.finditer(clean):
+                    groups = hit.groupdict()
+                    stepped_in = (_clean(groups["in"]) if groups.get("in")
+                                  else _clean(_last_name(groups.get("tail"))))
+                    pairs.append((stepped_in, last_out))
+        for pattern in WITHDRAWAL:
+            hit = pattern.search(clean)
+            if hit and _is_name(_clean(hit.group("out"))):
+                last_out = _clean(hit.group("out"))
+                break
+
+        days = _notice(clean)
+        for stepped_in, replaced in pairs:
+            if not _is_name(stepped_in) or not _is_name(replaced) \
+                    or stepped_in == replaced:
                 continue
-            notice = NOTICE.search(sentence)
-            days = None
-            if notice:
-                raw = notice.group("n")
-                count = WORDS.get((raw or "").lower(), None)
-                if count is None and raw and raw.isdigit():
-                    count = int(raw)
-                if count is not None:
-                    days = count * (7 if notice.group("unit").lower() == "week"
-                                    else 1)
-                else:
-                    days = 0        # a unit but no number
-            elif SHORT_NOTICE.search(sentence):
-                days = 0            # said to be short, no period given
-            stepped_in, replaced = (_clean(hit.group("in")),
-                                    _clean(hit.group("out")))
-            if not _is_name(stepped_in) or not _is_name(replaced):
+            if (stepped_in, replaced) in seen:
                 continue
+            seen.add((stepped_in, replaced))
             rows.append({"stepped_in": stepped_in,
                          "replaced": replaced,
                          "days_notice": days,
-                         "sentence": sentence.strip()[:200]})
-            break
+                         "sentence": clean[:200]})
     return rows
 
 
