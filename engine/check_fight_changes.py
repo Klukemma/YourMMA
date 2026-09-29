@@ -76,6 +76,7 @@ SEARCH_LIMIT = 3     # candidate articles considered per event
 # is being refused looks exactly like a run that is working. A runner's IP is
 # shared and may already be hot before this starts.
 PAUSE = 0.50         # seconds between calls
+MIN_LABELS_USEFUL = 400   # below this a 4% effect cannot be told from zero
 BATCH = 40           # titles per query; the API allows 50
 RETRIES = 3          # on 429, which is what hammering it looks like
 
