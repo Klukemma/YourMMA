@@ -125,3 +125,13 @@ def test_the_commit_step_never_adds_a_path_that_may_not_exist():
             / "update-dataset.yml").read_text()
     assert "git add $PATHS" not in text
     assert '[ -e "$p" ]' in text
+
+
+def test_runs_on_one_branch_queue_instead_of_racing():
+    # Two concurrent runs both regenerate app/data/*.json; the loser's rebase
+    # conflicts on generated files and its work is thrown away.
+    text = WORKFLOW.read_text()
+    block = re.search(r"^concurrency:\n((?:  .*\n)+)", text, re.M)
+    assert block, "workflow has no top-level concurrency group"
+    assert "github.ref" in block.group(1)
+    assert "cancel-in-progress: false" in block.group(1)

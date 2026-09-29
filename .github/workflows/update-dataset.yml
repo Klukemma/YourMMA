@@ -38,6 +38,15 @@ on:
 permissions:
   contents: write
 
+# ONE RUN AT A TIME PER BRANCH. Every mode regenerates app/data/*.json, so two
+# runs in flight each produce their own version of the same generated files
+# and the second one's rebase conflicts - no retry can merge two builds of a
+# JSON blob. A harvest was lost exactly that way, fired alongside a date check.
+# Queued, the second run checks out after the first has pushed.
+concurrency:
+  group: update-dataset-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
