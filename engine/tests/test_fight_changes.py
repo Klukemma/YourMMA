@@ -258,3 +258,10 @@ def test_the_same_fighter_twice_on_a_page_is_counted_once():
 
 def test_a_pronoun_is_not_a_replacement_either():
     assert cfc.changes_in("He replaced Bob Jones on the card.") == []
+
+
+def test_the_unparsed_dump_shows_what_was_missed_and_hides_what_was_read():
+    text = ("Jones withdrew and was replaced by Carl Brown. "
+            "Smith was forced out of the bout with an injury.")
+    misses = cfc.unparsed(text)
+    assert len(misses) == 1 and "forced out" in misses[0]

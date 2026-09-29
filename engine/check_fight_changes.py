@@ -463,11 +463,71 @@ def changes_in(text):
     return rows
 
 
+# Words that mark a sentence as PROBABLY about a card change or a weigh-in.
+# Deliberately broad: the point is to catch what the patterns miss, so a
+# sentence caught here and read by nothing is exactly what gets printed.
+CANDIDATE = re.compile(r"replac|withdr|stepped in|step in|forced out|pulled "
+                       r"out|pulled from|scratched|missed weight|make weight|"
+                       r"made weight|weighed in|came in at|pounds over|"
+                       r"lbs? over|catchweight", re.I)
+
+
+def unparsed(text):
+    """Candidate sentences that no pattern read. The parser's blind spots."""
+    read = {r["sentence"][:120] for r in changes_in(text)} | \
+           {r["sentence"][:120] for r in weigh_ins_in(text)}
+    out = []
+    for sentence in _sentences(text):
+        clean = sentence.strip()
+        if CANDIDATE.search(clean) and clean[:120] not in read:
+            out.append(clean[:260])
+    return out
+
+
+def dump_unparsed(from_year, to_year, sample, seed=0):
+    """Print what the parser missed, from real pages, for a span of years.
+
+    The fix for low recall must be fitted to the sentences Wikipedia actually
+    contains. Guessing at phrasings from memory is how the first version
+    missed "was forced out of the bout" and "stepped in to replace" - both
+    common, both plainly replacements, and both invisible to it.
+    """
+    import random
+    archive = pd.read_csv(ARCHIVE, usecols=["event_name", "date"],
+                          low_memory=False)
+    archive["date"] = pd.to_datetime(archive["date"], errors="coerce")
+    events = (archive.dropna(subset=["date"]).drop_duplicates("event_name"))
+    events = events[events.date.dt.year.between(from_year, to_year)]
+    rows = list(events.itertuples(index=False))
+    random.Random(seed).shuffle(rows)
+    block = pd.DataFrame(rows[:sample], columns=events.columns)
+    resolved = resolve_all(block)
+    print(f"  {len(resolved)} of {len(block)} events resolved, "
+          f"{from_year}-{to_year}")
+    total = 0
+    for name, (title, text) in sorted(resolved.items()):
+        misses = unparsed(text)
+        parsed = len(changes_in(text)) + len(weigh_ins_in(text))
+        print(f"\n  == {title}  (parsed {parsed}, missed {len(misses)})")
+        for sentence in misses:
+            total += 1
+            print(f"     - {sentence}")
+    print(f"\n  {total} candidate sentences read by nothing")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__[:200])
     parser.add_argument("--sample", type=int, default=40,
                         help="how many events to actually fetch")
+    parser.add_argument("--unparsed", action="store_true",
+                        help="print candidate sentences the parser missed")
+    parser.add_argument("--from-year", type=int, default=2010)
+    parser.add_argument("--to-year", type=int, default=2015)
     args = parser.parse_args(argv)
+
+    if args.unparsed:
+        dump_unparsed(args.from_year, args.to_year, args.sample)
+        return 0
 
     print("=" * 74)
     print("CAN LATE REPLACEMENTS BE LABELLED ACROSS HISTORY?")
