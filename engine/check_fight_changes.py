@@ -425,7 +425,21 @@ def _prose(text):
 
 
 def _sentences(text):
-    return re.split(r"(?<=[.!?])\s+(?=[A-Z])", _prose(text))
+    """Sentences, never crossing a line break.
+
+    A wikitext paragraph is one line, so a newline always ends something - a
+    paragraph, a list item, an infobox field, a heading. Splitting only on
+    ". Capital" let a clause run on into the next paragraph: at UFC 131
+    "...was replaced by Chris Weidman" (who never fought on that card) had no
+    full stop, so "replaced by" captured the next paragraph's "Dustin Poirier"
+    and labelled him a replacement. Found by reading harvested labels against
+    their evidence.
+    """
+    out = []
+    for line in _prose(text).split("\n"):
+        out.extend(part for part in re.split(r"(?<=[.!?])\s+(?=[A-Z])", line)
+                   if part.strip())
+    return out
 
 
 # --- missed weight -------------------------------------------------------

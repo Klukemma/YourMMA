@@ -390,3 +390,24 @@ def test_surrendering_his_own_purse_names_nobody():
     all, never guessed."""
     assert cfc.weigh_ins_in("As a result, he surrendered 20 percent of his "
                             "purse to his opponent, José Maria Tomé.") == []
+
+
+def test_a_clause_never_runs_on_into_the_next_paragraph():
+    # UFC 131 verbatim. The first paragraph has no closing full stop, and
+    # "replaced by" used to capture the next paragraph's Dustin Poirier.
+    text = ("Court McGee was scheduled to fight Jesse Bongfeldt, but was forced "
+            "to pull out due to a torn MCL while training and was replaced by "
+            "[[Chris Weidman]]\n\nRani Yahya was scheduled face Dustin Poirier "
+            "at this event.")
+    replacements = [r["stepped_in"] for r in cfc.changes_in(text)]
+    assert "Dustin Poirier" not in replacements
+    assert replacements == ["Chris Weidman"]
+
+
+def test_an_infobox_line_is_not_part_of_the_first_sentence():
+    text = ("|attendance=15,227\n|gate=$2,700,000\n\n==Background==\n\n"
+            "Jimy Hettes was expected to face Steven Siler. However, Hettes "
+            "pulled out and was replaced by Kurt Holobaugh.")
+    sentences = cfc._sentences(text)
+    assert not any("attendance" in s and "Hettes" in s for s in sentences)
+    assert [r["stepped_in"] for r in cfc.changes_in(text)] == ["Kurt Holobaugh"]
