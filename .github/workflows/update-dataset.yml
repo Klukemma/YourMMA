@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
+        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, verify-intel-dates, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -90,6 +90,14 @@ jobs:
             # on almost none of them, and a replacement announced two months
             # out had a full camp. days_notice stays blank where unstated.
             python engine/fetch_fight_changes.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "verify-intel-dates" ]; then
+            # Settle historical intel whose publication date could not be read
+            # from its URL: fetch each page and read the date it declares for
+            # itself. A record is kept only if that date is before the fight -
+            # most historical fighter news was written AFTER the fight, and a
+            # post-fight "he fought injured" filed as pre-fight news would
+            # make injury look predictive in testing and be worthless live.
+            python engine/verify_intel_dates.py 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "check-fight-changes" ]; then
             # Can a late replacement be labelled across history, and on how
             # many fights? predict_card carries a hand-typed 4% short-notice
@@ -203,7 +211,7 @@ jobs:
       - name: Commit the app data
         if: ${{ !inputs.dry_run }}
         run: |
-          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv engine/data/method_odds.csv engine/data/fight_changes.csv engine/data/intel_history.csv"
+          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv engine/data/method_odds.csv engine/data/fight_changes.csv engine/data/intel_history.csv engine/data/intel_history_scouted.csv engine/data/intel_history_pending.csv engine/data/intel_scout_log.csv"
           if [ -z "$(git status --porcelain -- $PATHS)" ]; then
             echo "App data and odds unchanged."
             exit 0
