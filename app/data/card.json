@@ -1,6 +1,7 @@
 {
  "caveats": {
   "flag": "A second model, fitted only on bets that had already settled, guessing whether each pick is wrong. Its flags score about 0.70 where 0.5 is a coin toss - real, not decisive. Most of what it reads is the gap between this model and the market, so a fight nobody has priced cannot be scored and is shown as such rather than assumed safe.",
+  "intel": "Sourced news gathered before the bell - injuries, late replacements, a change of camp - about things the model cannot read from a record. NONE OF IT MOVES THE PREDICTION. The one soft factor we could label at scale, 298 late replacements from Wikipedia, measured -3.5% against the model and -4.4% against the blend with both intervals spanning zero, needing roughly 1,800 labels to resolve. So this is shown beside the number, not folded into it: it tells you why a fight might not go the way the model thinks, and leaves the number something that was actually measured.",
   "model": "Walk-forward accuracy 61.7%, AUC 0.66. Flat-stake ROI on the confirm period (2020 onward, 2,339 priced bets) is -1.8%. Treat a pick as an opinion, not an edge.",
   "parlay": "Combined probability multiplies the legs, which assumes the fights are independent; they are not quite. Backtested on the confirm period, 3-leg parlays returned +21.8% over 224 parlays - promising but about 1.5 standard deviations, and those parlays share legs, so this is NOT an established edge.",
   "simulation": "20,000 simulations from both fighters' measured rates. As a winner picker this is weaker than the model (AUC 0.559 against 0.66), so the model's probability is the headline. Method and round are where the simulation is the only source, and there it finishes 55% of fights where the sport finishes 47% - read DEC as firmer and SUB as softer."
@@ -15,6 +16,7 @@
    "blue": "Raoni Barcelos",
    "confidence": 0.575893,
    "edge": 0.200197,
+   "intel": [],
    "market_prob": 0.596708,
    "method": "Decision",
    "method_prob": 0.531495,
@@ -63,6 +65,7 @@
    "blue": "Ailin Perez",
    "confidence": 0.575893,
    "edge": null,
+   "intel": [],
    "market_prob": null,
    "method": "Decision",
    "method_prob": 0.70093,
@@ -109,6 +112,7 @@
    "blue": "Rinya Nakamura",
    "confidence": 0.697095,
    "edge": null,
+   "intel": [],
    "market_prob": null,
    "method": "Decision",
    "method_prob": 0.608347,
@@ -155,6 +159,7 @@
    "blue": "Robert Bryczek",
    "confidence": 0.742718,
    "edge": null,
+   "intel": [],
    "market_prob": null,
    "method": "Decision",
    "method_prob": 0.518782,
@@ -201,6 +206,7 @@
    "blue": "Christian Edwards",
    "confidence": 0.697095,
    "edge": null,
+   "intel": [],
    "market_prob": null,
    "method": "KO/TKO",
    "method_prob": 0.465694,
@@ -249,6 +255,7 @@
    "blue": "Josiah Harrell",
    "confidence": 0.697095,
    "edge": null,
+   "intel": [],
    "market_prob": null,
    "method": "Decision",
    "method_prob": 0.411636,
@@ -295,6 +302,7 @@
    "blue": "Ricky Simon",
    "confidence": 0.730435,
    "edge": null,
+   "intel": [],
    "market_prob": null,
    "method": "Decision",
    "method_prob": 0.653872,
@@ -341,6 +349,7 @@
    "blue": "Alatengheili",
    "confidence": 0.742718,
    "edge": null,
+   "intel": [],
    "market_prob": null,
    "method": "Decision",
    "method_prob": 0.648391,
@@ -387,6 +396,7 @@
    "blue": "Vanessa Demopoulos",
    "confidence": 0.730435,
    "edge": null,
+   "intel": [],
    "market_prob": null,
    "method": "Decision",
    "method_prob": 0.631323,
@@ -430,7 +440,7 @@
    "win_prob_model": 0.790961
   }
  ],
- "generated": "2026-09-28T17:19:22Z",
+ "generated": "2026-09-30T18:11:20Z",
  "parlays": [
   {
    "combined_prob": 0.5988373640610001,
