@@ -188,6 +188,9 @@ def main(argv=None):
     parser.add_argument("--dates")
     parser.add_argument("--train")
     parser.add_argument("--out")
+    parser.add_argument("--work", help="keep the replays here and reuse "
+                                       "those already done (each is a full "
+                                       "engine load, ~10 minutes)")
     args = parser.parse_args(argv)
     if args.child == "train":
         return train_child(args.dates.split(","), args.out) or 0
@@ -198,22 +201,28 @@ def main(argv=None):
     days = pd.to_datetime(archive["date"], errors="coerce")
     dates = sorted(days.dropna().dt.strftime("%Y-%m-%d").unique())[-args.events:]
     print(f"  events: {', '.join(dates)}")
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp = Path(tmp)
-        (tmp / "app").mkdir()
-        train_path = tmp / "train.json"
-        print("  loading the full archive (training-style rows)...", flush=True)
-        _run(["--child", "train", "--dates", ",".join(dates), "--out",
-              str(train_path)], _quiet_env(tmp))
+    with tempfile.TemporaryDirectory() as scratch:
+        tmp = Path(args.work) if args.work else Path(scratch)
+        tmp.mkdir(parents=True, exist_ok=True)
+        (tmp / "app").mkdir(exist_ok=True)
+        train_path = tmp / f"train_{dates[0]}_{dates[-1]}.json"
+        if not train_path.exists():
+            print("  loading the full archive (training-style rows)...",
+                  flush=True)
+            _run(["--child", "train", "--dates", ",".join(dates), "--out",
+                  str(train_path)], _quiet_env(tmp))
         rows = []
         for date in dates:
-            cut = tmp / f"cut_{date}.csv"
-            archive[days < pd.Timestamp(date)].to_csv(cut, index=False)
-            print(f"  {date}: loading the archive as of the night before...",
-                  flush=True)
             out = tmp / f"live_{date}.json"
-            _run(["--child", "live", "--dates", date, "--train",
-                  str(train_path), "--out", str(out)], _quiet_env(tmp, cut))
+            if not out.exists():
+                cut = tmp / f"cut_{date}.csv"
+                archive[days < pd.Timestamp(date)].to_csv(cut, index=False)
+                print(f"  {date}: loading the archive as of the night "
+                      f"before...", flush=True)
+                _run(["--child", "live", "--dates", date, "--train",
+                      str(train_path), "--out", str(out)],
+                     _quiet_env(tmp, cut))
+                cut.unlink()
             rows += json.loads(out.read_text())
     result = report(rows)
     OUT.write_text(json.dumps({"events": dates, **result,
