@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, harvest-injuries, harvest-world, harvest-weights, probe-world, verify-intel-dates, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
+        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, harvest-injuries, harvest-world, harvest-weights, probe-sherdog, probe-world, verify-intel-dates, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -122,6 +122,11 @@ jobs:
             # every event page that reports them - the ground truth a True
             # Fight Weight estimator is fitted to and checked against.
             python engine/fight_night_weights.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "probe-sherdog" ]; then
+            # A few real Sherdog pages saved as fixtures, so the regional
+            # record parser for Contender Series prospects is written
+            # against real HTML. Five slow requests; robots.txt allows it.
+            python engine/probe_sherdog.py 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "probe-world" ]; then
             # Which non-UFC results pages exist on Wikipedia, and real samples
             # of them saved as test fixtures, so the multi-promotion parsers
@@ -261,7 +266,7 @@ jobs:
       - name: Commit the app data
         if: ${{ !inputs.dry_run }}
         run: |
-          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv engine/data/method_odds.csv engine/data/fight_changes.csv engine/data/intel_history.csv engine/data/intel_history_scouted.csv engine/data/intel_history_pending.csv engine/data/intel_scout_log.csv engine/data/injury_sentences.jsonl.gz engine/data/injury_pages.csv engine/data/world_year_pages.json engine/data/world_bouts.csv.gz engine/data/fighter_profiles.jsonl.gz engine/data/world_pages.csv engine/data/fight_night_weights.csv engine/tests/fixtures/wiki/"
+          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv engine/data/method_odds.csv engine/data/fight_changes.csv engine/data/intel_history.csv engine/data/intel_history_scouted.csv engine/data/intel_history_pending.csv engine/data/intel_scout_log.csv engine/data/injury_sentences.jsonl.gz engine/data/injury_pages.csv engine/data/world_year_pages.json engine/data/world_bouts.csv.gz engine/data/fighter_profiles.jsonl.gz engine/data/world_pages.csv engine/data/fight_night_weights.csv engine/tests/fixtures/wiki/ engine/tests/fixtures/sherdog/"
           if [ -z "$(git status --porcelain -- $PATHS)" ]; then
             echo "App data and odds unchanged."
             exit 0
