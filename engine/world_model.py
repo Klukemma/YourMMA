@@ -130,11 +130,14 @@ def results_only(frame):
     return frame[~frame["source"].astype(str).str.startswith("record:")]
 
 
-def build(frame):
+def build(frame, births=None):
     """One row per decided bout, with both fighters' pre-bout features.
 
     Walks the bouts in date order. Features are read BEFORE the bout
     updates anything, so no row ever sees its own result.
+
+    births: {normalised name: birth date} - when given, rows carry age_diff
+    (decades, 0 unless BOTH ages are known).
     """
     states = defaultdict(State)
     rows = []
@@ -160,6 +163,7 @@ def build(frame):
                 "layoff_diff": fa["layoff"] - fb["layoff"],
                 "beaten_diff": (fa["beaten"] - fb["beaten"]) / 100.0,
                 "p_elo": _expect(fa["elo"], fb["elo"]),
+                "age_diff": _age_diff(births, a, b),
                 "dwcs": "contender series" in str(bout.event).lower()
                         or "contender series" in str(bout.source).lower(),
                 "ufc": str(bout.event).upper().startswith("UFC"),
@@ -258,32 +262,52 @@ def gated(world, extra, when):
     return frame.sort_values("date", kind="stable").reset_index(drop=True)
 
 
-def _fit_predict(rows, when):
+def _fit_predict(rows, when, features=FEATURES):
     from sklearn.linear_model import LogisticRegression
     train = rows[rows["date"] < when]
     test = rows[(rows["date"] == when) & rows["dwcs"]]
     if len(train) < 2000 or test.empty:
         return test.assign(p_model=np.nan).iloc[0:0]
-    model = LogisticRegression(C=1.0, max_iter=1000).fit(train[FEATURES],
+    model = LogisticRegression(C=1.0, max_iter=1000).fit(train[features],
                                                          train["y"])
-    return test.assign(p_model=model.predict_proba(test[FEATURES])[:, 1])
+    return test.assign(p_model=model.predict_proba(test[features])[:, 1])
 
 
-def evaluate_contender(world, extra, first_year=2017):
-    """Every Contender Series bout predicted twice, from the same fitting
-    protocol: the world alone, and the world plus Sherdog as known then."""
+def evaluate_contender(world, extra, first_year=2017, births=None):
+    """Every Contender Series bout predicted by the same fitting protocol:
+    the world alone, the world plus Sherdog as known then, and - when
+    birth dates are given - that plus the age gap.
+
+    births: {normalised name: (birth date, date it became known)}.
+    """
     rows_base, _ = build(world)
     days = sorted(rows_base.loc[rows_base["dwcs"]
                                 & (rows_base["date"].dt.year >= first_year),
                                 "date"].unique())
     extra = not_in(extra, world)
-    base, with_sherdog = [], []
+    base, with_sherdog, with_age = [], [], []
     for when in days:
         when = pd.Timestamp(when)
         base.append(_fit_predict(rows_base[rows_base["date"] <= when], when))
-        rows, _ = build(gated(world, extra, when))
+        known = {k: born for k, (born, disclosed) in (births or {}).items()
+                 if disclosed <= when}
+        rows, _ = build(gated(world, extra, when), known)
         with_sherdog.append(_fit_predict(rows, when))
-    return pd.concat(base), pd.concat(with_sherdog)
+        if births:
+            with_age.append(_fit_predict(rows, when, FEATURES + ["age_diff"]))
+    return (pd.concat(base), pd.concat(with_sherdog),
+            pd.concat(with_age) if with_age else None)
+
+
+def births_of(records):
+    """{normalised name: (birth date, first Contender Series date)}."""
+    out = {}
+    for r in records:
+        born = (r.get("bio") or {}).get("birth_date")
+        if r.get("id") and born and r.get("first_contender"):
+            out[norm_name(r["target"])] = (pd.Timestamp(born),
+                                           pd.Timestamp(r["first_contender"]))
+    return out
 
 
 def paired(base, other, draws=2000, seed=0):
@@ -331,9 +355,12 @@ def contender_report(world):
           f"{verified} verified against their Contender Series bout; "
           f"{len(extra):,} bouts ({len(not_in(extra, world)):,} not already "
           f"on an event page)\n")
-    base, new = evaluate_contender(world, extra)
+    births = births_of(records)
+    base, new, aged = evaluate_contender(world, extra, births=births)
     results = [score(base, base["dwcs"], "world only"),
                score(new, new["dwcs"], "world + Sherdog (as known then)")]
+    if aged is not None:
+        results.append(score(aged, aged["dwcs"], "  + age gap (Sherdog birth dates)"))
     print(f"  {'Contender Series':<34}{'n':>6}{'logloss':>10}{'elo only':>10}"
           f"{'coin':>8}{'acc':>8}")
     for r in results:
@@ -344,6 +371,11 @@ def contender_report(world):
     print(f"\n  with Sherdog minus without: {gap['logloss_diff']:+.4f} log loss "
           f"on {gap['n']} bouts, 95% interval (by event) "
           f"[{gap['lo']:+.4f}, {gap['hi']:+.4f}] - negative is better")
+    age_gap = paired(new, aged) if aged is not None else None
+    if age_gap:
+        print(f"  adding the age gap: {age_gap['logloss_diff']:+.4f} "
+              f"[{age_gap['lo']:+.4f}, {age_gap['hi']:+.4f}] "
+              f"({len(births)} birth dates)")
     covered = {r["target"] for r in records if r.get("verified")}
     both = new[new["a"].isin({norm_name(n) for n in covered})
                & new["b"].isin({norm_name(n) for n in covered})]
@@ -352,12 +384,20 @@ def contender_report(world):
         print(f"  bouts with both fighters verified: n={r['n']}, log loss "
               f"{r['logloss_model']:.4f}, accuracy {r['accuracy_model']:.3f}")
     CONTENDER_OUT.write_text(json.dumps({"results": results, "paired": gap,
+                                         "paired_age": age_gap,
                                          "looked_up": len(records),
                                          "found": found,
                                          "verified": verified}, indent=1))
     print(f"\n  wrote {CONTENDER_OUT.name}. Each event predicted by a model "
           f"fitted only on bouts before it.")
     return 0
+
+
+def _age_diff(births, a, b):
+    if not births or a not in births or b not in births:
+        return 0.0
+    years = (births[b] - births[a]).days / 365.25    # a older -> positive
+    return float(np.clip(years, -15, 15)) / 10.0
 
 
 def _logloss(y, p):

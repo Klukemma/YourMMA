@@ -118,3 +118,21 @@ def test_a_record_is_unknown_before_its_owner_reached_the_contender_series():
     assert set(at_2019["event"]) == {"Contender Series 1", "LFA 2"}
     at_2021 = wm.gated(world, extra, pd.Timestamp("2021-08-01"))
     assert {"LFA 1", "LFA 3"} <= set(at_2021["event"])
+
+
+def test_age_gap_needs_both_birth_dates_and_is_signed_toward_fighter_a():
+    births = {"ann": pd.Timestamp("1990-01-01"), "bea": pd.Timestamp("2000-01-01")}
+    assert abs(wm._age_diff(births, "ann", "bea") - 1.0) < 0.01   # 10y older
+    assert wm._age_diff(births, "ann", "cat") == 0.0
+    assert wm._age_diff(None, "ann", "bea") == 0.0
+
+
+def test_birth_dates_become_known_with_the_record():
+    got = wm.births_of([
+        {"target": "Ann Lee", "id": 1, "first_contender": "2021-08-03",
+         "bio": {"birth_date": "1995-02-01"}},
+        {"target": "Bea Kim", "id": None, "first_contender": "2021-08-03"},
+        {"target": "Cat Poe", "id": 3, "first_contender": "2021-08-03",
+         "bio": {"birth_date": None}}])
+    assert got == {"ann lee": (pd.Timestamp("1995-02-01"),
+                               pd.Timestamp("2021-08-03"))}
