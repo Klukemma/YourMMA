@@ -66,3 +66,55 @@ def test_contender_series_bouts_are_flagged():
                     "Danny Silva", "Angel Pacheco", "win", "Decision", "x")])
     rows, _ = wm.build(frame)
     assert rows.iloc[0]["dwcs"] and not rows.iloc[0]["ufc"]
+
+
+def record_row(target, fid, first, bouts_):
+    return {"target": target, "id": fid, "first_contender": first,
+            "record": [{"date": d, "result": r, "opponent": o,
+                        "opponent_id": oid, "event": e, "method": "KO",
+                        "round": "1", "time": "1:00"}
+                       for d, r, o, oid, e in bouts_]}
+
+
+def test_sherdog_bouts_are_named_as_the_world_frame_names_them():
+    records = [
+        record_row("Jose Aldo Jr", 1, "2021-08-01", [
+            ("2020-01-01", "win", "Ann Other", 2, "LFA 1"),
+            ("2019-01-01", "loss", "Bob Stranger", 3, "Regional 2")]),
+        # Ann was looked up too - under the name her Contender page uses.
+        record_row("Anne Other", 2, "2022-08-01", [
+            ("2020-01-01", "loss", "Jose Aldo", 1, "LFA 1")]),
+    ]
+    got = wm.sherdog_bouts(records)
+    # The bout both records hold is kept once, with both names mapped.
+    lfa = got[got["event"] == "LFA 1"]
+    assert len(lfa) == 1
+    assert (lfa.iloc[0]["winner"], lfa.iloc[0]["loser"]) == ("Jose Aldo Jr",
+                                                            "Anne Other")
+    loss = got[got["event"] == "Regional 2"].iloc[0]
+    assert (loss["winner"], loss["loser"]) == ("Bob Stranger", "Jose Aldo Jr")
+
+
+def test_a_bout_already_on_an_event_page_is_not_added_twice():
+    world = bouts([("2020-01-02", "LFA 1", "Ann", "Bea", "win", "KO", "x")])
+    extra = bouts([("2020-01-01", "LFA 1", "Bea", "Ann", "win", "KO", "s"),
+                   ("2020-03-01", "LFA 2", "Ann", "Cat", "win", "KO", "s")])
+    assert list(wm.not_in(extra, world)["event"]) == ["LFA 2"]
+
+
+def test_a_record_is_unknown_before_its_owner_reached_the_contender_series():
+    world = bouts([("2019-08-01", "Contender Series 1", "Ann", "Bea", "win",
+                    "KO", "x"),
+                   ("2021-08-01", "Contender Series 2", "Cat", "Dee", "win",
+                    "KO", "x")])
+    extra = bouts([("2018-01-01", "LFA 1", "Cat", "Eve", "win", "KO", "s"),
+                   ("2019-01-01", "LFA 2", "Ann", "Fay", "win", "KO", "s"),
+                   ("2019-09-01", "LFA 3", "Ann", "Gil", "win", "KO", "s")])
+    extra["disclosed"] = pd.to_datetime(["2021-08-01", "2019-08-01",
+                                         "2019-08-01"])
+    at_2019 = wm.gated(world, extra, pd.Timestamp("2019-08-01"))
+    # Cat's 2018 bout is not yet known (Cat is looked up in 2021), and
+    # Ann's later bout is after the date: only Ann's earlier bout joins.
+    assert set(at_2019["event"]) == {"Contender Series 1", "LFA 2"}
+    at_2021 = wm.gated(world, extra, pd.Timestamp("2021-08-01"))
+    assert {"LFA 1", "LFA 3"} <= set(at_2021["event"])

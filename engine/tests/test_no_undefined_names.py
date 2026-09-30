@@ -15,6 +15,7 @@ import pytest
 ENGINE = Path(__file__).resolve().parents[1]
 NETWORK_ONLY = ["check_fight_changes.py", "fetch_fight_changes.py",
                 "harvest_injuries.py", "probe_world.py", "harvest_world.py", "fight_night_weights.py", "probe_sherdog.py",
+                "harvest_sherdog.py", "sherdog.py",
                 "intel_backfill.py", "verify_intel_dates.py",
                 "intel_search.py", "fight_intel.py",
                 "experiments/short_notice_weight.py"]

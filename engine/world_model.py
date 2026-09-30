@@ -22,7 +22,15 @@ simple:
   that is the only evaluation reported. Scored on all bouts, on non-UFC
   bouts, and on Contender Series bouts alone.
 
+  SHERDOG (--contender). Prospects' regional careers, from Sherdog
+  (harvest_sherdog.py), for both fighters of every Contender Series bout.
+  A record is used only from the day its owner first appeared on the
+  Contender Series - the day anyone would have looked them up - and only
+  its bouts dated before the bout being predicted. Scored per event, each
+  from a model fitted on bouts before that event, with and without Sherdog.
+
     python engine/world_model.py --evaluate
+    python engine/world_model.py --contender
     python engine/world_model.py --predict "Fighter A" "Fighter B"
 """
 
@@ -44,6 +52,8 @@ from name_resolution import norm_name
 
 BOUTS = ENGINE / "data" / "world_bouts.csv.gz"
 OUT = ENGINE / "data" / "world_model_eval.json"
+SHERDOG = ENGINE / "data" / "sherdog_records.jsonl.gz"
+CONTENDER_OUT = ENGINE / "data" / "world_model_contender.json"
 BASE = 1500.0
 K_NEW, K_OLD, K_SETTLE = 64.0, 24.0, 12    # K falls from K_NEW to K_OLD
                                             # over K_SETTLE bouts
@@ -182,6 +192,174 @@ def build(frame):
     return pd.DataFrame(rows), states
 
 
+def sherdog_bouts(records):
+    """Sherdog records as bouts, each stamped with when it became knowable.
+
+    records: rows of sherdog_records.jsonl.gz. The record's owner is named
+    as the Contender Series page names them (the name the rest of the world
+    frame uses); an opponent who is also a looked-up fighter is named the
+    same way, through their Sherdog ID. A bout between two looked-up
+    fighters is in both records and kept once.
+    """
+    by_id = {r["id"]: r["target"] for r in records if r.get("id")}
+    rows, seen = [], set()
+    for r in records:
+        if not r.get("id") or not r.get("first_contender"):
+            continue
+        owner = r["target"]
+        for bout in r.get("record", []):
+            other = by_id.get(bout["opponent_id"], bout["opponent"])
+            key = (bout["date"], frozenset((norm_name(owner), norm_name(other))))
+            if key in seen:
+                continue
+            seen.add(key)
+            won = bout["result"] != "loss"
+            result = bout["result"] if bout["result"] in ("draw", "nc") else "win"
+            rows.append({"date": bout["date"], "event": bout["event"],
+                         "winner": owner if won else other,
+                         "loser": other if won else owner,
+                         "result": result, "method": bout["method"],
+                         "round": bout["round"], "time": bout["time"],
+                         "source": f"sherdog:{owner}",
+                         "disclosed": r["first_contender"]})
+    frame = pd.DataFrame(rows, columns=["date", "event", "winner", "loser",
+                                        "result", "method", "round", "time",
+                                        "source", "disclosed"])
+    frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
+    frame["disclosed"] = pd.to_datetime(frame["disclosed"], errors="coerce")
+    # When two records disagree on a date by a day (time zones), a bout can
+    # survive the exact-date check twice; the world-frame check below uses
+    # a window and catches the rest against event pages.
+    return frame.dropna(subset=["date", "disclosed"])
+
+
+def not_in(extra, frame, days=2):
+    """Rows of `extra` that are not already a bout of `frame` - same pair of
+    fighters within `days` days. Event pages win: they are the label."""
+    dates = defaultdict(list)
+    for w, l, d in zip(frame["winner"].map(norm_name),
+                       frame["loser"].map(norm_name), frame["date"]):
+        dates[frozenset((w, l))].append(d)
+    keep = []
+    window = pd.Timedelta(days=days)
+    for w, l, d in zip(extra["winner"].map(norm_name),
+                       extra["loser"].map(norm_name), extra["date"]):
+        keep.append(not any(abs(d - x) <= window
+                            for x in dates.get(frozenset((w, l)), ())))
+    return extra[np.array(keep, dtype=bool)] if len(extra) else extra
+
+
+def gated(world, extra, when):
+    """The world as known the day before `when`: its bouts up to `when`,
+    plus the extra bouts disclosed by then and dated before it."""
+    part = extra[(extra["disclosed"] <= when) & (extra["date"] < when)]
+    frame = pd.concat([world[world["date"] <= when],
+                       part.drop(columns="disclosed")], ignore_index=True)
+    return frame.sort_values("date", kind="stable").reset_index(drop=True)
+
+
+def _fit_predict(rows, when):
+    from sklearn.linear_model import LogisticRegression
+    train = rows[rows["date"] < when]
+    test = rows[(rows["date"] == when) & rows["dwcs"]]
+    if len(train) < 2000 or test.empty:
+        return test.assign(p_model=np.nan).iloc[0:0]
+    model = LogisticRegression(C=1.0, max_iter=1000).fit(train[FEATURES],
+                                                         train["y"])
+    return test.assign(p_model=model.predict_proba(test[FEATURES])[:, 1])
+
+
+def evaluate_contender(world, extra, first_year=2017):
+    """Every Contender Series bout predicted twice, from the same fitting
+    protocol: the world alone, and the world plus Sherdog as known then."""
+    rows_base, _ = build(world)
+    days = sorted(rows_base.loc[rows_base["dwcs"]
+                                & (rows_base["date"].dt.year >= first_year),
+                                "date"].unique())
+    extra = not_in(extra, world)
+    base, with_sherdog = [], []
+    for when in days:
+        when = pd.Timestamp(when)
+        base.append(_fit_predict(rows_base[rows_base["date"] <= when], when))
+        rows, _ = build(gated(world, extra, when))
+        with_sherdog.append(_fit_predict(rows, when))
+    return pd.concat(base), pd.concat(with_sherdog)
+
+
+def paired(base, other, draws=2000, seed=0):
+    """Log-loss difference (other minus base) on the bouts both scored, with
+    a bootstrap interval that resamples whole events."""
+    key = ["date", "a", "b"]
+    m = base[key + ["y", "p_model", "p_elo"]].merge(
+        other[key + ["p_model", "p_elo"]], on=key, suffixes=("_base", "_new"))
+    m = m.dropna(subset=["p_model_base", "p_model_new"])
+    def loss(p):
+        p = np.clip(p, 1e-6, 1 - 1e-6)
+        return -(m["y"] * np.log(p) + (1 - m["y"]) * np.log(1 - p))
+    diff = (loss(m["p_model_new"]) - loss(m["p_model_base"])).to_numpy()
+    events = m["date"].to_numpy()
+    groups = [np.flatnonzero(events == e) for e in np.unique(events)]
+    rng = np.random.default_rng(seed)
+    means = []
+    for _ in range(draws):
+        pick = rng.integers(0, len(groups), len(groups))
+        idx = np.concatenate([groups[i] for i in pick])
+        means.append(diff[idx].mean())
+    lo, hi = np.percentile(means, [2.5, 97.5])
+    return {"n": int(len(m)), "events": len(groups),
+            "logloss_diff": float(diff.mean()), "lo": float(lo),
+            "hi": float(hi)}
+
+
+def load_sherdog(path=SHERDOG):
+    import gzip
+    if not path.exists():
+        return []
+    with gzip.open(path, "rt") as handle:
+        return [json.loads(line) for line in handle if line.strip()]
+
+
+def contender_report(world):
+    records = load_sherdog()
+    if not records:
+        print("  no Sherdog records yet - run harvest_sherdog.py")
+        return 1
+    extra = sherdog_bouts(records)
+    found = sum(1 for r in records if r.get("id"))
+    verified = sum(1 for r in records if r.get("verified"))
+    print(f"\n  Sherdog: {len(records)} fighters looked up, {found} found, "
+          f"{verified} verified against their Contender Series bout; "
+          f"{len(extra):,} bouts ({len(not_in(extra, world)):,} not already "
+          f"on an event page)\n")
+    base, new = evaluate_contender(world, extra)
+    results = [score(base, base["dwcs"], "world only"),
+               score(new, new["dwcs"], "world + Sherdog (as known then)")]
+    print(f"  {'Contender Series':<34}{'n':>6}{'logloss':>10}{'elo only':>10}"
+          f"{'coin':>8}{'acc':>8}")
+    for r in results:
+        print(f"  {r['label']:<34}{r['n']:>6}{r['logloss_model']:>10.4f}"
+              f"{r['logloss_elo']:>10.4f}{r['logloss_coin']:>8.4f}"
+              f"{r['accuracy_model']:>8.3f}")
+    gap = paired(base, new)
+    print(f"\n  with Sherdog minus without: {gap['logloss_diff']:+.4f} log loss "
+          f"on {gap['n']} bouts, 95% interval (by event) "
+          f"[{gap['lo']:+.4f}, {gap['hi']:+.4f}] - negative is better")
+    covered = {r["target"] for r in records if r.get("verified")}
+    both = new[new["a"].isin({norm_name(n) for n in covered})
+               & new["b"].isin({norm_name(n) for n in covered})]
+    if len(both):
+        r = score(both, both["dwcs"], "both fighters verified")
+        print(f"  bouts with both fighters verified: n={r['n']}, log loss "
+              f"{r['logloss_model']:.4f}, accuracy {r['accuracy_model']:.3f}")
+    CONTENDER_OUT.write_text(json.dumps({"results": results, "paired": gap,
+                                         "looked_up": len(records),
+                                         "found": found,
+                                         "verified": verified}, indent=1))
+    print(f"\n  wrote {CONTENDER_OUT.name}. Each event predicted by a model "
+          f"fitted only on bouts before it.")
+    return 0
+
+
 def _logloss(y, p):
     p = np.clip(p, 1e-6, 1 - 1e-6)
     return float(-np.mean(y * np.log(p) + (1 - y) * np.log(1 - p)))
@@ -225,6 +403,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__[:200])
     parser.add_argument("--evaluate", action="store_true")
     parser.add_argument("--predict", nargs=2, metavar=("A", "B"))
+    parser.add_argument("--contender", action="store_true",
+                        help="Contender Series with and without Sherdog "
+                             "records, as known at each event")
     parser.add_argument("--all-sources", action="store_true",
                         help="also use bouts known only from fighters' own "
                              "record tables (leaks - see RESULTS_ONLY)")
@@ -233,6 +414,8 @@ def main(argv=None):
     frame = load()
     if not args.all_sources:
         frame = results_only(frame)
+    if args.contender:
+        return contender_report(frame)
     rows, states = build(frame)
     if args.predict:
         from sklearn.linear_model import LogisticRegression
