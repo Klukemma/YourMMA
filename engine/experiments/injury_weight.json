@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-30T18:13:08.792542+00:00",
+ "generated": "2026-09-30T19:37:02.636961+00:00",
  "history_rows": 4808,
  "populations": {
   "withdrew_since_last_fight": 1298,
@@ -10,71 +10,73 @@
  },
  "results": [
   {
-   "label": "withdrew_since_last_fight, vs model",
-   "n": 909,
-   "events": 400,
-   "mean": -0.031099887521573097,
-   "low": -0.05891223985965068,
-   "high": -0.0028694506242909505
+   "label": "withdrew_since_last_fight",
+   "n": 765,
+   "fighters": 531,
+   "events": 341,
+   "family": 5,
+   "model_matched": 1.0,
+   "model_raw": -0.031141492696006957,
+   "model_adjusted": -0.02667536445761724,
+   "model_low": -0.0711789357527108,
+   "model_high": 0.01610752061743211,
+   "blend_matched": 1.0,
+   "blend_raw": -0.01967926991142942,
+   "blend_adjusted": -0.02104608067537172,
+   "blend_low": -0.06349721794796385,
+   "blend_high": 0.0189185645648172,
+   "verdict": "inside the noise"
   },
   {
-   "label": "withdrew_since_last_fight, vs blend (what the app prints)",
-   "n": 909,
-   "events": 400,
-   "mean": -0.021176694854691102,
-   "low": -0.04860119222917202,
-   "high": 0.007369353709019567
-  },
-  {
-   "label": "hurt_in_last_fight, vs model",
-   "n": 122,
+   "label": "hurt_in_last_fight",
+   "n": 97,
+   "fighters": 85,
+   "events": 87,
+   "family": 5,
    "too_few": true
   },
   {
-   "label": "hurt_in_last_fight, vs blend (what the app prints)",
-   "n": 122,
-   "too_few": true
+   "label": "surgery_or_long_layoff_2y",
+   "n": 183,
+   "fighters": 75,
+   "events": 143,
+   "family": 5,
+   "model_matched": 1.0,
+   "model_raw": -0.019983283551986405,
+   "model_adjusted": -0.010537223504387905,
+   "model_low": -0.10814452477278096,
+   "model_high": 0.08828692619307558,
+   "blend_matched": 1.0,
+   "blend_raw": -0.0036800773442020895,
+   "blend_adjusted": -0.007018690100876754,
+   "blend_low": -0.10309308278476353,
+   "blend_high": 0.08719345488467739,
+   "verdict": "inside the noise"
   },
   {
-   "label": "surgery_or_long_layoff_2y, vs model",
-   "n": 209,
-   "events": 163,
-   "mean": -0.017704461327500764,
-   "low": -0.0808154418362927,
-   "high": 0.04115471674731598
+   "label": "any_known_injury_1y",
+   "n": 1351,
+   "fighters": 612,
+   "events": 404,
+   "family": 5,
+   "model_matched": 1.0,
+   "model_raw": -0.009597770322118563,
+   "model_adjusted": -0.0024756299596222454,
+   "model_low": -0.03680995736230341,
+   "model_high": 0.031339555400859885,
+   "blend_matched": 0.999259807549963,
+   "blend_raw": -0.0044703382614758634,
+   "blend_adjusted": -0.005354843893849383,
+   "blend_low": -0.03750686006167861,
+   "blend_high": 0.026990691089880402,
+   "verdict": "inside the noise"
   },
   {
-   "label": "surgery_or_long_layoff_2y, vs blend (what the app prints)",
-   "n": 209,
-   "events": 163,
-   "mean": -0.0029632264595116672,
-   "low": -0.0636623640120538,
-   "high": 0.05497302992081361
-  },
-  {
-   "label": "any_known_injury_1y, vs model",
-   "n": 1615,
-   "events": 466,
-   "mean": -0.013714696651593899,
-   "low": -0.03488899942203861,
-   "high": 0.008764600037084073
-  },
-  {
-   "label": "any_known_injury_1y, vs blend (what the app prints)",
-   "n": 1615,
-   "events": 466,
-   "mean": -0.009108586507847932,
-   "low": -0.02970133415307182,
-   "high": 0.012925277156354052
-  },
-  {
-   "label": "known_hurt_going_in, vs model",
+   "label": "known_hurt_going_in",
    "n": 0,
-   "too_few": true
-  },
-  {
-   "label": "known_hurt_going_in, vs blend (what the app prints)",
-   "n": 0,
+   "fighters": 0,
+   "events": 0,
+   "family": 5,
    "too_few": true
   }
  ]
