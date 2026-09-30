@@ -1,0 +1,32 @@
+{
+ "results": [
+  {
+   "label": "world only",
+   "n": 460,
+   "logloss_model": 0.6884265222513191,
+   "logloss_elo": 0.6831576771687076,
+   "logloss_coin": 0.6931471805599453,
+   "accuracy_model": 0.55,
+   "accuracy_elo": 0.5608695652173913
+  },
+  {
+   "label": "world + Sherdog (as known then)",
+   "n": 460,
+   "logloss_model": 0.7243578526179654,
+   "logloss_elo": 0.6968687887306806,
+   "logloss_coin": 0.6931471805599453,
+   "accuracy_model": 0.55,
+   "accuracy_elo": 0.5478260869565217
+  }
+ ],
+ "paired": {
+  "n": 460,
+  "events": 88,
+  "logloss_diff": 0.03593133036664638,
+  "lo": -0.003258446974606653,
+  "hi": 0.07452971877951986
+ },
+ "looked_up": 849,
+ "found": 693,
+ "verified": 693
+}
