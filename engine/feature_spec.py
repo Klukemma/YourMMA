@@ -77,16 +77,23 @@ def ratio(numerator, denominator, floor=1e-6):
     return num / safe
 
 
-def interaction(attack, defence):
+def interaction(attack, defence, centres=None):
     """One fighter's offence against the other's defence.
 
     MMA is a matchup sport and a difference cannot express it: takedown
     defence matters enormously against a wrestler and not at all against a
     kickboxer. Both operands are centred first so the product is an
     interaction rather than a disguised main effect.
+
+    centres: (attack centre, defence centre) to use instead of this frame's
+    means. The centre is a statistic of the TRAINING frame; computed on a
+    one-fight frame it is the fight's own value, and every interaction came
+    out exactly zero on every live fight. Live builds pass the training
+    centres.
     """
     a, d = to_number(attack), to_number(defence)
-    return (a - a.mean()) * (d - d.mean())
+    ca, cd = centres if centres is not None else (a.mean(), d.mean())
+    return (a - ca) * (d - cd)
 
 
 # --- declaration -----------------------------------------------------------
@@ -134,8 +141,17 @@ class Interaction:
     blue_defence: str
     why: str
 
-    def build(self, df):
-        return {self.name: interaction(df[self.red_attack], df[self.blue_defence])}
+    def build(self, df, centres=None, fitted=None):
+        """centres: {name: (attack, defence)} frozen from training, or None
+        to centre on this frame; fitted, when given, records what was used."""
+        pair = (centres or {}).get(self.name)
+        if pair is None:
+            pair = (to_number(df[self.red_attack]).mean(),
+                    to_number(df[self.blue_defence]).mean())
+        if fitted is not None:
+            fitted[self.name] = pair
+        return {self.name: interaction(df[self.red_attack],
+                                       df[self.blue_defence], pair)}
 
     @property
     def emits(self):
@@ -159,7 +175,7 @@ class Derived:
         return [self.name]
 
 
-def build_all(specs, df):
+def build_all(specs, df, centres=None, fitted=None):
     """Apply every spec in order and return one DataFrame.
 
     Each spec sees the input frame plus everything built before it, so a
@@ -173,11 +189,17 @@ def build_all(specs, df):
 
     Building training rows and a single fight through the same code is what
     stops the two definitions drifting apart.
+
+    centres / fitted: the interaction centres to freeze, and a dict to record
+    the ones used (see interaction()). Only Interaction specs read them.
     """
     working = df.copy()
     out = {}
     for spec in specs:
-        produced = spec.build(working)
+        if isinstance(spec, Interaction):
+            produced = spec.build(working, centres, fitted)
+        else:
+            produced = spec.build(working)
         for name, values in produced.items():
             working[name] = values
         out.update(produced)

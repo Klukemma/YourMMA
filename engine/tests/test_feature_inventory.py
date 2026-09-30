@@ -63,7 +63,7 @@ def test_every_source_column_is_produced_somewhere():
     dataset = set(pd.read_csv(
         ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv",
         nrows=5, low_memory=False).columns)
-    source = (ENGINE / "predict_card.py").read_text()
+    source = _pipeline_source()
 
     # career_stats assigns its columns in a loop, which no regex over the
     # source can see, so career_columns() is its declared interface.
@@ -90,7 +90,7 @@ def test_every_source_column_is_produced_somewhere():
 
 def test_career_stats_is_actually_invoked_by_the_pipeline():
     """The exemption above is only honest if the pipeline really calls it."""
-    source = (ENGINE / "predict_card.py").read_text()
+    source = _pipeline_source()
     assert "career_stats" in source, "cd_ columns are exempted but never built"
 
 
@@ -195,6 +195,29 @@ def test_matchup_features_really_produces_every_column_it_declares():
 
 def test_the_pipeline_actually_invokes_matchup_features():
     """Declaring the columns is not the same as computing them."""
-    source = (ENGINE / "predict_card.py").read_text()
+    source = _pipeline_source()
     assert "matchup_features" in source
-    assert "matchup_extra" in source, "the prediction path must use it too"
+
+
+def test_the_live_functions_build_no_features_of_their_own():
+    """The live path used to rebuild every feature by hand, and drifted from
+    training in 70 places. Its model input must now come from the training
+    pipeline (_live_row -> feature_frame.build over a pending row), and no
+    second implementation may creep back in."""
+    import ast
+    tree = ast.parse((ENGINE / "predict_card.py").read_text())
+    funcs = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
+    for name in ("predict_fight", "predict_fight_prod"):
+        body = ast.unparse(funcs[name])
+        assert "_live_row(" in body, f"{name} must read its row from _live_row"
+        for banned in ("build_all(", "_declared_features", "matchup_extra",
+                       "build_prediction_frame", "pd.DataFrame([feat])"):
+            assert banned not in body, f"{name} builds features itself: {banned}"
+
+
+def _pipeline_source():
+    """predict_card.py plus the feature pipeline it calls (feature_frame.py,
+    whose body is indented one level inside build())."""
+    frame = (ENGINE / "feature_frame.py").read_text()
+    return ((ENGINE / "predict_card.py").read_text() + "\n"
+            + re.sub(r"(?m)^    ", "", frame))

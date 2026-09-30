@@ -24,6 +24,7 @@ ROI and the flag quality all at once with none of it measured - which is why
 the separation, not just the presence, is asserted here.
 """
 
+import re
 import sys
 from pathlib import Path
 
@@ -139,7 +140,11 @@ def test_a_missing_rate_stays_missing_through_the_level():
 # crossing into the winner model.
 
 def _source():
-    return (ENGINE / "predict_card.py").read_text()
+    """predict_card.py plus feature_frame.py, where the feature lists moved
+    (its body is indented one level inside build())."""
+    frame = (ENGINE / "feature_frame.py").read_text()
+    return ((ENGINE / "predict_card.py").read_text() + "\n"
+            + re.sub(r"(?m)^    ", "", frame))
 
 
 def test_the_new_blocks_are_held_out_of_the_winner_model():
