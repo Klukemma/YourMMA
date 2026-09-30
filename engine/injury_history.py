@@ -48,6 +48,9 @@ from name_resolution import norm_name
 ARCHIVE = ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
 SENTENCES = ENGINE / "data" / "injury_sentences.jsonl.gz"
 HISTORY = ENGINE / "data" / "injury_history.csv"
+# The readers' raw records, kept so the history can be rebuilt - and
+# re-dated if the dating rules change - without reading everything again.
+RECORDS = ENGINE / "data" / "injury_records.json.gz"
 
 KINDS = ("withdrawal", "fought_hurt", "in_fight", "surgery", "layoff",
          "other")
@@ -485,7 +488,12 @@ def main(argv=None):
                          ensure_ascii=False, indent=0))
         return 0
     if args.build:
-        extracted = json.loads(Path(args.build).read_text())
+        path = Path(args.build)
+        if path.suffix == ".gz":
+            with gzip.open(path, "rt", encoding="utf-8") as handle:
+                extracted = json.load(handle)
+        else:
+            extracted = json.loads(path.read_text())
         frame = pd.read_csv(ARCHIVE, usecols=["event_name", "date", "r_name",
                                               "b_name", "method", "winner"],
                             low_memory=False)
