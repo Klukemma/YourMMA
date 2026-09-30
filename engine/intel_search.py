@@ -61,6 +61,8 @@ QUESTIONS = (
     ("missed_weight", '"{fighter}" missed weight {year}'),
     ("layoff_return", '"{fighter}" return from layoff OR time off {year}'),
     ("personal", '"{fighter}" personal issues OR outside the cage {year}'),
+    ("motivation", '"{fighter}" retirement OR "last fight" OR contract OR '
+                   'motivation {year}'),
 )
 
 # Sources whose reporting is worth recording. Not a whitelist the ingest

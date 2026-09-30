@@ -46,7 +46,13 @@ a reader knows what the model cannot see. That is the job. It is a real one.
      "gathered": "2026-09-24T10:00:00Z"}]
    ```
    `kind` is one of: injury, short_notice, hard_weight_cut, missed_weight,
-   new_camp, layoff_return, personal, opponent_switch, other.
+   new_camp, layoff_return, personal, opponent_switch, motivation,
+   confidence, other.
+   `motivation` is what the fighter said about WANTING it (retirement talk,
+   last fight on contract, "business fight", a stated title chase).
+   `confidence` is what they said about WINNING it ("I finish him in one").
+   They are different things - a confident champion is not a hungry one -
+   and are never filed under each other.
    `confidence` is one of: reported, confirmed, rumoured.
    An `opponent_switch` also needs `replaced_opponent` - the fighter
    originally booked - because the interesting half of a late replacement is
