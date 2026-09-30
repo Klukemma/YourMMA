@@ -41,10 +41,19 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 
-from name_resolution import norm_name
+from name_resolution import canonical_winners, norm_name
 
-QUIT = re.compile(r"submission \((?:punch|strike|elbow|knee|kick)|"
-                  r"verbal submission|retirement|corner stoppage", re.I)
+# Tapping to STRIKES, retiring between rounds, the corner stopping it. The
+# first version had no boundary after "knee", so "Submission (kneebar)"
+# counted as quitting (68 of 269 rows), and any "verbal submission" did too,
+# including a verbal tap to an armbar. Those are losses to a hold, not a
+# fighter giving up.
+QUIT = re.compile(
+    r"submission \((?:punch|strike|elbow|knee|kick)(?:e?s)?(?: and \w+)?\)|"
+    r"verbal submission \((?:punch|strike|elbow|knee|kick)(?:e?s)?\)|"
+    r"\bretirement\b|corner stoppage", re.I)
+# "Decision - Unanimous" and, in the newest archive rows, "U-DEC"/"S-DEC".
+DECISION = re.compile(r"decision|\bdec\b|-dec", re.I)
 RISING_STREAK = 3
 ACTIVE_DAYS = 240
 PRIOR = 2          # shrinkage for the recovery rate
@@ -52,13 +61,20 @@ PRIOR = 2          # shrinkage for the recovery rate
 
 class MentalityIndex:
     def __init__(self, archive, world=None):
-        a = archive.copy()
+        a = canonical_winners(archive)
         a["date"] = pd.to_datetime(a["date"], errors="coerce")
         a = a.dropna(subset=["date"]).sort_values("date", kind="stable")
         self.fights = defaultdict(list)
         for row in a.itertuples():
-            minutes = max(float(row.match_time_sec or 0) / 60.0, 0.5) \
-                if pd.notna(row.match_time_sec) else np.nan
+            # match_time_sec is the time elapsed IN THE FINAL ROUND, not
+            # the fight: every decision stores 300. Total time is the full
+            # rounds before it plus that. Read as a total, it kept almost
+            # only decisions and made a 25-minute fight look like 5.
+            rnd = getattr(row, "finish_round", np.nan)
+            if pd.notna(row.match_time_sec) and pd.notna(rnd):
+                minutes = ((int(rnd) - 1) * 300 + float(row.match_time_sec)) / 60.0
+            else:
+                minutes = np.nan
             title = str(getattr(row, "title_fight", 0)) in ("1", "True", "true")
             for me, kd_them, att, tds, mu in (
                     (row.r_name, row.b_kd, row.r_sig_str_atmpted,
@@ -68,7 +84,7 @@ class MentalityIndex:
                 won = row.winner == me
                 decided = row.winner in (row.r_name, row.b_name)
                 finished = decided and not won and \
-                    "decision" not in str(row.method).lower()
+                    not DECISION.search(str(row.method))
                 self.fights[norm_name(me)].append({
                     "date": row.date, "won": won, "lost": decided and not won,
                     "dropped": (kd_them or 0) > 0, "finished": finished,
@@ -81,8 +97,8 @@ class MentalityIndex:
                     "pace": ((att + (tds if pd.notna(tds) else 0)) / minutes)
                     if pd.notna(att) and minutes == minutes and minutes >= 5
                     else np.nan,
-                    "mu": mu, "finish_win": won and "decision" not in
-                    str(row.method).lower()})
+                    "mu": mu,
+                    "finish_win": won and not DECISION.search(str(row.method))})
         self.quits = defaultdict(list)
         if world is not None:
             w = world[~world["source"].astype(str).str.startswith("record:")]

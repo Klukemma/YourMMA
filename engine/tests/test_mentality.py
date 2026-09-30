@@ -11,24 +11,29 @@ sys.path.insert(0, str(ENGINE))
 from mentality import MentalityIndex
 
 COLS = ["date", "r_name", "b_name", "r_kd", "b_kd", "winner", "method",
-        "match_time_sec", "title_fight", "r_sig_str_atmpted",
-        "b_sig_str_atmpted", "r_mu_pre", "b_mu_pre"]
+        "finish_round", "match_time_sec", "title_fight", "r_sig_str_atmpted",
+        "b_sig_str_atmpted", "r_td_atmpted", "b_td_atmpted", "r_mu_pre",
+        "b_mu_pre"]
 
 
 def archive(rows):
     return pd.DataFrame(rows, columns=COLS)
 
 
+# As the archive stores them: match_time_sec is the time in the FINAL round.
 # Ann: dropped and finished (2019), dropped and came back to win (2020),
 # then three straight wins with a rising rating (2021-22), then a title.
 A = archive([
-    ("2019-01-01", "Ann", "X1", 0, 1, "X1", "KO/TKO", 200, 0, 50, 40, 20, 22),
-    ("2020-01-01", "Ann", "X2", 1, 1, "Ann", "KO/TKO", 400, 0, 60, 40, 21, 22),
-    ("2021-01-01", "Ann", "X3", 0, 0, "Ann", "Decision - Unanimous", 900, 0,
-     150, 90, 22, 22),
-    ("2021-06-01", "Ann", "X4", 0, 0, "Ann", "Decision - Unanimous", 900, 0,
-     150, 90, 23, 22),
-    ("2022-01-01", "Ann", "X5", 1, 0, "Ann", "KO/TKO", 300, 1, 60, 30, 24, 22),
+    ("2019-01-01", "Ann", "X1", 0, 1, "X1", "KO/TKO", 1, 200, 0, 50, 40, 0, 0,
+     20, 22),
+    ("2020-01-01", "Ann", "X2", 1, 1, "Ann", "KO/TKO", 2, 100, 0, 60, 40, 0, 0,
+     21, 22),
+    ("2021-01-01", "Ann", "X3", 0, 0, "Ann", "Decision - Unanimous", 3, 300, 0,
+     140, 90, 10, 0, 22, 22),
+    ("2021-06-01", "Ann", "X4", 0, 0, "Ann", "U-DEC", 3, 300, 0,
+     150, 90, 0, 0, 23, 22),
+    ("2022-01-01", "Ann", "X5", 1, 0, "Ann", "KO/TKO", 1, 300, 1, 60, 30, 0, 0,
+     24, 22),
 ])
 
 
@@ -73,6 +78,32 @@ def test_quit_losses_come_from_results_pages_only():
     assert m.at("Ann", "2018-05-01")["quit_losses"] == 0   # not before itself
 
 
-def test_pace_trend_compares_recent_output_to_their_own_past():
+def test_pace_uses_the_whole_fight_not_the_final_round():
+    # Fights 2-5 last 6.7, 15, 15 and 5 minutes: output 9, 10, 10, 12 a
+    # minute. Last two against the two before: 11 / 9.5.
     got = MentalityIndex(A).at("Ann", "2023-01-01")
-    assert got["pace_trend"] is not None and got["pace_trend"] < 1.5
+    assert abs(got["pace_trend"] - 11 / 9.5) < 1e-6
+
+
+def test_every_spelling_of_a_decision_is_a_decision():
+    got = MentalityIndex(A).at("Ann", "2022-06-01")
+    # Wins in the streak: U-DEC, Decision, KO -> two decisions, one finish
+    # of the four (the 2020 KO is the fourth).
+    assert got["streak_finishes"] == 2
+
+
+def test_a_kneebar_is_not_quitting_but_tapping_to_punches_is():
+    world = pd.DataFrame([
+        ("2018-01-01", "Y", "Ann", "win", "Submission (kneebar)", "2018 in X"),
+        ("2018-02-01", "Y", "Ann", "win", "Verbal Submission (armbar)", "2018 in X"),
+        ("2018-03-01", "Y", "Ann (c)", "win", "Submission (punches)", "2018 in X"),
+    ], columns=["date", "winner", "loser", "result", "method", "source"])
+    # The third also carries a title tag, which must not hide it.
+    assert MentalityIndex(A, world).at("Ann", "2019-01-01")["quit_losses"] == 1
+
+
+def test_a_winner_spelled_differently_from_the_corner_still_won():
+    b = archive([("2020-01-01", "Waldo Cortes Acosta", "X", 0, 0,
+                  "Waldo Cortes-Acosta", "KO/TKO", 1, 100, 0, 10, 5, 0, 0, 20, 20)])
+    got = MentalityIndex(b).at("Waldo Cortes Acosta", "2020-02-01")
+    assert got["dominant_streak"] == 1

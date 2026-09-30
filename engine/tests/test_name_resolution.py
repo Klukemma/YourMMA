@@ -218,3 +218,20 @@ def test_every_suffixed_fighter_in_the_dataset_keeps_a_real_surname():
                  "Kai Kamaka III", "Raul Rosas Jr."):
         short = nr.short_name(name)
         assert short.split()[0].lower().strip(".") not in {"jr", "sr", "ii", "iii", "iv"}
+
+
+def test_a_title_tag_is_not_part_of_the_name():
+    from name_resolution import norm_name
+    assert norm_name("Ilia Topuria (c)") == "ilia topuria"
+    assert norm_name("Justin Gaethje (ic)") == "justin gaethje"
+
+
+def test_a_winner_is_spelled_as_their_corner():
+    import pandas as pd
+    from name_resolution import canonical_winners
+    frame = pd.DataFrame({"r_name": ["Waldo Cortes Acosta", "A"],
+                          "b_name": ["Jared Vanderaa", "B"],
+                          "winner": ["Waldo Cortes-Acosta", "Draw"]})
+    got = canonical_winners(frame)
+    assert list(got["winner"]) == ["Waldo Cortes Acosta", "Draw"]
+    assert (got["winner"] == got["r_name"]).iloc[0]

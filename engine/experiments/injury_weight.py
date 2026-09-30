@@ -25,33 +25,31 @@ POPULATIONS, each a different mechanism, none pooled with another:
                                the rare direct case, and the one a model
                                could least see
 
-The estimator, the walk-forward years and the event-cluster bootstrap are
-short_notice_weight.py's, for the same reasons given there. Vague records
-(timing not stated, "later admitted") are excluded, as are records whose
-fighter could not be matched to the archive.
+Measured with the shared harness (experiments/residual_harness.py): priced
+fights only in both arms, residuals adjusted for win-probability band and
+age gap, family-wise intervals resampled by event and by fighter. The first
+run of this file let unpriced fights into the blend arm (as the model's own
+number) and did not control for age; its -0.031 vs the model is re-measured
+here under the stricter test. Vague records (timing not stated, "later
+admitted") are excluded, as are records whose fighter could not be matched
+to the archive.
 
     python engine/experiments/injury_weight.py
 """
 
 import json
-import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 ENGINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ENGINE))
 
-from experiments.calibrator_mismatch import fit_models, proba
-from experiments.short_notice_weight import (FIRST_PREDICTED_YEAR, MIN_TRAIN,
-                                             bootstrap_by_event, verdict)
 import injury_history as ih
 
 OUT = Path(__file__).with_suffix(".json")
-MIN_LABELS = 150
 
 
 def populations(history, fights):
@@ -110,47 +108,28 @@ def populations(history, fights):
     return out
 
 
-def report(label, residuals, events):
-    residuals = np.asarray(residuals, dtype=float)
-    if len(residuals) < MIN_LABELS:
-        print(f"  {label:<46}{len(residuals):>6} labels - too few to report")
-        return {"label": label, "n": int(len(residuals)), "too_few": True}
-    mean = float(residuals.mean())
-    low, high = bootstrap_by_event(residuals, events)
-    print(f"  {label:<46}{len(residuals):>6}{mean:>+10.4f}   "
-          f"[{low:+.4f}, {high:+.4f}]   {verdict(mean, low, high)}")
-    return {"label": label, "n": int(len(residuals)),
-            "events": int(len(np.unique(events))), "mean": mean,
-            "low": low, "high": high}
-
-
 def main():
-    os.environ.setdefault("PREDICTIONS_LOG", "/tmp/injury_weight.json")
     if not ih.HISTORY.exists():
         print(f"  {ih.HISTORY} does not exist - build it first "
               f"(injury_history.py --build). Nothing was estimated.")
         return 1
-
-    print("building features...")
-    import predict_card as engine
-    import market_blend as blend
+    from experiments.residual_harness import (header, mark, measure,
+                                              predictions, sides)
     from name_resolution import norm_name
-
-    X = engine.X_valid_winner.reset_index(drop=True)
-    y = np.asarray(engine.y_win, dtype=float)
-    meta = engine.ufc_valid.reset_index(drop=True)
-    dates = pd.to_datetime(meta["date"])
-    years = dates.dt.year
 
     history = ih.load()
     history["fighter"] = history["fighter"].map(norm_name)
 
-    # Every appearance with the fighter's previous bout date.
-    appearances = []
-    for i, row in meta.iterrows():
-        for name in (row["r_name"], row["b_name"]):
-            appearances.append((norm_name(name), dates[i]))
-    appearances.sort(key=lambda a: (a[0], a[1]))
+    print("building predictions...")
+    frame = predictions()
+    # Every appearance with the fighter's previous bout date, from the
+    # predicted frame's own archive rows.
+    import predict_card as engine
+    meta = engine.ufc_valid.reset_index(drop=True)
+    appearances = sorted((norm_name(n), pd.Timestamp(d))
+                         for d, r, b in zip(meta["date"], meta["r_name"],
+                                            meta["b_name"])
+                         for n in (r, b))
     fights, last = [], {}
     for name, when in appearances:
         fights.append((name, when, last.get(name)))
@@ -159,89 +138,20 @@ def main():
     for name, members in pops.items():
         print(f"  {name:<32}{len(members):>7} fighter-fights")
 
-    # --- walk-forward predictions ------------------------------------------
-    rows = []
-    for year in sorted(years.unique()):
-        if year < FIRST_PREDICTED_YEAR:
-            continue
-        train = (years < year).to_numpy()
-        test = (years == year).to_numpy()
-        if train.sum() < MIN_TRAIN or test.sum() < 50:
-            continue
-        models = fit_models(X[train], y[train])
-        p = proba(models, X[test], 3)
-        for position, row in enumerate(np.flatnonzero(test)):
-            rows.append({"i": int(row), "p_model": float(p[position])})
-        print(f"    {year}: {test.sum()} fights")
-
-    frame = pd.DataFrame(rows).set_index("i")
-    frame["date"] = dates.loc[frame.index].dt.date.values
-    frame["event"] = meta.loc[frame.index, "event_name"].values
-    frame["red"] = [norm_name(n) for n in meta.loc[frame.index, "r_name"]]
-    frame["blue"] = [norm_name(n) for n in meta.loc[frame.index, "b_name"]]
-    frame["won"] = y[frame.index]
-
-    odds = pd.read_csv(ENGINE / "data" / "odds.csv")
-    odds["date"] = pd.to_datetime(odds["date"], errors="coerce")
-    priced = {}
-    for a, b, oa, ob, d in zip(odds.get("fighter_a", []),
-                               odds.get("fighter_b", []),
-                               odds.get("odds_a", []), odds.get("odds_b", []),
-                               odds.get("date", [])):
-        if pd.isna(d) or pd.isna(oa) or pd.isna(ob):
-            continue
-        priced[(norm_name(a), norm_name(b), d.date())] = (oa, ob)
-
-    def market_for(row):
-        for key, flip in (((row.red, row.blue, row.date), False),
-                          ((row.blue, row.red, row.date), True)):
-            if key in priced:
-                a, b = priced[key]
-                return blend.devig(b, a) if flip else blend.devig(a, b)
-        return np.nan
-
-    frame["p_market"] = [market_for(r) for r in frame.itertuples()]
-    frame["p_blend"] = [blend.blend(m, k) if np.isfinite(k) else m
-                        for m, k in zip(frame.p_model, frame.p_market)]
-
-    def residuals_for(population, column):
-        got, events = [], []
-        for row in frame.itertuples():
-            p = getattr(row, column)
-            if not np.isfinite(p):
-                continue
-            if (row.red, row.date) in population:
-                got.append(row.won - p)
-                events.append(row.event)
-            if (row.blue, row.date) in population:
-                got.append((1.0 - row.won) - (1.0 - p))
-                events.append(row.event)
-        return np.asarray(got), np.asarray(events)
-
-    print("\n  mean residual = actual minus predicted, for the fighter "
-          "carrying the history.\n  Negative = they under-perform the "
-          "prediction by that much.")
-    print(f"\n  {'population':<46}{'n':>6}{'mean':>10}   "
-          f"{'95% interval':<22} verdict")
-    print("  " + "-" * 108)
+    rows = sides(frame)
+    header(len(pops))
     results = []
     for name, members in pops.items():
-        for column, against in (("p_model", "vs model"),
-                                ("p_blend", "vs blend (what the app prints)")):
-            got, events = residuals_for(members, column)
-            results.append(report(f"{name}, {against}", got, events))
-
-    shipped = [r for r in results if "blend" in r["label"]
-               and not r.get("too_few") and r["high"] < 0]
-    print()
-    if shipped:
-        for r in shipped:
-            print(f"  EARNED on top of the blend: {r['label']} "
-                  f"{r['mean']:+.3f} [{r['low']:+.3f}, {r['high']:+.3f}]")
-    else:
-        print("  NOTHING SHIPS: no population under-performs the blended "
-              "probability\n  with an interval that excludes zero.")
-
+        def side(fight, members=members):
+            day = pd.Timestamp(fight.date).date()
+            r, b = (fight.red, day) in members, (fight.blue, day) in members
+            return "both" if r and b else "red" if r else "blue" if b else None
+        results.append(measure(rows, mark(frame, rows, side), name,
+                               family=len(pops)))
+    beyond = [r for r in results if r.get("verdict") == "REAL beyond the market"]
+    print("\n  " + ("BEYOND THE MARKET: " + ", ".join(r["label"] for r in beyond)
+                    if beyond else "NOTHING clears the family-wise bar against "
+                    "the market."))
     OUT.write_text(json.dumps({
         "generated": datetime.now(timezone.utc).isoformat(),
         "history_rows": int(len(history)),

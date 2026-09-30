@@ -582,6 +582,8 @@ def cmd_sync(args):
     if not backup.exists():
         shutil.copy2(LOCAL_CSV, backup)
         print(f"Backed up to {backup.name}")
+    from name_resolution import canonical_winners
+    combined = canonical_winners(combined)
     combined.to_csv(LOCAL_CSV, index=False)
     print(f"Wrote {LOCAL_CSV}")
 

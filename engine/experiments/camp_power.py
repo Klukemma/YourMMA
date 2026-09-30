@@ -29,7 +29,7 @@ ENGINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ENGINE))
 
 from camp_strength import CampIndex
-from experiments.residual_harness import predictions, report, residuals
+from experiments.residual_harness import header, mark, measure, predictions, sides
 
 PROFILES = ENGINE / "data" / "fighter_profiles.jsonl.gz"
 ARCHIVE = ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
@@ -93,21 +93,16 @@ def main():
 
     print("building predictions...")
     frame = predictions()
-    results = []
-    print(f"\n  {'population (the side with the stronger camp)':<52}{'n':>6}"
-          f"{'mean':>10}   {'95% interval':<22} verdict")
-    for name, marked in edges(camp, frame).items():
-        for column, against in (("p_model", "vs model"),
-                                ("p_blend", "vs blend")):
-            got, events = residuals(frame, marked, column)
-            results.append(report(f"{name}, {against}", got, events))
-
-    shipped = [r for r in results if "blend" in r["label"]
-               and not r.get("too_few") and r["low"] > 0]
-    print()
-    print("  EARNED on top of the blend: " + ", ".join(r["label"] for r in shipped)
-          if shipped else "  NOTHING SHIPS: no camp edge beats the blended "
-          "probability with an interval that excludes zero.")
+    rows = sides(frame)
+    populations = edges(camp, frame)
+    header(len(populations))
+    results = [measure(rows, mark(frame, rows, side), name,
+                       family=len(populations))
+               for name, side in populations.items()]
+    beyond = [r for r in results if r.get("verdict") == "REAL beyond the market"]
+    print("\n  " + ("BEYOND THE MARKET: " + ", ".join(r["label"] for r in beyond)
+                    if beyond else "NOTHING clears the family-wise bar against "
+                    "the market."))
     OUT.write_text(json.dumps({
         "generated": datetime.now(timezone.utc).isoformat(),
         "profiles": len(profiles), "dated_profiles": dated,

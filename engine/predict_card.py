@@ -218,6 +218,10 @@ print("="*70)
 print("\n[1] LOADING DATA...")
 
 ufc = pd.read_csv(UFC_CSV, low_memory=False)
+# The winner must be spelled exactly as a corner, or `winner == r_name`
+# mislabels the fight. See name_resolution.canonical_winners.
+from name_resolution import canonical_winners as _canonical_winners
+ufc = _canonical_winners(ufc)
 print(f"    Loaded {len(ufc):,} fights, {len(ufc.columns)} columns")
 
 # Parse dates
