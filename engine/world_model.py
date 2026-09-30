@@ -98,8 +98,26 @@ def load(path=BOUTS):
     frame = pd.read_csv(path)
     frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
     frame = frame.dropna(subset=["date", "winner", "loser"])
+    # A bout dated after today is a typo on the page it came from (two were
+    # found, "2027" and "2028", in fighters' own record tables).
+    frame = frame[frame["date"] <= pd.Timestamp.today().normalize()]
     frame = frame[frame["result"].isin(["win", "draw", "nc"])]
     return frame.sort_values("date", kind="stable").reset_index(drop=True)
+
+
+def results_only(frame):
+    """Bouts from event and results pages only.
+
+    THE LEAK THIS CLOSES. A fighter's own article - with their whole
+    regional record in it - usually exists BECAUSE they went on to succeed.
+    Bouts known only from those tables therefore favour the fighters who
+    later won: at a Contender Series bout the eventual winner shows ten
+    recorded fights and the loser two, and "more recorded fights" quietly
+    encodes the future. Event and results pages list every bout on a card,
+    whoever later became famous, so their coverage does not depend on the
+    outcome being predicted.
+    """
+    return frame[~frame["source"].astype(str).str.startswith("record:")]
 
 
 def build(frame):
@@ -207,9 +225,14 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__[:200])
     parser.add_argument("--evaluate", action="store_true")
     parser.add_argument("--predict", nargs=2, metavar=("A", "B"))
+    parser.add_argument("--all-sources", action="store_true",
+                        help="also use bouts known only from fighters' own "
+                             "record tables (leaks - see RESULTS_ONLY)")
     args = parser.parse_args(argv)
 
     frame = load()
+    if not args.all_sources:
+        frame = results_only(frame)
     rows, states = build(frame)
     if args.predict:
         from sklearn.linear_model import LogisticRegression
