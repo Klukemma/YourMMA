@@ -76,6 +76,7 @@ MODES_RUN_AS_THEIR_OWN_SCRIPT = {
     "check-line-history": "check_line_history.py",
     "check-fight-changes": "check_fight_changes.py",
     "fetch-fight-changes": "fetch_fight_changes.py",
+    "harvest-injuries": "harvest_injuries.py",
     "verify-intel-dates": "verify_intel_dates.py",
     "describe-odds": "describe_odds_api.py",
 }
