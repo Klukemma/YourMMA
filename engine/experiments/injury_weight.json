@@ -1,0 +1,81 @@
+{
+ "generated": "2026-09-30T18:13:08.792542+00:00",
+ "history_rows": 4808,
+ "populations": {
+  "withdrew_since_last_fight": 1298,
+  "hurt_in_last_fight": 235,
+  "surgery_or_long_layoff_2y": 368,
+  "any_known_injury_1y": 2528,
+  "known_hurt_going_in": 0
+ },
+ "results": [
+  {
+   "label": "withdrew_since_last_fight, vs model",
+   "n": 909,
+   "events": 400,
+   "mean": -0.031099887521573097,
+   "low": -0.05891223985965068,
+   "high": -0.0028694506242909505
+  },
+  {
+   "label": "withdrew_since_last_fight, vs blend (what the app prints)",
+   "n": 909,
+   "events": 400,
+   "mean": -0.021176694854691102,
+   "low": -0.04860119222917202,
+   "high": 0.007369353709019567
+  },
+  {
+   "label": "hurt_in_last_fight, vs model",
+   "n": 122,
+   "too_few": true
+  },
+  {
+   "label": "hurt_in_last_fight, vs blend (what the app prints)",
+   "n": 122,
+   "too_few": true
+  },
+  {
+   "label": "surgery_or_long_layoff_2y, vs model",
+   "n": 209,
+   "events": 163,
+   "mean": -0.017704461327500764,
+   "low": -0.0808154418362927,
+   "high": 0.04115471674731598
+  },
+  {
+   "label": "surgery_or_long_layoff_2y, vs blend (what the app prints)",
+   "n": 209,
+   "events": 163,
+   "mean": -0.0029632264595116672,
+   "low": -0.0636623640120538,
+   "high": 0.05497302992081361
+  },
+  {
+   "label": "any_known_injury_1y, vs model",
+   "n": 1615,
+   "events": 466,
+   "mean": -0.013714696651593899,
+   "low": -0.03488899942203861,
+   "high": 0.008764600037084073
+  },
+  {
+   "label": "any_known_injury_1y, vs blend (what the app prints)",
+   "n": 1615,
+   "events": 466,
+   "mean": -0.009108586507847932,
+   "low": -0.02970133415307182,
+   "high": 0.012925277156354052
+  },
+  {
+   "label": "known_hurt_going_in, vs model",
+   "n": 0,
+   "too_few": true
+  },
+  {
+   "label": "known_hurt_going_in, vs blend (what the app prints)",
+   "n": 0,
+   "too_few": true
+  }
+ ]
+}
