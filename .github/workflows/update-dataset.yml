@@ -53,7 +53,15 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # THE BRANCH, NOT THE COMMIT THE RUN WAS DISPATCHED FROM. By default a
+      # dispatched run checks out the SHA of the moment it was triggered, so a
+      # run queued behind another (see concurrency above) still builds on the
+      # files the first run is about to replace, and its commit then conflicts
+      # on app/data/*.json - the queue alone did not stop it. A probe's saved
+      # samples were lost that way behind an experiment.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
 
       - uses: actions/setup-python@v5
         with:

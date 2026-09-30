@@ -135,3 +135,13 @@ def test_runs_on_one_branch_queue_instead_of_racing():
     assert block, "workflow has no top-level concurrency group"
     assert "github.ref" in block.group(1)
     assert "cancel-in-progress: false" in block.group(1)
+
+
+def test_a_queued_run_checks_out_the_branch_not_its_dispatch_commit():
+    # Queueing only helps if the second run starts from what the first one
+    # pushed; the default checkout is the SHA at dispatch time.
+    text = WORKFLOW.read_text()
+    step = re.search(r"uses: actions/checkout@v\d+\n(\s+with:\n(?:\s{10,}.*\n)+)",
+                     text)
+    assert step, "checkout has no 'with:' block"
+    assert "ref: ${{ github.ref }}" in step.group(1)
