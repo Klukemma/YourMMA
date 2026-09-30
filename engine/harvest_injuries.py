@@ -45,8 +45,7 @@ import pandas as pd
 ENGINE = Path(__file__).resolve().parent
 sys.path.insert(0, str(ENGINE))
 
-from check_fight_changes import (ARCHIVE, _BREAK, _prose, get, resolve_all,
-                                 search_pages)
+from check_fight_changes import ARCHIVE, _BREAK, _prose, get, resolve_all
 from name_resolution import norm_name
 
 SENTENCES = ENGINE / "data" / "injury_sentences.jsonl.gz"
@@ -144,7 +143,15 @@ def sections(wikitext):
     return out
 
 
-TABLE = re.compile(r"^\{\|.*?^\|\}", re.S | re.M)
+# Plain wikitables, and the MMA record template most fighter pages use:
+# {{MMA record start}} ... {{end}}. Missing the template form let 829 lone
+# cells like "| TKO (knee injury)" through as "sentences" with no result,
+# opponent or date - the first harvest's record rows were nearly all lost.
+TABLE = re.compile(
+    r"^\{\|.*?^\|\}"
+    r"|^\{\{\s*(?:MMA|Mma|mma|Kickboxing|kickboxing)\s+record\s+"
+    r"(?:start|begin)[^}]*\}\}.*?^(?:\{\{\s*[Ee]nd\s*\}\}|\|\})",
+    re.S | re.M)
 
 
 def _cell_text(cell):
@@ -295,8 +302,46 @@ def fetch_pages(titles):
     return out
 
 
-def mma_page(text):
+NOT_A_BIOGRAPHY = re.compile(
+    r"^(?:List of|Lists of|UFC\b|The Ultimate Fighter|\d{4} in |"
+    r"Deaths in|Category:)|\bin UFC$|\bin mixed martial arts$", re.I)
+
+
+def mma_page(text, title=""):
+    """A fighter's own article: about MMA, and not a list, season or year.
+
+    The first harvest matched 2025 in UFC, List of Canadian UFC fighters and
+    List of deaths due to the COVID-19 pandemic to fighters, because pages
+    about many fighters name many opponents.
+    """
+    if title and NOT_A_BIOGRAPHY.search(title):
+        return False
     return bool(re.search(r"mixed martial art", text or "", re.I))
+
+
+def title_matches(fighter, title):
+    """Does this article's title name this fighter?
+
+    Required of every SEARCH result. Naming a fighter's opponents is not
+    enough: an opponent's own page names the same people, and the first
+    harvest filed about 350 fighters under someone else's article that way
+    (Aaron Wilkinson under "Michael Johnson (fighter)"). The surname must be
+    in the title, and a first name must agree at least as a prefix ("Abus"
+    for "Abusupiyan"); a name run together ("Alatengheili", "Alateng
+    Heili") matches as a whole.
+    """
+    t = norm_name(re.sub(r"\(.*?\)", " ", str(title))).split()
+    f = norm_name(fighter).split()
+    if not t or not f:
+        return False
+    if "".join(t) == "".join(f):
+        return True
+    if f[-1] not in t:
+        return False
+    if len(f) == 1 or len(f[0]) < 3:
+        return True
+    return any(x.startswith(f[0]) or f[0].startswith(x)
+               for x in t if len(x) >= 3 and x != f[-1])
 
 
 def opponent_hits(text, opponents):
@@ -314,6 +359,27 @@ def opponent_hits(text, opponents):
                 rf"\b{re.escape(parts[-1])}\b", low):
             count += 1
     return count
+
+
+SEARCH_RESULTS = 5
+
+
+def search_fighter(name):
+    """{title: wikitext} for articles search ranks for this exact name.
+
+    The name is quoted so the fighter's own article, which says it in full
+    in its first line, outranks pages that mention a surname in passing.
+    """
+    body = get({"action": "query", "generator": "search",
+                "gsrsearch": f'"{name}" mixed martial artist',
+                "gsrlimit": SEARCH_RESULTS, "prop": "revisions",
+                "rvslots": "main", "rvprop": "content", "redirects": 1})
+    found = {}
+    for page in body.get("query", {}).get("pages", {}).values():
+        revisions = page.get("revisions")
+        if revisions and "slots" in revisions[0]:
+            found[page["title"]] = revisions[0]["slots"]["main"]["*"]
+    return found
 
 
 def resolve_fighters(fighters, opponents, verbose=True):
@@ -337,7 +403,7 @@ def resolve_fighters(fighters, opponents, verbose=True):
         for title in candidates[fighter]:
             target = present.get(title)
             text = texts.get(target)
-            if not text or not mma_page(text):
+            if not text or not mma_page(text, target):
                 continue
             score = opponent_hits(text, opponents.get(fighter, ()))
             if score > best_score:
@@ -352,12 +418,12 @@ def resolve_fighters(fighters, opponents, verbose=True):
 
     for n, fighter in enumerate(missing, 1):
         try:
-            pages = search_pages(f"{fighter} mixed martial artist")
+            pages = search_fighter(fighter)
         except (urllib.error.URLError, OSError, TimeoutError):
             continue
         best, best_score = None, 0
         for title, text in pages.items():
-            if not mma_page(text):
+            if not mma_page(text, title) or not title_matches(fighter, title):
                 continue
             score = opponent_hits(text, opponents.get(fighter, ()))
             if score > best_score:

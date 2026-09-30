@@ -183,7 +183,7 @@ def test_resolution_prefers_the_page_that_names_the_opponents(monkeypatch):
         "Michael Johnson": "Michael Johnson"})
     monkeypatch.setattr(hi, "fetch_pages", lambda titles: {
         "Michael Johnson (fighter)": fighter, "Michael Johnson": sprinter})
-    monkeypatch.setattr(hi, "search_pages", lambda q: {})
+    monkeypatch.setattr(hi, "search_fighter", lambda q: {})
     got = hi.resolve_fighters(["Michael Johnson"],
                               {"Michael Johnson": {"Tony Ferguson",
                                                    "Nate Diaz"}},
@@ -194,7 +194,7 @@ def test_resolution_prefers_the_page_that_names_the_opponents(monkeypatch):
 def test_a_search_hit_needs_two_opponents_named(monkeypatch):
     monkeypatch.setattr(hi, "existing", lambda titles: {})
     monkeypatch.setattr(hi, "fetch_pages", lambda titles: {})
-    monkeypatch.setattr(hi, "search_pages", lambda q: {
+    monkeypatch.setattr(hi, "search_fighter", lambda q: {
         "Someone Else": "A mixed martial artist who once fought a Ferguson."})
     got = hi.resolve_fighters(["Carl Brown"],
                               {"Carl Brown": {"Tony Ferguson", "Nate Diaz"}},
@@ -240,3 +240,85 @@ def test_records_carry_a_stable_id_and_their_page():
     assert [r["id"] for r in first] == [r["id"] for r in again]
     assert len({r["id"] for r in first}) == len(first)
     assert all(r["page"] == "Carl Brown" for r in first)
+
+
+# --- the first full harvest's failures, pinned ------------------------------
+
+TEMPLATE_RECORD = """==Mixed martial arts record==
+{{MMA record start}}
+|-
+|{{no2}}Loss
+|align=center|12–4
+|Tom Nolan
+|TKO (shoulder injury)
+|UFC 250
+|{{dts|2020|06|06}}
+|align=center|1
+|align=center|2:13
+|Las Vegas, Nevada, United States
+|
+|-
+|{{yes2}}Win
+|align=center|12–3
+|Dan Evans
+|Decision (unanimous)
+|UFC 240
+|{{dts|2019|07|27}}
+|align=center|3
+|align=center|5:00
+|Edmonton, Alberta, Canada
+|
+{{end}}
+"""
+
+
+def test_the_mma_record_template_is_read_as_rows():
+    found = hi.hits(TEMPLATE_RECORD)
+    rows = [h for h in found if h["form"] == "record_row"]
+    assert len(rows) == 1
+    for part in ("Loss", "Tom Nolan", "TKO (shoulder injury)", "UFC 250",
+                 "2020-06-06"):
+        assert part in rows[0]["text"]
+    # And no cell leaks out as a "sentence" of its own.
+    assert not [h for h in found if h["form"] == "prose"]
+
+
+@pytest.mark.parametrize("title", [
+    "2025 in UFC", "List of Canadian UFC fighters",
+    "List of deaths due to the COVID-19 pandemic",
+    "The Ultimate Fighter: China", "UFC 200",
+    "List of male mixed martial artists"])
+def test_pages_about_many_fighters_are_nobodys_page(title):
+    assert not hi.mma_page("a mixed martial artist", title)
+
+
+@pytest.mark.parametrize("fighter,title,expected", [
+    ("Aaron Wilkinson", "Michael Johnson (fighter)", False),
+    ("Aliaskhab Khizriev", "Abusupiyan Magomedov", False),
+    ("Alex Reyes", "Alex Caceres", False),
+    ("Joe Brammer", "Aaron Riley", False),
+    ("Alatengheili", "Alateng Heili", True),
+    ("Abus Magomedov", "Abusupiyan Magomedov", True),
+    ("Ariane da Silva", "Ariane Lipski da Silva", True),
+    ("AJ Fletcher", "AJ Fletcher", True),
+    ("Bruno Silva", "Bruno Silva (fighter, born 1989)", True),
+    ("Carlos Silva", "Bruno Silva (fighter, born 1989)", False),
+])
+def test_a_search_result_must_carry_the_fighters_name(fighter, title,
+                                                        expected):
+    assert hi.title_matches(fighter, title) is expected
+
+
+def test_an_opponents_page_is_not_taken_for_the_fighters(monkeypatch):
+    # The page names both of Wilkinson's opponents - because it is one of
+    # them - and the first harvest took it.
+    monkeypatch.setattr(hi, "existing", lambda titles: {})
+    monkeypatch.setattr(hi, "fetch_pages", lambda titles: {})
+    monkeypatch.setattr(hi, "search_fighter", lambda q: {
+        "Michael Johnson (fighter)": "A mixed martial artist who fought "
+                                     "Tony Ferguson and Nate Diaz."})
+    got = hi.resolve_fighters(["Aaron Wilkinson"],
+                              {"Aaron Wilkinson": {"Tony Ferguson",
+                                                   "Nate Diaz"}},
+                              verbose=False)
+    assert got == {}
