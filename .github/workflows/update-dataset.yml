@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, harvest-injuries, probe-world, verify-intel-dates, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
+        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, harvest-injuries, harvest-world, probe-world, verify-intel-dates, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -109,6 +109,12 @@ jobs:
             # on almost none of them, and a replacement announced two months
             # out had a full camp. days_notice stays blank where unstated.
             python engine/fetch_fight_changes.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "harvest-world" ]; then
+            # Every bout of every promotion on Wikipedia since 2005 (year and
+            # event pages, Contender Series seasons, fighters' own records)
+            # and every fighter's camp, coaches and belts from their
+            # infobox - so fighters with no UFC history can be rated.
+            python engine/harvest_world.py 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "probe-world" ]; then
             # Which non-UFC results pages exist on Wikipedia, and real samples
             # of them saved as test fixtures, so the multi-promotion parsers
@@ -248,7 +254,7 @@ jobs:
       - name: Commit the app data
         if: ${{ !inputs.dry_run }}
         run: |
-          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv engine/data/method_odds.csv engine/data/fight_changes.csv engine/data/intel_history.csv engine/data/intel_history_scouted.csv engine/data/intel_history_pending.csv engine/data/intel_scout_log.csv engine/data/injury_sentences.jsonl.gz engine/data/injury_pages.csv engine/data/world_year_pages.json engine/tests/fixtures/wiki/"
+          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv engine/data/method_odds.csv engine/data/fight_changes.csv engine/data/intel_history.csv engine/data/intel_history_scouted.csv engine/data/intel_history_pending.csv engine/data/intel_scout_log.csv engine/data/injury_sentences.jsonl.gz engine/data/injury_pages.csv engine/data/world_year_pages.json engine/data/world_bouts.csv.gz engine/data/fighter_profiles.jsonl.gz engine/data/world_pages.csv engine/tests/fixtures/wiki/"
           if [ -z "$(git status --porcelain -- $PATHS)" ]; then
             echo "App data and odds unchanged."
             exit 0

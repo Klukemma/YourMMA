@@ -78,6 +78,7 @@ MODES_RUN_AS_THEIR_OWN_SCRIPT = {
     "fetch-fight-changes": "fetch_fight_changes.py",
     "harvest-injuries": "harvest_injuries.py",
     "probe-world": "probe_world.py",
+    "harvest-world": "harvest_world.py",
     "verify-intel-dates": "verify_intel_dates.py",
     "describe-odds": "describe_odds_api.py",
 }
