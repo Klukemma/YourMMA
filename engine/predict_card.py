@@ -489,7 +489,7 @@ from prediction_row import build_prediction_frame, required_suffixes
 from matchup_inputs import matchup_extra
 
 # Where the phone app reads its data from.
-APP_DATA_DIR = Path(__file__).resolve().parent.parent / "app" / "data"
+APP_DATA_DIR = Path(os.environ.get("APP_DATA_DIR", Path(__file__).resolve().parent.parent / "app" / "data"))
 _card_simulations = []
 from fight_report import (
     CARD_SIMULATIONS,

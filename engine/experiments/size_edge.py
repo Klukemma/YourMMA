@@ -24,6 +24,11 @@ the model and the market:
   taller_and_longer        2+ inches taller AND 2+ inches longer reach
                            (already model features: checks whether the model
                            prices frame size fully)
+  missed_weight            missed weight at the weigh-in the day before
+                           (intel_history.csv, read from event pages) - the
+                           one weight fact public before the bell. Heavier
+                           on the scale, but a failed cut; the market has it
+  missed_by_2lb            the same, by two pounds or more
 
     python engine/experiments/size_edge.py
 """
@@ -44,6 +49,7 @@ from name_resolution import canonical_winners, norm_name
 from true_fight_weight import limit_of
 
 ARCHIVE = ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
+INTEL = ENGINE / "data" / "intel_history.csv"
 OUT = Path(__file__).with_suffix(".json")
 INCHES_2 = 5.08
 
@@ -85,8 +91,18 @@ class History:
                 height, reach)
 
 
-def populations(history):
+def misses(path=None):
+    """{(date, fighter key): pounds over or NaN} for every missed weight."""
+    intel = pd.read_csv(path or INTEL)
+    intel = intel[intel["kind"] == "missed_weight"]
+    return {(pd.Timestamp(d).date(), norm_name(f)): float(o) if pd.notna(o) else np.nan
+            for d, f, o in zip(intel["event_date"], intel["fighter"],
+                               intel["over_by_lbs"])}
+
+
+def populations(history, missed=None):
     cache = {}
+    missed = missed or {}
 
     def at(name, date):
         key = (norm_name(name), pd.Timestamp(date).date())
@@ -143,10 +159,27 @@ def populations(history):
             return "blue"
         return None
 
+    def missed_by(at_least):
+        def marked(row):
+            day = pd.Timestamp(row.date).date()
+            r = missed.get((day, norm_name(row.red_raw)))
+            b = missed.get((day, norm_name(row.blue_raw)))
+            def hit(over):
+                if over is None:
+                    return False
+                return at_least == 0 or (np.isfinite(over) and over >= at_least)
+            r_hit, b_hit = hit(r), hit(b)
+            if r_hit == b_hit:
+                return None
+            return "red" if r_hit else "blue"
+        return marked
+
     return {"fought_heavier_before": heavier_before,
             "first_fight_down": moved("down"),
             "first_fight_up": moved("up"),
-            "taller_and_longer": frame_edge}
+            "taller_and_longer": frame_edge,
+            "missed_weight": missed_by(0),
+            "missed_by_2lb": missed_by(2)}
 
 
 def main():
@@ -157,7 +190,9 @@ def main():
     print("building predictions...")
     frame = predictions()
     rows = sides(frame)
-    pops = populations(history)
+    missed = misses()
+    print(f"  {len(missed)} missed weights on record")
+    pops = populations(history, missed)
     header(len(pops))
     results = [measure(rows, mark(frame, rows, side), name, family=len(pops))
                for name, side in pops.items()]

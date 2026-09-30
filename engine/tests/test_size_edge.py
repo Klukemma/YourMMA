@@ -48,3 +48,19 @@ def test_frame_edge_needs_both_height_and_reach():
                                          "Ann", "Cat")) == "red"
     assert pops["taller_and_longer"](row("2020-01-01", "catch weight",
                                          "Ann", "Cat")) is None
+
+
+def test_missed_weight_marks_the_fighter_who_missed(tmp_path):
+    path = tmp_path / "intel.csv"
+    pd.DataFrame([
+        ("2021-01-01", "Ann", "missed_weight", 1.5),
+        ("2021-01-01", "Cat", "stepped_in", None),
+        ("2022-01-01", "Eve", "missed_weight", None),
+    ], columns=["event_date", "fighter", "kind", "over_by_lbs"]).to_csv(path, index=False)
+    from experiments.size_edge import misses
+    pops = populations(History(archive()), misses(path))
+    assert pops["missed_weight"](row("2021-01-01", "lightweight", "Ann", "Cat")) == "red"
+    assert pops["missed_by_2lb"](row("2021-01-01", "lightweight", "Ann", "Cat")) is None
+    # A miss with no stated margin counts as a miss, not as 2+ lb.
+    assert pops["missed_weight"](row("2022-01-01", "welterweight", "Cat", "Eve")) == "blue"
+    assert pops["missed_by_2lb"](row("2022-01-01", "welterweight", "Cat", "Eve")) is None
