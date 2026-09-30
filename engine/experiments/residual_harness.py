@@ -85,6 +85,8 @@ def predictions():
     frame["red"] = [norm_name(n) for n in frame["red_raw"]]
     frame["blue"] = [norm_name(n) for n in frame["blue_raw"]]
     frame["won"] = y[frame.index]
+    frame["division"] = (meta.loc[frame.index, "division"].values
+                         if "division" in meta.columns else np.nan)
     for side, col in (("red", "r_dob"), ("blue", "b_dob")):
         if col in meta.columns:
             dob = pd.to_datetime(meta.loc[frame.index, col], errors="coerce")
