@@ -70,9 +70,15 @@ class MentalityIndex:
             # the fight: every decision stores 300. Total time is the full
             # rounds before it plus that. Read as a total, it kept almost
             # only decisions and made a 25-minute fight look like 5.
+            # Except the rows repaired from Kaggle for Sep-Dec 2025, which
+            # store the TOTAL (up to 1,500): a value over 300 cannot be one
+            # round, so it is taken as the whole fight.
             rnd = getattr(row, "finish_round", np.nan)
-            if pd.notna(row.match_time_sec) and pd.notna(rnd):
-                minutes = ((int(rnd) - 1) * 300 + float(row.match_time_sec)) / 60.0
+            t = row.match_time_sec
+            if pd.notna(t) and float(t) > 300:
+                minutes = float(t) / 60.0
+            elif pd.notna(t) and pd.notna(rnd):
+                minutes = ((int(rnd) - 1) * 300 + float(t)) / 60.0
             else:
                 minutes = np.nan
             title = str(getattr(row, "title_fight", 0)) in ("1", "True", "true")

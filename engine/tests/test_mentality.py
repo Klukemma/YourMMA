@@ -107,3 +107,12 @@ def test_a_winner_spelled_differently_from_the_corner_still_won():
                   "Waldo Cortes-Acosta", "KO/TKO", 1, 100, 0, 10, 5, 0, 0, 20, 20)])
     got = MentalityIndex(b).at("Waldo Cortes Acosta", "2020-02-01")
     assert got["dominant_streak"] == 1
+
+
+def test_a_repaired_row_that_stores_total_seconds_is_not_counted_twice():
+    # Late-2025 rows store the whole fight: a 3-round decision reads 900.
+    b = archive([
+        ("2025-10-01", "Bo", "X", 0, 0, "Bo", "U-DEC", 3, 900, 0, 150, 90, 0, 0,
+         20, 20)])
+    fight = MentalityIndex(b).fights["bo"][0]
+    assert abs(fight["pace"] - 150 / 15) < 1e-9       # 15 minutes, not 25
