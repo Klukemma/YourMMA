@@ -62,8 +62,8 @@ COLUMNS = ("fighter", "matched", "fighter_raw", "kind", "condition",
            "body_part", "surgery", "months_out", "certainty", "anchor_event",
            "anchor_opponent", "anchor_date", "anchor_precision",
            "anchor_source", "disclosed", "disclosure_date", "known_by",
-           "vague", "conflict", "n_sources", "sentence_ids", "source",
-           "page", "evidence")
+           "vague", "conflict", "checked", "n_sources", "sentence_ids",
+           "source", "page", "evidence")
 
 
 # --- the sentences, for readers ---------------------------------------------
@@ -339,6 +339,9 @@ def build(extracted, sentences, archive):
             "disclosure_date": record.get("disclosure_date") or "",
             "known_by": when.date().isoformat() if when is not None else "",
             "vague": vague, "conflict": conflict,
+            # Seen by a second, skeptical reader - kept, fixed, or added by
+            # it and confirmed by a third. False only where the check failed.
+            "checked": bool(record.get("_checked", True)),
             "n_sources": 1, "sentence_ids": sentence["id"],
             "source": sentence.get("source", ""),
             "page": sentence.get("page", ""),
@@ -390,6 +393,7 @@ def merge(frame):
                     current[field] = row[field]
                 current["conflict"] = True
             current["surgery"] = current["surgery"] or row["surgery"]
+            current["checked"] = current["checked"] or row["checked"]
             continue
         if current is not None:
             keep.append(current)
@@ -425,7 +429,8 @@ def archive_stoppages(archive_frame, from_year=2010):
             "anchor_precision": "day", "anchor_source": "archive_method",
             "disclosed": "at", "disclosure_date": "",
             "known_by": row.date.date().isoformat(), "vague": False,
-            "conflict": False, "n_sources": 1, "sentence_ids": "",
+            "conflict": False, "checked": True, "n_sources": 1,
+            "sentence_ids": "",
             "source": "archive", "page": "",
             "evidence": f"{row.event_name}: {row.method}"})
     return pd.DataFrame(rows, columns=COLUMNS)
