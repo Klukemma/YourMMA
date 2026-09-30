@@ -376,15 +376,40 @@ def contender_report(world):
         print(f"  adding the age gap: {age_gap['logloss_diff']:+.4f} "
               f"[{age_gap['lo']:+.4f}, {age_gap['hi']:+.4f}] "
               f"({len(births)} birth dates)")
-    covered = {r["target"] for r in records if r.get("verified")}
-    both = new[new["a"].isin({norm_name(n) for n in covered})
-               & new["b"].isin({norm_name(n) for n in covered})]
-    if len(both):
-        r = score(both, both["dwcs"], "both fighters verified")
-        print(f"  bouts with both fighters verified: n={r['n']}, log loss "
-              f"{r['logloss_model']:.4f}, accuracy {r['accuracy_model']:.3f}")
+    # COVERAGE MUST BE SYMMETRIC. When one fighter's record is found and the
+    # other's is not, the found one looks like a veteran facing a debutant:
+    # on the first run the found side was given 77% and won 51.5%. So the
+    # split is reported, and the arm that could ship uses Sherdog only for
+    # bouts where BOTH records were found, the world alone otherwise.
+    covered = {norm_name(r["target"]) for r in records if r.get("verified")}
+    split = []
+    for k in (2, 1, 0):
+        mb = (base["a"].isin(covered).astype(int)
+              + base["b"].isin(covered).astype(int)) == k
+        mn = (new["a"].isin(covered).astype(int)
+              + new["b"].isin(covered).astype(int)) == k
+        if mb.any():
+            sb, sn = score(base, base["dwcs"] & mb, ""), score(new, new["dwcs"] & mn, "")
+            split.append({"records_found": k, "n": sb["n"],
+                          "world_only": sb["logloss_model"],
+                          "with_sherdog": sn["logloss_model"]})
+            print(f"  {k} of 2 records found: n={sb['n']:>3}  world only "
+                  f"{sb['logloss_model']:.4f}  with Sherdog {sn['logloss_model']:.4f}")
+    key = ["date", "a", "b"]
+    both = (new["a"].isin(covered) & new["b"].isin(covered)).to_numpy()
+    symmetric = base.drop(columns="p_model").merge(
+        pd.concat([new[both], base[~base.set_index(key).index.isin(
+            new[both].set_index(key).index)]])[key + ["p_model"]], on=key)
+    sym = score(symmetric, symmetric["dwcs"], "Sherdog only when both found")
+    results.append(sym)
+    sym_gap = paired(base, symmetric)
+    print(f"  symmetric arm: log loss {sym['logloss_model']:.4f}, minus world "
+          f"only {sym_gap['logloss_diff']:+.4f} [{sym_gap['lo']:+.4f}, "
+          f"{sym_gap['hi']:+.4f}]")
     CONTENDER_OUT.write_text(json.dumps({"results": results, "paired": gap,
                                          "paired_age": age_gap,
+                                         "coverage_split": split,
+                                         "paired_symmetric": sym_gap,
                                          "looked_up": len(records),
                                          "found": found,
                                          "verified": verified}, indent=1))
