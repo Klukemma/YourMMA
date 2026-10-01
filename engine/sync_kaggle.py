@@ -909,6 +909,72 @@ def cmd_fetch_method_odds(args):
     print(f"\nWrote {METHOD_ODDS_FILE}")
 
 
+# OPENING lines, 2010-2025 (247 priced fights in 2025, the year odds.csv
+# has none). They are kept apart from odds.csv on purpose: odds.csv holds
+# CLOSING prices, which carry everything the market learned in fight week,
+# and an opening price is a weaker forecast. Mixing them would make 2025
+# look like a year the market was worse. Kept separately they answer a
+# question of their own: the live card reads prices days before the bell,
+# nearer an opening line than a closing one, while the blend weight was
+# fitted on closing lines.
+OPENING_ODDS_DATASET = 'p0p0xyz/ufc-fights-ml-with-odds-csv'
+OPENING_ODDS_FILE = DATA_DIR / 'opening_odds.csv'
+_NAME_PAIRS = [('fighter_a_name', 'fighter_b_name'), ('fighter_a', 'fighter_b'),
+               ('A_name', 'B_name'), ('A_fighter', 'B_fighter'),
+               ('fighter_a_fighter', 'fighter_b_fighter'),
+               ('red_fighter', 'blue_fighter'), ('r_fighter', 'b_fighter')]
+
+
+def cmd_fetch_opening_odds(args):
+    """Download historical OPENING moneylines into data/opening_odds.csv."""
+    with tempfile.TemporaryDirectory() as tmp:
+        result = subprocess.run(
+            ['kaggle', 'datasets', 'download', '-d', OPENING_ODDS_DATASET,
+             '-p', tmp, '--unzip'], capture_output=True, text=True)
+        if result.returncode != 0:
+            sys.exit(f"download failed: {result.stderr.strip()[:300]}")
+        files = sorted(Path(tmp).rglob('*.csv'))
+        source = next((f for f in files if 'odds' in f.name.lower()), None)
+        if source is None:
+            sys.exit(f"no odds file. Got: {[f.name for f in files]}")
+        raw = pd.read_csv(source, low_memory=False)
+    print(f"{source.name}: {len(raw):,} rows x {len(raw.columns)} cols")
+    texty = [c for c in raw.columns if raw[c].dtype == object]
+    print(f"  text columns: {texty[:30]}")
+    print(raw.head(3).T.head(40).to_string()[:3000])
+
+    pair = next(((a, b) for a, b in _NAME_PAIRS
+                 if a in raw.columns and b in raw.columns), None)
+    if pair is None:
+        sys.exit("::error::no fighter-name columns recognised - add the pair "
+                 "printed above to _NAME_PAIRS. Nothing written.")
+    date_col = 'event_date' if 'event_date' in raw.columns else 'date'
+    for side in ('A_open_odds', 'B_open_odds'):
+        values = pd.to_numeric(raw[side], errors='coerce').dropna()
+        detected = detect_odds_format(values)
+        impossible = ((values > -100) & (values < 100) & (values != 0)).mean()
+        print(f"  {side}: detected {detected} ({impossible:.1%} in -100..100)")
+        if detected != 'american' or impossible > 0.05:
+            sys.exit(f"::error::{side} is not American odds ({detected}). "
+                     f"Refusing to write prices that could invert favourites.")
+    out = pd.DataFrame({
+        'date': pd.to_datetime(raw[date_col], errors='coerce'),
+        'fighter_a': raw[pair[0]], 'fighter_b': raw[pair[1]],
+        'open_a': pd.to_numeric(raw['A_open_odds'], errors='coerce'),
+        'open_b': pd.to_numeric(raw['B_open_odds'], errors='coerce'),
+    }).dropna()
+    out = out[out['date'] >= '2010-01-01'].sort_values('date')
+    by_year = out.groupby(out['date'].dt.year).size()
+    print("\nopening prices per year:")
+    for year, count in by_year.items():
+        print(f"  {int(year)}  {count:,}")
+    if args.dry_run:
+        print("\n--dry-run: nothing written.")
+        return
+    out.to_csv(OPENING_ODDS_FILE, index=False)
+    print(f"\nWrote {OPENING_ODDS_FILE} ({len(out):,} fights)")
+
+
 def detect_odds_format(values):
     """American (-150, +130) or decimal (1.67, 2.30)?
 
@@ -1047,6 +1113,9 @@ def main():
     fh = sub.add_parser("fetch-odds-history",
                         help="add 2010-2025 moneylines to data/odds.csv")
     fh.add_argument("--dry-run", action="store_true", help="report without writing")
+    fo = sub.add_parser("fetch-opening-odds",
+                        help="2010-2025 OPENING moneylines into data/opening_odds.csv")
+    fo.add_argument("--dry-run", action="store_true", help="report without writing")
     fm = sub.add_parser("fetch-method-odds",
                         help="add historical method props to data/method_odds.csv")
     fm.add_argument("--dry-run", action="store_true", help="report without writing")
@@ -1064,6 +1133,7 @@ def main():
      "search-mma": cmd_search_mma, "inspect-fighter": cmd_inspect_fighter,
      "fetch-odds": cmd_fetch_odds,
      "fetch-odds-history": cmd_fetch_odds_history,
+     "fetch-opening-odds": cmd_fetch_opening_odds,
      "fetch-method-odds": cmd_fetch_method_odds, "repair": cmd_repair,
      "fix-units": cmd_fix_units,
      "sync": cmd_sync}[args.cmd](args)
