@@ -1408,6 +1408,8 @@ def prepare_live_rows(fights, event_date=None):
     passes = []                     # each pass holds no fighter twice
     for key, f in wanted:
         pair = {ids.get(_norm_name(f['red'])), ids.get(_norm_name(f['blue']))}
+        if None in pair:            # no bout before this date: nothing to
+            continue                # build from (predict refuses these)
         for batch in passes:
             if not pair & batch['ids']:
                 batch['fights'].append((key, f)); batch['ids'] |= pair
@@ -1454,6 +1456,8 @@ def _live_row(red, blue, event_date, is_5rnd, is_title, context):
     if key not in _LIVE_ROWS:
         prepare_live_rows([{'red': red, 'blue': blue, 'is_5rnd': is_5rnd,
                             'is_title': is_title, 'context': context}], when)
+    if key not in _LIVE_ROWS:
+        raise KeyError(f"no bout before {when.date()} for {red} or {blue}")
     return _LIVE_ROWS[key]
 
 
@@ -2595,9 +2599,18 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
     # bouts when it names none).
     def _division_only(i):
         return {'division': _division_of((contexts or {}).get(i))}
-    prepare_live_rows([(f[0], f[1], f[2] if len(f) > 2 else False,
-                        f[3] if len(f) > 3 else False, _division_only(i))
-                       for i, f in enumerate(fights)], event_date)
+    # Names are resolved the way prediction resolves them; a fight with a
+    # corner the engine refuses (a debut, an unknown name) is left out here
+    # and refused below as before.
+    _prefetch = []
+    for i, f in enumerate(fights):
+        _res, _problems, _ = _check_fighters(f[0], f[1])
+        if _problems:
+            continue
+        _prefetch.append((_res['red'][0], _res['blue'][0],
+                          f[2] if len(f) > 2 else False,
+                          f[3] if len(f) > 3 else False, _division_only(i)))
+    prepare_live_rows(_prefetch, event_date)
 
     for i, fight in enumerate(fights):
         if len(fight) == 2:
