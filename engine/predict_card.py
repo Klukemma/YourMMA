@@ -105,43 +105,48 @@ FIGHT_CARD = [
 #   Fight 11: Jauregui (Mexico, Away) vs Demopoulos (USA, Home) -> blue_home
 #
 # NOTE: All bouts at the Apex use the SMALL cage -> cage_size: 'small' for every fight.
+#
+# 'division' tells the model the weight class of the bout (e.g. 'lightweight',
+# "women's flyweight"). It feeds the weight-class features the model was
+# trained on; left out, it is inferred from both fighters' last bouts, which
+# is wrong whenever one of them is changing class.
 
 FIGHT_CONTEXTS = {
     # Fight 0: Rosas Jr. (Home) - red corner
-    0: {'red_home': True, 'cage_size': 'small'},
+    0: {"division": "bantamweight", 'red_home': True, 'cage_size': 'small'},
 
     # Fight 1: Both Away - no advantage
-    1: {'cage_size': 'small'},
+    1: {"division": "women's bantamweight", 'cage_size': 'small'},
 
     # Fight 2: Hernandez debuting - no data either way
-    2: {'cage_size': 'small'},
+    2: {"division": "middleweight", 'cage_size': 'small'},
 
     # Fight 3: TUF final, both debuting
-    3: {'cage_size': 'small'},
+    3: {"division": "bantamweight", 'cage_size': 'small'},
 
     # Fight 4: TUF final, both debuting
-    4: {'cage_size': 'small'},
+    4: {"division": "women's strawweight", 'cage_size': 'small'},
 
     # Fight 5: Hiestand (Home) - red corner
-    5: {'red_home': True, 'cage_size': 'small'},
+    5: {"division": "bantamweight", 'red_home': True, 'cage_size': 'small'},
 
     # Fight 6: Both Away - no advantage
-    6: {'cage_size': 'small'},
+    6: {"division": "middleweight", 'cage_size': 'small'},
 
     # Fight 7: Edwards (Home) - blue corner
-    7: {'blue_home': True, 'cage_size': 'small'},
+    7: {"division": "light heavyweight", 'blue_home': True, 'cage_size': 'small'},
 
     # Fight 8: Harrell (Home) - blue corner
-    8: {'blue_home': True, 'cage_size': 'small'},
+    8: {"division": "lightweight", 'blue_home': True, 'cage_size': 'small'},
 
     # Fight 9: Both Home - no advantage
-    9: {'cage_size': 'small'},
+    9: {"division": "bantamweight", 'cage_size': 'small'},
 
     # Fight 10: Castaneda (Home) - red corner
-    10: {'red_home': True, 'cage_size': 'small'},
+    10: {"division": "bantamweight", 'red_home': True, 'cage_size': 'small'},
 
     # Fight 11: Demopoulos (Home) - blue corner
-    11: {'blue_home': True, 'cage_size': 'small'},
+    11: {"division": "women's strawweight", 'blue_home': True, 'cage_size': 'small'},
 }
 
 # ==============================================================================
@@ -2584,7 +2589,16 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
     simulations = []
 
     print(f"\n    Predicting {len(fights)} fights...")
-    
+
+    # One pass of the training pipeline for the whole card, each fight in
+    # the division its context names (inferred from the fighters' last
+    # bouts when it names none).
+    def _division_only(i):
+        return {'division': _division_of((contexts or {}).get(i))}
+    prepare_live_rows([(f[0], f[1], f[2] if len(f) > 2 else False,
+                        f[3] if len(f) > 3 else False, _division_only(i))
+                       for i, f in enumerate(fights)], event_date)
+
     for i, fight in enumerate(fights):
         if len(fight) == 2:
             red, blue = fight
@@ -2596,7 +2610,8 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
             is_5rnd = fight[2] if len(fight) > 2 else False
             is_title = fight[3] if len(fight) > 3 else False
         
-        pred = predict_fight_prod(red, blue, event_date=event_date, is_5rnd=is_5rnd, is_title=is_title, verbose=False)
+        pred = predict_fight_prod(red, blue, event_date=event_date, is_5rnd=is_5rnd, is_title=is_title,
+                                  context=_division_only(i), verbose=False)
 
         if pred.get('status') == 'NO_DATA':
             results.append({

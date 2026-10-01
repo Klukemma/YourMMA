@@ -66,6 +66,7 @@ def train_child(dates, out):
                      "won": float(engine.y_win[i]),
                      "is_5rnd": int(meta.loc[i, "total_rounds"] == 5),
                      "is_title": int(bool(meta.loc[i, "title_fight"])),
+                     "division": str(meta.loc[i, "division"]),
                      "features": {c: float(X.loc[i, c]) for c in X.columns}})
     Path(out).write_text(json.dumps(rows))
 
@@ -102,7 +103,8 @@ def live_child(date, train_path, out):
             engine.predict_fight_prod(fight["red"], fight["blue"],
                                       event_date=date,
                                       is_5rnd=fight["is_5rnd"],
-                                      is_title=fight["is_title"])
+                                      is_title=fight["is_title"],
+                                      context={"division": fight.get("division")})
         except Exception as err:            # a debut: no live row at all
             rows.append({**fight, "live": None, "error": str(err)[:200]})
             continue
