@@ -240,15 +240,19 @@ def prediction_feature_dicts(tree, known):
 
 
 def missing_prediction_features(path=None):
-    """Features the model is trained on that a prediction never supplies.
+    """Features the model is trained on that a hand-built feature dict in
+    `path` never supplies. Returns [{line, missing}], one per dict.
 
-    Returns [{line, missing}] - one entry per hand-built feature dict.
+    A file that declares no feature list cannot be audited, and raises
+    rather than reading as clean: this guarded the live path while it built
+    its row by hand, and that row is now a row of the training matrix
+    itself (live_rows.py), so no file in the engine declares one any more.
     """
     path = Path(path or DEFAULT_TARGET)
     tree = ast.parse(path.read_text())
     wanted = declared_features(tree)
     if not wanted:
-        return []
+        raise ValueError(f"{path.name} declares no feature_cols list to audit against")
     out = []
     for lineno, keys in prediction_feature_dicts(tree, wanted):
         missing = sorted(wanted - keys)
@@ -281,19 +285,19 @@ def report(dead, defaults, missing=None):
     if not defaults:
         print("  none")
 
-    missing = missing or []
-    print()
-    print("=" * 72)
-    print(f"FEATURES A PREDICTION CANNOT SUPPLY: {len(missing)}")
-    print("  trained on it, but the per-fight dict never sets it")
-    print("=" * 72)
-    for f in missing:
-        print(f"  line {f['line']:>5}  missing {len(f['missing'])}: "
-              f"{', '.join(f['missing'])}")
-    if not missing:
-        print("  none")
+    if missing is not None:
+        print()
+        print("=" * 72)
+        print(f"FEATURES A PREDICTION CANNOT SUPPLY: {len(missing)}")
+        print("  trained on it, but the per-fight dict never sets it")
+        print("=" * 72)
+        for f in missing:
+            print(f"  line {f['line']:>5}  missing {len(f['missing'])}: "
+                  f"{', '.join(f['missing'])}")
+        if not missing:
+            print("  none")
 
-    return len(dead) + len(defaults) + len(missing)
+    return len(dead) + len(defaults) + len(missing or [])
 
 
 def main():
@@ -310,7 +314,9 @@ def main():
         d, f = audit(target, ranges)
         dead += d
         defaults += f
-    total = report(dead, defaults, missing_prediction_features(targets[0]))
+    # The live row is a row of the training matrix itself (live_rows.py),
+    # so there is no hand-built feature dict left to audit for gaps.
+    total = report(dead, defaults)
     if args.strict and total:
         sys.exit(1)
 

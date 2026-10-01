@@ -87,13 +87,58 @@ def main():
         graded, _ = grade(deduplicate(history['predictions']), index)
         print(f"\nscoring {len(graded)} graded bouts")
 
-        rows = []
+        # Each bout's archive row gives two pre-fight facts the replay needs
+        # (joined by date and names - nothing after the bell is read): its
+        # division, which the live row must be given when the fighters'
+        # last bouts were in different classes (the live path refuses a
+        # fight with no division then, as no training row has one), and
+        # whether the sync filed the bout under a placeholder id - such a
+        # row was built as a debut under 'new_<hex>' and the pending row
+        # builds it under the real id, so it is not the training row
+        # (pending_rows._canon_ids) and is left out.
+        archive = pd.read_csv(ENGINE / 'data' / 'UFC_with_mmr_rebuilt_dedup.csv',
+                              low_memory=False)
+        day = pd.to_datetime(archive['date'], errors='coerce').dt.strftime('%Y-%m-%d')
+        facts = {}
+        for when, r in zip(day, archive.itertuples(index=False)):
+            if not (isinstance(r.r_name, str) and isinstance(r.b_name, str)):
+                continue
+            division = r.division if isinstance(r.division, str) else None
+            placeholder = any(str(i).startswith(('new_', 'unk_')) for i in (r.r_id, r.b_id))
+            for a, b in ((r.r_name, r.b_name), (r.b_name, r.r_name)):
+                facts[(when, norm_name(a), norm_name(b))] = (division, placeholder)
+        bouts, left_out = [], 0
         for bout in graded:
+            when = str(bout['actual_date'])[:10]
+            division, placeholder = facts.get(
+                (when, norm_name(bout['red_corner']), norm_name(bout['blue_corner'])),
+                (None, False))
+            if placeholder:
+                left_out += 1
+                continue
+            bouts.append((bout, when, {'division': division}))
+        if left_out:
+            print(f"{left_out} bouts filed under a placeholder id left out "
+                  f"(not rebuildable as training built them)")
+
+        # The live rows come out of the training pipeline, one pass (~12 s)
+        # per set of fights with no fighter in common: built per event date
+        # here, rather than one pass per bout inside predict_fight_prod.
+        by_date = {}
+        for bout, when, context in bouts:
+            by_date.setdefault(when, []).append((bout, context))
+        for when, items in sorted(by_date.items()):
+            engine.prepare_live_card(
+                [(b['red_corner'], b['blue_corner']) for b, _ in items], when,
+                contexts={i: c for i, (_, c) in enumerate(items)})
+
+        rows, refused = [], {}
+        for bout, when, context in bouts:
             pred = engine.predict_fight_prod(
-                bout['red_corner'], bout['blue_corner'],
-                event_date=str(bout['actual_date'])[:10],
-                context=None, verbose=False)
+                bout['red_corner'], bout['blue_corner'], event_date=when,
+                context=context, verbose=False)
             if pred.get('status') == 'NO_DATA':
+                refused[f"{bout['red_corner']} vs {bout['blue_corner']} {when}"] = pred['reason']
                 continue
             red_won = norm_name(bout['actual_winner']) == norm_name(bout['red_corner'])
             rows.append({
@@ -107,6 +152,10 @@ def main():
 
         df = pd.DataFrame(rows)
         print(f"re-predicted {len(df)} of {len(graded)}")
+        if refused:
+            print(f"{len(refused)} refused (NO DATA):")
+            for fight, reason in refused.items():
+                print(f"  {fight}: {reason[:110]}")
 
         print("\n" + "=" * 62)
         print("EACH LAYER, SAME BOUTS")

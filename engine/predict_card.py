@@ -1135,6 +1135,18 @@ for fighter in all_fighters:
 
 print(f"    Fighter lookup built: {len(fighter_stats):,} fighters")
 
+def _after_last_bout(stats, key, scale=1.0):
+    """A career value as it stands after the fighter's last bout (the cd_
+    columns), on the profile scale; NaN when the career is unknown, which
+    the readers below fall back from exactly as they do for a NaN profile."""
+    value = stats.get(key)
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return np.nan
+    return value * scale
+
+
 # --- Post-process fighter_stats with advanced features ---
 print("    Adding advanced features to fighter stats...")
 for fighter_key, stats in fighter_stats.items():
@@ -1161,11 +1173,16 @@ for fighter_key, stats in fighter_stats.items():
         else:
             stats['cardio'] = 0.5
 
-    # Archetype from current stats
+    # Archetype from the career AFTER the last bout (the cd_ columns
+    # final_stats merged above - exactly the r_splm/r_td_avg/... a pending
+    # row carries), not from the last row's pre-bout snapshot: the two
+    # disagree for 23% of fighters, and the pressure flag the cage-size
+    # adjustment reads flips for 15%.
     stats['archetype'] = classify_archetype(
-        stats.get('splm', 3), stats.get('td_avg', 1.5),
-        stats.get('sub_avg', 0.5), stats.get('str_def', 55),
-        stats.get('str_acc', 45)
+        _after_last_bout(stats, 'cd_slpm'), _after_last_bout(stats, 'cd_td_per15'),
+        _after_last_bout(stats, 'cd_sub_per15'),
+        _after_last_bout(stats, 'cd_str_def', 100.0),
+        _after_last_bout(stats, 'cd_str_acc', 100.0)
     )[0]
 
     # Weight class movement (last known)
@@ -1352,6 +1369,10 @@ def _check_fighters(red_name, blue_name):
         if res['note']:
             warnings.append(res['note'])
         resolved[corner] = (res['name'], stats)
+    if ('red' in resolved and 'blue' in resolved
+            and _norm_name(resolved['red'][0]) == _norm_name(resolved['blue'][0])):
+        problems.append(f"SAME FIGHTER: both corners resolve to "
+                        f"'{resolved['red'][0]}'.")
     return resolved, problems, warnings
 
 
@@ -1362,103 +1383,36 @@ def _check_fighters(red_name, blue_name):
 # becomes a pending row (pending_rows.py) after the archive cut the day before
 # the event, and feature_frame.build - the code that built every training
 # row - computes its features, with the interaction centres frozen at the
-# training values. The live path used to rebuild the same features by hand
-# from each fighter's last archived row; replaying the last four events,
-# that moved the winner probability a mean 15.6 points from the training-style
-# row for the same fight (experiments/live_parity.py).
-import pending_rows as _pending_rows
+# training values (live_rows.py, where this is tested without the engine).
+# The live path used to rebuild the same features by hand from each
+# fighter's last archived row; replaying the last four events, that moved
+# the winner probability a mean 15.6 points from the training-style row for
+# the same fight (experiments/live_parity.py).
+import live_rows as _live_rows
 
-_LIVE_ROWS = {}                     # key -> one-row frame of feature_cols
-_TRAIN_X_BY_FIGHT = X.set_index(ufc['fight_id'].astype(str))
-
-
-def _live_key(red, blue, when, is_5rnd, is_title, division):
-    return (str(when.date()), _norm_name(red), _norm_name(blue),
-            bool(is_5rnd), bool(is_title), str(division or ''))
-
-
-def _division_of(context):
-    if not context:
-        return None
-    return context.get('division') or context.get('weight_class')
+_LIVE = _live_rows.LiveRows(_UFC_RAW, X.set_index(ufc['fight_id'].astype(str)),
+                            INTERACTION_CENTRES)
 
 
 def prepare_live_rows(fights, event_date=None):
-    """Build the model rows for fights on one date, in as few passes as the
-    rule "no fighter twice in one pass" allows (about 12 s a pass).
-
-    fights: (red, blue, is_5rnd, is_title[, context]) tuples or dicts with
-    those keys, names as the archive spells them.
-    """
-    when = (pd.Timestamp(event_date) if event_date
-            else pd.Timestamp.today().normalize())
-    wanted = []
-    for f in fights:
-        if not isinstance(f, dict):
-            f = dict(zip(('red', 'blue', 'is_5rnd', 'is_title', 'context'), f))
-        key = _live_key(f['red'], f['blue'], when, f.get('is_5rnd'),
-                        f.get('is_title'), _division_of(f.get('context')))
-        if key not in _LIVE_ROWS and key not in [k for k, _ in wanted]:
-            wanted.append((key, f))
-    if not wanted:
-        return
-    raw_dates = pd.to_datetime(_UFC_RAW['date'], errors='coerce')
-    before = _UFC_RAW[raw_dates < when]
-    ids = _pending_rows.fighter_ids(before)
-    passes = []                     # each pass holds no fighter twice
-    for key, f in wanted:
-        pair = {ids.get(_norm_name(f['red'])), ids.get(_norm_name(f['blue']))}
-        if None in pair:            # no bout before this date: nothing to
-            continue                # build from (predict refuses these)
-        for batch in passes:
-            if not pair & batch['ids']:
-                batch['fights'].append((key, f)); batch['ids'] |= pair
-                break
-        else:
-            passes.append({'fights': [(key, f)], 'ids': set(pair)})
-    for batch in passes:
-        spec = [{'red': f['red'], 'blue': f['blue'], 'date': when,
-                 'is_5rnd': bool(f.get('is_5rnd')),
-                 'is_title': bool(f.get('is_title')),
-                 'division': _division_of(f.get('context'))}
-                for _, f in batch['fights']]
-        pend = _pending_rows.build_pending(before, spec)
-        built = _feature_frame.build(before, pending=pend,
-                                     centres=INTERACTION_CENTRES,
-                                     verbose=False)
-        n = built['N_ARCHIVE']
-        _check_append_invariance(built, n)
-        rows = built['X'].iloc[n:]
-        for (key, _), (_, row) in zip(batch['fights'], rows.iterrows()):
-            _LIVE_ROWS[key] = row.to_frame().T.reset_index(drop=True)
-
-
-def _check_append_invariance(built, n):
-    """The archive part of a live build must equal the training rows, bit
-    for bit. If it does not, something in the pipeline has started to read
-    across rows, and the live row cannot be trusted to match training."""
-    part = built['X'].iloc[:n]
-    part.index = built['ufc']['fight_id'].iloc[:n].astype(str).values
-    train = _TRAIN_X_BY_FIGHT.loc[part.index, part.columns]
-    same = (part.values == train.values) | (np.isnan(part.values)
-                                            & np.isnan(train.values))
-    if not same.all():
-        bad = sorted(set(part.columns[~same.all(axis=0)]))
-        print(f"    WARNING: live build differs from training on "
-              f"{len(bad)} columns ({', '.join(bad[:5])}) - live rows are "
-              f"NOT the training definition")
+    """Build the model rows for fights on one date in as few pipeline passes
+    as possible (about 12 s each). fights: (red, blue, is_5rnd, is_title[,
+    context]) tuples or dicts, names as the engine resolves them."""
+    return _LIVE.prepare(fights, event_date)
 
 
 def _live_row(red, blue, event_date, is_5rnd, is_title, context):
-    when = (pd.Timestamp(event_date) if event_date
-            else pd.Timestamp.today().normalize())
-    key = _live_key(red, blue, when, is_5rnd, is_title, _division_of(context))
-    if key not in _LIVE_ROWS:
-        prepare_live_rows([{'red': red, 'blue': blue, 'is_5rnd': is_5rnd,
-                            'is_title': is_title, 'context': context}], when)
-    if key not in _LIVE_ROWS:
-        raise KeyError(f"no bout before {when.date()} for {red} or {blue}")
-    return _LIVE_ROWS[key]
+    """The fight's model row, or live_rows.NoLiveRow saying why there is none."""
+    return _LIVE.row(red, blue, event_date, is_5rnd, is_title, context)
+
+
+def prepare_live_card(fights, event_date=None, contexts=None):
+    """The card prefetch: every fight of `fights` ((red, blue[, is_5rnd[,
+    is_title]]) as FIGHT_CARD holds them) that the engine accepts, built in
+    as few passes as possible, keyed exactly as predict_fight_prod will ask
+    for it. Batch callers replaying many bouts on one date use this once
+    per date instead of paying a pass per bout."""
+    return _LIVE.prepare_card(fights, event_date, contexts, check=_check_fighters)
 
 
 def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=False, context=None):
@@ -1521,9 +1475,15 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
     # These diagnostics are for the printed analysis; the model reads only
     # the training-pipeline row below.
 
-    # Model rows from the training pipeline (see _live_rows).
-    X_pred = _live_row(r_resolved or red_name, b_resolved or blue_name,
-                       event_date, is_5rnd, is_title, context)[feature_cols]
+    # The model row from the training pipeline (live_rows.py); a fight it
+    # cannot build is refused with the reason, never guessed.
+    try:
+        X_pred = _live_row(r_resolved or red_name, b_resolved or blue_name,
+                           event_date, is_5rnd, is_title, context)[feature_cols]
+    except _live_rows.NoLiveRow as err:
+        problems = [f"NO DATA: {err}"]
+        print(f"    {problems[0]}")
+        return _no_data_result(red_name, blue_name, problems)
     X_pred_s = scaler.transform(X_pred)
     
     # Win prediction (ensemble + calibration)
@@ -1611,7 +1571,8 @@ print("="*70)
 print("\n--- Example 1: Basic Prediction with Bayesian Skill Analysis ---")
 def _demo_basic_prediction():
     """Illustrative example. Skipped if the demo fighters are not in the data."""
-    result = predict_fight("Islam Makhachev", "Charles Oliveira", is_title=True, is_5rnd=True)
+    result = predict_fight("Islam Makhachev", "Charles Oliveira", is_title=True, is_5rnd=True,
+                           context={'division': 'lightweight'})
     if result.get('status') == 'NO_DATA':
         print(f"    Demo skipped: {result['reason']}")
         return
@@ -1655,6 +1616,7 @@ print("\n--- Example 2: With Context Adjustments ---")
 def _demo_context_prediction():
     """Illustrative example. Skipped if the demo fighters are not in the data."""
     context = {
+        'division': 'lightweight',   # the bout's weight class, as every card fight names it
         'red_home': True,  # Makhachev fighting in Abu Dhabi (close to home)
         'blue_short_notice': False,
         'red_pressure_fighter': True,
@@ -2272,14 +2234,16 @@ def compute_cage_control_likelihood(fighter_name, opponent_stats, event_date=Non
         except:
             return d
 
+    # The opponent's career as it stands after their last bout (the cd_
+    # columns), not the pre-bout snapshot of their last row.
     opp_stats_vec = {}
     if isinstance(opponent_stats, dict):
         opp_stats_vec = {
-            'opp_td_def': _safe_val(opponent_stats.get('td_def'), 50),
-            'opp_str_def': _safe_val(opponent_stats.get('str_def'), 50),
-            'opp_sapm': _safe_val(opponent_stats.get('sapm'), 3),
+            'opp_td_def': _safe_val(_after_last_bout(opponent_stats, 'cd_td_def', 100.0), 50),
+            'opp_str_def': _safe_val(_after_last_bout(opponent_stats, 'cd_str_def', 100.0), 50),
+            'opp_sapm': _safe_val(_after_last_bout(opponent_stats, 'cd_sapm'), 3),
             'opp_reach': _safe_val(opponent_stats.get('reach'), 70),
-            'opp_splm': _safe_val(opponent_stats.get('splm'), 3),
+            'opp_splm': _safe_val(_after_last_bout(opponent_stats, 'cd_slpm'), 3),
         }
     else:
         opp_stats_vec = {dim: 50 for dim in trigger_dims}
@@ -2410,10 +2374,17 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
     
     
     # The model rows come from the training pipeline itself: the fight as a
-    # pending row after every archived bout (see _live_rows). The hand-built
-    # feature dict that stood here drifted from training in 70 places.
-    _feat_frame = _live_row(r_resolved or red_name, b_resolved or blue_name,
-                            event_date, is_5rnd, is_title, context)
+    # pending row after every archived bout (live_rows.py). The hand-built
+    # feature dict that stood here drifted from training in 70 places. A
+    # fight the pipeline cannot build is refused with the reason.
+    try:
+        _feat_frame = _live_row(r_resolved or red_name, b_resolved or blue_name,
+                                event_date, is_5rnd, is_title, context)
+    except _live_rows.NoLiveRow as err:
+        problems = [f"NO DATA: {err}"]
+        if verbose:
+            print(f"    {problems[0]}")
+        return _no_data_result(red_name, blue_name, problems)
     X_pred = _feat_frame[feature_cols]
     X_pred_winner = _feat_frame[feature_cols_winner]
     X_pred_s = scaler_prod.transform(X_pred)          # For method/round/finish
@@ -2596,21 +2567,12 @@ def predict_card(fights, event_date=None, event_name="Fight Card", contexts=None
 
     # One pass of the training pipeline for the whole card, each fight in
     # the division its context names (inferred from the fighters' last
-    # bouts when it names none).
+    # bouts when it names none). Names are resolved the way prediction
+    # resolves them; a fight with a corner the engine refuses (a debut, an
+    # unknown name) is left out here and refused below as before.
     def _division_only(i):
-        return {'division': _division_of((contexts or {}).get(i))}
-    # Names are resolved the way prediction resolves them; a fight with a
-    # corner the engine refuses (a debut, an unknown name) is left out here
-    # and refused below as before.
-    _prefetch = []
-    for i, f in enumerate(fights):
-        _res, _problems, _ = _check_fighters(f[0], f[1])
-        if _problems:
-            continue
-        _prefetch.append((_res['red'][0], _res['blue'][0],
-                          f[2] if len(f) > 2 else False,
-                          f[3] if len(f) > 3 else False, _division_only(i)))
-    prepare_live_rows(_prefetch, event_date)
+        return {'division': _live_rows.division_of((contexts or {}).get(i))}
+    prepare_live_card(fights, event_date, contexts)
 
     for i, fight in enumerate(fights):
         if len(fight) == 2:
@@ -3883,7 +3845,7 @@ else:
     # tonight's, because find_odds takes one.
     _odds_csv = _odds_cache.ODDS_CSV
     _flag_index = _roi.load_odds(_odds_csv) if _odds_csv.exists() else {}
-    _live_rows = []
+    _flag_odds_rows = []
     for _ba in bet_analysis:
         _pred = _ba['pred_full']
         _vi = _ba.get('value_info') or {}
@@ -3892,9 +3854,9 @@ else:
         _opp_vi = (analyze_fight_value(_pred, _opp, CURRENT_ODDS)
                    if CURRENT_ODDS else None) or {}
         if _vi.get('best_odds') is not None and _opp_vi.get('best_odds') is not None:
-            _live_rows.append((EVENT_DATE, _pick, _opp,
-                               _vi['best_odds'], _opp_vi['best_odds']))
-    _roi.index_odds(_live_rows, into=_flag_index)
+            _flag_odds_rows.append((EVENT_DATE, _pick, _opp,
+                                    _vi['best_odds'], _opp_vi['best_odds']))
+    _roi.index_odds(_flag_odds_rows, into=_flag_index)
 
     _live_picks = [{'date': EVENT_DATE,
                     'pick': _ba['pred_full']['winner'],
@@ -3978,3 +3940,32 @@ _app_card = _app_export.card_payload(
 
 for _path in _app_export.write_all(APP_DATA_DIR, {'card': _app_card}):
     print(f"\nApp data: {_path}")
+
+
+# ============================================================================
+# A FIGHT THE PIPELINE CANNOT BUILD MUST REACH THE CARD AS NO DATA
+# ============================================================================
+# The card above never reaches the pipeline's refusal path when every fight
+# it refuses is caught by the name check first, so a mistake on that path -
+# a module name rebound further down this file, say - would show only in a
+# later caller: the experiments, or a card asked for after the import. One
+# fight the pipeline must refuse (two archived fighters, a date before any
+# bout), asked for now that every module-level name is bound.
+def _refusals_reach_the_card():
+    for _row in ufc_valid.tail(5).itertuples():
+        _red, _blue = str(_row.r_name), str(_row.b_name)
+        if _check_fighters(_red, _blue)[1]:
+            continue
+        _pred = predict_fight_prod(_red, _blue, event_date='1900-01-01', verbose=False)
+        if (_pred.get('status') == 'NO_DATA'
+                and 'no bout before 1900-01-01' in str(_pred.get('reason'))):
+            return
+        raise RuntimeError(
+            f"a fight the pipeline cannot build must come back NO DATA; "
+            f"{_red} vs {_blue} on 1900-01-01 came back "
+            f"{_pred.get('status')!r}: {_pred.get('reason')!r}")
+    raise RuntimeError("no archived fight passed the name check; the "
+                       "refusal path could not be exercised")
+
+
+_refusals_reach_the_card()

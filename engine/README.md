@@ -13,14 +13,20 @@ python engine/predict_card.py
 Edit the **USER SETTINGS** block at the top of `engine/predict_card.py` to set
 `EVENT_NAME`, `EVENT_DATE`, `FIGHT_CARD` and `FIGHT_CONTEXTS`, then re-run.
 Give every fight its weight class as `'division'` in `FIGHT_CONTEXTS`
-(`'lightweight'`, `"women's flyweight"`); without it the division is inferred
-from both fighters' last bouts, which is wrong whenever one is changing class.
+(`'lightweight'`, `"women's flyweight"`); without it the division is taken
+from the fighters' last bouts when both were in the same class, and the fight
+is refused as NO DATA when they were not (no training row has an empty
+division, so there is no honest row to build).
 Each run appends its picks to `engine/data/prediction_history.json`.
 
 Each card fight is predicted from the same code that built every training row:
 the fight becomes a row with no result after the archive (`pending_rows.py`)
-and goes through `feature_frame.build`, so the live features are the training
-features (`tests/test_live_rows.py`, `experiments/live_parity.py`).
+and goes through `feature_frame.build` (`live_rows.py`), so the live features
+are the training features (`tests/test_live_rows.py`,
+`tests/test_live_rows_engine.py`, `experiments/live_parity.py`). A fight the
+pipeline cannot build - a debut, a name two fighters share that the division
+does not settle, a fight with no division whose fighters last fought in
+different classes - is reported as NO DATA with the reason, never guessed.
 
 A full run takes a few minutes. Set `RUN_OPTUNA = True` for hyperparameter
 tuning (much slower); it defaults to pre-tuned parameters.

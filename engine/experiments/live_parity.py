@@ -61,12 +61,19 @@ def train_child(dates, out):
     day = pd.to_datetime(meta["date"]).dt.strftime("%Y-%m-%d")
     rows = []
     for i in np.flatnonzero(day.isin(dates).to_numpy()):
+        # A bout the sync filed under a placeholder id was built as a
+        # debut under 'new_<hex>'; the live path builds the fighter under
+        # the real id, so that training row is not reproducible by design
+        # (pending_rows._canon_ids) and the report leaves it out.
+        placeholder = any(str(meta.loc[i, c]).startswith(("new_", "unk_"))
+                          for c in ("r_id", "b_id"))
         rows.append({"date": day[i], "red": meta.loc[i, "r_name"],
                      "blue": meta.loc[i, "b_name"],
                      "won": float(engine.y_win[i]),
                      "is_5rnd": int(meta.loc[i, "total_rounds"] == 5),
                      "is_title": int(bool(meta.loc[i, "title_fight"])),
                      "division": str(meta.loc[i, "division"]),
+                     "placeholder": bool(placeholder),
                      "features": {c: float(X.loc[i, c]) for c in X.columns}})
     Path(out).write_text(json.dumps(rows))
 
@@ -100,13 +107,17 @@ def live_child(date, train_path, out):
             continue
         seen.clear()
         try:
-            engine.predict_fight_prod(fight["red"], fight["blue"],
-                                      event_date=date,
-                                      is_5rnd=fight["is_5rnd"],
-                                      is_title=fight["is_title"],
-                                      context={"division": fight.get("division")})
-        except Exception as err:            # a debut: no live row at all
-            rows.append({**fight, "live": None, "error": str(err)[:200]})
+            pred = engine.predict_fight_prod(fight["red"], fight["blue"],
+                                             event_date=date,
+                                             is_5rnd=fight["is_5rnd"],
+                                             is_title=fight["is_title"],
+                                             context={"division": fight.get("division")})
+        except Exception as err:            # a crash, not a refusal
+            rows.append({**fight, "live": None, "error": f"crash: {err}"[:200]})
+            continue
+        if pred.get("status") == "NO_DATA":  # refused with its reason: a
+            rows.append({**fight, "live": None,  # debut, a shared name...
+                         "error": str(pred.get("reason"))[:200]})
             continue
         if not seen:
             rows.append({**fight, "live": None, "error": "no prediction"})
@@ -134,9 +145,16 @@ def _logloss(y, p):
 
 
 def report(rows):
+    placeholder = [r for r in rows if r.get("placeholder")]
+    rows = [r for r in rows if not r.get("placeholder")]
     scored = [r for r in rows if r.get("live")]
-    print(f"\n  {len(rows)} fights, {len(scored)} predicted live "
-          f"(the rest are debuts the live path refuses)")
+    refused = [r for r in rows if not r.get("live")]
+    print(f"\n  {len(rows)} fights, {len(scored)} predicted live"
+          + (f", {len(placeholder)} filed under a placeholder id left out"
+             if placeholder else ""))
+    for r in refused:
+        print(f"    refused: {r['red']} vs {r['blue']} ({r['date']}): "
+              f"{r.get('error')}")
     if not scored:
         return {}
     gap = np.array([r["p_live"] - r["p_train"] for r in scored])
