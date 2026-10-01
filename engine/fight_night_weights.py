@@ -13,7 +13,7 @@ This reads every such section on every event and year page the world
 harvest discovers, into engine/data/fight_night_weights.csv:
 
     date, event, fighter, official_lbs, fight_night_lbs, gain_lbs,
-    gain_pct, source
+    gain_pct, source, published_at
 
 These are MEASUREMENTS, not the variable itself. A fight-night weight is
 taken on fight day and usually published after the bout, so it cannot be
@@ -21,6 +21,19 @@ used as a pre-fight input for the fight it was taken at. It is used to
 FIT an estimator of fight-night weight from pre-fight information (height,
 reach, division, previous divisions, age, earlier measured regains), and to
 check that estimator on fights it never saw.
+
+published_at is WHEN THE NUMBER BECAME PUBLIC, the only date that matters
+for point-in-time use: a measurement may inform a fight only if it was
+published strictly before that fight. It is read from the section's own
+citations, never earlier than the truth: the earliest cited article dated
+on or after the event whose title says it is about fight-night weights
+(Bellator 300: event October 7, MMA Fighting's "fight night weights"
+article October 9); otherwise the LATEST article the section cites on or
+after the event, because a results or salary article cited next to the
+weights write-up is dated before the numbers were public; and event date
++ 7 days when the section cites nothing dated on or after the event - a
+deliberate lag, not the event date. A citation dated only in prose
+("October 9, 2023") is parsed; one that cannot be parsed is ignored.
 
     python engine/fight_night_weights.py      (needs network)
 """
@@ -51,6 +64,98 @@ LINE = re.compile(
     r"\s*(?:pounds|lbs?\.?)?\s*(?:to|→|->|/|–|—|-)\s*" + NUMBER +
     r"\s*(?:pounds|lbs?\.?)?", re.M)
 HEADING = re.compile(r"^(={2,4})\s*(.*?)\s*\1\s*$", re.M)
+# A {{Cite ...}} template and, inside one, "|date=" ("|access-date=" and
+# "|archive-date=" do not match) and "|title=".
+CITE = re.compile(r"\{\{\s*[Cc]ite\b")
+CITE_DATE = re.compile(r"\|\s*date\s*=\s*([^|}\n]+)")
+CITE_TITLE = re.compile(r"\|\s*title\s*=\s*([^|}\n]+)")
+# A title that says the article carries the fight-night numbers.
+FIGHT_NIGHT_TITLE = re.compile(r"fight[- ]night|fight[- ]day|second[- ]day|"
+                               r"rehydrat|regain|day[- ]of[- ]fight", re.I)
+# Without a dated citation, a measurement counts as public this many days
+# after the event. CSAC releases the numbers after the bout and media write
+# them up over the following days, so the event date itself is too early.
+PUBLICATION_LAG_DAYS = 7
+COLUMNS = ["date", "event", "fighter", "official_lbs", "fight_night_lbs",
+           "gain_lbs", "gain_pct", "source", "published_at"]
+
+
+def citations(body):
+    """(date, title) for every {{Cite ...}} in the text whose date parses.
+
+    The date is read in the forms Wikipedia uses (2023-10-09, October 9,
+    2023, 9 October 2023); a date that cannot be parsed, or that is not a
+    real day, drops the citation rather than aborting the harvest.
+    """
+    text = body or ""
+    out = []
+    for hit in CITE.finditer(text):
+        depth, i = 0, hit.start()
+        while i < len(text) - 1:                    # walk to the matching }}
+            pair = text[i:i + 2]
+            if pair == "{{":
+                depth += 1
+                i += 2
+                continue
+            if pair == "}}":
+                depth -= 1
+                i += 2
+                if depth == 0:
+                    break
+                continue
+            i += 1
+        template = text[hit.start():i]
+        date = CITE_DATE.search(template)
+        if not date:
+            continue
+        when = pd.to_datetime(parse_date(date.group(1).strip()), errors="coerce")
+        if pd.isna(when):
+            continue
+        title = CITE_TITLE.search(template)
+        out.append((when, plain(title.group(1)) if title else ""))
+    return out
+
+
+def published_at(event_date, body=""):
+    """The date the section's numbers became public, as YYYY-MM-DD.
+
+    Among the section's citations dated on or after the event: the
+    earliest whose title says fight-night weights; failing that the LATEST
+    of them (a results article cited alongside the write-up is dated
+    before the numbers were public, so the earliest would be too early);
+    failing that event date + PUBLICATION_LAG_DAYS. A citation dated
+    before the event (a weigh-in report) cannot have carried fight-night
+    numbers and is ignored. None when the event date is unknown.
+    """
+    if not event_date:
+        return None
+    day = pd.Timestamp(event_date)
+    after = [(d, t) for d, t in citations(body) if d >= day]
+    night = [d for d, t in after if FIGHT_NIGHT_TITLE.search(t or "")]
+    if night:
+        when = min(night)
+    elif after:
+        when = max(d for d, _ in after)
+    else:
+        when = day + pd.Timedelta(days=PUBLICATION_LAG_DAYS)
+    return when.strftime("%Y-%m-%d")
+
+
+def with_published_at(frame):
+    """The same frame with published_at filled by the rule where missing.
+
+    Rows harvested before the column existed carry no citation date, so
+    they get the conservative event date + PUBLICATION_LAG_DAYS.
+    """
+    frame = frame.copy()
+    fallback = (pd.to_datetime(frame["date"], errors="coerce")
+                + pd.Timedelta(days=PUBLICATION_LAG_DAYS)).dt.strftime("%Y-%m-%d")
+    if "published_at" not in frame.columns:
+        frame["published_at"] = fallback
+    else:
+        blank = frame["published_at"].isna() | (frame["published_at"].astype(str).str.strip() == "")
+        frame.loc[blank, "published_at"] = fallback[blank]
+    return frame
 
 
 def sections(wikitext):
@@ -85,6 +190,7 @@ def weights(wikitext, page=""):
         for pos, title, d in anchors:
             if pos < start and d:
                 event, date = title, d
+        public = published_at(date, body)     # from the refs, before they go
         body = re.sub(r"<ref[^>]*>.*?</ref>|<ref[^>]*/>", " ", body, flags=re.S)
         for m in LINE.finditer(body):
             name = plain(m.group("name")).strip(" *:")
@@ -96,7 +202,7 @@ def weights(wikitext, page=""):
                          "official_lbs": official, "fight_night_lbs": night,
                          "gain_lbs": round(night - official, 1),
                          "gain_pct": round(100 * (night - official) / official, 2),
-                         "source": page})
+                         "source": page, "published_at": public})
     return rows
 
 
@@ -115,10 +221,9 @@ def main(argv=None):
         if found:
             pages += 1
             rows += found
-    frame = pd.DataFrame(rows, columns=["date", "event", "fighter",
-                                        "official_lbs", "fight_night_lbs",
-                                        "gain_lbs", "gain_pct", "source"])
+    frame = pd.DataFrame(rows, columns=COLUMNS)
     frame = frame.drop_duplicates(["date", "fighter"]).sort_values(["date", "event"])
+    frame = with_published_at(frame)
     frame.to_csv(OUT, index=False)
     print(f"\n  {len(frame):,} measured fighter-weights from {pages} pages")
     if len(frame):

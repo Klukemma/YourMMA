@@ -36,6 +36,7 @@ on:
           - mentality
           - short_notice_weight
           - size_edge
+          - true_fight_weight_edge
         default: stale_form
   schedule:
     - cron: "0 6 * * MON"   # Mondays 06:00 UTC, after the weekend's cards

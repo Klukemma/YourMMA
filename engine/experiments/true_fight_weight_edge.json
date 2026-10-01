@@ -1,0 +1,758 @@
+{
+ "generated": "2026-10-01T01:54:37.628032+00:00",
+ "family": 3,
+ "arms": [
+  "regain_edge_top_third",
+  "tfw_gap_top_third",
+  "frame_only_gap_top_third"
+ ],
+ "placebo": "placebo_residuals_permuted",
+ "gate": {
+  "mean_gain_lb": 1.8067334479166561,
+  "interval": [
+   -0.11982350000000963,
+   3.0792749999999955
+  ],
+  "events": 3,
+  "bouts": 8,
+  "max_event_share": 0.852166378928421,
+  "passed": false,
+  "testable": false,
+  "reason": "too few events to test: 3 events, 6 needed before an event bootstrap can reach zero (the interval includes zero but cannot judge)"
+ },
+ "k_for_next_fight": 0.0,
+ "k_identified": false,
+ "frame_features_earned": false,
+ "validation": {
+  "labels": 146,
+  "events": 6,
+  "suspect_flagged": 2,
+  "off_limit_flagged": 13,
+  "heavyweight_rows": 12,
+  "spelling_corrections": true,
+  "predicted_rows": 99,
+  "predicted_events": 5,
+  "first_event_training_only": true,
+  "groups": {
+   "with_history": {
+    "n": 8,
+    "events": 3,
+    "division_median": {
+     "mae_pts": 2.5006250000000003,
+     "mae_lb": 3.295883125000001,
+     "n": 8
+    },
+    "division_mean": {
+     "mae_pts": 2.4957916666666673,
+     "mae_lb": 3.3149472708333345,
+     "n": 8
+    },
+    "earlier_regain_alone": {
+     "mae_pts": 0.8250000000000001,
+     "mae_lb": 1.1265125000000002,
+     "n": 8
+    },
+    "by_k": {
+     "0.0": {
+      "mae_pts": 0.8250000000000001,
+      "mae_lb": 1.1265125000000002,
+      "n": 8
+     },
+     "0.25": {
+      "mae_pts": 0.9492000000000009,
+      "mae_lb": 1.2857739125000012,
+      "n": 8
+     },
+     "0.5": {
+      "mae_pts": 1.1519305555555566,
+      "mae_lb": 1.5493974236111125,
+      "n": 8
+     },
+     "1.0": {
+      "mae_pts": 1.4878958333333345,
+      "mae_lb": 1.9907848854166685,
+      "n": 8
+     },
+     "2.0": {
+      "mae_pts": 1.8238611111111123,
+      "mae_lb": 2.432172347222224,
+      "n": 8
+     },
+     "4.0": {
+      "mae_pts": 2.0926333333333345,
+      "mae_lb": 2.7852823166666685,
+      "n": 8
+     },
+     "8.0": {
+      "mae_pts": 2.2718148148148156,
+      "mae_lb": 3.0206889629629643,
+      "n": 8
+     },
+     "inf": {
+      "mae_pts": 2.4957916666666673,
+      "mae_lb": 3.3149472708333345,
+      "n": 8
+     }
+    },
+    "frame_by_k": {
+     "0.0": {
+      "mae_pts": 0.8828434261905644,
+      "mae_lb": 1.1900423644327198,
+      "n": 8
+     },
+     "0.25": {
+      "mae_pts": 0.8105673433595191,
+      "mae_lb": 1.1022339125656027,
+      "n": 8
+     },
+     "0.5": {
+      "mae_pts": 1.0032567339727918,
+      "mae_lb": 1.3522516451799207,
+      "n": 8
+     },
+     "1.0": {
+      "mae_pts": 1.3392220117505695,
+      "mae_lb": 1.7936391069854762,
+      "n": 8
+     },
+     "2.0": {
+      "mae_pts": 1.6751872895283475,
+      "mae_lb": 2.235026568791032,
+      "n": 8
+     },
+     "4.0": {
+      "mae_pts": 1.9439595117505697,
+      "mae_lb": 2.588136538235476,
+      "n": 8
+     },
+     "8.0": {
+      "mae_pts": 2.1231409932320506,
+      "mae_lb": 2.823543184531772,
+      "n": 8
+     },
+     "inf": {
+      "mae_pts": 2.3471178450839023,
+      "mae_lb": 3.117801492402142,
+      "n": 8
+     }
+    },
+    "model_nested_k": {
+     "mae_pts": 1.0615416666666673,
+     "mae_lb": 1.4469188437500007,
+     "n": 8
+    },
+    "model_frame_nested_k": {
+     "mae_pts": 1.1143439279149485,
+     "mae_lb": 1.503632929685927,
+     "n": 8
+    },
+    "k_used": [
+     0.0,
+     1.0
+    ],
+    "shrinkage_gain_over_earlier_regain_pts": -0.2365416666666672,
+    "k_identified": false,
+    "k_identified_reason": "8 rows with history; 30 needed before a chosen k means more than noise"
+   },
+   "without_history": {
+    "n": 91,
+    "events": 5,
+    "division_median": {
+     "mae_pts": 3.291758241758241,
+     "mae_lb": 5.057808241758242,
+     "n": 91
+    },
+    "division_mean": {
+     "mae_pts": 3.3800935512988906,
+     "mae_lb": 5.194668007898847,
+     "n": 91
+    },
+    "model_nested_k": {
+     "mae_pts": 3.3800935512988906,
+     "mae_lb": 5.194668007898847,
+     "n": 91
+    },
+    "model_frame_nested_k": {
+     "mae_pts": 3.4277712183148843,
+     "mae_lb": 5.299175285166984,
+     "n": 91
+    },
+    "k_used": [
+     0.0,
+     1.0
+    ]
+   }
+  },
+  "frame_features": {
+   "earned": false,
+   "n": 91,
+   "mean_gain_pts": -0.04767766701599421,
+   "interval": [
+    -0.15644105931516147,
+    0.05930530560474825
+   ],
+   "reason": "does not clearly lower the error for fighters without history"
+  },
+  "bouts": {
+   "bouts": 48,
+   "events": 5,
+   "excluded": {
+    "heavyweight": 0,
+    "off_limit": 8,
+    "pooled_level": 0
+   },
+   "all": {
+    "n": 48,
+    "events": 5,
+    "weigh_in_only": {
+     "gap_mae_lb": 6.900000000000001,
+     "picks_heavier": 0.7567567567567568,
+     "decided": 37
+    },
+    "division_median": {
+     "gap_mae_lb": 6.878579375000002,
+     "picks_heavier": 0.7567567567567568,
+     "decided": 37
+    },
+    "model": {
+     "gap_mae_lb": 6.582512492408249,
+     "picks_heavier": 0.7368421052631579,
+     "decided": 38
+    },
+    "model_vs_weigh_in_only": {
+     "mean_gain_lb": 0.3174875075917522,
+     "interval": [
+      -0.00014996721315583273,
+      0.8899537936845642
+     ],
+     "events": 5,
+     "per_event": {
+      "Bellator 300: Nurmagomedov vs. Primus": {
+       "n": 10,
+       "mean": 0.019248545454547638,
+       "sum": 0.1924854545454764
+      },
+      "Bellator Champions Series 4: Nurmagomedov vs. Shabliy": {
+       "n": 9,
+       "mean": -0.03185296609285615,
+       "sum": -0.28667669483570535
+      },
+      "PFL San Diego: McKee vs. Isbulaev": {
+       "n": 8,
+       "mean": 1.544645569444441,
+       "sum": 12.357164555555528
+      },
+      "UFC 298: Volkanovski vs. Topuria": {
+       "n": 11,
+       "mean": 0.016971344294006485,
+       "sum": 0.18668478723407134
+      },
+      "UFC 311: Makhachev vs. Moicano": {
+       "n": 10,
+       "mean": 0.27897422619047346,
+       "sum": 2.7897422619047347
+      }
+     },
+     "max_event_share": 0.8108694738684832,
+     "leave_one_event_out": {
+      "Bellator 300: Nurmagomedov vs. Primus": {
+       "n": 38,
+       "mean": 0.3959714449962797,
+       "interval": [
+        -0.0049995953800817,
+        1.1146914233888146
+       ]
+      },
+      "Bellator Champions Series 4: Nurmagomedov vs. Shabliy": {
+       "n": 39,
+       "mean": 0.39810453998050793,
+       "interval": [
+        0.018055725799026083,
+        1.0959993859180017
+       ]
+      },
+      "PFL San Diego: McKee vs. Isbulaev": {
+       "n": 40,
+       "mean": 0.07205589522121443,
+       "interval": [
+        -0.017719613086132756,
+        0.20868077007190916
+       ]
+      },
+      "UFC 298: Volkanovski vs. Topuria": {
+       "n": 37,
+       "mean": 0.4068301507343252,
+       "interval": [
+        -0.004957433699485735,
+        1.1146914233888146
+       ]
+      },
+      "UFC 311: Makhachev vs. Moicano": {
+       "n": 38,
+       "mean": 0.32762258164472025,
+       "interval": [
+        -0.017719613086132756,
+        1.0959993859180017
+       ]
+      }
+     }
+    },
+    "rank_corr": 0.4618114962572792,
+    "calibration_slope": 2.102076659195458
+   },
+   "either_history": {
+    "n": 8,
+    "events": 3,
+    "weigh_in_only": {
+     "gap_mae_lb": 6.050000000000004,
+     "picks_heavier": 0.8571428571428571,
+     "decided": 7
+    },
+    "division_median": {
+     "gap_mae_lb": 6.0205806250000045,
+     "picks_heavier": 0.8571428571428571,
+     "decided": 7
+    },
+    "model": {
+     "gap_mae_lb": 4.243266552083348,
+     "picks_heavier": 0.75,
+     "decided": 8
+    },
+    "model_vs_weigh_in_only": {
+     "mean_gain_lb": 1.8067334479166561,
+     "interval": [
+      -0.11982350000000963,
+      3.0792749999999955
+     ],
+     "events": 3,
+     "per_event": {
+      "Bellator Champions Series 4: Nurmagomedov vs. Shabliy": {
+       "n": 2,
+       "mean": -0.11982350000000963,
+       "sum": -0.23964700000001926
+      },
+      "PFL San Diego: McKee vs. Isbulaev": {
+       "n": 4,
+       "mean": 3.0792749999999955,
+       "sum": 12.317099999999982
+      },
+      "UFC 311: Makhachev vs. Moicano": {
+       "n": 2,
+       "mean": 1.188207291666643,
+       "sum": 2.376414583333286
+      }
+     },
+     "max_event_share": 0.852166378928421,
+     "leave_one_event_out": {
+      "Bellator Champions Series 4: Nurmagomedov vs. Shabliy": {
+       "n": 6,
+       "mean": 2.4489190972222112,
+       "interval": [
+        1.188207291666643,
+        3.0792749999999955
+       ]
+      },
+      "PFL San Diego: McKee vs. Isbulaev": {
+       "n": 4,
+       "mean": 0.5341918958333167,
+       "interval": [
+        -0.11982350000000963,
+        1.188207291666643
+       ]
+      },
+      "UFC 311: Makhachev vs. Moicano": {
+       "n": 6,
+       "mean": 2.012908833333327,
+       "interval": [
+        -0.11982350000000963,
+        3.0792749999999955
+       ]
+      }
+     }
+    },
+    "rank_corr": 0.8571428571428571,
+    "calibration_slope": 2.062600925192079,
+    "rows": [
+     {
+      "date": "2024-09-07",
+      "event": "Bellator Champions Series 4: Nurmagomedov vs. Shabliy",
+      "red": "John MaCalolooy",
+      "blue": "Bryce Meredith",
+      "measured": -6.6,
+      "weigh_in_only": -1.0,
+      "model": -0.97
+     },
+     {
+      "date": "2024-09-07",
+      "event": "Bellator Champions Series 4: Nurmagomedov vs. Shabliy",
+      "red": "Usman Nurmagomedov",
+      "blue": "Alexander Shabliy",
+      "measured": -0.4,
+      "weigh_in_only": 0.0,
+      "model": 0.21
+     },
+     {
+      "date": "2025-01-18",
+      "event": "UFC 311: Makhachev vs. Moicano",
+      "red": "Merab Dvalishvili",
+      "blue": "Umar Nurmagomedov",
+      "measured": 0.0,
+      "weigh_in_only": -1.0,
+      "model": 1.31
+     },
+     {
+      "date": "2025-01-18",
+      "event": "UFC 311: Makhachev vs. Moicano",
+      "red": "Muin Gafurov",
+      "blue": "Rinya Nakamura",
+      "measured": 3.2,
+      "weigh_in_only": 0.5,
+      "model": 3.19
+     },
+     {
+      "date": "2026-06-27",
+      "event": "PFL San Diego: McKee vs. Isbulaev",
+      "red": "Liz Carmouche",
+      "blue": "Viviane Araujo",
+      "measured": 17.9,
+      "weigh_in_only": 0.2,
+      "model": 10.93
+     },
+     {
+      "date": "2026-06-27",
+      "event": "PFL San Diego: McKee vs. Isbulaev",
+      "red": "Shannon Clark",
+      "blue": "Ilara Joanne",
+      "measured": 4.3,
+      "weigh_in_only": 0.6,
+      "model": 0.91
+     },
+     {
+      "date": "2026-06-27",
+      "event": "PFL San Diego: McKee vs. Isbulaev",
+      "red": "Alexander Shabliy",
+      "blue": "Alfie Davis",
+      "measured": -12.5,
+      "weigh_in_only": -0.2,
+      "model": -0.74
+     },
+     {
+      "date": "2026-06-27",
+      "event": "PFL San Diego: McKee vs. Isbulaev",
+      "red": "Ariane da Silva",
+      "blue": "Jena Bishop",
+      "measured": 6.0,
+      "weigh_in_only": 1.0,
+      "model": 1.73
+     }
+    ]
+   }
+  },
+  "gate": {
+   "mean_gain_lb": 1.8067334479166561,
+   "interval": [
+    -0.11982350000000963,
+    3.0792749999999955
+   ],
+   "events": 3,
+   "bouts": 8,
+   "max_event_share": 0.852166378928421,
+   "passed": false,
+   "testable": false,
+   "reason": "too few events to test: 3 events, 6 needed before an event bootstrap can reach zero (the interval includes zero but cannot judge)"
+  },
+  "k_last_event": 0.0,
+  "k_final": 0.0,
+  "k_identified": false,
+  "leave_one_event_out": {
+   "k": 0.0,
+   "note": "every other event predicts each one, later events included: not point in time, not the gate",
+   "with_history": {
+    "n": 16,
+    "events": 5,
+    "division_median": {
+     "mae_pts": 2.3128124999999997,
+     "mae_lb": 3.0279887500000005,
+     "n": 16
+    },
+    "division_mean": {
+     "mae_pts": 2.4778482142857143,
+     "mae_lb": 3.2857224489348376,
+     "n": 16
+    },
+    "earlier_regain_alone": {
+     "mae_pts": 0.8250000000000001,
+     "mae_lb": 1.1268375000000002,
+     "n": 16
+    },
+    "by_k": {
+     "0.0": {
+      "mae_pts": 0.8250000000000001,
+      "mae_lb": 1.1268375000000002,
+      "n": 16
+     },
+     "0.25": {
+      "mae_pts": 0.9324446428571427,
+      "mae_lb": 1.251356656453634,
+      "n": 16
+     },
+     "0.5": {
+      "mae_pts": 1.1376507936507938,
+      "mae_lb": 1.516492899644946,
+      "n": 16
+     },
+     "1.0": {
+      "mae_pts": 1.4496011904761907,
+      "mae_lb": 1.9230430994674188,
+      "n": 16
+     },
+     "2.0": {
+      "mae_pts": 1.7615515873015877,
+      "mae_lb": 2.3295932992898916,
+      "n": 16
+     },
+     "4.0": {
+      "mae_pts": 2.0445285714285717,
+      "mae_lb": 2.70656245914787,
+      "n": 16
+     },
+     "8.0": {
+      "mae_pts": 2.2371150793650796,
+      "mae_lb": 2.9639668990531884,
+      "n": 16
+     },
+     "inf": {
+      "mae_pts": 2.4778482142857143,
+      "mae_lb": 3.2857224489348376,
+      "n": 16
+     }
+    },
+    "frame_by_k": {
+     "0.0": {
+      "mae_pts": 0.8992296564821869,
+      "mae_lb": 1.2180686419613114,
+      "n": 16
+     },
+     "0.25": {
+      "mae_pts": 0.7905304511941726,
+      "mae_lb": 1.0704493792252288,
+      "n": 16
+     },
+     "0.5": {
+      "mae_pts": 0.968881823609111,
+      "mae_lb": 1.298467363877391,
+      "n": 16
+     },
+     "1.0": {
+      "mae_pts": 1.2766853950376822,
+      "mae_lb": 1.6993778811601812,
+      "n": 16
+     },
+     "2.0": {
+      "mae_pts": 1.584488966466254,
+      "mae_lb": 2.100288398442972,
+      "n": 16
+     },
+     "4.0": {
+      "mae_pts": 1.8628502110910932,
+      "mae_lb": 2.4702450698245455,
+      "n": 16
+     },
+     "8.0": {
+      "mae_pts": 2.0554367190276013,
+      "mae_lb": 2.7276495097298645,
+      "n": 16
+     },
+     "inf": {
+      "mae_pts": 2.296169853948236,
+      "mae_lb": 3.049405059611513,
+      "n": 16
+     }
+    },
+    "model_nested_k": {
+     "mae_pts": 0.8250000000000001,
+     "mae_lb": 1.1268375000000002,
+     "n": 16
+    },
+    "model_frame_nested_k": {
+     "mae_pts": 0.8992296564821869,
+     "mae_lb": 1.2180686419613114,
+     "n": 16
+    },
+    "k_used": [
+     0.0
+    ],
+    "shrinkage_gain_over_earlier_regain_pts": 0.0,
+    "k_identified": false,
+    "k_identified_reason": "16 rows with history; 30 needed before a chosen k means more than noise"
+   },
+   "without_history": {
+    "n": 103,
+    "events": 6,
+    "division_median": {
+     "mae_pts": 3.1050485436893203,
+     "mae_lb": 4.709578106796116,
+     "n": 103
+    },
+    "division_mean": {
+     "mae_pts": 3.193836084805616,
+     "mae_lb": 4.856995726412526,
+     "n": 103
+    },
+    "model_nested_k": {
+     "mae_pts": 3.193836084805616,
+     "mae_lb": 4.856995726412526,
+     "n": 103
+    },
+    "model_frame_nested_k": {
+     "mae_pts": 3.390713713871034,
+     "mae_lb": 5.193394423433087,
+     "n": 103
+    },
+    "k_used": [
+     0.0
+    ]
+   }
+  },
+  "without_spelling_corrections": {
+   "labels": 146,
+   "with_history_rows": 7,
+   "with_history_events": 3,
+   "earlier_regain_alone_pts": 0.7114285714285714,
+   "model_nested_k_pts": 0.9817619047619052,
+   "either_history_bouts": 7,
+   "either_history_events": 3,
+   "model_vs_weigh_in_only_lb": 1.987381083333324,
+   "interval": [
+    -0.11982350000000963,
+    3.9249666666666676
+   ],
+   "gate": {
+    "mean_gain_lb": 1.987381083333324,
+    "interval": [
+     -0.11982350000000963,
+     3.9249666666666676
+    ],
+    "events": 3,
+    "bouts": 7,
+    "max_event_share": 0.8464046405268338,
+    "passed": false,
+    "testable": false,
+    "reason": "too few events to test: 3 events, 6 needed before an event bootstrap can reach zero (the interval includes zero but cannot judge)"
+   }
+  }
+ },
+ "coverage": {
+  "labels": 146,
+  "label_events": 6,
+  "usable_labels": 133,
+  "first_publication": "2022-08-20",
+  "fights_since_first_publication": 2028,
+  "priced_since_first_publication": 1091,
+  "eligible_priced": 991,
+  "with_a_measured_fighter": 192,
+  "with_a_measured_fighter_priced": 75,
+  "distinct_measured_fighters": 57,
+  "with_two_measured_fighters": 6,
+  "with_two_measured_fighters_priced": 1
+ },
+ "thresholds": {
+  "regain_edge_top_third": {
+   "abs_delta_at_least": 1.1554545454545462,
+   "frozen_on": 37
+  },
+  "tfw_gap_top_third": {
+   "abs_delta_at_least": 1.1554545454545289,
+   "frozen_on": 37
+  },
+  "frame_only_gap_top_third": {
+   "abs_delta_at_least": 1.4672813420216375,
+   "frozen_on": 458
+  }
+ },
+ "arm2_differs_from_arm1_on": 2,
+ "secondary_logit": {
+  "n": 75,
+  "events": 48,
+  "delta_pct_per_point": -0.01914191122177312,
+  "se": 0.1361736602728358,
+  "z": -0.14056985163959482,
+  "logit_market": 2.031863025029694,
+  "logit_market_se": 0.5015087194022859,
+  "note": "red win on logit(market) + delta_pct, errors clustered by event"
+ },
+ "results": [
+  {
+   "label": "regain_edge_top_third",
+   "n": 36,
+   "fighters": 30,
+   "events": 27,
+   "family": 3,
+   "too_few": true,
+   "placebo": false,
+   "threshold": 1.1554545454545462,
+   "marked": 36,
+   "shared_with_arm1": 36,
+   "shared_with_arm1_share": 1.0,
+   "marked_side_unmeasured": 19,
+   "marked_side_unmeasured_share": 0.5277777777777778
+  },
+  {
+   "label": "tfw_gap_top_third",
+   "n": 35,
+   "fighters": 29,
+   "events": 26,
+   "family": 3,
+   "too_few": true,
+   "placebo": false,
+   "threshold": 1.1554545454545289,
+   "marked": 35,
+   "shared_with_arm1": 35,
+   "shared_with_arm1_share": 1.0,
+   "marked_side_unmeasured": 19,
+   "marked_side_unmeasured_share": 0.5428571428571428,
+   "duplicates_arm1_except_missed_weight": true,
+   "t1_odds_timing_rule_met": false
+  },
+  {
+   "label": "frame_only_gap_top_third",
+   "n": 200,
+   "fighters": 151,
+   "events": 74,
+   "family": 3,
+   "model_matched": 1.0,
+   "model_raw": -0.05152155564635777,
+   "model_adjusted": -0.05629223969090089,
+   "model_low": -0.134522806369637,
+   "model_high": 0.024640449709876545,
+   "blend_matched": 1.0,
+   "blend_raw": -0.035204314315601434,
+   "blend_adjusted": -0.04371462843419582,
+   "blend_low": -0.11595854271593424,
+   "blend_high": 0.029521974203859727,
+   "verdict": "inside the noise",
+   "placebo": false,
+   "threshold": 1.4672813420216375,
+   "marked": 200,
+   "shared_with_arm1": 0,
+   "shared_with_arm1_share": 0.0,
+   "marked_side_unmeasured": 200,
+   "marked_side_unmeasured_share": 1.0
+  },
+  {
+   "label": "placebo_residuals_permuted",
+   "n": 36,
+   "fighters": 33,
+   "events": 28,
+   "family": 3,
+   "too_few": true,
+   "placebo": true,
+   "threshold": 1.1554545454545462,
+   "marked": 36,
+   "shared_with_arm1": 9,
+   "shared_with_arm1_share": 0.25,
+   "marked_side_unmeasured": 25,
+   "marked_side_unmeasured_share": 0.6944444444444444
+  }
+ ]
+}
