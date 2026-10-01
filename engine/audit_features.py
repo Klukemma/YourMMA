@@ -40,6 +40,9 @@ ENGINE = Path(__file__).resolve().parent
 DATA_DIR = ENGINE / "data"
 UFC_CSV = Path(os.environ.get("UFC_CSV", DATA_DIR / "UFC_with_mmr_rebuilt_dedup.csv"))
 DEFAULT_TARGET = ENGINE / "predict_card.py"
+# The feature code moved to feature_frame.py; with no target given, both are
+# audited, so a dead threshold in a feature cannot hide by moving files.
+DEFAULT_TARGETS = (DEFAULT_TARGET, ENGINE / "feature_frame.py")
 
 # A default this far outside the observed range is worth a look even when it is
 # technically reachable, because it is almost always a leftover from a rescale.
@@ -296,12 +299,18 @@ def report(dead, defaults, missing=None):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("target", nargs="?", default=str(DEFAULT_TARGET))
+    ap.add_argument("target", nargs="?", default=None)
     ap.add_argument("--strict", action="store_true",
                     help="exit non-zero when anything is found")
     args = ap.parse_args()
-    dead, defaults = audit(args.target)
-    total = report(dead, defaults, missing_prediction_features(args.target))
+    targets = [args.target] if args.target else list(DEFAULT_TARGETS)
+    dead, defaults = [], []
+    ranges = column_ranges()
+    for target in targets:
+        d, f = audit(target, ranges)
+        dead += d
+        defaults += f
+    total = report(dead, defaults, missing_prediction_features(targets[0]))
     if args.strict and total:
         sys.exit(1)
 
