@@ -8,50 +8,26 @@
  "summary": {
   "fights": 50,
   "scored": 31,
-  "mean_abs_gap": 0.004542799847526865,
+  "mean_abs_gap": 0.0019091635851515567,
   "share_gap_over_5pts": 0.0,
   "share_pick_flipped": 0.0,
-  "logloss_live": 0.48561255811756504,
-  "logloss_train_features": 0.49003271060597425,
+  "logloss_live": 0.48933280944605306,
+  "logloss_train_features": 0.4900327106059742,
   "accuracy_live": 0.8709677419354839,
   "accuracy_train_features": 0.8709677419354839
  },
  "features": [
   {
    "feature": "mx_mass_adv",
-   "share_differs": 0.12903225806451613,
+   "share_differs": 0.06451612903225806,
    "live_zero_train_not": 0.0,
-   "mean_abs_diff_sd": 0.5278557115705328
-  },
-  {
-   "feature": "wc_move_diff",
-   "share_differs": 0.12903225806451613,
-   "live_zero_train_not": 0.12903225806451613,
-   "mean_abs_diff_sd": 0.36514837167011066
-  },
-  {
-   "feature": "is_womens",
-   "share_differs": 0.03225806451612903,
-   "live_zero_train_not": 0.03225806451612903,
-   "mean_abs_diff_sd": 0.10910894511799621
-  },
-  {
-   "feature": "is_heavyweight",
-   "share_differs": 0.03225806451612903,
-   "live_zero_train_not": 0.03225806451612903,
-   "mean_abs_diff_sd": 0.09622504486493763
+   "mean_abs_diff_sd": 0.3607456119276003
   },
   {
    "feature": "r_sub_vs_b_subdef",
    "share_differs": 1.0,
    "live_zero_train_not": 0.0,
    "mean_abs_diff_sd": 0.002259475008773321
-  },
-  {
-   "feature": "prime_wc_diff",
-   "share_differs": 0.06451612903225806,
-   "live_zero_train_not": 0.0,
-   "mean_abs_diff_sd": 0.028517431083180982
   },
   {
    "feature": "b_sub_vs_r_subdef",
@@ -420,7 +396,19 @@
    "mean_abs_diff_sd": 0.0
   },
   {
+   "feature": "is_heavyweight",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
    "feature": "is_title",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "is_womens",
    "share_differs": 0.0,
    "live_zero_train_not": 0.0,
    "mean_abs_diff_sd": 0.0
@@ -565,6 +553,12 @@
   },
   {
    "feature": "power_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "prime_wc_diff",
    "share_differs": 0.0,
    "live_zero_train_not": 0.0,
    "mean_abs_diff_sd": 0.0
@@ -762,6 +756,12 @@
    "mean_abs_diff_sd": 0.0
   },
   {
+   "feature": "wc_move_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
    "feature": "winrate_diff",
    "share_differs": 0.0,
    "live_zero_train_not": 0.0,
@@ -782,7 +782,8 @@
    "won": 1.0,
    "is_5rnd": 1,
    "is_title": 0,
-   "p_live": 0.696707298408999,
+   "division": "middleweight",
+   "p_live": 0.681899693708971,
    "p_train": 0.6818937957340748
   },
   {
@@ -792,7 +793,8 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.46971268131059113,
+   "division": "welterweight",
+   "p_live": 0.4697126813105909,
    "p_train": 0.46971878631681957
   },
   {
@@ -802,8 +804,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.336180360508572,
-   "p_train": 0.33617326349089394
+   "division": "women's strawweight",
+   "p_live": 0.33618036050857186,
+   "p_train": 0.3361732634908938
   },
   {
    "date": "2026-07-18",
@@ -812,7 +815,8 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.7676128584669495,
+   "division": "flyweight",
+   "p_live": 0.7676128584669496,
    "p_train": 0.7676249197650441
   },
   {
@@ -822,8 +826,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.15763454475448976,
-   "p_train": 0.15763565258277154
+   "division": "middleweight",
+   "p_live": 0.1576345447544896,
+   "p_train": 0.15763565258277137
   },
   {
    "date": "2026-07-18",
@@ -832,7 +837,8 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.5881943010225094,
+   "division": "featherweight",
+   "p_live": 0.5881943010225095,
    "p_train": 0.5881806627353441
   },
   {
@@ -842,8 +848,9 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "lightweight",
    "p_live": 0.7584003932819859,
-   "p_train": 0.7584106552715336
+   "p_train": 0.7584106552715337
   },
   {
    "date": "2026-07-18",
@@ -852,6 +859,7 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "light heavyweight",
    "error": "no prediction"
   },
   {
@@ -861,6 +869,7 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "featherweight",
    "error": "no prediction"
   },
   {
@@ -870,6 +879,7 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "women's flyweight",
    "error": "no prediction"
   },
   {
@@ -879,7 +889,8 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.6443036216655817,
+   "division": "featherweight",
+   "p_live": 0.6443036216655815,
    "p_train": 0.6443588727637727
   },
   {
@@ -889,6 +900,7 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "heavyweight",
    "error": "no prediction"
   },
   {
@@ -898,8 +910,9 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.7400147976847441,
-   "p_train": 0.7400197691776791
+   "division": "lightweight",
+   "p_live": 0.7400147976847442,
+   "p_train": 0.7400197691776792
   },
   {
    "date": "2026-07-25",
@@ -908,6 +921,7 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "light heavyweight",
    "error": "no prediction"
   },
   {
@@ -917,7 +931,8 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.6740018570916222,
+   "division": "heavyweight",
+   "p_live": 0.6740018570916223,
    "p_train": 0.6387790244644089
   },
   {
@@ -927,6 +942,7 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "lightweight",
    "error": "no prediction"
   },
   {
@@ -936,8 +952,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "welterweight",
    "p_live": 0.2749307779025419,
-   "p_train": 0.27493260003330816
+   "p_train": 0.2749326000333082
   },
   {
    "date": "2026-07-25",
@@ -946,6 +963,7 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "welterweight",
    "error": "no prediction"
   },
   {
@@ -955,8 +973,9 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.5586584326977654,
-   "p_train": 0.5586738799288882
+   "division": "heavyweight",
+   "p_live": 0.5586584326977657,
+   "p_train": 0.5586738799288883
   },
   {
    "date": "2026-07-25",
@@ -965,8 +984,9 @@
    "won": 1.0,
    "is_5rnd": 1,
    "is_title": 0,
+   "division": "light heavyweight",
    "p_live": 0.6650603201456844,
-   "p_train": 0.6665601914519276
+   "p_train": 0.6665601914519278
   },
   {
    "date": "2026-07-25",
@@ -975,6 +995,7 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "bantamweight",
    "error": "no prediction"
   },
   {
@@ -984,8 +1005,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "flyweight",
    "p_live": 0.5458631520122141,
-   "p_train": 0.5458653934996289
+   "p_train": 0.5458653934996291
   },
   {
    "date": "2026-07-25",
@@ -994,6 +1016,7 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "light heavyweight",
    "error": "no prediction"
   },
   {
@@ -1003,7 +1026,8 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.47965223039085947,
+   "division": "lightweight",
+   "p_live": 0.4796522303908596,
    "p_train": 0.47966060153095924
   },
   {
@@ -1013,8 +1037,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.4900627572630384,
-   "p_train": 0.4900609801984478
+   "division": "middleweight",
+   "p_live": 0.4900627572630385,
+   "p_train": 0.490060980198448
   },
   {
    "date": "2026-08-01",
@@ -1023,8 +1048,9 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.7395300738341951,
-   "p_train": 0.7697589539630252
+   "division": "heavyweight",
+   "p_live": 0.7486013384031731,
+   "p_train": 0.7697589539630253
   },
   {
    "date": "2026-08-01",
@@ -1033,7 +1059,8 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.7919007384569162,
+   "division": "lightweight",
+   "p_live": 0.7919007384569163,
    "p_train": 0.7918999359318978
   },
   {
@@ -1043,6 +1070,7 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "heavyweight",
    "error": "no prediction"
   },
   {
@@ -1052,6 +1080,7 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "bantamweight",
    "error": "no prediction"
   },
   {
@@ -1061,6 +1090,7 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "middleweight",
    "error": "no prediction"
   },
   {
@@ -1070,6 +1100,7 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "women's strawweight",
    "error": "no prediction"
   },
   {
@@ -1079,8 +1110,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.3831597577379706,
-   "p_train": 0.38315670346925834
+   "division": "featherweight",
+   "p_live": 0.38315975773797073,
+   "p_train": 0.3831567034692585
   },
   {
    "date": "2026-08-01",
@@ -1089,6 +1121,7 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "welterweight",
    "error": "no prediction"
   },
   {
@@ -1098,8 +1131,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.7374678210482818,
-   "p_train": 0.7374758805726728
+   "division": "lightweight",
+   "p_live": 0.7374678210482819,
+   "p_train": 0.7374758805726729
   },
   {
    "date": "2026-08-01",
@@ -1108,6 +1142,7 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "women's bantamweight",
    "error": "no prediction"
   },
   {
@@ -1117,8 +1152,9 @@
    "won": 1.0,
    "is_5rnd": 1,
    "is_title": 0,
+   "division": "welterweight",
    "p_live": 0.6595227455180501,
-   "p_train": 0.6606110206186443
+   "p_train": 0.6606110206186444
   },
   {
    "date": "2026-08-01",
@@ -1127,6 +1163,7 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "lightweight",
    "error": "no prediction"
   },
   {
@@ -1136,8 +1173,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.1745205230647988,
-   "p_train": 0.17451344304318728
+   "division": "light heavyweight",
+   "p_live": 0.17452052306479884,
+   "p_train": 0.17451344304318733
   },
   {
    "date": "2026-08-08",
@@ -1146,7 +1184,8 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.685279596583107,
+   "division": "light heavyweight",
+   "p_live": 0.6852795965831068,
    "p_train": 0.6852845260990584
   },
   {
@@ -1156,7 +1195,8 @@
    "won": 0.0,
    "is_5rnd": 1,
    "is_title": 0,
-   "p_live": 0.2820873820914778,
+   "division": "lightweight",
+   "p_live": 0.2820873820914777,
    "p_train": 0.2820911133368211
   },
   {
@@ -1166,6 +1206,7 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "women's strawweight",
    "error": "no prediction"
   },
   {
@@ -1175,7 +1216,8 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.5939112618386582,
+   "division": "lightweight",
+   "p_live": 0.5670889010636704,
    "p_train": 0.5670823674858394
   },
   {
@@ -1185,8 +1227,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.3549165309790965,
-   "p_train": 0.35491517363220015
+   "division": "featherweight",
+   "p_live": 0.35491653097909637,
+   "p_train": 0.35491517363220004
   },
   {
    "date": "2026-08-08",
@@ -1195,8 +1238,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.4220152659224139,
-   "p_train": 0.4220121210633751
+   "division": "welterweight",
+   "p_live": 0.42201526592241373,
+   "p_train": 0.42201212106337505
   },
   {
    "date": "2026-08-08",
@@ -1205,6 +1249,7 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "lightweight",
    "error": "no prediction"
   },
   {
@@ -1214,8 +1259,9 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.5328442137331558,
-   "p_train": 0.5019002961378222
+   "division": "women's flyweight",
+   "p_live": 0.5019027196435135,
+   "p_train": 0.501900296137822
   },
   {
    "date": "2026-08-08",
@@ -1224,8 +1270,9 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.50040243846863,
-   "p_train": 0.5004103241654707
+   "division": "featherweight",
+   "p_live": 0.5004024384686296,
+   "p_train": 0.5004103241654706
   },
   {
    "date": "2026-08-08",
@@ -1234,8 +1281,9 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.20698332590826152,
-   "p_train": 0.20698300965950314
+   "division": "women's strawweight",
+   "p_live": 0.20698332590826146,
+   "p_train": 0.20698300965950303
   },
   {
    "date": "2026-08-08",
@@ -1244,6 +1292,7 @@
    "won": 0.0,
    "is_5rnd": 0,
    "is_title": 0,
+   "division": "heavyweight",
    "error": "no prediction"
   },
   {
@@ -1253,8 +1302,9 @@
    "won": 1.0,
    "is_5rnd": 0,
    "is_title": 0,
-   "p_live": 0.5324512706138481,
-   "p_train": 0.5324713777765455
+   "division": "heavyweight",
+   "p_live": 0.532451270613848,
+   "p_train": 0.5324713777765454
   }
  ]
 }
