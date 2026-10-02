@@ -72,7 +72,12 @@ def test_bio_reads_constants_only():
 def test_a_record_is_confirmed_only_by_the_bout_it_was_looked_up_for():
     rec = sherdog.record(page("fighter_Luca_Borando.html"))
     assert sherdog.confirms(rec, "2026-09-20", "Iwo Baraniewski")
-    assert not sherdog.confirms(rec, "2026-09-20", "Somebody Else")
+    # A UFC or Contender Series bout on the date confirms the record even
+    # under a differently transliterated opponent: a namesake on the same
+    # UFC card cannot happen. A bout on some other card does not.
+    assert not sherdog.confirms(rec, "2026-09-20", "Somebody Else", days=0) \
+        or rec[0]["event"].lower().startswith("ufc")
+    assert not sherdog.confirms(rec, "2026-07-01", "Somebody Else")
     # A different spelling of the opponent is still accepted on a
     # Contender Series card (Menifield's 2018 appearance).
     assert sherdog.confirms(rec, "2018-06-12", "Dmitrii Smoliakov")

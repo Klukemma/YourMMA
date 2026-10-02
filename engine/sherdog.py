@@ -148,8 +148,9 @@ def confirms(record, date, opponent=None, days=3):
     for bout in record:
         if abs((_day(bout["date"]) - when).days) > days:
             continue
+        event = bout["event"].lower()
         if (opponent is None or _surname(bout["opponent"]) == _surname(opponent)
-                or "contender series" in bout["event"].lower()):
+                or "contender series" in event or event.startswith("ufc")):
             return True
     return False
 

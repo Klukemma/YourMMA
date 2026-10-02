@@ -15,6 +15,10 @@ Resumable: fighters already in the output are skipped, and the file is
 rewritten every SAVE_EVERY lookups, so a stopped run keeps its work.
 
     python engine/harvest_sherdog.py [--minutes 300] [--names "A B" ...]
+    python engine/harvest_sherdog.py --ufc-debuts     (every UFC fighter,
+                    verified against their first UFC bout, newest debuts
+                    first; writes sherdog_ufc_records.jsonl.gz - the
+                    pre-UFC careers a debut model is built from)
 """
 
 import argparse
@@ -35,7 +39,9 @@ import sherdog
 from check_fight_changes import AGENT
 
 BOUTS = ENGINE / "data" / "world_bouts.csv.gz"
+ARCHIVE = ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
 OUT = ENGINE / "data" / "sherdog_records.jsonl.gz"
+OUT_UFC = ENGINE / "data" / "sherdog_ufc_records.jsonl.gz"
 SAVE_EVERY = 20
 MAX_ERRORS = 5          # consecutive failures before stopping: the site
                         # is refusing us, and hammering it helps nobody
@@ -56,6 +62,23 @@ def contender_appearances(path=None):
         out[bout.winner].append((str(bout.date)[:10], bout.loser))
         out[bout.loser].append((str(bout.date)[:10], bout.winner))
     return dict(out)
+
+
+def ufc_debuts(path=None):
+    """{fighter: [(date, opponent)]} - every fighter in the UFC archive with
+    their FIRST UFC bout, newest debuts first, so a run cut short by its
+    time budget has covered the fighters the production model sees."""
+    frame = pd.read_csv(path or ARCHIVE, usecols=["date", "r_name", "b_name"],
+                        low_memory=False)
+    frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
+    frame = frame.dropna().sort_values("date")
+    first = {}
+    for bout in frame.itertuples():
+        for me, them in ((bout.r_name, bout.b_name), (bout.b_name, bout.r_name)):
+            if me not in first:
+                first[me] = (str(bout.date.date()), them)
+    return {name: [bout] for name, bout in
+            sorted(first.items(), key=lambda kv: kv[1][0], reverse=True)}
 
 
 def load(path=None):
@@ -83,13 +106,18 @@ def main(argv=None):
                         help="also look these up (an upcoming card)")
     parser.add_argument("--retry-missing", action="store_true",
                         help="look again at fighters not found last time")
+    parser.add_argument("--ufc-debuts", action="store_true",
+                        help="every UFC fighter, verified against their first "
+                             "UFC bout, into sherdog_ufc_records.jsonl.gz")
     args = parser.parse_args(argv)
 
-    targets = contender_appearances()
+    out = OUT_UFC if args.ufc_debuts else OUT
+    targets = ufc_debuts() if args.ufc_debuts else contender_appearances()
     for name in args.names:
         targets.setdefault(name, [])
-    done = load()
-    todo = [n for n in sorted(targets)
+    done = load(out)
+    order = list(targets) if args.ufc_debuts else sorted(targets)
+    todo = [n for n in order
             if n not in done or (args.retry_missing and not done[n].get("id"))]
     print(f"  {len(targets)} fighters, {len(done)} already looked up, "
           f"{len(todo)} to do")
@@ -110,7 +138,8 @@ def main(argv=None):
                 break
             continue
         first = min((d for d, _ in targets[name]), default=None)
-        done[name] = {"target": name, "first_contender": first,
+        done[name] = {"target": name,
+                      "first_ufc" if args.ufc_debuts else "first_contender": first,
                       **(hit or {"id": None}),
                       "looked_up": time.strftime("%Y-%m-%d")}
         looked += 1
@@ -118,14 +147,14 @@ def main(argv=None):
             print(f"  {name}: {hit['slug']}-{hit['id']}, {len(hit['record'])} "
                   f"pro bouts{'' if hit['verified'] else ' (NOT verified)'}")
         else:
-            print(f"  {name}: no record containing the Contender Series bout")
+            print(f"  {name}: no record containing the bout looked up for")
         if looked % SAVE_EVERY == 0:
-            save(done)
-    save(done)
+            save(done, out)
+    save(done, out)
     found = sum(1 for r in done.values() if r.get("id"))
     verified = sum(1 for r in done.values() if r.get("verified"))
     print(f"\n  {len(done)} looked up, {found} found, {verified} verified "
-          f"against their Contender Series bout; wrote {OUT.name}")
+          f"against the bout looked up for; wrote {out.name}")
     return 0
 
 

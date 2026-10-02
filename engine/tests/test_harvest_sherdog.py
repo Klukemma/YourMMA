@@ -58,3 +58,25 @@ def test_a_stopped_run_keeps_its_work_and_the_next_one_carries_on(
     assert asked == []
     hs.main(["--retry-missing"])
     assert asked == ["Bea"]
+
+
+def test_ufc_debuts_are_every_fighter_with_their_first_bout_newest_first(tmp_path):
+    path = tmp_path / "archive.csv"
+    pd.DataFrame([
+        ("2019-05-04", "Ann", "Bea"),
+        ("2021-08-03", "Ann", "Cat"),      # Ann's second bout: not her debut
+        ("2023-01-14", "Dee", "Cat"),
+    ], columns=["date", "r_name", "b_name"]).to_csv(path, index=False)
+    got = hs.ufc_debuts(path)
+    assert list(got) == ["Dee", "Cat", "Ann", "Bea"]      # newest debut first
+    assert got["Ann"] == [("2019-05-04", "Bea")]
+    assert got["Cat"] == [("2021-08-03", "Ann")]
+
+
+def test_a_ufc_card_confirms_a_record_without_a_surname_match():
+    import sherdog
+    rec = [{"date": "2024-02-17", "result": "win", "opponent": "Jo Blow",
+            "opponent_id": 1, "event": "UFC 298 - Volkanovski vs. Topuria",
+            "method": "KO", "round": "1", "time": "1:00"}]
+    assert sherdog.confirms(rec, "2024-02-17", "Joseph Blough")
+    assert not sherdog.confirms(rec, "2024-05-17", "Joseph Blough")
