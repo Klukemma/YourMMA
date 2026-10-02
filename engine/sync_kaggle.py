@@ -623,6 +623,46 @@ def cmd_search_odds(args):
     print("  kaggle datasets files <ref>")
 
 
+def cmd_search_rounds(args):
+    """Look for a public dataset carrying UFC statistics BY ROUND.
+
+    A measured cardio feature needs each fight's strikes, takedowns and
+    control time round by round. UFCStats has them, but its pages now sit
+    behind a JavaScript browser check, which this project will not work
+    around. A dataset someone has already compiled is the honest route.
+    """
+    queries = ['ufc round by round', 'ufc per round stats', 'ufc round stats',
+               'ufc fight stats rounds', 'mma round statistics',
+               'ufcstats rounds', 'ufc significant strikes round']
+    seen = {}
+    import csv as _csv
+    for q in queries:
+        print(f"\n--- searching: {q!r} ---")
+        result = subprocess.run(['kaggle', 'datasets', 'list', '-s', q, '--csv'],
+                                capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"  failed: {result.stderr.strip()[:200]}")
+            continue
+        lines = [l for l in result.stdout.splitlines() if l.strip()]
+        if len(lines) < 2:
+            print("  no results")
+            continue
+        for row in _csv.DictReader(lines):
+            ref = row.get('ref')
+            if ref and ref not in seen:
+                seen[ref] = row
+                print(f"  {ref}")
+                print(f"      {row.get('title', '')[:70]}  "
+                      f"size={row.get('size', '?')}  "
+                      f"updated={row.get('lastUpdated', '')[:10]}")
+    print(f"\n{'=' * 70}")
+    print(f"{len(seen)} candidate datasets. For each, the file list:")
+    for ref in list(seen)[:12]:
+        result = subprocess.run(['kaggle', 'datasets', 'files', ref],
+                                capture_output=True, text=True)
+        print(f"\n  {ref}\n    " + result.stdout.strip().replace("\n", "\n    ")[:600])
+
+
 # Shortlisted by `search-odds`. The rest of the 23 results end in 2024/2025,
 # before the period we need to price.
 ODDS_CANDIDATES = [
@@ -1108,6 +1148,7 @@ def main():
     sub.add_parser("search-odds", help="look for a Kaggle dataset with historical odds")
     sub.add_parser("inspect-odds", help="check whether shortlisted odds datasets cover our window")
     sub.add_parser("search-mma", help="find non-UFC fight data on Kaggle")
+    sub.add_parser("search-rounds", help="find UFC round-by-round statistics on Kaggle")
     sub.add_parser("inspect-fighter", help="report fighter.csv and whether it carries records")
     sub.add_parser("fetch-odds", help="download 2026 odds into data/odds.csv")
     fh = sub.add_parser("fetch-odds-history",
@@ -1130,7 +1171,7 @@ def main():
     args = ap.parse_args()
     {"inspect": cmd_inspect, "propose-map": cmd_propose_map,
      "search-odds": cmd_search_odds, "inspect-odds": cmd_inspect_odds,
-     "search-mma": cmd_search_mma, "inspect-fighter": cmd_inspect_fighter,
+     "search-mma": cmd_search_mma, "search-rounds": cmd_search_rounds, "inspect-fighter": cmd_inspect_fighter,
      "fetch-odds": cmd_fetch_odds,
      "fetch-odds-history": cmd_fetch_odds_history,
      "fetch-opening-odds": cmd_fetch_opening_odds,

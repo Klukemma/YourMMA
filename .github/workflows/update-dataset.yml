@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, harvest-injuries, harvest-world, harvest-weights, harvest-sherdog, harvest-sherdog-ufc, probe-sherdog, probe-ufcstats, probe-world, verify-intel-dates, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, fetch-opening-odds, search-mma, inspect-fighter, experiment]
+        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, harvest-injuries, harvest-world, harvest-weights, harvest-sherdog, harvest-sherdog-ufc, probe-sherdog, probe-ufcstats, probe-world, verify-intel-dates, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, fetch-opening-odds, search-mma, search-rounds, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
