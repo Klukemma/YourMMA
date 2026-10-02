@@ -663,6 +663,43 @@ def cmd_search_rounds(args):
         print(f"\n  {ref}\n    " + result.stdout.strip().replace("\n", "\n    ")[:600])
 
 
+ROUNDS_FILE = DATA_DIR / 'ufc_rounds.csv.gz'
+
+
+def cmd_fetch_rounds(args):
+    """Download the per-ROUND statistics file of the archive's own upstream.
+
+    search-rounds found that the dataset this archive is synced from
+    (DATASET) carries a round.csv - strikes, takedowns, control time by
+    round - which UFCStats itself no longer serves to a script. It is kept
+    as data/ufc_rounds.csv.gz, raw; the parser and the point-in-time cardio
+    feature read it from there. The schema is printed, not assumed.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        result = subprocess.run(
+            ['kaggle', 'datasets', 'download', '-d', DATASET, '-f', 'round.csv',
+             '-p', tmp, '--unzip'], capture_output=True, text=True)
+        if result.returncode != 0:
+            sys.exit(f"download failed: {result.stderr.strip()[:300]}")
+        files = sorted(Path(tmp).rglob('*'))
+        source = next((f for f in files if f.name.lower().startswith('round')
+                       and f.suffix in ('.csv', '.zip')), None)
+        if source is None:
+            sys.exit(f"round.csv not found. Got: {[f.name for f in files]}")
+        raw = pd.read_csv(source, low_memory=False)
+    print(f"round.csv: {len(raw):,} rows x {len(raw.columns)} columns")
+    print(f"  columns: {list(raw.columns)}")
+    print(raw.head(4).T.to_string()[:4000])
+    for col in raw.columns:
+        if 'id' in col.lower():
+            print(f"  {col}: {raw[col].nunique():,} distinct, e.g. {raw[col].iloc[0]!r}")
+    if args.dry_run:
+        print("\n--dry-run: nothing written.")
+        return
+    raw.to_csv(ROUNDS_FILE, index=False, compression='gzip')
+    print(f"\nWrote {ROUNDS_FILE} ({ROUNDS_FILE.stat().st_size // 1024} KB)")
+
+
 # Shortlisted by `search-odds`. The rest of the 23 results end in 2024/2025,
 # before the period we need to price.
 ODDS_CANDIDATES = [
@@ -1154,6 +1191,9 @@ def main():
     fh = sub.add_parser("fetch-odds-history",
                         help="add 2010-2025 moneylines to data/odds.csv")
     fh.add_argument("--dry-run", action="store_true", help="report without writing")
+    fr = sub.add_parser("fetch-rounds",
+                        help="per-round statistics from the archive's upstream into data/ufc_rounds.csv.gz")
+    fr.add_argument("--dry-run", action="store_true", help="report without writing")
     fo = sub.add_parser("fetch-opening-odds",
                         help="2010-2025 OPENING moneylines into data/opening_odds.csv")
     fo.add_argument("--dry-run", action="store_true", help="report without writing")
@@ -1175,6 +1215,7 @@ def main():
      "fetch-odds": cmd_fetch_odds,
      "fetch-odds-history": cmd_fetch_odds_history,
      "fetch-opening-odds": cmd_fetch_opening_odds,
+     "fetch-rounds": cmd_fetch_rounds,
      "fetch-method-odds": cmd_fetch_method_odds, "repair": cmd_repair,
      "fix-units": cmd_fix_units,
      "sync": cmd_sync}[args.cmd](args)
