@@ -83,6 +83,7 @@ MODES_RUN_AS_THEIR_OWN_SCRIPT = {
     "harvest-sherdog": "harvest_sherdog.py",
     "harvest-sherdog-ufc": "harvest_sherdog.py",
     "probe-sherdog": "probe_sherdog.py",
+    "probe-ufcstats": "probe_ufcstats.py",
     "verify-intel-dates": "verify_intel_dates.py",
     "describe-odds": "describe_odds_api.py",
 }
