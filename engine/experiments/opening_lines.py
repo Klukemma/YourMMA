@@ -17,7 +17,6 @@ experiments/model_compare.py (each year fitted on earlier years only):
 
 import json
 import sys
-import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -38,13 +37,11 @@ def _ll(y, p):
 
 
 def main():
-    base = pd.read_csv(Path(__file__).with_name("model_compare_baseline.csv"))
+    # the recipe as listed (idea #7 was measured before idea #6 shipped)
+    base = pd.read_csv(Path(__file__).with_name("model_compare_baseline_legacy.csv"))
     base["p_close"] = mc.market_probabilities(base, mc.load_prices())
-    with tempfile.TemporaryDirectory() as tmp:
-        path = Path(tmp) / "open.csv"
-        pd.read_csv(OPENING).rename(columns={"open_a": "odds_a",
-                                             "open_b": "odds_b"}).to_csv(path, index=False)
-        base["p_open"] = mc.market_probabilities(base, mc.load_prices(path))
+    base["p_open"] = mc.market_probabilities(
+        base, mc.load_prices(OPENING, columns=("open_a", "open_b")))
     both = base[base["p_open"].notna() & base["p_close"].notna()].copy()
     y = both["y"].to_numpy()
     out = {"fights_both": int(len(both)),

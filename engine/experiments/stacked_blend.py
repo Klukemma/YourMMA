@@ -322,7 +322,9 @@ def main():
     registered = check_plan()
     print(f"plan sha256 {registered['sha256'][:12]} registered {registered['registered_at']}")
     print("baseline walk-forward predictions (cached if the archive is unchanged)...")
-    frame = mc.predictions(verbose=True)
+    # the recipe as listed: this idea was registered and run before idea #6
+    # shipped, and its reported numbers are against that baseline
+    frame = mc.predictions(recipe="legacy", verbose=True)
     priced = frame[np.isfinite(frame["p_market"])].reset_index(drop=True).copy()
     print(f"\n{len(priced):,} priced of {len(frame):,} walk-forward predictions; "
           f"unpriced years: {sorted(set(frame['year']) - set(priced['year']))}")

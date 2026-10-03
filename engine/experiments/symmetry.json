@@ -1,0 +1,2551 @@
+{
+ "generated": "2026-10-02T16:08:31Z",
+ "plan": "Idea #6: does enforcing corner symmetry beat the model as listed?\n\nThe red corner is usually the favoured or ranked fighter - it has won 58%\nof post-2001 UFC bouts - so a model fitted on fights as listed can learn\ncorner identity as a shortcut, and nothing forces p(A beats B) to equal\n1 - p(B beats A). This measures two ways of enforcing that, against the\nproduction recipe, with the shared walk-forward of model_compare.py.\n\nThe swapped row of a fight comes from corner_swap.py: the mirrored archive\nthrough feature_frame.build with the training centres frozen, and the\nthree features that count a corner's earlier appearances recomputed on the\nunchanged history - the row live_rows builds for the swapped fight, equal\nto it on every feature on the last archived event and, on earlier dates,\nup to the known rating-replay drift that hits both orientations alike\n(tests/test_symmetry.py). The mirror audit over every feature is written\nbeside this file as symmetry_mirror_audit.csv.\n\nPRE-REGISTERED PLAN - written before the first run and reported unchanged.\n\nRows. The walk-forward of experiments/model_compare.py: every valid fight\nof a predicted year (first predicted year 2011, at least 500 earlier\nfights, at least 20 in the year), predicted by models fitted on the valid\nfights of earlier years only, with the production recipe (LR + RF + XGB\naveraged, the last 10% of the fitting rows by date calibrating, recency\nweights, Platt), features feature_cols_winner. The swapped row of a fight\nis corner_swap.swapped_matrix: the same fight with the corners exchanged\nand the archive's history unchanged, interaction centres frozen at the\ntraining values.\n\nBaseline arm. model_compare's cached baseline predictions (p_model), the\nproduction recipe on rows as listed, unchanged. Arm (A) refits the same\nmodels with the same recipe; its own un-symmetrised prediction is compared\nwith the cache and the largest difference reported, but the comparison is\nagainst the cache.\n\nCandidate arms - a family of two, so alpha = 0.05 / 2:\n\n  (A) swap-averaged prediction. Each year's baseline models, unchanged.\n      The ensemble output is symmetrised, e_sym(x) = (e(x) + 1 - e(x_swap))\n      / 2, a Platt calibrator (LogisticRegression, C = 1e10) is fitted on\n      the same year's calibration block - one row per fight, in the\n      orientation listed, as production fits it - on e_sym, and\n      p_A = platt(e_sym(x)).\n  (B) swap-augmented training. Each year's LR, RF and XGB fitted on the\n      training block twice over: every fight as listed with its label, and\n      swapped with 1 - label, the fight's recency weight on both copies;\n      the scaler fitted on the doubled block; XGB early-stopping on the\n      doubled calibration block. The split into training and calibration\n      fights is the baseline's (the last 10% of fights by date). The\n      prediction is symmetrised and Platt-calibrated exactly as in (A).\n\nComparison set and bar. PRIMARY: the priced fights (odds.csv prices the\nfight; de-vigged closing line, matched as model_compare does) of every\npredicted year, identical for every arm and the baseline. Metric: the\nmodel-only log loss. An arm PASSES only if BOTH\n  (i)  the wider of the event-resampled and fighter-resampled bootstrap\n       intervals of (arm - baseline) log loss, at the family-wise level\n       1 - 0.05/2, lies entirely below zero, and\n  (ii) the 0.75 market blend of the arm (market_blend.blend, probability\n       space, clipped) has a log loss no worse than the blend of the\n       baseline on the same fights: the point estimate of\n       (arm blend - baseline blend) log loss is <= 0.\nNothing else is a pass.\n\nSecondary, reported, never the bar: accuracy and Brier on the priced set;\nmodel-only log loss, accuracy and Brier on ALL predicted fights (priced and\nunpriced); every table again on 2020 onward; the red-corner bias, mean\np_red minus the observed red win rate, for the baseline and each arm on\nthe priced set and on all fights; log loss by year; and the calibrator's\noutput at an ensemble value of 0.5 (the corner prior the Platt keeps) by\nyear. Calibration by decile is recorded in the JSON.\n\nShipping. Only a passing arm goes to production. (A): predict_fight_prod\nbuilds the swapped live row through live_rows, averages the ensemble\noutput of the fight with 1 - that of the swapped fight, and calibrates\nwith a Platt fitted in SECTION 15 on the symmetrised ensemble output of the\ncalibration block. (B): additionally SECTION 15 fits the winner models on\nthe doubled training block as above. Method and round models are not\ntouched. If no arm passes, nothing ships and this file says so.\n\nPOST-REGISTRATION NOTES - added after the first run; nothing above this\nline changed (its sha256 is in symmetry_plan.sha256 and main() refuses to\nrun if it moves).\n\n  * Result (first and only registered run, 2026-10-01): BOTH arms pass on\n    the primary set (5,897 priced fights, 2011-2026). Model-only log loss\n    0.6441 baseline; A 0.6394 (-0.0047, wider interval [-0.0088, -0.0007]);\n    B 0.6301 (-0.0140, [-0.0199, -0.0074]). Blend 0.6064 -> A 0.6049\n    (-0.0014), B 0.6034 (-0.0030, [-0.0045, -0.0015]). Accuracy 62.1% ->\n    63.1% for both. The plan did not say which of two passing arms ships;\n    B, the lower log loss, was taken, as stacked_blend.py's rule would.\n  * Honest caveats. The gain is front-loaded: on the 2020+ secondary set B\n    is -0.0045 model-only with an interval [-0.0104, +0.0014] that crosses\n    zero, and the blend gain there is -0.0005. 2019 is worse for both arms.\n    The pre-registered bar was all predicted years, and it is met; a\n    reader who weights the recent years should know they do not carry it\n    alone.\n  * The Platt keeps a corner prior: platt(0.5) runs 0.55-0.64 for A and\n    0.49-0.61 for B by year, so p(red, blue) + p(blue, red) is not exactly\n    1. The ensemble itself is exactly symmetric; the red-corner bias on the\n    priced set is -0.0055 baseline, -0.0020 A, -0.0022 B.\n  * The baseline refit reproduces the cached predictions to 5e-7 (the\n    cache is written at six decimals), so arm A really did use the\n    baseline's models.\n  * Shipped as production (predict_card.py SECTION 15, predict_fight_prod,\n    the SECTION 6 and 9 printouts, live_rows.prepare_card(swapped=True)).\n    The shared harness followed: model_compare.predictions() now fits\n    arm B by default (recipe \"symmetric\", importing fit_augmented,\n    symmetric_platt and predict_symmetric from here, cached as\n    baseline_symmetric and verified to reproduce this file's arm-B\n    numbers), and the recipe as listed stays reachable as\n    recipe=\"legacy\" (baseline_legacy - the file this run was measured\n    against, renamed, hash untouched). main() here keeps using the\n    legacy baseline, because the plan's baseline is the recipe as\n    listed. Later ideas pre-register their PRIMARY bar on\n    model_compare.decision_set (training sets of 4,000+ fights, 2018\n    onward), every year a secondary - the lesson of the front-loaded\n    gain above.\n  * The priced set has NO 2025 fights. odds.csv carries closing lines and\n    no source prices 2025 that way (idea #7: only opening lines exist for\n    2025, kept apart in opening_odds.csv and never used as closing), so\n    the 513 fights predicted for 2025 are all unpriced: they count in the\n    all-fights secondaries only, and \"2020 onward\" on the priced set is\n    2020-2024 plus 2026. The primary table is \"every predicted year that\n    odds.csv prices\", 15 years. Review pointed this out after the run; the\n    bar is decided and is not re-decided here. When closing lines for 2025\n    land, rerun this file and read the 2025 row of the priced by-year\n    table as a secondary. Model-only log loss by year on ALL fights,\n    including 2025, is reported below (log_loss_by_year_all in the JSON)\n    so the missing year is at least visible model-only. What it says:\n    2025 (513 fights) baseline 0.6435, A 0.6413, B 0.6444 - the shipped\n    arm is 0.0009 WORSE there; over the last four years B is worse on all\n    fights in 2023 (+0.0016), 2025 (+0.0009) and 2026 (+0.0018) and better\n    in 2024 (-0.0110). That is consistent with the 2020+ intervals that\n    cross zero: the recent regime does not carry the gain alone, and the\n    year nearest production is a small loss. The registered bar is met on\n    the registered set and the decision stands; this is reported so that\n    nobody reads the headline as the recent-regime expectation.\n  * \"The live swapped row equals the swapped training row on every\n    feature\" is proven on the LAST archived event. On earlier dates both\n    orientations of the live row differ from their training rows on the\n    same rating-derived features by the same amounts (the archive's\n    shipped TrueSkill/MMR/mass series are not reproduced bit for bit by a\n    replay - live_parity.json already lists mx_mass_adv), and the swapped\n    live row is the exact mirror of the listed live row on every feature\n    outside the three corner-history ones and the eight frozen-centre\n    interactions. tests/test_symmetry.py checks both.\n\n    python engine/experiments/symmetry.py\n",
+ "plan_sha256": "491e8d1c421c63d66ffb7c5a8ff13052a89a5b7290d64d41fdbcbf3083fa78f1",
+ "plan_registered_at": "2026-10-01T19:17:30Z",
+ "odds_sha256": "5be0a167717342faf891162d6a7a4710dd8a0b703c26204f46754aeeebc405fa",
+ "opening_odds_sha256": "8cc2d183ccf9ab5524ddd72774315ac071a108729618be5ab1258d9e638e57c0",
+ "family": 2,
+ "alpha": 0.025,
+ "confirm_from": 2020,
+ "features": 126,
+ "valid_fights": 8423,
+ "predicted_rows": 7184,
+ "priced_rows": 5897,
+ "priced_rows_by_year": {
+  "2011": 284,
+  "2012": 324,
+  "2013": 356,
+  "2014": 461,
+  "2015": 432,
+  "2016": 448,
+  "2017": 406,
+  "2018": 436,
+  "2019": 457,
+  "2020": 409,
+  "2021": 469,
+  "2022": 476,
+  "2023": 413,
+  "2024": 367,
+  "2026": 159
+ },
+ "predicted_years_without_prices": [
+  2025
+ ],
+ "baseline_refit_vs_cache": {
+  "max_abs": 4.998778709852658e-07,
+  "mean_abs": 2.499008639134096e-07
+ },
+ "mirror_audit": {
+  "features": 151,
+  "free_centres_clean": 151,
+  "frozen_centres_not_clean": [
+   "r_td_vs_b_tdd",
+   "b_td_vs_r_tdd",
+   "r_strike_vs_b_def",
+   "b_strike_vs_r_def",
+   "r_sub_vs_b_subdef",
+   "b_sub_vs_r_subdef",
+   "r_power_vs_b_chin",
+   "b_power_vs_r_chin"
+  ],
+  "corner_history": [
+   "data_sparsity_diff",
+   "career_damage_diff",
+   "career_damage_level"
+  ],
+  "transforms_free_centres": {
+   "unchanged": 71,
+   "negated": 66,
+   "swapped": 12,
+   "1-x": 2
+  }
+ },
+ "by_year_fit": {
+  "2011": {
+   "train_fights": 1239,
+   "predicted": 295,
+   "platt_at_half_A": 0.5547557745217367,
+   "platt_at_half_B": 0.493634407069772,
+   "xgb_best_iteration_A": 7,
+   "xgb_best_iteration_B": 40,
+   "seconds": 115.5
+  },
+  "2012": {
+   "train_fights": 1534,
+   "predicted": 333,
+   "platt_at_half_A": 0.5687044715278406,
+   "platt_at_half_B": 0.5157800661864517,
+   "xgb_best_iteration_A": 39,
+   "xgb_best_iteration_B": 51,
+   "seconds": 177.5
+  },
+  "2013": {
+   "train_fights": 1867,
+   "predicted": 376,
+   "platt_at_half_A": 0.6251239381230713,
+   "platt_at_half_B": 0.5758066543785876,
+   "xgb_best_iteration_A": 45,
+   "xgb_best_iteration_B": 92,
+   "seconds": 147.7
+  },
+  "2014": {
+   "train_fights": 2243,
+   "predicted": 494,
+   "platt_at_half_A": 0.5781401739778054,
+   "platt_at_half_B": 0.5235043691137311,
+   "xgb_best_iteration_A": 53,
+   "xgb_best_iteration_B": 185,
+   "seconds": 252.3
+  },
+  "2015": {
+   "train_fights": 2737,
+   "predicted": 464,
+   "platt_at_half_A": 0.6315498053698844,
+   "platt_at_half_B": 0.5860939496432422,
+   "xgb_best_iteration_A": 53,
+   "xgb_best_iteration_B": 52,
+   "seconds": 183.6
+  },
+  "2016": {
+   "train_fights": 3201,
+   "predicted": 483,
+   "platt_at_half_A": 0.5725736328493632,
+   "platt_at_half_B": 0.5225315516317351,
+   "xgb_best_iteration_A": 72,
+   "xgb_best_iteration_B": 96,
+   "seconds": 221.0
+  },
+  "2017": {
+   "train_fights": 3684,
+   "predicted": 446,
+   "platt_at_half_A": 0.6042607870962894,
+   "platt_at_half_B": 0.5440355223524255,
+   "xgb_best_iteration_A": 87,
+   "xgb_best_iteration_B": 185,
+   "seconds": 319.4
+  },
+  "2018": {
+   "train_fights": 4130,
+   "predicted": 469,
+   "platt_at_half_A": 0.5846175259399635,
+   "platt_at_half_B": 0.541133837096411,
+   "xgb_best_iteration_A": 130,
+   "xgb_best_iteration_B": 123,
+   "seconds": 284.9
+  },
+  "2019": {
+   "train_fights": 4599,
+   "predicted": 506,
+   "platt_at_half_A": 0.5663010026737109,
+   "platt_at_half_B": 0.5274827874746141,
+   "xgb_best_iteration_A": 72,
+   "xgb_best_iteration_B": 87,
+   "seconds": 191.3
+  },
+  "2020": {
+   "train_fights": 5105,
+   "predicted": 444,
+   "platt_at_half_A": 0.5715304350160277,
+   "platt_at_half_B": 0.5510240056501432,
+   "xgb_best_iteration_A": 50,
+   "xgb_best_iteration_B": 45,
+   "seconds": 155.6
+  },
+  "2021": {
+   "train_fights": 5549,
+   "predicted": 497,
+   "platt_at_half_A": 0.6366912307195621,
+   "platt_at_half_B": 0.6107032271490435,
+   "xgb_best_iteration_A": 74,
+   "xgb_best_iteration_B": 112,
+   "seconds": 190.6
+  },
+  "2022": {
+   "train_fights": 6046,
+   "predicted": 506,
+   "platt_at_half_A": 0.5821115688085926,
+   "platt_at_half_B": 0.5566068312790128,
+   "xgb_best_iteration_A": 90,
+   "xgb_best_iteration_B": 81,
+   "seconds": 182.2
+  },
+  "2023": {
+   "train_fights": 6552,
+   "predicted": 504,
+   "platt_at_half_A": 0.6049214276997922,
+   "platt_at_half_B": 0.5780527226587635,
+   "xgb_best_iteration_A": 60,
+   "xgb_best_iteration_B": 67,
+   "seconds": 162.1
+  },
+  "2024": {
+   "train_fights": 7056,
+   "predicted": 513,
+   "platt_at_half_A": 0.5929162184426096,
+   "platt_at_half_B": 0.5666350817051831,
+   "xgb_best_iteration_A": 79,
+   "xgb_best_iteration_B": 116,
+   "seconds": 200.0
+  },
+  "2025": {
+   "train_fights": 7569,
+   "predicted": 513,
+   "platt_at_half_A": 0.5705932479295679,
+   "platt_at_half_B": 0.5446627489184735,
+   "xgb_best_iteration_A": 59,
+   "xgb_best_iteration_B": 82,
+   "seconds": 111.9
+  },
+  "2026": {
+   "train_fights": 8082,
+   "predicted": 341,
+   "platt_at_half_A": 0.5659454324836554,
+   "platt_at_half_B": 0.5315990075625177,
+   "xgb_best_iteration_A": 79,
+   "xgb_best_iteration_B": 154,
+   "seconds": 98.8
+  }
+ },
+ "primary": {
+  "n": 5897,
+  "years": [
+   2011,
+   2012,
+   2013,
+   2014,
+   2015,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2026
+  ],
+  "decides": true,
+  "priced": true,
+  "baseline": {
+   "n": 5897,
+   "log_loss": 0.6440854418438031,
+   "brier": 0.22685729236033883,
+   "accuracy": 0.6213328811259963,
+   "red_bias": -0.0055245921655078245,
+   "blend": {
+    "n": 5897,
+    "log_loss": 0.6063937409162715,
+    "brier": 0.2092015827302038,
+    "accuracy": 0.6744107173138885
+   }
+  },
+  "arms": {
+   "A": {
+    "n": 5897,
+    "alpha": 0.025,
+    "events": 561,
+    "baseline": {
+     "n": 5897,
+     "log_loss": 0.6440854418438031,
+     "brier": 0.22685729236033883,
+     "accuracy": 0.6213328811259963
+    },
+    "A": {
+     "n": 5897,
+     "log_loss": 0.6394223949693781,
+     "brier": 0.22463040988747238,
+     "accuracy": 0.6311683907071393
+    },
+    "delta": {
+     "log_loss": {
+      "mean": -0.004663046874424881,
+      "event_low": -0.008797544810039025,
+      "event_high": -0.0006528334550543734,
+      "fighter_low": -0.007529548752795496,
+      "fighter_high": -0.0018076230133717386,
+      "low": -0.008797544810039025,
+      "high": -0.0006528334550543734
+     },
+     "brier": {
+      "mean": -0.002226882472866462,
+      "event_low": -0.004063158922258985,
+      "event_high": -0.0004624992688102262,
+      "fighter_low": -0.0034755721158790985,
+      "fighter_high": -0.0009683103685306048,
+      "low": -0.004063158922258985,
+      "high": -0.0004624992688102262
+     },
+     "accuracy": {
+      "mean": 0.009835509581142954,
+      "event_low": 0.0011748585983674235,
+      "event_high": 0.018815938854482146,
+      "fighter_low": 0.0033189625030898453,
+      "fighter_high": 0.01636810835019368,
+      "low": 0.0011748585983674235,
+      "high": 0.018815938854482146
+     }
+    },
+    "red_bias": -0.001956734517674197,
+    "calibration": [
+     {
+      "decile": 0,
+      "lo": 0.0,
+      "hi": 0.1,
+      "n": 8,
+      "predicted": 0.07452007427808202,
+      "observed": 0.0
+     },
+     {
+      "decile": 1,
+      "lo": 0.1,
+      "hi": 0.2,
+      "n": 34,
+      "predicted": 0.16906543865301654,
+      "observed": 0.20588235294117646
+     },
+     {
+      "decile": 2,
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "n": 184,
+      "predicted": 0.26347849487074426,
+      "observed": 0.2717391304347826
+     },
+     {
+      "decile": 3,
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "n": 522,
+      "predicted": 0.3543635899409878,
+      "observed": 0.3888888888888889
+     },
+     {
+      "decile": 4,
+      "lo": 0.4,
+      "hi": 0.5,
+      "n": 995,
+      "predicted": 0.45463463362808526,
+      "observed": 0.46834170854271356
+     },
+     {
+      "decile": 5,
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "n": 1491,
+      "predicted": 0.5527456817009606,
+      "observed": 0.5694164989939637
+     },
+     {
+      "decile": 6,
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "n": 1320,
+      "predicted": 0.647703333562926,
+      "observed": 0.6310606060606061
+     },
+     {
+      "decile": 7,
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "n": 873,
+      "predicted": 0.7440336454888908,
+      "observed": 0.7273768613974799
+     },
+     {
+      "decile": 8,
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 417,
+      "predicted": 0.8391234956818249,
+      "observed": 0.8105515587529976
+     },
+     {
+      "decile": 9,
+      "lo": 0.9,
+      "hi": 1.0,
+      "n": 53,
+      "predicted": 0.9194221065127042,
+      "observed": 0.9433962264150944
+     }
+    ],
+    "blend": {
+     "metrics": {
+      "n": 5897,
+      "log_loss": 0.6049456158120896,
+      "brier": 0.20859646578897684,
+      "accuracy": 0.6757673393250806
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.0014481251041819209,
+       "event_low": -0.002422567825706616,
+       "event_high": -0.00046771528098911886,
+       "fighter_low": -0.0021316124486132648,
+       "fighter_high": -0.0007598912449441585,
+       "low": -0.002422567825706616,
+       "high": -0.00046771528098911886
+      },
+      "brier": {
+       "mean": -0.0006051169412269871,
+       "event_low": -0.0010396779726748906,
+       "event_high": -0.00017818631806451843,
+       "fighter_low": -0.000907690071694056,
+       "fighter_high": -0.000300589351974353,
+       "low": -0.0010396779726748906,
+       "high": -0.00017818631806451843
+      },
+      "accuracy": {
+       "mean": 0.0013566220111921317,
+       "event_low": -0.0030436317300896825,
+       "event_high": 0.005497393436247633,
+       "fighter_low": -0.001928676198164645,
+       "fighter_high": 0.004434851027458099,
+       "low": -0.0030436317300896825,
+       "high": 0.005497393436247633
+      }
+     }
+    },
+    "passes": true
+   },
+   "B": {
+    "n": 5897,
+    "alpha": 0.025,
+    "events": 561,
+    "baseline": {
+     "n": 5897,
+     "log_loss": 0.6440854418438031,
+     "brier": 0.22685729236033883,
+     "accuracy": 0.6213328811259963
+    },
+    "B": {
+     "n": 5897,
+     "log_loss": 0.630135167000418,
+     "brier": 0.2208785980819784,
+     "accuracy": 0.6309988129557402
+    },
+    "delta": {
+     "log_loss": {
+      "mean": -0.013950274843384928,
+      "event_low": -0.019918666993641972,
+      "event_high": -0.007386094933057154,
+      "fighter_low": -0.018360214142204172,
+      "fighter_high": -0.009547802599541837,
+      "low": -0.019918666993641972,
+      "high": -0.007386094933057154
+     },
+     "brier": {
+      "mean": -0.0059786942783604255,
+      "event_low": -0.008658638822297324,
+      "event_high": -0.00304947205015268,
+      "fighter_low": -0.007969515919607472,
+      "fighter_high": -0.004022957938831637,
+      "low": -0.008658638822297324,
+      "high": -0.00304947205015268
+     },
+     "accuracy": {
+      "mean": 0.009665931829743938,
+      "event_low": -0.003067778312408287,
+      "event_high": 0.021983649050990383,
+      "fighter_low": 0.0009208036486499648,
+      "fighter_high": 0.018471236020468157,
+      "low": -0.003067778312408287,
+      "high": 0.021983649050990383
+     }
+    },
+    "red_bias": -0.0022137845141748658,
+    "calibration": [
+     {
+      "decile": 0,
+      "lo": 0.0,
+      "hi": 0.1,
+      "n": 9,
+      "predicted": 0.08416206319247009,
+      "observed": 0.1111111111111111
+     },
+     {
+      "decile": 1,
+      "lo": 0.1,
+      "hi": 0.2,
+      "n": 67,
+      "predicted": 0.15433625657813965,
+      "observed": 0.14925373134328357
+     },
+     {
+      "decile": 2,
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "n": 198,
+      "predicted": 0.2602251286988467,
+      "observed": 0.25757575757575757
+     },
+     {
+      "decile": 3,
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "n": 555,
+      "predicted": 0.3567882828070082,
+      "observed": 0.3963963963963964
+     },
+     {
+      "decile": 4,
+      "lo": 0.4,
+      "hi": 0.5,
+      "n": 955,
+      "predicted": 0.453506305661,
+      "observed": 0.4869109947643979
+     },
+     {
+      "decile": 5,
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "n": 1336,
+      "predicted": 0.550919768777655,
+      "observed": 0.5396706586826348
+     },
+     {
+      "decile": 6,
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "n": 1372,
+      "predicted": 0.6473624760550929,
+      "observed": 0.630466472303207
+     },
+     {
+      "decile": 7,
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "n": 934,
+      "predicted": 0.7446987089205003,
+      "observed": 0.7301927194860813
+     },
+     {
+      "decile": 8,
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 368,
+      "predicted": 0.8412639506121572,
+      "observed": 0.8722826086956522
+     },
+     {
+      "decile": 9,
+      "lo": 0.9,
+      "hi": 1.0,
+      "n": 103,
+      "predicted": 0.9209987807997222,
+      "observed": 0.9223300970873787
+     }
+    ],
+    "blend": {
+     "metrics": {
+      "n": 5897,
+      "log_loss": 0.6033562437197144,
+      "brier": 0.2079496218599795,
+      "accuracy": 0.6772935390876716
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.0030374971965570607,
+       "event_low": -0.004533111942803642,
+       "event_high": -0.0014567996791457402,
+       "fighter_low": -0.004094390128961335,
+       "fighter_high": -0.0019806347594518315,
+       "low": -0.004533111942803642,
+       "high": -0.0014567996791457402
+      },
+      "brier": {
+       "mean": -0.0012519608702243178,
+       "event_low": -0.0019402147914510258,
+       "event_high": -0.0005209461050387857,
+       "fighter_low": -0.0017281197113425098,
+       "fighter_high": -0.0007740056601732243,
+       "low": -0.0019402147914510258,
+       "high": -0.0005209461050387857
+      },
+      "accuracy": {
+       "mean": 0.0028828217737832795,
+       "event_low": -0.002564551912370333,
+       "event_high": 0.008150910858013683,
+       "fighter_low": -0.0011977560754947228,
+       "fighter_high": 0.006974870581591205,
+       "low": -0.002564551912370333,
+       "high": 0.008150910858013683
+      }
+     }
+    },
+    "passes": true
+   }
+  },
+  "market": {
+   "n": 5897,
+   "log_loss": 0.608051389187599,
+   "brier": 0.21033845496952772,
+   "accuracy": 0.6649143632355435
+  },
+  "baseline_calibration": [
+   {
+    "decile": 0,
+    "lo": 0.0,
+    "hi": 0.1,
+    "n": 3,
+    "predicted": 0.064042,
+    "observed": 0.0
+   },
+   {
+    "decile": 1,
+    "lo": 0.1,
+    "hi": 0.2,
+    "n": 29,
+    "predicted": 0.16562906896551727,
+    "observed": 0.3448275862068966
+   },
+   {
+    "decile": 2,
+    "lo": 0.2,
+    "hi": 0.30000000000000004,
+    "n": 198,
+    "predicted": 0.2623578787878788,
+    "observed": 0.2878787878787879
+   },
+   {
+    "decile": 3,
+    "lo": 0.30000000000000004,
+    "hi": 0.4,
+    "n": 517,
+    "predicted": 0.35753090522243713,
+    "observed": 0.40425531914893614
+   },
+   {
+    "decile": 4,
+    "lo": 0.4,
+    "hi": 0.5,
+    "n": 892,
+    "predicted": 0.4541542612107623,
+    "observed": 0.4786995515695067
+   },
+   {
+    "decile": 5,
+    "lo": 0.5,
+    "hi": 0.6000000000000001,
+    "n": 1628,
+    "predicted": 0.5561257948402949,
+    "observed": 0.550982800982801
+   },
+   {
+    "decile": 6,
+    "lo": 0.6000000000000001,
+    "hi": 0.7000000000000001,
+    "n": 1447,
+    "predicted": 0.6492577422252938,
+    "observed": 0.645473393227367
+   },
+   {
+    "decile": 7,
+    "lo": 0.7000000000000001,
+    "hi": 0.8,
+    "n": 903,
+    "predicted": 0.7412331107419712,
+    "observed": 0.716500553709856
+   },
+   {
+    "decile": 8,
+    "lo": 0.8,
+    "hi": 0.9,
+    "n": 260,
+    "predicted": 0.8428480884615385,
+    "observed": 0.8884615384615384
+   },
+   {
+    "decile": 9,
+    "lo": 0.9,
+    "hi": 1.0,
+    "n": 20,
+    "predicted": 0.9103711499999999,
+    "observed": 0.95
+   }
+  ]
+ },
+ "secondary": {
+  "priced_confirm": {
+   "n": 2293,
+   "years": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2026
+   ],
+   "decides": false,
+   "priced": true,
+   "baseline": {
+    "n": 2293,
+    "log_loss": 0.6435642438275274,
+    "brier": 0.22631054738371562,
+    "accuracy": 0.6249454862625382,
+    "red_bias": 0.005810303532490235,
+    "blend": {
+     "n": 2293,
+     "log_loss": 0.6059095460212769,
+     "brier": 0.20893731552660524,
+     "accuracy": 0.6816397732228522
+    }
+   },
+   "arms": {
+    "A": {
+     "n": 2293,
+     "alpha": 0.025,
+     "events": 222,
+     "baseline": {
+      "n": 2293,
+      "log_loss": 0.6435642438275274,
+      "brier": 0.22631054738371562,
+      "accuracy": 0.6249454862625382
+     },
+     "A": {
+      "n": 2293,
+      "log_loss": 0.6420883446045275,
+      "brier": 0.22552463315350754,
+      "accuracy": 0.6284343654600959
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.001475899222999918,
+       "event_low": -0.0052826032121340806,
+       "event_high": 0.002293293305152349,
+       "fighter_low": -0.004334521675811507,
+       "fighter_high": 0.0014552906281404575,
+       "low": -0.0052826032121340806,
+       "high": 0.002293293305152349
+      },
+      "brier": {
+       "mean": -0.0007859142302081168,
+       "event_low": -0.0024580788152206924,
+       "event_high": 0.00090681144929786,
+       "fighter_low": -0.002072399510462416,
+       "fighter_high": 0.0005186391479002403,
+       "low": -0.0024580788152206924,
+       "high": 0.00090681144929786
+      },
+      "accuracy": {
+       "mean": 0.0034888791975577847,
+       "event_low": -0.007944441605057428,
+       "event_high": 0.01592828148268759,
+       "fighter_low": -0.004815576176333743,
+       "fighter_high": 0.012144005442870219,
+       "low": -0.007944441605057428,
+       "high": 0.01592828148268759
+      }
+     },
+     "red_bias": 0.00820440232273778,
+     "calibration": [
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 1,
+       "predicted": 0.19907950139658445,
+       "observed": 0.0
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 42,
+       "predicted": 0.2752575148786463,
+       "observed": 0.23809523809523808
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 176,
+       "predicted": 0.3555364588396434,
+       "observed": 0.3352272727272727
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 415,
+       "predicted": 0.4562862760749644,
+       "observed": 0.4506024096385542
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 572,
+       "predicted": 0.5522292565045587,
+       "observed": 0.541958041958042
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 607,
+       "predicted": 0.6481673780240725,
+       "observed": 0.6392092257001647
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 389,
+       "predicted": 0.7427702190229405,
+       "observed": 0.7403598971722365
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 89,
+       "predicted": 0.8319820576664989,
+       "observed": 0.8426966292134831
+      },
+      {
+       "decile": 9,
+       "lo": 0.9,
+       "hi": 1.0,
+       "n": 2,
+       "predicted": 0.9114132796943644,
+       "observed": 1.0
+      }
+     ],
+     "blend": {
+      "metrics": {
+       "n": 2293,
+       "log_loss": 0.6054919922137244,
+       "brier": 0.2087564100548924,
+       "accuracy": 0.6812036633231574
+      },
+      "delta": {
+       "log_loss": {
+        "mean": -0.0004175538075525839,
+        "event_low": -0.0013292574963962422,
+        "event_high": 0.0004971647280763158,
+        "fighter_low": -0.0010909997064805503,
+        "fighter_high": 0.00028027765238984505,
+        "low": -0.0013292574963962422,
+        "high": 0.0004971647280763158
+       },
+       "brier": {
+        "mean": -0.00018090547171282722,
+        "event_low": -0.0005961038626923051,
+        "event_high": 0.00023779695783537492,
+        "fighter_low": -0.0004875118964646094,
+        "fighter_high": 0.00012648173312434686,
+        "low": -0.0005961038626923051,
+        "high": 0.00023779695783537492
+       },
+       "accuracy": {
+        "mean": -0.0004361098996947231,
+        "event_low": -0.005251669879324154,
+        "event_high": 0.004420866489832007,
+        "fighter_low": -0.0038515125946999985,
+        "fighter_high": 0.003008181185315307,
+        "low": -0.005251669879324154,
+        "high": 0.004420866489832007
+       }
+      }
+     },
+     "passes": null
+    },
+    "B": {
+     "n": 2293,
+     "alpha": 0.025,
+     "events": 222,
+     "baseline": {
+      "n": 2293,
+      "log_loss": 0.6435642438275274,
+      "brier": 0.22631054738371562,
+      "accuracy": 0.6249454862625382
+     },
+     "B": {
+      "n": 2293,
+      "log_loss": 0.6390968026389021,
+      "brier": 0.2242070936304475,
+      "accuracy": 0.6354121238552115
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.004467441188625223,
+       "event_low": -0.010380977905106085,
+       "event_high": 0.0014008911080713709,
+       "fighter_low": -0.008450412078859467,
+       "fighter_high": -0.00023284377055443376,
+       "low": -0.010380977905106085,
+       "high": 0.0014008911080713709
+      },
+      "brier": {
+       "mean": -0.002103453753268174,
+       "event_low": -0.004859172140705209,
+       "event_high": 0.0006080252965827222,
+       "fighter_low": -0.0039965239902784435,
+       "fighter_high": -0.00013657928111234397,
+       "low": -0.004859172140705209,
+       "high": 0.0006080252965827222
+      },
+      "accuracy": {
+       "mean": 0.010466637592673354,
+       "event_low": -0.006435075509785685,
+       "event_high": 0.027250382252202915,
+       "fighter_low": -0.0008993545755263188,
+       "fighter_high": 0.02151368559177943,
+       "low": -0.006435075509785685,
+       "high": 0.027250382252202915
+      }
+     },
+     "red_bias": 0.008385817997542344,
+     "calibration": [
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 1,
+       "predicted": 0.18802641213292925,
+       "observed": 0.0
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 54,
+       "predicted": 0.2753141845007553,
+       "observed": 0.3148148148148148
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 187,
+       "predicted": 0.358811844966497,
+       "observed": 0.3422459893048128
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 388,
+       "predicted": 0.4547945722446433,
+       "observed": 0.4252577319587629
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 571,
+       "predicted": 0.5514450023359028,
+       "observed": 0.5516637478108581
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 590,
+       "predicted": 0.6476338724180639,
+       "observed": 0.6220338983050847
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 402,
+       "predicted": 0.7448508801617276,
+       "observed": 0.763681592039801
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 100,
+       "predicted": 0.8320644436806154,
+       "observed": 0.84
+      }
+     ],
+     "blend": {
+      "metrics": {
+       "n": 2293,
+       "log_loss": 0.6054156366030533,
+       "brier": 0.20876603237185334,
+       "accuracy": 0.6846925425207152
+      },
+      "delta": {
+       "log_loss": {
+        "mean": -0.0004939094182236767,
+        "event_low": -0.00190163102554265,
+        "event_high": 0.0009073489115098674,
+        "fighter_low": -0.0014866640379847253,
+        "fighter_high": 0.000530851718280061,
+        "low": -0.00190163102554265,
+        "high": 0.0009073489115098674
+       },
+       "brier": {
+        "mean": -0.00017128315475190491,
+        "event_low": -0.0008230805587057435,
+        "event_high": 0.00048735039306337563,
+        "fighter_low": -0.0006194544669786451,
+        "fighter_high": 0.00029898566174567837,
+        "low": -0.0008230805587057435,
+        "high": 0.00048735039306337563
+       },
+       "accuracy": {
+        "mean": 0.0030527692978630614,
+        "event_low": -0.003392904445897222,
+        "event_high": 0.0095034968631081,
+        "fighter_low": -0.0015573685039777091,
+        "fighter_high": 0.0076286587313735815,
+        "low": -0.003392904445897222,
+        "high": 0.0095034968631081
+       }
+      }
+     },
+     "passes": null
+    }
+   },
+   "market": {
+    "n": 2293,
+    "log_loss": 0.6034394120204065,
+    "brier": 0.2081264155740987,
+    "accuracy": 0.6764064544265155
+   },
+   "baseline_calibration": [
+    {
+     "decile": 1,
+     "lo": 0.1,
+     "hi": 0.2,
+     "n": 1,
+     "predicted": 0.171662,
+     "observed": 0.0
+    },
+    {
+     "decile": 2,
+     "lo": 0.2,
+     "hi": 0.30000000000000004,
+     "n": 52,
+     "predicted": 0.26946040384615383,
+     "observed": 0.28846153846153844
+    },
+    {
+     "decile": 3,
+     "lo": 0.30000000000000004,
+     "hi": 0.4,
+     "n": 184,
+     "predicted": 0.35461464130434783,
+     "observed": 0.3423913043478261
+    },
+    {
+     "decile": 4,
+     "lo": 0.4,
+     "hi": 0.5,
+     "n": 369,
+     "predicted": 0.4539421355013549,
+     "observed": 0.45528455284552843
+    },
+    {
+     "decile": 5,
+     "lo": 0.5,
+     "hi": 0.6000000000000001,
+     "n": 590,
+     "predicted": 0.5540962050847458,
+     "observed": 0.5389830508474577
+    },
+    {
+     "decile": 6,
+     "lo": 0.6000000000000001,
+     "hi": 0.7000000000000001,
+     "n": 626,
+     "predicted": 0.6497929824281151,
+     "observed": 0.6293929712460063
+    },
+    {
+     "decile": 7,
+     "lo": 0.7000000000000001,
+     "hi": 0.8,
+     "n": 421,
+     "predicted": 0.7378345581947743,
+     "observed": 0.7505938242280285
+    },
+    {
+     "decile": 8,
+     "lo": 0.8,
+     "hi": 0.9,
+     "n": 50,
+     "predicted": 0.8214032800000001,
+     "observed": 0.9
+    }
+   ]
+  },
+  "all_fights": {
+   "n": 7184,
+   "years": [
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+   ],
+   "decides": false,
+   "priced": false,
+   "baseline": {
+    "n": 7184,
+    "log_loss": 0.6434619516044571,
+    "brier": 0.226530266081028,
+    "accuracy": 0.6234688195991092,
+    "red_bias": -0.002260588947661568
+   },
+   "arms": {
+    "A": {
+     "n": 7184,
+     "alpha": 0.025,
+     "events": 620,
+     "baseline": {
+      "n": 7184,
+      "log_loss": 0.6434619516044571,
+      "brier": 0.226530266081028,
+      "accuracy": 0.6234688195991092
+     },
+     "A": {
+      "n": 7184,
+      "log_loss": 0.6382405325416074,
+      "brier": 0.224131555939634,
+      "accuracy": 0.6316815144766147
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.005221419062849559,
+       "event_low": -0.008958745899272215,
+       "event_high": -0.001492312269267019,
+       "fighter_low": -0.007801907543787757,
+       "fighter_high": -0.002649052646237863,
+       "low": -0.008958745899272215,
+       "high": -0.001492312269267019
+      },
+      "brier": {
+       "mean": -0.002398710141393959,
+       "event_low": -0.004030462494385887,
+       "event_high": -0.000775631900969221,
+       "fighter_low": -0.0035666695528744166,
+       "fighter_high": -0.001242684583601468,
+       "low": -0.004030462494385887,
+       "high": -0.000775631900969221
+      },
+      "accuracy": {
+       "mean": 0.008212694877505568,
+       "event_low": -0.00013871766195033987,
+       "event_high": 0.01672437272638912,
+       "fighter_low": 0.0023920379636052248,
+       "fighter_high": 0.014426148779485297,
+       "low": -0.00013871766195033987,
+       "high": 0.01672437272638912
+      }
+     },
+     "red_bias": -0.00044460119790923347,
+     "calibration": [
+      {
+       "decile": 0,
+       "lo": 0.0,
+       "hi": 0.1,
+       "n": 9,
+       "predicted": 0.0752189445775304,
+       "observed": 0.0
+      },
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 41,
+       "predicted": 0.1706149278012518,
+       "observed": 0.1951219512195122
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 231,
+       "predicted": 0.26268088693510194,
+       "observed": 0.2554112554112554
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 644,
+       "predicted": 0.35432090333543326,
+       "observed": 0.38509316770186336
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 1219,
+       "predicted": 0.4544368365071007,
+       "observed": 0.46595570139458575
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 1805,
+       "predicted": 0.5522557345350038,
+       "observed": 0.5628808864265928
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 1616,
+       "predicted": 0.6478125597199316,
+       "observed": 0.6330445544554455
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 1068,
+       "predicted": 0.7443523387067031,
+       "observed": 0.7303370786516854
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 486,
+       "predicted": 0.8389623811288371,
+       "observed": 0.8148148148148148
+      },
+      {
+       "decile": 9,
+       "lo": 0.9,
+       "hi": 1.0,
+       "n": 65,
+       "predicted": 0.9218867663157343,
+       "observed": 0.9538461538461539
+      }
+     ],
+     "passes": null
+    },
+    "B": {
+     "n": 7184,
+     "alpha": 0.025,
+     "events": 620,
+     "baseline": {
+      "n": 7184,
+      "log_loss": 0.6434619516044571,
+      "brier": 0.226530266081028,
+      "accuracy": 0.6234688195991092
+     },
+     "B": {
+      "n": 7184,
+      "log_loss": 0.6314014391828455,
+      "brier": 0.22147453730806996,
+      "accuracy": 0.6294543429844098
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.012060512421611401,
+       "event_low": -0.01757421650234659,
+       "event_high": -0.006757737164836738,
+       "fighter_low": -0.015989270018546563,
+       "fighter_high": -0.00814971895387052,
+       "low": -0.01757421650234659,
+       "high": -0.006757737164836738
+      },
+      "brier": {
+       "mean": -0.005055728772958027,
+       "event_low": -0.007577172210246256,
+       "event_high": -0.002575177944410376,
+       "fighter_low": -0.006805413163340499,
+       "fighter_high": -0.0032758300230885497,
+       "low": -0.007577172210246256,
+       "high": -0.002575177944410376
+      },
+      "accuracy": {
+       "mean": 0.0059855233853006685,
+       "event_low": -0.005064984084323417,
+       "event_high": 0.01708097458849624,
+       "fighter_low": -0.0016186272117741786,
+       "fighter_high": 0.013841555193349913,
+       "low": -0.005064984084323417,
+       "high": 0.01708097458849624
+      }
+     },
+     "red_bias": -0.0003859975938400595,
+     "calibration": [
+      {
+       "decile": 0,
+       "lo": 0.0,
+       "hi": 0.1,
+       "n": 10,
+       "predicted": 0.08468612787102944,
+       "observed": 0.1
+      },
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 73,
+       "predicted": 0.1547817940023838,
+       "observed": 0.136986301369863
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 242,
+       "predicted": 0.25880874291831085,
+       "observed": 0.24793388429752067
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 690,
+       "predicted": 0.35641009019750963,
+       "observed": 0.39565217391304347
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 1161,
+       "predicted": 0.45321561671995947,
+       "observed": 0.48492678725236865
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 1656,
+       "predicted": 0.5507067779306435,
+       "observed": 0.5410628019323671
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 1656,
+       "predicted": 0.6473600413517452,
+       "observed": 0.6268115942028986
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 1132,
+       "predicted": 0.7446152738670261,
+       "observed": 0.7252650176678446
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 445,
+       "predicted": 0.8400155530361926,
+       "observed": 0.8696629213483146
+      },
+      {
+       "decile": 9,
+       "lo": 0.9,
+       "hi": 1.0,
+       "n": 119,
+       "predicted": 0.9212856147930105,
+       "observed": 0.9327731092436975
+      }
+     ],
+     "passes": null
+    }
+   },
+   "baseline_calibration": [
+    {
+     "decile": 0,
+     "lo": 0.0,
+     "hi": 0.1,
+     "n": 3,
+     "predicted": 0.064042,
+     "observed": 0.0
+    },
+    {
+     "decile": 1,
+     "lo": 0.1,
+     "hi": 0.2,
+     "n": 38,
+     "predicted": 0.16629323684210529,
+     "observed": 0.2894736842105263
+    },
+    {
+     "decile": 2,
+     "lo": 0.2,
+     "hi": 0.30000000000000004,
+     "n": 242,
+     "predicted": 0.2621231694214876,
+     "observed": 0.28512396694214875
+    },
+    {
+     "decile": 3,
+     "lo": 0.30000000000000004,
+     "hi": 0.4,
+     "n": 638,
+     "predicted": 0.3577742711598746,
+     "observed": 0.3887147335423197
+    },
+    {
+     "decile": 4,
+     "lo": 0.4,
+     "hi": 0.5,
+     "n": 1090,
+     "predicted": 0.4543097183486238,
+     "observed": 0.47522935779816516
+    },
+    {
+     "decile": 5,
+     "lo": 0.5,
+     "hi": 0.6000000000000001,
+     "n": 1924,
+     "predicted": 0.5555676595634097,
+     "observed": 0.5483367983367984
+    },
+    {
+     "decile": 6,
+     "lo": 0.6000000000000001,
+     "hi": 0.7000000000000001,
+     "n": 1770,
+     "predicted": 0.6495503559322034,
+     "observed": 0.6440677966101694
+    },
+    {
+     "decile": 7,
+     "lo": 0.7000000000000001,
+     "hi": 0.8,
+     "n": 1154,
+     "predicted": 0.7419334012131715,
+     "observed": 0.7209705372616985
+    },
+    {
+     "decile": 8,
+     "lo": 0.8,
+     "hi": 0.9,
+     "n": 299,
+     "predicted": 0.842386712374582,
+     "observed": 0.8762541806020067
+    },
+    {
+     "decile": 9,
+     "lo": 0.9,
+     "hi": 1.0,
+     "n": 26,
+     "predicted": 0.9106229230769229,
+     "observed": 0.9615384615384616
+    }
+   ]
+  },
+  "all_fights_confirm": {
+   "n": 3318,
+   "years": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+   ],
+   "decides": false,
+   "priced": false,
+   "baseline": {
+    "n": 3318,
+    "log_loss": 0.6436703054392464,
+    "brier": 0.22620827991123962,
+    "accuracy": 0.6289933694996986,
+    "red_bias": 0.007373387884267668
+   },
+   "arms": {
+    "A": {
+     "n": 3318,
+     "alpha": 0.025,
+     "events": 281,
+     "baseline": {
+      "n": 3318,
+      "log_loss": 0.6436703054392464,
+      "brier": 0.22620827991123962,
+      "accuracy": 0.6289933694996986
+     },
+     "A": {
+      "n": 3318,
+      "log_loss": 0.641338333077481,
+      "brier": 0.22515996010848408,
+      "accuracy": 0.6289933694996986
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.0023319723617655544,
+       "event_low": -0.006367795988626159,
+       "event_high": 0.0018838263315444383,
+       "fighter_low": -0.005124034879844189,
+       "fighter_high": 0.0004693522863879875,
+       "low": -0.006367795988626159,
+       "high": 0.0018838263315444383
+      },
+      "brier": {
+       "mean": -0.0010483198027555572,
+       "event_low": -0.0028291440249466485,
+       "event_high": 0.0008260897027479725,
+       "fighter_low": -0.0022678755645729057,
+       "fighter_high": 0.00018895458825571394,
+       "low": -0.0028291440249466485,
+       "high": 0.0008260897027479725
+      },
+      "accuracy": {
+       "mean": 0.0,
+       "event_low": -0.011141643137294488,
+       "event_high": 0.010846681417255139,
+       "fighter_low": -0.007429970921420191,
+       "fighter_high": 0.007730316795788815,
+       "low": -0.011141643137294488,
+       "high": 0.010846681417255139
+      }
+     },
+     "red_bias": 0.006353903070536515,
+     "calibration": [
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 7,
+       "predicted": 0.1856789986943978,
+       "observed": 0.14285714285714285
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 77,
+       "predicted": 0.26857429793574883,
+       "observed": 0.2077922077922078
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 276,
+       "predicted": 0.35537943789570975,
+       "observed": 0.3442028985507246
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 598,
+       "predicted": 0.45547725889886015,
+       "observed": 0.45652173913043476
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 824,
+       "predicted": 0.5516787127406333,
+       "observed": 0.5400485436893204
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 849,
+       "predicted": 0.647912214773063,
+       "observed": 0.6419316843345112
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 554,
+       "predicted": 0.7434969879635924,
+       "observed": 0.7454873646209387
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 129,
+       "predicted": 0.8328820242385847,
+       "observed": 0.8294573643410853
+      },
+      {
+       "decile": 9,
+       "lo": 0.9,
+       "hi": 1.0,
+       "n": 4,
+       "predicted": 0.9105771690431272,
+       "observed": 1.0
+      }
+     ],
+     "passes": null
+    },
+    "B": {
+     "n": 3318,
+     "alpha": 0.025,
+     "events": 281,
+     "baseline": {
+      "n": 3318,
+      "log_loss": 0.6436703054392464,
+      "brier": 0.22620827991123962,
+      "accuracy": 0.6289933694996986
+     },
+     "B": {
+      "n": 3318,
+      "log_loss": 0.64061264715229,
+      "brier": 0.22490006099654072,
+      "accuracy": 0.6311030741410488
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.0030576582869562235,
+       "event_low": -0.008549273225896914,
+       "event_high": 0.002654341311856583,
+       "fighter_low": -0.0067689842673141435,
+       "fighter_high": 0.0006795585880481845,
+       "low": -0.008549273225896914,
+       "high": 0.002654341311856583
+      },
+      "brier": {
+       "mean": -0.0013082189146988716,
+       "event_low": -0.0038537011270756046,
+       "event_high": 0.0012881265442048178,
+       "fighter_low": -0.0030341654064718346,
+       "fighter_high": 0.00040403298947065984,
+       "low": -0.0038537011270756046,
+       "high": 0.0012881265442048178
+      },
+      "accuracy": {
+       "mean": 0.002109704641350211,
+       "event_low": -0.011947654668843866,
+       "event_high": 0.016324381889758127,
+       "fighter_low": -0.007376140923526608,
+       "fighter_high": 0.011576728974950708,
+       "low": -0.011947654668843866,
+       "high": 0.016324381889758127
+      }
+     },
+     "red_bias": 0.006769171591853196,
+     "calibration": [
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 2,
+       "predicted": 0.1927596614210249,
+       "observed": 0.0
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 88,
+       "predicted": 0.2655667630926363,
+       "observed": 0.2727272727272727
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 306,
+       "predicted": 0.35688633680326637,
+       "observed": 0.35294117647058826
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 555,
+       "predicted": 0.45427023342426787,
+       "observed": 0.44324324324324327
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 828,
+       "predicted": 0.5510556717944178,
+       "observed": 0.5507246376811594
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 816,
+       "predicted": 0.647339482046029,
+       "observed": 0.625
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 570,
+       "predicted": 0.744925386932469,
+       "observed": 0.7491228070175439
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 153,
+       "predicted": 0.8318100268474625,
+       "observed": 0.8366013071895425
+      }
+     ],
+     "passes": null
+    }
+   },
+   "baseline_calibration": [
+    {
+     "decile": 1,
+     "lo": 0.1,
+     "hi": 0.2,
+     "n": 9,
+     "predicted": 0.17414655555555558,
+     "observed": 0.1111111111111111
+    },
+    {
+     "decile": 2,
+     "lo": 0.2,
+     "hi": 0.30000000000000004,
+     "n": 91,
+     "predicted": 0.2659924615384615,
+     "observed": 0.2857142857142857
+    },
+    {
+     "decile": 3,
+     "lo": 0.30000000000000004,
+     "hi": 0.4,
+     "n": 276,
+     "predicted": 0.3556579492753624,
+     "observed": 0.322463768115942
+    },
+    {
+     "decile": 4,
+     "lo": 0.4,
+     "hi": 0.5,
+     "n": 526,
+     "predicted": 0.45514449999999995,
+     "observed": 0.45817490494296575
+    },
+    {
+     "decile": 5,
+     "lo": 0.5,
+     "hi": 0.6000000000000001,
+     "n": 821,
+     "predicted": 0.5534230962241169,
+     "observed": 0.5408038976857491
+    },
+    {
+     "decile": 6,
+     "lo": 0.6000000000000001,
+     "hi": 0.7000000000000001,
+     "n": 895,
+     "predicted": 0.650367823463687,
+     "observed": 0.6335195530726258
+    },
+    {
+     "decile": 7,
+     "lo": 0.7000000000000001,
+     "hi": 0.8,
+     "n": 630,
+     "predicted": 0.7400057904761904,
+     "observed": 0.7507936507936508
+    },
+    {
+     "decile": 8,
+     "lo": 0.8,
+     "hi": 0.9,
+     "n": 70,
+     "predicted": 0.8211636428571429,
+     "observed": 0.8285714285714286
+    }
+   ]
+  },
+  "log_loss_by_year_priced": {
+   "2011": {
+    "n": 284,
+    "baseline": 0.6653749390226539,
+    "A": 0.6627366028527308,
+    "B": 0.6187276160858532,
+    "red_win_rate": 0.602112676056338,
+    "mean_p": {
+     "baseline": 0.5582336338028169,
+     "A": 0.5555136341191903,
+     "B": 0.5502694015182928
+    }
+   },
+   "2012": {
+    "n": 324,
+    "baseline": 0.6421447150246976,
+    "A": 0.6259195293357909,
+    "B": 0.5994557016771513,
+    "red_win_rate": 0.6296296296296297,
+    "mean_p": {
+     "baseline": 0.585029925925926,
+     "A": 0.5773807912544795,
+     "B": 0.567338715011524
+    }
+   },
+   "2013": {
+    "n": 356,
+    "baseline": 0.630013674450913,
+    "A": 0.6020488233438259,
+    "B": 0.5952227360348791,
+    "red_win_rate": 0.5926966292134831,
+    "mean_p": {
+     "baseline": 0.600217106741573,
+     "A": 0.606147925510575,
+     "B": 0.6064846280507977
+    }
+   },
+   "2014": {
+    "n": 461,
+    "baseline": 0.6478502747462742,
+    "A": 0.641046916486559,
+    "B": 0.6202781431883934,
+    "red_win_rate": 0.6399132321041214,
+    "mean_p": {
+     "baseline": 0.571227824295011,
+     "A": 0.5805084682016932,
+     "B": 0.5921435237216308
+    }
+   },
+   "2015": {
+    "n": 432,
+    "baseline": 0.6095100038819761,
+    "A": 0.6066853066803084,
+    "B": 0.5958961858180671,
+    "red_win_rate": 0.5763888888888888,
+    "mean_p": {
+     "baseline": 0.6126412708333333,
+     "A": 0.6227967855725289,
+     "B": 0.6205874523310284
+    }
+   },
+   "2016": {
+    "n": 448,
+    "baseline": 0.6364540759265073,
+    "A": 0.6286396667581288,
+    "B": 0.6145960318114234,
+    "red_win_rate": 0.5848214285714286,
+    "mean_p": {
+     "baseline": 0.5697127790178571,
+     "A": 0.5640206792992307,
+     "B": 0.5750478945128742
+    }
+   },
+   "2017": {
+    "n": 406,
+    "baseline": 0.6434276197912299,
+    "A": 0.6421899794158441,
+    "B": 0.6416441542243541,
+    "red_win_rate": 0.5541871921182266,
+    "mean_p": {
+     "baseline": 0.5679707660098522,
+     "A": 0.5719996984869513,
+     "B": 0.559520728060044
+    }
+   },
+   "2018": {
+    "n": 436,
+    "baseline": 0.6611817567478785,
+    "A": 0.652504071667682,
+    "B": 0.6466691020085021,
+    "red_win_rate": 0.5481651376146789,
+    "mean_p": {
+     "baseline": 0.5484053555045871,
+     "A": 0.5549568688569929,
+     "B": 0.5575883747544194
+    }
+   },
+   "2019": {
+    "n": 457,
+    "baseline": 0.6664490526783148,
+    "A": 0.6751829902562081,
+    "B": 0.672750269988403,
+    "red_win_rate": 0.5601750547045952,
+    "mean_p": {
+     "baseline": 0.550117875273523,
+     "A": 0.5634257771191505,
+     "B": 0.5574321733058754
+    }
+   },
+   "2020": {
+    "n": 409,
+    "baseline": 0.6440338125386806,
+    "A": 0.6470069179580257,
+    "B": 0.641081380242467,
+    "red_win_rate": 0.6063569682151589,
+    "mean_p": {
+     "baseline": 0.56353302200489,
+     "A": 0.5642158942208049,
+     "B": 0.5673926880287314
+    }
+   },
+   "2021": {
+    "n": 469,
+    "baseline": 0.670353836795799,
+    "A": 0.6669407167082169,
+    "B": 0.6628953066549158,
+    "red_win_rate": 0.55863539445629,
+    "mean_p": {
+     "baseline": 0.6146492942430705,
+     "A": 0.6184790891394828,
+     "B": 0.6181185897039981
+    }
+   },
+   "2022": {
+    "n": 476,
+    "baseline": 0.6365364250384161,
+    "A": 0.635958669403764,
+    "B": 0.6347786582732738,
+    "red_win_rate": 0.5903361344537815,
+    "mean_p": {
+     "baseline": 0.5654236428571429,
+     "A": 0.5655154022889751,
+     "B": 0.5642645949376358
+    }
+   },
+   "2023": {
+    "n": 413,
+    "baseline": 0.6323008015604162,
+    "A": 0.6252807019483755,
+    "B": 0.6288974290360144,
+    "red_win_rate": 0.5786924939467313,
+    "mean_p": {
+     "baseline": 0.5928680847457627,
+     "A": 0.5902167508199009,
+     "B": 0.5901764276959117
+    }
+   },
+   "2024": {
+    "n": 367,
+    "baseline": 0.6388518110930625,
+    "A": 0.6380189029124915,
+    "B": 0.6294557654331705,
+    "red_win_rate": 0.5367847411444142,
+    "mean_p": {
+     "baseline": 0.5776671089918256,
+     "A": 0.5793685123606911,
+     "B": 0.5787413725895434
+    }
+   },
+   "2026": {
+    "n": 159,
+    "baseline": 0.6245084797300524,
+    "A": 0.6275305326254097,
+    "B": 0.6254669161430961,
+    "red_win_rate": 0.5786163522012578,
+    "mean_p": {
+     "baseline": 0.5507389874213836,
+     "A": 0.574896901690354,
+     "B": 0.5757016171342738
+    }
+   }
+  },
+  "log_loss_by_year_all": {
+   "2011": {
+    "n": 295,
+    "baseline": 0.6682259363359171,
+    "A": 0.6646209235281172,
+    "B": 0.6197097246973813,
+    "red_win_rate": 0.5966101694915255,
+    "mean_p": {
+     "baseline": 0.5569336440677967,
+     "A": 0.5549826990951214,
+     "B": 0.549888123027154
+    }
+   },
+   "2012": {
+    "n": 333,
+    "baseline": 0.6441157525364969,
+    "A": 0.6296669634991768,
+    "B": 0.6038678711557243,
+    "red_win_rate": 0.6246246246246246,
+    "mean_p": {
+     "baseline": 0.5844682552552553,
+     "A": 0.5767296091419692,
+     "B": 0.5670338667964128
+    }
+   },
+   "2013": {
+    "n": 376,
+    "baseline": 0.6262849423994469,
+    "A": 0.5979860705693335,
+    "B": 0.5960275173452225,
+    "red_win_rate": 0.5930851063829787,
+    "mean_p": {
+     "baseline": 0.6008331755319148,
+     "A": 0.6060346971312953,
+     "B": 0.6088725310184586
+    }
+   },
+   "2014": {
+    "n": 494,
+    "baseline": 0.6499931229814481,
+    "A": 0.6413740618012608,
+    "B": 0.6178198723725097,
+    "red_win_rate": 0.631578947368421,
+    "mean_p": {
+     "baseline": 0.5718157530364373,
+     "A": 0.5799612632522797,
+     "B": 0.5889203260266188
+    }
+   },
+   "2015": {
+    "n": 464,
+    "baseline": 0.6097379234910759,
+    "A": 0.6057291618184412,
+    "B": 0.5952401899480922,
+    "red_win_rate": 0.5711206896551724,
+    "mean_p": {
+     "baseline": 0.6130345625,
+     "A": 0.6230678037667579,
+     "B": 0.6210940473959544
+    }
+   },
+   "2016": {
+    "n": 483,
+    "baseline": 0.6266367433224078,
+    "A": 0.6159202133592785,
+    "B": 0.6053267391832904,
+    "red_win_rate": 0.5921325051759835,
+    "mean_p": {
+     "baseline": 0.5729417267080745,
+     "A": 0.5675259119346459,
+     "B": 0.5779103084817683
+    }
+   },
+   "2017": {
+    "n": 446,
+    "baseline": 0.6393198985231574,
+    "A": 0.6363141954702726,
+    "B": 0.6367043302104342,
+    "red_win_rate": 0.5560538116591929,
+    "mean_p": {
+     "baseline": 0.5741884327354261,
+     "A": 0.5784733189748099,
+     "B": 0.5683470737295323
+    }
+   },
+   "2018": {
+    "n": 469,
+    "baseline": 0.6619560152111961,
+    "A": 0.6547989053160486,
+    "B": 0.6494849987701041,
+    "red_win_rate": 0.5415778251599147,
+    "mean_p": {
+     "baseline": 0.5495943603411513,
+     "A": 0.5550985988510082,
+     "B": 0.5584373717418766
+    }
+   },
+   "2019": {
+    "n": 506,
+    "baseline": 0.6671099991507144,
+    "A": 0.672511787289836,
+    "B": 0.6720960150699211,
+    "red_win_rate": 0.5711462450592886,
+    "mean_p": {
+     "baseline": 0.5493176501976286,
+     "A": 0.5632888316694711,
+     "B": 0.5576218499388339
+    }
+   },
+   "2020": {
+    "n": 444,
+    "baseline": 0.6432841051403598,
+    "A": 0.645801247928933,
+    "B": 0.6396058528412661,
+    "red_win_rate": 0.6148648648648649,
+    "mean_p": {
+     "baseline": 0.5619229189189189,
+     "A": 0.5628910836411362,
+     "B": 0.566547282870855
+    }
+   },
+   "2021": {
+    "n": 497,
+    "baseline": 0.6656766326045739,
+    "A": 0.6620211380970267,
+    "B": 0.6586363769937483,
+    "red_win_rate": 0.5694164989939637,
+    "mean_p": {
+     "baseline": 0.6156305432595574,
+     "A": 0.6203674312914508,
+     "B": 0.6194223290841235
+    }
+   },
+   "2022": {
+    "n": 506,
+    "baseline": 0.6382703536417595,
+    "A": 0.6377019678730695,
+    "B": 0.6357977261746292,
+    "red_win_rate": 0.5948616600790514,
+    "mean_p": {
+     "baseline": 0.5651030098814229,
+     "A": 0.5654131393112416,
+     "B": 0.5636207557191149
+    }
+   },
+   "2023": {
+    "n": 504,
+    "baseline": 0.6494419053161347,
+    "A": 0.6444279175263244,
+    "B": 0.6510351504972771,
+    "red_win_rate": 0.5734126984126984,
+    "mean_p": {
+     "baseline": 0.5941417003968255,
+     "A": 0.5910911155000246,
+     "B": 0.5916467919336875
+    }
+   },
+   "2024": {
+    "n": 513,
+    "baseline": 0.6447845603809493,
+    "A": 0.6407713322735299,
+    "B": 0.6337624023427287,
+    "red_win_rate": 0.5399610136452242,
+    "mean_p": {
+     "baseline": 0.5777312982456141,
+     "A": 0.5803128723316089,
+     "B": 0.5777820543587188
+    }
+   },
+   "2025": {
+    "n": 513,
+    "baseline": 0.6435153347335133,
+    "A": 0.6412507669981079,
+    "B": 0.644414782820416,
+    "red_win_rate": 0.557504873294347,
+    "mean_p": {
+     "baseline": 0.5847289746588694,
+     "A": 0.5574849575334649,
+     "B": 0.5641334255598188
+    }
+   },
+   "2026": {
+    "n": 341,
+    "baseline": 0.6101386479320967,
+    "A": 0.6071968514164869,
+    "B": 0.6119801288568927,
+    "red_win_rate": 0.5571847507331378,
+    "mean_p": {
+     "baseline": 0.5462495161290324,
+     "A": 0.5693159486077455,
+     "B": 0.5656172828904381
+    }
+   }
+  },
+  "opening_lines_unpriced_years": {
+   "note": "SECONDARY, NOT THE BAR: the years odds.csv prices no fight of, scored with opening_odds.csv's OPENING lines as the market. The primary set and bar are closing lines only.",
+   "years": [
+    2025
+   ],
+   "fights_by_year": {
+    "2025": 217
+   },
+   "table": {
+    "n": 217,
+    "years": [
+     2025
+    ],
+    "decides": false,
+    "priced": true,
+    "baseline": {
+     "n": 217,
+     "log_loss": 0.6515910565615347,
+     "brier": 0.22872047735303686,
+     "accuracy": 0.6497695852534562,
+     "red_bias": 0.05661740552995387,
+     "blend": {
+      "n": 217,
+      "log_loss": 0.6038053318086181,
+      "brier": 0.20772457082493004,
+      "accuracy": 0.6820276497695853
+     }
+    },
+    "arms": {
+     "A": {
+      "n": 217,
+      "alpha": 0.025,
+      "events": 40,
+      "baseline": {
+       "n": 217,
+       "log_loss": 0.6515910565615347,
+       "brier": 0.22872047735303686,
+       "accuracy": 0.6497695852534562
+      },
+      "A": {
+       "n": 217,
+       "log_loss": 0.6429134348323053,
+       "brier": 0.2254681435652946,
+       "accuracy": 0.6497695852534562
+      },
+      "delta": {
+       "log_loss": {
+        "mean": -0.008677621729229368,
+        "event_low": -0.03051799846785697,
+        "event_high": 0.013007998480934976,
+        "fighter_low": -0.0283379343610005,
+        "fighter_high": 0.009607718735800517,
+        "low": -0.03051799846785697,
+        "high": 0.013007998480934976
+       },
+       "brier": {
+        "mean": -0.003252333787742296,
+        "event_low": -0.012487634906752887,
+        "event_high": 0.005733220135963206,
+        "fighter_low": -0.011724808381609834,
+        "fighter_high": 0.0046494823877797735,
+        "low": -0.012487634906752887,
+        "high": 0.005733220135963206
+       },
+       "accuracy": {
+        "mean": 0.0,
+        "event_low": -0.044647321428571425,
+        "event_high": 0.04783212560386487,
+        "fighter_low": -0.03059095344298857,
+        "fighter_high": 0.032559088198623104,
+        "low": -0.044647321428571425,
+        "high": 0.04783212560386487
+       }
+      },
+      "red_bias": 0.019260559532940258,
+      "calibration": [
+       {
+        "decile": 2,
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 6,
+        "predicted": 0.25799803373347246,
+        "observed": 0.16666666666666666
+       },
+       {
+        "decile": 3,
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 22,
+        "predicted": 0.34308559451494086,
+        "observed": 0.3181818181818182
+       },
+       {
+        "decile": 4,
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 36,
+        "predicted": 0.450447229325854,
+        "observed": 0.3611111111111111
+       },
+       {
+        "decile": 5,
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 53,
+        "predicted": 0.5513556924460148,
+        "observed": 0.5283018867924528
+       },
+       {
+        "decile": 6,
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 63,
+        "predicted": 0.6449016780331392,
+        "observed": 0.6666666666666666
+       },
+       {
+        "decile": 7,
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 31,
+        "predicted": 0.7418097359212089,
+        "observed": 0.7741935483870968
+       },
+       {
+        "decile": 8,
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 6,
+        "predicted": 0.8368017753172872,
+        "observed": 0.6666666666666666
+       }
+      ],
+      "blend": {
+       "metrics": {
+        "n": 217,
+        "log_loss": 0.6045612362220131,
+        "brier": 0.2081310866261978,
+        "accuracy": 0.6774193548387096
+       },
+       "delta": {
+        "log_loss": {
+         "mean": 0.0007559044133948853,
+         "event_low": -0.004147379035884574,
+         "event_high": 0.005797816918346034,
+         "fighter_low": -0.003972115471122624,
+         "fighter_high": 0.005206274594048176,
+         "low": -0.004147379035884574,
+         "high": 0.005797816918346034
+        },
+        "brier": {
+         "mean": 0.0004065158012677628,
+         "event_low": -0.0018011841038970639,
+         "event_high": 0.0026270821248881335,
+         "fighter_low": -0.0016719173354015637,
+         "fighter_high": 0.00240237153301429,
+         "low": -0.0018011841038970639,
+         "high": 0.0026270821248881335
+        },
+        "accuracy": {
+         "mean": -0.004608294930875576,
+         "event_low": -0.02941357577513764,
+         "event_high": 0.018100575894693566,
+         "fighter_low": -0.020882277558948902,
+         "fighter_high": 0.01126126126126126,
+         "low": -0.02941357577513764,
+         "high": 0.018100575894693566
+        }
+       }
+      },
+      "passes": null
+     },
+     "B": {
+      "n": 217,
+      "alpha": 0.025,
+      "events": 40,
+      "baseline": {
+       "n": 217,
+       "log_loss": 0.6515910565615347,
+       "brier": 0.22872047735303686,
+       "accuracy": 0.6497695852534562
+      },
+      "B": {
+       "n": 217,
+       "log_loss": 0.6406302940172414,
+       "brier": 0.2250821934161633,
+       "accuracy": 0.6267281105990783
+      },
+      "delta": {
+       "log_loss": {
+        "mean": -0.01096076254429337,
+        "event_low": -0.04064908035975878,
+        "event_high": 0.01721155054164074,
+        "fighter_low": -0.035716992234106015,
+        "fighter_high": 0.013086868782122025,
+        "low": -0.04064908035975878,
+        "high": 0.01721155054164074
+       },
+       "brier": {
+        "mean": -0.003638283936873565,
+        "event_low": -0.016859156026006215,
+        "event_high": 0.008674865515247238,
+        "fighter_low": -0.014658038688997567,
+        "fighter_high": 0.0069225144730581745,
+        "low": -0.016859156026006215,
+        "high": 0.008674865515247238
+       },
+       "accuracy": {
+        "mean": -0.02304147465437788,
+        "event_low": -0.07306075286780264,
+        "event_high": 0.028226757455873424,
+        "fighter_low": -0.06320900068078397,
+        "fighter_high": 0.018306636155606407,
+        "low": -0.07306075286780264,
+        "high": 0.028226757455873424
+       }
+      },
+      "red_bias": 0.018759951868459135,
+      "calibration": [
+       {
+        "decile": 2,
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 9,
+        "predicted": 0.24783682715130967,
+        "observed": 0.2222222222222222
+       },
+       {
+        "decile": 3,
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 27,
+        "predicted": 0.34949833145489717,
+        "observed": 0.4074074074074074
+       },
+       {
+        "decile": 4,
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 29,
+        "predicted": 0.4515141012657436,
+        "observed": 0.3793103448275862
+       },
+       {
+        "decile": 5,
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 52,
+        "predicted": 0.5486069824186415,
+        "observed": 0.46153846153846156
+       },
+       {
+        "decile": 6,
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 55,
+        "predicted": 0.6473461153009624,
+        "observed": 0.6363636363636364
+       },
+       {
+        "decile": 7,
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 37,
+        "predicted": 0.74487582569841,
+        "observed": 0.7837837837837838
+       },
+       {
+        "decile": 8,
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 8,
+        "predicted": 0.8272511558677014,
+        "observed": 0.875
+       }
+      ],
+      "blend": {
+       "metrics": {
+        "n": 217,
+        "log_loss": 0.6038460919312462,
+        "brier": 0.20789763554440258,
+        "accuracy": 0.6820276497695853
+       },
+       "delta": {
+        "log_loss": {
+         "mean": 4.0760122627840576e-05,
+         "event_low": -0.006467925446908193,
+         "event_high": 0.006803924992429588,
+         "fighter_low": -0.006315131022661243,
+         "fighter_high": 0.006058891075886144,
+         "low": -0.006467925446908193,
+         "high": 0.006803924992429588
+        },
+        "brier": {
+         "mean": 0.00017306471947254579,
+         "event_low": -0.0028174857457832197,
+         "event_high": 0.003178750330686682,
+         "fighter_low": -0.002677264214568406,
+         "fighter_high": 0.0028810698254779043,
+         "low": -0.0028174857457832197,
+         "high": 0.003178750330686682
+        },
+        "accuracy": {
+         "mean": 0.0,
+         "event_low": -0.025533278777959627,
+         "event_high": 0.025,
+         "fighter_low": -0.01785764221796101,
+         "fighter_high": 0.016472051853916956,
+         "low": -0.025533278777959627,
+         "high": 0.025
+        }
+       }
+      },
+      "passes": null
+     }
+    },
+    "market": {
+     "n": 217,
+     "log_loss": 0.6039761146428737,
+     "brier": 0.2083450187682057,
+     "accuracy": 0.6774193548387096
+    },
+    "baseline_calibration": [
+     {
+      "decile": 1,
+      "lo": 0.1,
+      "hi": 0.2,
+      "n": 1,
+      "predicted": 0.175264,
+      "observed": 0.0
+     },
+     {
+      "decile": 2,
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "n": 9,
+      "predicted": 0.2725114444444445,
+      "observed": 0.5555555555555556
+     },
+     {
+      "decile": 3,
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "n": 15,
+      "predicted": 0.3549922,
+      "observed": 0.13333333333333333
+     },
+     {
+      "decile": 4,
+      "lo": 0.4,
+      "hi": 0.5,
+      "n": 23,
+      "predicted": 0.4640413043478261,
+      "observed": 0.2608695652173913
+     },
+     {
+      "decile": 5,
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "n": 43,
+      "predicted": 0.5607256511627907,
+      "observed": 0.5348837209302325
+     },
+     {
+      "decile": 6,
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "n": 62,
+      "predicted": 0.6491735161290323,
+      "observed": 0.5967741935483871
+     },
+     {
+      "decile": 7,
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "n": 55,
+      "predicted": 0.7435341454545454,
+      "observed": 0.7454545454545455
+     },
+     {
+      "decile": 8,
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 9,
+      "predicted": 0.822882,
+      "observed": 0.5555555555555556
+     }
+    ]
+   }
+  }
+ },
+ "passing": [
+  "A",
+  "B"
+ ],
+ "verdict": "PASS: A swap-averaged, B swap-augmented - model-only log loss interval below zero and the blend not worse"
+}

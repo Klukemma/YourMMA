@@ -247,8 +247,28 @@ from fight_report import (
 # row. Everything the pipeline defines is bound here as before.
 import feature_frame as _feature_frame
 _UFC_RAW = ufc                  # the archive as read; live rows cut it by date
-globals().update(_feature_frame.build(ufc))
+_BUILT = _feature_frame.build(ufc)
+globals().update(_BUILT)
 print(f"    Feature matrix shape: {X.shape}")
+
+# CORNER SYMMETRY (experiments/symmetry.py, idea #6). The red corner is the
+# favoured fighter on most cards and wins 58% of bouts, so a model fitted on
+# fights as listed learns corner identity along with the fighters. The winner
+# models are fitted on every fight twice - as listed, and with the corners
+# exchanged and the label flipped - and predict a fight as the average of
+# p(red, blue) and 1 - p(blue, red). Walk-forward, 5,897 priced fights of
+# 2011-2024 and 2026 (odds.csv prices no 2025 fight): model-only log loss
+# 0.6441 -> 0.6301 (interval [-0.0199, -0.0074] at the family-wise level),
+# accuracy 62.1% -> 63.1%, and the 0.75 market blend 0.6064 -> 0.6034;
+# prediction-time averaging alone gave a third of that. On 2020+ priced
+# fights it is -0.0045 [-0.0104, +0.0014], blend -0.0005; the headline gain
+# is front-loaded in 2011-2016 where training sets were small (1,239-3,201
+# fights), so expect the production regime to earn a fraction of it.
+# X_SWAPPED is every training row with the corners exchanged on the history
+# as it is - the row live_rows builds for the swapped fight (corner_swap.py).
+import corner_swap as _corner_swap
+X_SWAPPED = _corner_swap.swapped_matrix(_UFC_RAW, _BUILT)
+print(f"    Swapped feature matrix shape: {X_SWAPPED.shape}")
 
 # ============================================================================
 # SECTION 4.5: LEAKAGE AUDIT & TIME-TRAVEL TESTS
@@ -406,6 +426,10 @@ print("\n[5] SPLITTING DATA (70/15/15 temporal)...")
 valid_mask = ufc['target_win'].notna()
 X_valid = X[valid_mask].copy()
 X_valid_winner = X_valid[feature_cols_winner].copy()  # Winner model features only
+# The same fights with the corners exchanged (label 1 - y), for the
+# swap-augmented winner models and the symmetrised prediction.
+X_valid_swap = X_SWAPPED[valid_mask].copy()
+X_valid_winner_swap = X_valid_swap[feature_cols_winner].copy()
 ufc_valid = ufc[valid_mask].copy()
 y_win = ufc_valid['target_win'].values
 
@@ -453,6 +477,24 @@ scaler = StandardScaler()
 X_train_s = scaler.fit_transform(X_train)
 X_cal_s = scaler.transform(X_cal)
 X_test_s = scaler.transform(X_test)
+
+# The swapped copies through the same scaler (fitted on the rows as listed,
+# which the method, finish and round models share), and the doubled blocks
+# the winner models train and early-stop on: every fight as listed with its
+# label and swapped with 1 - label, the fight's recency weight on both.
+# NOTE: the SECTION 6 test-set figures this produces are the engine's
+# diagnostic printout, not the shipped recipe - production (SECTION 15) fits
+# its own winner scaler on the doubled block and averages three models
+# without the MLP; the measurement is experiments/symmetry.py.
+X_train_swap_s = scaler.transform(X_valid_swap.iloc[:train_end])
+X_cal_swap_s = scaler.transform(X_valid_swap.iloc[train_end:cal_end])
+X_test_swap_s = scaler.transform(X_valid_swap.iloc[cal_end:])
+X_train_aug_s = np.vstack([X_train_s, X_train_swap_s])
+y_train_aug = np.concatenate([y_train, 1.0 - y_train])
+recency_weights_aug = np.concatenate([recency_weights, recency_weights])
+X_cal_aug_s = np.vstack([X_cal_s, X_cal_swap_s])
+y_cal_aug = np.concatenate([y_cal, 1.0 - y_cal])
+_symmetrise = _corner_swap.symmetrise   # (p(x) + 1 - p(x_swapped)) / 2
 
 # ============================================================================
 # SECTION 5.5: HYPERPARAMETER TUNING WITH OPTUNA
@@ -566,7 +608,7 @@ print("\n[6] TRAINING WIN PREDICTION MODELS...")
 # Logistic Regression
 print("    Training Logistic Regression...")
 lr = LogisticRegression(C=0.1, max_iter=1000, random_state=42)
-lr.fit(X_train_s, y_train, sample_weight=recency_weights)
+lr.fit(X_train_aug_s, y_train_aug, sample_weight=recency_weights_aug)
 print(f"      Train acc: {lr.score(X_train_s, y_train):.4f}")
 
 # Random Forest (with max_depth cap to reduce overfitting)
@@ -576,7 +618,7 @@ rf = RandomForestClassifier(
     min_samples_split=10,  # Additional regularization
     random_state=42, n_jobs=-1
 )
-rf.fit(X_train_s, y_train, sample_weight=recency_weights)
+rf.fit(X_train_aug_s, y_train_aug, sample_weight=recency_weights_aug)
 print(f"      Train acc: {rf.score(X_train_s, y_train):.4f}")
 
 # XGBoost (with early stopping to prevent overfitting)
@@ -588,7 +630,7 @@ xgb_win = XGBClassifier(
     random_state=42, eval_metric='logloss', verbosity=0,
     early_stopping_rounds=50
 )
-xgb_win.fit(X_train_s, y_train, sample_weight=recency_weights, eval_set=[(X_cal_s, y_cal)], verbose=False)
+xgb_win.fit(X_train_aug_s, y_train_aug, sample_weight=recency_weights_aug, eval_set=[(X_cal_aug_s, y_cal_aug)], verbose=False)
 print(f"      Train acc: {xgb_win.score(X_train_s, y_train):.4f}")
 print(f"      Early stopped at iteration: {xgb_win.best_iteration}")
 
@@ -614,11 +656,16 @@ mlp.fit(X_train_s, y_train)
 print(f"      Train acc: {mlp.score(X_train_s, y_train):.4f}")
 print(f"      Iterations: {mlp.n_iter_}")
 
-# Ensemble probabilities on calibration set
-p_lr_cal = lr.predict_proba(X_cal_s)[:, 1]
-p_rf_cal = rf.predict_proba(X_cal_s)[:, 1]
-p_xgb_cal = xgb_win.predict_proba(X_cal_s)[:, 1]
-p_mlp_cal = mlp.predict_proba(X_cal_s)[:, 1]
+# Ensemble probabilities on calibration set - every model's output
+# symmetrised over the two orientations of the fight, as every prediction
+# this engine makes is (the MLP is fitted as listed and symmetrised too).
+def _symmetric_proba(model, Xs, Xs_swap):
+    return _symmetrise(model.predict_proba(Xs)[:, 1], model.predict_proba(Xs_swap)[:, 1])
+
+p_lr_cal = _symmetric_proba(lr, X_cal_s, X_cal_swap_s)
+p_rf_cal = _symmetric_proba(rf, X_cal_s, X_cal_swap_s)
+p_xgb_cal = _symmetric_proba(xgb_win, X_cal_s, X_cal_swap_s)
+p_mlp_cal = _symmetric_proba(mlp, X_cal_s, X_cal_swap_s)
 p_ens_cal = (p_lr_cal + p_rf_cal + p_xgb_cal + p_mlp_cal) / 4
 
 # Platt calibration on calibration set (NOT test set!)
@@ -628,10 +675,10 @@ platt.fit(p_ens_cal.reshape(-1, 1), y_cal)
 
 # Evaluate on TEST set
 print("\n    EVALUATING ON TEST SET...")
-p_lr_test = lr.predict_proba(X_test_s)[:, 1]
-p_rf_test = rf.predict_proba(X_test_s)[:, 1]
-p_xgb_test = xgb_win.predict_proba(X_test_s)[:, 1]
-p_mlp_test = mlp.predict_proba(X_test_s)[:, 1]
+p_lr_test = _symmetric_proba(lr, X_test_s, X_test_swap_s)
+p_rf_test = _symmetric_proba(rf, X_test_s, X_test_swap_s)
+p_xgb_test = _symmetric_proba(xgb_win, X_test_s, X_test_swap_s)
+p_mlp_test = _symmetric_proba(mlp, X_test_s, X_test_swap_s)
 p_ens_test = (p_lr_test + p_rf_test + p_xgb_test + p_mlp_test) / 4
 p_cal_test = platt.predict_proba(p_ens_test.reshape(-1, 1))[:, 1]
 
@@ -642,6 +689,9 @@ logloss = log_loss(y_test, p_cal_test)
 print(f"\n    " + "="*50)
 print(f"    WIN PREDICTION TEST RESULTS")
 print(f"    " + "="*50)
+print("    (diagnostic printout: full feature set, scaler fitted as listed,")
+print("     four-model average with the MLP - not the shipped recipe;")
+print("     experiments/symmetry.json is the measurement to believe)")
 print(f"    Accuracy:    {acc:.4f} ({acc*100:.1f}%)")
 print(f"    Brier Score: {brier:.4f}")
 print(f"    Log Loss:    {logloss:.4f}")
@@ -842,22 +892,28 @@ for test_year in range(start_year, years[-1] + 1):
     if train_mask.sum() < 100 or test_mask.sum() < 10:
         continue
     
-    X_wf_train = X_valid[train_mask]
+    # Every training fight as listed and swapped (label flipped); the test
+    # fight predicted as the average of the two orientations, as production.
+    X_wf_train = np.vstack([X_valid[train_mask], X_valid_swap[train_mask]])
     X_wf_test = X_valid[test_mask]
-    y_wf_train = y_win[train_mask.values]
+    X_wf_test_swap = X_valid_swap[test_mask]
+    y_wf_train = np.concatenate([y_win[train_mask.values], 1.0 - y_win[train_mask.values]])
     y_wf_test = y_win[test_mask.values]
-    
+
     # Scale
     sc_wf = StandardScaler()
     X_wf_train_s = sc_wf.fit_transform(X_wf_train)
     X_wf_test_s = sc_wf.transform(X_wf_test)
-    
+    X_wf_test_swap_s = sc_wf.transform(X_wf_test_swap)
+
     # Quick ensemble (with early stopping for XGB)
     lr_wf = LogisticRegression(C=0.1, max_iter=1000, random_state=42).fit(X_wf_train_s, y_wf_train)
     rf_wf = RandomForestClassifier(n_estimators=100, max_depth=12, random_state=42, n_jobs=-1).fit(X_wf_train_s, y_wf_train)
     xgb_wf = XGBClassifier(n_estimators=100, max_depth=5, learning_rate=0.05, random_state=42, eval_metric='logloss', verbosity=0).fit(X_wf_train_s, y_wf_train)
-    
-    p_ens = (lr_wf.predict_proba(X_wf_test_s)[:, 1] + rf_wf.predict_proba(X_wf_test_s)[:, 1] + xgb_wf.predict_proba(X_wf_test_s)[:, 1]) / 3
+
+    def _ens_wf(Xs):
+        return (lr_wf.predict_proba(Xs)[:, 1] + rf_wf.predict_proba(Xs)[:, 1] + xgb_wf.predict_proba(Xs)[:, 1]) / 3
+    p_ens = _symmetrise(_ens_wf(X_wf_test_s), _ens_wf(X_wf_test_swap_s))
     acc_wf = accuracy_score(y_wf_test, p_ens > 0.5)
     brier_wf = brier_score_loss(y_wf_test, p_ens)
     
@@ -1412,7 +1468,8 @@ def prepare_live_card(fights, event_date=None, contexts=None):
     as few passes as possible, keyed exactly as predict_fight_prod will ask
     for it. Batch callers replaying many bouts on one date use this once
     per date instead of paying a pass per bout."""
-    return _LIVE.prepare_card(fights, event_date, contexts, check=_check_fighters)
+    return _LIVE.prepare_card(fights, event_date, contexts, check=_check_fighters,
+                              swapped=True)
 
 
 def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=False, context=None):
@@ -1480,14 +1537,21 @@ def predict_fight(red_name, blue_name, event_date=None, is_5rnd=False, is_title=
     try:
         X_pred = _live_row(r_resolved or red_name, b_resolved or blue_name,
                            event_date, is_5rnd, is_title, context)[feature_cols]
+        # the same fight with the corners exchanged, for the symmetrised prediction
+        X_pred_swap = _live_row(b_resolved or blue_name, r_resolved or red_name,
+                                event_date, is_5rnd, is_title, context)[feature_cols]
     except _live_rows.NoLiveRow as err:
         problems = [f"NO DATA: {err}"]
         print(f"    {problems[0]}")
         return _no_data_result(red_name, blue_name, problems)
     X_pred_s = scaler.transform(X_pred)
-    
-    # Win prediction (ensemble + calibration)
-    p_ens = (lr.predict_proba(X_pred_s)[:, 1][0] + rf.predict_proba(X_pred_s)[:, 1][0] + xgb_win.predict_proba(X_pred_s)[:, 1][0] + mlp.predict_proba(X_pred_s)[:, 1][0]) / 4
+    X_pred_swap_s = scaler.transform(X_pred_swap)
+
+    # Win prediction (ensemble + calibration), symmetrised over the two
+    # orientations of the fight: (p(red, blue) + 1 - p(blue, red)) / 2
+    def _ens4(Xs):
+        return (lr.predict_proba(Xs)[:, 1][0] + rf.predict_proba(Xs)[:, 1][0] + xgb_win.predict_proba(Xs)[:, 1][0] + mlp.predict_proba(Xs)[:, 1][0]) / 4
+    p_ens = float(_symmetrise(_ens4(X_pred_s), _ens4(X_pred_swap_s)))
     p_win_base = platt.predict_proba([[p_ens]])[0, 1]
     
     # Apply context adjustments if provided
@@ -1749,9 +1813,25 @@ print(f"    Cal:   {len(X_cal_full):,} fights ({cal_dates_full.min().date()} to 
 X_train_full_winner = X_valid_winner.iloc[:train_end_full]
 X_cal_full_winner = X_valid_winner.iloc[train_end_full:]
 
+# CORNER SYMMETRY: the winner models are fitted on the training block twice
+# over - every fight as listed with its label, and with the corners
+# exchanged (X_valid_winner_swap) with the label flipped - the fight's
+# recency weight on both copies, the scaler fitted on the doubled block and
+# XGB early-stopping on the doubled calibration block; the split into
+# training and calibration FIGHTS is the one above. Measured in
+# experiments/symmetry.py (arm B) and summarised at X_SWAPPED's definition.
+X_train_full_winner_swap = X_valid_winner_swap.iloc[:train_end_full]
+X_cal_full_winner_swap = X_valid_winner_swap.iloc[train_end_full:]
+X_train_full_winner_aug = pd.concat([X_train_full_winner, X_train_full_winner_swap], ignore_index=True)
+y_train_full_aug = np.concatenate([y_train_full, 1.0 - y_train_full])
+y_cal_full_aug = np.concatenate([y_cal_full, 1.0 - y_cal_full])
+
 scaler_winner = StandardScaler()
-X_train_full_winner_s = scaler_winner.fit_transform(X_train_full_winner)
+X_train_full_winner_aug_s = scaler_winner.fit_transform(X_train_full_winner_aug)
+X_train_full_winner_s = scaler_winner.transform(X_train_full_winner)
 X_cal_full_winner_s = scaler_winner.transform(X_cal_full_winner)
+X_cal_full_winner_swap_s = scaler_winner.transform(X_cal_full_winner_swap)
+X_cal_full_winner_aug_s = np.vstack([X_cal_full_winner_s, X_cal_full_winner_swap_s])
 
 # Method/round/finish: uses full feature_cols (with cage control features)
 scaler_prod = StandardScaler()
@@ -1771,15 +1851,16 @@ recency_weights_prod = np.array([
     for d in train_dates_prod
 ])
 recency_weights_prod = recency_weights_prod / recency_weights_prod.mean()
+recency_weights_prod_aug = np.concatenate([recency_weights_prod, recency_weights_prod])
 
-lr_prod.fit(X_train_full_winner_s, y_train_full, sample_weight=recency_weights_prod)
+lr_prod.fit(X_train_full_winner_aug_s, y_train_full_aug, sample_weight=recency_weights_prod_aug)
 
 print("    Retraining Random Forest on full data (winner features)...")
 rf_prod = RandomForestClassifier(
     n_estimators=200, max_depth=12, min_samples_leaf=10,
     min_samples_split=10, random_state=42, n_jobs=-1
 )
-rf_prod.fit(X_train_full_winner_s, y_train_full, sample_weight=recency_weights_prod)
+rf_prod.fit(X_train_full_winner_aug_s, y_train_full_aug, sample_weight=recency_weights_prod_aug)
 
 print("    Retraining XGBoost on full data (winner features, early stopping)...")
 xgb_prod = XGBClassifier(
@@ -1789,7 +1870,7 @@ xgb_prod = XGBClassifier(
     random_state=42, eval_metric='logloss', verbosity=0,
     early_stopping_rounds=50
 )
-xgb_prod.fit(X_train_full_winner_s, y_train_full, sample_weight=recency_weights_prod, eval_set=[(X_cal_full_winner_s, y_cal_full)], verbose=False)
+xgb_prod.fit(X_train_full_winner_aug_s, y_train_full_aug, sample_weight=recency_weights_prod_aug, eval_set=[(X_cal_full_winner_aug_s, y_cal_full_aug)], verbose=False)
 print(f"      Early stopped at iteration: {xgb_prod.best_iteration}")
 
 print("    Retraining Neural Network (MLP) on full data (winner features)...")
@@ -1811,11 +1892,17 @@ mlp_prod = MLPClassifier(
 mlp_prod.fit(X_train_full_winner_s, y_train_full)
 print(f"      Iterations: {mlp_prod.n_iter_}")
 
-# Platt calibration (using winner features)
+# Platt calibration (using winner features), fitted on the calibration
+# block as listed - one row per fight - on the SYMMETRISED ensemble output,
+# which is what predict_fight_prod applies it to.
 print("    Fitting Platt calibration on full data (winner features)...")
-p_lr_cal_full = lr_prod.predict_proba(X_cal_full_winner_s)[:, 1]
-p_rf_cal_full = rf_prod.predict_proba(X_cal_full_winner_s)[:, 1]
-p_xgb_cal_full = xgb_prod.predict_proba(X_cal_full_winner_s)[:, 1]
+def _symmetric_ensemble_prod(Xs, Xs_swap):
+    """(LR + RF + XGB) / 3 averaged over the two orientations of the fight:
+    (e(x) + 1 - e(x_swapped)) / 2 - predict_fight_prod's arithmetic."""
+    def ens(Z):
+        return (lr_prod.predict_proba(Z)[:, 1] + rf_prod.predict_proba(Z)[:, 1]
+                + xgb_prod.predict_proba(Z)[:, 1]) / 3
+    return _symmetrise(ens(Xs), ens(Xs_swap))
 
 # Fit the calibrator on exactly what it will be applied to. This previously
 # averaged four models including mlp_prod, while predict_fight_prod averages
@@ -1825,10 +1912,13 @@ p_xgb_cal_full = xgb_prod.predict_proba(X_cal_full_winner_s)[:, 1]
 # regardless of how little it currently costs.
 # Including the MLP on both sides was also measured, and was worse
 # (ECE 0.149 against 0.123). See experiments/calibrator_mismatch.py.
-p_ens_cal_full = (p_lr_cal_full + p_rf_cal_full + p_xgb_cal_full) / 3
+p_ens_cal_full = _symmetric_ensemble_prod(X_cal_full_winner_s, X_cal_full_winner_swap_s)
 
 platt_prod = LogisticRegression(C=1e10, solver='lbfgs', max_iter=1000)
 platt_prod.fit(p_ens_cal_full.reshape(-1, 1), y_cal_full)
+print(f"      Platt on the symmetrised ensemble: platt(0.5) = "
+      f"{platt_prod.predict_proba([[0.5]])[0, 1]:.3f} (the corner prior it keeps; "
+      f"calibration-block red win rate {y_cal_full.mean():.3f})")
 
 # Retrain method model
 print("    Retraining Method prediction model...")
@@ -2380,6 +2470,12 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
     try:
         _feat_frame = _live_row(r_resolved or red_name, b_resolved or blue_name,
                                 event_date, is_5rnd, is_title, context)
+        # The same fight with the corners exchanged: the winner probability
+        # is the average of p(red, blue) and 1 - p(blue, red), so a fight
+        # gets the same number whichever way the card lists it, less the
+        # corner prior the Platt calibrator keeps (experiments/symmetry.py).
+        _feat_frame_swap = _live_row(b_resolved or blue_name, r_resolved or red_name,
+                                     event_date, is_5rnd, is_title, context)
     except _live_rows.NoLiveRow as err:
         problems = [f"NO DATA: {err}"]
         if verbose:
@@ -2387,12 +2483,12 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
         return _no_data_result(red_name, blue_name, problems)
     X_pred = _feat_frame[feature_cols]
     X_pred_winner = _feat_frame[feature_cols_winner]
+    X_pred_winner_swap = _feat_frame_swap[feature_cols_winner]
     X_pred_s = scaler_prod.transform(X_pred)          # For method/round/finish
     X_pred_winner_s = scaler_winner.transform(X_pred_winner)  # For winner models
-    
-    p_ens = (lr_prod.predict_proba(X_pred_winner_s)[:, 1][0] + 
-             rf_prod.predict_proba(X_pred_winner_s)[:, 1][0] + 
-             xgb_prod.predict_proba(X_pred_winner_s)[:, 1][0]) / 3
+    X_pred_winner_swap_s = scaler_winner.transform(X_pred_winner_swap)
+
+    p_ens = float(_symmetric_ensemble_prod(X_pred_winner_s, X_pred_winner_swap_s)[0])
     p_win_base = platt_prod.predict_proba([[p_ens]])[0, 1]
     
     # Auto-detect pressure fighters from archetype for cage size adjustments

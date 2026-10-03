@@ -2,7 +2,7 @@
  "hash": "d11442575e5f8268eed60e5725aedbd5af4fc1736d58c914678956d84d42b802",
  "protocol": "production-3model-platt-v2",
  "code": "8fc8eab612b779ddd1ac0a3b306fd08d18ba91d653258ffd3d2273d6ea3559c9",
- "label": "baseline",
+ "label": "baseline_legacy",
  "columns": [
   "fight_id",
   "date",
@@ -42,5 +42,8 @@
   2024,
   2025,
   2026
- ]
+ ],
+ "recipe": "legacy",
+ "orientations": 1,
+ "renamed": "model_compare_baseline.{csv,json} until idea #6's fix: the recipe as listed, now the legacy recipe"
 }

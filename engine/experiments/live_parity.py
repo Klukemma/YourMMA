@@ -21,6 +21,15 @@ Both rows go through the SAME fitted models (the cut archive's). The gap
 between the two probabilities is what the live path changes; the per-
 feature table says where. Nothing here changes a prediction.
 
+Since idea #6 (experiments/symmetry.py) a prediction averages two rows: the
+fight as listed and the same fight with the corners exchanged. Each side
+here therefore holds both orientations - the training-style swapped row is
+corner_swap.swapped_matrix's (engine.X_valid_winner_swap), the live one is
+the second frame predict_fight_prod hands the winner scaler - and both
+probabilities are the shipped arithmetic: the Platt of the symmetrised
+three-model ensemble. The per-feature table is on the row as listed, as it
+always was; the swapped row is compared the same way and counted after it.
+
     python engine/experiments/live_parity.py [--events 4]
 """
 
@@ -37,6 +46,8 @@ import pandas as pd
 
 ENGINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ENGINE))
+
+import corner_swap  # noqa: E402
 
 ARCHIVE = ENGINE / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
 OUT = Path(__file__).with_suffix(".json")
@@ -58,6 +69,10 @@ def train_child(dates, out):
     meta = engine.ufc_valid.reset_index(drop=True)
     X = engine.X_valid_winner.reset_index(drop=True)
     X = X.replace([np.inf, -np.inf], np.nan).fillna(0)
+    # the same fights with the corners exchanged, as production trains on
+    # and predicts with (corner_swap.swapped_matrix)
+    X_swap = engine.X_valid_winner_swap.reset_index(drop=True)
+    X_swap = X_swap.replace([np.inf, -np.inf], np.nan).fillna(0)
     day = pd.to_datetime(meta["date"]).dt.strftime("%Y-%m-%d")
     rows = []
     for i in np.flatnonzero(day.isin(dates).to_numpy()):
@@ -74,7 +89,8 @@ def train_child(dates, out):
                      "is_title": int(bool(meta.loc[i, "title_fight"])),
                      "division": str(meta.loc[i, "division"]),
                      "placeholder": bool(placeholder),
-                     "features": {c: float(X.loc[i, c]) for c in X.columns}})
+                     "features": {c: float(X.loc[i, c]) for c in X.columns},
+                     "features_swap": {c: float(X_swap.loc[i, c]) for c in X.columns}})
     Path(out).write_text(json.dumps(rows))
 
 
@@ -94,17 +110,25 @@ def live_child(date, train_path, out):
     scaler = engine.scaler_winner
     engine.scaler_winner = Recorder(scaler)
 
-    def prob(frame):
+    def ens(frame):
         xs = scaler.transform(frame[engine.feature_cols_winner])
-        ens = (engine.lr_prod.predict_proba(xs)[:, 1]
-               + engine.rf_prod.predict_proba(xs)[:, 1]
-               + engine.xgb_prod.predict_proba(xs)[:, 1]) / 3
-        return engine.platt_prod.predict_proba(ens.reshape(-1, 1))[:, 1]
+        return (engine.lr_prod.predict_proba(xs)[:, 1]
+                + engine.rf_prod.predict_proba(xs)[:, 1]
+                + engine.xgb_prod.predict_proba(xs)[:, 1]) / 3
+
+    def prob(listed, swapped):
+        # predict_fight_prod's arithmetic: the Platt of the symmetrised
+        # ensemble, (e(x) + 1 - e(x_swapped)) / 2
+        e = corner_swap.symmetrise(ens(listed), ens(swapped))
+        return engine.platt_prod.predict_proba(e.reshape(-1, 1))[:, 1]
 
     rows = []
     for fight in json.loads(Path(train_path).read_text()):
         if fight["date"] != date:
             continue
+        if "features_swap" not in fight:
+            raise SystemExit("the training-style rows predate the symmetrised "
+                             "prediction: delete the train_*.json in --work and rerun")
         seen.clear()
         try:
             pred = engine.predict_fight_prod(fight["red"], fight["blue"],
@@ -122,11 +146,17 @@ def live_child(date, train_path, out):
         if not seen:
             rows.append({**fight, "live": None, "error": "no prediction"})
             continue
-        live = seen[-1].iloc[0].to_dict()
+        # predict_fight_prod scales exactly two winner frames per fight: the
+        # fight as listed, then with the corners exchanged
+        assert len(seen) == 2, f"expected 2 winner frames, saw {len(seen)}"
+        live = seen[0].iloc[0].to_dict()
+        live_swap = seen[1].iloc[0].to_dict()
         trained = pd.DataFrame([fight["features"]])
+        trained_swap = pd.DataFrame([fight["features_swap"]])
         rows.append({**fight, "live": {k: float(v) for k, v in live.items()},
-                     "p_live": float(prob(pd.DataFrame([live]))[0]),
-                     "p_train": float(prob(trained)[0])})
+                     "live_swap": {k: float(v) for k, v in live_swap.items()},
+                     "p_live": float(prob(pd.DataFrame([live]), pd.DataFrame([live_swap]))[0]),
+                     "p_train": float(prob(trained, trained_swap)[0])})
     Path(out).write_text(json.dumps(rows))
 
 
@@ -181,24 +211,39 @@ def report(rows):
           f"{summary['accuracy_train_features']:.3f} (few fights - the gap "
           f"above is the measurement, these are colour)")
     features = sorted(scored[0]["features"])
-    table = []
-    for name in features:
-        a = np.array([r["live"].get(name, np.nan) for r in scored])
-        b = np.array([r["features"][name] for r in scored])
-        differs = ~np.isclose(a, b, atol=1e-6, equal_nan=True)
-        sd = np.nanstd(b) or 1.0
-        table.append({"feature": name, "share_differs": float(differs.mean()),
-                      "live_zero_train_not": float(np.mean((a == 0) & (b != 0))),
-                      "mean_abs_diff_sd": float(np.nanmean(np.abs(a - b)) / sd)})
-    table.sort(key=lambda t: -t["share_differs"] * (t["mean_abs_diff_sd"] + 1e-9))
+
+    def feature_table(pairs):
+        table = []
+        for name in features:
+            a = np.array([live.get(name, np.nan) for live, _ in pairs])
+            b = np.array([train[name] for _, train in pairs])
+            differs = ~np.isclose(a, b, atol=1e-6, equal_nan=True)
+            sd = np.nanstd(b) or 1.0
+            table.append({"feature": name, "share_differs": float(differs.mean()),
+                          "live_zero_train_not": float(np.mean((a == 0) & (b != 0))),
+                          "mean_abs_diff_sd": float(np.nanmean(np.abs(a - b)) / sd)})
+        table.sort(key=lambda t: -t["share_differs"] * (t["mean_abs_diff_sd"] + 1e-9))
+        return table
+
+    # the per-feature comparison on the row as listed, as before the swap
+    table = feature_table([(r["live"], r["features"]) for r in scored])
     print(f"\n  {'feature':<32}{'differs':>9}{'0 live':>8}{'|diff| in sd':>14}")
     for t in table:
         if t["share_differs"] > 0:
             print(f"  {t['feature']:<32}{t['share_differs']:>9.0%}"
                   f"{t['live_zero_train_not']:>8.0%}{t['mean_abs_diff_sd']:>14.2f}")
     same = [t["feature"] for t in table if t["share_differs"] == 0]
-    print(f"\n  {len(same)} of {len(table)} features match on every fight")
-    return {"summary": summary, "features": table}
+    print(f"\n  {len(same)} of {len(table)} features match on every fight "
+          f"(row as listed, {len(scored)} fights)")
+    # the swapped row the prediction averages with, against corner_swap's
+    # training-style swapped row: a feature that differs here is a live/
+    # train gap of the shipped probability too
+    table_swap = feature_table([(r["live_swap"], r["features_swap"]) for r in scored])
+    same_swap = [t["feature"] for t in table_swap if t["share_differs"] == 0]
+    differ_swap = [t["feature"] for t in table_swap if t["share_differs"] > 0]
+    print(f"  {len(same_swap)} of {len(table_swap)} features match on every fight "
+          f"(swapped row); differing: {', '.join(differ_swap) or 'none'}")
+    return {"summary": summary, "features": table, "features_swap": table_swap}
 
 
 def main(argv=None):
@@ -247,7 +292,8 @@ def main(argv=None):
     result = report(rows)
     OUT.write_text(json.dumps({"events": dates, **result,
                                "fights": [{k: v for k, v in r.items()
-                                           if k not in ("features", "live")}
+                                           if k not in ("features", "live",
+                                                        "features_swap", "live_swap")}
                                           for r in rows]}, indent=1))
     print(f"\n  wrote {OUT.name}")
     return 0

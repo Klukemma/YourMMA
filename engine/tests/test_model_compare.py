@@ -73,22 +73,28 @@ def test_every_year_is_predicted_by_models_fitted_on_earlier_years_only():
     assert (pd.to_datetime(out["date"]).dt.year == out["year"]).all()
 
 
-def test_a_signal_that_exists_only_in_the_predicted_year_cannot_be_used():
+@pytest.mark.parametrize("recipe", sorted(mc.RECIPES))
+def test_a_signal_that_exists_only_in_the_predicted_year_cannot_be_used(recipe):
     """Feature 3 is pure noise before 2013 and the exact answer in 2013. A
     harness that leaked 2013 into its own models would score near 100% on
-    2013; the honest one scores like the weak feature-0 signal alone."""
+    2013; the honest one scores like the weak feature-0 signal alone. Both
+    recipes: the legacy one as listed, the shipped one on the paired matrix
+    (a synthetic fight's swapped orientation is its negation, every feature
+    being a red-minus-blue difference - the leak with it)."""
     ufc, X, y = synthetic(n_per_year=150, years=range(2008, 2014), seed=3)
     X = X.copy()
     leak_year = ufc["date"].dt.year == 2013
     X.loc[leak_year, "f3"] = np.where(y[leak_year] == 1, 3.0, -3.0)
-    out = mc.walk_forward(X, y, ufc, first_year=2013, min_train=100, min_test=10,
-                          verbose=False)
+    spec = mc.RECIPES[recipe]
+    X_in = mc.paired(X, -X) if recipe == "symmetric" else X
+    out = mc.walk_forward(X_in, y, ufc, fitter=spec["fit"], predictor=spec["predict"],
+                          first_year=2013, min_train=100, min_test=10, verbose=False)
     assert set(out["year"]) == {2013}
     acc = mc.correct_rows(out["y"], out["p_model"]).mean()
     assert acc < 0.80, f"2013 accuracy {acc:.2f} - the harness saw its own answer"
     # the same fitter, in-sample, DOES exploit the leak - so the test bites
-    models = mc.fit_production(X[leak_year], y[leak_year], ufc.loc[leak_year, "date"])
-    _, p_in = mc.predict_production(models, X[leak_year])
+    models = spec["fit"](X_in[leak_year], y[leak_year], ufc.loc[leak_year, "date"])
+    _, p_in = spec["predict"](models, X_in[leak_year])
     assert mc.correct_rows(y[leak_year], p_in).mean() > 0.95
 
 
@@ -127,6 +133,135 @@ def test_recency_weights_rise_toward_the_present_and_average_one():
     assert w.mean() == pytest.approx(1.0)
     assert np.all(np.diff(w) >= 0)
     assert w[-1] / w[0] == pytest.approx(3.0)       # 1 -> 1 + 2 * 1 ** 1.5
+
+
+# --- the two recipes -------------------------------------------------------
+
+def test_paired_holds_both_orientations_and_halves_takes_them_apart():
+    ufc, X, y = synthetic(n_per_year=10, years=range(2010, 2012))
+    Xp = mc.paired(X, -X)
+    assert list(Xp.columns) == list(X.columns) + [mc.SWAP_PREFIX + c for c in X.columns]
+    a, b = mc.halves(Xp)
+    assert np.array_equal(a, X.to_numpy(float)) and np.array_equal(b, -X.to_numpy(float))
+    with pytest.raises(ValueError):
+        mc.paired(X, X.iloc[:-1])
+    with pytest.raises(ValueError):
+        mc.paired(X, X.rename(columns={"f0": "g0"}))
+    with pytest.raises(ValueError):
+        mc.halves(np.zeros((3, 5)))
+
+
+def test_the_shipped_recipe_is_symmetric_and_calibrates_through_its_own_platt():
+    ufc, X, y = synthetic(n_per_year=200, years=range(2008, 2012), seed=5)
+    Xp = mc.paired(X, -X)
+    models = mc.fit_symmetric(Xp, y, ufc["date"])
+    e, p = mc.predict_symmetric(models, Xp)
+    e2, p2 = mc.predict_symmetric(models, mc.paired(-X, X))
+    assert np.allclose(e + e2, 1.0), "the ensemble is exactly symmetric"
+    assert p.shape == e.shape == (len(X),) and np.all((p > 0) & (p < 1))
+    assert not np.allclose(p, e), "Platt must be applied, not skipped"
+    base = mc.fit_production(X, y, ufc["date"])
+    assert models["train_rows"] == base["train_rows"], "the same split of FIGHTS"
+    assert models["augmented_rows"] == 2 * models["train_rows"]
+    with pytest.raises(ValueError):
+        mc.fit_symmetric(Xp.iloc[::-1], y[::-1], ufc["date"].iloc[::-1])
+
+
+def test_the_two_recipes_are_keyed_apart_and_the_legacy_key_is_what_it_always_was():
+    ufc, X, y = synthetic(n_per_year=20, years=range(2010, 2012))
+    cols = list(X.columns)
+    legacy = mc.inputs_hash(X, y, ufc, cols, protocol=mc.RECIPES["legacy"]["protocol"],
+                            code=mc.code_fingerprint("legacy"))
+    assert legacy == mc.inputs_hash(X, y, ufc, cols), "the defaults are the legacy recipe's"
+    assert mc.code_fingerprint() == mc.code_fingerprint("legacy")
+    assert mc.code_fingerprint("symmetric") != mc.code_fingerprint("legacy")
+    assert mc.PROTOCOL != mc.PROTOCOL_SYMMETRIC
+    assert {s["protocol"] for s in mc.RECIPES.values()} == {mc.PROTOCOL, mc.PROTOCOL_SYMMETRIC}
+    assert {s["label"] for s in mc.RECIPES.values()} == {"baseline_legacy", "baseline_symmetric"}
+    assert mc.RECIPES[mc.DEFAULT_RECIPE]["fit"] is mc.fit_symmetric
+    Xp = mc.paired(X, -X)
+    symmetric = mc.inputs_hash(Xp, y, ufc, list(Xp.columns), protocol=mc.PROTOCOL_SYMMETRIC,
+                               code=mc.code_fingerprint("symmetric"))
+    assert symmetric != legacy
+    with pytest.raises(KeyError):
+        mc.code_fingerprint("something-else")
+
+
+def test_the_shipped_legacy_cache_is_still_valid_for_its_label():
+    """model_compare_baseline_legacy.{csv,json} is the file ideas #3-#7
+    were measured against (model_compare_baseline.* until idea #6's fix),
+    renamed: its protocol and recipe fingerprint must still be the legacy
+    recipe's, or every earlier verdict's yardstick has silently moved."""
+    csv_path, meta_path = mc.cache_paths("baseline_legacy")
+    if not meta_path.exists():
+        pytest.skip("no legacy cache beside the module")
+    meta = json.loads(meta_path.read_text())
+    assert meta["protocol"] == mc.PROTOCOL
+    assert meta["code"] == mc.code_fingerprint("legacy")
+    assert meta["label"] == "baseline_legacy"
+    head = pd.read_csv(csv_path, nrows=5)
+    assert "p_market" not in head.columns and {"p_model", "train_rows"} <= set(head.columns)
+
+
+def test_predictions_fits_the_shipped_recipe_by_default_and_the_legacy_one_by_name(tmp_path, monkeypatch):
+    from experiments import symmetry as sy
+    ufc, X, y = synthetic(n_per_year=30, years=range(2009, 2013))
+    used = []
+
+    def fake_frames(raw=None, features=None, swap_features=None, verbose=True):
+        return {"ufc": ufc, "X": X, "X_swap": -X, "y": y, "feature_cols": list(X.columns)}
+
+    def fake_build_frame(raw=None, features=None, verbose=False):
+        return {"ufc": ufc, "X": X, "y": y, "feature_cols": list(X.columns)}
+
+    def fake_walk_forward(X_, y_, ufc_, *, fitter, predictor, verbose=True):
+        used.append((fitter, predictor, X_.shape[1]))
+        return pd.DataFrame({"fight_id": ufc_["fight_id"], "date": ufc_["date"],
+                             "year": ufc_["date"].dt.year, "event": ufc_["event_name"],
+                             "red": ufc_["r_name"], "blue": ufc_["b_name"],
+                             "red_norm": ufc_["r_name"].str.lower(),
+                             "blue_norm": ufc_["b_name"].str.lower(),
+                             "y": y_, "p_model": 0.5, "p_ensemble": 0.5,
+                             "train_rows": 100})
+
+    monkeypatch.setattr(sy, "frames", fake_frames)
+    monkeypatch.setattr(mc, "build_frame", fake_build_frame)
+    monkeypatch.setattr(mc, "walk_forward", fake_walk_forward)
+    monkeypatch.setattr(mc, "load_prices", lambda path=None, columns=None: {})
+    default = mc.predictions(cache_dir=tmp_path, verbose=False)
+    assert default.attrs["recipe"] == "symmetric" and default.attrs["label"] == "baseline_symmetric"
+    assert used[-1] == (mc.fit_symmetric, mc.predict_symmetric, 2 * X.shape[1])
+    legacy = mc.predictions(recipe="legacy", cache_dir=tmp_path, verbose=False)
+    assert legacy.attrs["recipe"] == "legacy" and legacy.attrs["label"] == "baseline_legacy"
+    assert used[-1] == (mc.fit_production, mc.predict_production, X.shape[1])
+    # two files under two protocols, neither servable as the other
+    sym = json.loads((tmp_path / "model_compare_baseline_symmetric.json").read_text())
+    leg = json.loads((tmp_path / "model_compare_baseline_legacy.json").read_text())
+    assert sym["protocol"] == mc.PROTOCOL_SYMMETRIC and leg["protocol"] == mc.PROTOCOL
+    assert sym["hash"] != leg["hash"] and sym["code"] != leg["code"]
+    assert sym["orientations"] == 2 and sym["features"] == X.shape[1] == leg["features"]
+    assert leg["hash"] == mc.inputs_hash(X, y, ufc, list(X.columns))
+    n = len(used)
+    mc.predictions(cache_dir=tmp_path, verbose=False)
+    mc.predictions(recipe="legacy", cache_dir=tmp_path, verbose=False)
+    assert len(used) == n, "both baselines served from their own caches"
+    with pytest.raises(KeyError):
+        mc.predictions(recipe="nope", cache_dir=tmp_path, verbose=False)
+
+
+def test_decision_set_is_the_fights_whose_training_set_was_large_enough():
+    """Later ideas pre-register their PRIMARY bar on this set (the regime
+    production is in), all years secondary - see the docstring."""
+    frame = pd.DataFrame({"year": [2011, 2017, 2018, 2026],
+                          "train_rows": [1239, 3684, 4130, 8082]}, index=[10, 11, 12, 13])
+    mask = mc.decision_set(frame)
+    assert list(mask) == [False, False, True, True] and list(mask.index) == [10, 11, 12, 13]
+    assert list(frame[mask]["year"]) == [2018, 2026]
+    assert list(mc.decision_set(frame, min_train_rows=3000)) == [False, True, True, True]
+    assert mc.DECISION_MIN_TRAIN_ROWS == 4000
+    assert "PRIMARY" in mc.decision_set.__doc__ and "secondary" in mc.decision_set.__doc__
+    with pytest.raises(KeyError):
+        mc.decision_set(frame.drop(columns=["train_rows"]))
 
 
 # --- prior bouts -----------------------------------------------------------
@@ -190,6 +325,12 @@ def test_market_is_matched_in_either_corner_order_on_the_exact_date(tmp_path):
     assert p[1] == pytest.approx(market_blend.devig(+170, -200))   # flipped corners
     assert np.isnan(p[2]), "a day off is not a match - no tolerance, as residual_harness"
     assert np.isnan(p[3])
+    # opening lines live under their own column names and are read the same way
+    opening = tmp_path / "opening_odds.csv"
+    pd.read_csv(odds).rename(columns={"odds_a": "open_a", "odds_b": "open_b"}).to_csv(
+        opening, index=False)
+    q = mc.market_probabilities(frame, mc.load_prices(opening, columns=("open_a", "open_b")))
+    assert np.array_equal(np.isnan(q), np.isnan(p)) and q[0] == p[0] and q[1] == p[1]
 
 
 # --- comparison ------------------------------------------------------------
@@ -297,7 +438,7 @@ def test_predictions_are_served_from_cache_only_when_the_hash_matches(tmp_path, 
     def fake_build_frame(raw=None, features=None, verbose=False):
         return {"ufc": ufc, "X": X, "y": y, "feature_cols": list(X.columns)}
 
-    def fake_walk_forward(X_, y_, ufc_, verbose=True):
+    def fake_walk_forward(X_, y_, ufc_, verbose=True, **recipe):
         calls["fit"] += 1
         return pd.DataFrame({"fight_id": ufc_["fight_id"], "date": ufc_["date"],
                              "year": ufc_["date"].dt.year, "event": ufc_["event_name"],
@@ -308,9 +449,9 @@ def test_predictions_are_served_from_cache_only_when_the_hash_matches(tmp_path, 
 
     monkeypatch.setattr(mc, "build_frame", fake_build_frame)
     monkeypatch.setattr(mc, "walk_forward", fake_walk_forward)
-    monkeypatch.setattr(mc, "load_prices", lambda path=None: {})
-    first = mc.predictions(label="t", cache_dir=tmp_path, verbose=False)
-    again = mc.predictions(label="t", cache_dir=tmp_path, verbose=False)
+    monkeypatch.setattr(mc, "load_prices", lambda path=None, columns=None: {})
+    first = mc.predictions(recipe="legacy", label="t", cache_dir=tmp_path, verbose=False)
+    again = mc.predictions(recipe="legacy", label="t", cache_dir=tmp_path, verbose=False)
     assert calls["fit"] == 1 and len(first) == len(again) == len(ufc)
     meta = json.loads((tmp_path / "model_compare_t.json").read_text())
     assert meta["hash"] == mc.inputs_hash(X, y, ufc, list(X.columns))
@@ -318,7 +459,7 @@ def test_predictions_are_served_from_cache_only_when_the_hash_matches(tmp_path, 
     assert "p_market" not in pd.read_csv(tmp_path / "model_compare_t.csv").columns
     # the archive changes: the hash misses and the fit is redone
     y[0] = 1 - y[0]
-    mc.predictions(label="t", cache_dir=tmp_path, verbose=False)
+    mc.predictions(recipe="legacy", label="t", cache_dir=tmp_path, verbose=False)
     assert calls["fit"] == 2
 
 
@@ -331,7 +472,7 @@ def test_a_changed_odds_file_is_seen_on_a_cache_hit_without_a_refit(tmp_path, mo
     def fake_build_frame(raw=None, features=None, verbose=False):
         return {"ufc": ufc, "X": X, "y": y, "feature_cols": list(X.columns)}
 
-    def fake_walk_forward(X_, y_, ufc_, verbose=True):
+    def fake_walk_forward(X_, y_, ufc_, verbose=True, **recipe):
         calls["fit"] += 1
         return pd.DataFrame({"fight_id": ufc_["fight_id"], "date": ufc_["date"],
                              "year": ufc_["date"].dt.year, "event": ufc_["event_name"],
@@ -345,13 +486,15 @@ def test_a_changed_odds_file_is_seen_on_a_cache_hit_without_a_refit(tmp_path, mo
     columns = ["date", "fighter_a", "fighter_b", "odds_a", "odds_b"]
     odds = tmp_path / "odds.csv"
     pd.DataFrame(columns=columns).to_csv(odds, index=False)
-    before = mc.predictions(label="t", cache_dir=tmp_path, odds_path=odds, verbose=False)
+    before = mc.predictions(recipe="legacy", label="t", cache_dir=tmp_path, odds_path=odds,
+                            verbose=False)
     assert calls["fit"] == 1 and np.isnan(before["p_market"]).all()
     # the odds file is backfilled for one fight: same archive, same cache
     row = ufc.iloc[5]
     pd.DataFrame([[row["date"].strftime("%Y-%m-%d"), row["r_name"], row["b_name"], -150, 130]],
                  columns=columns).to_csv(odds, index=False)
-    after = mc.predictions(label="t", cache_dir=tmp_path, odds_path=odds, verbose=False)
+    after = mc.predictions(recipe="legacy", label="t", cache_dir=tmp_path, odds_path=odds,
+                           verbose=False)
     assert calls["fit"] == 1, "a changed odds file is not a reason to refit"
     assert np.isfinite(after["p_market"]).sum() == 1
     assert after.loc[5, "p_market"] == pytest.approx(

@@ -8,13 +8,13 @@
  "summary": {
   "fights": 50,
   "scored": 31,
-  "mean_abs_gap": 0.0019091635851515567,
-  "share_gap_over_5pts": 0.0,
+  "mean_abs_gap": 0.003515996729132443,
+  "share_gap_over_5pts": 0.03225806451612903,
   "share_pick_flipped": 0.0,
-  "logloss_live": 0.48933280944605306,
-  "logloss_train_features": 0.4900327106059742,
-  "accuracy_live": 0.8709677419354839,
-  "accuracy_train_features": 0.8709677419354839
+  "logloss_live": 0.4916935808653002,
+  "logloss_train_features": 0.49150785574006406,
+  "accuracy_live": 0.8387096774193549,
+  "accuracy_train_features": 0.8387096774193549
  },
  "features": [
   {
@@ -774,6 +774,764 @@
    "mean_abs_diff_sd": 0.0
   }
  ],
+ "features_swap": [
+  {
+   "feature": "mx_mass_adv",
+   "share_differs": 0.06451612903225806,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.3607456119276003
+  },
+  {
+   "feature": "r_strike_vs_b_def",
+   "share_differs": 1.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0024027893053014484
+  },
+  {
+   "feature": "b_sub_vs_r_subdef",
+   "share_differs": 1.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0020602657861872008
+  },
+  {
+   "feature": "r_sub_vs_b_subdef",
+   "share_differs": 1.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0015939676721941217
+  },
+  {
+   "feature": "r_power_vs_b_chin",
+   "share_differs": 1.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0010575938249365645
+  },
+  {
+   "feature": "b_strike_vs_r_def",
+   "share_differs": 1.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0009651917422126011
+  },
+  {
+   "feature": "r_td_vs_b_tdd",
+   "share_differs": 0.9032258064516129,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0009410363763663387
+  },
+  {
+   "feature": "b_power_vs_r_chin",
+   "share_differs": 0.967741935483871,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0005440348251121141
+  },
+  {
+   "feature": "ape_index_diff",
+   "share_differs": 0.03225806451612903,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.015996098518601048
+  },
+  {
+   "feature": "reach_diff",
+   "share_differs": 0.03225806451612903,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.010375096456423207
+  },
+  {
+   "feature": "mx_size_adv",
+   "share_differs": 0.03225806451612903,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0052578214690075335
+  },
+  {
+   "feature": "b_td_vs_r_tdd",
+   "share_differs": 0.967741935483871,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.00014686438581245593
+  },
+  {
+   "feature": "reach_level",
+   "share_differs": 0.03225806451612903,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.00395934821823182
+  },
+  {
+   "feature": "absorption_eff_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "absorption_eff_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "acc_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "acc_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "acc_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "accuracy_trajectory_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "age_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "age_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "age_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "ape_index_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "archetype_clash",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "archetype_matchup",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "b_accuracy_trajectory",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "b_striking_trajectory",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "base_prob",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 1.3616418607519085e-16
+  },
+  {
+   "feature": "bayesian_prob",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 1.2009266632705947e-16
+  },
+  {
+   "feature": "been_finished_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cardio_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cardio_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "career_damage_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "career_damage_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_bouts_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_bouts_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_bouts_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_ctrl_share_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_ctrl_share_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_ctrl_share_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_head_share_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_kd_per15_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_kd_per15_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_kd_per15_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_minutes_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "cd_minutes_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "combined_pace",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "combined_uncertainty",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 3.8510881427740473e-17
+  },
+  {
+   "feature": "consistency_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 2.226430810922636e-17
+  },
+  {
+   "feature": "data_sparsity_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "def_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "def_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "def_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "exp_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "exp_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "finish_rate_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "footwork_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "footwork_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "height_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "height_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "height_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "high_pace",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "is_5rnd",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "is_heavyweight",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "is_title",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "is_womens",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "ko_rate_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "ko_vulnerability_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "mmr_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 1.0571664214052083e-16
+  },
+  {
+   "feature": "mom_quality_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "mu_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 1.367695201499189e-16
+  },
+  {
+   "feature": "mu_diff_z",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 1.6239733521781095e-16
+  },
+  {
+   "feature": "mu_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 1.9639629435945528e-17
+  },
+  {
+   "feature": "mu_sum",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 1.9639629435945528e-17
+  },
+  {
+   "feature": "mx_ctrl_adv",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "mx_grappling_adv",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "mx_grappling_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "mx_size_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "mx_strike_adv",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "mx_striking_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "mx_sub_adv",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "mx_td_adv",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "off_striking_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "off_striking_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "off_striking_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "opp_history_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "opp_quality_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "opp_quality_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "opp_quality_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "power_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "prime_wc_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "r_accuracy_trajectory",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "r_striking_trajectory",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "reach_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "recent_form_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "recent_form_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "ring_rust_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "sapm_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "sapm_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "sapm_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "skill_conservative_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 1.2273592794984723e-16
+  },
+  {
+   "feature": "southpaw_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "splm_L3_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "splm_L3_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "stance_mismatch",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "str_acc_L3_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "str_acc_L3_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "striking_trajectory_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "sub_def_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "sub_def_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "sub_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "sub_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "sub_rate_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "td_acc_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "td_acc_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "td_avg_L3_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "td_avg_L3_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "td_def_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "td_def_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "td_def_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "td_off_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "td_off_known",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "td_off_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "wc_move_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "winrate_diff",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  },
+  {
+   "feature": "winrate_level",
+   "share_differs": 0.0,
+   "live_zero_train_not": 0.0,
+   "mean_abs_diff_sd": 0.0
+  }
+ ],
  "fights": [
   {
    "date": "2026-07-18",
@@ -783,8 +1541,9 @@
    "is_5rnd": 1,
    "is_title": 0,
    "division": "middleweight",
-   "p_live": 0.681899693708971,
-   "p_train": 0.6818937957340748
+   "placeholder": false,
+   "p_live": 0.6920900780992716,
+   "p_train": 0.6920937551501117
   },
   {
    "date": "2026-07-18",
@@ -794,8 +1553,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "welterweight",
-   "p_live": 0.4697126813105909,
-   "p_train": 0.46971878631681957
+   "placeholder": false,
+   "p_live": 0.3458564574756514,
+   "p_train": 0.3458548737071446
   },
   {
    "date": "2026-07-18",
@@ -805,8 +1565,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "women's strawweight",
-   "p_live": 0.33618036050857186,
-   "p_train": 0.3361732634908938
+   "placeholder": false,
+   "p_live": 0.3285710045623822,
+   "p_train": 0.3285661313863815
   },
   {
    "date": "2026-07-18",
@@ -816,8 +1577,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "flyweight",
-   "p_live": 0.7676128584669496,
-   "p_train": 0.7676249197650441
+   "placeholder": false,
+   "p_live": 0.8102646314056915,
+   "p_train": 0.8111342475287017
   },
   {
    "date": "2026-07-18",
@@ -827,8 +1589,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "middleweight",
-   "p_live": 0.1576345447544896,
-   "p_train": 0.15763565258277137
+   "placeholder": false,
+   "p_live": 0.23674472200269825,
+   "p_train": 0.2367453474652558
   },
   {
    "date": "2026-07-18",
@@ -838,8 +1601,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "featherweight",
-   "p_live": 0.5881943010225095,
-   "p_train": 0.5881806627353441
+   "placeholder": false,
+   "p_live": 0.4315944669386621,
+   "p_train": 0.431573315348004
   },
   {
    "date": "2026-07-18",
@@ -849,8 +1613,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "lightweight",
-   "p_live": 0.7584003932819859,
-   "p_train": 0.7584106552715337
+   "placeholder": false,
+   "p_live": 0.8025606743190004,
+   "p_train": 0.8036336626904703
   },
   {
    "date": "2026-07-18",
@@ -860,7 +1625,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "light heavyweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Levi Rodrigues Jr.'.  Did you mean: Kleydson Rodrigues (69%), Victor Rodriguez (67%), Gregory Rodrigues (65%), Pete Rodriguez (65%), Yair Rodriguez (65%)?"
   },
   {
    "date": "2026-07-18",
@@ -870,7 +1636,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "featherweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Ezra Elliott'.  Did you mean: Oban Elliott (75%), Tim Elliott (70%), Elisha Ellison (62%)?; NO DATA: No data for 'Damien Anderson'.  Did you mean: Dan Henderson (79%), Megan Ande"
   },
   {
    "date": "2026-07-18",
@@ -880,7 +1647,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "women's flyweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Anna Melisano'.  Did you mean: Anna Elmose (67%), Brian Melancon (67%), Yana Santos (67%), Luana Santos (64%), Vanessa Melo (64%)?"
   },
   {
    "date": "2026-07-18",
@@ -890,8 +1658,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "featherweight",
-   "p_live": 0.6443036216655815,
-   "p_train": 0.6443588727637727
+   "placeholder": false,
+   "p_live": 0.6758970268956185,
+   "p_train": 0.6759322780554745
   },
   {
    "date": "2026-07-18",
@@ -901,7 +1670,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "heavyweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'RJ Harris'.  Did you mean: Gerald Harris (73%), Phil Harris (70%), Walt Harris (70%), Carlston Harris (67%), Kayla Harrison (61%)?"
   },
   {
    "date": "2026-07-25",
@@ -911,8 +1681,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "lightweight",
-   "p_live": 0.7400147976847442,
-   "p_train": 0.7400197691776792
+   "placeholder": false,
+   "p_live": 0.7069948251055652,
+   "p_train": 0.7069959975011261
   },
   {
    "date": "2026-07-25",
@@ -922,7 +1693,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "light heavyweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Magomed Tuchalov'.  Did you mean: Magomed Ankalaev (69%), Magomed Mustafaev (67%), Magomed Gadzhiyasulov (65%), Abus Magomedov (60%)?"
   },
   {
    "date": "2026-07-25",
@@ -932,8 +1704,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "heavyweight",
-   "p_live": 0.6740018570916223,
-   "p_train": 0.6387790244644089
+   "placeholder": false,
+   "p_live": 0.641827621744945,
+   "p_train": 0.5936032348817948
   },
   {
    "date": "2026-07-25",
@@ -943,7 +1716,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "lightweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Magomed Zaynukov'.  Did you mean: Magomed Ankalaev (75%), Magomed Gadzhiyasulov (70%), Magomed Mustafaev (61%), Abus Magomedov (60%)?; NO DATA: No data for 'Damian Rzepecki'.  Di"
   },
   {
    "date": "2026-07-25",
@@ -953,8 +1727,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "welterweight",
-   "p_live": 0.2749307779025419,
-   "p_train": 0.2749326000333082
+   "placeholder": false,
+   "p_live": 0.31594946980612326,
+   "p_train": 0.3159562412861161
   },
   {
    "date": "2026-07-25",
@@ -964,7 +1739,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "welterweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Abubakar Vagaev'.  Did you mean: Abubakar Nurmagomedov (72%)?"
   },
   {
    "date": "2026-07-25",
@@ -974,8 +1750,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "heavyweight",
-   "p_live": 0.5586584326977657,
-   "p_train": 0.5586738799288883
+   "placeholder": false,
+   "p_live": 0.5959278066864097,
+   "p_train": 0.5959302847570842
   },
   {
    "date": "2026-07-25",
@@ -985,8 +1762,9 @@
    "is_5rnd": 1,
    "is_title": 0,
    "division": "light heavyweight",
-   "p_live": 0.6650603201456844,
-   "p_train": 0.6665601914519278
+   "placeholder": false,
+   "p_live": 0.7251929998538714,
+   "p_train": 0.7251914976429913
   },
   {
    "date": "2026-07-25",
@@ -996,7 +1774,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "bantamweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Abdul Hussein'.  Did you mean: Abdul Razak Alhassan (61%)?"
   },
   {
    "date": "2026-07-25",
@@ -1006,8 +1785,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "flyweight",
-   "p_live": 0.5458631520122141,
-   "p_train": 0.5458653934996291
+   "placeholder": false,
+   "p_live": 0.6194000682891586,
+   "p_train": 0.6194003758900989
   },
   {
    "date": "2026-07-25",
@@ -1017,7 +1797,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "light heavyweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Muhammad Saidov'.  Did you mean: Muhammad Naimov (87%), Muhammad Mokaev (73%), Mohammad Yahya (62%), Mohammed Usman (62%), Muslim Salikhov (60%)?"
   },
   {
    "date": "2026-07-25",
@@ -1027,8 +1808,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "lightweight",
-   "p_live": 0.4796522303908596,
-   "p_train": 0.47966060153095924
+   "placeholder": false,
+   "p_live": 0.5939195433584266,
+   "p_train": 0.5939216939564259
   },
   {
    "date": "2026-08-01",
@@ -1038,8 +1820,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "middleweight",
-   "p_live": 0.4900627572630385,
-   "p_train": 0.490060980198448
+   "placeholder": false,
+   "p_live": 0.5166955940361095,
+   "p_train": 0.5167066973014169
   },
   {
    "date": "2026-08-01",
@@ -1049,8 +1832,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "heavyweight",
-   "p_live": 0.7486013384031731,
-   "p_train": 0.7697589539630253
+   "placeholder": false,
+   "p_live": 0.7005519299239843,
+   "p_train": 0.7564043048553695
   },
   {
    "date": "2026-08-01",
@@ -1060,8 +1844,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "lightweight",
-   "p_live": 0.7919007384569163,
-   "p_train": 0.7918999359318978
+   "placeholder": false,
+   "p_live": 0.8463665096280671,
+   "p_train": 0.8463673584779277
   },
   {
    "date": "2026-08-01",
@@ -1071,7 +1856,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "heavyweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Jovan Leka'.  Did you mean: Jordan Leavitt (67%), John Lineker (64%), Jean Silva (60%), Jon Manley (60%)?; NO DATA: No data for 'Alexander Poppeck'.  Did you mean: Alexander Volk"
   },
   {
    "date": "2026-08-01",
@@ -1081,7 +1867,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "bantamweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Borislav Nikolic'."
   },
   {
    "date": "2026-08-01",
@@ -1091,7 +1878,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "middleweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Vlasto Cepo'."
   },
   {
    "date": "2026-08-01",
@@ -1101,7 +1889,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "women's strawweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Marina Spasic'.  Did you mean: Martin Sano (67%), Mairon Santos (62%), Aaron Pico (61%), Martin Day (52%), Marcin Prachnio (50%)?"
   },
   {
    "date": "2026-08-01",
@@ -1111,8 +1900,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "featherweight",
-   "p_live": 0.38315975773797073,
-   "p_train": 0.3831567034692585
+   "placeholder": false,
+   "p_live": 0.36883025217186105,
+   "p_train": 0.3688375885575215
   },
   {
    "date": "2026-08-01",
@@ -1122,7 +1912,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "welterweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Michael Oliveira'.  Did you mean: Charles Oliveira (81%), Alex Oliveira (76%), Michael Chiesa (73%), Michael Kuiper (73%), Michel Pereira (73%)?"
   },
   {
    "date": "2026-08-01",
@@ -1132,8 +1923,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "lightweight",
-   "p_live": 0.7374678210482819,
-   "p_train": 0.7374758805726729
+   "placeholder": false,
+   "p_live": 0.7506214611142548,
+   "p_train": 0.7506252327551747
   },
   {
    "date": "2026-08-01",
@@ -1143,7 +1935,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "women's bantamweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Nina Milosevic'.  Did you mean: Anna Elmose (64%), Pat Miletich (62%), Bojan Mihajlovic (60%)?"
   },
   {
    "date": "2026-08-01",
@@ -1153,8 +1946,9 @@
    "is_5rnd": 1,
    "is_title": 0,
    "division": "welterweight",
-   "p_live": 0.6595227455180501,
-   "p_train": 0.6606110206186444
+   "placeholder": false,
+   "p_live": 0.6657518212753226,
+   "p_train": 0.6668661551217446
   },
   {
    "date": "2026-08-01",
@@ -1164,7 +1958,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "lightweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Milos Janicic'.; NO DATA: No data for 'Noah Gugnon'.  Did you mean: Mitch Gagnon (61%), Norma Dumont (61%), John Gunderson (56%)?"
   },
   {
    "date": "2026-08-01",
@@ -1174,8 +1969,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "light heavyweight",
-   "p_live": 0.17452052306479884,
-   "p_train": 0.17451344304318733
+   "placeholder": false,
+   "p_live": 0.2249821809912257,
+   "p_train": 0.22497754606365006
   },
   {
    "date": "2026-08-08",
@@ -1185,8 +1981,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "light heavyweight",
-   "p_live": 0.6852795965831068,
-   "p_train": 0.6852845260990584
+   "placeholder": false,
+   "p_live": 0.6028899951314164,
+   "p_train": 0.6028945993632957
   },
   {
    "date": "2026-08-08",
@@ -1196,8 +1993,9 @@
    "is_5rnd": 1,
    "is_title": 0,
    "division": "lightweight",
-   "p_live": 0.2820873820914777,
-   "p_train": 0.2820911133368211
+   "placeholder": false,
+   "p_live": 0.3243833399703854,
+   "p_train": 0.3243840044439659
   },
   {
    "date": "2026-08-08",
@@ -1207,7 +2005,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "women's strawweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Gigi Canuto'.  Did you mean: Gil Castillo (61%)?; NO DATA: No data for 'Carol Foro'.  Did you mean: Caros Fodor (76%), Karol Rosa (70%), Caol Uno (67%), Charles Rosa (64%), Manon"
   },
   {
    "date": "2026-08-08",
@@ -1217,8 +2016,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "lightweight",
-   "p_live": 0.5670889010636704,
-   "p_train": 0.5670823674858394
+   "placeholder": false,
+   "p_live": 0.6500141826079078,
+   "p_train": 0.6500140753043357
   },
   {
    "date": "2026-08-08",
@@ -1228,8 +2028,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "featherweight",
-   "p_live": 0.35491653097909637,
-   "p_train": 0.35491517363220004
+   "placeholder": false,
+   "p_live": 0.33496373685033365,
+   "p_train": 0.3349636158686345
   },
   {
    "date": "2026-08-08",
@@ -1239,8 +2040,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "welterweight",
-   "p_live": 0.42201526592241373,
-   "p_train": 0.42201212106337505
+   "placeholder": false,
+   "p_live": 0.3883688292317722,
+   "p_train": 0.38836324696059443
   },
   {
    "date": "2026-08-08",
@@ -1250,7 +2052,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "lightweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Richie Miranda'.  Did you mean: Gabriel Miranda (76%), Mario Miranda (74%), Vitor Miranda (67%), Richie Smullen (64%), Richie Hightower (60%)?"
   },
   {
    "date": "2026-08-08",
@@ -1260,8 +2063,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "women's flyweight",
-   "p_live": 0.5019027196435135,
-   "p_train": 0.501900296137822
+   "placeholder": false,
+   "p_live": 0.550733768076183,
+   "p_train": 0.55073277328945
   },
   {
    "date": "2026-08-08",
@@ -1271,8 +2075,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "featherweight",
-   "p_live": 0.5004024384686296,
-   "p_train": 0.5004103241654706
+   "placeholder": false,
+   "p_live": 0.6005550441191929,
+   "p_train": 0.6005606001545788
   },
   {
    "date": "2026-08-08",
@@ -1282,8 +2087,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "women's strawweight",
-   "p_live": 0.20698332590826146,
-   "p_train": 0.20698300965950303
+   "placeholder": false,
+   "p_live": 0.2065588243438678,
+   "p_train": 0.2065601883066709
   },
   {
    "date": "2026-08-08",
@@ -1293,7 +2099,8 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "heavyweight",
-   "error": "no prediction"
+   "placeholder": false,
+   "error": "NO DATA: No data for 'Jose Montanha'.  Did you mean: Jose Maria (70%), Jose Medina (67%), Jason Tan (64%), Nicco Montano (62%), Jose Ochoa (61%)?"
   },
   {
    "date": "2026-08-08",
@@ -1303,8 +2110,9 @@
    "is_5rnd": 0,
    "is_title": 0,
    "division": "heavyweight",
-   "p_live": 0.532451270613848,
-   "p_train": 0.5324713777765454
+   "placeholder": false,
+   "p_live": 0.5743660000359463,
+   "p_train": 0.5760999648229925
   }
  ]
 }

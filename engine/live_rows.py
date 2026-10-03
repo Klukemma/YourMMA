@@ -238,7 +238,8 @@ class LiveRows:
         raise NoLiveRow(self.refused.get(
             key, f"no live row for {red!r} vs {blue!r} on {when.date()}"))
 
-    def prepare_card(self, fights, event_date=None, contexts=None, check=None):
+    def prepare_card(self, fights, event_date=None, contexts=None, check=None,
+                     swapped=False):
         """The prefetch for a card: every fight `check` accepts, in one
         prepare() call, so the whole card costs as few passes as possible.
 
@@ -247,8 +248,11 @@ class LiveRows:
         read here. check(red, blue) -> (resolved, problems, warnings) as
         predict_card._check_fighters: a fight with problems is left out and
         refused by the prediction as before; the resolved spellings are what
-        the prediction asks for, so they are what is built. Returns the
-        specs prepared."""
+        the prediction asks for, so they are what is built. swapped=True
+        also builds every fight with the corners exchanged - the row a
+        symmetrised prediction averages with - which costs the card a
+        second pass, since the swapped fight holds the same two fighters.
+        Returns the specs prepared (the swapped ones after the listed)."""
         specs = []
         for i, fight in enumerate(fights):
             red, blue = fight[0], fight[1]
@@ -261,5 +265,7 @@ class LiveRows:
                           "is_5rnd": fight[2] if len(fight) > 2 else False,
                           "is_title": fight[3] if len(fight) > 3 else False,
                           "division": division_of((contexts or {}).get(i))})
+        if swapped:
+            specs = specs + [dict(s, red=s["blue"], blue=s["red"]) for s in specs]
         self.prepare(specs, event_date)
         return specs

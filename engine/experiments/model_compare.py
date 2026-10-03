@@ -32,6 +32,29 @@ read line by line:
 The MLP is trained in production but is NOT in the winner average
 (predict_card.py:2393-2396), so it is not fitted here.
 
+TWO RECIPES. Since idea #6 (experiments/symmetry.py) production fits the
+winner models on every fight twice - as listed and with the corners
+exchanged, label flipped - and predicts the average of e(red, blue) and
+1 - e(blue, red), Platt-calibrated. That is the SHIPPED recipe, and
+predictions() fits it by default:
+
+    "symmetric"   the shipped recipe, symmetry.py's arm B imported from
+                  there (fit_augmented, symmetric_platt, predict_symmetric -
+                  nothing is re-implemented here); the frame carries both
+                  orientations of every fight side by side (paired());
+                  cached as baseline_symmetric under PROTOCOL_SYMMETRIC
+    "legacy"      the recipe as listed, above, that every idea up to #6 was
+                  measured against; cached as baseline_legacy under PROTOCOL
+                  (the file ideas #3-#7 used, renamed, hash untouched)
+
+The two protocols differ, so the caches cannot collide. What the shipped
+recipe earns over the legacy one (symmetry.py): -0.0140 log loss on 5,897
+priced fights of every predicted year; on 2020+ priced fights -0.0045
+[-0.0104, +0.0014], blend -0.0005 - the headline gain is front-loaded in
+2011-2016 where training sets were small. Hence decision_set(): later ideas
+pre-register their PRIMARY bar on the fights whose training set had at
+least DECISION_MIN_TRAIN_ROWS fights, all years secondary.
+
 WALK-FORWARD. Year Y is predicted by models fitted on valid fights of years
 < Y only, the 90/10 split and the Platt calibrator inside that block, so no
 FITTED parameter used for year Y has seen year Y's outcomes. First predicted
@@ -81,18 +104,21 @@ k arms passes 0.05 / k, not 0.05.
 
 CACHE. The baseline predictions (no feature function) are the expensive part
 and every idea needs them, so they are cached beside this file as
-model_compare_baseline.csv, keyed by a hash of the feature matrix, labels,
-dates, fight ids, feature names, the protocol string AND the source of the
-recipe functions (fit_production, predict_production, recency_weights,
-walk_forward, prior_bouts, build_frame); a changed archive or a changed
-recipe misses the cache and refits, with or without a PROTOCOL bump. The
-cache holds the model columns only - never p_market - so odds.csv is not
-part of the key and does not need to be: the market is re-matched on every
-call. MODEL_COMPARE_CACHE overrides the directory.
+model_compare_<label>.csv (baseline_symmetric, baseline_legacy), keyed by a
+hash of the feature matrix (both orientations for the symmetric recipe),
+labels, dates, fight ids, feature names, the recipe's protocol string AND
+the source of the recipe functions (fit_production, predict_production,
+recency_weights, walk_forward, prior_bouts, build_frame, and for the
+symmetric recipe the arm-B functions and corner_swap too); a changed archive
+or a changed recipe misses the cache and refits, with or without a PROTOCOL
+bump. The cache holds the model columns only - never p_market - so odds.csv
+is not part of the key and does not need to be: the market is re-matched on
+every call. MODEL_COMPARE_CACHE overrides the directory.
 
-    python engine/experiments/model_compare.py        # baseline + sanity numbers
+    python engine/experiments/model_compare.py [--recipe legacy]   # baseline + sanity numbers
 """
 
+import argparse
 import hashlib
 import inspect
 import json
@@ -130,8 +156,18 @@ EPS = 1e-3                   # probabilities are clipped before logs are taken
 
 # Bumped whenever what a row MEANS changes (v2: prior bouts counted on the
 # full archive, market no longer cached). Changes to the recipe code itself
-# are caught by code_fingerprint(), with or without a bump.
+# are caught by code_fingerprint(), with or without a bump. PROTOCOL is the
+# legacy recipe's and is NOT to move: the baseline_legacy cache is keyed by
+# it. The shipped, symmetric recipe has its own string, so the two caches
+# can never be served for each other.
 PROTOCOL = "production-3model-platt-v2"
+PROTOCOL_SYMMETRIC = "production-3model-platt-symmetric-v1"
+DEFAULT_RECIPE = "symmetric"
+SWAP_PREFIX = "swap:"        # paired(): the swapped orientation's columns
+# decision_set(): the smallest training set a later idea's PRIMARY bar may
+# include - 2018 onward on the current archive (2018's models were fitted
+# on 4,130 fights, 2017's on 3,684).
+DECISION_MIN_TRAIN_ROWS = 4000
 MODEL_COLUMNS = ["fight_id", "date", "year", "event", "red", "blue", "red_norm", "blue_norm",
                  "red_prior_bouts", "blue_prior_bouts", "y", "p_ensemble", "p_model",
                  "train_rows"]
@@ -273,6 +309,85 @@ def predict_production(models, X):
 
 
 # --------------------------------------------------------------------------
+# the shipped recipe (corner symmetry, idea #6) - symmetry.py's arm B
+# --------------------------------------------------------------------------
+# symmetry.py imports this module, so it is imported inside these functions.
+
+def paired(X, X_swap):
+    """One matrix holding both orientations of every fight side by side:
+    the columns of X, then the same columns of X_swap under SWAP_PREFIX.
+    fit_symmetric and predict_symmetric take a row apart again (halves), so
+    walk_forward's loop and the cache key serve both recipes unchanged -
+    the swapped matrix is an input to the symmetric recipe and is hashed as
+    one. Refuses a swapped matrix that does not hold the same features for
+    the same fights."""
+    X = pd.DataFrame(X).reset_index(drop=True)
+    X_swap = pd.DataFrame(X_swap).reset_index(drop=True)
+    if X.shape != X_swap.shape or list(map(str, X.columns)) != list(map(str, X_swap.columns)):
+        raise ValueError("X_swap must hold the same features, in the same order, "
+                         "for the same fights as X")
+    X_swap = X_swap.copy()
+    X_swap.columns = [f"{SWAP_PREFIX}{c}" for c in X.columns]
+    return pd.concat([X, X_swap], axis=1).astype(float)
+
+
+def halves(X_paired):
+    """(X as listed, X swapped) from paired()'s matrix."""
+    X_paired = np.asarray(X_paired, float)
+    if X_paired.ndim != 2 or X_paired.shape[1] % 2:
+        raise ValueError("a paired matrix holds both orientations: an even number of columns")
+    k = X_paired.shape[1] // 2
+    return X_paired[:, :k], X_paired[:, k:]
+
+
+def fit_symmetric(X_paired, y, dates, seed=SEED):
+    """The SHIPPED winner model (predict_card.py SECTION 15 since idea #6):
+    symmetry.fit_augmented - LR, RF and XGB on the training block twice
+    over, as listed and swapped with 1 - y, the recency weight on both
+    copies, the scaler on the doubled block, XGB early-stopping on the
+    doubled calibration block - and symmetry.symmetric_platt, the Platt
+    fitted on the calibration block as listed on the symmetrised ensemble.
+    `X_paired` is paired()'s matrix. Same split of FIGHTS as fit_production."""
+    from experiments import symmetry as sy
+    X, X_swap = halves(X_paired)
+    models = sy.fit_augmented(X, X_swap, y, dates, seed=seed)
+    models["platt"] = sy.symmetric_platt(models, X, X_swap, y)
+    return models
+
+
+def predict_symmetric(models, X_paired):
+    """(symmetrised ensemble (e(x) + 1 - e(x_swapped)) / 2, its Platt) -
+    predict_fight_prod's arithmetic, symmetry.predict_symmetric."""
+    from experiments import symmetry as sy
+    X, X_swap = halves(X_paired)
+    return sy.predict_symmetric(models, models["platt"], X, X_swap)
+
+
+def build_frame_symmetric(raw=None, features=None, swap_features=None, verbose=False):
+    """build_frame's result with X replaced by paired(X, X_swap): both
+    orientations of every valid fight. The swapped matrix is
+    corner_swap.swapped_matrix (symmetry.frames); an idea whose feature
+    function adds columns passes swap_features(raw, built) -> the swapped
+    rows of ITS matrix, since the swap of a new column is its own to
+    define."""
+    from experiments import symmetry as sy
+    fr = sy.frames(raw, features=features, swap_features=swap_features, verbose=verbose)
+    return {"ufc": fr["ufc"], "X": paired(fr["X"], fr["X_swap"]), "y": fr["y"],
+            "feature_cols": fr["feature_cols"], "orientations": 2}
+
+
+RECIPES = {
+    "symmetric": {"fit": fit_symmetric, "predict": predict_symmetric,
+                  "protocol": PROTOCOL_SYMMETRIC, "label": "baseline_symmetric",
+                  "describe": "the shipped recipe: swap-augmented LR + RF + XGB, "
+                              "symmetrised, Platt (symmetry.py arm B)"},
+    "legacy": {"fit": fit_production, "predict": predict_production,
+               "protocol": PROTOCOL, "label": "baseline_legacy",
+               "describe": "the recipe as listed (production before idea #6)"},
+}
+
+
+# --------------------------------------------------------------------------
 # the walk-forward
 # --------------------------------------------------------------------------
 
@@ -336,13 +451,15 @@ def walk_forward(X, y, ufc, *, fitter=fit_production, predictor=predict_producti
 # the market
 # --------------------------------------------------------------------------
 
-def load_prices(path=ODDS_CSV):
-    """{(norm a, norm b, date): (odds_a, odds_b)} - residual_harness.py:88-96."""
+def load_prices(path=ODDS_CSV, columns=("odds_a", "odds_b")):
+    """{(norm a, norm b, date): (odds_a, odds_b)} - residual_harness.py:88-96.
+    `columns` names the two moneyline columns: odds.csv's closing lines are
+    odds_a/odds_b, opening_odds.csv's opening lines open_a/open_b."""
     odds = pd.read_csv(path)
     odds["date"] = pd.to_datetime(odds["date"], errors="coerce")
     priced = {}
     for a, b, oa, ob, d in zip(odds["fighter_a"], odds["fighter_b"],
-                               odds["odds_a"], odds["odds_b"], odds["date"]):
+                               odds[columns[0]], odds[columns[1]], odds["date"]):
         if pd.isna(d) or pd.isna(oa) or pd.isna(ob):
             continue
         priced[(norm_name(a), norm_name(b), d.date())] = (oa, ob)
@@ -372,13 +489,27 @@ def market_probabilities(frame, prices):
 # cache
 # --------------------------------------------------------------------------
 
-def code_fingerprint():
+def code_fingerprint(recipe="legacy"):
     """sha256 of the source of every function that decides what a cached row
-    is, so editing the recipe misses the cache even without a PROTOCOL bump."""
+    is, so editing the recipe misses the cache even without a PROTOCOL bump.
+    The legacy fingerprint is the seven functions it always was (the
+    baseline_legacy cache is keyed by it); the symmetric one adds the
+    shipped recipe's functions here, in symmetry.py and in corner_swap."""
     h = hashlib.sha256()
     for fn in (build_frame, prior_bouts, recency_weights, fit_production, _average,
                predict_production, walk_forward):
         h.update(inspect.getsource(fn).encode())
+    if recipe == "symmetric":
+        import corner_swap
+        from experiments import symmetry as sy
+        for fn in (paired, halves, fit_symmetric, predict_symmetric, build_frame_symmetric,
+                   sy.frames, sy.fit_augmented, sy.ensemble, sy.symmetric_platt,
+                   sy.predict_symmetric, corner_swap.mirror_archive,
+                   corner_swap.corner_appearances, corner_swap.corner_history_features,
+                   corner_swap.swapped_matrix, corner_swap.symmetrise):
+            h.update(inspect.getsource(fn).encode())
+    elif recipe != "legacy":
+        raise KeyError(f"unknown recipe {recipe!r}: {sorted(RECIPES)}")
     return h.hexdigest()
 
 
@@ -414,21 +545,32 @@ def cache_paths(label, cache_dir=None):
     return stem.with_suffix(".csv"), stem.with_suffix(".json")
 
 
-def predictions(raw=None, features=None, *, label="baseline", cache_dir=None,
-                odds_path=ODDS_CSV, verbose=True, use_cache=True):
+def predictions(raw=None, features=None, *, recipe=DEFAULT_RECIPE, label=None,
+                cache_dir=None, odds_path=ODDS_CSV, verbose=True, use_cache=True,
+                swap_features=None):
     """Walk-forward predictions with the market attached.
 
-    The walk-forward (model columns only) is cached by input hash; the
-    market column is matched against `odds_path` on every call, hit or
-    miss, so a changed odds file is always reflected and never refits.
-    `features` is passed to build_frame. Anything but the baseline should
-    give its own `label`, or it would overwrite the baseline's file (the
-    hash would still refuse to serve it as the baseline).
+    `recipe` is "symmetric" (the shipped recipe, the default) or "legacy"
+    (the recipe as listed); `label` defaults to the recipe's cached
+    baseline, baseline_symmetric or baseline_legacy. The walk-forward
+    (model columns only) is cached by input hash under the recipe's own
+    protocol; the market column is matched against `odds_path` on every
+    call, hit or miss, so a changed odds file is always reflected and never
+    refits. `features` is passed to build_frame (and `swap_features` to
+    build_frame_symmetric). Anything but a baseline should give its own
+    `label`, or it would overwrite the baseline's file (the hash would
+    still refuse to serve it as the baseline).
     """
+    spec = RECIPES[recipe]
+    label = spec["label"] if label is None else label
     t0 = time.time()
-    frame = build_frame(raw, features, verbose=False)
+    if recipe == "symmetric":       # looked up by name, so a test can stand in
+        frame = build_frame_symmetric(raw, features, swap_features, verbose=False)
+    else:
+        frame = build_frame(raw, features, verbose=False)
     X, y, ufc = frame["X"], frame["y"], frame["ufc"]
-    key = inputs_hash(X, y, ufc, frame["feature_cols"])
+    code = code_fingerprint(recipe)
+    key = inputs_hash(X, y, ufc, list(X.columns), protocol=spec["protocol"], code=code)
     csv_path, meta_path = cache_paths(label, cache_dir)
     out = None
     if use_cache and csv_path.exists() and meta_path.exists():
@@ -442,25 +584,38 @@ def predictions(raw=None, features=None, *, label="baseline", cache_dir=None,
         elif verbose:
             print(f"  cache miss {csv_path.name}: inputs or recipe changed, refitting")
     if out is None:
+        orientations = int(frame.get("orientations", 1))
         if verbose:
-            print(f"  frame: {len(ufc):,} valid fights x {X.shape[1]} features "
-                  f"({time.time() - t0:.0f}s)")
-        out = walk_forward(X, y, ufc, verbose=verbose)
+            print(f"  frame: {len(ufc):,} valid fights x {X.shape[1] // orientations} "
+                  f"features{' x 2 orientations' if orientations == 2 else ''} "
+                  f"({time.time() - t0:.0f}s); fitting {spec['describe']}")
+        out = walk_forward(X, y, ufc, fitter=spec["fit"], predictor=spec["predict"],
+                           verbose=verbose)
         if use_cache:
             csv_path.parent.mkdir(parents=True, exist_ok=True)
             out[[c for c in MODEL_COLUMNS if c in out]].to_csv(
                 csv_path, index=False, float_format="%.6f")
             meta_path.write_text(json.dumps({
-                "hash": key, "protocol": PROTOCOL, "code": code_fingerprint(),
+                "hash": key, "protocol": spec["protocol"], "code": code, "recipe": recipe,
                 "label": label, "columns": [c for c in MODEL_COLUMNS if c in out],
                 "market_cached": False,
                 "fitted": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "rows": int(len(out)), "features": int(X.shape[1]),
+                "rows": int(len(out)), "features": int(X.shape[1] // orientations),
+                "orientations": orientations,
                 "first_year": FIRST_PREDICTED_YEAR, "min_train": MIN_TRAIN,
                 "years": sorted(int(v) for v in out["year"].unique()),
             }, indent=1) + "\n")
     out["p_market"] = market_probabilities(out, load_prices(odds_path))
     out.attrs["odds_sha256"] = file_sha256(odds_path)
+    out.attrs["recipe"] = recipe
+    out.attrs["label"] = label
+    if verbose:
+        priced = out.loc[np.isfinite(out["p_market"]), "year"].value_counts().sort_index()
+        print("  priced fights by year: " + ", ".join(f"{int(y)}={int(n)}" for y, n in priced.items()))
+        missing = sorted(set(out["year"].astype(int)) - set(priced.index.astype(int)))
+        if missing:
+            print(f"  predicted years with NO priced fight in {Path(odds_path).name}: "
+                  f"{', '.join(map(str, missing))} (they are outside every priced comparison)")
     return out
 
 
@@ -620,12 +775,41 @@ def sanity(frame, since=2020):
             "ensemble_uncalibrated": metrics(y, priced["p_ensemble"].to_numpy())}
 
 
-def main():
-    print("walk-forward baseline (production recipe, feature_cols_winner)...")
-    frame = predictions()
+def decision_set(frame, min_train_rows=DECISION_MIN_TRAIN_ROWS):
+    """Mask (bool Series on frame's index) of the predicted fights whose
+    models were fitted on at least `min_train_rows` training fights
+    (frame["train_rows"], the walk-forward's count of fights before the
+    year) - on the current archive, 2018 onward: the regime production is
+    in, with 8,000-odd fights behind it.
+
+    LATER IDEAS PRE-REGISTER THEIR PRIMARY BAR ON THIS SET, every predicted
+    year as a secondary. The lesson of idea #6: its bar was every priced
+    year, and was met (-0.0140 log loss), but the gain was front-loaded in
+    2011-2016, where the models were fitted on 1,239-3,201 fights; on 2020+
+    the interval crossed zero (-0.0045 [-0.0104, +0.0014]). A bar over all
+    years can be carried by years no production model will ever be fitted
+    on. A smaller `min_train_rows` is for an idea whose claim is about thin
+    history; say so in the plan."""
+    if "train_rows" not in frame:
+        raise KeyError("decision_set needs the walk-forward's train_rows column")
+    return pd.Series(frame["train_rows"].to_numpy(int) >= int(min_train_rows),
+                     index=frame.index, name="decision_set")
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="walk-forward baseline + sanity numbers")
+    parser.add_argument("--recipe", choices=sorted(RECIPES), default=DEFAULT_RECIPE)
+    args = parser.parse_args(argv)
+    print(f"walk-forward baseline ({args.recipe}: {RECIPES[args.recipe]['describe']}, "
+          f"feature_cols_winner)...")
+    frame = predictions(recipe=args.recipe)
     priced = np.isfinite(frame["p_market"])
     print(f"\n{len(frame):,} predictions {frame['year'].min()}-{frame['year'].max()}, "
           f"{int(priced.sum()):,} priced")
+    decided = decision_set(frame)
+    print(f"  decision set (training sets of {DECISION_MIN_TRAIN_ROWS:,}+ fights): "
+          f"{int(decided.sum()):,} fights, {int((decided & priced).sum()):,} priced, "
+          f"years {int(frame.loc[decided, 'year'].min())}-{int(frame.loc[decided, 'year'].max())}")
     print("  by year: " + ", ".join(
         f"{int(y)}:{int(n)}/{int(m)}" for y, n, m in
         frame.groupby("year").agg(n=("p_market", lambda s: np.isfinite(s).sum()),
@@ -637,10 +821,15 @@ def main():
     for arm in ("model", "market", "blend_0.75", "ensemble_uncalibrated"):
         m = s[arm]
         print(f"  {arm:<24}{m['accuracy']:>10.1%}{m['log_loss']:>10.4f}{m['brier']:>9.4f}")
-    print("  quoted (market_blend.py): model 62.0%, market 67.5%, blend 68.2% on 2,339")
+    print("  quoted (market_blend.py, legacy recipe): model 62.0%, market 67.5%, "
+          "blend 68.2% on 2,339")
     out = Path(__file__).with_suffix(".json")
     out.write_text(json.dumps({"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                               "recipe": args.recipe, "label": frame.attrs.get("label"),
                                "rows": int(len(frame)), "priced": int(priced.sum()),
+                               "decision_set": {"min_train_rows": DECISION_MIN_TRAIN_ROWS,
+                                                "fights": int(decided.sum()),
+                                                "priced": int((decided & priced).sum())},
                                "sanity": s}, indent=1) + "\n")
     print(f"wrote {out}")
 
