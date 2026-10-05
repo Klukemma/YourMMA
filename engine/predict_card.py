@@ -50,8 +50,8 @@ RUN_OPTUNA = False
 # ==============================================================================
 # 2. EVENT DETAILS
 # ==============================================================================
-EVENT_NAME = "UFC 332: Silva vs. Wang"
-EVENT_DATE = "2026-10-03"  # Format: YYYY-MM-DD
+EVENT_NAME = "UFC Fight Night: Allen vs. Duncan"
+EVENT_DATE = "2026-10-10"  # Format: YYYY-MM-DD
 
 # ==============================================================================
 # 3. FIGHT CARD
@@ -61,27 +61,23 @@ EVENT_DATE = "2026-10-03"  # Format: YYYY-MM-DD
 # - is_title_fight: True if fighting for a championship
 
 FIGHT_CARD = [
-    # Main Event - vacant Women's Flyweight title (Shevchenko vacated, injured)
-    ("Natalia Silva", "Wang Cong", True, True),                # 0 - Main Event, Women's Flyweight title
+    # Main Event (5 rounds, non-title) - Middleweight
+    ("Brendan Allen", "Christian Leroy Duncan", True, False),  # 0 - Main Event, Middleweight (5 rounds)
 
     # Main Card
-    ("Deiveson Figueiredo", "Payton Talbott"),                 # 1 - Bantamweight
-    ("King Green", "Esteban Ribovics"),                        # 2 - Lightweight
-    ("Roberto Soldic", "Khaos Williams"),                      # 3 - Welterweight (Soldic: UFC debut)
-    ("Ateba Gautier", "Roman Kopylov"),                        # 4 - Middleweight
+    ("Matheus Camilo", "Jai Herbert"),                         # 1 - Lightweight
+    ("Loopy Godinez", "Ketlen Souza"),                         # 2 - Women's Strawweight
+    ("Andre Fili", "Kai Kamaka III"),                          # 3 - Featherweight
+    ("Julius Walker", "Gerald Meerschaert"),                   # 4 - Light Heavyweight
+    ("Malcolm Wellmaker", "Otari Tanzilovi"),                  # 5 - Bantamweight
 
-    # Prelims
-    ("Imanol Rodriguez", "Alden Coria"),                       # 5 - Flyweight
-    ("Damian Pinas", "Andrey Pulyaev"),                        # 6 - Middleweight
-    ("Marcus McGhee", "Anthony Romero"),                       # 7 - Featherweight (Romero replaced Benardo Sopaj 3 days out; UFC debut)
-    ("Anthony Wint", "Lucas Armand"),                          # 8 - Heavyweight (neither has a UFC bout in the archive)
-
-    # Early Prelims
-    ("Johnny Walker", "Mick Parkin"),                          # 9 - Heavyweight
-    ("Rafael dos Anjos", "Alexander Hernandez"),               # 10 - Lightweight
-    ("Marvin Vettori", "Ismail Naurdiev"),                     # 11 - Middleweight
-    ("Court McGee", "Eric Nolan"),                             # 12 - Welterweight
-    ("Jacobe Smith", "Bruce Whitehead"),                       # 13 - Welterweight (Whitehead: UFC debut)
+    # Preliminary Card
+    ("Francisco Prado", "Ismael Bonfim"),                      # 6 - Lightweight
+    ("Niko Price", "Leon Shahbazyan"),                         # 7 - Welterweight
+    ("Felipe Franco", "Brendson Ribeiro"),                     # 8 - Light Heavyweight
+    ("Allen Frye Jr.", "RJ Harris"),                           # 9 - Heavyweight
+    ("Alice Pereira", "Darya Zheleznyakova"),                  # 10 - Women's Bantamweight (Zheleznyakova: UFC debut)
+    ("Ernesta Kareckaite", "Melissa Gatto"),                   # 11 - Women's Flyweight
 ]
 
 # ==============================================================================
@@ -90,10 +86,12 @@ FIGHT_CARD = [
 # Home advantage only counts when ONE fighter is home and the other is NOT.
 # If both fighters are "home" (e.g., both USA-based), no advantage.
 #
-# UFC 332: Silva vs. Wang - Delta Center, Salt Lake City, UT (arena: the standard cage, so no cage_size)
+# UFC Fight Night: Allen vs. Duncan - Meta Apex, Enterprise (Las Vegas), NV (SMALL cage)
 #
 # Home flags are left off this card: nobody's base was checked fight by
-# fight, and a guessed flag is worse than none. Only the division is set.
+# fight, and a guessed flag is worse than none.
+#
+# NOTE: All bouts at the Apex use the SMALL cage -> cage_size: 'small' for every fight.
 #
 # 'division' tells the model the weight class of the bout (e.g. 'lightweight',
 # "women's flyweight"). It feeds the weight-class features the model was
@@ -101,20 +99,18 @@ FIGHT_CARD = [
 # is wrong whenever one of them is changing class.
 
 FIGHT_CONTEXTS = {
-    0: {"division": "women's flyweight"},
-    1: {"division": "bantamweight"},
-    2: {"division": "lightweight"},
-    3: {"division": "welterweight"},
-    4: {"division": "middleweight"},
-    5: {"division": "flyweight"},
-    6: {"division": "middleweight"},
-    7: {"division": "featherweight"},
-    8: {"division": "heavyweight"},
-    9: {"division": "heavyweight"},
-    10: {"division": "lightweight"},
-    11: {"division": "middleweight"},
-    12: {"division": "welterweight"},
-    13: {"division": "welterweight"},
+    0: {"division": "middleweight", 'cage_size': 'small'},
+    1: {"division": "lightweight", 'cage_size': 'small'},
+    2: {"division": "women's strawweight", 'cage_size': 'small'},
+    3: {"division": "featherweight", 'cage_size': 'small'},
+    4: {"division": "light heavyweight", 'cage_size': 'small'},
+    5: {"division": "bantamweight", 'cage_size': 'small'},
+    6: {"division": "lightweight", 'cage_size': 'small'},
+    7: {"division": "welterweight", 'cage_size': 'small'},
+    8: {"division": "light heavyweight", 'cage_size': 'small'},
+    9: {"division": "heavyweight", 'cage_size': 'small'},
+    10: {"division": "women's bantamweight", 'cage_size': 'small'},
+    11: {"division": "women's flyweight", 'cage_size': 'small'},
 }
 
 # ==============================================================================
