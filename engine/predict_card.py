@@ -50,8 +50,8 @@ RUN_OPTUNA = False
 # ==============================================================================
 # 2. EVENT DETAILS
 # ==============================================================================
-EVENT_NAME = "UFC Fight Night: Rosas Jr. vs. Barcelos"
-EVENT_DATE = "2026-09-26"  # Format: YYYY-MM-DD
+EVENT_NAME = "UFC 332: Silva vs. Wang"
+EVENT_DATE = "2026-10-03"  # Format: YYYY-MM-DD
 
 # ==============================================================================
 # 3. FIGHT CARD
@@ -61,25 +61,27 @@ EVENT_DATE = "2026-09-26"  # Format: YYYY-MM-DD
 # - is_title_fight: True if fighting for a championship
 
 FIGHT_CARD = [
-    # Main Event (5 rounds, non-title) - Bantamweight
-    ("Raul Rosas Jr.", "Raoni Barcelos", True, False),         # 0 - Main Event, Bantamweight (5 rounds)
-
-    # Co-Main Event - Women's Bantamweight
-    ("Norma Dumont", "Ailin Perez"),                           # 1 - Co-Main, Women's Bantamweight
+    # Main Event - vacant Women's Flyweight title (Shevchenko vacated, injured)
+    ("Natalia Silva", "Wang Cong", True, True),                # 0 - Main Event, Women's Flyweight title
 
     # Main Card
-    ("Luis Hernandez", "Sedriques Dumas"),                     # 2 - Middleweight (Hernandez: short-notice UFC debut)
-    ("Mehemmedeli Osmanli", "Ilimbek Akylbek Uulu"),           # 3 - TUF 34 Bantamweight final
-    ("Melissa Amaya", "Valesca Machado"),                      # 4 - TUF 34 Women's Strawweight final
+    ("Deiveson Figueiredo", "Payton Talbott"),                 # 1 - Bantamweight
+    ("King Green", "Esteban Ribovics"),                        # 2 - Lightweight
+    ("Roberto Soldic", "Khaos Williams"),                      # 3 - Welterweight (Soldic: UFC debut)
+    ("Ateba Gautier", "Roman Kopylov"),                        # 4 - Middleweight
 
-    # Preliminary Card
-    ("Brady Hiestand", "Rinya Nakamura"),                      # 5 - Bantamweight
-    ("Rodolfo Vieira", "Robert Bryczek"),                      # 6 - Middleweight
-    ("Rodolfo Bellato", "Christian Edwards"),                  # 7 - Light Heavyweight
-    ("Elves Brener", "Josiah Harrell"),                        # 8 - Lightweight
-    ("Montel Jackson", "Ricky Simon"),                         # 9 - Bantamweight
-    ("John Castaneda", "Alatengheili"),                        # 10 - Bantamweight
-    ("Yazmin Jauregui", "Vanessa Demopoulos"),                 # 11 - Women's Strawweight
+    # Prelims
+    ("Imanol Rodriguez", "Alden Coria"),                       # 5 - Flyweight
+    ("Damian Pinas", "Andrey Pulyaev"),                        # 6 - Middleweight
+    ("Marcus McGhee", "Anthony Romero"),                       # 7 - Featherweight (Romero replaced Benardo Sopaj 3 days out; UFC debut)
+    ("Anthony Wint", "Lucas Armand"),                          # 8 - Heavyweight (neither has a UFC bout in the archive)
+
+    # Early Prelims
+    ("Johnny Walker", "Mick Parkin"),                          # 9 - Heavyweight
+    ("Rafael dos Anjos", "Alexander Hernandez"),               # 10 - Lightweight
+    ("Marvin Vettori", "Ismail Naurdiev"),                     # 11 - Middleweight
+    ("Court McGee", "Eric Nolan"),                             # 12 - Welterweight
+    ("Jacobe Smith", "Bruce Whitehead"),                       # 13 - Welterweight (Whitehead: UFC debut)
 ]
 
 # ==============================================================================
@@ -88,23 +90,10 @@ FIGHT_CARD = [
 # Home advantage only counts when ONE fighter is home and the other is NOT.
 # If both fighters are "home" (e.g., both USA-based), no advantage.
 #
-# UFC Fight Night: Rosas Jr. vs. Barcelos - Meta Apex, Enterprise (Las Vegas), NV (SMALL cage)
+# UFC 332: Silva vs. Wang - Delta Center, Salt Lake City, UT (arena: the standard cage, so no cage_size)
 #
-# Home/Away Analysis (event in USA):
-#   Fight 0: Rosas Jr. (fights out of Las Vegas, Home) vs Barcelos (Brazil, Away) -> red_home
-#   Fight 1: Dumont (Brazil, Away) vs Perez (Argentina, Away) -> no advantage
-#   Fight 2: Hernandez (UFC debut, no data) vs Dumas (USA, Home) -> not predicted
-#   Fight 3: Osmanli vs Akylbek Uulu (TUF 34 final, both debuting) -> not predicted
-#   Fight 4: Amaya vs Machado (TUF 34 final, both debuting) -> not predicted
-#   Fight 5: Hiestand (USA, Home) vs Nakamura (Japan, Away) -> red_home
-#   Fight 6: Vieira (Brazil, Away) vs Bryczek (Poland, Away) -> no advantage
-#   Fight 7: Bellato (Brazil, Away) vs Edwards (USA, Home) -> blue_home
-#   Fight 8: Brener (Brazil, Away) vs Harrell (USA, Home) -> blue_home
-#   Fight 9: Jackson (USA, Home) vs Simon (USA, Home) -> no advantage (both home)
-#   Fight 10: Castaneda (USA, Home) vs Alatengheili (China, Away) -> red_home
-#   Fight 11: Jauregui (Mexico, Away) vs Demopoulos (USA, Home) -> blue_home
-#
-# NOTE: All bouts at the Apex use the SMALL cage -> cage_size: 'small' for every fight.
+# Home flags are left off this card: nobody's base was checked fight by
+# fight, and a guessed flag is worse than none. Only the division is set.
 #
 # 'division' tells the model the weight class of the bout (e.g. 'lightweight',
 # "women's flyweight"). It feeds the weight-class features the model was
@@ -112,41 +101,20 @@ FIGHT_CARD = [
 # is wrong whenever one of them is changing class.
 
 FIGHT_CONTEXTS = {
-    # Fight 0: Rosas Jr. (Home) - red corner
-    0: {"division": "bantamweight", 'red_home': True, 'cage_size': 'small'},
-
-    # Fight 1: Both Away - no advantage
-    1: {"division": "women's bantamweight", 'cage_size': 'small'},
-
-    # Fight 2: Hernandez debuting - no data either way
-    2: {"division": "middleweight", 'cage_size': 'small'},
-
-    # Fight 3: TUF final, both debuting
-    3: {"division": "bantamweight", 'cage_size': 'small'},
-
-    # Fight 4: TUF final, both debuting
-    4: {"division": "women's strawweight", 'cage_size': 'small'},
-
-    # Fight 5: Hiestand (Home) - red corner
-    5: {"division": "bantamweight", 'red_home': True, 'cage_size': 'small'},
-
-    # Fight 6: Both Away - no advantage
-    6: {"division": "middleweight", 'cage_size': 'small'},
-
-    # Fight 7: Edwards (Home) - blue corner
-    7: {"division": "light heavyweight", 'blue_home': True, 'cage_size': 'small'},
-
-    # Fight 8: Harrell (Home) - blue corner
-    8: {"division": "lightweight", 'blue_home': True, 'cage_size': 'small'},
-
-    # Fight 9: Both Home - no advantage
-    9: {"division": "bantamweight", 'cage_size': 'small'},
-
-    # Fight 10: Castaneda (Home) - red corner
-    10: {"division": "bantamweight", 'red_home': True, 'cage_size': 'small'},
-
-    # Fight 11: Demopoulos (Home) - blue corner
-    11: {"division": "women's strawweight", 'blue_home': True, 'cage_size': 'small'},
+    0: {"division": "women's flyweight"},
+    1: {"division": "bantamweight"},
+    2: {"division": "lightweight"},
+    3: {"division": "welterweight"},
+    4: {"division": "middleweight"},
+    5: {"division": "flyweight"},
+    6: {"division": "middleweight"},
+    7: {"division": "featherweight"},
+    8: {"division": "heavyweight"},
+    9: {"division": "heavyweight"},
+    10: {"division": "lightweight"},
+    11: {"division": "middleweight"},
+    12: {"division": "welterweight"},
+    13: {"division": "welterweight"},
 }
 
 # ==============================================================================
