@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, predict, check-odds, check-markets, check-line-history, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, search-mma, inspect-fighter, experiment]
+        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, harvest-injuries, harvest-world, harvest-weights, harvest-sherdog, harvest-sherdog-ufc, probe-sherdog, probe-ufcstats, probe-world, verify-intel-dates, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, fetch-opening-odds, fetch-rounds, search-mma, search-rounds, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -31,6 +31,13 @@ on:
           - calibrator_mismatch
           - adjustment_ablation
           - live_flags
+          - injury_weight
+          - camp_power
+          - mentality
+          - short_notice_weight
+          - size_edge
+          - true_fight_weight_edge
+          - live_parity
         default: stale_form
   schedule:
     - cron: "0 6 * * MON"   # Mondays 06:00 UTC, after the weekend's cards
@@ -38,11 +45,28 @@ on:
 permissions:
   contents: write
 
+# ONE RUN AT A TIME PER BRANCH. Every mode regenerates app/data/*.json, so two
+# runs in flight each produce their own version of the same generated files
+# and the second one's rebase conflicts - no retry can merge two builds of a
+# JSON blob. A harvest was lost exactly that way, fired alongside a date check.
+# Queued, the second run checks out after the first has pushed.
+concurrency:
+  group: update-dataset-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # THE BRANCH, NOT THE COMMIT THE RUN WAS DISPATCHED FROM. By default a
+      # dispatched run checks out the SHA of the moment it was triggered, so a
+      # run queued behind another (see concurrency above) still builds on the
+      # files the first run is about to replace, and its commit then conflicts
+      # on app/data/*.json - the queue alone did not stop it. A probe's saved
+      # samples were lost that way behind an experiment.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
 
       - uses: actions/setup-python@v5
         with:
@@ -83,6 +107,83 @@ jobs:
             # in the fortnight before the bell, and it cannot be measured
             # without both ends.
             python engine/check_line_history.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "fetch-fight-changes" ]; then
+            # Harvest late replacements into engine/data/fight_changes.csv.
+            # The label is "this fighter stepped in for somebody", NOT short
+            # notice - the probe found that Wikipedia states a notice period
+            # on almost none of them, and a replacement announced two months
+            # out had a full camp. days_notice stays blank where unstated.
+            python engine/fetch_fight_changes.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "harvest-world" ]; then
+            # Every bout of every promotion on Wikipedia since 2005 (year and
+            # event pages, Contender Series seasons, fighters' own records)
+            # and every fighter's camp, coaches and belts from their
+            # infobox - so fighters with no UFC history can be rated.
+            python engine/harvest_world.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "harvest-weights" ]; then
+            # Measured fight-night weights (official -> fight night) from
+            # every event page that reports them - the ground truth a True
+            # Fight Weight estimator is fitted to and checked against.
+            python engine/fight_night_weights.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "harvest-sherdog" ]; then
+            # Sherdog pro records for both fighters of every Contender Series
+            # bout, each kept only if it holds that bout (namesakes exist).
+            # Resumable: a run stops after its time budget, keeps what it
+            # has, and the next run carries on. Then the Contender Series is
+            # re-scored with those records as they were known at each event.
+            python engine/harvest_sherdog.py --minutes 150 2>&1 | tee sync.log
+            python engine/world_model.py --contender 2>&1 | tee -a sync.log
+          elif [ "${{ inputs.mode }}" = "harvest-sherdog-ufc" ]; then
+            # Every UFC fighter's pre-UFC career from Sherdog, verified
+            # against their first UFC bout, newest debuts first. Hours of
+            # slow requests: resumable, 330-minute budget per run, re-run
+            # until it reports nothing left to do.
+            python engine/harvest_sherdog.py --ufc-debuts --minutes 330 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "probe-sherdog" ]; then
+            # A few real Sherdog pages saved as fixtures, so the regional
+            # record parser for Contender Series prospects is written
+            # against real HTML. Five slow requests; robots.txt allows it.
+            python engine/probe_sherdog.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "probe-ufcstats" ]; then
+            # Do the archive's 16-hex ids resolve on UFCStats, and do its
+            # fight pages carry round-by-round totals? Five slow requests,
+            # saved as fixtures for a per-round parser (a measured cardio
+            # feature needs them).
+            python engine/probe_ufcstats.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "probe-world" ]; then
+            # Which non-UFC results pages exist on Wikipedia, and real samples
+            # of them saved as test fixtures, so the multi-promotion parsers
+            # are written against real wikitext. Also reads robots.txt of the
+            # MMA record sites.
+            python engine/probe_world.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "harvest-injuries" ]; then
+            # Every injury and illness sentence on the Wikipedia page of every
+            # UFC event and every UFC fighter since 2010 - text, not labels.
+            # When each injury became KNOWN is decided afterwards, by reading;
+            # a "fought injured" revealed after a fight must never count as
+            # known before it.
+            python engine/harvest_injuries.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "verify-intel-dates" ]; then
+            # Settle historical intel whose publication date could not be read
+            # from its URL: fetch each page and read the date it declares for
+            # itself. A record is kept only if that date is before the fight -
+            # most historical fighter news was written AFTER the fight, and a
+            # post-fight "he fought injured" filed as pre-fight news would
+            # make injury look predictive in testing and be worthless live.
+            python engine/verify_intel_dates.py 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "check-fight-changes" ]; then
+            # Can a late replacement be labelled across history, and on how
+            # many fights? predict_card carries a hand-typed 4% short-notice
+            # penalty nobody ever fitted, and fitting it needs labels the
+            # archive does not contain. This reports whether Wikipedia's
+            # event pages can supply enough of them to tell 4% from 0%.
+            # Writes nothing; it only answers whether to build.
+            python engine/check_fight_changes.py 2>&1 | tee sync.log
+            # And what the parser MISSED on the early years, where the label
+            # rate is a tenth of today's - so the patterns are fitted to
+            # sentences Wikipedia actually contains, not to guesses.
+            python engine/check_fight_changes.py --unparsed --sample 30 \
+                --from-year 2010 --to-year 2016 2>&1 | tee -a sync.log
           elif [ "${{ inputs.mode }}" = "check-markets" ]; then
             # Is there a "goes the distance" market on this plan? The method
             # question has no market anchor, and the wrongness layer on the
@@ -156,7 +257,18 @@ jobs:
             NEW=$(grep -oP 'New fights: \K[0-9,]+' sync.log || echo "?")
             git commit -m "Update UFC dataset: +${NEW} fights through ${THROUGH}"
           fi
-          git push
+          # REBASE, THEN PUSH, AND TRY AGAIN. A run that takes four minutes
+          # can easily be overtaken by a push to the same branch, and a
+          # rejected push here throws away work the job has already done -
+          # a harvest of 297 gathered labels was lost to exactly this. The
+          # commit only ever touches generated data files, so replaying it
+          # on top of whatever arrived meanwhile is safe.
+          for attempt in 1 2 3; do
+            git push && break
+            echo "push rejected, rebasing onto the branch (attempt $attempt)"
+            git pull --rebase --autostash origin "$(git rev-parse --abbrev-ref HEAD)" || exit 1
+            sleep $((attempt * 3))
+          done
 
       # The phone app reads these files. Rebuilt whenever the dataset or the
       # experiment output moved, so the app never shows numbers from a data
@@ -177,14 +289,20 @@ jobs:
       - name: Commit the app data
         if: ${{ !inputs.dry_run }}
         run: |
-          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv engine/data/method_odds.csv"
+          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv engine/data/opening_odds.csv engine/data/ufc_rounds.csv.gz engine/data/method_odds.csv engine/data/fight_changes.csv engine/data/intel_history.csv engine/data/intel_history_scouted.csv engine/data/intel_history_pending.csv engine/data/intel_scout_log.csv engine/data/injury_sentences.jsonl.gz engine/data/injury_pages.csv engine/data/world_year_pages.json engine/data/world_bouts.csv.gz engine/data/fighter_profiles.jsonl.gz engine/data/world_pages.csv engine/data/fight_night_weights.csv engine/data/sherdog_records.jsonl.gz engine/data/sherdog_ufc_records.jsonl.gz engine/data/world_model_contender.json engine/tests/fixtures/wiki/ engine/tests/fixtures/sherdog/ engine/tests/fixtures/ufcstats/"
           if [ -z "$(git status --porcelain -- $PATHS)" ]; then
             echo "App data and odds unchanged."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add $PATHS
+          # Only paths that exist. A tracked data file a mode never created -
+          # the historical scout's pending queue, say, when nothing is
+          # pending - makes `git add` fatal, and the whole run fails at its
+          # last step with its work done and unsaved.
+          for p in $PATHS; do
+            if [ -e "$p" ]; then git add -- "$p"; fi
+          done
           if [ "${{ inputs.mode }}" = "predict" ]; then
             # Count the fights that actually carry a price. The old count
             # grepped for "best_odds", which is what the engine calls the field
@@ -196,7 +314,18 @@ jobs:
           else
             git commit -m "Refresh app data"
           fi
-          git push
+          # REBASE, THEN PUSH, AND TRY AGAIN. A run that takes four minutes
+          # can easily be overtaken by a push to the same branch, and a
+          # rejected push here throws away work the job has already done -
+          # a harvest of 297 gathered labels was lost to exactly this. The
+          # commit only ever touches generated data files, so replaying it
+          # on top of whatever arrived meanwhile is safe.
+          for attempt in 1 2 3; do
+            git push && break
+            echo "push rejected, rebasing onto the branch (attempt $attempt)"
+            git pull --rebase --autostash origin "$(git rev-parse --abbrev-ref HEAD)" || exit 1
+            sleep $((attempt * 3))
+          done
 
       - name: Commit experiment output
         if: ${{ inputs.mode == 'experiment' || inputs.mode == 'backtest' }}
@@ -209,7 +338,18 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add engine/experiments/
           git commit -m "Results: ${{ inputs.mode == 'backtest' && 'backtest' || inputs.experiment }}"
-          git push
+          # REBASE, THEN PUSH, AND TRY AGAIN. A run that takes four minutes
+          # can easily be overtaken by a push to the same branch, and a
+          # rejected push here throws away work the job has already done -
+          # a harvest of 297 gathered labels was lost to exactly this. The
+          # commit only ever touches generated data files, so replaying it
+          # on top of whatever arrived meanwhile is safe.
+          for attempt in 1 2 3; do
+            git push && break
+            echo "push rejected, rebasing onto the branch (attempt $attempt)"
+            git pull --rebase --autostash origin "$(git rev-parse --abbrev-ref HEAD)" || exit 1
+            sleep $((attempt * 3))
+          done
 
       - name: Upload sync log
         if: always()

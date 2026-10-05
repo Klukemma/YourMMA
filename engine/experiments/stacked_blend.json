@@ -1,0 +1,2389 @@
+{
+ "generated": "2026-10-01T18:55:49Z",
+ "plan": "Idea #3: is a fitted stack a better blend with the market than 0.75?\n\nThe app's headline probability is 0.25 * model + 0.75 * market, in\nprobability space, the weight chosen by walk-forward ACCURACY\n(market_blend.py). A fixed probability-space average is the crudest\ncombiner there is: it cannot learn that the market is sharper on heavy\nfavourites, that the model is worth less when a fighter has no UFC record,\nor that the market's own prices carry a favourite-longshot bias. This asks\nwhether any of those, fitted honestly, beats the fixed weight.\n\nPRE-REGISTERED PLAN - written before the first run and reported unchanged.\n\nData. The baseline walk-forward predictions from experiments/model_compare.py\n(production recipe: LR + RF + XGB averaged and Platt-calibrated, each year\nfitted on earlier years only), with the de-vigged closing line where\nodds.csv prices the fight. Only priced fights are in any arm; 2025 is\nunpriced and is simply absent.\n\nBaseline arm. p = clip(0.25 * p_model + 0.75 * p_market, 0.01, 0.99),\nexactly market_blend.blend with MARKET_WEIGHT = 0.75. Nothing is fitted.\n\nCandidate arms - a family of three, so alpha = 0.05 / 3:\n\n  (1) stack         logit(p) = a * logit(market) + b * logit(model) + c\n  (2) stack+thin    (1) + d * logit(model) * thin,\n                    thin = 1 / (1 + min(red_prior_bouts, blue_prior_bouts)),\n                    where prior_bouts is each corner's UFC bouts strictly\n                    before the fight in either corner (model_compare.\n                    prior_bouts). thin is 1 for a debutant on either side,\n                    1/2 after one bout, 1/11 after ten. Both fighters have\n                    it; it is symmetric under a corner swap, so it enters\n                    only through the model term and has no main effect.\n  (3) stack+FL      (1) + a2 * logit(market) * |logit(market)|: a\n                    favourite-longshot correction of the market term. This\n                    form is chosen over isotonic/Platt-on-market-alone\n                    because it is one coefficient and stays monotone.\n\nFitting. Every arm is an unregularised logistic regression (sklearn\nLogisticRegression, C = 1e6, lbfgs) on the stated design. For each\npredicted year Y the coefficients are fitted ONLY on priced fights of years\n< Y (expanding window) using the WALK-FORWARD model probabilities, never\nin-sample ones, and need at least MIN_STACK_TRAIN = 200 such fights; the\nfirst year with that many is the first scored year. Probabilities are\nclipped to [0.001, 0.999] before the logit. The comparison set is the\npriced fights of every scored year, identical for every arm and for the\nbaseline.\n\nPrimary metric and pass bar. Log loss on the comparison set. An arm passes\nif the paired bootstrap interval of (arm - baseline) log loss - the wider\nof event-resampled and fighter-resampled, at the family-wise level\n1 - 0.05/3 - lies entirely below zero. Nothing else is a pass.\n\nSecondary, reported but not the bar: accuracy, Brier, calibration by\ndecile, and the same table on 2020+ only (the confirm period of\nhistorical_backtest.py). Per-year coefficients are printed for the record.\n\nShipping. Only an arm that passes is implemented in market_blend.py, with\ncoefficients fitted on the full priced history and the date range stated.\nIf none passes, market_blend.py is not touched.\n\nPOST-REGISTRATION NOTES - added after the first run; nothing above this line\nchanged (its sha256 is in stacked_blend_plan.sha256 and main() refuses to run\nif it moves), and the pass bar is exactly the one above.\n\n  * thin. The plan says \"UFC bouts strictly before the fight\"; the first run's\n    prior_bouts counted DECIDED bouts only (draws and no-contests dropped\n    before counting). model_compare now counts every post-2001 archive row,\n    as the plan's wording says, and the experiment was re-run. Both runs'\n    numbers are in the write-up; the verdict did not move.\n  * The baseline is not point-in-time, and the comparison is asymmetric.\n    The 0.75 weight was chosen on the whole priced history (market_blend.py)\n    and is applied in every scored year, while the candidates refit on years\n    < Y. The asymmetry favours the BASELINE (it has seen the future), so it\n    cannot manufacture a pass; it is reported here because the harness is\n    meant to be the shared yardstick. For the record a second baseline,\n    NOT pre-registered and NOT the bar, is reported alongside: \"pit-weight\",\n    p = clip((1 - w_Y) * model + w_Y * market, 0.01, 0.99) with w_Y the grid\n    value in {0, 0.05, ..., 1} that minimises LOG LOSS (the pre-registered\n    metric) on priced fights of years < Y, same expanding window and\n    MIN_STACK_TRAIN as the candidates. The accuracy-chosen weight per year\n    - market_blend.py's stated procedure - is printed too, because under\n    the production recipe it does not come back 0.75 \"for every year\".\n  * Staleness. Harness models for year Y are fitted through 31 December of\n    Y-1 (model_compare docstring); production retrains before every card.\n    The shipping coefficients of a passing arm would therefore be fitted on\n    staler model probabilities than they are applied to; before any ship,\n    refit on a finer walk-forward or measure the fresh-versus-stale shift.\n  * Family. The reference baseline adds no candidate; alpha stays 0.05 / 3.\n\n    python engine/experiments/stacked_blend.py\n",
+ "plan_sha256": "30dea00b2f69d182b40448462ab0653ae292f77cba3464a566305ecd7b0fd895",
+ "plan_registered_at": "2026-10-01T18:31:00Z",
+ "odds_sha256": "5be0a167717342faf891162d6a7a4710dd8a0b703c26204f46754aeeebc405fa",
+ "family": 3,
+ "alpha": 0.016666666666666666,
+ "min_stack_train": 200,
+ "priced_rows": 5897,
+ "comparison_rows": 5613,
+ "coefficients_by_year": {
+  "stack": {
+   "2012": {
+    "a_market": 1.1735950716314525,
+    "b_model": 1.7648670735005765,
+    "c": -0.2746197080264892,
+    "fitted_on": 284
+   },
+   "2013": {
+    "a_market": 1.026371476221033,
+    "b_model": 1.089555493989716,
+    "c": -0.10382499963238112,
+    "fitted_on": 608
+   },
+   "2014": {
+    "a_market": 1.0690068859728405,
+    "b_model": 0.7795897354959637,
+    "c": -0.10706844275983651,
+    "fitted_on": 964
+   },
+   "2015": {
+    "a_market": 0.9665739299257649,
+    "b_model": 0.5266705352455918,
+    "c": 0.03067933398220737,
+    "fitted_on": 1425
+   },
+   "2016": {
+    "a_market": 0.8814542179077395,
+    "b_model": 0.6237300315771332,
+    "c": -0.029762943579181893,
+    "fitted_on": 1857
+   },
+   "2017": {
+    "a_market": 0.863101273192811,
+    "b_model": 0.5838862583263861,
+    "c": -0.024410561395569054,
+    "fitted_on": 2305
+   },
+   "2018": {
+    "a_market": 0.8780700188004529,
+    "b_model": 0.5924847578618024,
+    "c": -0.04127083283865102,
+    "fitted_on": 2711
+   },
+   "2019": {
+    "a_market": 0.9034878843944266,
+    "b_model": 0.541653038180076,
+    "c": -0.03105889676342124,
+    "fitted_on": 3147
+   },
+   "2020": {
+    "a_market": 0.9004891202884724,
+    "b_model": 0.5123945622920786,
+    "c": -0.028342290012975686,
+    "fitted_on": 3604
+   },
+   "2021": {
+    "a_market": 0.902990833008,
+    "b_model": 0.5046934220380979,
+    "c": -0.012137349645715547,
+    "fitted_on": 4013
+   },
+   "2022": {
+    "a_market": 0.9105082367749768,
+    "b_model": 0.4681878146460816,
+    "c": -0.02141737303648866,
+    "fitted_on": 4482
+   },
+   "2023": {
+    "a_market": 0.9140649530740188,
+    "b_model": 0.4641285004561343,
+    "c": -0.007247843298086954,
+    "fitted_on": 4958
+   },
+   "2024": {
+    "a_market": 0.9331259661686738,
+    "b_model": 0.45794843913710653,
+    "c": -0.011293522847968444,
+    "fitted_on": 5371
+   },
+   "2026": {
+    "a_market": 0.9381786019099719,
+    "b_model": 0.45128050271359704,
+    "c": -0.018716680295529173,
+    "fitted_on": 5738
+   }
+  },
+  "stack+thin": {
+   "2012": {
+    "a_market": 1.181455217388113,
+    "b_model": 1.2812755899730206,
+    "d_model_x_thin": 0.96674442946275,
+    "c": -0.3098381828159494,
+    "fitted_on": 284
+   },
+   "2013": {
+    "a_market": 1.056518437110786,
+    "b_model": 0.19102117978866734,
+    "d_model_x_thin": 1.708634638547793,
+    "c": -0.14845282422392436,
+    "fitted_on": 608
+   },
+   "2014": {
+    "a_market": 1.0699461187369663,
+    "b_model": 0.6476605420451218,
+    "d_model_x_thin": 0.2753064080739418,
+    "c": -0.11712447049824372,
+    "fitted_on": 964
+   },
+   "2015": {
+    "a_market": 0.9756610507511466,
+    "b_model": 0.3098845846607114,
+    "d_model_x_thin": 0.3824891282045582,
+    "c": 0.022412510281961135,
+    "fitted_on": 1425
+   },
+   "2016": {
+    "a_market": 0.904918714970428,
+    "b_model": 0.2140620525072668,
+    "d_model_x_thin": 0.7680985875279569,
+    "c": -0.038953865969617016,
+    "fitted_on": 1857
+   },
+   "2017": {
+    "a_market": 0.8962355642671339,
+    "b_model": 0.16246454220635195,
+    "d_model_x_thin": 0.8258830802482238,
+    "c": -0.03529162429476248,
+    "fitted_on": 2305
+   },
+   "2018": {
+    "a_market": 0.9096517436831387,
+    "b_model": 0.23700634397687254,
+    "d_model_x_thin": 0.6910703155113103,
+    "c": -0.04963192713350019,
+    "fitted_on": 2711
+   },
+   "2019": {
+    "a_market": 0.9357462075761842,
+    "b_model": 0.2066461857005381,
+    "d_model_x_thin": 0.6614200697403141,
+    "c": -0.04068587470624458,
+    "fitted_on": 3147
+   },
+   "2020": {
+    "a_market": 0.925937781242141,
+    "b_model": 0.2435289633623715,
+    "d_model_x_thin": 0.5253653306746748,
+    "c": -0.035656908563388906,
+    "fitted_on": 3604
+   },
+   "2021": {
+    "a_market": 0.9238846721607654,
+    "b_model": 0.2654508432290271,
+    "d_model_x_thin": 0.4680656265010755,
+    "c": -0.017832912014556192,
+    "fitted_on": 4013
+   },
+   "2022": {
+    "a_market": 0.9292355415116769,
+    "b_model": 0.23985575252655694,
+    "d_model_x_thin": 0.4619117073761145,
+    "c": -0.026128490211791575,
+    "fitted_on": 4482
+   },
+   "2023": {
+    "a_market": 0.9323781162943219,
+    "b_model": 0.2388375793902825,
+    "d_model_x_thin": 0.46119180925950026,
+    "c": -0.011957376313591636,
+    "fitted_on": 4958
+   },
+   "2024": {
+    "a_market": 0.9503656166053919,
+    "b_model": 0.24965108822149457,
+    "d_model_x_thin": 0.4282428766288231,
+    "c": -0.015687690354411657,
+    "fitted_on": 5371
+   },
+   "2026": {
+    "a_market": 0.9535190156872537,
+    "b_model": 0.2725660790227592,
+    "d_model_x_thin": 0.3707793419517572,
+    "c": -0.022732549120583718,
+    "fitted_on": 5738
+   }
+  },
+  "stack+FL": {
+   "2012": {
+    "a_market": 1.5570732868149082,
+    "b_model": 1.7597484891945838,
+    "a2_market_x_abs": -0.3715162953341238,
+    "c": -0.26931460232245846,
+    "fitted_on": 284
+   },
+   "2013": {
+    "a_market": 1.0776031003746152,
+    "b_model": 1.090827055364226,
+    "a2_market_x_abs": -0.05058663962944135,
+    "c": -0.10310043347941895,
+    "fitted_on": 608
+   },
+   "2014": {
+    "a_market": 0.9231620830712773,
+    "b_model": 0.7735315505146374,
+    "a2_market_x_abs": 0.13859048922631614,
+    "c": -0.10607370829297895,
+    "fitted_on": 964
+   },
+   "2015": {
+    "a_market": 0.8653384889717065,
+    "b_model": 0.5253364366318172,
+    "a2_market_x_abs": 0.09096207221406681,
+    "c": 0.029915834382013833,
+    "fitted_on": 1425
+   },
+   "2016": {
+    "a_market": 0.6353392719210456,
+    "b_model": 0.6201811341571902,
+    "a2_market_x_abs": 0.2165036935208423,
+    "c": -0.030796619684156326,
+    "fitted_on": 1857
+   },
+   "2017": {
+    "a_market": 0.5712826637478114,
+    "b_model": 0.580993372734258,
+    "a2_market_x_abs": 0.26054412060643645,
+    "c": -0.024283472545528168,
+    "fitted_on": 2305
+   },
+   "2018": {
+    "a_market": 0.6259365267479067,
+    "b_model": 0.5909458348855923,
+    "a2_market_x_abs": 0.22644890507428175,
+    "c": -0.04151679098516035,
+    "fitted_on": 2711
+   },
+   "2019": {
+    "a_market": 0.571373752544523,
+    "b_model": 0.5418359002228709,
+    "a2_market_x_abs": 0.3003345286712296,
+    "c": -0.03138729418637805,
+    "fitted_on": 3147
+   },
+   "2020": {
+    "a_market": 0.5505444962894319,
+    "b_model": 0.511949897500938,
+    "a2_market_x_abs": 0.31966323412820596,
+    "c": -0.028935447019938863,
+    "fitted_on": 3604
+   },
+   "2021": {
+    "a_market": 0.6010650029027569,
+    "b_model": 0.5041281838682639,
+    "a2_market_x_abs": 0.2772797206850938,
+    "c": -0.012293624303605684,
+    "fitted_on": 4013
+   },
+   "2022": {
+    "a_market": 0.6018865801507967,
+    "b_model": 0.46974833437980906,
+    "a2_market_x_abs": 0.28607082190038974,
+    "c": -0.02265452795653933,
+    "fitted_on": 4482
+   },
+   "2023": {
+    "a_market": 0.609972776779427,
+    "b_model": 0.46532656105008297,
+    "a2_market_x_abs": 0.2832561189016863,
+    "c": -0.00857531792472508,
+    "fitted_on": 4958
+   },
+   "2024": {
+    "a_market": 0.6447979777105908,
+    "b_model": 0.4595632624138107,
+    "a2_market_x_abs": 0.2688384513792991,
+    "c": -0.012686102407957141,
+    "fitted_on": 5371
+   },
+   "2026": {
+    "a_market": 0.6817640247056995,
+    "b_model": 0.45360415867034765,
+    "a2_market_x_abs": 0.2372276279123074,
+    "c": -0.020032780359930044,
+    "fitted_on": 5738
+   }
+  }
+ },
+ "pit_weight_by_year": {
+  "log_loss": {
+   "2012": {
+    "weight": 1.0,
+    "fitted_on": 284
+   },
+   "2013": {
+    "weight": 0.95,
+    "fitted_on": 608
+   },
+   "2014": {
+    "weight": 0.85,
+    "fitted_on": 964
+   },
+   "2015": {
+    "weight": 0.85,
+    "fitted_on": 1425
+   },
+   "2016": {
+    "weight": 0.75,
+    "fitted_on": 1857
+   },
+   "2017": {
+    "weight": 0.7,
+    "fitted_on": 2305
+   },
+   "2018": {
+    "weight": 0.7,
+    "fitted_on": 2711
+   },
+   "2019": {
+    "weight": 0.75,
+    "fitted_on": 3147
+   },
+   "2020": {
+    "weight": 0.75,
+    "fitted_on": 3604
+   },
+   "2021": {
+    "weight": 0.75,
+    "fitted_on": 4013
+   },
+   "2022": {
+    "weight": 0.8,
+    "fitted_on": 4482
+   },
+   "2023": {
+    "weight": 0.8,
+    "fitted_on": 4958
+   },
+   "2024": {
+    "weight": 0.8,
+    "fitted_on": 5371
+   },
+   "2026": {
+    "weight": 0.8,
+    "fitted_on": 5738
+   }
+  },
+  "accuracy": {
+   "2012": {
+    "weight": 0.45,
+    "fitted_on": 284
+   },
+   "2013": {
+    "weight": 0.45,
+    "fitted_on": 608
+   },
+   "2014": {
+    "weight": 0.55,
+    "fitted_on": 964
+   },
+   "2015": {
+    "weight": 0.55,
+    "fitted_on": 1425
+   },
+   "2016": {
+    "weight": 0.45,
+    "fitted_on": 1857
+   },
+   "2017": {
+    "weight": 0.55,
+    "fitted_on": 2305
+   },
+   "2018": {
+    "weight": 0.55,
+    "fitted_on": 2711
+   },
+   "2019": {
+    "weight": 0.55,
+    "fitted_on": 3147
+   },
+   "2020": {
+    "weight": 0.65,
+    "fitted_on": 3604
+   },
+   "2021": {
+    "weight": 0.65,
+    "fitted_on": 4013
+   },
+   "2022": {
+    "weight": 0.65,
+    "fitted_on": 4482
+   },
+   "2023": {
+    "weight": 0.65,
+    "fitted_on": 4958
+   },
+   "2024": {
+    "weight": 0.65,
+    "fitted_on": 5371
+   },
+   "2026": {
+    "weight": 0.7,
+    "fitted_on": 5738
+   }
+  }
+ },
+ "all_years": {
+  "n": 5613,
+  "years": [
+   2012,
+   2013,
+   2014,
+   2015,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2026
+  ],
+  "baseline_arm": "baseline 0.75",
+  "decides": true,
+  "baseline": {
+   "n": 5613,
+   "log_loss": 0.6068031197479181,
+   "brier": 0.20944135067851305,
+   "accuracy": 0.673258507037235
+  },
+  "arms": {
+   "stack": {
+    "n": 5613,
+    "alpha": 0.016666666666666666,
+    "events": 534,
+    "baseline": {
+     "n": 5613,
+     "log_loss": 0.6068031197479181,
+     "brier": 0.20944135067851305,
+     "accuracy": 0.673258507037235
+    },
+    "stack": {
+     "n": 5613,
+     "log_loss": 0.6031632533953282,
+     "brier": 0.20831610520047117,
+     "accuracy": 0.6746837698200606
+    },
+    "delta": {
+     "log_loss": {
+      "mean": -0.003639866352590063,
+      "event_low": -0.009092425718092698,
+      "event_high": 0.0024341766588089233,
+      "fighter_low": -0.007505223949594583,
+      "fighter_high": 0.0002289923753314464,
+      "low": -0.009092425718092698,
+      "high": 0.0024341766588089233
+     },
+     "brier": {
+      "mean": -0.0011252454780419365,
+      "event_low": -0.003143339702607183,
+      "event_high": 0.0010269727396237701,
+      "fighter_low": -0.002522242032176616,
+      "fighter_high": 0.00032763591742532316,
+      "low": -0.003143339702607183,
+      "high": 0.0010269727396237701
+     },
+     "accuracy": {
+      "mean": 0.0014252627828255835,
+      "event_low": -0.005905881887262058,
+      "event_high": 0.009182398177052799,
+      "fighter_low": -0.0036598833433698712,
+      "fighter_high": 0.0066233265961772175,
+      "low": -0.005905881887262058,
+      "high": 0.009182398177052799
+     }
+    },
+    "passes": false,
+    "calibration": [
+     {
+      "decile": 0,
+      "lo": 0.0,
+      "hi": 0.1,
+      "n": 15,
+      "predicted": 0.08101544981969783,
+      "observed": 0.0
+     },
+     {
+      "decile": 1,
+      "lo": 0.1,
+      "hi": 0.2,
+      "n": 180,
+      "predicted": 0.1587844540224616,
+      "observed": 0.2
+     },
+     {
+      "decile": 2,
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "n": 378,
+      "predicted": 0.2548274520597,
+      "observed": 0.29894179894179895
+     },
+     {
+      "decile": 3,
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "n": 606,
+      "predicted": 0.35147001814625767,
+      "observed": 0.36633663366336633
+     },
+     {
+      "decile": 4,
+      "lo": 0.4,
+      "hi": 0.5,
+      "n": 730,
+      "predicted": 0.45067969065019503,
+      "observed": 0.4383561643835616
+     },
+     {
+      "decile": 5,
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "n": 799,
+      "predicted": 0.5509154372677149,
+      "observed": 0.5632040050062578
+     },
+     {
+      "decile": 6,
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "n": 965,
+      "predicted": 0.6525058988645708,
+      "observed": 0.6072538860103627
+     },
+     {
+      "decile": 7,
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "n": 961,
+      "predicted": 0.7494645421353864,
+      "observed": 0.7159209157127991
+     },
+     {
+      "decile": 8,
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 730,
+      "predicted": 0.8452452264292551,
+      "observed": 0.8506849315068493
+     },
+     {
+      "decile": 9,
+      "lo": 0.9,
+      "hi": 1.0,
+      "n": 249,
+      "predicted": 0.925136406440979,
+      "observed": 0.8995983935742972
+     }
+    ]
+   },
+   "stack+thin": {
+    "n": 5613,
+    "alpha": 0.016666666666666666,
+    "events": 534,
+    "baseline": {
+     "n": 5613,
+     "log_loss": 0.6068031197479181,
+     "brier": 0.20944135067851305,
+     "accuracy": 0.673258507037235
+    },
+    "stack+thin": {
+     "n": 5613,
+     "log_loss": 0.6036471307452571,
+     "brier": 0.2085328901040034,
+     "accuracy": 0.6711206128629966
+    },
+    "delta": {
+     "log_loss": {
+      "mean": -0.003155989002661108,
+      "event_low": -0.008617862093268562,
+      "event_high": 0.0028572581016757964,
+      "fighter_low": -0.0069742646273737215,
+      "fighter_high": 0.0006601306129648153,
+      "low": -0.008617862093268562,
+      "high": 0.0028572581016757964
+     },
+     "brier": {
+      "mean": -0.0009084605745096995,
+      "event_low": -0.0028681676479096487,
+      "event_high": 0.001162490927295979,
+      "fighter_low": -0.0022864430480161292,
+      "fighter_high": 0.0004674458454664601,
+      "low": -0.0028681676479096487,
+      "high": 0.001162490927295979
+     },
+     "accuracy": {
+      "mean": -0.002137894174238375,
+      "event_low": -0.008851246534012484,
+      "event_high": 0.004801497127108843,
+      "fighter_low": -0.0071207760498498834,
+      "fighter_high": 0.002799657352750874,
+      "low": -0.008851246534012484,
+      "high": 0.004801497127108843
+     }
+    },
+    "passes": false,
+    "calibration": [
+     {
+      "decile": 0,
+      "lo": 0.0,
+      "hi": 0.1,
+      "n": 18,
+      "predicted": 0.07612473233341763,
+      "observed": 0.05555555555555555
+     },
+     {
+      "decile": 1,
+      "lo": 0.1,
+      "hi": 0.2,
+      "n": 168,
+      "predicted": 0.16088778955706484,
+      "observed": 0.19047619047619047
+     },
+     {
+      "decile": 2,
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "n": 372,
+      "predicted": 0.2549409449974401,
+      "observed": 0.3010752688172043
+     },
+     {
+      "decile": 3,
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "n": 625,
+      "predicted": 0.3525376354463534,
+      "observed": 0.3664
+     },
+     {
+      "decile": 4,
+      "lo": 0.4,
+      "hi": 0.5,
+      "n": 752,
+      "predicted": 0.4512355567678728,
+      "observed": 0.4521276595744681
+     },
+     {
+      "decile": 5,
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "n": 834,
+      "predicted": 0.5512661347071303,
+      "observed": 0.5551558752997602
+     },
+     {
+      "decile": 6,
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "n": 989,
+      "predicted": 0.6513785058664215,
+      "observed": 0.6198179979777553
+     },
+     {
+      "decile": 7,
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "n": 905,
+      "predicted": 0.7488746905541245,
+      "observed": 0.7204419889502762
+     },
+     {
+      "decile": 8,
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 697,
+      "predicted": 0.8464109736716746,
+      "observed": 0.8507890961262554
+     },
+     {
+      "decile": 9,
+      "lo": 0.9,
+      "hi": 1.0,
+      "n": 253,
+      "predicted": 0.9321582778874622,
+      "observed": 0.8893280632411067
+     }
+    ]
+   },
+   "stack+FL": {
+    "n": 5613,
+    "alpha": 0.016666666666666666,
+    "events": 534,
+    "baseline": {
+     "n": 5613,
+     "log_loss": 0.6068031197479181,
+     "brier": 0.20944135067851305,
+     "accuracy": 0.673258507037235
+    },
+    "stack+FL": {
+     "n": 5613,
+     "log_loss": 0.6028046167443687,
+     "brier": 0.20816764962717643,
+     "accuracy": 0.671476928558703
+    },
+    "delta": {
+     "log_loss": {
+      "mean": -0.003998503003549541,
+      "event_low": -0.00959857943969733,
+      "event_high": 0.0021741127815534615,
+      "fighter_low": -0.007834946131712225,
+      "fighter_high": -3.368871858770985e-05,
+      "low": -0.00959857943969733,
+      "high": 0.0021741127815534615
+     },
+     "brier": {
+      "mean": -0.0012737010513366059,
+      "event_low": -0.0032600453264679135,
+      "event_high": 0.0008674334635114887,
+      "fighter_low": -0.0026664906656496453,
+      "fighter_high": 0.00018228868900928142,
+      "low": -0.0032600453264679135,
+      "high": 0.0008674334635114887
+     },
+     "accuracy": {
+      "mean": -0.0017815784785319793,
+      "event_low": -0.010457149560164459,
+      "event_high": 0.007045703838442387,
+      "fighter_low": -0.00754622213164132,
+      "fighter_high": 0.004077726213459641,
+      "low": -0.010457149560164459,
+      "high": 0.007045703838442387
+     }
+    },
+    "passes": false,
+    "calibration": [
+     {
+      "decile": 0,
+      "lo": 0.0,
+      "hi": 0.1,
+      "n": 27,
+      "predicted": 0.07838529658285703,
+      "observed": 0.1111111111111111
+     },
+     {
+      "decile": 1,
+      "lo": 0.1,
+      "hi": 0.2,
+      "n": 175,
+      "predicted": 0.1574656167724627,
+      "observed": 0.2
+     },
+     {
+      "decile": 2,
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "n": 338,
+      "predicted": 0.2556634101132066,
+      "observed": 0.30177514792899407
+     },
+     {
+      "decile": 3,
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "n": 560,
+      "predicted": 0.35293670255956966,
+      "observed": 0.36428571428571427
+     },
+     {
+      "decile": 4,
+      "lo": 0.4,
+      "hi": 0.5,
+      "n": 795,
+      "predicted": 0.45152058488835917,
+      "observed": 0.4389937106918239
+     },
+     {
+      "decile": 5,
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "n": 900,
+      "predicted": 0.5507192756537262,
+      "observed": 0.5533333333333333
+     },
+     {
+      "decile": 6,
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "n": 973,
+      "predicted": 0.6501593666100205,
+      "observed": 0.6125385405960946
+     },
+     {
+      "decile": 7,
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "n": 863,
+      "predicted": 0.7485916032268803,
+      "observed": 0.7288528389339514
+     },
+     {
+      "decile": 8,
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 674,
+      "predicted": 0.8470044851758771,
+      "observed": 0.8382789317507419
+     },
+     {
+      "decile": 9,
+      "lo": 0.9,
+      "hi": 1.0,
+      "n": 308,
+      "predicted": 0.9279903131546663,
+      "observed": 0.9058441558441559
+     }
+    ]
+   }
+  },
+  "baseline_calibration": [
+   {
+    "decile": 1,
+    "lo": 0.1,
+    "hi": 0.2,
+    "n": 21,
+    "predicted": 0.18240876011327756,
+    "observed": 0.14285714285714285
+   },
+   {
+    "decile": 2,
+    "lo": 0.2,
+    "hi": 0.30000000000000004,
+    "n": 231,
+    "predicted": 0.2643513212709303,
+    "observed": 0.2077922077922078
+   },
+   {
+    "decile": 3,
+    "lo": 0.30000000000000004,
+    "hi": 0.4,
+    "n": 673,
+    "predicted": 0.35672266838439487,
+    "observed": 0.32838038632986627
+   },
+   {
+    "decile": 4,
+    "lo": 0.4,
+    "hi": 0.5,
+    "n": 1016,
+    "predicted": 0.4511246193344228,
+    "observed": 0.43208661417322836
+   },
+   {
+    "decile": 5,
+    "lo": 0.5,
+    "hi": 0.6000000000000001,
+    "n": 1168,
+    "predicted": 0.5523910315865708,
+    "observed": 0.5659246575342466
+   },
+   {
+    "decile": 6,
+    "lo": 0.6000000000000001,
+    "hi": 0.7000000000000001,
+    "n": 1351,
+    "predicted": 0.6486472853145824,
+    "observed": 0.6691339748334567
+   },
+   {
+    "decile": 7,
+    "lo": 0.7000000000000001,
+    "hi": 0.8,
+    "n": 912,
+    "predicted": 0.7443371351441715,
+    "observed": 0.8377192982456141
+   },
+   {
+    "decile": 8,
+    "lo": 0.8,
+    "hi": 0.9,
+    "n": 241,
+    "predicted": 0.829240443676498,
+    "observed": 0.9128630705394191
+   }
+  ]
+ },
+ "confirm": {
+  "n": 2293,
+  "years": [
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2026
+  ],
+  "baseline_arm": "baseline 0.75",
+  "decides": true,
+  "baseline": {
+   "n": 2293,
+   "log_loss": 0.6059095460212769,
+   "brier": 0.20893731552660524,
+   "accuracy": 0.6816397732228522
+  },
+  "arms": {
+   "stack": {
+    "n": 2293,
+    "alpha": 0.016666666666666666,
+    "events": 222,
+    "baseline": {
+     "n": 2293,
+     "log_loss": 0.6059095460212769,
+     "brier": 0.20893731552660524,
+     "accuracy": 0.6816397732228522
+    },
+    "stack": {
+     "n": 2293,
+     "log_loss": 0.601109879953229,
+     "brier": 0.2073746381109056,
+     "accuracy": 0.6781508940252944
+    },
+    "delta": {
+     "log_loss": {
+      "mean": -0.004799666068048007,
+      "event_low": -0.009429791553944076,
+      "event_high": 0.00030443369361110605,
+      "fighter_low": -0.008347863474038524,
+      "fighter_high": -0.000990868397027039,
+      "low": -0.009429791553944076,
+      "high": 0.00030443369361110605
+     },
+     "brier": {
+      "mean": -0.0015626774156996372,
+      "event_low": -0.0033746203316191528,
+      "event_high": 0.0003525393258798045,
+      "fighter_low": -0.002946536412088875,
+      "fighter_high": -7.248997344402297e-05,
+      "low": -0.0033746203316191528,
+      "high": 0.0003525393258798045
+     },
+     "accuracy": {
+      "mean": -0.0034888791975577847,
+      "event_low": -0.010538803070946259,
+      "event_high": 0.0034578237198810515,
+      "fighter_low": -0.00831534554255131,
+      "fighter_high": 0.0012923401253220406,
+      "low": -0.010538803070946259,
+      "high": 0.0034578237198810515
+     }
+    },
+    "passes": false,
+    "calibration": [
+     {
+      "decile": 0,
+      "lo": 0.0,
+      "hi": 0.1,
+      "n": 1,
+      "predicted": 0.0850483826377749,
+      "observed": 0.0
+     },
+     {
+      "decile": 1,
+      "lo": 0.1,
+      "hi": 0.2,
+      "n": 64,
+      "predicted": 0.16345968020615464,
+      "observed": 0.171875
+     },
+     {
+      "decile": 2,
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "n": 151,
+      "predicted": 0.25834497509231963,
+      "observed": 0.304635761589404
+     },
+     {
+      "decile": 3,
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "n": 268,
+      "predicted": 0.35089970160908907,
+      "observed": 0.33955223880597013
+     },
+     {
+      "decile": 4,
+      "lo": 0.4,
+      "hi": 0.5,
+      "n": 312,
+      "predicted": 0.44871845030839025,
+      "observed": 0.4230769230769231
+     },
+     {
+      "decile": 5,
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "n": 347,
+      "predicted": 0.5503084023041394,
+      "observed": 0.553314121037464
+     },
+     {
+      "decile": 6,
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "n": 439,
+      "predicted": 0.6521124126336939,
+      "observed": 0.6378132118451025
+     },
+     {
+      "decile": 7,
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "n": 434,
+      "predicted": 0.7490102250407251,
+      "observed": 0.7373271889400922
+     },
+     {
+      "decile": 8,
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 241,
+      "predicted": 0.8416072509670429,
+      "observed": 0.8879668049792531
+     },
+     {
+      "decile": 9,
+      "lo": 0.9,
+      "hi": 1.0,
+      "n": 36,
+      "predicted": 0.9218561992599328,
+      "observed": 0.9166666666666666
+     }
+    ]
+   },
+   "stack+thin": {
+    "n": 2293,
+    "alpha": 0.016666666666666666,
+    "events": 222,
+    "baseline": {
+     "n": 2293,
+     "log_loss": 0.6059095460212769,
+     "brier": 0.20893731552660524,
+     "accuracy": 0.6816397732228522
+    },
+    "stack+thin": {
+     "n": 2293,
+     "log_loss": 0.6016699781489024,
+     "brier": 0.20769758143192787,
+     "accuracy": 0.6768425643262101
+    },
+    "delta": {
+     "log_loss": {
+      "mean": -0.004239567872374415,
+      "event_low": -0.009131971209450956,
+      "event_high": 0.001035288284014315,
+      "fighter_low": -0.007716506828683077,
+      "fighter_high": -0.0004442540249300024,
+      "low": -0.009131971209450956,
+      "high": 0.001035288284014315
+     },
+     "brier": {
+      "mean": -0.0012397340946773366,
+      "event_low": -0.003135162895959118,
+      "event_high": 0.0008302207486756739,
+      "fighter_low": -0.002558551190867734,
+      "fighter_high": 0.00017853960856830997,
+      "low": -0.003135162895959118,
+      "high": 0.0008302207486756739
+     },
+     "accuracy": {
+      "mean": -0.004797208896641954,
+      "event_low": -0.0110538784902523,
+      "event_high": 0.001698532435965971,
+      "fighter_low": -0.009414701264343265,
+      "fighter_high": -0.0004245350302553031,
+      "low": -0.0110538784902523,
+      "high": 0.001698532435965971
+     }
+    },
+    "passes": false,
+    "calibration": [
+     {
+      "decile": 0,
+      "lo": 0.0,
+      "hi": 0.1,
+      "n": 4,
+      "predicted": 0.0968868229953145,
+      "observed": 0.0
+     },
+     {
+      "decile": 1,
+      "lo": 0.1,
+      "hi": 0.2,
+      "n": 54,
+      "predicted": 0.16743343617596831,
+      "observed": 0.16666666666666666
+     },
+     {
+      "decile": 2,
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "n": 150,
+      "predicted": 0.2586640816662391,
+      "observed": 0.30666666666666664
+     },
+     {
+      "decile": 3,
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "n": 282,
+      "predicted": 0.3500794265501837,
+      "observed": 0.3475177304964539
+     },
+     {
+      "decile": 4,
+      "lo": 0.4,
+      "hi": 0.5,
+      "n": 317,
+      "predicted": 0.4493886362516359,
+      "observed": 0.4227129337539432
+     },
+     {
+      "decile": 5,
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "n": 360,
+      "predicted": 0.5509520376743386,
+      "observed": 0.5472222222222223
+     },
+     {
+      "decile": 6,
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "n": 446,
+      "predicted": 0.652058202675457,
+      "observed": 0.6614349775784754
+     },
+     {
+      "decile": 7,
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "n": 401,
+      "predicted": 0.7473001264271872,
+      "observed": 0.7331670822942643
+     },
+     {
+      "decile": 8,
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 235,
+      "predicted": 0.8415856304473238,
+      "observed": 0.8765957446808511
+     },
+     {
+      "decile": 9,
+      "lo": 0.9,
+      "hi": 1.0,
+      "n": 44,
+      "predicted": 0.919884571332341,
+      "observed": 0.9090909090909091
+     }
+    ]
+   },
+   "stack+FL": {
+    "n": 2293,
+    "alpha": 0.016666666666666666,
+    "events": 222,
+    "baseline": {
+     "n": 2293,
+     "log_loss": 0.6059095460212769,
+     "brier": 0.20893731552660524,
+     "accuracy": 0.6816397732228522
+    },
+    "stack+FL": {
+     "n": 2293,
+     "log_loss": 0.601161383662134,
+     "brier": 0.2074941226654589,
+     "accuracy": 0.675534234627126
+    },
+    "delta": {
+     "log_loss": {
+      "mean": -0.004748162359142859,
+      "event_low": -0.00963241353735396,
+      "event_high": 0.0007343292489161455,
+      "fighter_low": -0.00844343458888452,
+      "fighter_high": -0.0008733650986521166,
+      "low": -0.00963241353735396,
+      "high": 0.0007343292489161455
+     },
+     "brier": {
+      "mean": -0.0014431928611463192,
+      "event_low": -0.003133449466265256,
+      "event_high": 0.00038768386642372004,
+      "fighter_low": -0.0027199306280139275,
+      "fighter_high": -0.00011258187330007654,
+      "low": -0.003133449466265256,
+      "high": 0.00038768386642372004
+     },
+     "accuracy": {
+      "mean": -0.006105538595726123,
+      "event_low": -0.016513235325773614,
+      "event_high": 0.003552482269503548,
+      "fighter_low": -0.013068603576033027,
+      "fighter_high": 0.0010935877855188928,
+      "low": -0.016513235325773614,
+      "high": 0.003552482269503548
+     }
+    },
+    "passes": false,
+    "calibration": [
+     {
+      "decile": 0,
+      "lo": 0.0,
+      "hi": 0.1,
+      "n": 13,
+      "predicted": 0.08202825882679275,
+      "observed": 0.23076923076923078
+     },
+     {
+      "decile": 1,
+      "lo": 0.1,
+      "hi": 0.2,
+      "n": 56,
+      "predicted": 0.16246637244035864,
+      "observed": 0.14285714285714285
+     },
+     {
+      "decile": 2,
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "n": 129,
+      "predicted": 0.25918223967840265,
+      "observed": 0.3333333333333333
+     },
+     {
+      "decile": 3,
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "n": 234,
+      "predicted": 0.35312150134500014,
+      "observed": 0.3162393162393162
+     },
+     {
+      "decile": 4,
+      "lo": 0.4,
+      "hi": 0.5,
+      "n": 340,
+      "predicted": 0.4497859423194156,
+      "observed": 0.42058823529411765
+     },
+     {
+      "decile": 5,
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "n": 428,
+      "predicted": 0.5492566720605708,
+      "observed": 0.544392523364486
+     },
+     {
+      "decile": 6,
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "n": 445,
+      "predicted": 0.6498032074234219,
+      "observed": 0.6561797752808989
+     },
+     {
+      "decile": 7,
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "n": 370,
+      "predicted": 0.7478612965730208,
+      "observed": 0.7486486486486487
+     },
+     {
+      "decile": 8,
+      "lo": 0.8,
+      "hi": 0.9,
+      "n": 206,
+      "predicted": 0.8449176644673735,
+      "observed": 0.8689320388349514
+     },
+     {
+      "decile": 9,
+      "lo": 0.9,
+      "hi": 1.0,
+      "n": 72,
+      "predicted": 0.9317823660669434,
+      "observed": 0.9305555555555556
+     }
+    ]
+   }
+  },
+  "baseline_calibration": [
+   {
+    "decile": 1,
+    "lo": 0.1,
+    "hi": 0.2,
+    "n": 13,
+    "predicted": 0.18480241832498684,
+    "observed": 0.23076923076923078
+   },
+   {
+    "decile": 2,
+    "lo": 0.2,
+    "hi": 0.30000000000000004,
+    "n": 95,
+    "predicted": 0.2623540618732626,
+    "observed": 0.23157894736842105
+   },
+   {
+    "decile": 3,
+    "lo": 0.30000000000000004,
+    "hi": 0.4,
+    "n": 300,
+    "predicted": 0.35677828739060774,
+    "observed": 0.31
+   },
+   {
+    "decile": 4,
+    "lo": 0.4,
+    "hi": 0.5,
+    "n": 416,
+    "predicted": 0.45094928416319985,
+    "observed": 0.41346153846153844
+   },
+   {
+    "decile": 5,
+    "lo": 0.5,
+    "hi": 0.6000000000000001,
+    "n": 469,
+    "predicted": 0.553370682735218,
+    "observed": 0.5778251599147122
+   },
+   {
+    "decile": 6,
+    "lo": 0.6000000000000001,
+    "hi": 0.7000000000000001,
+    "n": 562,
+    "predicted": 0.6491382980371055,
+    "observed": 0.6797153024911032
+   },
+   {
+    "decile": 7,
+    "lo": 0.7000000000000001,
+    "hi": 0.8,
+    "n": 351,
+    "predicted": 0.7419828525729293,
+    "observed": 0.8433048433048433
+   },
+   {
+    "decile": 8,
+    "lo": 0.8,
+    "hi": 0.9,
+    "n": 87,
+    "predicted": 0.8322748301629578,
+    "observed": 0.9195402298850575
+   }
+  ]
+ },
+ "reference_pit_weight": {
+  "note": "post-registration reference baseline, weight chosen on years < Y by log loss; reported, never the bar",
+  "all_years": {
+   "n": 5613,
+   "years": [
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2026
+   ],
+   "baseline_arm": "pit-weight",
+   "decides": false,
+   "baseline": {
+    "n": 5613,
+    "log_loss": 0.6075044618320322,
+    "brier": 0.20986591127607226,
+    "accuracy": 0.6734366648850882
+   },
+   "arms": {
+    "stack": {
+     "n": 5613,
+     "alpha": 0.016666666666666666,
+     "events": 534,
+     "baseline": {
+      "n": 5613,
+      "log_loss": 0.6075044618320322,
+      "brier": 0.20986591127607226,
+      "accuracy": 0.6734366648850882
+     },
+     "stack": {
+      "n": 5613,
+      "log_loss": 0.6031632533953282,
+      "brier": 0.20831610520047117,
+      "accuracy": 0.6746837698200606
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.004341208436704065,
+       "event_low": -0.00993323082495146,
+       "event_high": 0.0018752928169624185,
+       "fighter_low": -0.00812829869473037,
+       "fighter_high": -0.00031185524007083207,
+       "low": -0.00993323082495146,
+       "high": 0.0018752928169624185
+      },
+      "brier": {
+       "mean": -0.0015498060756011145,
+       "event_low": -0.0037218149815339604,
+       "event_high": 0.0007881581264270506,
+       "fighter_low": -0.003026794865608703,
+       "fighter_high": -1.1383708768931672e-05,
+       "low": -0.0037218149815339604,
+       "high": 0.0007881581264270506
+      },
+      "accuracy": {
+       "mean": 0.0012471049349723855,
+       "event_low": -0.0067491970599237285,
+       "event_high": 0.009832845273041341,
+       "fighter_low": -0.004457884597855886,
+       "fighter_high": 0.006691455811392582,
+       "low": -0.0067491970599237285,
+       "high": 0.009832845273041341
+      }
+     },
+     "passes": null,
+     "calibration": [
+      {
+       "decile": 0,
+       "lo": 0.0,
+       "hi": 0.1,
+       "n": 15,
+       "predicted": 0.08101544981969783,
+       "observed": 0.0
+      },
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 180,
+       "predicted": 0.1587844540224616,
+       "observed": 0.2
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 378,
+       "predicted": 0.2548274520597,
+       "observed": 0.29894179894179895
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 606,
+       "predicted": 0.35147001814625767,
+       "observed": 0.36633663366336633
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 730,
+       "predicted": 0.45067969065019503,
+       "observed": 0.4383561643835616
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 799,
+       "predicted": 0.5509154372677149,
+       "observed": 0.5632040050062578
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 965,
+       "predicted": 0.6525058988645708,
+       "observed": 0.6072538860103627
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 961,
+       "predicted": 0.7494645421353864,
+       "observed": 0.7159209157127991
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 730,
+       "predicted": 0.8452452264292551,
+       "observed": 0.8506849315068493
+      },
+      {
+       "decile": 9,
+       "lo": 0.9,
+       "hi": 1.0,
+       "n": 249,
+       "predicted": 0.925136406440979,
+       "observed": 0.8995983935742972
+      }
+     ]
+    },
+    "stack+thin": {
+     "n": 5613,
+     "alpha": 0.016666666666666666,
+     "events": 534,
+     "baseline": {
+      "n": 5613,
+      "log_loss": 0.6075044618320322,
+      "brier": 0.20986591127607226,
+      "accuracy": 0.6734366648850882
+     },
+     "stack+thin": {
+      "n": 5613,
+      "log_loss": 0.6036471307452571,
+      "brier": 0.2085328901040034,
+      "accuracy": 0.6711206128629966
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.003857331086775111,
+       "event_low": -0.009360272798843326,
+       "event_high": 0.00219313731149038,
+       "fighter_low": -0.007632089004259683,
+       "fighter_high": 9.932472801675563e-05,
+       "low": -0.009360272798843326,
+       "high": 0.00219313731149038
+      },
+      "brier": {
+       "mean": -0.0013330211720688778,
+       "event_low": -0.003307234269693129,
+       "event_high": 0.0008904449993871375,
+       "fighter_low": -0.0027365180949149026,
+       "fighter_high": 0.00013369684358560625,
+       "low": -0.003307234269693129,
+       "high": 0.0008904449993871375
+      },
+      "accuracy": {
+       "mean": -0.0023160520220915732,
+       "event_low": -0.010039492343720952,
+       "event_high": 0.0050257812964934765,
+       "fighter_low": -0.007800282629552221,
+       "fighter_high": 0.0028838282078473,
+       "low": -0.010039492343720952,
+       "high": 0.0050257812964934765
+      }
+     },
+     "passes": null,
+     "calibration": [
+      {
+       "decile": 0,
+       "lo": 0.0,
+       "hi": 0.1,
+       "n": 18,
+       "predicted": 0.07612473233341763,
+       "observed": 0.05555555555555555
+      },
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 168,
+       "predicted": 0.16088778955706484,
+       "observed": 0.19047619047619047
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 372,
+       "predicted": 0.2549409449974401,
+       "observed": 0.3010752688172043
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 625,
+       "predicted": 0.3525376354463534,
+       "observed": 0.3664
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 752,
+       "predicted": 0.4512355567678728,
+       "observed": 0.4521276595744681
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 834,
+       "predicted": 0.5512661347071303,
+       "observed": 0.5551558752997602
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 989,
+       "predicted": 0.6513785058664215,
+       "observed": 0.6198179979777553
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 905,
+       "predicted": 0.7488746905541245,
+       "observed": 0.7204419889502762
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 697,
+       "predicted": 0.8464109736716746,
+       "observed": 0.8507890961262554
+      },
+      {
+       "decile": 9,
+       "lo": 0.9,
+       "hi": 1.0,
+       "n": 253,
+       "predicted": 0.9321582778874622,
+       "observed": 0.8893280632411067
+      }
+     ]
+    },
+    "stack+FL": {
+     "n": 5613,
+     "alpha": 0.016666666666666666,
+     "events": 534,
+     "baseline": {
+      "n": 5613,
+      "log_loss": 0.6075044618320322,
+      "brier": 0.20986591127607226,
+      "accuracy": 0.6734366648850882
+     },
+     "stack+FL": {
+      "n": 5613,
+      "log_loss": 0.6028046167443687,
+      "brier": 0.20816764962717643,
+      "accuracy": 0.671476928558703
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.004699845087663543,
+       "event_low": -0.01038347905666113,
+       "event_high": 0.0015553711923527464,
+       "fighter_low": -0.008609718810035112,
+       "fighter_high": -0.0006846630039981988,
+       "low": -0.01038347905666113,
+       "high": 0.0015553711923527464
+      },
+      "brier": {
+       "mean": -0.001698261648895784,
+       "event_low": -0.0037875718180289514,
+       "event_high": 0.0005900950956825692,
+       "fighter_low": -0.0031570949157000987,
+       "fighter_high": -0.00017609383275773248,
+       "low": -0.0037875718180289514,
+       "high": 0.0005900950956825692
+      },
+      "accuracy": {
+       "mean": -0.0019597363263851772,
+       "event_low": -0.01102115956025596,
+       "event_high": 0.007585393195753733,
+       "fighter_low": -0.008254082884915285,
+       "fighter_high": 0.004167395717733802,
+       "low": -0.01102115956025596,
+       "high": 0.007585393195753733
+      }
+     },
+     "passes": null,
+     "calibration": [
+      {
+       "decile": 0,
+       "lo": 0.0,
+       "hi": 0.1,
+       "n": 27,
+       "predicted": 0.07838529658285703,
+       "observed": 0.1111111111111111
+      },
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 175,
+       "predicted": 0.1574656167724627,
+       "observed": 0.2
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 338,
+       "predicted": 0.2556634101132066,
+       "observed": 0.30177514792899407
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 560,
+       "predicted": 0.35293670255956966,
+       "observed": 0.36428571428571427
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 795,
+       "predicted": 0.45152058488835917,
+       "observed": 0.4389937106918239
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 900,
+       "predicted": 0.5507192756537262,
+       "observed": 0.5533333333333333
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 973,
+       "predicted": 0.6501593666100205,
+       "observed": 0.6125385405960946
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 863,
+       "predicted": 0.7485916032268803,
+       "observed": 0.7288528389339514
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 674,
+       "predicted": 0.8470044851758771,
+       "observed": 0.8382789317507419
+      },
+      {
+       "decile": 9,
+       "lo": 0.9,
+       "hi": 1.0,
+       "n": 308,
+       "predicted": 0.9279903131546663,
+       "observed": 0.9058441558441559
+      }
+     ]
+    }
+   },
+   "baseline_calibration": [
+    {
+     "decile": 1,
+     "lo": 0.1,
+     "hi": 0.2,
+     "n": 31,
+     "predicted": 0.180284723837205,
+     "observed": 0.16129032258064516
+    },
+    {
+     "decile": 2,
+     "lo": 0.2,
+     "hi": 0.30000000000000004,
+     "n": 262,
+     "predicted": 0.2620857459131473,
+     "observed": 0.22900763358778625
+    },
+    {
+     "decile": 3,
+     "lo": 0.30000000000000004,
+     "hi": 0.4,
+     "n": 703,
+     "predicted": 0.35555168776189733,
+     "observed": 0.3385490753911807
+    },
+    {
+     "decile": 4,
+     "lo": 0.4,
+     "hi": 0.5,
+     "n": 982,
+     "predicted": 0.4508513282279514,
+     "observed": 0.43380855397148677
+    },
+    {
+     "decile": 5,
+     "lo": 0.5,
+     "hi": 0.6000000000000001,
+     "n": 1143,
+     "predicted": 0.5538083327226185,
+     "observed": 0.5730533683289589
+    },
+    {
+     "decile": 6,
+     "lo": 0.6000000000000001,
+     "hi": 0.7000000000000001,
+     "n": 1281,
+     "predicted": 0.6492947651365543,
+     "observed": 0.6651053864168618
+    },
+    {
+     "decile": 7,
+     "lo": 0.7000000000000001,
+     "hi": 0.8,
+     "n": 917,
+     "predicted": 0.7445287008523026,
+     "observed": 0.8287895310796074
+    },
+    {
+     "decile": 8,
+     "lo": 0.8,
+     "hi": 0.9,
+     "n": 293,
+     "predicted": 0.831309426274588,
+     "observed": 0.8976109215017065
+    },
+    {
+     "decile": 9,
+     "lo": 0.9,
+     "hi": 1.0,
+     "n": 1,
+     "predicted": 0.9295774647887324,
+     "observed": 1.0
+    }
+   ]
+  },
+  "confirm": {
+   "n": 2293,
+   "years": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2026
+   ],
+   "baseline_arm": "pit-weight",
+   "decides": false,
+   "baseline": {
+    "n": 2293,
+    "log_loss": 0.6052463757916471,
+    "brier": 0.2086781114193436,
+    "accuracy": 0.6833842128216311
+   },
+   "arms": {
+    "stack": {
+     "n": 2293,
+     "alpha": 0.016666666666666666,
+     "events": 222,
+     "baseline": {
+      "n": 2293,
+      "log_loss": 0.6052463757916471,
+      "brier": 0.2086781114193436,
+      "accuracy": 0.6833842128216311
+     },
+     "stack": {
+      "n": 2293,
+      "log_loss": 0.601109879953229,
+      "brier": 0.2073746381109056,
+      "accuracy": 0.6781508940252944
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.004136495838418268,
+       "event_low": -0.008781330304816379,
+       "event_high": 0.0009678592577350507,
+       "fighter_low": -0.007626842235209989,
+       "fighter_high": -0.00041869498187282003,
+       "low": -0.008781330304816379,
+       "high": 0.0009678592577350507
+      },
+      "brier": {
+       "mean": -0.001303473308437962,
+       "event_low": -0.0031363372567799796,
+       "event_high": 0.0006077296118199111,
+       "fighter_low": -0.0026991728114676822,
+       "fighter_high": 0.00019434719383324927,
+       "low": -0.0031363372567799796,
+       "high": 0.0006077296118199111
+      },
+      "accuracy": {
+       "mean": -0.005233318796336677,
+       "event_low": -0.012552805548181502,
+       "event_high": 0.002197392488204365,
+       "fighter_low": -0.010629890124725969,
+       "fighter_high": 0.0,
+       "low": -0.012552805548181502,
+       "high": 0.002197392488204365
+      }
+     },
+     "passes": null,
+     "calibration": [
+      {
+       "decile": 0,
+       "lo": 0.0,
+       "hi": 0.1,
+       "n": 1,
+       "predicted": 0.0850483826377749,
+       "observed": 0.0
+      },
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 64,
+       "predicted": 0.16345968020615464,
+       "observed": 0.171875
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 151,
+       "predicted": 0.25834497509231963,
+       "observed": 0.304635761589404
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 268,
+       "predicted": 0.35089970160908907,
+       "observed": 0.33955223880597013
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 312,
+       "predicted": 0.44871845030839025,
+       "observed": 0.4230769230769231
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 347,
+       "predicted": 0.5503084023041394,
+       "observed": 0.553314121037464
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 439,
+       "predicted": 0.6521124126336939,
+       "observed": 0.6378132118451025
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 434,
+       "predicted": 0.7490102250407251,
+       "observed": 0.7373271889400922
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 241,
+       "predicted": 0.8416072509670429,
+       "observed": 0.8879668049792531
+      },
+      {
+       "decile": 9,
+       "lo": 0.9,
+       "hi": 1.0,
+       "n": 36,
+       "predicted": 0.9218561992599328,
+       "observed": 0.9166666666666666
+      }
+     ]
+    },
+    "stack+thin": {
+     "n": 2293,
+     "alpha": 0.016666666666666666,
+     "events": 222,
+     "baseline": {
+      "n": 2293,
+      "log_loss": 0.6052463757916471,
+      "brier": 0.2086781114193436,
+      "accuracy": 0.6833842128216311
+     },
+     "stack+thin": {
+      "n": 2293,
+      "log_loss": 0.6016699781489024,
+      "brier": 0.20769758143192787,
+      "accuracy": 0.6768425643262101
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.0035763976427446767,
+       "event_low": -0.008410585511865087,
+       "event_high": 0.001554714210823024,
+       "fighter_low": -0.007026468468464691,
+       "fighter_high": 6.432424351976631e-05,
+       "low": -0.008410585511865087,
+       "high": 0.001554714210823024
+      },
+      "brier": {
+       "mean": -0.0009805299874156618,
+       "event_low": -0.002902972290806055,
+       "event_high": 0.0010707454191098888,
+       "fighter_low": -0.002294164699263987,
+       "fighter_high": 0.0004091828347343904,
+       "low": -0.002902972290806055,
+       "high": 0.0010707454191098888
+      },
+      "accuracy": {
+       "mean": -0.0065416484954208464,
+       "event_low": -0.01267122751702446,
+       "event_high": -0.00042593225981926914,
+       "fighter_low": -0.011200718936763642,
+       "fighter_high": -0.0017918940974252363,
+       "low": -0.01267122751702446,
+       "high": -0.00042593225981926914
+      }
+     },
+     "passes": null,
+     "calibration": [
+      {
+       "decile": 0,
+       "lo": 0.0,
+       "hi": 0.1,
+       "n": 4,
+       "predicted": 0.0968868229953145,
+       "observed": 0.0
+      },
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 54,
+       "predicted": 0.16743343617596831,
+       "observed": 0.16666666666666666
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 150,
+       "predicted": 0.2586640816662391,
+       "observed": 0.30666666666666664
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 282,
+       "predicted": 0.3500794265501837,
+       "observed": 0.3475177304964539
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 317,
+       "predicted": 0.4493886362516359,
+       "observed": 0.4227129337539432
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 360,
+       "predicted": 0.5509520376743386,
+       "observed": 0.5472222222222223
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 446,
+       "predicted": 0.652058202675457,
+       "observed": 0.6614349775784754
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 401,
+       "predicted": 0.7473001264271872,
+       "observed": 0.7331670822942643
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 235,
+       "predicted": 0.8415856304473238,
+       "observed": 0.8765957446808511
+      },
+      {
+       "decile": 9,
+       "lo": 0.9,
+       "hi": 1.0,
+       "n": 44,
+       "predicted": 0.919884571332341,
+       "observed": 0.9090909090909091
+      }
+     ]
+    },
+    "stack+FL": {
+     "n": 2293,
+     "alpha": 0.016666666666666666,
+     "events": 222,
+     "baseline": {
+      "n": 2293,
+      "log_loss": 0.6052463757916471,
+      "brier": 0.2086781114193436,
+      "accuracy": 0.6833842128216311
+     },
+     "stack+FL": {
+      "n": 2293,
+      "log_loss": 0.601161383662134,
+      "brier": 0.2074941226654589,
+      "accuracy": 0.675534234627126
+     },
+     "delta": {
+      "log_loss": {
+       "mean": -0.00408499212951312,
+       "event_low": -0.009041845780249656,
+       "event_high": 0.0013655293436323468,
+       "fighter_low": -0.007729471277479982,
+       "fighter_high": -0.000273986852166149,
+       "low": -0.009041845780249656,
+       "high": 0.0013655293436323468
+      },
+      "brier": {
+       "mean": -0.0011839887538846446,
+       "event_low": -0.0029559190066068834,
+       "event_high": 0.0006250992809201867,
+       "fighter_low": -0.0024885565089986642,
+       "fighter_high": 0.0001557526670841041,
+       "low": -0.0029559190066068834,
+       "high": 0.0006250992809201867
+      },
+      "accuracy": {
+       "mean": -0.007849978194505015,
+       "event_low": -0.018388999831000098,
+       "event_high": 0.0025983297413793133,
+       "fighter_low": -0.014977074172820544,
+       "fighter_high": -0.0004252286796836753,
+       "low": -0.018388999831000098,
+       "high": 0.0025983297413793133
+      }
+     },
+     "passes": null,
+     "calibration": [
+      {
+       "decile": 0,
+       "lo": 0.0,
+       "hi": 0.1,
+       "n": 13,
+       "predicted": 0.08202825882679275,
+       "observed": 0.23076923076923078
+      },
+      {
+       "decile": 1,
+       "lo": 0.1,
+       "hi": 0.2,
+       "n": 56,
+       "predicted": 0.16246637244035864,
+       "observed": 0.14285714285714285
+      },
+      {
+       "decile": 2,
+       "lo": 0.2,
+       "hi": 0.30000000000000004,
+       "n": 129,
+       "predicted": 0.25918223967840265,
+       "observed": 0.3333333333333333
+      },
+      {
+       "decile": 3,
+       "lo": 0.30000000000000004,
+       "hi": 0.4,
+       "n": 234,
+       "predicted": 0.35312150134500014,
+       "observed": 0.3162393162393162
+      },
+      {
+       "decile": 4,
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 340,
+       "predicted": 0.4497859423194156,
+       "observed": 0.42058823529411765
+      },
+      {
+       "decile": 5,
+       "lo": 0.5,
+       "hi": 0.6000000000000001,
+       "n": 428,
+       "predicted": 0.5492566720605708,
+       "observed": 0.544392523364486
+      },
+      {
+       "decile": 6,
+       "lo": 0.6000000000000001,
+       "hi": 0.7000000000000001,
+       "n": 445,
+       "predicted": 0.6498032074234219,
+       "observed": 0.6561797752808989
+      },
+      {
+       "decile": 7,
+       "lo": 0.7000000000000001,
+       "hi": 0.8,
+       "n": 370,
+       "predicted": 0.7478612965730208,
+       "observed": 0.7486486486486487
+      },
+      {
+       "decile": 8,
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 206,
+       "predicted": 0.8449176644673735,
+       "observed": 0.8689320388349514
+      },
+      {
+       "decile": 9,
+       "lo": 0.9,
+       "hi": 1.0,
+       "n": 72,
+       "predicted": 0.9317823660669434,
+       "observed": 0.9305555555555556
+      }
+     ]
+    }
+   },
+   "baseline_calibration": [
+    {
+     "decile": 1,
+     "lo": 0.1,
+     "hi": 0.2,
+     "n": 15,
+     "predicted": 0.18089658076527176,
+     "observed": 0.26666666666666666
+    },
+    {
+     "decile": 2,
+     "lo": 0.2,
+     "hi": 0.30000000000000004,
+     "n": 104,
+     "predicted": 0.2619359801153458,
+     "observed": 0.2403846153846154
+    },
+    {
+     "decile": 3,
+     "lo": 0.30000000000000004,
+     "hi": 0.4,
+     "n": 302,
+     "predicted": 0.3563118781936097,
+     "observed": 0.304635761589404
+    },
+    {
+     "decile": 4,
+     "lo": 0.4,
+     "hi": 0.5,
+     "n": 411,
+     "predicted": 0.450673789515945,
+     "observed": 0.41605839416058393
+    },
+    {
+     "decile": 5,
+     "lo": 0.5,
+     "hi": 0.6000000000000001,
+     "n": 467,
+     "predicted": 0.5541799469459114,
+     "observed": 0.5802997858672377
+    },
+    {
+     "decile": 6,
+     "lo": 0.6000000000000001,
+     "hi": 0.7000000000000001,
+     "n": 547,
+     "predicted": 0.6494584199458392,
+     "observed": 0.6819012797074955
+    },
+    {
+     "decile": 7,
+     "lo": 0.7000000000000001,
+     "hi": 0.8,
+     "n": 347,
+     "predicted": 0.7411533430956455,
+     "observed": 0.8357348703170029
+    },
+    {
+     "decile": 8,
+     "lo": 0.8,
+     "hi": 0.9,
+     "n": 100,
+     "predicted": 0.8317113926771793,
+     "observed": 0.93
+    }
+   ]
+  },
+  "pit_vs_0.75": {
+   "n": 5613,
+   "alpha": 0.016666666666666666,
+   "events": 534,
+   "baseline": {
+    "n": 5613,
+    "log_loss": 0.6068031197479181,
+    "brier": 0.20944135067851305,
+    "accuracy": 0.673258507037235
+   },
+   "pit-weight": {
+    "n": 5613,
+    "log_loss": 0.6075044618320322,
+    "brier": 0.20986591127607226,
+    "accuracy": 0.6734366648850882
+   },
+   "delta": {
+    "log_loss": {
+     "mean": 0.0007013420841140021,
+     "event_low": -0.0006546317620163722,
+     "event_high": 0.0021416012937435537,
+     "fighter_low": -0.00012561515648790427,
+     "fighter_high": 0.0014989887426473249,
+     "low": -0.0006546317620163722,
+     "high": 0.0021416012937435537
+    },
+    "brier": {
+     "mean": 0.00042456059755917823,
+     "event_low": -0.00017465983923015173,
+     "event_high": 0.0010763824539656752,
+     "fighter_low": 5.964131914550339e-05,
+     "fighter_high": 0.0007720376060273097,
+     "low": -0.00017465983923015173,
+     "high": 0.0010763824539656752
+    },
+    "accuracy": {
+     "mean": 0.00017815784785319794,
+     "event_low": -0.003541621260061477,
+     "event_high": 0.003742881945106171,
+     "fighter_low": -0.0024582438778933246,
+     "fighter_high": 0.0026372613262341995,
+     "low": -0.003541621260061477,
+     "high": 0.003742881945106171
+    }
+   }
+  }
+ },
+ "passing": [],
+ "verdict": "NO ARM PASSES: no stacked blend's log loss interval lies below the 0.75 blend at the family-wise level; market_blend.py unchanged"
+}

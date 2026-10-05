@@ -199,14 +199,12 @@ def test_an_unrelated_dict_is_ignored(tmp_path):
     assert len(missing_prediction_features(path)) == 1
 
 
-def test_a_file_with_no_feature_list_reports_nothing(tmp_path):
+def test_a_file_with_no_feature_list_cannot_read_as_clean(tmp_path):
+    """The guard over predict_card.py once passed because the file had
+    stopped declaring a feature list - [] == [] with nothing checked. The
+    live row is a training-matrix row now (live_rows.py), so the guard is
+    retired; what is left must refuse rather than pass vacuously."""
     path = tmp_path / "sample.py"
     path.write_text("x = 1\n")
-    assert missing_prediction_features(path) == []
-
-
-def test_every_trained_feature_is_supplied_at_prediction_time():
-    """Guard: a feature added to the model but not to the per-fight dict is a
-    KeyError that only shows up ten minutes into a real run."""
-    findings = missing_prediction_features(ENGINE / "predict_card.py")
-    assert findings == [], f"prediction cannot supply: {findings}"
+    with pytest.raises(ValueError, match="no feature_cols list"):
+        missing_prediction_features(path)

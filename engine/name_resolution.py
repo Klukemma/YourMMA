@@ -16,11 +16,18 @@ import re
 import unicodedata
 
 
+# Results pages mark titleholders "Ilia Topuria (c)", "Justin Gaethje (ic)".
+# Left in, the tag became part of the name ("ilia topuria c") and every
+# result of a champion - including Topuria's corner-stoppage loss - was filed
+# under somebody who does not exist.
+_TITLE_TAG = re.compile(r"\s*\((?:c|ic|uc|ac)\)\s*$", re.I)
+
+
 def norm_name(s):
-    """Lowercase, strip accents and punctuation, collapse whitespace."""
+    """Lowercase, strip accents, punctuation and title tags, collapse spaces."""
     if s is None:
         return ""
-    s = str(s).strip().lower()
+    s = _TITLE_TAG.sub("", str(s)).strip().lower()
     s = unicodedata.normalize("NFKD", s)
     s = "".join(c for c in s if not unicodedata.combining(c))
     s = s.replace("-", " ")
@@ -210,3 +217,25 @@ def format_failure(user_input, res):
         opts = ", ".join(f"{n} ({r:.0%})" for r, n in res['suggestions'])
         msg += f"  Did you mean: {opts}?"
     return msg
+
+
+def canonical_winners(frame):
+    """Spell each winner exactly as their corner is spelled.
+
+    Code everywhere asks `winner == r_name`. In seven archive rows the winner
+    is "Waldo Cortes-Acosta" and the corner "Waldo Cortes Acosta", so four of
+    his wins were labelled as his opponent's and all seven looked undecided
+    to anything else. A winner that names one corner once normalised is
+    rewritten to that corner's spelling; anything else (Draw, NC, blank) is
+    left alone.
+    """
+    if "winner" not in frame.columns:
+        return frame
+    frame = frame.copy()
+    w = frame["winner"]
+    wn = w.map(lambda x: norm_name(x) if isinstance(x, str) else "")
+    for corner in ("r_name", "b_name"):
+        cn = frame[corner].map(lambda x: norm_name(x) if isinstance(x, str) else "")
+        fix = (w != frame[corner]) & (wn != "") & (wn == cn)
+        frame.loc[fix, "winner"] = frame.loc[fix, corner]
+    return frame

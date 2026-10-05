@@ -12,7 +12,21 @@ python engine/predict_card.py
 
 Edit the **USER SETTINGS** block at the top of `engine/predict_card.py` to set
 `EVENT_NAME`, `EVENT_DATE`, `FIGHT_CARD` and `FIGHT_CONTEXTS`, then re-run.
+Give every fight its weight class as `'division'` in `FIGHT_CONTEXTS`
+(`'lightweight'`, `"women's flyweight"`); without it the division is taken
+from the fighters' last bouts when both were in the same class, and the fight
+is refused as NO DATA when they were not (no training row has an empty
+division, so there is no honest row to build).
 Each run appends its picks to `engine/data/prediction_history.json`.
+
+Each card fight is predicted from the same code that built every training row:
+the fight becomes a row with no result after the archive (`pending_rows.py`)
+and goes through `feature_frame.build` (`live_rows.py`), so the live features
+are the training features (`tests/test_live_rows.py`,
+`tests/test_live_rows_engine.py`, `experiments/live_parity.py`). A fight the
+pipeline cannot build - a debut, a name two fighters share that the division
+does not settle, a fight with no division whose fighters last fought in
+different classes - is reported as NO DATA with the reason, never guessed.
 
 A full run takes a few minutes. Set `RUN_OPTUNA = True` for hyperparameter
 tuning (much slower); it defaults to pre-tuned parameters.
@@ -36,17 +50,78 @@ Win probability is an ensemble of LogisticRegression + RandomForest + XGBoost
 with Platt calibration, on a 70/15/15 temporal train/cal/test split. Separate
 heads predict method (KO/TKO, Submission, Decision) and round.
 
-Measured on the held-out test set:
+**Corner symmetry.** The red corner is the favoured fighter on most cards and
+wins 58% of bouts, so a model fitted on fights as listed learns corner
+identity along with the fighters. The winner models are fitted on every fight
+twice - as listed, and with the corners exchanged and the label flipped - and
+the ensemble output of a fight is the average of e(red, blue) and
+1 - e(blue, red), which is then Platt-calibrated. The ensemble is exactly
+symmetric; the calibrator, fitted on the calibration block as listed, keeps a
+small red-corner prior (platt(0.5) = 0.53 in the current build, against a
+calibration-block red win rate of 0.555), so the final probability of the
+same fight listed the other way round is not exactly 1 minus this one. The
+swapped live row is built by `live_rows.py` (`corner_swap.py` holds the
+training-side twin); `tests/test_symmetry.py` proves it equal to the swapped
+training row on every feature for the last archived event, and on earlier
+dates equal to the exact mirror of the listed live row, the two orientations
+carrying the same pre-existing rating-replay drift.
+
+Measured walk-forward on 5,897 priced fights against the same recipe as
+listed (`experiments/symmetry.py`, pre-registered; `experiments/symmetry.json`
+holds every number): model-only log loss 0.6441 -> 0.6301 (-0.0140, interval
+[-0.0199, -0.0074] at the family-wise level), accuracy 62.1% -> 63.1%, and
+the 0.75 market blend 0.6064 -> 0.6034 (-0.0030). Read beside it: on 2020+
+priced fights -0.0045 [-0.0104, +0.0014], blend -0.0005; the headline gain is
+front-loaded in 2011-2016 where training sets were small (1,239-3,201
+fights). Two honest caveats. The priced set is every predicted year that
+`data/odds.csv` prices - 2011-2024 and 2026; **no 2025 fight is priced**
+(`odds.csv` carries closing lines and no source closes 2025; only opening
+lines exist, kept apart in `opening_odds.csv`), so 2025 enters the
+all-fights, model-only secondaries alone - where the shipped arm is 0.0009
+*worse* than the baseline (0.6444 vs 0.6435 on 513 fights). Scored once
+with the OPENING line as the market (`opening_odds.csv`, 217 of the 513;
+a secondary, not the bar, since an opening line is a weaker forecast and
+the blend weight was fitted on closing lines): model-only 0.6516 -> 0.6406
+(-0.0110, interval [-0.0406, +0.0172] - it crosses zero), blend 0.6038 ->
+0.6038 (+0.0000).
+And the gain is front-loaded, as above: on all fights the shipped arm is
+worse in 2023, 2025 and 2026 and better in 2024. The production-regime
+expectation is small and uncertain, not the headline. Three features count a
+fighter's earlier appearances *in that corner* (`data_sparsity_diff`,
+`career_damage_diff`, `career_damage_level`), which is corner identity by
+another name; the audit of every feature is
+`experiments/symmetry_mirror_audit.csv`.
+
+The shared harness, `experiments/model_compare.py`, now fits this shipped
+recipe by default (`predictions()`, cached as `baseline_symmetric`; the
+arm-B code is imported from `symmetry.py`, not re-implemented) and keeps the
+recipe as listed reachable as `predictions(recipe="legacy")`, cached as
+`baseline_legacy` - the file ideas #3-#7 were measured against, renamed, its
+hash untouched. The two caches are keyed by different protocol strings.
+Later ideas pre-register their PRIMARY bar on `model_compare.decision_set`
+(the fights whose training set held at least 4,000 fights - 2018 onward, the
+regime production is in), with every predicted year as a secondary: that is
+the lesson of the front-loaded gain above.
+
+The engine's own diagnostic printouts, held-out test set (SECTION 6: the
+full feature set, the winner scaler fitted on the rows as listed because the
+method and round heads share it, a four-model average that includes the MLP
+- so neither the old recipe nor the shipped one, and the printout says so;
+`experiments/symmetry.json` is the number to believe):
 
 | Target | Accuracy | Brier | Log loss |
 | --- | --- | --- | --- |
-| Win | 73.3% | 0.186 | 0.553 |
-| Method | 48.5% | | |
-| Round | 59.6% | | |
+| Win (before symmetry, same machine) | 63.0% | 0.226 | 0.645 |
+| Win (current) | 64.5% | 0.220 | 0.629 |
+| Method | 49.3% | | |
+| Round | 57.2% | | |
 
-Walk-forward evaluation (expanding window, 2015–2025) averages **69.7%**, which
-is the more honest number — the single test-set figure benefits from a
-favourable slice. Per-year accuracy ranges 65.2%–72.9% with no downward drift.
+The SECTION 9 walk-forward printout (expanding window, 2015-2026, a quick
+unweighted, uncalibrated ensemble) averages **63.0%** (61.6% before
+symmetry), per-year 56.5% (2019) to 66.9% (2026). The higher figures this
+file used to quote came from career statistics that leaked each fighter's
+future (see `career_stats.py`); the walk-forward of
+`experiments/model_compare.py` is the number to believe.
 
 Seven automated leakage audits run on every execution (rolling-feature shifts,
 pre-fight streaks, layoff dates, target columns, per-fight outcome stats,

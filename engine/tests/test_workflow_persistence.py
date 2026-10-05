@@ -113,3 +113,35 @@ def test_card_json_carries_odds_under_the_name_the_count_reads():
                               [{"number": 1, "red": "A", "blue": "B",
                                 "pick": "A", "odds": -150}])
     assert payload["fights"][0]["odds"] == -150
+
+
+def test_the_commit_step_never_adds_a_path_that_may_not_exist():
+    """`git add` on a missing pathspec is fatal. A mode that does not create
+    every tracked data file - the scout's pending queue when nothing is
+    pending - would fail at the commit step with its work done and unsaved,
+    which is what happened on the first check-fight-changes run after the
+    scout's files were added to the list."""
+    text = (Path(__file__).resolve().parents[2] / ".github" / "workflows"
+            / "update-dataset.yml").read_text()
+    assert "git add $PATHS" not in text
+    assert '[ -e "$p" ]' in text
+
+
+def test_runs_on_one_branch_queue_instead_of_racing():
+    # Two concurrent runs both regenerate app/data/*.json; the loser's rebase
+    # conflicts on generated files and its work is thrown away.
+    text = WORKFLOW.read_text()
+    block = re.search(r"^concurrency:\n((?:  .*\n)+)", text, re.M)
+    assert block, "workflow has no top-level concurrency group"
+    assert "github.ref" in block.group(1)
+    assert "cancel-in-progress: false" in block.group(1)
+
+
+def test_a_queued_run_checks_out_the_branch_not_its_dispatch_commit():
+    # Queueing only helps if the second run starts from what the first one
+    # pushed; the default checkout is the SHA at dispatch time.
+    text = WORKFLOW.read_text()
+    step = re.search(r"uses: actions/checkout@v\d+\n(\s+with:\n(?:\s{10,}.*\n)+)",
+                     text)
+    assert step, "checkout has no 'with:' block"
+    assert "ref: ${{ github.ref }}" in step.group(1)

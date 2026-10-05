@@ -1,0 +1,84 @@
+{
+ "results": [
+  {
+   "label": "world only",
+   "n": 460,
+   "logloss_model": 0.6884265222513338,
+   "logloss_elo": 0.6831576771687076,
+   "logloss_coin": 0.6931471805599453,
+   "accuracy_model": 0.55,
+   "accuracy_elo": 0.5608695652173913
+  },
+  {
+   "label": "world + Sherdog (as known then)",
+   "n": 460,
+   "logloss_model": 0.7243578526171744,
+   "logloss_elo": 0.6968687887306806,
+   "logloss_coin": 0.6931471805599453,
+   "accuracy_model": 0.55,
+   "accuracy_elo": 0.5478260869565217
+  },
+  {
+   "label": "  + age gap (Sherdog birth dates)",
+   "n": 460,
+   "logloss_model": 0.7246054967382799,
+   "logloss_elo": 0.6968687887306806,
+   "logloss_coin": 0.6931471805599453,
+   "accuracy_model": 0.5369565217391304,
+   "accuracy_elo": 0.5478260869565217
+  },
+  {
+   "label": "Sherdog only when both found",
+   "n": 460,
+   "logloss_model": 0.6871306188324195,
+   "logloss_elo": 0.6831576771687076,
+   "logloss_coin": 0.6931471805599453,
+   "accuracy_model": 0.558695652173913,
+   "accuracy_elo": 0.5608695652173913
+  }
+ ],
+ "paired": {
+  "n": 460,
+  "events": 88,
+  "logloss_diff": 0.035931330365840626,
+  "lo": -0.0032584469762233733,
+  "hi": 0.07452971877951413
+ },
+ "paired_age": {
+  "n": 460,
+  "events": 88,
+  "logloss_diff": 0.0002476441211053248,
+  "lo": -0.0037453409508796222,
+  "hi": 0.004110486686829071
+ },
+ "coverage_split": [
+  {
+   "records_found": 2,
+   "n": 330,
+   "world_only": 0.6937065167093152,
+   "with_sherdog": 0.6919001058829498
+  },
+  {
+   "records_found": 1,
+   "n": 97,
+   "world_only": 0.6910183760409334,
+   "with_sherdog": 0.865284603412685
+  },
+  {
+   "records_found": 0,
+   "n": 33,
+   "world_only": 0.628008098350576,
+   "with_sherdog": 0.6346960827726178
+  }
+ ],
+ "paired_symmetric": {
+  "n": 460,
+  "events": 88,
+  "logloss_diff": -0.001295903418914317,
+  "lo": -0.02518611905366015,
+  "hi": 0.022251394383443243
+ },
+ "looked_up": 849,
+ "found": 693,
+ "verified": 693
+}

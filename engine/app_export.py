@@ -42,6 +42,17 @@ FLAG_CAVEAT = (
     "scored and is shown as such rather than assumed safe."
 )
 
+INTEL_CAVEAT = (
+    "Sourced news gathered before the bell - injuries, late replacements, a "
+    "change of camp - about things the model cannot read from a record. NONE "
+    "OF IT MOVES THE PREDICTION. The one soft factor we could label at scale, "
+    "298 late replacements from Wikipedia, measured -3.5% against the model "
+    "and -4.4% against the blend with both intervals spanning zero, needing "
+    "roughly 1,800 labels to resolve. So this is shown beside the number, not "
+    "folded into it: it tells you why a fight might not go the way the model "
+    "thinks, and leaves the number something that was actually measured."
+)
+
 PARLAY_CAVEAT = (
     "Combined probability multiplies the legs, which assumes the fights are "
     "independent; they are not quite. Backtested on the confirm period, "
@@ -80,6 +91,30 @@ def _method_probs(probs):
         return None
     out = {k: _clean(v) for k, v in probs.items()}
     return out if any(v is not None for v in out.values()) else None
+
+
+def _intel_payload(records):
+    """Observations for one fight, or an empty list.
+
+    `applies` is carried through rather than dropped so the app can never
+    present a note as though it moved the prediction. If a weight is ever
+    fitted, the flag changes here and the app can start saying so - until
+    then every one of these is false and the app should say "not priced in".
+    """
+    out = []
+    for record in records or []:
+        out.append({
+            "fighter": record.get("fighter"),
+            "kind": record.get("kind"),
+            "confidence": record.get("confidence"),
+            "note": record.get("note"),
+            "source": record.get("source"),
+            "gathered": record.get("gathered"),
+            "applies": bool(record.get("applies")),
+            **({"replaced_opponent": record["replaced_opponent"]}
+               if record.get("replaced_opponent") else {}),
+        })
+    return out
 
 
 def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
@@ -131,6 +166,15 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
             "rounds_scheduled": fight.get("rounds_scheduled"),
             "title_fight": bool(fight.get("title_fight")),
             "simulation": _simulation_payload(simulation),
+            # WHAT THE MODEL CANNOT SEE. Sourced observations gathered before
+            # the bell - an injury, a late replacement, a new camp. They carry
+            # `applies: false` because no weight is fitted for any kind, so
+            # NONE of this has moved win_prob by a single point. It is shown
+            # beside the number rather than folded into it, which is the
+            # honest version of soft information: the reader is told why a
+            # fight might not go the way the model thinks, and the number
+            # stays something that was actually measured.
+            "intel": _intel_payload(fight.get("intel")),
         })
     return {
         "schema": SCHEMA_VERSION,
@@ -142,7 +186,8 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
         "skipped": [{"fight": s.get("fight"), "reason": s.get("reason")}
                     for s in skipped],
         "caveats": {"model": MODEL_CAVEAT, "simulation": SIMULATION_CAVEAT,
-                    "parlay": PARLAY_CAVEAT, "flag": FLAG_CAVEAT},
+                    "parlay": PARLAY_CAVEAT, "flag": FLAG_CAVEAT,
+                    "intel": INTEL_CAVEAT},
         "parlays": parlays or [],
     }
 

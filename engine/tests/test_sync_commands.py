@@ -57,15 +57,61 @@ def test_every_subcommand_is_wired_to_a_real_function():
         assert callable(getattr(sync_kaggle, name)), f"{name} missing"
 
 
-# Modes the workflow handles in shell rather than by calling sync_kaggle.
-# Listed explicitly so a genuinely missing command still fails the test.
-# "predict" runs predict_card.py, which is the only mode that produces a fresh
-# card for the app and the only one that needs the odds key.
 # Modes the workflow runs as their own script rather than through
-# sync_kaggle's dispatcher. Each is a line in the workflow that names a file.
-MODES_NOT_HANDLED_BY_SYNC_KAGGLE = {"experiment", "backtest", "predict",
-                                    "check-odds", "check-markets",
-                                    "check-line-history", "describe-odds"}
+# sync_kaggle's dispatcher, mapped to the file each one runs.
+#
+# A SET WOULD BE A HOLE. This was a bare set of names, which meant a mode
+# could be waved past the "every mode has a command" check by adding a string
+# to it - including a mode whose script had never been written. Mapping each
+# to its file and asserting the file exists turns a skip list into a claim
+# that gets checked, and it is the same claim the non-exempt modes make.
+# "predict" and "describe-odds" do not share a name with their script, which
+# is exactly why the mapping has to be written down rather than derived.
+MODES_RUN_AS_THEIR_OWN_SCRIPT = {
+    "experiment": None,                 # engine/experiments/*.py; see below
+    "backtest": "backtest.py",
+    "predict": "predict_card.py",
+    "check-odds": "check_odds.py",
+    "check-markets": "check_markets.py",
+    "check-line-history": "check_line_history.py",
+    "check-fight-changes": "check_fight_changes.py",
+    "fetch-fight-changes": "fetch_fight_changes.py",
+    "harvest-injuries": "harvest_injuries.py",
+    "probe-world": "probe_world.py",
+    "harvest-world": "harvest_world.py",
+    "harvest-weights": "fight_night_weights.py",
+    "harvest-sherdog": "harvest_sherdog.py",
+    "harvest-sherdog-ufc": "harvest_sherdog.py",
+    "probe-sherdog": "probe_sherdog.py",
+    "probe-ufcstats": "probe_ufcstats.py",
+    "verify-intel-dates": "verify_intel_dates.py",
+    "describe-odds": "describe_odds_api.py",
+}
+MODES_NOT_HANDLED_BY_SYNC_KAGGLE = set(MODES_RUN_AS_THEIR_OWN_SCRIPT)
+
+
+def test_every_exempt_mode_names_a_script_that_exists():
+    """The exemption list is a claim, and this is the check on it.
+
+    Without it, "this mode is handled elsewhere" is an assertion nobody ever
+    verifies, and a mode can reach the dropdown with no implementation at all.
+    """
+    for mode, script in MODES_RUN_AS_THEIR_OWN_SCRIPT.items():
+        if script is None:
+            continue
+        assert (ENGINE / script).exists(), \
+            f"mode {mode!r} is exempt because it runs {script}, which is missing"
+
+
+def test_the_workflow_actually_runs_each_exempt_mode_script():
+    """And the workflow must really call it - an exemption for a mode the
+    workflow never routes anywhere is a mode that silently does nothing."""
+    text = WORKFLOW.read_text()
+    for mode, script in MODES_RUN_AS_THEIR_OWN_SCRIPT.items():
+        if script is None:
+            continue
+        assert script in text, \
+            f"mode {mode!r} claims to run {script}, which the workflow never calls"
 
 
 WORKFLOW = ENGINE.parent / ".github" / "workflows" / "update-dataset.yml"

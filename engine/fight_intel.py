@@ -74,6 +74,21 @@ KINDS = {
     # artist, point fighter - so the engine can measure the switch itself
     # from two names. See `replaced_opponent` on the record.
     "opponent_switch": None,
+    # The fighter who took somebody else's place. Not "short_notice": the
+    # Wikipedia harvest found a notice period stated on 2 of 298, and one of
+    # them had a nine-week camp. A replacement is a replacement.
+    "stepped_in": None,
+    # What a fighter has SAID, before the fight, about wanting it: retirement
+    # talk, a last fight on contract, "this is a business fight", a stated
+    # title ambition. Upcoming cards only, dated before the bell like every
+    # record here. Historically it cannot be gathered honestly - "he wasn't
+    # hungry" is written about fighters who just lost - so hunger in the
+    # model comes from mentality.py, which reads what fighters did.
+    "motivation": None,
+    # Kept apart from motivation on purpose: a champion saying he will
+    # finish the challenger in one round is confidence, not hunger, and
+    # the two predict different things if they predict anything.
+    "confidence": None,
     "other": None,
 }
 

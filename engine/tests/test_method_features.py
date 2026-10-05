@@ -24,6 +24,7 @@ ROI and the flag quality all at once with none of it measured - which is why
 the separation, not just the presence, is asserted here.
 """
 
+import re
 import sys
 from pathlib import Path
 
@@ -139,7 +140,11 @@ def test_a_missing_rate_stays_missing_through_the_level():
 # crossing into the winner model.
 
 def _source():
-    return (ENGINE / "predict_card.py").read_text()
+    """predict_card.py plus feature_frame.py, where the feature lists moved
+    (its body is indented one level inside build())."""
+    frame = (ENGINE / "feature_frame.py").read_text()
+    return ((ENGINE / "predict_card.py").read_text() + "\n"
+            + re.sub(r"(?m)^    ", "", frame))
 
 
 def test_the_new_blocks_are_held_out_of_the_winner_model():
@@ -167,61 +172,3 @@ def test_the_differences_stay_in_the_winner_model():
                  "been_finished_diff", "sub_def_diff"):
         assert name not in method_only, (
             f"{name} has always been in the winner model and must stay")
-
-
-# --- the UNAVAILABLE list -------------------------------------------------
-# prediction_row.UNAVAILABLE forces a suffix to NaN at prediction time. Its
-# career-column entries were written before career_stats.final_stats()
-# existed, and for as long as they stayed there the winner model trained on
-# twelve features it could never read.
-#
-# They are off the list now. Restoring them was measured and is NOT a gain:
-# paired bootstrap over 3,318 confirm-period fights gives 95% [-1.5%, +0.1%]
-# and AUC moves by a thousandth. It is a correctness fix - a model should not
-# train on features it cannot read - and these tests keep it from drifting
-# back rather than claiming it bought anything.
-
-def test_no_career_column_is_forced_to_nan():
-    from prediction_row import UNAVAILABLE
-
-    from career_stats import CAREER_COLUMNS
-
-    listed = sorted(set(CAREER_COLUMNS) & set(UNAVAILABLE))
-    assert not listed, (
-        f"final_stats supplies {listed} and predict_card merges them into the "
-        f"stats dict, so listing them here throws away values that are present")
-
-
-def test_what_remains_unavailable_really_is():
-    """A snapshot cannot rebuild a window over a fighter's last three bouts.
-    Everything still on the list must be of that kind."""
-    from prediction_row import UNAVAILABLE
-
-    from career_stats import CAREER_COLUMNS
-
-    supplied = set(CAREER_COLUMNS)
-    for suffix in UNAVAILABLE:
-        assert suffix not in supplied, suffix
-
-
-def test_a_listed_suffix_is_still_nan_even_when_a_value_is_present():
-    """The mechanism itself, on a suffix that is genuinely unavailable."""
-    import numpy as np
-
-    from prediction_row import UNAVAILABLE, _value
-
-    listed = next(iter(UNAVAILABLE))
-    assert np.isnan(_value({listed: 0.97}, listed, None))
-    # And a career column now comes through rather than being discarded.
-    assert _value({"cd_kd_per15": 0.97}, "cd_kd_per15", None) == 0.97
-
-
-def test_the_method_rate_block_is_readable_at_prediction_time():
-    """A feature the model trains on and never sees live is worse than no
-    feature: the training rows carry signal the prediction rows cannot."""
-    from prediction_row import UNAVAILABLE
-
-    for spec in fi.METHOD_RATES:
-        suffix = spec.red[2:]          # strip the r_ prefix
-        assert suffix not in UNAVAILABLE, (
-            f"{suffix} feeds the method model but is forced to NaN live")

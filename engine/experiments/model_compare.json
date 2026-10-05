@@ -1,0 +1,41 @@
+{
+ "generated": "2026-10-02T21:52:50Z",
+ "recipe": "symmetric",
+ "label": "baseline_symmetric",
+ "rows": 7184,
+ "priced": 5897,
+ "decision_set": {
+  "min_train_rows": 4000,
+  "fights": 4293,
+  "priced": 3186
+ },
+ "sanity": {
+  "since": 2020,
+  "priced": 2293,
+  "all_predicted": 3318,
+  "model": {
+   "n": 2293,
+   "log_loss": 0.6390967669086082,
+   "brier": 0.2242070786105146,
+   "accuracy": 0.6354121238552115
+  },
+  "market": {
+   "n": 2293,
+   "log_loss": 0.6034394120204065,
+   "brier": 0.2081264155740987,
+   "accuracy": 0.6764064544265155
+  },
+  "blend_0.75": {
+   "n": 2293,
+   "log_loss": 0.6054156268123196,
+   "brier": 0.20876602827920326,
+   "accuracy": 0.6846925425207152
+  },
+  "ensemble_uncalibrated": {
+   "n": 2293,
+   "log_loss": 0.6453995124399126,
+   "brier": 0.22693118044206279,
+   "accuracy": 0.6179677278674226
+  }
+ }
+}

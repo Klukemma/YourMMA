@@ -1,487 +1,590 @@
 {
  "caveats": {
   "flag": "A second model, fitted only on bets that had already settled, guessing whether each pick is wrong. Its flags score about 0.70 where 0.5 is a coin toss - real, not decisive. Most of what it reads is the gap between this model and the market, so a fight nobody has priced cannot be scored and is shown as such rather than assumed safe.",
+  "intel": "Sourced news gathered before the bell - injuries, late replacements, a change of camp - about things the model cannot read from a record. NONE OF IT MOVES THE PREDICTION. The one soft factor we could label at scale, 298 late replacements from Wikipedia, measured -3.5% against the model and -4.4% against the blend with both intervals spanning zero, needing roughly 1,800 labels to resolve. So this is shown beside the number, not folded into it: it tells you why a fight might not go the way the model thinks, and leaves the number something that was actually measured.",
   "model": "Walk-forward accuracy 61.7%, AUC 0.66. Flat-stake ROI on the confirm period (2020 onward, 2,339 priced bets) is -1.8%. Treat a pick as an opinion, not an edge.",
   "parlay": "Combined probability multiplies the legs, which assumes the fights are independent; they are not quite. Backtested on the confirm period, 3-leg parlays returned +21.8% over 224 parlays - promising but about 1.5 standard deviations, and those parlays share legs, so this is NOT an established edge.",
   "simulation": "20,000 simulations from both fighters' measured rates. As a winner picker this is weaker than the model (AUC 0.559 against 0.66), so the model's probability is the headline. Method and round are where the simulation is the only source, and there it finishes 55% of fights where the sport finishes 47% - read DEC as firmer and SUB as softer."
  },
  "dataset_end": "2026-08-08",
  "event": {
-  "date": "2026-09-26",
-  "name": "UFC Fight Night: Rosas Jr. vs. Barcelos"
+  "date": "2026-10-10",
+  "name": "UFC Fight Night: Allen vs. Duncan"
  },
  "fights": [
   {
-   "blue": "Raoni Barcelos",
-   "confidence": 0.730435,
-   "edge": 0.158612,
+   "blue": "Christian Leroy Duncan",
+   "confidence": 0.547893,
+   "edge": -0.068543,
+   "intel": [],
+   "market_prob": 0.556697,
    "method": "Decision",
-   "method_prob": 0.50269,
+   "method_prob": 0.4243,
    "method_probs": {
-    "Decision": 0.50269,
-    "KO/TKO": 0.238996,
-    "Submission": 0.258314
+    "Decision": 0.4243,
+    "KO/TKO": 0.324853,
+    "Submission": 0.250847
    },
    "number": 1,
-   "odds": -145,
-   "p_fail": 0.255694,
-   "p_finish": 0.49731,
-   "p_finish_raw": 0.675261,
-   "parlay_tier": "STRONG",
-   "pick": "Raul Rosas Jr.",
-   "recommendation": "GOOD BET",
-   "red": "Raul Rosas Jr.",
-   "round": "R3",
+   "odds": -133,
+   "p_fail": 0.271834,
+   "p_finish": 0.5757,
+   "p_finish_raw": 0.697952,
+   "parlay_tier": null,
+   "pick": "Brendan Allen",
+   "recommendation": "LEAN",
+   "red": "Brendan Allen",
+   "round": "R5",
    "rounds_scheduled": 5,
    "simulation": {
     "assumed": [],
-    "blue_win": 0.667,
-    "decision": 0.4062,
-    "decision_share": 0.4165,
-    "draw": 0.0103,
+    "blue_win": 0.4904,
+    "decision": 0.36095,
+    "decision_share": 0.38535,
+    "draw": 0.0244,
     "finish_by_round": [
-     0.1602,
-     0.1329,
-     0.1156,
-     0.0971,
-     0.0777
+     0.17325,
+     0.1412,
+     0.11675,
+     0.09885,
+     0.0846
     ],
-    "ko": 0.2786,
-    "mean_seconds": 1004.076782,
-    "median_seconds": 1185.0,
-    "red_win": 0.3227,
+    "ko": 0.29835,
+    "mean_seconds": 975.180176,
+    "median_seconds": 1105.0,
+    "red_win": 0.4852,
     "simulations": 20000,
-    "standard_error": 0.003306,
-    "sub": 0.3049
+    "standard_error": 0.003534,
+    "sub": 0.3163
    },
    "title_fight": false,
-   "win_prob": 0.750449
+   "win_prob": 0.543091,
+   "win_prob_model": 0.502273
   },
   {
-   "blue": "Ailin Perez",
-   "confidence": 0.554545,
-   "edge": null,
+   "blue": "Jai Herbert",
+   "confidence": 0.7,
+   "edge": 0.1823,
+   "intel": [],
+   "market_prob": 0.62775,
    "method": "Decision",
-   "method_prob": 0.584744,
+   "method_prob": 0.476463,
    "method_probs": {
-    "Decision": 0.584744,
-    "KO/TKO": 0.194815,
-    "Submission": 0.220441
+    "Decision": 0.476463,
+    "KO/TKO": 0.310026,
+    "Submission": 0.213511
    },
    "number": 2,
-   "odds": null,
-   "p_fail": null,
-   "p_finish": 0.415256,
-   "p_finish_raw": 0.48267,
-   "parlay_tier": null,
-   "pick": "Norma Dumont",
+   "odds": -175,
+   "p_fail": 0.210117,
+   "p_finish": 0.523537,
+   "p_finish_raw": 0.766885,
+   "parlay_tier": "VALUE",
+   "pick": "Matheus Camilo",
    "recommendation": "LEAN",
-   "red": "Norma Dumont",
+   "red": "Matheus Camilo",
    "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.4031,
-    "decision": 0.63655,
-    "decision_share": 0.68705,
-    "draw": 0.0505,
-    "finish_by_round": [
-     0.11645,
-     0.1043,
-     0.0922
-    ],
-    "ko": 0.17555,
-    "mean_seconds": 752.80603,
-    "median_seconds": 900.0,
-    "red_win": 0.5464,
-    "simulations": 20000,
-    "standard_error": 0.00352,
-    "sub": 0.1374
-   },
-   "title_fight": false,
-   "win_prob": 0.549301
-  },
-  {
-   "blue": "Rinya Nakamura",
-   "confidence": 0.575893,
-   "edge": null,
-   "method": "Decision",
-   "method_prob": 0.551578,
-   "method_probs": {
-    "Decision": 0.551578,
-    "KO/TKO": 0.240705,
-    "Submission": 0.207717
-   },
-   "number": 6,
-   "odds": null,
-   "p_fail": null,
-   "p_finish": 0.448422,
-   "p_finish_raw": 0.541877,
-   "parlay_tier": null,
-   "pick": "Brady Hiestand",
-   "recommendation": "LEAN",
-   "red": "Brady Hiestand",
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.5173,
-    "decision": 0.4891,
-    "decision_share": 0.52865,
-    "draw": 0.03955,
-    "finish_by_round": [
-     0.1921,
-     0.15375,
-     0.1255
-    ],
-    "ko": 0.31325,
-    "mean_seconds": 666.288269,
-    "median_seconds": 900.0,
-    "red_win": 0.44315,
-    "simulations": 20000,
-    "standard_error": 0.003513,
-    "sub": 0.1581
-   },
-   "title_fight": false,
-   "win_prob": 0.635117
-  },
-  {
-   "blue": "Robert Bryczek",
-   "confidence": 0.697095,
-   "edge": null,
-   "method": "Decision",
-   "method_prob": 0.547389,
-   "method_probs": {
-    "Decision": 0.547389,
-    "KO/TKO": 0.208705,
-    "Submission": 0.243906
-   },
-   "number": 7,
-   "odds": null,
-   "p_fail": null,
-   "p_finish": 0.452611,
-   "p_finish_raw": 0.50262,
-   "parlay_tier": null,
-   "pick": "Rodolfo Vieira",
-   "recommendation": "LEAN",
-   "red": "Rodolfo Vieira",
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.3805,
-    "decision": 0.43475,
-    "decision_share": 0.4706,
-    "draw": 0.03585,
-    "finish_by_round": [
-     0.22585,
-     0.1713,
-     0.13225
-    ],
-    "ko": 0.2295,
-    "mean_seconds": 635.695496,
-    "median_seconds": 835.0,
-    "red_win": 0.58365,
-    "simulations": 20000,
-    "standard_error": 0.003486,
-    "sub": 0.2999
-   },
-   "title_fight": false,
-   "win_prob": 0.672485
-  },
-  {
-   "blue": "Christian Edwards",
-   "confidence": 0.575893,
-   "edge": null,
-   "method": "KO/TKO",
-   "method_prob": 0.454256,
-   "method_probs": {
-    "Decision": 0.269597,
-    "KO/TKO": 0.454256,
-    "Submission": 0.276147
-   },
-   "number": 8,
-   "odds": null,
-   "p_fail": null,
-   "p_finish": 0.730403,
-   "p_finish_raw": 0.824622,
-   "parlay_tier": null,
-   "pick": "Rodolfo Bellato",
-   "recommendation": "LEAN",
-   "red": "Rodolfo Bellato",
-   "round": "R1",
    "rounds_scheduled": 3,
    "simulation": {
     "assumed": [
      "td_def"
     ],
-    "blue_win": 0.3407,
-    "decision": 0.5267,
-    "decision_share": 0.5619,
-    "draw": 0.0352,
+    "blue_win": 0.40395,
+    "decision": 0.4157,
+    "decision_share": 0.44845,
+    "draw": 0.03275,
     "finish_by_round": [
-     0.1787,
-     0.14265,
-     0.11675
+     0.2316,
+     0.1853,
+     0.13465
     ],
-    "ko": 0.29845,
-    "mean_seconds": 683.338013,
-    "median_seconds": 900.0,
-    "red_win": 0.6241,
+    "ko": 0.3926,
+    "mean_seconds": 620.427734,
+    "median_seconds": 780.0,
+    "red_win": 0.5633,
     "simulations": 20000,
-    "standard_error": 0.003425,
-    "sub": 0.13965
+    "standard_error": 0.003507,
+    "sub": 0.15895
    },
    "title_fight": false,
-   "win_prob": 0.632676
+   "win_prob": 0.675478,
+   "win_prob_model": 0.818663
   },
   {
-   "blue": "Josiah Harrell",
-   "confidence": 0.575893,
+   "blue": "Ketlen Souza",
+   "confidence": 0.7,
    "edge": null,
+   "intel": [],
+   "market_prob": null,
    "method": "Decision",
-   "method_prob": 0.419559,
+   "method_prob": 0.791444,
    "method_probs": {
-    "Decision": 0.419559,
-    "KO/TKO": 0.318792,
-    "Submission": 0.261649
+    "Decision": 0.791444,
+    "KO/TKO": 0.035655,
+    "Submission": 0.172901
+   },
+   "number": 3,
+   "odds": null,
+   "p_fail": null,
+   "p_finish": 0.208556,
+   "p_finish_raw": 0.311575,
+   "parlay_tier": null,
+   "pick": "Loopy Godinez",
+   "recommendation": "LEAN",
+   "red": "Loopy Godinez",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.2748,
+    "decision": 0.58325,
+    "decision_share": 0.6149,
+    "draw": 0.03165,
+    "finish_by_round": [
+     0.15275,
+     0.12235,
+     0.11
+    ],
+    "ko": 0.1262,
+    "mean_seconds": 717.250977,
+    "median_seconds": 900.0,
+    "red_win": 0.69355,
+    "simulations": 20000,
+    "standard_error": 0.00326,
+    "sub": 0.2589
+   },
+   "title_fight": false,
+   "win_prob": 0.674721,
+   "win_prob_model": 0.674721
+  },
+  {
+   "blue": "Kai Kamaka III",
+   "confidence": 0.556017,
+   "edge": null,
+   "intel": [],
+   "market_prob": null,
+   "method": "Decision",
+   "method_prob": 0.502505,
+   "method_probs": {
+    "Decision": 0.502505,
+    "KO/TKO": 0.336715,
+    "Submission": 0.16078
+   },
+   "number": 4,
+   "odds": null,
+   "p_fail": null,
+   "p_finish": 0.497495,
+   "p_finish_raw": 0.628715,
+   "parlay_tier": null,
+   "pick": "Kai Kamaka III",
+   "recommendation": "LEAN",
+   "red": "Andre Fili",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.61155,
+    "decision": 0.4899,
+    "decision_share": 0.51995,
+    "draw": 0.03005,
+    "finish_by_round": [
+     0.1955,
+     0.15785,
+     0.1267
+    ],
+    "ko": 0.3833,
+    "mean_seconds": 659.576721,
+    "median_seconds": 900.0,
+    "red_win": 0.3584,
+    "simulations": 20000,
+    "standard_error": 0.003391,
+    "sub": 0.09675
+   },
+   "title_fight": false,
+   "win_prob": 0.564748,
+   "win_prob_model": 0.564748
+  },
+  {
+   "blue": "Gerald Meerschaert",
+   "confidence": 0.77907,
+   "edge": -0.00536,
+   "intel": [],
+   "market_prob": 0.698925,
+   "method": "Decision",
+   "method_prob": 0.402505,
+   "method_probs": {
+    "Decision": 0.402505,
+    "KO/TKO": 0.205291,
+    "Submission": 0.392203
+   },
+   "number": 5,
+   "odds": -250,
+   "p_fail": 0.146974,
+   "p_finish": 0.597495,
+   "p_finish_raw": 0.53207,
+   "parlay_tier": "VALUE",
+   "pick": "Julius Walker",
+   "recommendation": "GOOD BET",
+   "red": "Julius Walker",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.53105,
+    "decision": 0.2251,
+    "decision_share": 0.2418,
+    "draw": 0.0167,
+    "finish_by_round": [
+     0.3792,
+     0.23385,
+     0.14515
+    ],
+    "ko": 0.42885,
+    "mean_seconds": 484.474243,
+    "median_seconds": 445.0,
+    "red_win": 0.45225,
+    "simulations": 20000,
+    "standard_error": 0.003519,
+    "sub": 0.32935
+   },
+   "title_fight": false,
+   "win_prob": 0.701425,
+   "win_prob_model": 0.708925
+  },
+  {
+   "blue": "Otari Tanzilovi",
+   "confidence": 0.574163,
+   "edge": -0.129347,
+   "intel": [],
+   "market_prob": 0.660923,
+   "method": "Decision",
+   "method_prob": 0.488723,
+   "method_probs": {
+    "Decision": 0.488723,
+    "KO/TKO": 0.36414,
+    "Submission": 0.147137
+   },
+   "number": 6,
+   "odds": -205,
+   "p_fail": 0.198798,
+   "p_finish": 0.511277,
+   "p_finish_raw": 0.546225,
+   "parlay_tier": null,
+   "pick": "Malcolm Wellmaker",
+   "recommendation": "LEAN",
+   "red": "Malcolm Wellmaker",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [
+     "td_acc",
+     "td_att_per15"
+    ],
+    "blue_win": 0.49545,
+    "decision": 0.47715,
+    "decision_share": 0.51215,
+    "draw": 0.035,
+    "finish_by_round": [
+     0.19985,
+     0.1618,
+     0.1262
+    ],
+    "ko": 0.29885,
+    "mean_seconds": 657.555725,
+    "median_seconds": 900.0,
+    "red_win": 0.46955,
+    "simulations": 20000,
+    "standard_error": 0.003529,
+    "sub": 0.189
+   },
+   "title_fight": false,
+   "win_prob": 0.609996,
+   "win_prob_model": 0.542784
+  },
+  {
+   "blue": "Ismael Bonfim",
+   "confidence": 0.547893,
+   "edge": 0.023171,
+   "intel": [],
+   "market_prob": 0.52381,
+   "method": "Decision",
+   "method_prob": 0.476877,
+   "method_probs": {
+    "Decision": 0.476877,
+    "KO/TKO": 0.352898,
+    "Submission": 0.170226
+   },
+   "number": 7,
+   "odds": -110,
+   "p_fail": 0.298324,
+   "p_finish": 0.523123,
+   "p_finish_raw": 0.740927,
+   "parlay_tier": null,
+   "pick": "Ismael Bonfim",
+   "recommendation": "RISKY",
+   "red": "Francisco Prado",
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.4776,
+    "decision": 0.48415,
+    "decision_share": 0.5185,
+    "draw": 0.03435,
+    "finish_by_round": [
+     0.19865,
+     0.15795,
+     0.1249
+    ],
+    "ko": 0.3275,
+    "mean_seconds": 659.918518,
+    "median_seconds": 900.0,
+    "red_win": 0.48805,
+    "simulations": 20000,
+    "standard_error": 0.003535,
+    "sub": 0.154
+   },
+   "title_fight": false,
+   "win_prob": 0.529602,
+   "win_prob_model": 0.546981
+  },
+  {
+   "blue": "Leon Shahbazyan",
+   "confidence": 0.556017,
+   "edge": -0.095014,
+   "intel": [],
+   "market_prob": 0.593301,
+   "method": "KO/TKO",
+   "method_prob": 0.50396,
+   "method_probs": {
+    "Decision": 0.23865,
+    "KO/TKO": 0.50396,
+    "Submission": 0.257391
+   },
+   "number": 8,
+   "odds": -155,
+   "p_fail": 0.244831,
+   "p_finish": 0.76135,
+   "p_finish_raw": 0.685597,
+   "parlay_tier": null,
+   "pick": "Leon Shahbazyan",
+   "recommendation": "RISKY",
+   "red": "Niko Price",
+   "round": "R1",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [
+     "td_acc",
+     "td_att_per15",
+     "td_def"
+    ],
+    "blue_win": 0.4121,
+    "decision": 0.2529,
+    "decision_share": 0.2688,
+    "draw": 0.0159,
+    "finish_by_round": [
+     0.3565,
+     0.22775,
+     0.14695
+    ],
+    "ko": 0.5638,
+    "mean_seconds": 500.9935,
+    "median_seconds": 470.0,
+    "red_win": 0.572,
+    "simulations": 20000,
+    "standard_error": 0.003499,
+    "sub": 0.1674
+   },
+   "title_fight": false,
+   "win_prob": 0.566769,
+   "win_prob_model": 0.512829
+  },
+  {
+   "blue": "Brendson Ribeiro",
+   "confidence": 0.77193,
+   "edge": 0.029854,
+   "intel": [],
+   "market_prob": 0.748428,
+   "method": "KO/TKO",
+   "method_prob": 0.426058,
+   "method_probs": {
+    "Decision": 0.340603,
+    "KO/TKO": 0.426058,
+    "Submission": 0.233339
    },
    "number": 9,
-   "odds": null,
-   "p_fail": null,
-   "p_finish": 0.580441,
-   "p_finish_raw": 0.718933,
-   "parlay_tier": null,
-   "pick": "Elves Brener",
-   "recommendation": "LEAN",
-   "red": "Elves Brener",
+   "odds": -340,
+   "p_fail": 0.135367,
+   "p_finish": 0.659397,
+   "p_finish_raw": 0.625001,
+   "parlay_tier": "STRONG",
+   "pick": "Felipe Franco",
+   "recommendation": "GOOD BET",
+   "red": "Felipe Franco",
    "round": "R3",
    "rounds_scheduled": 3,
    "simulation": {
     "assumed": [],
-    "blue_win": 0.34715,
-    "decision": 0.42835,
-    "decision_share": 0.45795,
-    "draw": 0.0296,
+    "blue_win": 0.35905,
+    "decision": 0.37845,
+    "decision_share": 0.4083,
+    "draw": 0.02985,
     "finish_by_round": [
-     0.23285,
-     0.17095,
-     0.13825
+     0.2572,
+     0.19275,
+     0.14175
     ],
-    "ko": 0.42435,
-    "mean_seconds": 624.154724,
-    "median_seconds": 795.0,
-    "red_win": 0.62325,
+    "ko": 0.40085,
+    "mean_seconds": 596.422485,
+    "median_seconds": 695.0,
+    "red_win": 0.6111,
     "simulations": 20000,
-    "standard_error": 0.003426,
-    "sub": 0.1177
+    "standard_error": 0.003447,
+    "sub": 0.19085
    },
    "title_fight": false,
-   "win_prob": 0.619014
+   "win_prob": 0.761966,
+   "win_prob_model": 0.802582
   },
   {
-   "blue": "Ricky Simon",
-   "confidence": 0.697095,
-   "edge": null,
-   "method": "Decision",
-   "method_prob": 0.487502,
+   "blue": "RJ Harris",
+   "confidence": 0.7,
+   "edge": -0.20497,
+   "intel": [],
+   "market_prob": 0.697987,
+   "method": "KO/TKO",
+   "method_prob": 0.468292,
    "method_probs": {
-    "Decision": 0.487502,
-    "KO/TKO": 0.379381,
-    "Submission": 0.133117
+    "Decision": 0.338347,
+    "KO/TKO": 0.468292,
+    "Submission": 0.193361
    },
    "number": 10,
-   "odds": null,
-   "p_fail": null,
-   "p_finish": 0.512498,
-   "p_finish_raw": 0.612202,
-   "parlay_tier": "VALUE",
-   "pick": "Montel Jackson",
+   "odds": -260,
+   "p_fail": 0.152776,
+   "p_finish": 0.661653,
+   "p_finish_raw": 0.660733,
+   "parlay_tier": null,
+   "pick": "RJ Harris",
    "recommendation": "LEAN",
-   "red": "Montel Jackson",
+   "red": "Allen Frye Jr.",
    "round": "R3",
    "rounds_scheduled": 3,
    "simulation": {
-    "assumed": [],
-    "blue_win": 0.4398,
-    "decision": 0.53625,
-    "decision_share": 0.5788,
-    "draw": 0.04255,
-    "finish_by_round": [
-     0.1665,
-     0.13795,
-     0.11675
+    "assumed": [
+     "td_acc",
+     "td_att_per15",
+     "td_def"
     ],
-    "ko": 0.30085,
-    "mean_seconds": 693.792725,
-    "median_seconds": 900.0,
-    "red_win": 0.51765,
+    "blue_win": 0.57935,
+    "decision": 0.46195,
+    "decision_share": 0.4964,
+    "draw": 0.03445,
+    "finish_by_round": [
+     0.2098,
+     0.1657,
+     0.1281
+    ],
+    "ko": 0.33435,
+    "mean_seconds": 648.257996,
+    "median_seconds": 895.0,
+    "red_win": 0.3862,
     "simulations": 20000,
-    "standard_error": 0.003533,
-    "sub": 0.12035
+    "standard_error": 0.003443,
+    "sub": 0.16925
    },
    "title_fight": false,
-   "win_prob": 0.697103
+   "win_prob": 0.652803,
+   "win_prob_model": 0.517252
   },
   {
-   "blue": "Alatengheili",
-   "confidence": 0.742718,
-   "edge": null,
+   "blue": "Melissa Gatto",
+   "confidence": 0.547893,
+   "edge": -0.050491,
+   "intel": [],
+   "market_prob": 0.544304,
    "method": "Decision",
-   "method_prob": 0.614391,
+   "method_prob": 0.641788,
    "method_probs": {
-    "Decision": 0.614391,
-    "KO/TKO": 0.254508,
-    "Submission": 0.131101
-   },
-   "number": 11,
-   "odds": null,
-   "p_fail": null,
-   "p_finish": 0.385609,
-   "p_finish_raw": 0.431455,
-   "parlay_tier": "VALUE",
-   "pick": "John Castaneda",
-   "recommendation": "GOOD BET",
-   "red": "John Castaneda",
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.2881,
-    "decision": 0.64965,
-    "decision_share": 0.68445,
-    "draw": 0.0348,
-    "finish_by_round": [
-     0.1182,
-     0.10345,
-     0.0939
-    ],
-    "ko": 0.1996,
-    "mean_seconds": 751.371765,
-    "median_seconds": 900.0,
-    "red_win": 0.6771,
-    "simulations": 20000,
-    "standard_error": 0.003306,
-    "sub": 0.11595
-   },
-   "title_fight": false,
-   "win_prob": 0.718356
-  },
-  {
-   "blue": "Vanessa Demopoulos",
-   "confidence": 0.730435,
-   "edge": null,
-   "method": "Decision",
-   "method_prob": 0.459992,
-   "method_probs": {
-    "Decision": 0.459992,
-    "KO/TKO": 0.318577,
-    "Submission": 0.221431
+    "Decision": 0.641788,
+    "KO/TKO": 0.164511,
+    "Submission": 0.193702
    },
    "number": 12,
-   "odds": null,
-   "p_fail": null,
-   "p_finish": 0.540008,
-   "p_finish_raw": 0.659059,
-   "parlay_tier": "STRONG",
-   "pick": "Yazmin Jauregui",
-   "recommendation": "STRONG BET",
-   "red": "Yazmin Jauregui",
+   "odds": -125,
+   "p_fail": 0.280111,
+   "p_finish": 0.358212,
+   "p_finish_raw": 0.306861,
+   "parlay_tier": null,
+   "pick": "Melissa Gatto",
+   "recommendation": "RISKY",
+   "red": "Ernesta Kareckaite",
    "round": "R3",
    "rounds_scheduled": 3,
    "simulation": {
     "assumed": [],
-    "blue_win": 0.3639,
-    "decision": 0.4909,
-    "decision_share": 0.5051,
-    "draw": 0.0142,
+    "blue_win": 0.3454,
+    "decision": 0.6478,
+    "decision_share": 0.6918,
+    "draw": 0.044,
     "finish_by_round": [
-     0.2039,
-     0.1641,
-     0.1269
+     0.11855,
+     0.1004,
+     0.08925
     ],
-    "ko": 0.29295,
-    "mean_seconds": 654.641235,
+    "ko": 0.21095,
+    "mean_seconds": 752.624756,
     "median_seconds": 900.0,
-    "red_win": 0.6219,
+    "red_win": 0.6106,
     "simulations": 20000,
-    "standard_error": 0.003429,
-    "sub": 0.20195
+    "standard_error": 0.003448,
+    "sub": 0.09725
    },
    "title_fight": false,
-   "win_prob": 0.780651
+   "win_prob": 0.534494,
+   "win_prob_model": 0.505065
   }
  ],
- "generated": "2026-09-27T20:54:27Z",
+ "generated": "2026-10-05T16:57:03Z",
  "parlays": [
   {
-   "combined_prob": 0.585838762299,
-   "fair_odds": 71,
+   "combined_prob": 0.53446200155,
+   "fair_odds": 87,
    "legs": [
     {
-     "fight": "Jauregui vs Demopoulos",
-     "pick": "Jauregui",
-     "prob": 0.780651,
+     "fight": "Franco vs Ribeiro",
+     "pick": "Franco",
+     "prob": 0.761966,
      "tier": "STRONG"
     },
     {
-     "fight": "Rosas Jr. vs Barcelos",
-     "pick": "Rosas Jr.",
-     "prob": 0.750449,
-     "tier": "STRONG"
-    }
-   ]
-  },
-  {
-   "combined_prob": 0.40838995871491984,
-   "fair_odds": 145,
-   "legs": [
-    {
-     "fight": "Jauregui vs Demopoulos",
-     "pick": "Jauregui",
-     "prob": 0.780651,
-     "tier": "STRONG"
-    },
-    {
-     "fight": "Rosas Jr. vs Barcelos",
-     "pick": "Rosas Jr.",
-     "prob": 0.750449,
-     "tier": "STRONG"
-    },
-    {
-     "fight": "Jackson vs Simon",
-     "pick": "Jackson",
-     "prob": 0.697103,
+     "fight": "Walker vs Meerschaert",
+     "pick": "Walker",
+     "prob": 0.701425,
      "tier": "VALUE"
     }
    ]
   },
   {
-   "combined_prob": 0.29336937718261497,
-   "fair_odds": 241,
+   "combined_prob": 0.3610173238829909,
+   "fair_odds": 177,
    "legs": [
     {
-     "fight": "Jauregui vs Demopoulos",
-     "pick": "Jauregui",
-     "prob": 0.780651,
+     "fight": "Franco vs Ribeiro",
+     "pick": "Franco",
+     "prob": 0.761966,
      "tier": "STRONG"
     },
     {
-     "fight": "Rosas Jr. vs Barcelos",
-     "pick": "Rosas Jr.",
-     "prob": 0.750449,
-     "tier": "STRONG"
-    },
-    {
-     "fight": "Jackson vs Simon",
-     "pick": "Jackson",
-     "prob": 0.697103,
+     "fight": "Walker vs Meerschaert",
+     "pick": "Walker",
+     "prob": 0.701425,
      "tier": "VALUE"
     },
     {
-     "fight": "Castaneda vs Alatengheili",
-     "pick": "Castaneda",
-     "prob": 0.718356,
+     "fight": "Camilo vs Herbert",
+     "pick": "Camilo",
+     "prob": 0.675478,
      "tier": "VALUE"
     }
    ]
@@ -490,16 +593,8 @@
  "schema": 3,
  "skipped": [
   {
-   "fight": "Luis Hernandez vs Sedriques Dumas",
-   "reason": "NO DATA: No data for 'Luis Hernandez'.  Did you mean: Carlos Hernandez (80%), Luke Fernandez (79%), Nohelin Hernandez (77%), Ramiro Hernandez (73%), Luis Pena (70%)?"
-  },
-  {
-   "fight": "Mehemmedeli Osmanli vs Ilimbek Akylbek Uulu",
-   "reason": "NO DATA: No data for 'Mehemmedeli Osmanli'.  Did you mean: Mohammed Usman (67%)? NO DATA: No data for 'Ilimbek Akylbek Uulu'."
-  },
-  {
-   "fight": "Melissa Amaya vs Valesca Machado",
-   "reason": "NO DATA: No data for 'Melissa Amaya'.  Did you mean: Melissa Gatto (69%), Melissa Martinez (69%), Melissa Mullins (64%)? NO DATA: No data for 'Valesca Machado'.  Did you mean: Caio Machado (74%)?"
+   "fight": "Alice Pereira vs Darya Zheleznyakova",
+   "reason": "NO DATA: No data for 'Darya Zheleznyakova'.  Did you mean: Daria Zhelezniakova (89%)?"
   }
  ],
  "trained_on": 7580
