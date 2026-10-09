@@ -156,3 +156,78 @@ def test_a_rematch_on_a_different_date_is_kept():
          'timestamp': '2', 'correct': False},
     ]
     assert len(deduplicate_graded(rows)) == 2
+
+
+def test_picks_are_logged_only_up_to_the_day_of_the_card():
+    """A pick made after the card is not a prediction, and grading keeps the
+    newest pick for a bout - so a late one would replace the real one."""
+    from datetime import datetime, timezone
+    from grade import picks_may_be_logged
+    at = lambda s: datetime.fromisoformat(s).replace(tzinfo=timezone.utc)
+    assert picks_may_be_logged("2026-10-10", now=at("2026-10-09T15:00:00"))
+    assert picks_may_be_logged("2026-10-10", now=at("2026-10-10T20:00:00"))
+    assert not picks_may_be_logged("2026-10-10", now=at("2026-10-11T02:00:00"))
+    assert not picks_may_be_logged("not a date", now=at("2026-10-09T15:00:00"))
+
+
+def test_the_engine_checks_before_it_logs():
+    from pathlib import Path
+    source = (Path(__file__).resolve().parents[1] / "predict_card.py").read_text()
+    guard = source.index("_grade.picks_may_be_logged(")
+    log = source.index("log_card_predictions(predictions_to_log, EVENT_NAME, EVENT_DATE")
+    assert guard < log
+    # the guard nearest the call is the one that decides it
+    assert source.rindex("_grade.picks_may_be_logged(", 0, log) > source.index("PREDICTION LOGGING")
+
+
+
+def test_with_a_start_time_the_cutoff_is_the_first_bell():
+    """A Vegas card is dated 10-10 locally and its first bell is on 10-11 UTC:
+    a run just before it logs, one just after does not - by the start time,
+    not by the date."""
+    from datetime import datetime, timezone
+    from grade import picks_may_be_logged
+    at = lambda s: datetime.fromisoformat(s).replace(tzinfo=timezone.utc)
+    start = "2026-10-11T00:00:00Z"
+    assert picks_may_be_logged("2026-10-10", now=at("2026-10-10T23:59:00"), first_start=start)
+    assert not picks_may_be_logged("2026-10-10", now=at("2026-10-11T00:01:00"), first_start=start)
+
+
+def test_a_pick_logged_after_its_card_never_counts():
+    """The log holds September re-runs of a June card; graded as the newest
+    pick for each bout, they replaced the real picks and flipped results."""
+    real = {'red_corner': 'Manel Kape', 'blue_corner': 'Kyoji Horiguchi',
+            'event_date': '2026-06-20', 'predicted_winner': 'Kyoji Horiguchi',
+            'timestamp': '2026-06-20T12:00:00'}
+    late = dict(real, predicted_winner='Manel Kape', timestamp='2026-09-18T10:00:00')
+    kept = deduplicate([real, late])
+    assert [p['predicted_winner'] for p in kept] == ['Kyoji Horiguchi']
+
+
+def test_a_pick_with_nothing_to_show_it_was_late_is_kept():
+    from grade import made_before_the_card
+    assert made_before_the_card({'event_date': '2026-06-20'})
+    assert made_before_the_card({'timestamp': 'garbled', 'event_date': '2026-06-20'})
+
+
+
+def test_grading_applies_the_cutoff_the_engine_logged_under():
+    """A pick logged at 00:30Z before a 01:00Z first bell passed the guard,
+    then the date rule dropped it in grading and an older pick was graded."""
+    early = {'red_corner': 'Brendan Allen', 'blue_corner': 'Christian Leroy Duncan',
+             'event_date': '2026-10-10', 'predicted_winner': 'Brendan Allen',
+             'timestamp': '2026-10-09T18:00:00', 'first_start': '2026-10-11T01:00:00Z'}
+    fight_night = dict(early, predicted_winner='Christian Leroy Duncan',
+                       timestamp='2026-10-11T00:30:00')
+    kept = deduplicate([early, fight_night])
+    assert [p['predicted_winner'] for p in kept] == ['Christian Leroy Duncan']
+    after_bell = dict(fight_night, timestamp='2026-10-11T01:30:00')
+    assert [p['predicted_winner'] for p in deduplicate([early, after_bell])] == ['Brendan Allen']
+
+
+def test_the_engine_checks_the_cutoff_before_buying_a_line():
+    from pathlib import Path
+    source = (Path(__file__).resolve().parents[1] / "predict_card.py").read_text()
+    guard = source.index("if _grade.picks_may_be_logged(EVENT_DATE, first_start=_card_first_start()):")
+    assert guard < source.index("_should_fetch, _why = _odds_cache.decide(")
+    assert "first_start=_first_start)" in source

@@ -92,3 +92,37 @@ def test_the_matcher_is_never_a_coin_toss_between_two_same_surname_entries():
     assert match("Jean Silva", both)["best_odds"] == 320
     assert match("Bruno Silva", both)["best_odds"] == -200
     assert match("Anderson Silva", both) is None
+
+
+FEED = {
+    "kai kamaka": {"name": "Kai Kamaka", "best_odds": 132},
+    "lupita godinez": {"name": "Lupita Godinez", "best_odds": -225},
+    "darya zheleznyakova": {"name": "Darya Zheleznyakova", "best_odds": 124},
+    "allen frye jr": {"name": "Allen Frye Jr", "best_odds": 220},
+}
+
+
+def test_a_generational_suffix_is_not_the_surname():
+    """'Kai Kamaka III' took 'iii' as his surname and was priced at nothing."""
+    assert match("Kai Kamaka III", FEED)["name"] == "Kai Kamaka"
+    assert match("Allen Frye Jr.", FEED)["name"] == "Allen Frye Jr"
+
+
+def test_a_suffix_never_matches_a_different_fighter():
+    assert match("Kai Smith III", FEED) is None
+
+
+def test_a_known_feed_spelling_is_matched_exactly():
+    """A nickname the dataset uses and a transliteration: no rule can see
+    either, and both fights showed no price."""
+    assert match("Loopy Godinez", FEED)["name"] == "Lupita Godinez"
+    assert match("Daria Zhelezniakova", FEED)["name"] == "Darya Zheleznyakova"
+
+
+def test_an_alias_whose_feed_name_is_absent_prices_nobody():
+    assert match("Mick Parkin", FEED) is None
+
+
+def test_the_engine_prices_the_card_bout_by_bout():
+    assert "_odds_cache.for_card(_cache, _card_fights, CURRENT_ODDS)" in SOURCE
+    assert "_odds_cache.as_current_odds(_cache, CURRENT_ODDS)" not in SOURCE

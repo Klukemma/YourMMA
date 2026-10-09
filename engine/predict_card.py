@@ -76,7 +76,7 @@ FIGHT_CARD = [
     ("Niko Price", "Leon Shahbazyan"),                         # 7 - Welterweight
     ("Felipe Franco", "Brendson Ribeiro"),                     # 8 - Light Heavyweight
     ("Allen Frye Jr.", "RJ Harris"),                           # 9 - Heavyweight
-    ("Alice Pereira", "Darya Zheleznyakova"),                  # 10 - Women's Bantamweight (Zheleznyakova: UFC debut)
+    ("Alice Pereira", "Daria Zhelezniakova"),                  # 10 - Women's Bantamweight (the dataset's spelling; 4 UFC bouts, not a debut)
     ("Ernesta Kareckaite", "Melissa Gatto"),                   # 11 - Women's Flyweight
 ]
 
@@ -194,6 +194,7 @@ from method_calibration import fit_calibrator as _fit_finish_calibrator
 from method_calibration import rebuild_three_way as _rebuild_three_way
 import market_blend as _blend
 import finish_distil as _distil
+import grade as _grade
 
 # Where the phone app reads its data from.
 APP_DATA_DIR = Path(os.environ.get("APP_DATA_DIR", Path(__file__).resolve().parent.parent / "app" / "data"))
@@ -2975,9 +2976,26 @@ def implied_prob_to_american(prob):
 # Anything else is a different person and gets no price rather than a wrong one.
 FIRST_NAME_MIN_RATIO = 0.85
 
+# A generational suffix is not a surname. "Kai Kamaka III" is a Kamaka, and the
+# feed prints him "Kai Kamaka"; taking "iii" as the last name priced nobody.
+_NAME_SUFFIXES = {"jr", "sr", "ii", "iii", "iv"}
+
+# Where the feed spells a fighter in a way no rule above can see - a nickname
+# the dataset uses, a transliteration - and so would show no price. Keyed by
+# the dataset's name, lowercase; the value is the feed's. Exact entries only:
+# a wrong price is worse than none, so nothing here is fuzzy.
+ODDS_NAME_ALIASES = {
+    "loopy godinez": "lupita godinez",
+    "mick parkin": "michael parkin",
+    "daria zhelezniakova": "darya zheleznyakova",
+}
+
 
 def _names_of(text):
-    return [part for part in re.split(r"[^a-z0-9]+", text.lower()) if part]
+    parts = [part for part in re.split(r"[^a-z0-9]+", text.lower()) if part]
+    while len(parts) > 2 and parts[-1] in _NAME_SUFFIXES:
+        parts.pop()
+    return parts
 
 
 def _compatible_first_names(a, b):
@@ -3003,6 +3021,9 @@ def match_fighter_to_odds(fighter_name, odds_data):
     fighter_lower = fighter_name.lower().strip()
     if fighter_lower in odds_data:
         return odds_data[fighter_lower]
+    alias = ODDS_NAME_ALIASES.get(fighter_lower)
+    if alias and alias in odds_data:
+        return odds_data[alias]
 
     parts = _names_of(fighter_lower)
     if not parts:
@@ -3084,9 +3105,30 @@ def load_odds(api_key=None):
 import odds_cache as _odds_cache
 
 _cache = _odds_cache.load()
-_card_fights = [(f[0], f[1], str(EVENT_DATE)) for f in FIGHT_CARD]
+# Looked up under the feed's spelling where the dataset's differs, so a priced
+# fight is not counted as unpriced and bought again on every run.
+_feed_name = lambda n: ODDS_NAME_ALIASES.get(n.lower().strip(), n)
+_card_fights = [(_feed_name(f[0]), _feed_name(f[1]), str(EVENT_DATE)) for f in FIGHT_CARD]
 _refresh = os.environ.get("ODDS_REFRESH", "").strip() not in ("", "0", "false")
-_should_fetch, _why = _odds_cache.decide(_card_fights, _cache, refresh=_refresh)
+
+
+def _card_first_start():
+    """The earliest start the feed gave for any of the card's bouts, or None."""
+    starts = [e["commence_time"] for e in
+              (_odds_cache.find(_cache, *f) for f in _card_fights)
+              if e and e.get("commence_time")]
+    return min(starts) if starts else None
+
+
+# ONE CUTOFF FOR THE LINE AND THE LOG. Once the card has started, a pick is no
+# longer a prediction and a fetched line may be in-play; a run then buys
+# nothing and records nothing, so the line on file stays the one the last
+# logged pick was made against.
+if _grade.picks_may_be_logged(EVENT_DATE, first_start=_card_first_start()):
+    _should_fetch, _why = _odds_cache.decide(_card_fights, _cache, refresh=_refresh)
+else:
+    _should_fetch, _why = False, ("the card has started - no new line is "
+                                  "recorded and no pick is logged")
 
 if not ODDS_API_KEY:
     print("\n[Odds] No API key set. To enable odds:")
@@ -3108,9 +3150,10 @@ else:
           f"Credits left: {_LAST_ODDS_REMAINING or 'unknown'}")
 
 # Serve the card from the cache, so a fight priced on an earlier run is still
-# priced on this one without another call.
+# priced on this one without another call - each bout from its own entry, so a
+# fighter with another fight on file is never priced from that one.
 if _cache["fights"]:
-    CURRENT_ODDS = _odds_cache.as_current_odds(_cache, CURRENT_ODDS)
+    CURRENT_ODDS = _odds_cache.for_card(_cache, _card_fights, CURRENT_ODDS)
 
 # A settled fight's line can never change, so it graduates into the historical
 # file the backtest reads. odds.csv has no 2025 prices at all; every card
@@ -3355,7 +3398,7 @@ def get_tracking_summary():
         'accuracy_pct': f"{accuracy*100:.1f}%"
     }
 
-def log_card_predictions(predictions_list, event_name, event_date):
+def log_card_predictions(predictions_list, event_name, event_date, first_start=None):
     """Log all predictions for a fight card."""
     logged = 0
     for pred in predictions_list:
@@ -3363,6 +3406,7 @@ def log_card_predictions(predictions_list, event_name, event_date):
             'fight_id': f"{event_date}_{pred['red']}_{pred['blue']}",
             'event_name': event_name,
             'event_date': event_date,
+            'first_start': first_start,
             'red_corner': pred['red'],
             'blue_corner': pred['blue'],
             'predicted_winner': pred['winner'],
@@ -3782,8 +3826,20 @@ for ba in bet_analysis:
     if 'pred_full' in ba:
         predictions_to_log.append(ba['pred_full'])
 
-if predictions_to_log:
-    log_card_predictions(predictions_to_log, EVENT_NAME, EVENT_DATE)
+# THE TRACK RECORD HOLDS ONLY PICKS MADE BEFORE THE FIGHT. A run after the
+# card - a re-dispatch, a rebuild - would log picks made with the result
+# possibly in the data, and grading keeps the newest pick for a bout.
+# The card's first start, where the odds feed gave one: a fight-night run
+# before the prelims logs, one after the first bell does not. Each pick keeps
+# it, so grading applies the same cutoff (grade.made_before_the_card).
+_first_start = _card_first_start()
+if predictions_to_log and not _grade.picks_may_be_logged(
+        EVENT_DATE, first_start=_first_start):
+    print(f"::warning::{EVENT_NAME} ({EVENT_DATE}) is in the past - its picks "
+          f"are NOT logged to the track record.")
+elif predictions_to_log:
+    log_card_predictions(predictions_to_log, EVENT_NAME, EVENT_DATE,
+                         first_start=_first_start)
 
 # Show tracking summary
 tracking = get_tracking_summary()

@@ -33,6 +33,51 @@ HISTORY = Path(os.environ.get("PREDICTIONS_LOG", DATA_DIR / "prediction_history.
 DATE_TOLERANCE = timedelta(days=10)
 
 
+def picks_may_be_logged(event_date, now=None, first_start=None):
+    """Whether picks for a card dated `event_date` are made before the fight.
+
+    With the card's first start time on file (the odds feed's commence_time),
+    true only before it. Without one, true up to and including the event's own
+    date (UTC): cards run in the evening and a fight-day run has the freshest
+    line. After that the result may already be in the data and a pick is not a
+    prediction - and grading keeps the newest pick for a bout, so a late one
+    would replace the real one. An unreadable date is not loggable.
+    """
+    from datetime import date, datetime, timezone
+    now = now or datetime.now(timezone.utc)
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    if first_start:
+        try:
+            start = datetime.fromisoformat(str(first_start).replace("Z", "+00:00"))
+        except ValueError:
+            start = None
+        if start is not None:
+            if start.tzinfo is None:
+                start = start.replace(tzinfo=timezone.utc)
+            return now < start
+    try:
+        day = date.fromisoformat(str(event_date)[:10])
+    except ValueError:
+        return False
+    return now.astimezone(timezone.utc).date() <= day
+
+
+def made_before_the_card(pred):
+    """A logged pick that is a prediction: logged before its card's first
+    start where the pick recorded one, else no later than the card's date -
+    the cutoff the engine applied when it logged. A pick with no timestamp or
+    no readable event date is kept: there is nothing to show it was late."""
+    from datetime import date, datetime
+    stamp, event = pred.get('timestamp'), pred.get('event_date')
+    try:
+        when = datetime.fromisoformat(str(stamp))
+        date.fromisoformat(str(event)[:10])
+    except (TypeError, ValueError):
+        return True
+    return picks_may_be_logged(event, now=when, first_start=pred.get('first_start'))
+
+
 def categorise_method(method):
     """Dataset method text -> the three classes the model predicts."""
     if not isinstance(method, str):
@@ -86,6 +131,11 @@ def deduplicate(predictions):
     """
     latest = {}
     for pred in predictions:
+        # A pick logged after its card is not a prediction, and as the newest
+        # it would replace the real one. The log holds such picks (re-runs of
+        # old cards); they stay in the file and never count.
+        if not made_before_the_card(pred):
+            continue
         key = (norm_name(pred['red_corner']), norm_name(pred['blue_corner']),
                str(pred.get('event_date'))[:7])          # same bout, same month
         stamp = pred.get('timestamp') or ''

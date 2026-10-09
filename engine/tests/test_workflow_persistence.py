@@ -35,6 +35,8 @@ MUST_PERSIST = (
     "engine/data/odds_cache.json",   # prices already paid for
     "engine/data/odds.csv",          # settled lines the backtest scores against
     "engine/data/method_odds.csv",   # the market's price on how a fight ends
+    "engine/data/prediction_history.json",  # the picks the track record grades
+    "app/yourmma.html",              # the phone's standalone copy of the card
 )
 
 
@@ -145,3 +147,59 @@ def test_a_queued_run_checks_out_the_branch_not_its_dispatch_commit():
                      text)
     assert step, "checkout has no 'with:' block"
     assert "ref: ${{ github.ref }}" in step.group(1)
+
+
+def _predict_block(text):
+    """The shell lines predict mode runs, comments stripped."""
+    start = text.index('inputs.mode }}" = "predict" ]; then')
+    rest = text[start:]
+    end = rest.index("\n          elif ")
+    return "\n".join(l for l in rest[:end].splitlines()
+                     if not l.lstrip().startswith("#"))
+
+
+def test_predict_mode_writes_the_real_prediction_log():
+    """The step points PREDICTIONS_LOG at scratch so experiments cannot log.
+    Predict mode inherited that, so every pick the runner made before a fight
+    was written to /tmp and thrown away with the runner: the track record
+    never saw one. Predict must run the engine on its own default log."""
+    block = _predict_block(WORKFLOW.read_text())
+    assert "env -u PREDICTIONS_LOG python engine/predict_card.py" in block
+
+
+def test_the_log_path_committed_is_the_one_the_engine_writes_by_default():
+    import build_app_data
+    relative = build_app_data.HISTORY.relative_to(ENGINE.parent).as_posix()
+    assert relative in MUST_PERSIST
+    assert relative in WORKFLOW.read_text()
+
+
+def test_predict_mode_rebuilds_the_standalone_file_after_the_app_data():
+    """yourmma.html embeds card.json and the other app files; a refreshed
+    card with a stale standalone file shows the phone last week's fights,
+    and one built before build_app_data embeds last run's record."""
+    text = WORKFLOW.read_text()
+    start = text.index("- name: Refresh the app data")
+    step = text[start:text.index("\n      - name:", start + 10)]
+    code = "\n".join(l for l in step.splitlines() if not l.lstrip().startswith("#"))
+    assert 'inputs.mode }}" = "predict" ]' in code
+    assert code.index("engine/build_app_data.py") < code.index("engine/build_standalone.py")
+    assert text.index("- name: Refresh the app data") < text.index("- name: Commit the app data")
+
+
+def test_fight_week_can_buy_a_fresh_price():
+    """The cache makes no call while every fight is priced, so without an
+    override a fight-eve run reuses lines from days before."""
+    text = WORKFLOW.read_text()
+    assert re.search(r"^      refresh_odds:\n(?:        .*\n)*?        type: boolean", text, re.M)
+    block = _predict_block(text)
+    assert 'inputs.refresh_odds }}" = "true"' in block
+    assert "export ODDS_REFRESH=1" in block
+
+
+def test_a_push_that_never_lands_fails_the_run():
+    """The retry loop's status is sleep's; three rejections ended green with
+    the run's picks and paid-for prices thrown away."""
+    text = WORKFLOW.read_text()
+    loops = text.count("for attempt in 1 2 3")
+    assert loops and text.count('echo "::error::push failed after 3 rebases"') == loops
