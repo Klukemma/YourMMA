@@ -224,3 +224,25 @@ def test_a_strategy_that_placed_no_bets_serialises_as_null_not_a_crash():
     payload = {"strategies": [{k: ax._clean(v) for k, v in empty.items()}]}
     text = json.dumps(payload, allow_nan=False)   # must not raise
     assert json.loads(text)["strategies"][0]["roi"] is None
+
+
+def test_the_app_shows_the_intel_the_card_carries():
+    """The export carried fight-week news for every card and the app never
+    read it: the scouting was invisible on the phone."""
+    from pathlib import Path
+    app = (Path(__file__).resolve().parents[2] / "app" / "app.js").read_text()
+    import app_export as ax
+    payload = ax.card_payload("E", "2026-01-01",
+                              [{"number": 1, "red": "A", "blue": "B", "pick": "A",
+                                "intel": []}])
+    assert "intel" in payload["fights"][0] and "intel" in payload["caveats"]
+    assert "f.intel" in app and "d.caveats.intel" in app
+    assert "shown, not applied" in app
+
+
+def test_the_fight_clock_never_prints_sixty_seconds():
+    import re
+    from pathlib import Path
+    app = (Path(__file__).resolve().parents[2] / "app" / "app.js").read_text()
+    body = re.search(r"const clock = \(s\) => \{(.*?)\n\};", app, re.S).group(1)
+    assert "Math.round(s)" in body and "t % 60" in body

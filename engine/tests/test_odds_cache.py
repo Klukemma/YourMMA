@@ -274,3 +274,155 @@ def test_nothing_settled_writes_nothing(tmp_path):
     csv = tmp_path / "odds.csv"
     assert oc.flush_settled(_primed(), csv, before="2026-10-01") == 0
     assert not csv.exists()
+
+
+# --- the line a run is priced at -------------------------------------------
+
+def _moved():
+    """The primed Pereira fight, re-fetched later at a moved line."""
+    cache = _primed()
+    oc.merge(cache, oc.parse_events([event("Alex Pereira", "Magomed Ankalaev",
+                                           "2026-10-04", (-260, 210))]),
+             now="2026-10-03T00:00:00Z")
+    return cache
+
+
+def test_a_refreshed_line_is_the_one_the_card_is_priced_at():
+    """A fight-eve refresh bought today's line and the card kept serving the
+    first one: the credit was spent and the app showed a five-day-old price."""
+    served = oc.as_current_odds(_moved())
+    assert served["alex pereira"]["best_odds"] == -260
+    assert served["magomed ankalaev"]["best_odds"] == 210
+    assert served["alex pereira"]["cached_at"] == "2026-10-03T00:00:00Z"
+
+
+def test_the_first_seen_price_is_kept_as_history():
+    cache = _moved()
+    key = oc.fight_key("Alex Pereira", "Magomed Ankalaev", "2026-10-04")
+    assert cache["fights"][key]["odds_a"] == -150
+    assert cache["fights"][key]["first_seen"] != cache["fights"][key]["latest_seen"]
+
+
+def test_a_line_that_moves_back_is_recorded_as_moved_back():
+    """Recording latest only when it differs from the FIRST price leaves a
+    moved-away line as 'latest' after the market returns."""
+    cache = _moved()
+    oc.merge(cache, oc.parse_events([event("Alex Pereira", "Magomed Ankalaev",
+                                           "2026-10-04", (-150, 130))]),
+             now="2026-10-04T00:00:00Z")
+    assert oc.as_current_odds(cache)["alex pereira"]["best_odds"] == -150
+
+
+def test_a_settled_fight_is_scored_at_the_last_line_seen():
+    """The graded pick is the newest one logged, made at the newest line."""
+    rows = oc.settled_rows(_moved(), before="2026-11-01")
+    row = next(r for r in rows if "Pereira" in (r["fighter_a"] + r["fighter_b"]))
+    a_is_pereira = row["fighter_a"] == "Alex Pereira"
+    assert (row["odds_a"], row["odds_b"]) == ((-260, 210) if a_is_pereira else (210, -260))
+
+
+# --- finding the card's fights in the cache ---------------------------------
+
+def test_a_us_evening_card_filed_under_the_next_utc_day_is_found():
+    """The feed dates a fight by its UTC start; the card by the local date.
+    Every predict run for an evening card bought a credit for prices it had."""
+    cache = oc.empty()
+    oc.merge(cache, oc.parse_events([event("Brendan Allen", "Christian Leroy Duncan",
+                                           "2026-10-11", (-133, 120))]))
+    card = [("Brendan Allen", "Christian Leroy Duncan", "2026-10-10")]
+    assert oc.missing(card, cache) == []
+    should, why = oc.decide(card, cache)
+    assert should is False, why
+
+
+def test_a_rematch_two_days_away_is_a_different_fight():
+    cache = oc.empty()
+    oc.merge(cache, oc.parse_events([event("Brendan Allen", "Christian Leroy Duncan",
+                                           "2026-10-12", (-133, 120))]))
+    assert oc.missing([("Brendan Allen", "Christian Leroy Duncan", "2026-10-10")], cache)
+
+
+def test_a_generational_suffix_does_not_hide_a_priced_fight():
+    cache = oc.empty()
+    oc.merge(cache, oc.parse_events([event("Andre Fili", "Kai Kamaka",
+                                           "2026-10-11", (-150, 132))]))
+    assert oc.missing([("Andre Fili", "Kai Kamaka III", "2026-10-10")], cache) == []
+
+
+def test_staleness_is_measured_from_the_line_a_run_would_serve():
+    cache = _moved()
+    entry = cache["fights"][oc.fight_key("Alex Pereira", "Magomed Ankalaev", "2026-10-04")]
+    assert oc.age_days(entry, now="2026-10-04T00:00:00Z") == pytest.approx(1.0)
+
+
+def test_a_bout_re_dated_across_utc_midnight_refreshes_its_own_entry(tmp_path):
+    """A second key for the same bout loads first after a save (sort_keys) and
+    a later run served the stale line from it."""
+    cache = _primed()
+    moved = oc.parse_events([event("Alex Pereira", "Magomed Ankalaev",
+                                   "2026-10-03", (-260, 210))])
+    added, refreshed = oc.merge(cache, moved, now="2026-10-02T00:00:00Z")
+    assert (added, refreshed) == (0, 1)
+    path = oc.save(cache, tmp_path / "cache.json")
+    served = oc.as_current_odds(oc.load(path))
+    assert served["alex pereira"]["best_odds"] == -260
+
+
+def test_a_fight_already_under_way_is_never_priced():
+    """An in-play line is not a pre-fight price: served, blended and
+    exported as the close, it would score the card at a knockdown's odds."""
+    cache = _primed()
+    live = oc.parse_events([event("Alex Pereira", "Magomed Ankalaev",
+                                  "2026-10-04", (-2500, 1200)),
+                            event("New Fighter", "Other Fighter",
+                                  "2026-10-04", (-110, -110))])
+    added, refreshed = oc.merge(cache, live, now="2026-10-04T03:00:00Z")
+    assert (added, refreshed) == (0, 0)
+    assert oc.as_current_odds(cache)["alex pereira"]["best_odds"] == -150
+
+
+def _two_fights_for_one_fighter():
+    cache = oc.empty()
+    oc.merge(cache, oc.parse_events([
+        event("Ilia Topuria", "Justin Gaethje", "2026-12-31", (-250, 210)),
+        event("Arman Tsarukyan", "Justin Gaethje", "2028-07-30", (-450, 350))]),
+        now="2026-10-01T00:00:00Z")
+    return cache
+
+
+def test_a_card_bout_is_priced_from_its_own_entry():
+    """Keyed by name alone, Gaethje was served his 2028 line against
+    Tsarukyan on a card where he fights Topuria."""
+    served = oc.for_card(_two_fights_for_one_fighter(),
+                         [("Ilia Topuria", "Justin Gaethje", "2026-12-31")])
+    assert served["justin gaethje"]["best_odds"] == 210
+    assert served["justin gaethje"]["opponent"] == "Ilia Topuria"
+
+
+def test_a_card_fighter_whose_bout_is_not_on_file_gets_no_price():
+    served = oc.for_card(_two_fights_for_one_fighter(),
+                         [("Justin Gaethje", "Someone New", "2027-03-01")],
+                         existing={"justin gaethje": {"best_odds": 999}})
+    assert "justin gaethje" not in served
+
+
+
+def test_an_unreadable_start_time_does_not_crash_the_fetch():
+    cache = _primed()
+    parsed = oc.parse_events([event("Alex Pereira", "Magomed Ankalaev",
+                                    "2026-10-04", (-200, 170))])
+    for entry in parsed.values():
+        entry["commence_time"] = "not a time"
+    assert oc.merge(cache, parsed, now="2026-10-02T00:00:00Z") == (0, 1)
+
+
+
+def test_a_missing_bout_reaches_none_of_its_fighters_other_fights():
+    """Popping only the exact feed name left 'kai kamaka' from another bout
+    for the matcher to find under 'Kai Kamaka III'."""
+    cache = oc.empty()
+    oc.merge(cache, oc.parse_events([event("Kai Kamaka", "Someone Else",
+                                           "2027-02-01", (-120, 100))]),
+             now="2026-10-01T00:00:00Z")
+    served = oc.for_card(cache, [("Andre Fili", "Kai Kamaka III", "2026-10-10")])
+    assert "kai kamaka" not in served and "someone else" in served

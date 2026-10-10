@@ -16,8 +16,13 @@ const pct = (x, d = 0) => (x == null ? "—" : `${(x * 100).toFixed(d)}%`);
 const signed = (x, d = 1) =>
   x == null ? "—" : `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(d)}`;
 const num = (x, d = 2) => (x == null ? "—" : x.toFixed(d));
-const clock = (s) =>
-  s == null ? "—" : `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, "0")}`;
+// Round the whole duration first: rounding only the seconds printed 599.6 s
+// as "9:60".
+const clock = (s) => {
+  if (s == null) return "—";
+  const t = Math.round(s);
+  return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+};
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -108,8 +113,41 @@ const segment = (cls, v, label) =>
     ? `<i class="${cls}" style="flex:${v}">${label} ${Math.round(v * 100)}</i>`
     : `<i class="${cls}" style="flex:${v}"></i>`;
 
+// Fight-week news the scout gathered before the bell (engine/fight_intel.py).
+// SHOWN, NEVER APPLIED: every soft factor the engine has measured - short
+// notice, a recent withdrawal, a known injury, a missed weight - is inside
+// the noise, so none of it moves the number above it. It is here so a reader
+// knows what the model cannot see.
+const KIND_LABEL = {
+  injury: "Injury", short_notice: "Short notice", hard_weight_cut: "Hard weight cut",
+  missed_weight: "Missed weight", new_camp: "New camp", layoff_return: "Back from a layoff",
+  personal: "Personal", opponent_switch: "Opponent changed", motivation: "Motivation",
+  confidence: "Confidence", other: "Note",
+};
+const sourceHost = (u) => {
+  try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return "source"; }
+};
+function newsBlock(news) {
+  if (!news.length) return "";
+  const items = news.map((o) => {
+    const safe = /^https?:\/\//.test(o.source || "");
+    const link = safe
+      ? ` <a href="${esc(o.source)}" target="_blank" rel="noopener noreferrer">${esc(sourceHost(o.source))}</a>`
+      : "";
+    return `<li><b>${esc(o.fighter)}</b> · ${esc(KIND_LABEL[o.kind] || o.kind)}${
+      o.confidence && o.confidence !== "reported" ? ` (${esc(o.confidence)})` : ""}${
+      o.replaced_opponent ? ` · originally ${esc(o.replaced_opponent)}` : ""}
+      <div class="mini">${esc(o.note)}${link}</div></li>`;
+  }).join("");
+  return `<div class="news">
+      <div class="eyebrow">Fight-week news · shown, not applied</div>
+      <ul class="plain news">${items}</ul>
+    </div>`;
+}
+
 function boutRow(f) {
   const p = f.win_prob;
+  const news = Array.isArray(f.intel) ? f.intel : [];
   const redPicked = f.pick === f.red;
   // The bar is the corners, which is what the sport actually calls them.
   const redShare = p == null ? null : (redPicked ? p : 1 - p);
@@ -142,6 +180,8 @@ function boutRow(f) {
   }
   if (f.odds != null)
     tags.push(`<span class="tag flat num">${f.odds > 0 ? "+" : ""}${f.odds}</span>`);
+  if (news.length)
+    tags.push(`<span class="tag warn" title="Fight-week news - shown, not applied">News ${news.length}</span>`);
   // The second layer. Shown on every scored pick, not only the flagged ones:
   // "the model thinks it is right about this" is information too. A pick it
   // could not score gets no tag at all rather than a reassuring one.
@@ -203,6 +243,7 @@ function boutRow(f) {
          Those rates were not measured for these fighters.</div>` : "";
     detail = `
       <div class="detail">
+        ${newsBlock(news)}
         <div>
           <div class="eyebrow">Simulated ${(sim.simulations || 0).toLocaleString()} times</div>
           <dl class="kv">
@@ -228,7 +269,7 @@ function boutRow(f) {
         ${assumed}
       </div>`;
   } else {
-    detail = `<div class="detail">${methodModel}<div class="mini">
+    detail = `<div class="detail">${newsBlock(news)}${methodModel}<div class="mini">
       No simulation: too much of these fighters' record is unmeasured, so the
       only honest answer is nothing.</div></div>`;
   }
@@ -292,6 +333,8 @@ BOOT.card = async () => {
     </div>
     <div class="note warnbox">${esc(d.caveats.model)}</div>
     ${doubtCard(d.fights, d.caveats.flag)}
+    ${d.caveats.intel && d.fights.some((f) => Array.isArray(f.intel) && f.intel.length)
+      ? `<div class="note">${esc(d.caveats.intel)}</div>` : ""}
     <div class="bouts">${d.fights.map(boutRow).join("")}</div>
     ${skipped}
     ${parlayCard(d.parlays, d.caveats.parlay)}

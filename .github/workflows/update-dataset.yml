@@ -14,6 +14,10 @@ on:
         description: "sync only: report what would change without committing"
         type: boolean
         default: false
+      refresh_odds:
+        description: "predict only: buy today's prices even if every fight already has one on file (fight week; one API credit)"
+        type: boolean
+        default: false
       experiment:
         description: "experiment mode: which engine/experiments/*.py to run"
         type: choice
@@ -199,7 +203,18 @@ jobs:
               echo "::warning::odds, edge or value. Add it under Settings ->"
               echo "::warning::Secrets and variables -> Actions."
             fi
-            python engine/predict_card.py 2>&1 | tee sync.log
+            # The odds cache makes no call while every fight has a price on
+            # file, so a run in fight week would score the card against lines
+            # taken days earlier. refresh_odds buys today's (one credit).
+            if [ "${{ inputs.refresh_odds }}" = "true" ]; then
+              export ODDS_REFRESH=1
+            fi
+            # THE PICKS ARE THE TRACK RECORD. The step sends PREDICTIONS_LOG to
+            # scratch so experiments that import the engine cannot log; predict
+            # mode is the one run whose picks are made before the fight, so it
+            # writes the engine's own log (its default path), which is
+            # committed below and graded once the results land.
+            env -u PREDICTIONS_LOG python engine/predict_card.py 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "experiment" ]; then
             # Model experiments need ~10 uninterrupted minutes, which the dev
             # container cannot give: it suspends between turns and kills them.
@@ -263,19 +278,33 @@ jobs:
           # a harvest of 297 gathered labels was lost to exactly this. The
           # commit only ever touches generated data files, so replaying it
           # on top of whatever arrived meanwhile is safe.
+          pushed=0
           for attempt in 1 2 3; do
-            git push && break
+            git push && { pushed=1; break; }
             echo "push rejected, rebasing onto the branch (attempt $attempt)"
             git pull --rebase --autostash origin "$(git rev-parse --abbrev-ref HEAD)" || exit 1
             sleep $((attempt * 3))
           done
+          # The loop's status is sleep's, so three rejections would end green
+          # with the run's work - picks, paid-for prices - thrown away.
+          if [ "$pushed" != 1 ]; then
+            git push || { echo "::error::push failed after 3 rebases"; exit 1; }
+          fi
 
       # The phone app reads these files. Rebuilt whenever the dataset or the
       # experiment output moved, so the app never shows numbers from a data
       # pull two weeks older than the one the engine is using.
       - name: Refresh the app data
         if: ${{ !inputs.dry_run }}
-        run: python engine/build_app_data.py
+        run: |
+          python engine/build_app_data.py
+          # The phone's standalone file carries the card and these files
+          # inside it, so after predict mode writes a new card it is stale
+          # until rebuilt - here, after build_app_data, so it embeds this
+          # run's fighters, record and card rather than the last run's.
+          if [ "${{ inputs.mode }}" = "predict" ]; then
+            python engine/build_standalone.py
+          fi
 
       # predict mode writes app/data/card.json itself, at the end of the run.
       #
@@ -289,7 +318,7 @@ jobs:
       - name: Commit the app data
         if: ${{ !inputs.dry_run }}
         run: |
-          PATHS="app/data/ engine/data/odds_cache.json engine/data/odds.csv engine/data/opening_odds.csv engine/data/ufc_rounds.csv.gz engine/data/method_odds.csv engine/data/fight_changes.csv engine/data/intel_history.csv engine/data/intel_history_scouted.csv engine/data/intel_history_pending.csv engine/data/intel_scout_log.csv engine/data/injury_sentences.jsonl.gz engine/data/injury_pages.csv engine/data/world_year_pages.json engine/data/world_bouts.csv.gz engine/data/fighter_profiles.jsonl.gz engine/data/world_pages.csv engine/data/fight_night_weights.csv engine/data/sherdog_records.jsonl.gz engine/data/sherdog_ufc_records.jsonl.gz engine/data/world_model_contender.json engine/tests/fixtures/wiki/ engine/tests/fixtures/sherdog/ engine/tests/fixtures/ufcstats/"
+          PATHS="app/data/ app/yourmma.html engine/data/prediction_history.json engine/data/odds_cache.json engine/data/odds.csv engine/data/opening_odds.csv engine/data/ufc_rounds.csv.gz engine/data/method_odds.csv engine/data/fight_changes.csv engine/data/intel_history.csv engine/data/intel_history_scouted.csv engine/data/intel_history_pending.csv engine/data/intel_scout_log.csv engine/data/injury_sentences.jsonl.gz engine/data/injury_pages.csv engine/data/world_year_pages.json engine/data/world_bouts.csv.gz engine/data/fighter_profiles.jsonl.gz engine/data/world_pages.csv engine/data/fight_night_weights.csv engine/data/sherdog_records.jsonl.gz engine/data/sherdog_ufc_records.jsonl.gz engine/data/world_model_contender.json engine/tests/fixtures/wiki/ engine/tests/fixtures/sherdog/ engine/tests/fixtures/ufcstats/"
           if [ -z "$(git status --porcelain -- $PATHS)" ]; then
             echo "App data and odds unchanged."
             exit 0
@@ -320,12 +349,18 @@ jobs:
           # a harvest of 297 gathered labels was lost to exactly this. The
           # commit only ever touches generated data files, so replaying it
           # on top of whatever arrived meanwhile is safe.
+          pushed=0
           for attempt in 1 2 3; do
-            git push && break
+            git push && { pushed=1; break; }
             echo "push rejected, rebasing onto the branch (attempt $attempt)"
             git pull --rebase --autostash origin "$(git rev-parse --abbrev-ref HEAD)" || exit 1
             sleep $((attempt * 3))
           done
+          # The loop's status is sleep's, so three rejections would end green
+          # with the run's work - picks, paid-for prices - thrown away.
+          if [ "$pushed" != 1 ]; then
+            git push || { echo "::error::push failed after 3 rebases"; exit 1; }
+          fi
 
       - name: Commit experiment output
         if: ${{ inputs.mode == 'experiment' || inputs.mode == 'backtest' }}
@@ -344,12 +379,18 @@ jobs:
           # a harvest of 297 gathered labels was lost to exactly this. The
           # commit only ever touches generated data files, so replaying it
           # on top of whatever arrived meanwhile is safe.
+          pushed=0
           for attempt in 1 2 3; do
-            git push && break
+            git push && { pushed=1; break; }
             echo "push rejected, rebasing onto the branch (attempt $attempt)"
             git pull --rebase --autostash origin "$(git rev-parse --abbrev-ref HEAD)" || exit 1
             sleep $((attempt * 3))
           done
+          # The loop's status is sleep's, so three rejections would end green
+          # with the run's work - picks, paid-for prices - thrown away.
+          if [ "$pushed" != 1 ]; then
+            git push || { echo "::error::push failed after 3 rebases"; exit 1; }
+          fi
 
       - name: Upload sync log
         if: always()
