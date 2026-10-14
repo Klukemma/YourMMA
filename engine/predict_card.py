@@ -3892,17 +3892,18 @@ except Exception as _err:                                      # noqa: BLE001
 # Each fighter's pro record and last five, for the app beside the name. A
 # reader's aid, not a model input: a failure here - or in the intel store
 # above - must never cost the card, so each degrades to "not shown" alone.
+_form_ready = False
 try:
     import fighter_form as _form
     _form_sherdog = _form.load_sherdog()
     _form_archive = _form.load_archive(UFC_CSV)
+    _form_ready = True
 except Exception as _err:                                      # noqa: BLE001
-    _form = None
     print(f"   [form] records unavailable: {_err}")
 
 
 def _form_of(name):
-    if _form is None:
+    if not _form_ready:
         return None
     try:
         return _form.form(name, EVENT_DATE, _form_sherdog, _form_archive)
