@@ -95,3 +95,17 @@ def test_a_card_lookup_covers_everyone_on_the_card_with_bouts_to_check(tmp_path)
     targets = hs.card_targets(source, archive)
     assert targets["Ann Vet"] == [("2026-01-01", "Cat Old"), ("2025-01-01", "Cat Old")]
     assert targets["Bea New"] == []        # a debutant: name-only, unverified
+
+
+def test_a_card_fighter_is_also_searched_under_sherdogs_spelling(monkeypatch):
+    tried = []
+
+    def fake_find(name, agent, bouts=(), tries=3):
+        tried.append(name)
+        return {"id": 1, "record": []} if name == "Cristian Perez Gonzalez" else None
+
+    monkeypatch.setattr(hs.sherdog, "find", fake_find)
+    assert hs.find_any("Cristian Perez", "agent", [])["id"] == 1
+    assert tried == ["Cristian Perez", "Cristian Perez Gonzalez"]
+    tried.clear()
+    assert hs.find_any("Nobody Known", "agent", []) is None and tried == ["Nobody Known"]

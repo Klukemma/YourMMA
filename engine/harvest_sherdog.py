@@ -87,6 +87,24 @@ def ufc_debuts(path=None):
 PREDICT_CARD = ENGINE / "predict_card.py"
 CARD_VERIFY_BOUTS = 3
 
+# How Sherdog spells a fighter where it differs from the card: tried in order
+# after the card's own spelling. The record is still verified against the
+# fighter's UFC bouts when there are any, so a wrong alias finds nothing
+# rather than somebody else.
+SEARCH_AS = {
+    "Cristian Perez": ["Cristian Perez Gonzalez"],
+    "SuYoung You": ["Su Young You", "Suyoung You", "Su-Young You"],
+}
+
+
+def find_any(name, agent, bouts):
+    """sherdog.find under the card's spelling, then each SEARCH_AS spelling."""
+    for spelling in [name] + SEARCH_AS.get(name, []):
+        hit = sherdog.find(spelling, agent, bouts)
+        if hit:
+            return hit
+    return None
+
 
 def card_fighters(source=None):
     """(event_date, [names]) on predict_card's FIGHT_CARD, read from the source
@@ -184,7 +202,8 @@ def main(argv=None):
             print("  time budget spent - the next run carries on")
             break
         try:
-            hit = sherdog.find(name, AGENT, targets[name])
+            hit = (find_any(name, AGENT, targets[name]) if args.card
+                   else sherdog.find(name, AGENT, targets[name]))
             errors = 0
         except (urllib.error.URLError, OSError, TimeoutError) as err:
             errors += 1
