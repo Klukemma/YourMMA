@@ -30,14 +30,20 @@ import fighter_form as ff
     ("No Contest (Accidental Eye Poke)", "1", "NC"), ("Overturned", 2, "NC"),
     ("Could Not Continue", 1, "NC"), ("N/A", "1", "??"), (None, None, "??"),
     ("KO (Punch)", "0", "K?"), ("Submission", None, "S?"),
+    ("TKO (Submission to Punches)", "1", "K1"),
+    ("TKO (Submission to Leg Kicks and Punches)", "1", "K1"),
+    ("No Decision (Overturned by NSAC)", "3", "NC"),
+    ("ND (Decision Overturned by NSAC)", "3", "NC"),
+    ("No Decision - Overturned by CSAC", "2", "NC"),
+    ("Technical Draw (Majority)", "2", "DC"),
 ])
 def test_how_a_bout_ended_is_two_characters(method, rnd, code):
     assert ff.method_code(method, rnd) == code
 
 
-def _sherdog(record, verified=True):
+def _sherdog(record, verified=True, looked_up="2026-10-02"):
     return {"Sam Fighter": {"target": "Sam Fighter", "id": 1, "verified": verified,
-                            "looked_up": "2026-10-02", "record": record}}
+                            "looked_up": looked_up, "record": record}}
 
 
 def _bout(day, result, method="Decision (Unanimous)", rnd="3", opponent="Other Guy"):
@@ -72,15 +78,28 @@ def _archive(rows):
                                        "method", "finish_round", "event_name"])
 
 
-def test_a_ufc_bout_newer_than_the_sherdog_record_is_added_once():
-    rec = [_bout("2026-01-01", "win", opponent="Old Foe")]
+def test_only_ufc_bouts_after_the_sherdog_lookup_are_added_and_once():
+    """The record was complete on the day it was read: a UFC bout before
+    that is already in it under another spelling ('Sopai'/'Sopaj') and was
+    counted twice."""
+    rec = [_bout("2026-01-01", "win", opponent="Bernardo Sopai")]
     arch = _archive([
-        ["2026-01-02", "Sam Fighter", "Jo Old Foe", "Sam Fighter", "U-DEC", 3, "UFC X"],  # same bout, a day off
-        ["2026-05-09", "New Rival", "Sam Fighter", "New Rival", "KO/TKO", 2, "UFC Y"]])
-    out = ff.form("Sam Fighter", "2026-10-17", _sherdog(rec), arch)
+        ["2026-01-01", "Sam Fighter", "Benardo Sopaj", "Sam Fighter", "U-DEC", 3, "UFC X"],
+        ["2026-05-09", "New Rival", "Sam Fighter", "New Rival", "KO/TKO", 2, "UFC Y"],
+        ["2026-05-10", "Sam Fighter", "New Rival", "New Rival", "KO/TKO", 2, "UFC Y"]])  # same bout, a day off
+    out = ff.form("Sam Fighter", "2026-10-17", _sherdog(rec, looked_up="2026-02-01"), arch)
     assert out["record"] == {"wins": 1, "losses": 1, "draws": 0, "nc": 0}
     assert [(b["result"], b["code"], b["opponent"]) for b in out["last5"]] == [
-        ("L", "K2", "New Rival"), ("W", "DC", "Old Foe")]
+        ("L", "K2", "New Rival"), ("W", "DC", "Bernardo Sopai")]
+
+
+def test_a_namesakes_ufc_bouts_never_enter_a_verified_record():
+    """The archive's 'Bruno Silva' is two men; the Sherdog row is one."""
+    rec = [_bout("2025-06-07", "win", opponent="Joshua Van")]
+    arch = _archive([["2025-05-10", "Marc-Andre Barriault", "Sam Fighter",
+                      "Marc-Andre Barriault", "KO/TKO", 1, "UFC Z"]])
+    out = ff.form("Sam Fighter", "2026-10-17", _sherdog(rec), arch)
+    assert out["record"] == {"wins": 1, "losses": 0, "draws": 0, "nc": 0}
 
 
 def test_without_sherdog_the_ufc_bouts_alone_are_marked_ufc():

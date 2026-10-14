@@ -3883,28 +3883,32 @@ import app_export as _app_export
 try:
     import fight_intel as _intel
     _intel_store = _intel.load()
-    # Each fighter's pro record and last five, for the app beside the name.
-    # A reader's aid, not a model input; a failure here must never cost the
-    # card, so it degrades to "not shown".
-    import fighter_form as _form
-    try:
-        _form_sherdog = _form.load_sherdog()
-        _form_archive = _form.load_archive(UFC_CSV)
-    except Exception as _err:                      # pragma: no cover
-        print(f"   [form] records unavailable: {_err}")
-        _form_sherdog, _form_archive = {}, None
-
-    def _form_of(name):
-        try:
-            return _form.form(name, EVENT_DATE, _form_sherdog, _form_archive)
-        except Exception as _err:                  # pragma: no cover
-            print(f"   [form] {name}: {_err}")
-            return None
     print(f"    Scouted intel on file: "
           f"{len(_intel_store['observations'])} observation(s).")
 except Exception as _err:                                      # noqa: BLE001
     _intel_store = None
     print(f"    No intel store ({type(_err).__name__}); the card carries none.")
+
+# Each fighter's pro record and last five, for the app beside the name. A
+# reader's aid, not a model input: a failure here - or in the intel store
+# above - must never cost the card, so each degrades to "not shown" alone.
+try:
+    import fighter_form as _form
+    _form_sherdog = _form.load_sherdog()
+    _form_archive = _form.load_archive(UFC_CSV)
+except Exception as _err:                                      # noqa: BLE001
+    _form = None
+    print(f"   [form] records unavailable: {_err}")
+
+
+def _form_of(name):
+    if _form is None:
+        return None
+    try:
+        return _form.form(name, EVENT_DATE, _form_sherdog, _form_archive)
+    except Exception as _err:                                  # noqa: BLE001
+        print(f"   [form] {name}: {_err}")
+        return None
 
 _app_fights = []
 for _ba in bet_analysis:

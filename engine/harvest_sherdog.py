@@ -98,8 +98,11 @@ SEARCH_AS = {
 
 
 def find_any(name, agent, bouts):
-    """sherdog.find under the card's spelling, then each SEARCH_AS spelling."""
-    for spelling in [name] + SEARCH_AS.get(name, []):
+    """sherdog.find under each SEARCH_AS spelling, then the card's own.
+
+    Sherdog's spelling first: when the card's spelling is a different,
+    real fighter's name (a namesake), searching it first would take them."""
+    for spelling in SEARCH_AS.get(name, []) + [name]:
         hit = sherdog.find(spelling, agent, bouts)
         if hit:
             return hit
@@ -136,14 +139,37 @@ def card_targets(source=None, archive=None):
     frame = frame.dropna()
     if event_date:
         frame = frame[frame["date"] < pd.Timestamp(event_date)]
+    world = _world_bouts(event_date)
     out = {}
     for name in names:
         rows = []
         for me, them in (("r_name", "b_name"), ("b_name", "r_name")):
             hit = frame[frame[me] == name]
             rows += [(str(d.date()), o) for d, o in zip(hit["date"], hit[them])]
+        if not rows:
+            # A UFC debutant: their Contender Series or regional bouts on
+            # file verify the record instead of a name-only match.
+            rows = world.get(name, [])
         out[name] = sorted(rows, reverse=True)[:CARD_VERIFY_BOUTS]
     return out
+
+
+def _world_bouts(before=None, path=None):
+    """{fighter: [(date, opponent), ...]} from world_bouts.csv.gz (Contender
+    Series and regional bouts), dated before `before`."""
+    path = Path(path or BOUTS)
+    if not path.exists():
+        return {}
+    frame = pd.read_csv(path, usecols=["date", "winner", "loser"], low_memory=False)
+    frame = frame.dropna(subset=["date", "winner", "loser"])
+    if before:
+        frame = frame[frame["date"].astype(str).str[:10] < str(before)[:10]]
+    out = defaultdict(list)
+    for bout in frame.itertuples():
+        day = str(bout.date)[:10]
+        out[bout.winner].append((day, bout.loser))
+        out[bout.loser].append((day, bout.winner))
+    return dict(out)
 
 
 def load(path=None):
@@ -215,11 +241,23 @@ def main(argv=None):
         first = min((d for d, _ in targets[name]), default=None)
         if args.card:
             previous = done.get(name) or {}
-            if not hit and previous.get("id"):
-                # Not found this time (a search hiccup, a renamed page): the
-                # record already on file is kept rather than erased.
-                print(f"  {name}: not found again - keeping the record on file")
+            if hit and previous.get("id") and hit.get("id") != previous["id"]:
+                # A different Sherdog fighter than the one on file. Which is
+                # right needs a person; neither silently replaces the other.
+                print(f"  {name}: CONFLICT - Sherdog {hit.get('id')} found, "
+                      f"{previous['id']} on file; keeping the one on file")
                 continue
+            if not hit and previous.get("id"):
+                if previous.get("verified"):
+                    # Not found this time (a search hiccup, a renamed page):
+                    # a verified record on file is kept rather than erased.
+                    print(f"  {name}: not found again - keeping the verified "
+                          f"record on file")
+                    continue
+                # A name-only match that no longer resolves - often a second
+                # page with the same name - is dropped: it may be the wrong
+                # person, and a wrong record is worse than none.
+                print(f"  {name}: name-only record no longer resolves - dropped")
             first = previous.get("first_ufc") or first
         done[name] = {"target": name,
                       "first_ufc" if (args.ufc_debuts or args.card) else "first_contender": first,

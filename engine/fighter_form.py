@@ -10,8 +10,8 @@ input. Two sources, in order:
             against - a UFC debutant) is marked unverified and the app says
             so, because a namesake's record is worse than no record.
   Archive   the UFC bouts in the dataset, used to extend a Sherdog record
-            that is older than the fighter's latest UFC bout, and on their
-            own (marked UFC-only) when Sherdog has nothing.
+            with bouts fought after it was looked up, and on their own
+            (marked UFC-only) when Sherdog has nothing.
 
 POINT IN TIME. Only bouts dated strictly before the card count, so a record
 harvested after a fight can never show its result on that fight's card.
@@ -39,25 +39,38 @@ SAME_BOUT_DAYS = 2
 
 
 def method_code(method, rnd=None):
-    """Two characters for how a bout ended: K1, S2, DC, DQ, NC or ??."""
+    """Two characters for how a bout ended: K1, S2, DC, DQ, NC or ??.
+
+    Classified on the words before any parenthesis first: Sherdog's
+    "TKO (Submission to Punches)" is a TKO - the opponent tapped to strikes -
+    and must not read as a submission.
+    """
     m = str(method or "").strip().lower()
+    head = m.split("(")[0].strip()
     r = str(rnd or "").strip()
     r = r if r.isdigit() and r != "0" else ""
     if not m or m in ("n/a", "nd"):
         return "??"
-    if m.startswith(("no contest", "nc", "overturned", "could not continue",
-                     "cnc")):
+    if (head.startswith(("no contest", "no decision", "overturned",
+                         "could not continue", "cnc"))
+            or head in ("nc", "nd") or m.startswith(("nd ", "nd(", "nc ", "nc("))):
         return "NC"
-    if m.startswith(("dq", "disqualification")):
+    if head.startswith(("dq", "disqualification")):
         return "DQ"
-    if "decision" in m or m.startswith(("u-dec", "s-dec", "m-dec", "dec",
-                                        "draw")):
-        return "DC"
-    if "submission" in m or m.startswith(("sub", "techinal sub")):
-        return f"S{r}" if r else "S?"
-    if (m.startswith(("ko", "tko", "k.o", "technical knockout"))
-            or "ko/tko" in m or "knockout" in m):
+    if (head.startswith(("ko", "tko", "k.o", "technical knockout"))
+            or "ko/tko" in head or "knockout" in head):
         return f"K{r}" if r else "K?"
+    if head.startswith(("submission", "sub", "technical submission",
+                        "techinal sub")):
+        return f"S{r}" if r else "S?"
+    if ("decision" in head or "draw" in head
+            or head.startswith(("u-dec", "s-dec", "m-dec", "dec"))):
+        return "DC"
+    # Nothing recognisable before a parenthesis: fall back to the whole text.
+    if "submission" in m:
+        return f"S{r}" if r else "S?"
+    if "decision" in m:
+        return "DC"
     return "??"
 
 
@@ -112,19 +125,28 @@ def archive_bouts(archive, name):
     return out
 
 
-def _merge(sherdog, ufc):
-    """Sherdog's record plus any UFC bout it does not already hold."""
+def _merge(sherdog, ufc, looked_up):
+    """Sherdog's record plus the UFC bouts fought AFTER it was read.
+
+    The Sherdog record was complete on the day it was looked up, so a UFC
+    bout dated before that is either already in it - under another spelling
+    of the opponent ("Sopai"/"Sopaj", "Darya"/"Daria") - or belongs to a
+    namesake sharing the dataset's name (the archive's "Bruno Silva" is two
+    men). Adding either would put a bout in the record that the fighter did
+    not have, so neither is added. Only bouts after the lookup are, once
+    each: nobody fights twice in two days.
+    """
     out = [dict(b, source="sherdog") for b in sherdog]
+    read = _day(looked_up)
     for bout in ufc:
         day = _day(bout["date"])
-        if day is None:
+        if day is None or read is None or day <= read:
             continue
-        dup = any(_surname(s.get("opponent")) == _surname(bout["opponent"])
-                  and _day(s.get("date")) is not None
-                  and abs((_day(s["date"]) - day).days) <= SAME_BOUT_DAYS
-                  for s in out)
-        if not dup:
-            out.append(bout)
+        if any(_day(s.get("date")) is not None
+               and abs((_day(s["date"]) - day).days) <= SAME_BOUT_DAYS
+               for s in out):
+            continue
+        out.append(bout)
     return out
 
 
@@ -137,7 +159,7 @@ def form(name, before, sherdog=None, archive=None):
     row = (sherdog or {}).get(name)
     ufc = archive_bouts(archive, name) if archive is not None else []
     if row:
-        bouts, source = _merge(row.get("record") or [], ufc), "sherdog"
+        bouts, source = _merge(row.get("record") or [], ufc, row.get("looked_up")), "sherdog"
     elif ufc:
         bouts, source = ufc, "ufc"
     else:
