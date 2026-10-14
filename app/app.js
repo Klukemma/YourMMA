@@ -145,6 +145,29 @@ function newsBlock(news) {
     </div>`;
 }
 
+// A fighter's pro record and last five results beside the name, newest on
+// the left: a green circle is a win, red a loss, grey a draw or no contest,
+// and the two letters say how it ended - K1 knockout in round 1, S2
+// submission in round 2, DC decision, DQ, NC. From Sherdog (the whole pro
+// career), or the UFC archive alone when Sherdog has nothing (marked UFC).
+// A record matched by name only - a debutant with no UFC bout to check it
+// against - is marked with an asterisk. Not a model input.
+const RESULT_WORD = { W: "Win", L: "Loss", D: "Draw", NC: "No contest" };
+function formLine(form) {
+  if (!form || !form.record) return `<span class="rec none">no record</span>`;
+  const r = form.record;
+  const text = `${r.wins}-${r.losses}${r.draws ? `-${r.draws}` : ""}${r.nc ? ` (${r.nc} NC)` : ""}`;
+  const marks = `${form.source === "ufc" ? ` <i class="src" title="UFC bouts only - no pro record found">UFC</i>` : ""}${
+    form.verified === false ? `<i class="src" title="Sherdog record matched by name only">*</i>` : ""}`;
+  const dots = (form.last5 || []).map((b) => {
+    const tip = `${RESULT_WORD[b.result] || b.result} · ${b.method || b.code}${
+      b.opponent ? ` · vs ${b.opponent}` : ""}${b.date ? ` · ${b.date}` : ""}${b.event ? ` · ${b.event}` : ""}`;
+    return `<b class="res ${esc(String(b.result).toLowerCase())}" title="${esc(tip)}"
+      aria-label="${esc(tip)}">${esc(b.code)}</b>`;
+  }).join("");
+  return `<span class="rec num">${esc(text)}${marks}</span><span class="last5">${dots}</span>`;
+}
+
 function boutRow(f) {
   const p = f.win_prob;
   const news = Array.isArray(f.intel) ? f.intel : [];
@@ -276,10 +299,9 @@ function boutRow(f) {
 
   return `<details class="bout">
     <summary>
-      <div class="names">
-        <span class="r">${esc(f.red)}</span>
-        <span class="vs">vs</span>
-        <span class="b">${esc(f.blue)}</span>
+      <div class="names form">
+        <div class="frow"><span class="r">${esc(f.red)}</span>${formLine(f.red_form)}</div>
+        <div class="frow"><span class="b">${esc(f.blue)}</span>${formLine(f.blue_form)}</div>
       </div>
       ${bar}
       <div class="readout">
@@ -318,10 +340,19 @@ BOOT.card = async () => {
   catch (e) { return fail(el, e, "the card"); }
 
   $("stamp").textContent = `data to ${d.dataset_end ?? "—"}`;
+  // A refused bout keeps both fighters' records: for a UFC debutant the pro
+  // record is all there is to go on, and the model has nothing to add.
+  const skipRow = (s) => s.red && s.blue
+    ? `<div class="names form skip">
+         <div class="frow"><span class="r">${esc(s.red)}</span>${formLine(s.red_form)}</div>
+         <div class="frow"><span class="b">${esc(s.blue)}</span>${formLine(s.blue_form)}</div>
+         <div class="mini">${esc(s.reason)}</div>
+       </div>`
+    : `<br>${esc(s.fight)} — ${esc(s.reason)}`;
   const skipped = d.skipped?.length
     ? `<div class="note"><b>Not predicted — ${d.skipped.length} of
         ${d.fights.length + d.skipped.length} fights.</b>
-        ${d.skipped.map((s) => `<br>${esc(s.fight)} — ${esc(s.reason)}`).join("")}
+        ${d.skipped.map(skipRow).join("")}
        </div>` : "";
 
   el.innerHTML = `

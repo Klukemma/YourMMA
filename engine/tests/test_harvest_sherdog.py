@@ -80,3 +80,18 @@ def test_a_ufc_card_confirms_a_record_without_a_surname_match():
             "method": "KO", "round": "1", "time": "1:00"}]
     assert sherdog.confirms(rec, "2024-02-17", "Joseph Blough")
     assert not sherdog.confirms(rec, "2024-05-17", "Joseph Blough")
+
+
+def test_a_card_lookup_covers_everyone_on_the_card_with_bouts_to_check(tmp_path):
+    source = tmp_path / "predict_card.py"
+    source.write_text('EVENT_DATE = "2026-10-17"\n'
+                      'FIGHT_CARD = [("Ann Vet", "Bea New", True, False), ("Cat Old", "Ann Vet")]\n')
+    archive = tmp_path / "a.csv"
+    pd.DataFrame({"date": ["2026-01-01", "2025-01-01", "2026-10-17"],
+                  "r_name": ["Ann Vet", "Cat Old", "Ann Vet"],
+                  "b_name": ["Cat Old", "Ann Vet", "Late Bout"]}).to_csv(archive, index=False)
+    event, names = hs.card_fighters(source)
+    assert event == "2026-10-17" and names == ["Ann Vet", "Bea New", "Cat Old"]
+    targets = hs.card_targets(source, archive)
+    assert targets["Ann Vet"] == [("2026-01-01", "Cat Old"), ("2025-01-01", "Cat Old")]
+    assert targets["Bea New"] == []        # a debutant: name-only, unverified

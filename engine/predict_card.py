@@ -50,8 +50,8 @@ RUN_OPTUNA = False
 # ==============================================================================
 # 2. EVENT DETAILS
 # ==============================================================================
-EVENT_NAME = "UFC Fight Night: Allen vs. Duncan"
-EVENT_DATE = "2026-10-10"  # Format: YYYY-MM-DD
+EVENT_NAME = "UFC Fight Night: Buckley vs. Malott"
+EVENT_DATE = "2026-10-17"  # Format: YYYY-MM-DD
 
 # ==============================================================================
 # 3. FIGHT CARD
@@ -61,23 +61,24 @@ EVENT_DATE = "2026-10-10"  # Format: YYYY-MM-DD
 # - is_title_fight: True if fighting for a championship
 
 FIGHT_CARD = [
-    # Main Event (5 rounds, non-title) - Middleweight
-    ("Brendan Allen", "Christian Leroy Duncan", True, False),  # 0 - Main Event, Middleweight (5 rounds)
+    # Main Event (5 rounds, non-title) - Welterweight
+    ("Joaquin Buckley", "Mike Malott", True, False),           # 0 - Main Event, Welterweight (5 rounds)
 
     # Main Card
-    ("Matheus Camilo", "Jai Herbert"),                         # 1 - Lightweight
-    ("Loopy Godinez", "Ketlen Souza"),                         # 2 - Women's Strawweight
-    ("Andre Fili", "Kai Kamaka III"),                          # 3 - Featherweight
-    ("Julius Walker", "Gerald Meerschaert"),                   # 4 - Light Heavyweight
-    ("Malcolm Wellmaker", "Otari Tanzilovi"),                  # 5 - Bantamweight
+    ("Erin Blanchfield", "Jasmine Jasudavicius"),              # 1 - Co-Main, Women's Flyweight
+    ("Kyle Nelson", "Cristian Perez"),                         # 2 - Lightweight (Perez, listed as Cristian Perez Gonzalez: UFC debut)
+    ("Marc-Andre Barriault", "Kyle Daukaus"),                  # 3 - Middleweight
+    ("Louis Jourdain", "Timmy Cuamba"),                        # 4 - Bantamweight (Jourdain: UFC debut, DWCS)
+    ("Mandel Nallo", "Nate Landwehr"),                         # 5 - Lightweight (Landwehr up from featherweight)
 
     # Preliminary Card
-    ("Francisco Prado", "Ismael Bonfim"),                      # 6 - Lightweight
-    ("Niko Price", "Leon Shahbazyan"),                         # 7 - Welterweight
-    ("Felipe Franco", "Brendson Ribeiro"),                     # 8 - Light Heavyweight
-    ("Allen Frye Jr.", "RJ Harris"),                           # 9 - Heavyweight
-    ("Alice Pereira", "Daria Zhelezniakova"),                  # 10 - Women's Bantamweight (the dataset's spelling; 4 UFC bouts, not a debut)
-    ("Ernesta Kareckaite", "Melissa Gatto"),                   # 11 - Women's Flyweight
+    ("Tanner Boser", "Jhonata Diniz"),                         # 6 - Heavyweight
+    ("Julien Leblanc", "Nick Galanti"),                        # 7 - Middleweight (Galanti replaced Gilbert Urbina; UFC debut)
+    ("Javad Mahjoub", "Joel Faglier"),                         # 8 - Heavyweight (Faglier replaced Louie Sutherland; both UFC debuts)
+    ("Katlyn Cerminara", "Mackenzie Stiller"),                 # 9 - Women's Flyweight (Stiller replaced the injured Jamey-Lyn Horth; UFC debut)
+    ("Chad Anheliger", "Steven Koslow"),                       # 10 - Bantamweight
+    ("Melissa Croden", "Chelsea Chandler"),                    # 11 - Women's Bantamweight
+    ("Cody Chovancek", "SuYoung You"),                         # 12 - Bantamweight (Chovancek: UFC debut)
 ]
 
 # ==============================================================================
@@ -86,12 +87,11 @@ FIGHT_CARD = [
 # Home advantage only counts when ONE fighter is home and the other is NOT.
 # If both fighters are "home" (e.g., both USA-based), no advantage.
 #
-# UFC Fight Night: Allen vs. Duncan - Meta Apex, Enterprise (Las Vegas), NV (SMALL cage)
+# UFC Fight Night: Buckley vs. Malott - Rogers Place, Edmonton, AB, Canada
+# (arena: the standard cage, so no cage_size)
 #
 # Home flags are left off this card: nobody's base was checked fight by
-# fight, and a guessed flag is worse than none.
-#
-# NOTE: All bouts at the Apex use the SMALL cage -> cage_size: 'small' for every fight.
+# fight, and a guessed flag is worse than none. Only the division is set.
 #
 # 'division' tells the model the weight class of the bout (e.g. 'lightweight',
 # "women's flyweight"). It feeds the weight-class features the model was
@@ -99,18 +99,19 @@ FIGHT_CARD = [
 # is wrong whenever one of them is changing class.
 
 FIGHT_CONTEXTS = {
-    0: {"division": "middleweight", 'cage_size': 'small'},
-    1: {"division": "lightweight", 'cage_size': 'small'},
-    2: {"division": "women's strawweight", 'cage_size': 'small'},
-    3: {"division": "featherweight", 'cage_size': 'small'},
-    4: {"division": "light heavyweight", 'cage_size': 'small'},
-    5: {"division": "bantamweight", 'cage_size': 'small'},
-    6: {"division": "lightweight", 'cage_size': 'small'},
-    7: {"division": "welterweight", 'cage_size': 'small'},
-    8: {"division": "light heavyweight", 'cage_size': 'small'},
-    9: {"division": "heavyweight", 'cage_size': 'small'},
-    10: {"division": "women's bantamweight", 'cage_size': 'small'},
-    11: {"division": "women's flyweight", 'cage_size': 'small'},
+    0: {"division": "welterweight"},
+    1: {"division": "women's flyweight"},
+    2: {"division": "lightweight"},
+    3: {"division": "middleweight"},
+    4: {"division": "bantamweight"},
+    5: {"division": "lightweight"},
+    6: {"division": "heavyweight"},
+    7: {"division": "middleweight"},
+    8: {"division": "heavyweight"},
+    9: {"division": "women's flyweight"},
+    10: {"division": "bantamweight"},
+    11: {"division": "women's bantamweight"},
+    12: {"division": "bantamweight"},
 }
 
 # ==============================================================================
@@ -3611,6 +3612,7 @@ for i, fight in enumerate(FIGHT_CARD):
     # A refusal never reaches bettability, Kelly sizing, parlays or the log.
     if pred.get('status') == 'NO_DATA':
         skipped_fights.append({'fight_num': i + 1, 'matchup': f"{red} vs {blue}",
+                               'red': red, 'blue': blue,
                                'problems': pred['problems']})
         print(f"\nFight {i+1}: {red} vs {blue}")
         for msg in pred['problems']:
@@ -3881,6 +3883,23 @@ import app_export as _app_export
 try:
     import fight_intel as _intel
     _intel_store = _intel.load()
+    # Each fighter's pro record and last five, for the app beside the name.
+    # A reader's aid, not a model input; a failure here must never cost the
+    # card, so it degrades to "not shown".
+    import fighter_form as _form
+    try:
+        _form_sherdog = _form.load_sherdog()
+        _form_archive = _form.load_archive(UFC_CSV)
+    except Exception as _err:                      # pragma: no cover
+        print(f"   [form] records unavailable: {_err}")
+        _form_sherdog, _form_archive = {}, None
+
+    def _form_of(name):
+        try:
+            return _form.form(name, EVENT_DATE, _form_sherdog, _form_archive)
+        except Exception as _err:                  # pragma: no cover
+            print(f"   [form] {name}: {_err}")
+            return None
     print(f"    Scouted intel on file: "
           f"{len(_intel_store['observations'])} observation(s).")
 except Exception as _err:                                      # noqa: BLE001
@@ -3923,6 +3942,8 @@ for _ba in bet_analysis:
         'intel': (_intel.for_fight(_intel_store, _pred['red'], _pred['blue'],
                                    EVENT_DATE, known_by=EVENT_DATE)
                   if _intel_store else []),
+        'red_form': _form_of(_pred['red']),
+        'blue_form': _form_of(_pred['blue']),
     })
 
 # ------------------------------------------------------------------ 2c
@@ -4047,8 +4068,13 @@ _app_card = _app_export.card_payload(
     # 'fight'/'reason' silently exported a pair of nulls and the app showed a
     # refusal with no fighters and no reason, which is worse than not showing
     # it - the reason is usually a misspelling the user can fix.
+    # A refused bout still shows both fighters' pro records: for a UFC
+    # debutant that record is all there is to go on.
     skipped=[{'fight': _s.get('matchup'),
-              'reason': ' '.join(_s.get('problems') or []) or None}
+              'reason': ' '.join(_s.get('problems') or []) or None,
+              'red': _s.get('red'), 'blue': _s.get('blue'),
+              'red_form': _form_of(_s.get('red')) if _s.get('red') else None,
+              'blue_form': _form_of(_s.get('blue')) if _s.get('blue') else None}
              for _s in skipped_fights],
     parlays=_app_export.parlay_payload(parlay_candidates),
     dataset_end=str(ufc_valid['date'].max().date()),

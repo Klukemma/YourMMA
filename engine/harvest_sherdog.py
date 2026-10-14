@@ -19,6 +19,9 @@ rewritten every SAVE_EVERY lookups, so a stopped run keeps its work.
                     verified against their first UFC bout, newest debuts
                     first; writes sherdog_ufc_records.jsonl.gz - the
                     pre-UFC careers a debut model is built from)
+    python engine/harvest_sherdog.py --card           (everyone on the
+                    current FIGHT_CARD, looked up again so the app's pro
+                    records and last five results are current)
 """
 
 import argparse
@@ -81,6 +84,50 @@ def ufc_debuts(path=None):
             sorted(first.items(), key=lambda kv: kv[1][0], reverse=True)}
 
 
+PREDICT_CARD = ENGINE / "predict_card.py"
+CARD_VERIFY_BOUTS = 3
+
+
+def card_fighters(source=None):
+    """(event_date, [names]) on predict_card's FIGHT_CARD, read from the source
+    text (importing predict_card trains every model)."""
+    import ast
+    tree = ast.parse(Path(source or PREDICT_CARD).read_text())
+    values = {}
+    for node in tree.body:
+        if (isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name)
+                and node.targets[0].id in ("FIGHT_CARD", "EVENT_DATE")):
+            values[node.targets[0].id] = ast.literal_eval(node.value)
+    names = []
+    for fight in values.get("FIGHT_CARD", []):
+        for name in fight[:2]:
+            if name not in names:
+                names.append(name)
+    return str(values.get("EVENT_DATE", ""))[:10], names
+
+
+def card_targets(source=None, archive=None):
+    """{fighter: [(date, opponent), ...]} for everyone on the current card,
+    with their latest UFC bouts before the card to verify a record against.
+    A UFC debutant gets none, and sherdog.find then accepts only a single
+    exact-name match, recorded as unverified."""
+    event_date, names = card_fighters(source)
+    frame = pd.read_csv(archive or ARCHIVE, usecols=["date", "r_name", "b_name"],
+                        low_memory=False)
+    frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
+    frame = frame.dropna()
+    if event_date:
+        frame = frame[frame["date"] < pd.Timestamp(event_date)]
+    out = {}
+    for name in names:
+        rows = []
+        for me, them in (("r_name", "b_name"), ("b_name", "r_name")):
+            hit = frame[frame[me] == name]
+            rows += [(str(d.date()), o) for d, o in zip(hit["date"], hit[them])]
+        out[name] = sorted(rows, reverse=True)[:CARD_VERIFY_BOUTS]
+    return out
+
+
 def load(path=None):
     path = path or OUT
     if not path.exists():
@@ -109,16 +156,25 @@ def main(argv=None):
     parser.add_argument("--ufc-debuts", action="store_true",
                         help="every UFC fighter, verified against their first "
                              "UFC bout, into sherdog_ufc_records.jsonl.gz")
+    parser.add_argument("--card", action="store_true",
+                        help="look up everyone on predict_card's FIGHT_CARD "
+                             "again, so the app's records and last five are "
+                             "current; debutants included")
     args = parser.parse_args(argv)
 
-    out = OUT_UFC if args.ufc_debuts else OUT
-    targets = ufc_debuts() if args.ufc_debuts else contender_appearances()
+    out = OUT_UFC if (args.ufc_debuts or args.card) else OUT
+    targets = (card_targets() if args.card else
+               ufc_debuts() if args.ufc_debuts else contender_appearances())
     for name in args.names:
         targets.setdefault(name, [])
     done = load(out)
-    order = list(targets) if args.ufc_debuts else sorted(targets)
+    order = list(targets) if (args.ufc_debuts or args.card) else sorted(targets)
+    # A card is looked up again whatever is on file: a record harvested weeks
+    # ago is missing the fighter's latest bouts, and it is the last five that
+    # the app shows.
     todo = [n for n in order
-            if n not in done or (args.retry_missing and not done[n].get("id"))]
+            if args.card or n not in done
+            or (args.retry_missing and not done[n].get("id"))]
     print(f"  {len(targets)} fighters, {len(done)} already looked up, "
           f"{len(todo)} to do")
     stop = time.time() + args.minutes * 60
@@ -138,8 +194,16 @@ def main(argv=None):
                 break
             continue
         first = min((d for d, _ in targets[name]), default=None)
+        if args.card:
+            previous = done.get(name) or {}
+            if not hit and previous.get("id"):
+                # Not found this time (a search hiccup, a renamed page): the
+                # record already on file is kept rather than erased.
+                print(f"  {name}: not found again - keeping the record on file")
+                continue
+            first = previous.get("first_ufc") or first
         done[name] = {"target": name,
-                      "first_ufc" if args.ufc_debuts else "first_contender": first,
+                      "first_ufc" if (args.ufc_debuts or args.card) else "first_contender": first,
                       **(hit or {"id": None}),
                       "looked_up": time.strftime("%Y-%m-%d")}
         looked += 1
