@@ -150,8 +150,8 @@ def test_merging_the_same_response_twice_adds_nothing():
     before = len(cache["fights"])
     parsed = oc.parse_events([event("Alex Pereira", "Magomed Ankalaev",
                                     "2026-10-04", (-150, 130))])
-    added, _ = oc.merge(cache, parsed)
-    assert added == 0 and len(cache["fights"]) == before
+    added, refreshed = oc.merge(cache, parsed, now="2026-10-02T00:00:00Z")
+    assert (added, refreshed) == (0, 1) and len(cache["fights"]) == before
 
 
 # --- settled fights become history -----------------------------------------
@@ -328,7 +328,8 @@ def test_a_us_evening_card_filed_under_the_next_utc_day_is_found():
     Every predict run for an evening card bought a credit for prices it had."""
     cache = oc.empty()
     oc.merge(cache, oc.parse_events([event("Brendan Allen", "Christian Leroy Duncan",
-                                           "2026-10-11", (-133, 120))]))
+                                           "2026-10-11", (-133, 120))]),
+             now="2026-10-01T00:00:00Z")
     card = [("Brendan Allen", "Christian Leroy Duncan", "2026-10-10")]
     assert oc.missing(card, cache) == []
     should, why = oc.decide(card, cache)
@@ -338,14 +339,16 @@ def test_a_us_evening_card_filed_under_the_next_utc_day_is_found():
 def test_a_rematch_two_days_away_is_a_different_fight():
     cache = oc.empty()
     oc.merge(cache, oc.parse_events([event("Brendan Allen", "Christian Leroy Duncan",
-                                           "2026-10-12", (-133, 120))]))
+                                           "2026-10-12", (-133, 120))]),
+             now="2026-10-01T00:00:00Z")
     assert oc.missing([("Brendan Allen", "Christian Leroy Duncan", "2026-10-10")], cache)
 
 
 def test_a_generational_suffix_does_not_hide_a_priced_fight():
     cache = oc.empty()
     oc.merge(cache, oc.parse_events([event("Andre Fili", "Kai Kamaka",
-                                           "2026-10-11", (-150, 132))]))
+                                           "2026-10-11", (-150, 132))]),
+             now="2026-10-01T00:00:00Z")
     assert oc.missing([("Andre Fili", "Kai Kamaka III", "2026-10-10")], cache) == []
 
 

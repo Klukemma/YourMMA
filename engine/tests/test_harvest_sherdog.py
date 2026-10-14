@@ -80,3 +80,83 @@ def test_a_ufc_card_confirms_a_record_without_a_surname_match():
             "method": "KO", "round": "1", "time": "1:00"}]
     assert sherdog.confirms(rec, "2024-02-17", "Joseph Blough")
     assert not sherdog.confirms(rec, "2024-05-17", "Joseph Blough")
+
+
+def test_a_card_lookup_covers_everyone_on_the_card_with_bouts_to_check(tmp_path):
+    source = tmp_path / "predict_card.py"
+    source.write_text('EVENT_DATE = "2026-10-17"\n'
+                      'FIGHT_CARD = [("Ann Vet", "Bea New", True, False), ("Cat Old", "Ann Vet")]\n')
+    archive = tmp_path / "a.csv"
+    pd.DataFrame({"date": ["2026-01-01", "2025-01-01", "2026-10-17"],
+                  "r_name": ["Ann Vet", "Cat Old", "Ann Vet"],
+                  "b_name": ["Cat Old", "Ann Vet", "Late Bout"]}).to_csv(archive, index=False)
+    event, names = hs.card_fighters(source)
+    assert event == "2026-10-17" and names == ["Ann Vet", "Bea New", "Cat Old"]
+    targets = hs.card_targets(source, archive)
+    assert targets["Ann Vet"] == [("2026-01-01", "Cat Old"), ("2025-01-01", "Cat Old")]
+    assert targets["Bea New"] == []        # a debutant: name-only, unverified
+
+
+def test_a_card_fighter_is_also_searched_under_sherdogs_spelling(monkeypatch):
+    tried = []
+
+    def fake_find(name, agent, bouts=(), tries=3):
+        tried.append(name)
+        return {"id": 1, "record": []} if name == "Cristian Perez Gonzalez" else None
+
+    monkeypatch.setattr(hs.sherdog, "find", fake_find)
+    assert hs.find_any("Cristian Perez", "agent", [])["id"] == 1
+    assert tried == ["Cristian Perez Gonzalez"]
+    tried.clear()
+    assert hs.find_any("Nobody Known", "agent", []) is None and tried == ["Nobody Known"]
+
+
+def test_sherdogs_spelling_is_tried_before_the_cards(monkeypatch):
+    """The card's spelling can be a different real fighter's name."""
+    tried = []
+    monkeypatch.setattr(hs.sherdog, "find",
+                        lambda name, agent, bouts=(), tries=3: tried.append(name))
+    hs.find_any("Cristian Perez", "agent", [])
+    assert tried == ["Cristian Perez Gonzalez", "Cristian Perez"]
+
+
+def test_a_debutant_is_verified_against_their_contender_series_bout(tmp_path, monkeypatch):
+    source = tmp_path / "predict_card.py"
+    source.write_text('EVENT_DATE = "2026-10-17"\nFIGHT_CARD = [("New Guy", "Old Hand")]\n')
+    archive = tmp_path / "a.csv"
+    pd.DataFrame({"date": ["2026-01-01"], "r_name": ["Old Hand"],
+                  "b_name": ["Some One"]}).to_csv(archive, index=False)
+    world = tmp_path / "w.csv.gz"
+    pd.DataFrame({"date": ["2025-09-30", "2026-11-01"], "winner": ["New Guy", "New Guy"],
+                  "loser": ["Magno Dias", "Later Foe"]}).to_csv(world, index=False)
+    monkeypatch.setattr(hs, "BOUTS", world)
+    assert hs.card_targets(source, archive)["New Guy"] == [("2025-09-30", "Magno Dias")]
+
+
+def _run_card(tmp_path, monkeypatch, on_file, found):
+    out = tmp_path / "ufc.jsonl.gz"
+    hs.save({"Ann Vet": on_file}, out)
+    monkeypatch.setattr(hs, "OUT_UFC", out)
+    monkeypatch.setattr(hs, "card_targets", lambda: {"Ann Vet": []})
+    monkeypatch.setattr(hs, "find_any", lambda name, agent, bouts: found)
+    hs.main(["--card", "--minutes", "1"])
+    return hs.load(out)["Ann Vet"]
+
+
+def test_a_different_sherdog_fighter_never_replaces_the_one_on_file(tmp_path, monkeypatch):
+    kept = _run_card(tmp_path, monkeypatch,
+                     {"target": "Ann Vet", "id": 111, "verified": True, "record": []},
+                     {"id": 222, "slug": "x", "name": "Ann Vet", "verified": True, "record": []})
+    assert kept["id"] == 111
+
+
+def test_a_name_only_record_that_no_longer_resolves_is_dropped(tmp_path, monkeypatch):
+    gone = _run_card(tmp_path, monkeypatch,
+                     {"target": "Ann Vet", "id": 111, "verified": False, "record": []}, None)
+    assert gone["id"] is None
+
+
+def test_a_verified_record_survives_a_failed_lookup(tmp_path, monkeypatch):
+    kept = _run_card(tmp_path, monkeypatch,
+                     {"target": "Ann Vet", "id": 111, "verified": True, "record": []}, None)
+    assert kept["id"] == 111

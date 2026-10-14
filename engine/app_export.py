@@ -117,6 +117,40 @@ def _intel_payload(records):
     return out
 
 
+_RESULTS = ("W", "L", "D", "NC")
+
+
+def _form_payload(form):
+    """A fighter's pro record and last five (fighter_form.form), checked.
+
+    None stays None - the app shows no record rather than an invented 0-0.
+    A result outside W/L/D/NC, or a count that is not a whole number, means
+    the producer is broken, and the whole record is dropped rather than
+    shown half-right.
+    """
+    if not form:
+        return None
+    rec = form.get("record") or {}
+    try:
+        record = {k: int(rec[k]) for k in ("wins", "losses", "draws", "nc")}
+    except (KeyError, TypeError, ValueError):
+        return None
+    last = []
+    for bout in (form.get("last5") or [])[:5]:
+        if bout.get("result") not in _RESULTS:
+            return None
+        last.append({"result": bout["result"],
+                     "code": str(bout.get("code") or "??")[:3],
+                     "date": bout.get("date"),
+                     "opponent": bout.get("opponent"),
+                     "event": bout.get("event"),
+                     "method": bout.get("method")})
+    return {"record": record, "last5": last,
+            "source": form.get("source"),
+            "verified": bool(form.get("verified")),
+            "as_of": form.get("as_of")}
+
+
 def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
                  dataset_end=None, trained_on=None):
     """The card: one entry per fight, with the model and the simulation.
@@ -175,6 +209,11 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
             # fight might not go the way the model thinks, and the number
             # stays something that was actually measured.
             "intel": _intel_payload(fight.get("intel")),
+            # Each fighter's pro record and last five results, newest first
+            # (fighter_form.py): for the reader, beside the name. Not a model
+            # input, and only bouts dated before the card.
+            "red_form": _form_payload(fight.get("red_form")),
+            "blue_form": _form_payload(fight.get("blue_form")),
         })
     return {
         "schema": SCHEMA_VERSION,
@@ -183,7 +222,10 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
         "dataset_end": dataset_end,
         "trained_on": trained_on,
         "fights": out,
-        "skipped": [{"fight": s.get("fight"), "reason": s.get("reason")}
+        "skipped": [{"fight": s.get("fight"), "reason": s.get("reason"),
+                     "red": s.get("red"), "blue": s.get("blue"),
+                     "red_form": _form_payload(s.get("red_form")),
+                     "blue_form": _form_payload(s.get("blue_form"))}
                     for s in skipped],
         "caveats": {"model": MODEL_CAVEAT, "simulation": SIMULATION_CAVEAT,
                     "parlay": PARLAY_CAVEAT, "flag": FLAG_CAVEAT,

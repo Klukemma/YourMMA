@@ -8,7 +8,7 @@ on:
       mode:
         description: "inspect = report upstream schema only; sync = merge new fights"
         type: choice
-        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, harvest-injuries, harvest-world, harvest-weights, harvest-sherdog, harvest-sherdog-ufc, probe-sherdog, probe-ufcstats, probe-world, verify-intel-dates, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, fetch-opening-odds, fetch-rounds, search-mma, search-rounds, inspect-fighter, experiment]
+        options: [sync, predict, check-odds, check-markets, check-line-history, check-fight-changes, fetch-fight-changes, harvest-injuries, harvest-world, harvest-weights, harvest-sherdog, harvest-sherdog-ufc, harvest-sherdog-card, probe-sherdog, probe-ufcstats, probe-world, verify-intel-dates, fetch-method-odds, describe-odds, backtest, repair, inspect, propose-map, search-odds, inspect-odds, fetch-odds, fetch-odds-history, fetch-opening-odds, fetch-rounds, search-mma, search-rounds, inspect-fighter, experiment]
         default: sync
       dry_run:
         description: "sync only: report what would change without committing"
@@ -143,6 +143,12 @@ jobs:
             # slow requests: resumable, 330-minute budget per run, re-run
             # until it reports nothing left to do.
             python engine/harvest_sherdog.py --ufc-debuts --minutes 330 2>&1 | tee sync.log
+          elif [ "${{ inputs.mode }}" = "harvest-sherdog-card" ]; then
+            # Everyone on the current FIGHT_CARD looked up on Sherdog again,
+            # debutants included, so the app's pro records and last five
+            # results are current on fight week. A couple of dozen slow
+            # requests; run it before predict.
+            python engine/harvest_sherdog.py --card --minutes 30 2>&1 | tee sync.log
           elif [ "${{ inputs.mode }}" = "probe-sherdog" ]; then
             # A few real Sherdog pages saved as fixtures, so the regional
             # record parser for Contender Series prospects is written

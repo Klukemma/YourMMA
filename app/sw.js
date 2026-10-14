@@ -21,7 +21,7 @@
 // not fail on a missing extra: a 404 on one icon should not cost the user an
 // offline app.
 
-const CACHE = "yourmma-v1";
+const CACHE = "yourmma-v2";
 
 // "./" is the start_url. The rest is everything the shell needs to render
 // before it asks for any data.

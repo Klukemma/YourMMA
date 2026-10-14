@@ -112,6 +112,24 @@ section.view{padding-block:18px 0;display:flex;flex-direction:column;gap:16px}
 .names .vs{color:var(--ink-3);font-size:12px;text-transform:uppercase;
   letter-spacing:.08em}
 .names .r{color:var(--red)} .names .b{color:var(--blue)}
+.names.form{display:flex;flex-direction:column;align-items:stretch;gap:5px}
+.frow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.frow>.r,.frow>.b{flex:1 1 auto;min-width:0}
+.form-r{display:inline-flex;align-items:center;gap:8px;margin-left:auto;white-space:nowrap}
+.rec{font-size:12.5px;color:var(--ink-2);font-weight:600;white-space:nowrap}
+.rec.none{font-weight:400;color:var(--ink-3)}
+.rec .src{font-style:normal;font-size:11px;font-weight:700;color:var(--ink-2);margin-left:3px}
+.last5{display:inline-flex;gap:3px}
+.legend{margin:2px 2px 8px}
+ul.lastfights{list-style:none;padding-left:0;margin:6px 0 0}
+ul.lastfights li{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.names.form.skip{margin-top:10px;padding-top:10px;border-top:1px solid var(--line-soft);font-size:14px}
+.res,.note .res,.last5 .res{display:inline-flex;flex:none;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:50%;font:700 9px/1 "IBM Plex Sans",sans-serif;
+  color:#fff;letter-spacing:0}
+.res.w{background:#1e7b3c} .res.l{background:#c0392b} .res.d,.res.nc{background:#6b6f7d}
+/* Win and loss differ by more than hue: a loss carries a ring. */
+.res.l{box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
 .corner-bar{display:flex;height:8px;border-radius:99px;overflow:hidden;
   margin:9px 0 7px;background:var(--sunk);gap:2px}
 .corner-bar i{display:block}

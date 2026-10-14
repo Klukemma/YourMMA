@@ -246,3 +246,29 @@ def test_the_fight_clock_never_prints_sixty_seconds():
     app = (Path(__file__).resolve().parents[2] / "app" / "app.js").read_text()
     body = re.search(r"const clock = \(s\) => \{(.*?)\n\};", app, re.S).group(1)
     assert "Math.round(s)" in body and "t % 60" in body
+
+
+def test_a_fighters_record_passes_through_and_a_broken_one_is_dropped():
+    good = {"record": {"wins": 21, "losses": 8, "draws": 0, "nc": 0},
+            "last5": [{"result": "L", "code": "DC", "date": "2026-05-09",
+                       "opponent": "Sean Brady", "event": "UFC", "method": "Decision"}],
+            "source": "sherdog", "verified": True, "as_of": "2026-10-02"}
+    payload = ax.card_payload("E", "2026-10-17",
+                              [{"number": 1, "red": "A", "blue": "B", "pick": "A",
+                                "red_form": good, "blue_form": None}],
+                              skipped=[{"fight": "C vs D", "reason": "no data",
+                                        "red": "C", "blue": "D", "red_form": good}])
+    fight = payload["fights"][0]
+    assert fight["red_form"]["record"]["wins"] == 21
+    assert fight["red_form"]["last5"][0]["code"] == "DC"
+    assert fight["blue_form"] is None
+    assert payload["skipped"][0]["red_form"]["record"]["losses"] == 8
+    broken = dict(good, last5=[{"result": "WIN", "code": "K1"}])
+    assert ax._form_payload(broken) is None
+
+
+def test_the_app_draws_the_record_beside_both_names():
+    from pathlib import Path
+    app = (Path(__file__).resolve().parents[2] / "app" / "app.js").read_text()
+    assert "formLine(f.red_form)" in app and "formLine(f.blue_form)" in app
+    assert "formLine(s.red_form)" in app
