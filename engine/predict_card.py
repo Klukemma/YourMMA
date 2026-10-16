@@ -69,7 +69,7 @@ FIGHT_CARD = [
     ("Kyle Nelson", "Cristian Perez"),                         # 2 - Lightweight (Perez, listed as Cristian Perez Gonzalez: UFC debut)
     ("Marc-Andre Barriault", "Kyle Daukaus"),                  # 3 - Middleweight
     ("Louis Jourdain", "Timmy Cuamba"),                        # 4 - Bantamweight (Jourdain: UFC debut, DWCS)
-    ("Mandel Nallo", "Nate Landwehr"),                         # 5 - Lightweight (Landwehr up from featherweight)
+    ("Mandel Nallo", "Nate Landwehr"),                         # 5 - Lightweight (Landwehr up from featherweight; weighed 155.5/155 on 10-16)
 
     # Preliminary Card
     ("Tanner Boser", "Jhonata Diniz"),                         # 6 - Heavyweight
