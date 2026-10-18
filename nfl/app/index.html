@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>YourNFL Pick Desk</title>
+<meta name="description" content="NFL game predictions blended with the betting market, each team's form, and the model's own measured record.">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14151b" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="icon" href="icons/icon-512.png" sizes="512x512" type="image/png">
+<!-- iOS ignores the manifest: Add to Home Screen reads these instead. -->
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="YourNFL">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* The MMA app's tokens, unchanged: the two apps are one family. Home is the
+   red side and away the blue, as the red and blue corners are there. */
+:root{
+  --ground:#f7f6f3; --surface:#ffffff; --sunk:#efeeea;
+  --line:#dedcd5; --line-soft:#eae8e2;
+  --ink:#1a1b21; --ink-2:#4d4f5a; --ink-3:#7b7e8b;
+  --red:#e04a4a; --blue:#4a8fe0;
+  --gain:#2a9d8f; --loss:#d1603d;
+  --gold:#b07d16;
+  --shadow:0 1px 2px rgba(20,21,27,.06),0 4px 14px rgba(20,21,27,.05);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#14151b; --surface:#1c1e26; --sunk:#181a21;
+  --line:#2c2f3a; --line-soft:#242732;
+  --ink:#eceef4; --ink-2:#a8acbb; --ink-3:#787d8e;
+  --red:#e0595c; --blue:#5c93dd;
+  --gain:#3fb5a4; --loss:#e0764f;
+  --gold:#d6a43c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.28);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ground:#14151b; --surface:#1c1e26; --sunk:#181a21;
+  --line:#2c2f3a; --line-soft:#242732;
+  --ink:#eceef4; --ink-2:#a8acbb; --ink-3:#787d8e;
+  --red:#e0595c; --blue:#5c93dd;
+  --gain:#3fb5a4; --loss:#e0764f;
+  --gold:#d6a43c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.28);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+/* Must beat .view{display:flex}: a class selector outranks the user-agent
+   [hidden] rule, so every hidden tab rendered underneath the visible one. */
+[hidden]{display:none!important}
+html,body{height:100%}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font:400 15px/1.5 "IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  font-weight:600;letter-spacing:.01em;margin:0;text-wrap:balance}
+h2{font-size:21px}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+/* ---- shell ---- */
+.wrap{max-width:720px;margin:0 auto;padding:0 16px;padding-block:0 96px}
+header.top{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+  background:color-mix(in srgb,var(--ground) 92%,transparent);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line-soft);
+}
+.top-in{max-width:720px;margin:0 auto;padding:10px 16px;
+  display:flex;align-items:baseline;gap:10px}
+.brand{font-family:"Barlow Condensed",sans-serif;font-weight:700;
+  font-size:23px;letter-spacing:.02em;text-transform:uppercase}
+.brand span{color:var(--red)}
+.stamp{margin-left:auto;font-size:11px;color:var(--ink-3)}
+
+nav.tabs{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:color-mix(in srgb,var(--surface) 95%,transparent);
+  backdrop-filter:blur(12px);border-top:1px solid var(--line);
+  padding:6px 8px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px));
+  display:flex;gap:4px;
+}
+nav.tabs button{
+  flex:1;background:none;border:0;border-radius:9px;padding:8px 4px 6px;
+  color:var(--ink-3);font:600 11px/1.2 "IBM Plex Sans",sans-serif;
+  letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
+}
+nav.tabs button[aria-selected="true"]{color:var(--ink);background:var(--sunk)}
+nav.tabs button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+
+section.view{padding-block:18px 0;display:flex;flex-direction:column;gap:16px}
+.eyebrow{font:600 11px/1 "IBM Plex Sans",sans-serif;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-3)}
+.lede{color:var(--ink-2);font-size:14px;max-width:62ch}
+.mini{font-size:12px;color:var(--ink-3)}
+
+/* ---- week header ---- */
+.event{display:flex;flex-direction:column;gap:3px;
+  border-left:3px solid var(--red);padding-left:12px}
+.event h1{font-size:28px;line-height:1.05}
+.day{margin:6px 2px -4px}
+
+/* ---- game row ---- */
+.bouts{display:flex;flex-direction:column;gap:10px}
+.bout{background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.bout>summary{list-style:none;cursor:pointer;padding:12px 14px;display:block}
+.bout>summary::-webkit-details-marker{display:none}
+.bout>summary:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+.when{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.when .t{font-size:12px;color:var(--ink-2);font-weight:500}
+.status{font:600 9.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.08em;
+  text-transform:uppercase;padding:3px 6px;border-radius:4px;background:var(--sunk);color:var(--ink-3)}
+.status.live{color:var(--loss)} .status.final{color:var(--ink-2)}
+.names{display:flex;flex-direction:column;align-items:stretch;gap:5px;font-size:15px;font-weight:500}
+.frow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.frow .team{flex:1 1 auto;min-width:0;display:flex;align-items:baseline;gap:6px}
+.frow .team .code{font:700 15px/1 "Barlow Condensed",sans-serif;letter-spacing:.03em;min-width:34px}
+.frow .team .nm{font-size:13px;color:var(--ink-2);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.frow .at{color:var(--ink-3);font-size:11px;font-weight:500}
+.frow.away .code{color:var(--blue)} .frow.home .code{color:var(--red)}
+.frow .sc{font:600 15px/1 "IBM Plex Mono",monospace;min-width:24px;text-align:right}
+.form-r{display:inline-flex;align-items:center;gap:8px;margin-left:auto;white-space:nowrap}
+.rec{font-size:12.5px;color:var(--ink-2);font-weight:600;white-space:nowrap}
+.rec.none{font-weight:400;color:var(--ink-3)}
+.last5{display:inline-flex;gap:3px}
+.res,.note .res,.last5 .res{display:inline-flex;flex:none;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:50%;font:700 9px/1 "IBM Plex Sans",sans-serif;
+  color:#fff;letter-spacing:0}
+.res.w{background:#1e7b3c} .res.l{background:#c0392b} .res.t{background:#6b6f7d}
+/* Win and loss differ by more than hue: a loss carries a ring. */
+.res.l{box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+ul.lastfights{list-style:none;padding-left:0;margin:6px 0 0}
+ul.lastfights li{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.corner-bar{display:flex;height:8px;border-radius:99px;overflow:hidden;
+  margin:9px 0 7px;background:var(--sunk);gap:2px}
+.corner-bar i{display:block}
+.corner-bar .r{background:var(--red)} .corner-bar .b{background:var(--blue)}
+.readout{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px}
+.pick{font-weight:600}
+.pct{font-size:15px;font-weight:600}
+.tag{font:600 10px/1 "IBM Plex Sans",sans-serif;letter-spacing:.07em;
+  text-transform:uppercase;padding:4px 7px;border-radius:5px;
+  border:1px solid var(--line);color:var(--ink-2)}
+.tag.good{border-color:color-mix(in srgb,var(--gain) 45%,transparent);color:var(--gain)}
+.tag.warn{border-color:color-mix(in srgb,var(--gold) 50%,transparent);color:var(--gold)}
+.tag.bad{border-color:color-mix(in srgb,var(--loss) 50%,transparent);color:var(--loss)}
+.tag.flat{color:var(--ink-3)}
+.detail{border-top:1px solid var(--line-soft);padding:12px 14px 14px;
+  display:flex;flex-direction:column;gap:12px;background:var(--sunk)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px}
+.kv dt{color:var(--ink-3)} .kv dd{margin:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:420px){.two{grid-template-columns:1fr}}
+.inj{list-style:none;padding:0;margin:4px 0 0;font-size:12.5px;color:var(--ink-2)}
+.inj li{display:flex;gap:6px;align-items:baseline;padding:2px 0}
+.inj .st{font:600 9.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.06em;text-transform:uppercase;min-width:28px}
+.inj .st.out{color:var(--loss)} .inj .st.doubtful{color:var(--gold)} .inj .st.questionable{color:var(--ink-3)}
+
+/* ---- generic ---- */
+.card{background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:12px;padding:14px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:10px}
+.note{background:var(--sunk);border:1px solid var(--line-soft);border-radius:10px;
+  padding:11px 13px;font-size:12.5px;color:var(--ink-2);line-height:1.55}
+.note b{color:var(--ink);font-weight:600}
+.warnbox{border-left:3px solid var(--gold)}
+.err{border-left:3px solid var(--loss)}
+.loading{color:var(--ink-3);font-size:13.5px;padding:22px 0;text-align:center}
+ul.plain{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2);line-height:1.6}
+ul.plain li{margin-bottom:5px}
+/* Teal and orange rather than green and red: the green/red pair failed the
+   deutan check in the MMA app, this one clears it. */
+ul.plain.doubt{list-style:none;padding-left:0;margin-top:8px}
+ul.plain.doubt li{display:flex;align-items:baseline;gap:8px;margin-bottom:0;
+  padding:6px 0;border-bottom:1px solid var(--line-soft)}
+ul.plain.doubt li:last-child{border-bottom:0}
+ul.plain.doubt li b{color:var(--ink)}
+ul.plain.doubt li .num{margin-left:auto;font-weight:600;font-size:14.5px}
+ul.plain.doubt .num.warn{color:var(--loss)}
+ul.plain.doubt .num.flat{color:var(--ink-3)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;
+  margin-right:5px;vertical-align:-1px}
+
+/* ---- teams ---- */
+.pickers{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font:600 10.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3)}
+.field select{width:100%;padding:10px 10px;border-radius:9px;font-size:15px;
+  background:var(--surface);color:var(--ink);border:1px solid var(--line);font-family:inherit}
+.field select:focus{outline:2px solid var(--blue);outline-offset:-1px}
+.field.r select{border-left:3px solid var(--red)}
+.field.b select{border-left:3px solid var(--blue)}
+.tape{display:grid;grid-template-columns:1fr auto 1fr;gap:3px 10px;
+  align-items:center;font-size:13.5px}
+.tape .lab{text-align:center;font:600 9.5px/1.2 "IBM Plex Sans",sans-serif;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.tape .l{text-align:right} .tape .r2{text-align:left}
+.tape .win{font-weight:600}
+
+/* ---- record ---- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:11px;padding:12px;box-shadow:var(--shadow)}
+.tile .k{font:600 10px/1 "IBM Plex Sans",sans-serif;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3)}
+.tile .v{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
+  font-size:24px;font-weight:600;margin-top:5px;line-height:1}
+.tile .s{font-size:11.5px;color:var(--ink-3);margin-top:3px}
+.v.gain{color:var(--gain)} .v.loss{color:var(--loss)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line-soft)}
+th{font:600 10px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-3)}
+td.n,th.n{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;text-align:right}
+td.gain{color:var(--gain)} td.loss{color:var(--loss)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+svg{display:block;max-width:100%;height:auto}
+@media (prefers-reduced-motion:no-preference){
+  .bout{transition:border-color .15s ease}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">Your<span>NFL</span></div>
+    <div class="stamp num" id="stamp"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="view" id="view-week"><div class="loading">Loading the week…</div></section>
+  <section class="view" id="view-teams" hidden><div class="loading">Loading…</div></section>
+  <section class="view" id="view-record" hidden><div class="loading">Loading…</div></section>
+  <section class="view" id="view-method" hidden></section>
+</main>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" id="tab-week" aria-selected="true" aria-controls="view-week">Week</button>
+  <button role="tab" id="tab-teams" aria-selected="false" aria-controls="view-teams">Teams</button>
+  <button role="tab" id="tab-record" aria-selected="false" aria-controls="view-record">Record</button>
+  <button role="tab" id="tab-method" aria-selected="false" aria-controls="view-method">Method</button>
+</nav>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

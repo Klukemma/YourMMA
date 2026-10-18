@@ -1,0 +1,116 @@
+"""The weekly run: which week, picks logged before kickoff only, grading,
+the ruled-out quarterback, and the files the app reads."""
+
+import json
+import math
+
+import pandas as pd
+import pytest
+
+import nfl_predict as npd
+import nfl_standalone
+
+
+def test_the_week_is_the_one_with_the_next_kickoff(games):
+    played = games[games["played"]]
+    last = played.iloc[-1]
+    season, week, _ = npd.current_week(games, last["kickoff"] - pd.Timedelta(minutes=1))
+    assert (season, week) == (int(last["season"]), int(last["week"]))
+
+
+def _game(kickoff="2026-10-25T17:00:00Z", **kw):
+    g = {"game_id": "2026_07_LV_KC", "season": 2026, "week": 7, "game_type": "REG",
+         "kickoff": kickoff, "home": "KC", "away": "LV", "pick": "KC", "pick_prob": 0.8,
+         "home_prob": 0.8, "model_prob": 0.78, "market_prob": 0.81, "market_source": "nflverse",
+         "tier": "STRONG", "model_spread": 8.0, "market_spread": 9.5,
+         "spread_pick": {"team": "LV", "line": 9.5, "edge": 1.5}, "model_total": 46.0,
+         "market_total": 44.5, "total_pick": {"side": "OVER", "line": 44.5, "edge": 1.5}}
+    g.update(kw)
+    return g
+
+
+def test_a_pick_is_logged_only_before_kickoff_and_keeps_its_first_time():
+    log = {"schema": 1, "picks": {}}
+    early, later, after = (pd.Timestamp(t) for t in ("2026-10-20 12:00", "2026-10-25 12:00", "2026-10-25 17:00"))
+    assert npd.log_pick(log, _game(), early)
+    assert npd.log_pick(log, _game(pick_prob=0.81), later)
+    assert not npd.log_pick(log, _game(pick_prob=0.99), after)
+    entry = log["picks"]["2026_07_LV_KC"]
+    assert entry["pick_prob"] == 0.81
+    assert entry["first_logged"] == "2026-10-20T12:00:00Z" and entry["last_logged"] == "2026-10-25T12:00:00Z"
+
+
+def _final(home, away):
+    return pd.DataFrame([{"game_id": "2026_07_LV_KC", "played": True, "home_score": home, "away_score": away}])
+
+
+@pytest.mark.parametrize("home,away,correct,ats,total", [
+    (31, 10, True, False, False),     # KC by 21: covers 9.5; 41 under 44.5
+    (20, 17, True, True, False),      # KC by 3: LV +9.5 covers
+    (17, 20, False, True, False),
+    (27, 27, None, True, True),       # a tie voids the pick; LV +9.5 covers; 54 over
+])
+def test_grading(home, away, correct, ats, total):
+    log = {"schema": 1, "picks": {"2026_07_LV_KC": dict(_game())}}
+    assert npd.grade(log, _final(home, away)) == 1
+    p = log["picks"]["2026_07_LV_KC"]
+    assert p["correct"] == correct and p["spread_correct"] == ats and p["total_correct"] == total
+    assert npd.grade(log, _final(home, away)) == 0   # graded once
+
+
+def test_a_ruled_out_starter_is_replaced_by_the_last_one(built, games):
+    frame, state = built
+    row = frame[frame["played"]].iloc[-1].copy()
+    names = npd._qb_names(games)
+    starter = row["home_qb_used"]
+    injuries = pd.DataFrame([{"season": row["season"], "week": row["week"], "team": row["home"],
+                              "gsis_id": starter, "position": "QB", "full_name": names.get(starter, "X"),
+                              "report_status": "Out", "report_primary_injury": "Ankle"}])
+    state = dict(state, last_qb=dict(state["last_qb"], **{row["home"]: "00-BACKUP"}))
+    new, replaced = npd.replace_ruled_out(row, state, injuries, names, row["season"], row["week"])
+    assert replaced == {"home": names.get(starter, starter)}
+    assert new["home_qb_used"] == "00-BACKUP" and new["home_qb_source"] == "replaced"
+
+
+@pytest.fixture(scope="module")
+def run_output(tmp_path_factory, games):
+    out = tmp_path_factory.mktemp("app")
+    log = out / "log.json"
+    now = games[games["played"]]["kickoff"].iloc[-1] + pd.Timedelta(hours=6)
+    produced = npd.run(sync=False, now=now, out_dir=out, log_path=log, log=lambda *_: None)
+    return out, log, produced
+
+
+def test_the_run_writes_the_three_files_the_app_reads(run_output):
+    out, _, produced = run_output
+    for name in ("week", "teams", "performance"):
+        text = (out / f"{name}.json").read_text()
+        assert "NaN" not in text and "Infinity" not in text
+        assert json.loads(text)["schema"] == 1
+    week = json.loads((out / "week.json").read_text())
+    assert week["games"] and {"label", "season", "caveats", "tiers"} <= set(week)
+    for g in week["games"]:
+        assert g["status"] in ("final", "in progress", "upcoming")
+        assert {"home_form", "away_form", "home_injuries", "away_injuries"} <= set(g)
+        if g["status"] == "upcoming":
+            assert 0.5 <= g["pick_prob"] < 1 and g["pick"] in (g["home"], g["away"])
+            assert g["tier"] in ("STRONG", "SOLID", "LEAN", "TOSS-UP")
+        elif not g.get("logged_at"):
+            assert g["pick"] is None    # no pick invented after kickoff
+    teams = json.loads((out / "teams.json").read_text())
+    assert len(teams["teams"]) == 32
+
+
+def test_every_upcoming_pick_is_logged(run_output):
+    _, log, produced = run_output
+    picks = json.loads(log.read_text())["picks"]
+    upcoming = [g for g in produced if g["status"] == "upcoming"]
+    assert {g["game_id"] for g in upcoming} <= set(picks)
+
+
+def test_the_standalone_page_carries_the_data(run_output, tmp_path):
+    out, _, _ = run_output
+    page = nfl_standalone.build(tmp_path / "x.html", out)
+    html = page.read_text()
+    assert "window.__YOURNFL_DATA__" in html and 'type="module"' not in html
+    assert 'rel="manifest"' not in html
