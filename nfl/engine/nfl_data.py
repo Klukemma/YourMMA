@@ -181,6 +181,13 @@ def sync(seasons=None, full=False, log=print):
     the lines for the games still to come). Team, quarterback and injury
     files are fetched for `seasons` - by default the current one - unless
     `full`, which rebuilds every season since 1999.
+
+    EACH FILE STANDS ALONE. nflverse publishes them on different clocks -
+    results within hours, team and player statistics overnight, a season's
+    statistics file only once its first game is in - so one that is missing
+    or late keeps the rows already on file and the rest still refresh. The
+    injury report in particular is fetched even when the statistics are not
+    there yet: week 1's game statuses exist before week 1's statistics do.
     """
     now = current_season()
     seasons = list(range(FIRST_SEASON, now + 1)) if full else (seasons or [now])
@@ -193,30 +200,47 @@ def sync(seasons=None, full=False, log=print):
     _write(games, GAMES)
     log(f"   schedule: {len(games):,} games, seasons {games.season.min()}-{games.season.max()}")
 
-    team, qbs, injuries = [], [], []
+    fetched = {"team": {}, "qb": {}, "injuries": {}}
     for season in seasons:
-        t = _read(TEAM_URL.format(season=season))
-        t = t[t["team"].notna()]
-        team.append(t[[c for c in TEAM_COLUMNS if c in t.columns]])
-        p = _read(PLAYER_URL.format(season=season))
-        qbs.append(p[p["position"] == "QB"][[c for c in QB_COLUMNS if c in p.columns]])
+        try:
+            t = _read(TEAM_URL.format(season=season))
+            fetched["team"][season] = t[t["team"].notna()][[c for c in TEAM_COLUMNS if c in t.columns]]
+        except Exception as err:
+            log(f"   team stats {season}: not fetched, keeping what is on file ({str(err)[:120]})")
+        try:
+            pl = _read(PLAYER_URL.format(season=season))
+            fetched["qb"][season] = pl[pl["position"] == "QB"][[c for c in QB_COLUMNS if c in pl.columns]]
+        except Exception as err:
+            log(f"   QB stats {season}: not fetched, keeping what is on file ({str(err)[:120]})")
         if season >= 2009:   # nflverse's injury reports start in 2009
             try:
                 i = _read(INJURY_URL.format(season=season))
-                injuries.append(i[[c for c in INJURY_COLUMNS if c in i.columns]])
+                fetched["injuries"][season] = i[[c for c in INJURY_COLUMNS if c in i.columns]]
             except Exception as err:   # an off-season with no file yet
-                log(f"   injuries {season}: none ({err})")
-        log(f"   {season}: {len(t):,} team games, {len(qbs[-1]):,} QB games")
+                log(f"   injuries {season}: not fetched ({str(err)[:120]})")
+        log(f"   {season}: {len(fetched['team'].get(season, [])):,} team games, "
+            f"{len(fetched['qb'].get(season, [])):,} QB games, "
+            f"{len(fetched['injuries'].get(season, [])):,} injury rows")
 
-    _write(_merge_seasons(TEAM_GAMES, pd.concat(team), seasons, ["season", "week", "game_id", "team"]), TEAM_GAMES)
-    _write(_merge_seasons(QB_GAMES, pd.concat(qbs), seasons, ["season", "week", "game_id", "player_id"]), QB_GAMES)
-    if injuries:
+    def store(kind, path, key):
+        got = fetched[kind]
+        if not got:
+            return None
+        return _merge_seasons(path, pd.concat(got.values()), list(got), key)
+
+    team = store("team", TEAM_GAMES, ["season", "week", "game_id", "team"])
+    if team is not None:
+        _write(team, TEAM_GAMES)
+    qbs = store("qb", QB_GAMES, ["season", "week", "game_id", "player_id"])
+    if qbs is not None:
+        _write(qbs, QB_GAMES)
+    injuries = store("injuries", INJURIES, ["season", "week", "team", "full_name"])
+    if injuries is not None:
         # Only recent reports are worth keeping: they are shown beside this
-        # week's games and never used as a model input.
-        fresh = pd.concat(injuries)
-        kept = _merge_seasons(INJURIES, fresh, seasons, ["season", "week", "team", "full_name"])
-        _write(kept[kept["season"] >= now - 1], INJURIES)
-    return {"games": len(games), "seasons": seasons}
+        # week's games, and only the quarterback's status is ever read.
+        _write(injuries[injuries["season"] >= now - 1], INJURIES)
+    return {"games": len(games), "seasons": seasons,
+            "fetched": {k: sorted(v) for k, v in fetched.items()}}
 
 
 def load_games(path=GAMES):

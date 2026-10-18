@@ -19,7 +19,8 @@ def test_the_key_comes_from_the_secret():
 def test_picks_prices_and_the_app_are_committed_after_the_tests():
     nfl = (WF / "nfl.yml").read_text()
     assert 'PATHS="nfl/data/ nfl/app/data/ nfl/app/yournfl.html"' in nfl
-    assert nfl.index("python -m pytest nfl/engine/tests") < nfl.index("- name: Commit")
+    # Tests gate the code before the run, never the commit of what it bought.
+    assert nfl.index("python -m pytest nfl/engine/tests") < nfl.index("- name: Run")
     assert "set -o pipefail" in nfl
 
 

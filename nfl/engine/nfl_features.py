@@ -98,8 +98,42 @@ def _team_lines(team_games):
 def _qb_lines(qb_games):
     by_game = {}
     for r in qb_games.itertuples(index=False):
-        by_game.setdefault(r.game_id, []).append((r.player_id, r.dropbacks, r.epa))
+        team = nd.franchise(r.team) if isinstance(r.team, str) else None
+        by_game.setdefault(r.game_id, []).append((r.player_id, team, r.dropbacks, r.epa))
     return by_game
+
+
+# A game's result is assumed known this long after kickoff: a regulation
+# game takes about three and a quarter hours, overtime rarely four.
+FINAL_AFTER = pd.Timedelta(hours=4)
+
+ROOFED = ("dome", "retractable")
+
+
+def roof_classes(games):
+    """Each stadium's roof as a property of the building - dome, retractable
+    or outdoors - known before any game is played there.
+
+    The schedule's own roof column says 'open' or 'closed' for a retractable
+    roof only once that game day's decision is made, and is blank for games
+    still to come: read per game, the backtest and the live week would see
+    the same stadium two different ways."""
+    out = {}
+    for stadium, roofs in games.groupby("stadium")["roof"]:
+        seen = set(roofs.dropna())
+        if seen & {"open", "closed"}:
+            out[stadium] = "retractable"
+        elif "dome" in seen:
+            out[stadium] = "dome"
+        elif seen:
+            out[stadium] = "outdoors"
+    return out
+
+
+def roof_of(game, classes, home_roof):
+    """The roof class for one game: its stadium's, else the home team's most
+    recent home stadium's (a renamed or new building), else outdoors."""
+    return classes.get(game.stadium) or home_roof.get(game.home) or "outdoors"
 
 
 def build(games, team_games, qb_games, elo_params=ne.EloParams(), params=FeatureParams()):
@@ -124,24 +158,36 @@ def build_with_state(games, team_games, qb_games, elo_params=ne.EloParams(), par
     elo, elo_now = ne.run(games, elo_params)
     lines = _team_lines(team_games)
     qblines = _qb_lines(qb_games)
+    classes = roof_classes(games)
+    home_roof = {}
 
     off, dfn, pf, pa = {}, {}, {}, {}
     season_of, last_kick, last_qb = {}, {}, {}
     qbs = {}
+    team_qbs = {}                    # team -> [(season, kickoff, qb, dropbacks)]
     league = _Ewma(44.0, 1.0)        # league points per game, for totals
     league_season = None
-    # SHARED STATE WAITS FOR THE CLOCK. A team or quarterback plays one game
-    # at a time, so its own state can be updated the moment its game is
-    # folded in. The league average is shared by every game: updated
+    # SHARED STATE WAITS FOR THE FINAL WHISTLE. A team or quarterback plays
+    # one game at a time, so its own state can be updated the moment its game
+    # is folded in. The league average is shared by every game: updated
     # straight away, the second of two 1pm games would read the first one's
-    # final score. Its updates queue here until a later kickoff comes round.
+    # final score, and a 4:25pm game would read 1pm scores that were not yet
+    # final. Its updates wait until FINAL_AFTER past their kickoff.
     pending_league = []
+
+    def season_roll(q, season):
+        """Discount a quarterback's history once, the first time he is
+        seen in a new season - as a starter or in relief."""
+        if q.season is not None and q.season != season:
+            q.epa *= params.qb_offseason_keep
+            q.dropbacks *= params.qb_offseason_keep
+        q.season = season
 
     rows = []
     for g in games.itertuples(index=False):
         if league_season != g.season:
             league_season = g.season
-        while pending_league and pending_league[0][0] < g.kickoff:
+        while pending_league and pending_league[0][0] + FINAL_AFTER <= g.kickoff:
             league.add(pending_league.pop(0)[1], 0.02)
         for team in (g.home, g.away):
             if team not in off:
@@ -160,10 +206,7 @@ def build_with_state(games, team_games, qb_games, elo_params=ne.EloParams(), par
             q = qbs.get(qb_id)
             if q is None:
                 q = qbs[qb_id] = _Qb()
-            if q.season is not None and q.season != g.season:
-                q.epa *= params.qb_offseason_keep
-                q.dropbacks *= params.qb_offseason_keep
-            q.season = g.season
+            season_roll(q, g.season)
             return q
 
         home_qb_id, away_qb_id = g.home_qb_id, g.away_qb_id
@@ -187,6 +230,7 @@ def build_with_state(games, team_games, qb_games, elo_params=ne.EloParams(), par
         h_rest = h_rest if h_rest == h_rest and h_rest < 30 else np.nan
         a_rest = a_rest if a_rest == a_rest and a_rest < 30 else np.nan
 
+        roof = roof_of(g, classes, home_roof)
         if g.neutral:
             tz = 0.0
         else:
@@ -208,9 +252,15 @@ def build_with_state(games, team_games, qb_games, elo_params=ne.EloParams(), par
             "home_rest_days": h_rest, "away_rest_days": a_rest,
             "tz_shift": tz,
             "league_total": league.value,
+            "roof_class": roof,
         }
         rows.append(row)
 
+        # The schedule is public: rest is counted from the last SCHEDULED
+        # game, so a result nflverse has not posted yet is not a bye week.
+        last_kick[g.home] = last_kick[g.away] = g.kickoff
+        if not g.neutral and isinstance(g.stadium, str) and g.stadium in classes:
+            home_roof[g.home] = classes[g.stadium]
         if not g.played:
             continue
         # Fold the game in.
@@ -223,15 +273,16 @@ def build_with_state(games, team_games, qb_games, elo_params=ne.EloParams(), par
                 dfn[team].add(theirs[1] / theirs[0], params.decay)
             pf[team].add(float(scored), params.decay)
             pa[team].add(float(allowed), params.decay)
-            last_kick[team] = g.kickoff
         pending_league.append((g.kickoff, float(g.home_score + g.away_score)))
-        for qb_id, dropbacks, epa in qblines.get(g.game_id, []):
+        for qb_id, qb_team, dropbacks, epa in qblines.get(g.game_id, []):
             if dropbacks and dropbacks > 0:
                 q = qbs.get(qb_id)
                 if q is None:
                     q = qbs[qb_id] = _Qb()
-                    q.season = g.season
+                season_roll(q, g.season)
                 q.add(float(epa), float(dropbacks), params)
+                if qb_team:
+                    team_qbs.setdefault(qb_team, []).append((g.season, g.kickoff, qb_id, float(dropbacks)))
         for team, qb_id in ((g.home, g.home_qb_id), (g.away, g.away_qb_id)):
             if isinstance(qb_id, str):
                 last_qb[team] = qb_id
@@ -255,7 +306,7 @@ def build_with_state(games, team_games, qb_games, elo_params=ne.EloParams(), par
     out["off_epa_sum"] = out.home_off_epa + out.away_off_epa
     out["def_epa_sum"] = out.home_def_epa + out.away_def_epa
     out["qb_sum"] = out.home_qb_rating + out.away_qb_rating
-    out["dome"] = out.roof.isin(["dome", "closed"]).astype(int)
+    out["dome"] = out.roof_class.isin(ROOFED).astype(int)
     out["home_win"] = np.where(out.played, (out.result > 0).astype(float), np.nan)
     out.loc[out.played & (out.result == 0), "home_win"] = 0.5
     state = {
@@ -267,6 +318,7 @@ def build_with_state(games, team_games, qb_games, elo_params=ne.EloParams(), par
         "last_qb": dict(last_qb),
         "qb_rating": {q: s.rating(params) for q, s in qbs.items()},
         "qb_starts": {q: s.starts for q, s in qbs.items()},
+        "team_qbs": {t: rows[-40:] for t, rows in team_qbs.items()},
     }
     return out, state
 

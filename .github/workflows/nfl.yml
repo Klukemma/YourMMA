@@ -62,6 +62,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r engine/requirements.txt pytest
 
+      # BEFORE the run, on the snapshot as committed: they check the code.
+      # After it they would also be checking nflverse's clock - results land
+      # hours before the statistics behind them - and a red test there would
+      # throw away the run's picks and the prices it paid for.
+      - name: Tests
+        run: python -m pytest nfl/engine/tests -q
+
       - name: Run
         env:
           # Without it the app uses the schedule's posted lines; with it,
@@ -84,9 +91,6 @@ jobs:
             fi
             python nfl/engine/nfl_predict.py 2>&1 | tee nfl.log
           fi
-
-      - name: Tests
-        run: python -m pytest nfl/engine/tests -q
 
       - name: Commit
         run: |

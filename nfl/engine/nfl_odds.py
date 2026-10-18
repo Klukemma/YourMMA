@@ -87,6 +87,32 @@ def game_key(away, home, kickoff):
     return f"{pd.Timestamp(kickoff).strftime('%Y-%m-%d')}|{away}|{home}"
 
 
+def _implied(o):
+    o = float(o)
+    return -o / (-o + 100.0) if o < 0 else 100.0 / (o + 100.0)
+
+
+def _american(p):
+    """Implied probability -> American odds (the inverse of _implied)."""
+    return -100.0 * p / (1 - p) if p >= 0.5 else 100.0 * (1 - p) / p
+
+
+def consensus_price(prices):
+    """The middle book's price, taken in probability space. American odds
+    jump from -100 to +100 at even money, so the median of the raw numbers
+    across books that straddle it (-110 and +105) is a price nobody quoted
+    (-2.5)."""
+    return round(_american(statistics.median(_implied(o) for o in prices)), 1)
+
+
+def offered_line(points):
+    """A line some book actually offered: the lower-middle of the sorted
+    lines. The plain median of 3 and 3.5 is 3.25, which no book hangs and
+    which would turn the commonest NFL result, a push on 3, into a loss."""
+    points = sorted(points)
+    return points[(len(points) - 1) // 2]
+
+
 def _no_vig(home_price, away_price):
     def implied(o):
         o = float(o)
@@ -134,12 +160,12 @@ def parse_events(events):
             "home": home, "away": away,
             "commence_time": ev.get("commence_time"),
             "home_prob": statistics.median(probs) if probs else None,
-            "home_ml": statistics.median(p for p, _ in home_prices) if home_prices else None,
-            "away_ml": statistics.median(p for p, _ in away_prices) if away_prices else None,
+            "home_ml": consensus_price([p for p, _ in home_prices]) if home_prices else None,
+            "away_ml": consensus_price([p for p, _ in away_prices]) if away_prices else None,
             "best_home_ml": best_home[0], "best_home_book": best_home[1],
             "best_away_ml": best_away[0], "best_away_book": best_away[1],
-            "spread": statistics.median(spreads) if spreads else None,
-            "total": statistics.median(totals) if totals else None,
+            "spread": offered_line(spreads) if spreads else None,
+            "total": offered_line(totals) if totals else None,
             "books": len(books),
         }
     return out, sorted(unknown)
@@ -252,11 +278,19 @@ def refresh(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=No
     return "fetched" if status == 200 else f"failed ({status})"
 
 
-def market_for(cache, game):
+def market_for(cache, game, now=None):
     """The market for one game as the app shows it: the API's latest price if
-    there is one, else the schedule's posted line. Probabilities are the
-    home side's. None where nothing is known."""
+    it is fresh, else the schedule's posted line. Probabilities are the
+    home side's. None where nothing is known.
+
+    A cached price older than STALE_AFTER_DAYS loses to the schedule's line,
+    which is re-synced every run: when a refresh fails (a spent quota, an
+    outage) a days-old price must not feed the pick, or the ATS grade, while
+    a fresher line sits on disk."""
+    now = now or _now()
     entry = for_game(cache, game["away"], game["home"], game["kickoff"])
+    if entry and now - _parse_time(entry["latest"]["seen"]) > timedelta(days=STALE_AFTER_DAYS):
+        entry = None
     if entry:
         latest, opening = entry["latest"], entry["opening"]
         return {

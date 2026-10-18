@@ -47,8 +47,11 @@ def test_played_means_both_scores(games):
 
 
 def test_every_completed_game_has_team_stats(games, team_games):
+    """nflverse posts results within hours and statistics overnight, so the
+    last few days' finals may have none yet; anything older must."""
     have = team_games.groupby("game_id").size()
-    done = games[games["played"] & (games["season"] >= 2000)]
+    cutoff = games["kickoff"][games["played"]].max() - pd.Timedelta(days=3)
+    done = games[games["played"] & (games["season"] >= 2000) & (games["kickoff"] < cutoff)]
     missing = done[~done["game_id"].isin(have.index)]
     assert len(missing) <= 5, missing["game_id"].tolist()
 
@@ -57,3 +60,31 @@ def test_team_stat_rows_are_offense(team_games):
     sample = team_games.dropna(subset=["plays"])
     assert (sample["plays"] >= 0).all()
     assert sample["plays"].median() > 50
+
+
+def test_a_missing_statistics_file_keeps_the_rest_of_the_sync(monkeypatch, tmp_path):
+    """Week 1: the schedule and the injury report exist, the season's
+    statistics do not yet. The injuries must still arrive and the
+    statistics on file must survive."""
+    import io
+    for name in ("GAMES", "TEAM_GAMES", "QB_GAMES", "INJURIES"):
+        monkeypatch.setattr(nd, name, tmp_path / f"{name.lower()}.csv.gz")
+    old_team = pd.DataFrame({"season": [2025], "week": [1], "game_id": ["g"], "team": ["KC"]})
+    nd._write(old_team, nd.TEAM_GAMES)
+    games_csv = ("game_id,season,week,gameday,gametime,home_team,away_team,home_score,away_score,spread_line\n"
+                 "2026_01_KC_BUF,2026,1,2026-09-13,13:00,BUF,KC,,,3\n")
+    injuries_csv = "season,game_type,team,week,gsis_id,position,full_name,report_primary_injury,report_status,practice_status\n2026,REG,BUF,1,x,QB,Q B,Ankle,Out,DNP\n"
+
+    def fake_read(url, **kw):
+        if url == nd.GAMES_URL:
+            return pd.read_csv(io.StringIO(games_csv))
+        if "injuries" in url:
+            return pd.read_csv(io.StringIO(injuries_csv))
+        raise OSError("404 Not Found")
+    monkeypatch.setattr(nd, "_read", fake_read)
+    lines = []
+    result = nd.sync(seasons=[2026], log=lines.append)
+    assert result["fetched"]["injuries"] == [2026] and result["fetched"]["team"] == []
+    assert len(nd.load_injuries(nd.INJURIES)) == 1
+    assert pd.read_csv(nd.TEAM_GAMES)["season"].tolist() == [2025]
+    assert any("keeping what is on file" in l for l in lines)

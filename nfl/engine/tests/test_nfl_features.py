@@ -13,8 +13,10 @@ QB_FIELDS = ["home_qb_rating", "away_qb_rating", "home_qb_change", "away_qb_chan
 
 
 def _hide_results_from(games, cutoff):
+    """Every result not yet final at `cutoff` hidden: a game is final
+    FINAL_AFTER past its kickoff."""
     g = games.copy()
-    later = g["kickoff"] >= cutoff
+    later = g["kickoff"] + nf.FINAL_AFTER > cutoff
     g.loc[later, ["home_score", "away_score", "result", "total"]] = np.nan
     g.loc[later, "played"] = False
     return g
@@ -22,9 +24,10 @@ def _hide_results_from(games, cutoff):
 
 @pytest.mark.parametrize("season,week", [(2019, 9), (2024, 12)])
 def test_a_game_reads_the_same_features_with_its_future_deleted(games, team_games, qb_games, built, season, week):
-    """The exact rule: hide every result from a kickoff onwards, rebuild, and
-    the games starting at that kickoff must read identical features. (Earlier
-    games the same week - Thursday night before Sunday - are rightly known.)"""
+    """The exact rule: hide every result not final at a kickoff, rebuild, and
+    the games starting then must read identical features. (Games already
+    over that week - Thursday night before Sunday, 1pm before a Sunday night
+    game - are rightly known; a 1pm score is not known at 4:25pm.)"""
     full, _ = built
     wk = full[(full["season"] == season) & (full["week"] == week)]
     cols = nf.FEATURES + nf.TOTAL_FEATURES + ["elo_prob", "home_elo", "away_elo"]
@@ -74,3 +77,29 @@ def test_swapping_a_quarterback_recomputes_the_difference(built):
     assert swapped["home_qb_rating"] == nf.FeatureParams().qb_prior
     assert swapped["qb_diff"] == pytest.approx(swapped["home_qb_rating"] - swapped["away_qb_rating"])
     assert swapped["home_qb_change"] == 1
+
+
+def test_a_roofed_stadium_reads_the_same_before_and_after_its_game(built):
+    """The roof is a property of the building: a game still to come at a
+    dome or retractable roof must not read as outdoors because the schedule
+    has not filled in that day's roof yet."""
+    frame, _ = built
+    classes = nf.roof_classes(frame)
+    for row in frame[~frame["played"]].itertuples():
+        if classes.get(row.stadium) in nf.ROOFED:
+            assert row.dome == 1, row.game_id
+    played = frame[frame["played"] & frame["roof"].isin(["open", "closed"])]
+    assert (played["dome"] == 1).all()
+
+
+def test_a_result_not_posted_yet_is_not_a_bye_week(games, team_games, qb_games, built):
+    full, _ = built
+    g = games.copy()
+    week5 = g[(g["season"] == 2024) & (g["week"] == 5)].index
+    g.loc[week5, ["home_score", "away_score", "result", "total"]] = np.nan
+    g.loc[week5, "played"] = False
+    late = nf.build(g, team_games, qb_games, nm.ELO)
+    wk6 = full[(full["season"] == 2024) & (full["week"] == 6)].set_index("game_id")
+    b = late.set_index("game_id").loc[wk6.index]
+    pd.testing.assert_series_equal(wk6["home_rest_days"], b["home_rest_days"])
+    assert (wk6["home_bye"] == b["home_bye"]).all()

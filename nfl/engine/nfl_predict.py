@@ -188,22 +188,36 @@ def ruled_out_qbs(injuries, season, week, team):
             if i["position"] == "QB" and i["status"] == "Out"}
 
 
-def replace_ruled_out(row, state, injuries, names, season, week):
-    """If a projected starter is listed Out, start the team's last starter
-    instead (or a replacement-level unknown if he is out too). Returns
-    (row, {side: name of the quarterback replaced})."""
+def stand_in(state, team, season, ruled_out, elsewhere, names):
+    """Who starts when the projected starter cannot: the quarterback who most
+    recently threw for THIS team THIS season (a last starter from another
+    season may have moved on - Kirk Cousins was Atlanta's last starter of
+    2025 and Las Vegas's starter in 2026), is not ruled out himself and is
+    not another team's starter this week. None when nobody qualifies: the
+    model then reads a replacement-level unknown."""
+    out_ids = {i for i, _ in ruled_out if i}
+    out_names = {n for _, n in ruled_out}
+    for s, _kick, qb, dropbacks in reversed(state.get("team_qbs", {}).get(team, [])):
+        if s != season:
+            break
+        if dropbacks < 5 or qb in out_ids or names.get(qb) in out_names or qb in elsewhere:
+            continue
+        return qb
+    return None
+
+
+def replace_ruled_out(row, state, injuries, names, season, week, elsewhere=frozenset()):
+    """If a projected starter is listed Out, start stand_in() instead.
+    `elsewhere` is every other game's projected starters this week.
+    Returns (row, {side: name of the quarterback replaced})."""
     replaced = {}
     for side in ("home", "away"):
         qb_id = row[f"{side}_qb_used"]
         out = ruled_out_qbs(injuries, season, week, row[side])
-        out_ids = {i for i, _ in out if i}
-        out_names = {n for _, n in out}
         name = names.get(qb_id)
-        if not isinstance(qb_id, str) or not (qb_id in out_ids or (name and name in out_names)):
+        if not isinstance(qb_id, str) or not (qb_id in {i for i, _ in out} or (name and name in {n for _, n in out})):
             continue
-        alt = state["last_qb"].get(row[side])
-        if alt == qb_id or alt in out_ids or (names.get(alt) in out_names):
-            alt = None
+        alt = stand_in(state, row[side], season, out | {(qb_id, name)}, elsewhere, names)
         row = nf.with_quarterback(row, side, alt, state, "replaced")
         replaced[side] = name or qb_id
     return row, replaced
@@ -243,7 +257,8 @@ def predict_game(row, models, market, tiers):
 
 # ---------------------------------------------------------------- the run
 
-def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print):
+def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
+        cache_path=no.CACHE, api_key=None):
     now = naive_utc(now) if now is not None else now_utc()
     if sync:
         try:
@@ -262,10 +277,11 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print):
     slate = frame[(frame["season"] == season) & (frame["week"] == week)].sort_values(["kickoff", "game_id"])
     log(f"   {season} {week_label(week, game_type)}: {len(slate)} games")
 
-    cache = no.load()
+    cache = no.load(cache_path)
     upcoming = frame[~frame["played"] & (frame["kickoff"] > now)][["away", "home", "kickoff"]]
-    no.refresh(cache, upcoming, log=log)
-    no.save(cache)
+    clock = now.tz_localize("UTC").to_pydatetime()
+    no.refresh(cache, upcoming, api_key=api_key, log=log, now=clock)
+    no.save(cache, cache_path)
 
     qb_names = _qb_names(games)
     injuries = nd.load_injuries()
@@ -274,14 +290,14 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print):
     for _, row in slate.iterrows():
         kickoff = pd.Timestamp(row["kickoff"])
         status = "final" if row["played"] else ("in progress" if kickoff <= now else "upcoming")
-        market = no.market_for(cache, row)
+        market = no.market_for(cache, row, now=clock)
         game = {
             "game_id": row["game_id"], "season": season, "week": week, "game_type": row["game_type"],
             "kickoff": stamp(kickoff), "status": status,
             "home": row["home"], "away": row["away"],
             "home_name": nd.TEAMS[row["home"]][0], "away_name": nd.TEAMS[row["away"]][0],
             "neutral": bool(row["neutral"]), "div_game": bool(row["div_game"]),
-            "roof": row["roof"] if isinstance(row["roof"], str) else None,
+            "roof": row["roof"] if isinstance(row["roof"], str) else row["roof_class"],
             "stadium": row["stadium"] if isinstance(row["stadium"], str) else None,
             "home_rest": _num(row["home_rest_days"]), "away_rest": _num(row["away_rest_days"]),
             "elo": {"home": _num(row["home_elo"]), "away": _num(row["away_elo"])},
@@ -296,7 +312,9 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print):
         if status == "final":
             game["score"] = {"home": int(row["home_score"]), "away": int(row["away_score"])}
         if status == "upcoming":
-            row, replaced = replace_ruled_out(row, state, injuries, qb_names, season, week)
+            elsewhere = {q for _, r in slate.iterrows() if r["game_id"] != row["game_id"]
+                         for q in (r["home_qb_used"], r["away_qb_used"]) if isinstance(q, str)}
+            row, replaced = replace_ruled_out(row, state, injuries, qb_names, season, week, elsewhere)
             for side, name in replaced.items():
                 game[f"{side}_qb"] = qb_info(row, side, state, qb_names)
                 game[f"{side}_qb"]["replaced"] = name
@@ -309,6 +327,11 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print):
                     "pick", "pick_prob", "home_prob", "model_prob", "market_prob", "market_source",
                     "tier", "model_spread", "market_spread", "spread_pick", "model_total",
                     "market_total", "total_pick")})
+                # The quarterbacks the logged pick was computed with - a
+                # replaced starter must not reappear once the game is on.
+                for side in ("home", "away"):
+                    if logged.get(f"{side}_qb"):
+                        game[f"{side}_qb"] = logged[f"{side}_qb"]
                 game["tier_hit_rate"] = (tiers.get(logged.get("tier")) or {}).get("hit_rate")
                 game["logged_at"] = logged.get("last_logged")
             else:

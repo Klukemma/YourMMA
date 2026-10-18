@@ -66,10 +66,21 @@ def test_a_ruled_out_starter_is_replaced_by_the_last_one(built, games):
     injuries = pd.DataFrame([{"season": row["season"], "week": row["week"], "team": row["home"],
                               "gsis_id": starter, "position": "QB", "full_name": names.get(starter, "X"),
                               "report_status": "Out", "report_primary_injury": "Ankle"}])
-    state = dict(state, last_qb=dict(state["last_qb"], **{row["home"]: "00-BACKUP"}))
+    team_qbs = {row["home"]: [(row["season"], row["kickoff"], "00-BACKUP", 20.0),
+                              (row["season"], row["kickoff"], starter, 30.0)]}
+    state = dict(state, team_qbs=team_qbs)
     new, replaced = npd.replace_ruled_out(row, state, injuries, names, row["season"], row["week"])
     assert replaced == {"home": names.get(starter, starter)}
     assert new["home_qb_used"] == "00-BACKUP" and new["home_qb_source"] == "replaced"
+
+
+def test_a_stand_in_must_be_this_seasons_and_not_someone_elses_starter():
+    names = {"A": "Starter", "B": "Old Backup", "C": "Traded", "D": "Relief"}
+    state = {"team_qbs": {"ATL": [(2025, 1, "B", 30.0), (2026, 2, "D", 12.0), (2026, 3, "C", 25.0)]}}
+    out = {("A", "Starter")}
+    assert npd.stand_in(state, "ATL", 2026, out, set(), names) == "C"
+    assert npd.stand_in(state, "ATL", 2026, out, {"C"}, names) == "D"     # C starts elsewhere
+    assert npd.stand_in(state, "ATL", 2026, out | {("D", "Relief")}, {"C"}, names) is None  # never 2025's B
 
 
 @pytest.fixture(scope="module")
@@ -77,7 +88,8 @@ def run_output(tmp_path_factory, games):
     out = tmp_path_factory.mktemp("app")
     log = out / "log.json"
     now = games[games["played"]]["kickoff"].iloc[-1] + pd.Timedelta(hours=6)
-    produced = npd.run(sync=False, now=now, out_dir=out, log_path=log, log=lambda *_: None)
+    produced = npd.run(sync=False, now=now, out_dir=out, log_path=log, log=lambda *_: None,
+                       cache_path=out / "odds_cache.json", api_key="")
     return out, log, produced
 
 

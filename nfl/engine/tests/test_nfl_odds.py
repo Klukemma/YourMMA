@@ -35,8 +35,9 @@ def test_parse_maps_names_flips_the_spread_and_takes_medians():
     # The API quotes the home handicap (-9.5); the schedule convention is the
     # home side's expected margin (+9.5).
     assert e["spread"] == 9.5
-    assert e["total"] == 45.0
-    assert e["home_ml"] == -390 and e["away_ml"] == 310
+    assert e["total"] == 44.5                     # a line a book hung, not 45.0
+    assert e["home_ml"] == pytest.approx(-389.8, abs=0.1)
+    assert e["away_ml"] == pytest.approx(309.8, abs=0.1)
     assert 0.75 < e["home_prob"] < 0.79
     assert e["best_away_ml"] == 320 and e["best_away_book"] == "DraftKings"
 
@@ -111,3 +112,28 @@ def test_cache_round_trips_and_refuses_a_foreign_schema(tmp_path):
     (tmp_path / "bad.json").write_text(json.dumps({"schema": 99}))
     with pytest.raises(ValueError):
         no.load(tmp_path / "bad.json")
+
+
+def test_a_consensus_price_straddling_even_money_is_a_real_price():
+    # -110 and +105 average to -2.5 as raw numbers; in probability space they
+    # meet near even money.
+    price = no.consensus_price([-110, 105])
+    assert abs(price) >= 100
+    assert no.consensus_price([-400, -380]) < -380
+
+
+def test_the_line_is_one_a_book_offered():
+    assert no.offered_line([3.0, 3.5]) == 3.0
+    assert no.offered_line([44.5, 45.5, 45.5]) == 45.5
+
+
+def test_a_stale_price_loses_to_the_schedule_line():
+    cache = no.empty()
+    parsed, _ = no.parse_events([_event()])
+    no.merge(cache, parsed, now=NOW)
+    game = {"away": "LV", "home": "KC", "kickoff": pd.Timestamp("2026-10-25 20:25"),
+            "home_ml": -800.0, "away_ml": 550.0, "spread_line": 14.0, "total_line": 40.5}
+    assert no.market_for(cache, game, now=NOW)["source"] == "the-odds-api"
+    later = datetime(2026, 10, 25, 12, 0, tzinfo=timezone.utc)
+    m = no.market_for(cache, game, now=later)
+    assert m["source"] == "nflverse" and m["spread"] == 14.0
