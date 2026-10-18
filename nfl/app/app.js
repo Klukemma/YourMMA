@@ -177,8 +177,8 @@ function gameRow(g, d) {
   const kv = [
     ["Pick", g.pick ? `${esc(g.pick)} ${pct(g.pick_prob, 1)} <span class="mini">model and market blended</span>` : "—"],
     ["Band", g.tier ? `${esc(g.tier)} <span class="mini">picks in this band won ${pct(g.tier_hit_rate, 1)} of 2016-2025 games</span>` : "—"],
-    ["Model alone", g.model_prob == null ? "—" : `${esc(g.home)} ${pct(g.model_prob, 1)} · ${esc(g.away)} ${pct(1 - g.model_prob, 1)}`],
-    ["Market", g.market_prob == null ? "—" : `${esc(g.home)} ${pct(g.market_prob, 1)} <span class="mini">no-vig, ${esc(m.source === "the-odds-api" ? `${m.books ?? "?"} books` : "schedule line")}</span>`],
+    ["Model alone", g.model_prob == null ? "—" : `${esc(g.away)} ${pct(1 - g.model_prob, 1)} · ${esc(g.home)} ${pct(g.model_prob, 1)}`],
+    ["Market", g.market_prob == null ? "—" : `${esc(g.away)} ${pct(1 - g.market_prob, 1)} · ${esc(g.home)} ${pct(g.market_prob, 1)} <span class="mini">no-vig, ${esc(m.source === "the-odds-api" ? `${m.books ?? "?"} books` : "schedule line")}</span>`],
     ["Moneyline", m.home_ml == null ? "—" : `${esc(g.away)} ${esc(odds(m.away_ml))} · ${esc(g.home)} ${esc(odds(m.home_ml))}`],
     ["Spread", g.market_spread == null ? "—" : `market ${esc(line(g.home, -g.market_spread))} · model ${marginText(g, g.model_spread)}`
       + (sp ? ` <span class="mini">model side ${esc(line(sp.team, sp.line))}, ${num(sp.edge, 1)} pts</span>` : "")],
