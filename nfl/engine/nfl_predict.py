@@ -42,6 +42,7 @@ import nfl_model as nm
 import nfl_news as nnews
 import nfl_odds as no
 import nfl_players as nplayers
+import nfl_td as ntd
 
 LOG = Path(os.environ.get("NFL_PREDICTIONS_LOG") or (nd.DATA / "prediction_history.json"))
 LOG_SCHEMA = 1
@@ -52,6 +53,7 @@ POSITION_ORDER = ["QB", "RB", "FB", "WR", "TE", "T", "OT", "G", "OG", "C", "OL",
                   "DE", "EDGE", "DT", "NT", "DL", "OLB", "LB", "ILB", "MLB",
                   "CB", "S", "FS", "SS", "DB", "K", "P", "LS"]
 INJURIES_PER_TEAM = 8
+TD_SHOWN = 3            # most likely scorers shown per team
 WEEK_NAMES = {"WC": "Wild Card", "DIV": "Divisional round",
               "CON": "Conference championships", "SB": "Super Bowl"}
 
@@ -110,10 +112,30 @@ def log_pick(log, game, now):
     fields = ("game_id", "season", "week", "game_type", "kickoff", "home", "away",
               "pick", "pick_prob", "home_prob", "model_prob", "market_prob", "market_source",
               "tier", "model_spread", "market_spread", "spread_pick", "model_total",
-              "market_total", "total_pick", "home_qb", "away_qb", "market")
+              "market_total", "total_pick", "home_qb", "away_qb", "market", "home_td", "away_td")
     log["picks"][game["game_id"]] = dict(
         {k: game.get(k) for k in fields}, **keep, last_logged=stamp(now))
     return True
+
+
+def grade_touchdowns(log, player_games):
+    """Mark each logged touchdown pick scored or not, once its game's box
+    score is in (results arrive hours before player statistics)."""
+    if player_games is None or not len(player_games):
+        return 0
+    by_game = player_games.groupby("game_id")
+    graded = 0
+    for gid, p in log["picks"].items():
+        if not p.get("final") or p.get("td_graded") or gid not in by_game.groups:
+            continue
+        box = by_game.get_group(gid)
+        tds = dict(zip(box["player_id"], box["rushing_tds"].fillna(0) + box["receiving_tds"].fillna(0)))
+        for side in ("home_td", "away_td"):
+            for pick in p.get(side) or []:
+                pick["scored"] = bool(tds.get(pick.get("gsis_id"), 0) >= 1)
+        p["td_graded"] = True
+        graded += 1
+    return graded
 
 
 def grade(log, games):
@@ -305,6 +327,9 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
     injuries = nd.load_injuries()
     players = nplayers.PlayerData(injuries=injuries)
     players.set_schedule(games)
+    td_built = ntd.build_with_state(games, ntd.load_lines())
+    td_report = ntd.report(td_built[0], ntd.walk_forward(td_built[0]))
+    td_live = ntd.fit_live(season, games=games, built=td_built)
     news = nnews.load(news_path)
     if sync:   # the feeds are read where the internet is open - the runner
         nnews.refresh(news, log=log, now=clock)
@@ -358,6 +383,10 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
                 game[f"{side}_qb"] = qb_info(row, side, state, qb_names)
                 game[f"{side}_qb"]["replaced"] = name
             game.update(predict_game(row, models[season], market, tiers))
+            out_now = off_roster(players.rosters, season, week)
+            for side in ("home", "away"):
+                game[f"{side}_td"] = touchdown_picks(td_live, players, row, side, game, market,
+                                                     full_injuries[side], out_now, season, week)
             log_pick(history, game, now)
         else:
             logged = history["picks"].get(row["game_id"])
@@ -369,6 +398,9 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
                 # The price the pick was made against, not today's.
                 if logged.get("market"):
                     game["market"] = logged["market"]
+                for side in ("home_td", "away_td"):
+                    if logged.get(side):
+                        game[side] = logged[side]
                 # The quarterbacks the logged pick was computed with - a
                 # replaced starter must not reappear once the game is on.
                 for side in ("home", "away"):
@@ -389,12 +421,13 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
         out_games.append(game)
 
     graded = grade(history, games)
+    grade_touchdowns(history, players.offense)
     save_log(history, log_path)
     log(f"   logged {sum(1 for g in out_games if g['status'] == 'upcoming')} picks, graded {graded}")
 
     last_played = games[games["played"]]["kickoff"].max()
     trained_on = models[season].trained_on
-    cav = nx.caveats(backtest)
+    cav = nx.caveats(backtest, td_report)
     nx.write("week", {
         "season": season, "week": week, "game_type": game_type, "label": week_label(week, game_type),
         "games": out_games, "data_through": stamp(last_played)[:10], "trained_on": trained_on,
@@ -403,10 +436,38 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
     }, out_dir)
     nx.write("teams", teams_payload(games, state, qb_names, now, season, players), out_dir)
     nx.write("performance", {
-        "backtest": backtest, "track_record": nx.track_record(history),
+        "backtest": backtest, "track_record": nx.track_record(history), "td": td_report,
         "trained_on": trained_on, "caveats": cav, "data_through": stamp(last_played)[:10],
     }, out_dir)
     return out_games
+
+
+def touchdown_picks(live, players, row, side, game, market, injuries, off, season, week):
+    """The team's TD_SHOWN most likely scorers for a game still to come.
+
+    The team's expected points are the market's (its total and spread) when
+    there is a price, else the model's own; players listed Out or off the
+    active roster are left out, Doubtful and Questionable ones kept and
+    marked - every probability is conditional on the player playing."""
+    home = side == "home"
+    total, spread = (market or {}).get("total"), (market or {}).get("spread")
+    if total is None or spread is None:
+        total, spread = game.get("model_total"), game.get("model_spread")
+    implied = ntd.implied_points(total, spread, home)
+    status = {i["gsis_id"]: i["status"].lower() for i in injuries if i.get("gsis_id")}
+    exclude = {g for g, st in status.items() if st == "out"} | set(off)
+    roster = None
+    r = players.rosters
+    if len(r):
+        mine = r[(r["season"] == season) & (r["team"] == row[side]) & (r["week"] <= week)]
+        if len(mine):
+            latest = mine[mine["week"] == mine["week"].max()]
+            roster = list(latest[latest["status"] == "ACT"]["gsis_id"].dropna())
+    picks = ntd.predict_team(live, row[side], implied, home, exclude=exclude, roster=roster,
+                             playoff=row["game_type"] != "REG")[:TD_SHOWN]
+    return [{"gsis_id": p["gsis_id"], "name": p["name"], "position": p["position"],
+             "prob": p["prob"], "tds_season": p["tds_season"], "games_season": p["games_season"],
+             "status": status.get(p["gsis_id"], "active")} for p in picks]
 
 
 def _roster_names(players, season, teams):

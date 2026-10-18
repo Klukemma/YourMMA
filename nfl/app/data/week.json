@@ -1,10 +1,13 @@
 {
- "as_of": "2026-10-18T20:16:39Z",
+ "as_of": "2026-10-18T20:56:54Z",
  "caveats": {
   "injuries": "Injury report from the league's official practice reports via nflverse: shown, not applied. The model reads only who starts at quarterback.",
   "lines": "Model line and model total are the model's own numbers beside the market's. Taking the model's side against the closing spread won 49.8% of 2016-2025 games and against the total 50.1%; -110 needs 52.4% to break even.",
   "model": "The pick is the model blended with the betting market. The market is hard to beat in the NFL: across 2016-2025 the blend picked 66.7% of winners against the closing favourite's 66.6%, and betting the model where it disagreed with the price lost money. Treat a pick as an opinion with a measured hit rate, not an edge.",
+  "news": "Headlines from public NFL news feeds that name one of the two teams or their players, published before kickoff. Shown, not applied.",
+  "players": "Most valuable on offence is ranked by expected points added (EPA) this season - the points a player's plays added above an average play in the same situation; defenders by sacks, takeaways, passes defended and tackles for loss. A listed player who is out or doubtful - or the most valuable player questionable - is flagged at the top of the game, from the official injury report and the weekly roster. Shown, not applied: only the starting quarterback moves the pick.",
   "qb": "The quarterback the model assumes is the one the schedule projects to start. If the injury report says he is out, the number above does not know yet.",
+  "td": "Chance of a rushing or receiving touchdown, if he plays - from his recent carries, targets and snaps and his team's expected points from the betting line. In 2020-2025 each team's most likely scorer scored 43.5% of the time (the model said 41.1%). Measured, and shown, not applied.",
   "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
   "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
  },
@@ -12,6 +15,35 @@
  "game_type": "REG",
  "games": [
   {
+   "alerts": [
+    {
+     "name": "Pat Bryant",
+     "position": "WR",
+     "reason": "did not play",
+     "role": "most valuable player",
+     "side": "home",
+     "status": "out",
+     "team": "DEN"
+    },
+    {
+     "name": "Talanoa Hufanga",
+     "position": "SAF",
+     "reason": "did not play",
+     "role": "#1 defender",
+     "side": "home",
+     "status": "out",
+     "team": "DEN"
+    },
+    {
+     "name": "Drew Lock",
+     "position": "QB",
+     "reason": "did not play",
+     "role": "#2 on offence",
+     "side": "away",
+     "status": "out",
+     "team": "SEA"
+    }
+   ],
    "away": "SEA",
    "away_form": {
     "last5": [
@@ -105,7 +137,69 @@
      "status": "Out"
     }
    ],
+   "away_injuries_total": 3,
    "away_name": "Seattle Seahawks",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0036994",
+      "line": "2 sacks, 1 INT, 3 PD",
+      "name": "Ernest Jones",
+      "position": "LB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 5.0
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0034974",
+      "line": "2 INT, 5 PD, 2 TFL",
+      "name": "Julian Love",
+      "position": "SAF",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 5.0
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0038543",
+      "line": "37 rec, 583 yds, 7 TD",
+      "name": "Jaxon Smith-Njigba",
+      "position": "WR",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 36.708239
+     },
+     {
+      "games": 2,
+      "gsis_id": "00-0035704",
+      "line": "422 pass yds, 4 TD, 0 INT",
+      "name": "Drew Lock",
+      "position": "QB",
+      "rank": 2,
+      "reason": "did not play",
+      "status": "out",
+      "value": 24.267821
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0033908",
+      "line": "11 rec, 129 yds, 1 TD",
+      "name": "Cooper Kupp",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 6.814049
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0035704",
@@ -216,7 +310,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 3,
    "home_name": "Denver Broncos",
+   "home_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0036564",
+      "line": "1 sack, 2 INT, 1 FF",
+      "name": "Talanoa Hufanga",
+      "position": "SAF",
+      "rank": 1,
+      "reason": "did not play",
+      "status": "out",
+      "value": 8.25
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0035248",
+      "line": "4 sacks, 1 FF, 4 TFL",
+      "name": "Zach Allen",
+      "position": "DE",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 6.0
+     }
+    ],
+    "offense": [
+     {
+      "games": 4,
+      "gsis_id": "00-0040134",
+      "line": "9 rec, 133 yds, 1 TD",
+      "name": "Pat Bryant",
+      "position": "WR",
+      "rank": 1,
+      "reason": "did not play",
+      "status": "out",
+      "value": 13.337914
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0038783",
+      "line": "4 rec, 40 yds, 2 TD",
+      "name": "Nate Adkins",
+      "position": "TE",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 5.597575
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0037085",
+      "line": "16 rush yds, 67 rec yds, 0 TD",
+      "name": "Tyler Badie",
+      "position": "RB",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 4.786613
+     }
+    ]
+   },
    "home_qb": {
     "change": false,
     "id": "00-0039732",
@@ -239,6 +395,7 @@
     "total": 40.5
    },
    "neutral": false,
+   "news": [],
    "no_pick_reason": "No pick was logged before kickoff.",
    "pick": null,
    "roof": "outdoors",
@@ -252,6 +409,7 @@
    "week": 6
   },
   {
+   "alerts": [],
    "away": "HOU",
    "away_form": {
     "last5": [
@@ -359,7 +517,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 5,
    "away_name": "Houston Texans",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0039108",
+      "line": "7.5 sacks, 1 FF, 1 PD",
+      "name": "Will Anderson Jr.",
+      "position": "DE",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 11.5
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0031565",
+      "line": "3 sacks, 1 FF, 4 PD",
+      "name": "Danielle Hunter",
+      "position": "DE",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 6.5
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0039163",
+      "line": "1,402 pass yds, 6 TD, 0 INT",
+      "name": "C.J. Stroud",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 24.196924
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0036554",
+      "line": "19 rec, 249 yds, 3 TD",
+      "name": "Nico Collins",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 19.772683
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0040138",
+      "line": "13 rec, 227 yds, 1 TD",
+      "name": "Jaylin Noel",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 12.318067
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0039163",
@@ -470,7 +690,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 3,
    "home_name": "Jacksonville Jaguars",
+   "home_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0034413",
+      "line": "2 INT, 1 FF, 2 PD",
+      "name": "Foyesade Oluokun",
+      "position": "LB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 4.25
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0039353",
+      "line": "1 INT, 5 PD, 1 TFL",
+      "name": "Jarrian Jones",
+      "position": "CB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0036971",
+      "line": "1,174 pass yds, 10 TD, 3 INT",
+      "name": "Trevor Lawrence",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 45.763482
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0038606",
+      "line": "22 rec, 352 yds, 4 TD",
+      "name": "Parker Washington",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 20.770074
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0034960",
+      "line": "15 rec, 202 yds, 2 TD",
+      "name": "Jakobi Meyers",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 18.144452
+     }
+    ]
+   },
    "home_qb": {
     "change": false,
     "id": "00-0036971",
@@ -493,6 +775,7 @@
     "total": 42.5
    },
    "neutral": true,
+   "news": [],
    "no_pick_reason": "No pick was logged before kickoff.",
    "pick": null,
    "roof": "outdoors",
@@ -506,6 +789,17 @@
    "week": 6
   },
   {
+   "alerts": [
+    {
+     "name": "Lamar Jackson",
+     "position": "QB",
+     "reason": "Out on the injury report (ankle)",
+     "role": "most valuable player",
+     "side": "away",
+     "status": "out",
+     "team": "BAL"
+    }
+   ],
    "away": "BAL",
    "away_form": {
     "last5": [
@@ -627,7 +921,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 7,
    "away_name": "Baltimore Ravens",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0038505",
+      "line": "3 sacks, 1 FF, 2 PD",
+      "name": "Tavius Robinson",
+      "position": "LB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 5.75
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0038038",
+      "line": "1 INT, 1 FF, 4 PD",
+      "name": "Kyle Hamilton",
+      "position": "SAF",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 4.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 4,
+      "gsis_id": "00-0034796",
+      "line": "967 pass yds, 6 TD, 1 INT, 144 rush yds",
+      "name": "Lamar Jackson",
+      "position": "QB",
+      "rank": 1,
+      "reason": "Out on the injury report (ankle)",
+      "status": "out",
+      "value": 42.199811
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0039064",
+      "line": "26 rec, 405 yds, 2 TD",
+      "name": "Zay Flowers",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 27.964447
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0036550",
+      "line": "16 rec, 233 yds, 1 TD",
+      "name": "Rashod Bateman",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 15.920275
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0035993",
@@ -774,7 +1130,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 9,
    "home_name": "Cleveland Browns",
+   "home_players": {
+    "defense": [
+     {
+      "games": 3,
+      "gsis_id": "00-0040685",
+      "line": "4 sacks, 6 TFL",
+      "name": "Mason Graham",
+      "position": "DT",
+      "rank": 1,
+      "reason": "Questionable on the injury report (knee)",
+      "status": "questionable",
+      "value": 5.5
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0035680",
+      "line": "3 FF, 2 PD, 3 TFL",
+      "name": "Quincy Williams",
+      "position": "LB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 4.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0041037",
+      "line": "16 rec, 330 yds, 3 TD",
+      "name": "Denzel Boston",
+      "position": "WR",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 18.156274
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0040663",
+      "line": "18 rec, 157 yds, 3 TD",
+      "name": "Harold Fannin Jr.",
+      "position": "TE",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 8.914064
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0033537",
+      "line": "1,010 pass yds, 7 TD, 2 INT, 167 rush yds",
+      "name": "Deshaun Watson",
+      "position": "QB",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 4.605596
+     }
+    ]
+   },
    "home_prob": 0.374304,
    "home_qb": {
     "change": false,
@@ -806,6 +1224,7 @@
    "model_spread": -2.545655,
    "model_total": 42.130227,
    "neutral": false,
+   "news": [],
    "pick": "BAL",
    "pick_prob": 0.625696,
    "roof": "outdoors",
@@ -831,6 +1250,7 @@
    "week": 6
   },
   {
+   "alerts": [],
    "away": "CAR",
    "away_form": {
     "last5": [
@@ -952,7 +1372,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 7,
    "away_name": "Carolina Panthers",
+   "away_players": {
+    "defense": [
+     {
+      "games": 3,
+      "gsis_id": "00-0037244",
+      "line": "1 sack, 2 INT, 3 PD",
+      "name": "Devin Lloyd",
+      "position": "LB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 7.25
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0040136",
+      "line": "3 sacks, 3 TFL",
+      "name": "Princely Umanmielen",
+      "position": "LB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 4,
+      "gsis_id": "00-0039150",
+      "line": "1,268 pass yds, 9 TD, 2 INT",
+      "name": "Bryce Young",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 41.460656
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0040124",
+      "line": "26 rec, 385 yds, 2 TD",
+      "name": "Tetairoa McMillan",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 15.89874
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0039491",
+      "line": "18 rec, 222 yds, 2 TD",
+      "name": "Jalen Coker",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 12.661383
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0039150",
@@ -1098,7 +1580,69 @@
      "status": "Out"
     }
    ],
+   "home_injuries_total": 11,
    "home_name": "Philadelphia Eagles",
+   "home_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0038386",
+      "line": "3 sacks, 3 FF, 1 PD",
+      "name": "Jalen Carter",
+      "position": "DT",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 7.75
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0039841",
+      "line": "1 INT, 4 PD, 2 TFL",
+      "name": "Cooper DeJean",
+      "position": "CB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.5
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0038393",
+      "line": "17 rec, 260 yds, 1 TD",
+      "name": "Dontayvion Wicks",
+      "position": "WR",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 14.283997
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0040024",
+      "line": "7 rec, 130 yds, 4 TD",
+      "name": "Darius Cooper",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 8.818474
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0034351",
+      "line": "11 rec, 119 yds, 2 TD",
+      "name": "Dallas Goedert",
+      "position": "TE",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 7.266217
+     }
+    ]
+   },
    "home_prob": 0.391934,
    "home_qb": {
     "change": true,
@@ -1130,9 +1674,14 @@
    "model_spread": -0.581495,
    "model_total": 43.602938,
    "neutral": false,
+   "news": [],
    "pick": "CAR",
    "pick_prob": 0.608066,
    "roof": "outdoors",
+   "score": {
+    "away": 25,
+    "home": 14
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 2.418505,
@@ -1140,7 +1689,7 @@
     "team": "PHI"
    },
    "stadium": "Lincoln Financial Field",
-   "status": "in progress",
+   "status": "final",
    "tier": "LEAN",
    "tier_hit_rate": 0.590398,
    "total_pick": {
@@ -1151,6 +1700,44 @@
    "week": 6
   },
   {
+   "alerts": [
+    {
+     "name": "C.J. Henderson",
+     "position": "CB",
+     "reason": "Out on the injury report (groin)",
+     "role": "#1 defender",
+     "side": "home",
+     "status": "out",
+     "team": "ATL"
+    },
+    {
+     "name": "Kyle Monangai",
+     "position": "RB",
+     "reason": "Out on the injury report (thumb)",
+     "role": "#3 on offence",
+     "side": "away",
+     "status": "out",
+     "team": "CHI"
+    },
+    {
+     "name": "Dayo Odeyingbo",
+     "position": "DE",
+     "reason": "Out on the injury report (quadricep)",
+     "role": "#2 defender",
+     "side": "away",
+     "status": "out",
+     "team": "CHI"
+    },
+    {
+     "name": "Caleb Williams",
+     "position": "QB",
+     "reason": "Questionable on the injury report (hamstring)",
+     "role": "most valuable player",
+     "side": "away",
+     "status": "questionable",
+     "team": "CHI"
+    }
+   ],
    "away": "CHI",
    "away_form": {
     "last5": [
@@ -1272,7 +1859,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 7,
    "away_name": "Chicago Bears",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0039840",
+      "line": "4 sacks, 2 FF, 5 TFL",
+      "name": "Austin Booker",
+      "position": "DE",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 7.25
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0036480",
+      "line": "3 sacks, 2 PD, 3 TFL",
+      "name": "Dayo Odeyingbo",
+      "position": "DE",
+      "rank": 2,
+      "reason": "Out on the injury report (quadricep)",
+      "status": "out",
+      "value": 4.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 2,
+      "gsis_id": "00-0039918",
+      "line": "407 pass yds, 2 TD, 1 INT, 107 rush yds",
+      "name": "Caleb Williams",
+      "position": "QB",
+      "rank": 1,
+      "reason": "Questionable on the injury report (hamstring)",
+      "status": "questionable",
+      "value": 23.889643
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0032464",
+      "line": "24 rec, 226 yds, 1 TD",
+      "name": "Kalif Raymond",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 16.01462
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0040236",
+      "line": "324 rush yds, 3 TD",
+      "name": "Kyle Monangai",
+      "position": "RB",
+      "rank": 3,
+      "reason": "Out on the injury report (thumb)",
+      "status": "out",
+      "value": 6.327036
+     }
+    ]
+   },
    "away_qb": {
     "change": true,
     "id": "00-0039918",
@@ -1376,7 +2025,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 2,
    "home_name": "Atlanta Falcons",
+   "home_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0036281",
+      "line": "1 FF, 6 PD, 1 TFL",
+      "name": "C.J. Henderson",
+      "position": "CB",
+      "rank": 1,
+      "reason": "Out on the injury report (groin)",
+      "status": "out",
+      "value": 4.25
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0031576",
+      "line": "2.5 sacks, 1 PD, 4 TFL",
+      "name": "Za'Darius Smith",
+      "position": "DE",
+      "rank": 2,
+      "reason": "Questionable on the injury report (neck)",
+      "status": "questionable",
+      "value": 4.0
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0037238",
+      "line": "27 rec, 488 yds, 0 TD",
+      "name": "Drake London",
+      "position": "WR",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 27.087848
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0039917",
+      "line": "719 pass yds, 3 TD, 1 INT",
+      "name": "Michael Penix Jr.",
+      "position": "QB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 26.098156
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0032392",
+      "line": "5 rec, 40 yds, 1 TD",
+      "name": "Austin Hooper",
+      "position": "TE",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 6.505002
+     }
+    ]
+   },
    "home_prob": 0.471321,
    "home_qb": {
     "change": false,
@@ -1408,9 +2119,14 @@
    "model_spread": 2.404262,
    "model_total": 46.557701,
    "neutral": false,
+   "news": [],
    "pick": "CHI",
    "pick_prob": 0.528679,
-   "roof": "retractable",
+   "roof": "closed",
+   "score": {
+    "away": 31,
+    "home": 23
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 3.904262,
@@ -1418,7 +2134,7 @@
     "team": "ATL"
    },
    "stadium": "Mercedes-Benz Stadium",
-   "status": "in progress",
+   "status": "final",
    "tier": "TOSS-UP",
    "tier_hit_rate": 0.516624,
    "total_pick": {
@@ -1429,6 +2145,26 @@
    "week": 6
   },
   {
+   "alerts": [
+    {
+     "name": "Jaxson Dart",
+     "position": "QB",
+     "reason": "on a reserve list",
+     "role": "most valuable player",
+     "side": "home",
+     "status": "out",
+     "team": "NYG"
+    },
+    {
+     "name": "Chris Olave",
+     "position": "WR",
+     "reason": "Questionable on the injury report (illness)",
+     "role": "most valuable player",
+     "side": "away",
+     "status": "questionable",
+     "team": "NO"
+    }
+   ],
    "away": "NO",
    "away_form": {
     "last5": [
@@ -1550,7 +2286,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 7,
    "away_name": "New Orleans Saints",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0036321",
+      "line": "4 sacks, 1 FF, 2 PD",
+      "name": "Chase Young",
+      "position": "DE",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 6.75
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0035402",
+      "line": "2.5 sacks, 4 TFL",
+      "name": "Carl Granderson",
+      "position": "DE",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.5
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0037239",
+      "line": "39 rec, 537 yds, 1 TD",
+      "name": "Chris Olave",
+      "position": "WR",
+      "rank": 1,
+      "reason": "Questionable on the injury report (illness)",
+      "status": "questionable",
+      "value": 38.062942
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0039424",
+      "line": "25 rec, 252 yds, 2 TD",
+      "name": "Devaughn Vele",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 14.444811
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0036040",
+      "line": "25 rec, 248 yds, 3 TD",
+      "name": "Juwan Johnson",
+      "position": "TE",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 9.302331
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0040743",
@@ -1682,7 +2480,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 6,
    "home_name": "New York Giants",
+   "home_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0036998",
+      "line": "3 INT, 2 FF, 4 PD",
+      "name": "Jevon Holland",
+      "position": "SAF",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 7.0
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0039000",
+      "line": "1 INT, 7 PD, 1 TD",
+      "name": "Deonte Banks",
+      "position": "CB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 6.5
+     }
+    ],
+    "offense": [
+     {
+      "games": 2,
+      "gsis_id": "00-0040691",
+      "line": "250 pass yds, 3 TD, 0 INT",
+      "name": "Jaxson Dart",
+      "position": "QB",
+      "rank": 1,
+      "reason": "on a reserve list",
+      "status": "out",
+      "value": 24.484685
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0037838",
+      "line": "33 rec, 284 yds, 4 TD",
+      "name": "Isaiah Likely",
+      "position": "TE",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 16.056335
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0039337",
+      "line": "29 rec, 329 yds, 2 TD",
+      "name": "Malik Nabers",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 9.275667
+     }
+    ]
+   },
    "home_prob": 0.498049,
    "home_qb": {
     "change": false,
@@ -1714,9 +2574,14 @@
    "model_spread": 4.766843,
    "model_total": 44.40776,
    "neutral": false,
+   "news": [],
    "pick": "NO",
    "pick_prob": 0.501951,
    "roof": "outdoors",
+   "score": {
+    "away": 34,
+    "home": 27
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 6.266843,
@@ -1724,7 +2589,7 @@
     "team": "NYG"
    },
    "stadium": "MetLife Stadium",
-   "status": "in progress",
+   "status": "final",
    "tier": "TOSS-UP",
    "tier_hit_rate": 0.516624,
    "total_pick": {
@@ -1735,6 +2600,26 @@
    "week": 6
   },
   {
+   "alerts": [
+    {
+     "name": "Mack Hollins",
+     "position": "WR",
+     "reason": "on a reserve list",
+     "role": "#2 on offence",
+     "side": "home",
+     "status": "out",
+     "team": "NE"
+    },
+    {
+     "name": "Adonai Mitchell",
+     "position": "WR",
+     "reason": "Out on the injury report (finger)",
+     "role": "#2 on offence",
+     "side": "away",
+     "status": "out",
+     "team": "NYJ"
+    }
+   ],
    "away": "NYJ",
    "away_form": {
     "last5": [
@@ -1856,7 +2741,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 7,
    "away_name": "New York Jets",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0041026",
+      "line": "5 sacks, 1 FF, 1 PD",
+      "name": "David Bailey",
+      "position": "LB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 8.0
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0037083",
+      "line": "2 sacks, 1 FF, 3 TFL",
+      "name": "Kingsley Enagbare",
+      "position": "LB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0037740",
+      "line": "31 rec, 374 yds, 3 TD",
+      "name": "Garrett Wilson",
+      "position": "WR",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 19.571168
+     },
+     {
+      "games": 2,
+      "gsis_id": "00-0039890",
+      "line": "9 rec, 123 yds, 0 TD",
+      "name": "Adonai Mitchell",
+      "position": "WR",
+      "rank": 2,
+      "reason": "Out on the injury report (finger)",
+      "status": "out",
+      "value": 8.644263
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0039451",
+      "line": "11 rec, 151 yds, 1 TD",
+      "name": "Isaiah Williams",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 7.856588
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0030565",
@@ -2002,7 +2949,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 9,
    "home_name": "New England Patriots",
+   "home_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0040574",
+      "line": "4.5 sacks, 1 FF, 6 TFL",
+      "name": "Elijah Ponder",
+      "position": "LB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 7.0
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0041569",
+      "line": "1.5 sacks, 1 INT, 1 PD",
+      "name": "Gabe Jacas",
+      "position": "LB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0039851",
+      "line": "1,228 pass yds, 8 TD, 7 INT, 161 rush yds",
+      "name": "Drake Maye",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 35.354213
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0033555",
+      "line": "15 rec, 209 yds, 0 TD",
+      "name": "Mack Hollins",
+      "position": "WR",
+      "rank": 2,
+      "reason": "on a reserve list",
+      "status": "out",
+      "value": 12.884917
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0038621",
+      "line": "13 rec, 147 yds, 2 TD",
+      "name": "DeMario Douglas",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 9.356024
+     }
+    ]
+   },
    "home_prob": 0.755773,
    "home_qb": {
     "change": false,
@@ -2034,9 +3043,14 @@
    "model_spread": 11.270098,
    "model_total": 42.822199,
    "neutral": false,
+   "news": [],
    "pick": "NE",
    "pick_prob": 0.755773,
    "roof": "outdoors",
+   "score": {
+    "away": 19,
+    "home": 26
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 3.770098,
@@ -2044,7 +3058,7 @@
     "team": "NE"
    },
    "stadium": "Gillette Stadium",
-   "status": "in progress",
+   "status": "final",
    "tier": "STRONG",
    "tier_hit_rate": 0.818182,
    "total_pick": {
@@ -2055,6 +3069,26 @@
    "week": 6
   },
   {
+   "alerts": [
+    {
+     "name": "Roman Wilson",
+     "position": "WR",
+     "reason": "Out on the injury report (finger)",
+     "role": "#3 on offence",
+     "side": "away",
+     "status": "out",
+     "team": "PIT"
+    },
+    {
+     "name": "Pat Freiermuth",
+     "position": "TE",
+     "reason": "Questionable on the injury report (calf)",
+     "role": "most valuable player",
+     "side": "away",
+     "status": "questionable",
+     "team": "PIT"
+    }
+   ],
    "away": "PIT",
    "away_form": {
     "last5": [
@@ -2183,7 +3217,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 8,
    "away_name": "Pittsburgh Steelers",
+   "away_players": {
+    "defense": [
+     {
+      "games": 4,
+      "gsis_id": "00-0033886",
+      "line": "4.5 sacks, 1 INT, 1 FF",
+      "name": "T.J. Watt",
+      "position": "OLB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 11.0
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0036333",
+      "line": "3 sacks, 1 PD, 5 TFL",
+      "name": "Alex Highsmith",
+      "position": "LB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 4.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0036894",
+      "line": "19 rec, 169 yds, 4 TD",
+      "name": "Pat Freiermuth",
+      "position": "TE",
+      "rank": 1,
+      "reason": "Questionable on the injury report (calf)",
+      "status": "questionable",
+      "value": 11.546
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0037228",
+      "line": "410 rush yds, 230 rec yds, 2 TD",
+      "name": "Jaylen Warren",
+      "position": "RB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 6.794955
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0039739",
+      "line": "14 rec, 188 yds, 2 TD",
+      "name": "Roman Wilson",
+      "position": "WR",
+      "rank": 3,
+      "reason": "Out on the injury report (finger)",
+      "status": "out",
+      "value": 6.347061
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0023459",
@@ -2329,7 +3425,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 8,
    "home_name": "Tampa Bay Buccaneers",
+   "home_players": {
+    "defense": [
+     {
+      "games": 4,
+      "gsis_id": "00-0041502",
+      "line": "1 sack, 1 INT, 1 PD",
+      "name": "Josiah Trotter",
+      "position": "LB",
+      "rank": 1,
+      "reason": "Questionable on the injury report (knee)",
+      "status": "questionable",
+      "value": 5.25
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0040143",
+      "line": "1 INT, 7 PD, 1 TFL",
+      "name": "Jacob Parrish",
+      "position": "CB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 4.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0033921",
+      "line": "19 rec, 179 yds, 0 TD",
+      "name": "Chris Godwin Jr.",
+      "position": "WR",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 6.917724
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0040237",
+      "line": "5 rec, 138 yds, 0 TD",
+      "name": "Tez Johnson",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 5.92214
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0038129",
+      "line": "18 rec, 182 yds, 0 TD",
+      "name": "Cade Otton",
+      "position": "TE",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 5.030305
+     }
+    ]
+   },
    "home_prob": 0.426759,
    "home_qb": {
     "change": false,
@@ -2361,9 +3519,14 @@
    "model_spread": 1.375768,
    "model_total": 41.744595,
    "neutral": false,
+   "news": [],
    "pick": "PIT",
    "pick_prob": 0.573241,
    "roof": "outdoors",
+   "score": {
+    "away": 26,
+    "home": 19
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 3.875768,
@@ -2371,7 +3534,7 @@
     "team": "TB"
    },
    "stadium": "Raymond James Stadium",
-   "status": "in progress",
+   "status": "final",
    "tier": "LEAN",
    "tier_hit_rate": 0.590398,
    "total_pick": {
@@ -2382,6 +3545,26 @@
    "week": 6
   },
   {
+   "alerts": [
+    {
+     "name": "Alec Pierce",
+     "position": "WR",
+     "reason": "on a reserve list",
+     "role": "#3 on offence",
+     "side": "home",
+     "status": "out",
+     "team": "IND"
+    },
+    {
+     "name": "Tyler Warren",
+     "position": "TE",
+     "reason": "Questionable on the injury report (groin)",
+     "role": "most valuable player",
+     "side": "home",
+     "status": "questionable",
+     "team": "IND"
+    }
+   ],
    "away": "TEN",
    "away_form": {
     "last5": [
@@ -2482,7 +3665,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 4,
    "away_name": "Tennessee Titans",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0035643",
+      "line": "2 sacks, 2 PD, 4 TFL",
+      "name": "Jeffery Simmons",
+      "position": "DT",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 4.0
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0034163",
+      "line": "2.5 sacks, 1 PD, 2 TFL",
+      "name": "Jacob Martin",
+      "position": "DE",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.5
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0038117",
+      "line": "22 rec, 176 yds, 2 TD",
+      "name": "Wan'Dale Robinson",
+      "position": "WR",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 8.238524
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0034837",
+      "line": "5 rec, 81 yds, 0 TD",
+      "name": "Calvin Ridley",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 2.68106
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0040170",
+      "line": "6 rec, 130 yds, 1 TD",
+      "name": "Elic Ayomanor",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 2.663349
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0040676",
@@ -2593,7 +3838,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 3,
    "home_name": "Indianapolis Colts",
+   "home_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0032378",
+      "line": "4 sacks, 2 PD, 4 TFL",
+      "name": "DeForest Buckner",
+      "position": "DT",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 6.0
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0040139",
+      "line": "1 sack, 1 FF, 3 PD",
+      "name": "Justin Walley",
+      "position": "CB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0040128",
+      "line": "30 rec, 213 yds, 3 TD",
+      "name": "Tyler Warren",
+      "position": "TE",
+      "rank": 1,
+      "reason": "Questionable on the injury report (groin)",
+      "status": "questionable",
+      "value": 11.978465
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0038997",
+      "line": "20 rec, 249 yds, 0 TD",
+      "name": "Josh Downs",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 11.689619
+     },
+     {
+      "games": 2,
+      "gsis_id": "00-0037664",
+      "line": "5 rec, 72 yds, 0 TD",
+      "name": "Alec Pierce",
+      "position": "WR",
+      "rank": 3,
+      "reason": "on a reserve list",
+      "status": "out",
+      "value": 2.565828
+     }
+    ]
+   },
    "home_prob": 0.72273,
    "home_qb": {
     "change": false,
@@ -2625,9 +3932,10 @@
    "model_spread": 8.688249,
    "model_total": 42.318032,
    "neutral": false,
+   "news": [],
    "pick": "IND",
    "pick_prob": 0.72273,
-   "roof": "retractable",
+   "roof": "open",
    "score": {
     "away": 26,
     "home": 20
@@ -2650,6 +3958,7 @@
    "week": 6
   },
   {
+   "alerts": [],
    "away": "ARI",
    "away_form": {
     "last5": [
@@ -2771,7 +4080,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 7,
    "away_name": "Arizona Cardinals",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0033890",
+      "line": "2.5 sacks, 1 INT, 3 PD",
+      "name": "Budda Baker",
+      "position": "S",
+      "rank": 1,
+      "reason": "Questionable on the injury report (not injury related - resting player)",
+      "status": "questionable",
+      "value": 5.5
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0036995",
+      "line": "1 sack, 2 FF, 2 TFL",
+      "name": "Baron Browning",
+      "position": "LB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.5
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0037744",
+      "line": "42 rec, 308 yds, 3 TD",
+      "name": "Trey McBride",
+      "position": "TE",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 16.463912
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0033307",
+      "line": "17 rec, 178 yds, 0 TD",
+      "name": "Kendrick Bourne",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 8.781964
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0039041",
+      "line": "8 rec, 96 yds, 1 TD",
+      "name": "Elijah Higgins",
+      "position": "TE",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 7.829011
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0033119",
@@ -2875,7 +4246,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 2,
    "home_name": "Los Angeles Rams",
+   "home_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0039137",
+      "line": "3.5 sacks, 1 FF, 4 TFL",
+      "name": "Byron Young",
+      "position": "LB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 5.5
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0037841",
+      "line": "1 INT, 1 FF, 7 PD",
+      "name": "Quentin Lake",
+      "position": "SAF",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 5.5
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0026498",
+      "line": "1,572 pass yds, 9 TD, 6 INT",
+      "name": "Matthew Stafford",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 23.703493
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0031381",
+      "line": "27 rec, 441 yds, 4 TD",
+      "name": "Davante Adams",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 18.629669
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0033110",
+      "line": "20 rec, 224 yds, 1 TD",
+      "name": "Tyler Higbee",
+      "position": "TE",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 10.293008
+     }
+    ]
+   },
    "home_prob": 0.852641,
    "home_qb": {
     "change": false,
@@ -2907,6 +4340,7 @@
    "model_spread": 10.532083,
    "model_total": 51.473908,
    "neutral": false,
+   "news": [],
    "pick": "LA",
    "pick_prob": 0.852641,
    "roof": "dome",
@@ -2928,6 +4362,7 @@
    "week": 6
   },
   {
+   "alerts": [],
    "away": "BUF",
    "away_form": {
     "last5": [
@@ -3035,7 +4470,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 5,
    "away_name": "Buffalo Bills",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0036914",
+      "line": "6 sacks, 3 FF, 3 PD",
+      "name": "Greg Rousseau",
+      "position": "LB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 12.5
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0040710",
+      "line": "1 sack, 4 PD, 4 TFL",
+      "name": "Deone Walker",
+      "position": "DT",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 4.0
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0034857",
+      "line": "1,249 pass yds, 7 TD, 4 INT, 239 rush yds",
+      "name": "Josh Allen",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 61.255769
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0039901",
+      "line": "15 rec, 224 yds, 2 TD",
+      "name": "Keon Coleman",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 18.65994
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0035537",
+      "line": "3 rush yds, 131 rec yds, 0 TD",
+      "name": "Ty Johnson",
+      "position": "RB",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 12.107916
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0034857",
@@ -3153,7 +4650,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 4,
    "home_name": "Las Vegas Raiders",
+   "home_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0040889",
+      "line": "3 INT, 6 PD, 1 TFL",
+      "name": "Hezekiah Masses",
+      "position": "CB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 6.25
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0037615",
+      "line": "1.5 sacks, 3 FF, 1 PD",
+      "name": "Nakobe Dean",
+      "position": "LB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 5.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0029604",
+      "line": "1,269 pass yds, 12 TD, 4 INT",
+      "name": "Kirk Cousins",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 26.195832
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0039338",
+      "line": "24 rec, 312 yds, 3 TD",
+      "name": "Brock Bowers",
+      "position": "TE",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 17.38666
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0035891",
+      "line": "7 rec, 108 yds, 3 TD",
+      "name": "Cody White",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 11.457764
+     }
+    ]
+   },
    "home_prob": 0.303889,
    "home_qb": {
     "change": false,
@@ -3166,6 +4725,7 @@
    },
    "home_rest": 7.142361,
    "kickoff": "2026-10-18T20:25:00Z",
+   "logged_at": "2026-10-18T20:16:39Z",
    "market": {
     "as_of": null,
     "away_ml": -238.0,
@@ -3184,6 +4744,7 @@
    "model_spread": -6.190711,
    "model_total": 53.549017,
    "neutral": false,
+   "news": [],
    "pick": "BUF",
    "pick_prob": 0.696111,
    "roof": "dome",
@@ -3194,7 +4755,7 @@
     "team": "BUF"
    },
    "stadium": "Allegiant Stadium",
-   "status": "upcoming",
+   "status": "in progress",
    "tier": "SOLID",
    "tier_hit_rate": 0.721728,
    "total_pick": {
@@ -3205,6 +4766,26 @@
    "week": 6
   },
   {
+   "alerts": [
+    {
+     "name": "Tyquan Thornton",
+     "position": "WR",
+     "reason": "on a reserve list",
+     "role": "#2 on offence",
+     "side": "home",
+     "status": "out",
+     "team": "KC"
+    },
+    {
+     "name": "Tre Harris",
+     "position": "WR",
+     "reason": "Out on the injury report (hamstring)",
+     "role": "#2 on offence",
+     "side": "away",
+     "status": "out",
+     "team": "LAC"
+    }
+   ],
    "away": "LAC",
    "away_form": {
     "last5": [
@@ -3333,7 +4914,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 12,
    "away_name": "Los Angeles Chargers",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0039111",
+      "line": "2 sacks, 1 INT, 2 FF",
+      "name": "Tuli Tuipulotu",
+      "position": "LB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 7.0
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0031040",
+      "line": "3 sacks, 5 TFL",
+      "name": "Khalil Mack",
+      "position": "OLB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 4.25
+     }
+    ],
+    "offense": [
+     {
+      "games": 4,
+      "gsis_id": "00-0039915",
+      "line": "12 rec, 183 yds, 1 TD",
+      "name": "Ladd McConkey",
+      "position": "WR",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 10.685361
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0040727",
+      "line": "15 rec, 225 yds, 0 TD",
+      "name": "Tre Harris",
+      "position": "WR",
+      "rank": 2,
+      "reason": "Out on the injury report (hamstring)",
+      "status": "out",
+      "value": 4.799194
+     },
+     {
+      "games": 1,
+      "gsis_id": "00-0040311",
+      "line": "1 rec, 16 yds, 0 TD",
+      "name": "Theo Wease Jr.",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 2.996485
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0036355",
@@ -3444,7 +5087,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 3,
    "home_name": "Kansas City Chiefs",
+   "home_players": {
+    "defense": [
+     {
+      "games": 4,
+      "gsis_id": "00-0040670",
+      "line": "1 sack, 4 PD, 2 TFL",
+      "name": "Nohl Williams",
+      "position": "CB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 3.5
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0041543",
+      "line": "1 INT, 3 PD, 2 TFL",
+      "name": "Mansoor Delane",
+      "position": "CB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.0
+     }
+    ],
+    "offense": [
+     {
+      "games": 4,
+      "gsis_id": "00-0033873",
+      "line": "1,037 pass yds, 9 TD, 2 INT",
+      "name": "Patrick Mahomes",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 25.058565
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0038104",
+      "line": "11 rec, 219 yds, 2 TD",
+      "name": "Tyquan Thornton",
+      "position": "WR",
+      "rank": 2,
+      "reason": "on a reserve list",
+      "status": "out",
+      "value": 19.036908
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0030506",
+      "line": "16 rec, 246 yds, 2 TD",
+      "name": "Travis Kelce",
+      "position": "TE",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 16.362778
+     }
+    ]
+   },
    "home_prob": 0.787467,
    "home_qb": {
     "change": false,
@@ -3457,6 +5162,7 @@
    },
    "home_rest": 14.0,
    "kickoff": "2026-10-18T20:25:00Z",
+   "logged_at": "2026-10-18T20:16:39Z",
    "market": {
     "as_of": null,
     "away_ml": 350.0,
@@ -3475,6 +5181,7 @@
    "model_spread": 9.431636,
    "model_total": 42.005418,
    "neutral": false,
+   "news": [],
    "pick": "KC",
    "pick_prob": 0.787467,
    "roof": "outdoors",
@@ -3485,7 +5192,7 @@
     "team": "KC"
    },
    "stadium": "GEHA Field at Arrowhead Stadium",
-   "status": "upcoming",
+   "status": "in progress",
    "tier": "STRONG",
    "tier_hit_rate": 0.818182,
    "total_pick": {
@@ -3496,6 +5203,17 @@
    "week": 6
   },
   {
+   "alerts": [
+    {
+     "name": "Edgerrin Cooper",
+     "position": "LB",
+     "reason": "on a reserve list",
+     "role": "#1 defender",
+     "side": "home",
+     "status": "out",
+     "team": "GB"
+    }
+   ],
    "away": "DAL",
    "away_form": {
     "last5": [
@@ -3610,7 +5328,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 6,
    "away_name": "Dallas Cowboys",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0040865",
+      "line": "1 sack, 2 FF, 1 PD",
+      "name": "Caleb Downs",
+      "position": "SAF",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 3.5
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0035718",
+      "line": "1 sack, 1 FF, 4 TFL",
+      "name": "Quinnen Williams",
+      "position": "DT",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 3.0
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0033077",
+      "line": "1,381 pass yds, 9 TD, 3 INT",
+      "name": "Dak Prescott",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 46.15073
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0036358",
+      "line": "39 rec, 507 yds, 4 TD",
+      "name": "CeeDee Lamb",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 36.659803
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0037247",
+      "line": "27 rec, 355 yds, 1 TD",
+      "name": "George Pickens",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 16.567701
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0033077",
@@ -3621,6 +5401,35 @@
     "starts": 150
    },
    "away_rest": 10.003472,
+   "away_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0036997",
+     "name": "Javonte Williams",
+     "position": "RB",
+     "prob": 0.556791,
+     "status": "active",
+     "tds_season": 7
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0037247",
+     "name": "George Pickens",
+     "position": "WR",
+     "prob": 0.345886,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0036358",
+     "name": "CeeDee Lamb",
+     "position": "WR",
+     "prob": 0.34093,
+     "status": "active",
+     "tds_season": 4
+    }
+   ],
    "div_game": false,
    "elo": {
     "away": 1447.752654,
@@ -3756,7 +5565,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 10,
    "home_name": "Green Bay Packers",
+   "home_players": {
+    "defense": [
+     {
+      "games": 4,
+      "gsis_id": "00-0039850",
+      "line": "3 sacks, 1 INT, 1 PD",
+      "name": "Edgerrin Cooper",
+      "position": "LB",
+      "rank": 1,
+      "reason": "on a reserve list",
+      "status": "out",
+      "value": 6.0
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0036388",
+      "line": "1 sack, 3 INT, 3 PD",
+      "name": "Xavier McKinney",
+      "position": "SAF",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 5.75
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0038124",
+      "line": "26 rec, 474 yds, 6 TD",
+      "name": "Christian Watson",
+      "position": "WR",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 20.270463
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0036264",
+      "line": "1,408 pass yds, 10 TD, 3 INT",
+      "name": "Jordan Love",
+      "position": "QB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 17.14524
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0040667",
+      "line": "24 rec, 397 yds, 2 TD",
+      "name": "Matthew Golden",
+      "position": "WR",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 13.879669
+     }
+    ]
+   },
    "home_prob": 0.504753,
    "home_qb": {
     "change": false,
@@ -3768,6 +5639,35 @@
     "starts": 57
    },
    "home_rest": 7.305556,
+   "home_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0038124",
+     "name": "Christian Watson",
+     "position": "WR",
+     "prob": 0.445554,
+     "status": "active",
+     "tds_season": 6
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0039811",
+     "name": "MarShawn Lloyd",
+     "position": "RB",
+     "prob": 0.386028,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0040667",
+     "name": "Matthew Golden",
+     "position": "WR",
+     "prob": 0.358448,
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
    "kickoff": "2026-10-19T00:20:00Z",
    "market": {
     "as_of": null,
@@ -3785,8 +5685,9 @@
    "market_total": 53.5,
    "model_prob": 0.68255,
    "model_spread": 5.307209,
-   "model_total": 50.622507,
+   "model_total": 50.594809,
    "neutral": false,
+   "news": [],
    "pick": "GB",
    "pick_prob": 0.504753,
    "roof": "outdoors",
@@ -3801,13 +5702,24 @@
    "tier": "TOSS-UP",
    "tier_hit_rate": 0.516624,
    "total_pick": {
-    "edge": 2.877493,
+    "edge": 2.905191,
     "line": 53.5,
     "side": "UNDER"
    },
    "week": 6
   },
   {
+   "alerts": [
+    {
+     "name": "Marcus Mariota",
+     "position": "QB",
+     "reason": "Out on the injury report (knee)",
+     "role": "#3 on offence",
+     "side": "away",
+     "status": "out",
+     "team": "WAS"
+    }
+   ],
    "away": "WAS",
    "away_form": {
     "last5": [
@@ -3936,7 +5848,69 @@
      "status": "Questionable"
     }
    ],
+   "away_injuries_total": 13,
    "away_name": "Washington Commanders",
+   "away_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0041028",
+      "line": "1 sack, 1 INT, 1 FF",
+      "name": "Sonny Styles",
+      "position": "LB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 5.25
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0036375",
+      "line": "1 FF, 8 PD",
+      "name": "Amik Robertson",
+      "position": "CB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 5.0
+     }
+    ],
+    "offense": [
+     {
+      "games": 3,
+      "gsis_id": "00-0039910",
+      "line": "459 pass yds, 3 TD, 0 INT, 203 rush yds",
+      "name": "Jayden Daniels",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 15.329657
+     },
+     {
+      "games": 4,
+      "gsis_id": "00-0035659",
+      "line": "14 rec, 203 yds, 1 TD",
+      "name": "Terry McLaurin",
+      "position": "WR",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 12.208245
+     },
+     {
+      "games": 3,
+      "gsis_id": "00-0032268",
+      "line": "340 pass yds, 4 TD, 0 INT",
+      "name": "Marcus Mariota",
+      "position": "QB",
+      "rank": 3,
+      "reason": "Out on the injury report (knee)",
+      "status": "out",
+      "value": 11.983679
+     }
+    ]
+   },
    "away_qb": {
     "change": false,
     "id": "00-0039910",
@@ -3947,6 +5921,35 @@
     "starts": 27
    },
    "away_rest": 8.302083,
+   "away_td": [
+    {
+     "games_season": 4,
+     "gsis_id": "00-0035659",
+     "name": "Terry McLaurin",
+     "position": "WR",
+     "prob": 0.270788,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 3,
+     "gsis_id": "00-0039910",
+     "name": "Jayden Daniels",
+     "position": "QB",
+     "prob": 0.266097,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0031588",
+     "name": "Stefon Diggs",
+     "position": "WR",
+     "prob": 0.217937,
+     "status": "questionable",
+     "tds_season": 3
+    }
+   ],
    "div_game": false,
    "elo": {
     "away": 1421.137637,
@@ -4082,7 +6085,69 @@
      "status": "Questionable"
     }
    ],
+   "home_injuries_total": 10,
    "home_name": "San Francisco 49ers",
+   "home_players": {
+    "defense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0039345",
+      "line": "3 INT, 5 PD",
+      "name": "Renardo Green",
+      "position": "CB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 5.5
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0034815",
+      "line": "0.5 sacks, 3 FF, 3 PD",
+      "name": "Fred Warner",
+      "position": "MLB",
+      "rank": 2,
+      "reason": null,
+      "status": "active",
+      "value": 5.25
+     }
+    ],
+    "offense": [
+     {
+      "games": 5,
+      "gsis_id": "00-0037834",
+      "line": "1,196 pass yds, 13 TD, 2 INT, 128 rush yds",
+      "name": "Brock Purdy",
+      "position": "QB",
+      "rank": 1,
+      "reason": null,
+      "status": "active",
+      "value": 62.403403
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0031408",
+      "line": "24 rec, 326 yds, 3 TD",
+      "name": "Mike Evans",
+      "position": "WR",
+      "rank": 2,
+      "reason": "Questionable on the injury report (ribs)",
+      "status": "questionable",
+      "value": 35.198561
+     },
+     {
+      "games": 5,
+      "gsis_id": "00-0033288",
+      "line": "21 rec, 268 yds, 4 TD",
+      "name": "George Kittle",
+      "position": "TE",
+      "rank": 3,
+      "reason": null,
+      "status": "active",
+      "value": 12.605978
+     }
+    ]
+   },
    "home_prob": 0.790313,
    "home_qb": {
     "change": false,
@@ -4094,6 +6159,35 @@
     "starts": 58
    },
    "home_rest": 8.159722,
+   "home_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0033280",
+     "name": "Christian McCaffrey",
+     "position": "RB",
+     "prob": 0.634482,
+     "status": "active",
+     "tds_season": 5
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0031408",
+     "name": "Mike Evans",
+     "position": "WR",
+     "prob": 0.416941,
+     "status": "questionable",
+     "tds_season": 3
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0033288",
+     "name": "George Kittle",
+     "position": "TE",
+     "prob": 0.384891,
+     "status": "active",
+     "tds_season": 4
+    }
+   ],
    "kickoff": "2026-10-20T00:15:00Z",
    "market": {
     "as_of": null,
@@ -4111,8 +6205,9 @@
    "market_total": 52.5,
    "model_prob": 0.818988,
    "model_spread": 11.122173,
-   "model_total": 50.277121,
+   "model_total": 50.249424,
    "neutral": false,
+   "news": [],
    "pick": "SF",
    "pick_prob": 0.790313,
    "roof": "outdoors",
@@ -4127,14 +6222,14 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.818182,
    "total_pick": {
-    "edge": 2.222879,
+    "edge": 2.250576,
     "line": 52.5,
     "side": "UNDER"
    },
    "week": 6
   }
  ],
- "generated": "2026-10-18T20:16:45Z",
+ "generated": "2026-10-18T20:57:51Z",
  "label": "Week 6",
  "schema": 1,
  "season": 2026,

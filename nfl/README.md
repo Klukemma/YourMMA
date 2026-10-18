@@ -23,6 +23,29 @@ little in 2006-2015 and lost 7-10% in 2016-2025, so that label is switched off b
 `nfl_backtest.value_gate`. It turns itself on only if a re-measured edge is profitable in
 both periods.
 
+## Players
+
+Every game card also carries:
+
+- **Most valuable players**, for each team. Offence is ranked by expected points added (EPA)
+  this season, the points a player's plays added above an average play in the same situation.
+  Before week 5, last season's per-game rate fills in. Defenders are ranked by the plays they
+  make themselves: sacks, takeaways, passes defended and tackles for loss.
+- **Absence alerts.** A listed player who is out or doubtful, or a most valuable player who is
+  questionable, leads the card. This is read from the official injury report, the weekly roster
+  (injured reserve and game-day inactives) and, once a game is over, its snap counts.
+- **Most likely to score a touchdown.** For each team's top three, this is the chance of a
+  rushing or receiving TD if the player plays (`nfl_td.py`). It is built from his recent carries,
+  targets, snaps and scoring, and his team's expected points from the betting line. Measured
+  walk-forward on 2013+ snap-count games against a position base rate (log loss 0.444) and
+  usage alone (0.403), it scores 0.395 in 2020-2025. Each team's most likely scorer scored
+  43.5% of the time against the 41.1% the model gave, and at least one of the top three scored
+  74% of the time. These picks are logged before kickoff and graded from the box score.
+- **Player news.** Headlines from public NFL news feeds (`nfl_news.py`, fetched by the runner)
+  that name either team or one of their rostered players, published before kickoff.
+
+All of these are shown, not applied. The pick moves only for the starting quarterback.
+
 ## The rules it keeps
 
 - **Point in time.** Games are replayed in kickoff order. A game reads every team's and
@@ -49,6 +72,9 @@ both periods.
     nfl/engine/nfl_backtest.py    protocol, metrics, confidence bands, value gate
     nfl/engine/nfl_odds.py        the-odds-api (ODDS_API_KEY) with cache; schedule lines as fallback
     nfl/engine/nfl_form.py        record and last five beside each team
+    nfl/engine/nfl_players.py     most valuable players and whether they play
+    nfl/engine/nfl_td.py          anytime-touchdown model, walk-forward and live
+    nfl/engine/nfl_news.py        player news from public RSS feeds
     nfl/engine/nfl_predict.py     the weekly run: picks, log, grading, app data
     nfl/engine/nfl_export.py      app payloads and caveats
     nfl/engine/nfl_standalone.py  the offline single-file app

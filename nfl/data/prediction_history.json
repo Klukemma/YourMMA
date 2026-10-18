@@ -169,6 +169,11 @@
     "source": "projected",
     "starts": 46
    },
+   "correct": true,
+   "final": {
+    "away": 25,
+    "home": 14
+   },
    "first_logged": "2026-10-18T14:04:05Z",
    "game_id": "2026_06_CAR_PHI",
    "game_type": "REG",
@@ -195,12 +200,14 @@
    "pick": "CAR",
    "pick_prob": 0.608066,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 2.418505,
     "line": 3.0,
     "team": "PHI"
    },
    "tier": "LEAN",
+   "total_correct": false,
    "total_pick": {
     "edge": 4.102938,
     "line": 39.5,
@@ -218,6 +225,11 @@
     "rating": 0.073709,
     "source": "projected",
     "starts": 38
+   },
+   "correct": true,
+   "final": {
+    "away": 31,
+    "home": 23
    },
    "first_logged": "2026-10-18T14:04:05Z",
    "game_id": "2026_06_CHI_ATL",
@@ -245,12 +257,14 @@
    "pick": "CHI",
    "pick_prob": 0.528679,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 3.904262,
     "line": 1.5,
     "team": "ATL"
    },
    "tier": "TOSS-UP",
+   "total_correct": false,
    "total_pick": {
     "edge": 5.942299,
     "line": 52.5,
@@ -269,6 +283,35 @@
     "source": "projected",
     "starts": 150
    },
+   "away_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0036997",
+     "name": "Javonte Williams",
+     "position": "RB",
+     "prob": 0.556791,
+     "status": "active",
+     "tds_season": 7
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0037247",
+     "name": "George Pickens",
+     "position": "WR",
+     "prob": 0.345886,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0036358",
+     "name": "CeeDee Lamb",
+     "position": "WR",
+     "prob": 0.34093,
+     "status": "active",
+     "tds_season": 4
+    }
+   ],
    "first_logged": "2026-10-18T14:04:05Z",
    "game_id": "2026_06_DAL_GB",
    "game_type": "REG",
@@ -283,15 +326,54 @@
     "source": "projected",
     "starts": 57
    },
+   "home_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0038124",
+     "name": "Christian Watson",
+     "position": "WR",
+     "prob": 0.445554,
+     "status": "active",
+     "tds_season": 6
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0039811",
+     "name": "MarShawn Lloyd",
+     "position": "RB",
+     "prob": 0.386028,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0040667",
+     "name": "Matthew Golden",
+     "position": "WR",
+     "prob": 0.358448,
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
    "kickoff": "2026-10-19T00:20:00Z",
-   "last_logged": "2026-10-18T20:16:39Z",
+   "last_logged": "2026-10-18T20:56:54Z",
+   "market": {
+    "as_of": null,
+    "away_ml": -108.0,
+    "books": null,
+    "home_ml": -112.0,
+    "home_prob": 0.50433,
+    "source": "nflverse",
+    "spread": 1.5,
+    "total": 53.5
+   },
    "market_prob": 0.50433,
    "market_source": "nflverse",
    "market_spread": 1.5,
    "market_total": 53.5,
    "model_prob": 0.68255,
    "model_spread": 5.307209,
-   "model_total": 50.622507,
+   "model_total": 50.594809,
    "pick": "GB",
    "pick_prob": 0.504753,
    "season": 2026,
@@ -302,7 +384,7 @@
    },
    "tier": "TOSS-UP",
    "total_pick": {
-    "edge": 2.877493,
+    "edge": 2.905191,
     "line": 53.5,
     "side": "UNDER"
    },
@@ -369,6 +451,11 @@
     "source": "projected",
     "starts": 14
    },
+   "correct": true,
+   "final": {
+    "away": 34,
+    "home": 27
+   },
    "first_logged": "2026-10-18T14:04:05Z",
    "game_id": "2026_06_NO_NYG",
    "game_type": "REG",
@@ -395,12 +482,14 @@
    "pick": "NO",
    "pick_prob": 0.501951,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 6.266843,
     "line": 1.5,
     "team": "NYG"
    },
    "tier": "TOSS-UP",
+   "total_correct": false,
    "total_pick": {
     "edge": 2.09224,
     "line": 46.5,
@@ -418,6 +507,11 @@
     "rating": -0.080497,
     "source": "projected",
     "starts": 104
+   },
+   "correct": true,
+   "final": {
+    "away": 19,
+    "home": 26
    },
    "first_logged": "2026-10-18T14:04:05Z",
    "game_id": "2026_06_NYJ_NE",
@@ -445,12 +539,14 @@
    "pick": "NE",
    "pick_prob": 0.755773,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 3.770098,
     "line": -7.5,
     "team": "NE"
    },
    "tier": "STRONG",
+   "total_correct": false,
    "total_pick": {
     "edge": 0.677801,
     "line": 43.5,
@@ -468,6 +564,11 @@
     "rating": -0.048696,
     "source": "projected",
     "starts": 283
+   },
+   "correct": true,
+   "final": {
+    "away": 26,
+    "home": 19
    },
    "first_logged": "2026-10-18T14:04:05Z",
    "game_id": "2026_06_PIT_TB",
@@ -495,12 +596,14 @@
    "pick": "PIT",
    "pick_prob": 0.573241,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 3.875768,
     "line": 2.5,
     "team": "TB"
    },
    "tier": "LEAN",
+   "total_correct": true,
    "total_pick": {
     "edge": 3.244595,
     "line": 38.5,
@@ -576,6 +679,35 @@
     "source": "projected",
     "starts": 27
    },
+   "away_td": [
+    {
+     "games_season": 4,
+     "gsis_id": "00-0035659",
+     "name": "Terry McLaurin",
+     "position": "WR",
+     "prob": 0.270788,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 3,
+     "gsis_id": "00-0039910",
+     "name": "Jayden Daniels",
+     "position": "QB",
+     "prob": 0.266097,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0031588",
+     "name": "Stefon Diggs",
+     "position": "WR",
+     "prob": 0.217937,
+     "status": "questionable",
+     "tds_season": 3
+    }
+   ],
    "first_logged": "2026-10-18T14:04:05Z",
    "game_id": "2026_06_WAS_SF",
    "game_type": "REG",
@@ -590,15 +722,54 @@
     "source": "projected",
     "starts": 58
    },
+   "home_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0033280",
+     "name": "Christian McCaffrey",
+     "position": "RB",
+     "prob": 0.634482,
+     "status": "active",
+     "tds_season": 5
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0031408",
+     "name": "Mike Evans",
+     "position": "WR",
+     "prob": 0.416941,
+     "status": "questionable",
+     "tds_season": 3
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0033288",
+     "name": "George Kittle",
+     "position": "TE",
+     "prob": 0.384891,
+     "status": "active",
+     "tds_season": 4
+    }
+   ],
    "kickoff": "2026-10-20T00:15:00Z",
-   "last_logged": "2026-10-18T20:16:39Z",
+   "last_logged": "2026-10-18T20:56:54Z",
+   "market": {
+    "as_of": null,
+    "away_ml": 350.0,
+    "books": null,
+    "home_ml": -455.0,
+    "home_prob": 0.786744,
+    "source": "nflverse",
+    "spread": 7.5,
+    "total": 52.5
+   },
    "market_prob": 0.786744,
    "market_source": "nflverse",
    "market_spread": 7.5,
    "market_total": 52.5,
    "model_prob": 0.818988,
    "model_spread": 11.122173,
-   "model_total": 50.277121,
+   "model_total": 50.249424,
    "pick": "SF",
    "pick_prob": 0.790313,
    "season": 2026,
@@ -609,7 +780,7 @@
    },
    "tier": "STRONG",
    "total_pick": {
-    "edge": 2.222879,
+    "edge": 2.250576,
     "line": 52.5,
     "side": "UNDER"
    },

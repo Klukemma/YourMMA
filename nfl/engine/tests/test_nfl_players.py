@@ -28,7 +28,7 @@ def _offense():
         return base
     rows = [r("qb", "Pat Q", "QB", g, 2026, 10.0, passing_yards=250, passing_tds=2) for g in ("g1", "g2", "g3", "g4")]
     rows += [r("wr", "Wide R", "WR", g, 2026, 4.0, receptions=5, receiving_yards=70) for g in ("g1", "g2", "g3", "g4")]
-    rows += [r("te", "Tight E", "TE", g, 2026, 1.0, receptions=3, receiving_yards=30) for g in ("g1", "g2")]
+    rows += [r("te", "Tight E", "TE", g, 2026, 1.5, receptions=3, receiving_yards=30) for g in ("g1", "g2")]
     rows += [r("rb", "Run B", "RB", g, 2026, 0.5, rushing_yards=60) for g in ("g1", "g2", "g3", "g4")]
     return pd.DataFrame(rows)
 

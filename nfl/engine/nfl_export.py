@@ -103,7 +103,7 @@ def pct(x):
     return "—" if x is None or x != x else f"{x * 100:.1f}%"
 
 
-def caveats(backtest):
+def caveats(backtest, td=None):
     confirm = f"{backtest['periods']['confirm'][0]}-{backtest['periods']['confirm'][1]}"
     blend = backtest["winner"]["blend"][confirm]
     spread = backtest["spread"][confirm]["0"]["hit_rate"]
@@ -113,6 +113,14 @@ def caveats(backtest):
     out["lines"] = out["lines"].format(ats=pct(spread), tot=pct(total))
     if backtest["value"]["enabled_at"] is not None:
         out.pop("value_off")
+    if td:
+        period = [k for k in td if k[:2] == "20"][-1]
+        top = td[period]["top_pick"][td["model"]]
+        out["td"] = (
+            f"Chance of a rushing or receiving touchdown, if he plays - from his recent carries, "
+            f"targets and snaps and his team's expected points from the betting line. In {period} "
+            f"each team's most likely scorer scored {pct(top['hit_rate'])} of the time "
+            f"(the model said {pct(top['mean_prob'])}). Measured, and shown, not applied.")
     return out
 
 
@@ -158,6 +166,10 @@ def track_record(log):
         "log_loss": (sum(ll) / len(ll)) if ll else None,
         "pending": sum(1 for p in picks if p.get("correct") is None and not p.get("void")),
         "ats": {"picks": len(ats), "correct": sum(1 for p in ats if p["spread_correct"])},
+        "td": {"picks": sum(1 for p in picks for side in ("home_td", "away_td") for t in (p.get(side) or [])
+                            if t.get("scored") is not None),
+               "scored": sum(1 for p in picks for side in ("home_td", "away_td") for t in (p.get(side) or [])
+                             if t.get("scored"))},
         "totals": {"picks": len(tot), "correct": sum(1 for p in tot if p["total_correct"])},
         "by_season": sorted(seasons.values(), key=lambda r: r["season"]),
         "by_week": sorted(weeks.values(), key=lambda r: (r["season"], r["week"])),

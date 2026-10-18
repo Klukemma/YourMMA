@@ -175,8 +175,13 @@ function keyPlayers(code, kp) {
 
 function tdList(code, list) {
   if (!list || !list.length) return "";
-  const items = list.map((p) => `<li><span class="num tdp">${pct(p.prob)}</span>
-    <span><b>${esc(p.name)}</b> ${esc(p.position)}${statusBadge(p)}</span></li>`).join("");
+  const items = list.map((p) => {
+    const result = p.scored === true ? ` <span class="st scored">Scored</span>`
+      : p.scored === false ? ` <span class="st questionable">No TD</span>` : "";
+    const season = p.games_season ? `<div class="mini">${esc(p.tds_season)} TD in ${esc(p.games_season)} games this season</div>` : "";
+    return `<li><span class="num tdp">${pct(p.prob)}</span>
+    <span><b>${esc(p.name)}</b> ${esc(p.position)}${statusBadge(p)}${result}${season}</span></li>`;
+  }).join("");
   return `<div><div class="eyebrow">${esc(code)} · touchdown</div><ul class="kp">${items}</ul></div>`;
 }
 
@@ -524,6 +529,24 @@ function renderRecord(d) {
 
   const cal = (b.calibration || []).map((r) =>
     `<tr><td class="n">${pct(r.lo)}-${pct(r.hi)}</td><td class="n">${esc(r.games)}</td><td class="n">${pct(r.predicted, 1)}</td><td class="n">${pct(r.observed, 1)}</td></tr>`).join("");
+  const td = d.td || {};
+  const tdPeriods = Object.keys(td).filter((k) => /^20/.test(k));
+  const tdRows = tdPeriods.map((k) => {
+    const r = td[k] || {}, top = ((r.top_pick || {})[td.model]) || {}, t3 = r.top3 || {};
+    return `<tr><td>${esc(k)}</td><td class="n">${pct(top.hit_rate, 1)} <span class="mini">said ${pct(top.mean_prob, 1)}</span></td>
+      <td class="n">${pct(t3.any_hit_rate ?? t3.any_scored, 1)}</td><td class="n">${num((r.log_loss || {})[td.model], 3)}
+      <span class="mini">base ${num((r.log_loss || {}).base, 3)}</span></td></tr>`;
+  }).join("");
+  const tdCal = ((td[tdPeriods[tdPeriods.length - 1]] || {}).calibration || []).map((b) =>
+    `<tr><td class="n">${pct(b.lo)}-${pct(b.hi)}</td><td class="n">${esc(b.rows)}</td><td class="n">${pct(b.predicted, 1)}</td><td class="n">${pct(b.observed, 1)}</td></tr>`).join("");
+  const tdCard = tdRows ? `<div class="card"><h2>Touchdown scorers</h2>
+    <div class="scroll"><table><thead><tr><th>Period</th><th class="n">Top pick scored</th><th class="n">One of top 3</th><th class="n">Log loss</th></tr></thead>
+    <tbody>${tdRows}</tbody></table></div>
+    <div class="mini">"Top pick" is each team's most likely scorer in each game; "one of top 3" is how often at least one of
+      the three shown scored. Lower log loss is better; "base" is guessing each position's average rate.</div>
+    ${tdCal ? `<div class="scroll"><table><thead><tr><th class="n">Said</th><th class="n">Players</th><th class="n">Avg said</th><th class="n">Scored</th></tr></thead><tbody>${tdCal}</tbody></table></div>` : ""}
+    ${(t.td || {}).picks ? `<div class="mini">Live: ${esc(t.td.scored)} of ${esc(t.td.picks)} touchdown picks scored.</div>` : ""}
+  </div>` : "";
   const calCard = cal ? `<div class="card"><h2>Calibration</h2>
     <div class="scroll"><table><thead><tr><th class="n">Home win %</th><th class="n">Games</th><th class="n">Said</th><th class="n">Happened</th></tr></thead>
     <tbody>${cal}</tbody></table></div><div class="mini">${esc(conf)}, the pick's probability for the home side.</div></div>` : "";
@@ -535,7 +558,7 @@ function renderRecord(d) {
 
   return `<div class="event"><div class="eyebrow">The model's own record</div><h1>Record</h1>
       <div class="mini">Live picks are graded against final scores; the backtest replays every season since ${esc(per.dev[0])}.</div></div>
-    ${tiles}${liveNote}${weekCard}${winners}${tierCard}${valueCard}${linesCard}${calCard}`;
+    ${tiles}${liveNote}${weekCard}${winners}${tierCard}${valueCard}${linesCard}${tdCard}${calCard}`;
 }
 
 // ---------------------------------------------------------------- method

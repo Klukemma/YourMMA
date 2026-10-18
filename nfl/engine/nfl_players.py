@@ -148,7 +148,7 @@ def key_players(data, team, season, before):
             "line": offense_line(mine, last["position"]) if len(mine) else
                     f"last season: {offense_line(before_rows, last['position'])}",
         })
-    offense.sort(key=lambda p: -p["value"])
+    offense.sort(key=lambda p: (-p["value"], p["name"]))   # a tie never depends on set order
 
     dfn_now = data.games_of(data.defense, before, season) if len(data.defense) else data.defense
     defense = []
@@ -161,7 +161,7 @@ def key_players(data, team, season, before):
             defense.append({"gsis_id": pid, "name": last["player_display_name"],
                             "position": last["position"], "value": defense_score(totals),
                             "games": int(len(rows)), "line": defense_line(totals)})
-        defense.sort(key=lambda p: -p["value"])
+        defense.sort(key=lambda p: (-p["value"], p["name"]))
     for rank, p in enumerate(offense[:TOP_OFFENSE], 1):
         p["rank"] = rank
     for rank, p in enumerate(defense[:TOP_DEFENSE], 1):

@@ -156,3 +156,32 @@ def test_the_standalone_page_carries_the_data(run_output, tmp_path):
     html = page.read_text()
     assert "window.__YOURNFL_DATA__" in html and 'type="module"' not in html
     assert 'rel="manifest"' not in html
+
+
+def test_upcoming_games_carry_the_likeliest_scorers(run_output):
+    out, _, produced = run_output
+    week = json.loads((out / "week.json").read_text())
+    for g in week["games"]:
+        if g["status"] != "upcoming":
+            continue
+        for side in ("home_td", "away_td"):
+            picks = g[side]
+            assert 0 < len(picks) <= npd.TD_SHOWN
+            probs = [p["prob"] for p in picks]
+            assert probs == sorted(probs, reverse=True) and all(0 < p < 1 for p in probs)
+            assert all(p["status"] != "out" for p in picks)
+    perf = json.loads((out / "performance.json").read_text())
+    assert perf["td"]["model"] and "td" in week["caveats"]
+
+
+def test_touchdown_picks_are_graded_from_the_box_score():
+    log = {"schema": 1, "picks": {"g": {"final": {"home": 24, "away": 17},
+                                        "home_td": [{"gsis_id": "a"}, {"gsis_id": "b"}],
+                                        "away_td": [{"gsis_id": "c"}]}}}
+    box = pd.DataFrame({"game_id": ["g", "g"], "player_id": ["a", "c"],
+                        "rushing_tds": [1, 0], "receiving_tds": [0, 0]})
+    assert npd.grade_touchdowns(log, pd.DataFrame(columns=box.columns)) == 0   # box score not in yet
+    assert npd.grade_touchdowns(log, box) == 1
+    p = log["picks"]["g"]
+    assert [t["scored"] for t in p["home_td"]] == [True, False] and p["away_td"][0]["scored"] is False
+    assert npd.grade_touchdowns(log, box) == 0
