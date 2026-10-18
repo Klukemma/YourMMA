@@ -1,14 +1,14 @@
 {
- "as_of": "2026-10-18T14:04:05Z",
+ "as_of": "2026-10-18T20:16:39Z",
  "caveats": {
   "injuries": "Injury report from the league's official practice reports via nflverse: shown, not applied. The model reads only who starts at quarterback.",
-  "lines": "Model line and model total are the model's own numbers beside the market's. Taking the model's side against the closing spread won 49.9% of 2016-2025 games and against the total 49.7%; -110 needs 52.4% to break even.",
+  "lines": "Model line and model total are the model's own numbers beside the market's. Taking the model's side against the closing spread won 49.8% of 2016-2025 games and against the total 50.1%; -110 needs 52.4% to break even.",
   "model": "The pick is the model blended with the betting market. The market is hard to beat in the NFL: across 2016-2025 the blend picked 66.7% of winners against the closing favourite's 66.6%, and betting the model where it disagreed with the price lost money. Treat a pick as an opinion with a measured hit rate, not an edge.",
   "qb": "The quarterback the model assumes is the one the schedule projects to start. If the injury report says he is out, the number above does not know yet.",
   "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
   "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
  },
- "data_through": "2026-10-16",
+ "data_through": "2026-10-18",
  "game_type": "REG",
  "games": [
   {
@@ -111,7 +111,7 @@
     "id": "00-0035704",
     "injury_status": null,
     "name": "Drew Lock",
-    "rating": -0.02721,
+    "rating": -0.018133,
     "source": "started",
     "starts": 29
    },
@@ -366,7 +366,7 @@
     "injury_status": null,
     "name": "C.J. Stroud",
     "rating": 0.029769,
-    "source": "projected",
+    "source": "started",
     "starts": 56
    },
    "away_rest": 6.854167,
@@ -477,7 +477,7 @@
     "injury_status": null,
     "name": "Trevor Lawrence",
     "rating": 0.107529,
-    "source": "projected",
+    "source": "started",
     "starts": 85
    },
    "home_rest": 7.0,
@@ -496,9 +496,13 @@
    "no_pick_reason": "No pick was logged before kickoff.",
    "pick": null,
    "roof": "outdoors",
+   "score": {
+    "away": 34,
+    "home": 31
+   },
    "season": 2026,
    "stadium": "Wembley Stadium",
-   "status": "in progress",
+   "status": "final",
    "week": 6
   },
   {
@@ -783,12 +787,13 @@
    },
    "home_rest": 7.0,
    "kickoff": "2026-10-18T17:00:00Z",
+   "logged_at": "2026-10-18T14:04:05Z",
    "market": {
     "as_of": null,
-    "away_ml": -175.0,
+    "away_ml": -170.0,
     "books": null,
-    "home_ml": 145.0,
-    "home_prob": 0.390764,
+    "home_ml": 142.0,
+    "home_prob": 0.396243,
     "source": "nflverse",
     "spread": -3.0,
     "total": 39.5
@@ -804,6 +809,10 @@
    "pick": "BAL",
    "pick_prob": 0.625696,
    "roof": "outdoors",
+   "score": {
+    "away": 10,
+    "home": 13
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 0.454345,
@@ -811,9 +820,9 @@
     "team": "CLE"
    },
    "stadium": "Huntington Bank Field",
-   "status": "upcoming",
+   "status": "final",
    "tier": "LEAN",
-   "tier_hit_rate": 0.592821,
+   "tier_hit_rate": 0.590398,
    "total_pick": {
     "edge": 2.630227,
     "line": 39.5,
@@ -1102,6 +1111,7 @@
    },
    "home_rest": 7.145833,
    "kickoff": "2026-10-18T17:00:00Z",
+   "logged_at": "2026-10-18T14:04:05Z",
    "market": {
     "as_of": null,
     "away_ml": -162.0,
@@ -1130,9 +1140,9 @@
     "team": "PHI"
    },
    "stadium": "Lincoln Financial Field",
-   "status": "upcoming",
+   "status": "in progress",
    "tier": "LEAN",
-   "tier_hit_rate": 0.592821,
+   "tier_hit_rate": 0.590398,
    "total_pick": {
     "edge": 4.102938,
     "line": 39.5,
@@ -1379,15 +1389,16 @@
    },
    "home_rest": 6.694444,
    "kickoff": "2026-10-18T17:00:00Z",
+   "logged_at": "2026-10-18T14:04:05Z",
    "market": {
     "as_of": null,
-    "away_ml": -120.0,
+    "away_ml": -118.0,
     "books": null,
-    "home_ml": 100.0,
-    "home_prob": 0.478261,
+    "home_ml": -102.0,
+    "home_prob": 0.482636,
     "source": "nflverse",
     "spread": -1.5,
-    "total": 52.5
+    "total": 51.5
    },
    "market_prob": 0.478261,
    "market_source": "nflverse",
@@ -1399,7 +1410,7 @@
    "neutral": false,
    "pick": "CHI",
    "pick_prob": 0.528679,
-   "roof": null,
+   "roof": "retractable",
    "season": 2026,
    "spread_pick": {
     "edge": 3.904262,
@@ -1407,9 +1418,9 @@
     "team": "ATL"
    },
    "stadium": "Mercedes-Benz Stadium",
-   "status": "upcoming",
+   "status": "in progress",
    "tier": "TOSS-UP",
-   "tier_hit_rate": 0.51269,
+   "tier_hit_rate": 0.516624,
    "total_pick": {
     "edge": 5.942299,
     "line": 52.5,
@@ -1684,12 +1695,13 @@
    },
    "home_rest": 7.0,
    "kickoff": "2026-10-18T17:00:00Z",
+   "logged_at": "2026-10-18T14:04:05Z",
    "market": {
     "as_of": null,
-    "away_ml": -110.0,
+    "away_ml": -108.0,
     "books": null,
-    "home_ml": -110.0,
-    "home_prob": 0.5,
+    "home_ml": -112.0,
+    "home_prob": 0.50433,
     "source": "nflverse",
     "spread": -1.5,
     "total": 46.5
@@ -1712,9 +1724,9 @@
     "team": "NYG"
    },
    "stadium": "MetLife Stadium",
-   "status": "upcoming",
+   "status": "in progress",
    "tier": "TOSS-UP",
-   "tier_hit_rate": 0.51269,
+   "tier_hit_rate": 0.516624,
    "total_pick": {
     "edge": 2.09224,
     "line": 46.5,
@@ -2003,12 +2015,13 @@
    },
    "home_rest": 7.0,
    "kickoff": "2026-10-18T17:00:00Z",
+   "logged_at": "2026-10-18T14:04:05Z",
    "market": {
     "as_of": null,
-    "away_ml": 285.0,
+    "away_ml": 275.0,
     "books": null,
-    "home_ml": -360.0,
-    "home_prob": 0.750813,
+    "home_ml": -345.0,
+    "home_prob": 0.744069,
     "source": "nflverse",
     "spread": 7.5,
     "total": 43.5
@@ -2031,9 +2044,9 @@
     "team": "NE"
    },
    "stadium": "Gillette Stadium",
-   "status": "upcoming",
+   "status": "in progress",
    "tier": "STRONG",
-   "tier_hit_rate": 0.818792,
+   "tier_hit_rate": 0.818182,
    "total_pick": {
     "edge": 0.677801,
     "line": 43.5,
@@ -2329,6 +2342,7 @@
    },
    "home_rest": 9.697917,
    "kickoff": "2026-10-18T17:00:00Z",
+   "logged_at": "2026-10-18T14:04:05Z",
    "market": {
     "as_of": null,
     "away_ml": -142.0,
@@ -2357,9 +2371,9 @@
     "team": "TB"
    },
    "stadium": "Raymond James Stadium",
-   "status": "upcoming",
+   "status": "in progress",
    "tier": "LEAN",
-   "tier_hit_rate": 0.592821,
+   "tier_hit_rate": 0.590398,
    "total_pick": {
     "edge": 3.244595,
     "line": 38.5,
@@ -2592,15 +2606,16 @@
    },
    "home_rest": 7.0,
    "kickoff": "2026-10-18T17:00:00Z",
+   "logged_at": "2026-10-18T14:04:05Z",
    "market": {
     "as_of": null,
-    "away_ml": 245.0,
+    "away_ml": 240.0,
     "books": null,
-    "home_ml": -305.0,
-    "home_prob": 0.722079,
+    "home_ml": -298.0,
+    "home_prob": 0.717971,
     "source": "nflverse",
     "spread": 6.5,
-    "total": 44.5
+    "total": 43.5
    },
    "market_prob": 0.722079,
    "market_source": "nflverse",
@@ -2612,7 +2627,11 @@
    "neutral": false,
    "pick": "IND",
    "pick_prob": 0.72273,
-   "roof": null,
+   "roof": "retractable",
+   "score": {
+    "away": 26,
+    "home": 20
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 2.188249,
@@ -2620,9 +2639,9 @@
     "team": "IND"
    },
    "stadium": "Lucas Oil Stadium",
-   "status": "upcoming",
+   "status": "final",
    "tier": "SOLID",
-   "tier_hit_rate": 0.720102,
+   "tier_hit_rate": 0.721728,
    "total_pick": {
     "edge": 2.181968,
     "line": 44.5,
@@ -2869,12 +2888,13 @@
    },
    "home_rest": 5.826389,
    "kickoff": "2026-10-18T20:05:00Z",
+   "logged_at": "2026-10-18T14:04:05Z",
    "market": {
     "as_of": null,
-    "away_ml": 550.0,
+    "away_ml": 500.0,
     "books": null,
-    "home_ml": -800.0,
-    "home_prob": 0.852459,
+    "home_ml": -700.0,
+    "home_prob": 0.84,
     "source": "nflverse",
     "spread": 12.5,
     "total": 51.5
@@ -2897,9 +2917,9 @@
     "team": "ARI"
    },
    "stadium": "SoFi Stadium",
-   "status": "upcoming",
+   "status": "in progress",
    "tier": "STRONG",
-   "tier_hit_rate": 0.818792,
+   "tier_hit_rate": 0.818182,
    "total_pick": {
     "edge": 0.026092,
     "line": 51.5,
@@ -3134,13 +3154,13 @@
     }
    ],
    "home_name": "Las Vegas Raiders",
-   "home_prob": 0.298609,
+   "home_prob": 0.303889,
    "home_qb": {
     "change": false,
     "id": "00-0029604",
     "injury_status": null,
     "name": "Kirk Cousins",
-    "rating": 0.027363,
+    "rating": 0.026962,
     "source": "projected",
     "starts": 176
    },
@@ -3148,37 +3168,37 @@
    "kickoff": "2026-10-18T20:25:00Z",
    "market": {
     "as_of": null,
-    "away_ml": -245.0,
+    "away_ml": -238.0,
     "books": null,
-    "home_ml": 200.0,
-    "home_prob": 0.319444,
+    "home_ml": 195.0,
+    "home_prob": 0.324969,
     "source": "nflverse",
     "spread": -5.5,
     "total": 53.5
    },
-   "market_prob": 0.319444,
+   "market_prob": 0.324969,
    "market_source": "nflverse",
    "market_spread": -5.5,
    "market_total": 53.5,
-   "model_prob": 0.303255,
-   "model_spread": -6.183365,
-   "model_total": 53.565291,
+   "model_prob": 0.303092,
+   "model_spread": -6.190711,
+   "model_total": 53.549017,
    "neutral": false,
    "pick": "BUF",
-   "pick_prob": 0.701391,
+   "pick_prob": 0.696111,
    "roof": "dome",
    "season": 2026,
    "spread_pick": {
-    "edge": 0.683365,
+    "edge": 0.690711,
     "line": -5.5,
     "team": "BUF"
    },
    "stadium": "Allegiant Stadium",
    "status": "upcoming",
    "tier": "SOLID",
-   "tier_hit_rate": 0.720102,
+   "tier_hit_rate": 0.721728,
    "total_pick": {
-    "edge": 0.065291,
+    "edge": 0.049017,
     "line": 53.5,
     "side": "OVER"
    },
@@ -3425,7 +3445,7 @@
     }
    ],
    "home_name": "Kansas City Chiefs",
-   "home_prob": 0.772788,
+   "home_prob": 0.787467,
    "home_qb": {
     "change": false,
     "id": "00-0033873",
@@ -3439,37 +3459,37 @@
    "kickoff": "2026-10-18T20:25:00Z",
    "market": {
     "as_of": null,
-    "away_ml": 320.0,
+    "away_ml": 350.0,
     "books": null,
-    "home_ml": -410.0,
-    "home_prob": 0.771505,
+    "home_ml": -455.0,
+    "home_prob": 0.786744,
     "source": "nflverse",
     "spread": 7.5,
     "total": 41.5
    },
-   "market_prob": 0.771505,
+   "market_prob": 0.786744,
    "market_source": "nflverse",
    "market_spread": 7.5,
    "market_total": 41.5,
-   "model_prob": 0.78313,
-   "model_spread": 9.43541,
-   "model_total": 42.024637,
+   "model_prob": 0.783012,
+   "model_spread": 9.431636,
+   "model_total": 42.005418,
    "neutral": false,
    "pick": "KC",
-   "pick_prob": 0.772788,
+   "pick_prob": 0.787467,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
-    "edge": 1.93541,
+    "edge": 1.931636,
     "line": -7.5,
     "team": "KC"
    },
    "stadium": "GEHA Field at Arrowhead Stadium",
    "status": "upcoming",
    "tier": "STRONG",
-   "tier_hit_rate": 0.818792,
+   "tier_hit_rate": 0.818182,
    "total_pick": {
-    "edge": 0.524637,
+    "edge": 0.505418,
     "line": 41.5,
     "side": "OVER"
    },
@@ -3737,13 +3757,13 @@
     }
    ],
    "home_name": "Green Bay Packers",
-   "home_prob": 0.511444,
+   "home_prob": 0.504753,
    "home_qb": {
     "change": false,
     "id": "00-0036264",
     "injury_status": null,
     "name": "Jordan Love",
-    "rating": 0.121363,
+    "rating": 0.121407,
     "source": "projected",
     "starts": 57
    },
@@ -3751,37 +3771,37 @@
    "kickoff": "2026-10-19T00:20:00Z",
    "market": {
     "as_of": null,
-    "away_ml": -105.0,
+    "away_ml": -108.0,
     "books": null,
-    "home_ml": -115.0,
-    "home_prob": 0.510834,
+    "home_ml": -112.0,
+    "home_prob": 0.50433,
     "source": "nflverse",
     "spread": 1.5,
     "total": 53.5
    },
-   "market_prob": 0.510834,
+   "market_prob": 0.50433,
    "market_source": "nflverse",
    "market_spread": 1.5,
    "market_total": 53.5,
-   "model_prob": 0.682828,
-   "model_spread": 5.316942,
-   "model_total": 50.671102,
+   "model_prob": 0.68255,
+   "model_spread": 5.307209,
+   "model_total": 50.622507,
    "neutral": false,
    "pick": "GB",
-   "pick_prob": 0.511444,
+   "pick_prob": 0.504753,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
-    "edge": 3.816942,
+    "edge": 3.807209,
     "line": -1.5,
     "team": "GB"
    },
    "stadium": "Lambeau Field",
    "status": "upcoming",
    "tier": "TOSS-UP",
-   "tier_hit_rate": 0.51269,
+   "tier_hit_rate": 0.516624,
    "total_pick": {
-    "edge": 2.828898,
+    "edge": 2.877493,
     "line": 53.5,
     "side": "UNDER"
    },
@@ -4063,7 +4083,7 @@
     }
    ],
    "home_name": "San Francisco 49ers",
-   "home_prob": 0.794863,
+   "home_prob": 0.790313,
    "home_qb": {
     "change": false,
     "id": "00-0037834",
@@ -4077,67 +4097,67 @@
    "kickoff": "2026-10-20T00:15:00Z",
    "market": {
     "as_of": null,
-    "away_ml": 360.0,
+    "away_ml": 350.0,
     "books": null,
-    "home_ml": -470.0,
-    "home_prob": 0.791362,
+    "home_ml": -455.0,
+    "home_prob": 0.786744,
     "source": "nflverse",
     "spread": 7.5,
     "total": 52.5
    },
-   "market_prob": 0.791362,
+   "market_prob": 0.786744,
    "market_source": "nflverse",
    "market_spread": 7.5,
    "market_total": 52.5,
-   "model_prob": 0.819064,
-   "model_spread": 11.125384,
-   "model_total": 50.317373,
+   "model_prob": 0.818988,
+   "model_spread": 11.122173,
+   "model_total": 50.277121,
    "neutral": false,
    "pick": "SF",
-   "pick_prob": 0.794863,
+   "pick_prob": 0.790313,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
-    "edge": 3.625384,
+    "edge": 3.622173,
     "line": -7.5,
     "team": "SF"
    },
    "stadium": "Levi's Stadium",
    "status": "upcoming",
    "tier": "STRONG",
-   "tier_hit_rate": 0.818792,
+   "tier_hit_rate": 0.818182,
    "total_pick": {
-    "edge": 2.182627,
+    "edge": 2.222879,
     "line": 52.5,
     "side": "UNDER"
    },
    "week": 6
   }
  ],
- "generated": "2026-10-18T14:04:14Z",
+ "generated": "2026-10-18T20:16:45Z",
  "label": "Week 6",
  "schema": 1,
  "season": 2026,
  "tiers": {
   "LEAN": {
-   "hit_rate": 0.592821,
-   "mean_prob": 0.600003,
-   "picks": 975
+   "hit_rate": 0.590398,
+   "mean_prob": 0.599893,
+   "picks": 979
   },
   "SOLID": {
-   "hit_rate": 0.720102,
-   "mean_prob": 0.699172,
-   "picks": 786
+   "hit_rate": 0.721728,
+   "mean_prob": 0.699341,
+   "picks": 787
   },
   "STRONG": {
-   "hit_rate": 0.818792,
-   "mean_prob": 0.809849,
-   "picks": 596
+   "hit_rate": 0.818182,
+   "mean_prob": 0.809996,
+   "picks": 594
   },
   "TOSS-UP": {
-   "hit_rate": 0.51269,
-   "mean_prob": 0.52753,
-   "picks": 394
+   "hit_rate": 0.516624,
+   "mean_prob": 0.527393,
+   "picks": 391
   }
  },
  "trained_on": 6484,

@@ -1,10 +1,10 @@
 {
- "as_of": "2026-10-18T14:04:05Z",
+ "as_of": "2026-10-18T20:16:39Z",
  "elo_scale": {
   "hfa": 48.0,
   "points_per_elo": 0.04
  },
- "generated": "2026-10-18T14:04:14Z",
+ "generated": "2026-10-18T20:16:45Z",
  "schema": 1,
  "season": 2026,
  "teams": [
@@ -164,7 +164,7 @@
    "points_against": 19.617557,
    "points_for": 25.000659,
    "qb": "Drew Lock",
-   "qb_rating": -0.02721,
+   "qb_rating": -0.018133,
    "qb_starts": 30,
    "rank": 2,
    "record": {
@@ -342,89 +342,6 @@
   },
   {
    "conference": "AFC",
-   "def_epa": -0.067898,
-   "division": "AFC South",
-   "elo": 1626.091417,
-   "last5": [
-    {
-     "code": "2",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": true,
-     "neutral": true,
-     "opponent": "PHI",
-     "result": "W",
-     "score": "19-17",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "5",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "CIN",
-     "result": "W",
-     "score": "22-17",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "29",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "NE",
-     "result": "W",
-     "score": "35-6",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "7",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "DEN",
-     "result": "L",
-     "score": "13-20",
-     "season": 2026,
-     "week": 2
-    },
-    {
-     "code": "24",
-     "date": "2026-09-13",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "CLE",
-     "result": "W",
-     "score": "34-10",
-     "season": 2026,
-     "week": 1
-    }
-   ],
-   "name": "Jacksonville Jaguars",
-   "net_epa": 0.142805,
-   "off_epa": 0.074908,
-   "points_against": 17.795336,
-   "points_for": 24.849027,
-   "qb": "Trevor Lawrence",
-   "qb_rating": 0.107529,
-   "qb_starts": 85,
-   "rank": 5,
-   "record": {
-    "losses": 1,
-    "ties": 0,
-    "wins": 4
-   },
-   "team": "JAX"
-  },
-  {
-   "conference": "AFC",
    "def_epa": -0.049634,
    "division": "AFC West",
    "elo": 1613.255478,
@@ -498,7 +415,7 @@
    "qb": "Bo Nix",
    "qb_rating": -0.000694,
    "qb_starts": 42,
-   "rank": 6,
+   "rank": 5,
    "record": {
     "losses": 2,
     "ties": 0,
@@ -581,13 +498,96 @@
    "qb": "Drake Maye",
    "qb_rating": 0.108748,
    "qb_starts": 37,
-   "rank": 7,
+   "rank": 6,
    "record": {
     "losses": 2,
     "ties": 0,
     "wins": 3
    },
    "team": "NE"
+  },
+  {
+   "conference": "AFC",
+   "def_epa": -0.067898,
+   "division": "AFC South",
+   "elo": 1607.604177,
+   "last5": [
+    {
+     "code": "3",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": true,
+     "neutral": true,
+     "opponent": "HOU",
+     "result": "L",
+     "score": "31-34",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "2",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": true,
+     "neutral": true,
+     "opponent": "PHI",
+     "result": "W",
+     "score": "19-17",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "5",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "CIN",
+     "result": "W",
+     "score": "22-17",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "29",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "NE",
+     "result": "W",
+     "score": "35-6",
+     "season": 2026,
+     "week": 3
+    },
+    {
+     "code": "7",
+     "date": "2026-09-20",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "DEN",
+     "result": "L",
+     "score": "13-20",
+     "season": 2026,
+     "week": 2
+    }
+   ],
+   "name": "Jacksonville Jaguars",
+   "net_epa": 0.142805,
+   "off_epa": 0.074908,
+   "points_against": 19.415802,
+   "points_for": 25.464124,
+   "qb": "Trevor Lawrence",
+   "qb_rating": 0.107529,
+   "qb_starts": 86,
+   "rank": 7,
+   "record": {
+    "losses": 2,
+    "ties": 0,
+    "wins": 4
+   },
+   "team": "JAX"
   },
   {
    "conference": "NFC",
@@ -674,89 +674,6 @@
   },
   {
    "conference": "AFC",
-   "def_epa": 0.004569,
-   "division": "AFC North",
-   "elo": 1575.185881,
-   "last5": [
-    {
-     "code": "7",
-     "date": "2026-10-12",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "ATL",
-     "result": "W",
-     "score": "30-23",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "6",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "TEN",
-     "result": "W",
-     "score": "24-18",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "3",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": true,
-     "opponent": "DAL",
-     "result": "W",
-     "score": "34-31",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "7",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "NO",
-     "result": "L",
-     "score": "17-24",
-     "season": 2026,
-     "week": 2
-    },
-    {
-     "code": "18",
-     "date": "2026-09-13",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "IND",
-     "result": "W",
-     "score": "41-23",
-     "season": 2026,
-     "week": 1
-    }
-   ],
-   "name": "Baltimore Ravens",
-   "net_epa": 0.086453,
-   "off_epa": 0.091022,
-   "points_against": 22.296581,
-   "points_for": 25.711879,
-   "qb": "Tyler Huntley",
-   "qb_rating": -0.024839,
-   "qb_starts": 16,
-   "rank": 9,
-   "record": {
-    "losses": 1,
-    "ties": 0,
-    "wins": 4
-   },
-   "team": "BAL"
-  },
-  {
-   "conference": "AFC",
    "def_epa": -0.040817,
    "division": "AFC West",
    "elo": 1570.81328,
@@ -830,13 +747,96 @@
    "qb": "Patrick Mahomes",
    "qb_rating": 0.106341,
    "qb_starts": 151,
-   "rank": 10,
+   "rank": 9,
    "record": {
     "losses": 0,
     "ties": 0,
     "wins": 4
    },
    "team": "KC"
+  },
+  {
+   "conference": "AFC",
+   "def_epa": 0.004569,
+   "division": "AFC North",
+   "elo": 1557.231421,
+   "last5": [
+    {
+     "code": "3",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "CLE",
+     "result": "L",
+     "score": "10-13",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "7",
+     "date": "2026-10-12",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "ATL",
+     "result": "W",
+     "score": "30-23",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "6",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "TEN",
+     "result": "W",
+     "score": "24-18",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "3",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": false,
+     "neutral": true,
+     "opponent": "DAL",
+     "result": "W",
+     "score": "34-31",
+     "season": 2026,
+     "week": 3
+    },
+    {
+     "code": "7",
+     "date": "2026-09-20",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "NO",
+     "result": "L",
+     "score": "17-24",
+     "season": 2026,
+     "week": 2
+    }
+   ],
+   "name": "Baltimore Ravens",
+   "net_epa": 0.086453,
+   "off_epa": 0.091022,
+   "points_against": 21.366922,
+   "points_for": 24.140691,
+   "qb": "Tyler Huntley",
+   "qb_rating": -0.024303,
+   "qb_starts": 17,
+   "rank": 10,
+   "record": {
+    "losses": 2,
+    "ties": 0,
+    "wins": 4
+   },
+   "team": "BAL"
   },
   {
    "conference": "NFC",
@@ -922,6 +922,89 @@
    "team": "DET"
   },
   {
+   "conference": "AFC",
+   "def_epa": -0.083447,
+   "division": "AFC South",
+   "elo": 1546.777234,
+   "last5": [
+    {
+     "code": "3",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": false,
+     "neutral": true,
+     "opponent": "JAX",
+     "result": "W",
+     "score": "34-31",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "23",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "TEN",
+     "result": "W",
+     "score": "26-3",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "4",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "DAL",
+     "result": "L",
+     "score": "30-34",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "2",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "IND",
+     "result": "L",
+     "score": "17-19",
+     "season": 2026,
+     "week": 3
+    },
+    {
+     "code": "14",
+     "date": "2026-09-20",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "CIN",
+     "result": "L",
+     "score": "6-20",
+     "season": 2026,
+     "week": 2
+    }
+   ],
+   "name": "Houston Texans",
+   "net_epa": 0.072533,
+   "off_epa": -0.010915,
+   "points_against": 21.378061,
+   "points_for": 23.851717,
+   "qb": "C.J. Stroud",
+   "qb_rating": 0.029769,
+   "qb_starts": 57,
+   "rank": 12,
+   "record": {
+    "losses": 4,
+    "ties": 0,
+    "wins": 2
+   },
+   "team": "HOU"
+  },
+  {
    "conference": "NFC",
    "def_epa": 0.016544,
    "division": "NFC North",
@@ -994,98 +1077,15 @@
    "points_against": 20.969078,
    "points_for": 22.695176,
    "qb": "Tyson Bagent",
-   "qb_rating": -0.111148,
+   "qb_rating": -0.108187,
    "qb_starts": 5,
-   "rank": 12,
+   "rank": 13,
    "record": {
     "losses": 2,
     "ties": 0,
     "wins": 3
    },
    "team": "CHI"
-  },
-  {
-   "conference": "AFC",
-   "def_epa": -0.083447,
-   "division": "AFC South",
-   "elo": 1528.289994,
-   "last5": [
-    {
-     "code": "23",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "TEN",
-     "result": "W",
-     "score": "26-3",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "4",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "DAL",
-     "result": "L",
-     "score": "30-34",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "2",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "IND",
-     "result": "L",
-     "score": "17-19",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "14",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "CIN",
-     "result": "L",
-     "score": "6-20",
-     "season": 2026,
-     "week": 2
-    },
-    {
-     "code": "5",
-     "date": "2026-09-13",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "BUF",
-     "result": "L",
-     "score": "31-36",
-     "season": 2026,
-     "week": 1
-    }
-   ],
-   "name": "Houston Texans",
-   "net_epa": 0.072533,
-   "off_epa": -0.010915,
-   "points_against": 20.308956,
-   "points_for": 22.72413,
-   "qb": "C.J. Stroud",
-   "qb_rating": 0.029769,
-   "qb_starts": 56,
-   "rank": 13,
-   "record": {
-    "losses": 4,
-    "ties": 0,
-    "wins": 1
-   },
-   "team": "HOU"
   },
   {
    "conference": "AFC",
@@ -1326,7 +1326,7 @@
    "points_against": 21.698176,
    "points_for": 21.494543,
    "qb": "Jordan Love",
-   "qb_rating": 0.121363,
+   "qb_rating": 0.121407,
    "qb_starts": 57,
    "rank": 16,
    "record": {
@@ -1658,7 +1658,7 @@
    "points_against": 22.315242,
    "points_for": 22.218167,
    "qb": "Jameis Winston",
-   "qb_rating": -0.008976,
+   "qb_rating": -0.017075,
    "qb_starts": 95,
    "rank": 20,
    "record": {
@@ -1670,86 +1670,86 @@
   },
   {
    "conference": "AFC",
-   "def_epa": 0.034463,
-   "division": "AFC South",
-   "elo": 1458.639957,
+   "def_epa": -0.037423,
+   "division": "AFC North",
+   "elo": 1458.558244,
    "last5": [
     {
-     "code": "12",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "PIT",
-     "result": "L",
-     "score": "22-34",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "17",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": false,
-     "neutral": true,
-     "opponent": "WAS",
-     "result": "W",
-     "score": "30-13",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "2",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "HOU",
-     "result": "W",
-     "score": "19-17",
-     "season": 2026,
-     "week": 3
-    },
-    {
      "code": "3",
-     "date": "2026-09-21",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "KC",
-     "result": "L",
-     "score": "30-33",
-     "season": 2026,
-     "week": 2
-    },
-    {
-     "code": "18",
-     "date": "2026-09-13",
+     "date": "2026-10-18",
      "game_type": "REG",
      "home": true,
      "neutral": false,
      "opponent": "BAL",
-     "result": "L",
-     "score": "23-41",
+     "result": "W",
+     "score": "13-10",
      "season": 2026,
-     "week": 1
+     "week": 6
+    },
+    {
+     "code": "5",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "NYJ",
+     "result": "L",
+     "score": "12-17",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "3",
+     "date": "2026-10-02",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "PIT",
+     "result": "W",
+     "score": "27-24",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "3",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "CAR",
+     "result": "W",
+     "score": "21-18",
+     "season": 2026,
+     "week": 3
+    },
+    {
+     "code": "4",
+     "date": "2026-09-20",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "TB",
+     "result": "W",
+     "score": "23-19",
+     "season": 2026,
+     "week": 2
     }
    ],
-   "name": "Indianapolis Colts",
-   "net_epa": -0.044785,
-   "off_epa": -0.010323,
-   "points_against": 25.386733,
-   "points_for": 23.858871,
-   "qb": "Daniel Jones",
-   "qb_rating": -0.016793,
-   "qb_starts": 89,
+   "name": "Cleveland Browns",
+   "net_epa": -0.053253,
+   "off_epa": -0.090676,
+   "points_against": 20.463921,
+   "points_for": 17.997342,
+   "qb": "Deshaun Watson",
+   "qb_rating": -0.065696,
+   "qb_starts": 81,
    "rank": 21,
    "record": {
-    "losses": 3,
+    "losses": 2,
     "ties": 0,
-    "wins": 2
+    "wins": 4
    },
-   "team": "IND"
+   "team": "CLE"
   },
   {
    "conference": "NFC",
@@ -1919,89 +1919,6 @@
   },
   {
    "conference": "AFC",
-   "def_epa": -0.037423,
-   "division": "AFC North",
-   "elo": 1440.603784,
-   "last5": [
-    {
-     "code": "5",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "NYJ",
-     "result": "L",
-     "score": "12-17",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "3",
-     "date": "2026-10-02",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "PIT",
-     "result": "W",
-     "score": "27-24",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "3",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "CAR",
-     "result": "W",
-     "score": "21-18",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "4",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "TB",
-     "result": "W",
-     "score": "23-19",
-     "season": 2026,
-     "week": 2
-    },
-    {
-     "code": "24",
-     "date": "2026-09-13",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "JAX",
-     "result": "L",
-     "score": "10-34",
-     "season": 2026,
-     "week": 1
-    }
-   ],
-   "name": "Cleveland Browns",
-   "net_epa": -0.053253,
-   "off_epa": -0.090676,
-   "points_against": 21.626579,
-   "points_for": 18.552603,
-   "qb": "Deshaun Watson",
-   "qb_rating": -0.065696,
-   "qb_starts": 80,
-   "rank": 24,
-   "record": {
-    "losses": 2,
-    "ties": 0,
-    "wins": 3
-   },
-   "team": "CLE"
-  },
-  {
-   "conference": "AFC",
    "def_epa": 0.015306,
    "division": "AFC West",
    "elo": 1427.82349,
@@ -2073,15 +1990,98 @@
    "points_against": 24.986772,
    "points_for": 20.713246,
    "qb": "Kirk Cousins",
-   "qb_rating": 0.027363,
+   "qb_rating": 0.026962,
    "qb_starts": 176,
-   "rank": 25,
+   "rank": 24,
    "record": {
     "losses": 2,
     "ties": 0,
     "wins": 3
    },
    "team": "LV"
+  },
+  {
+   "conference": "AFC",
+   "def_epa": 0.034463,
+   "division": "AFC South",
+   "elo": 1425.185505,
+   "last5": [
+    {
+     "code": "6",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "TEN",
+     "result": "L",
+     "score": "20-26",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "12",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "PIT",
+     "result": "L",
+     "score": "22-34",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "17",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": false,
+     "neutral": true,
+     "opponent": "WAS",
+     "result": "W",
+     "score": "30-13",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "2",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "HOU",
+     "result": "W",
+     "score": "19-17",
+     "season": 2026,
+     "week": 3
+    },
+    {
+     "code": "3",
+     "date": "2026-09-21",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "KC",
+     "result": "L",
+     "score": "30-33",
+     "season": 2026,
+     "week": 2
+    }
+   ],
+   "name": "Indianapolis Colts",
+   "net_epa": -0.044785,
+   "off_epa": -0.010323,
+   "points_against": 25.448059,
+   "points_for": 23.472984,
+   "qb": "Daniel Jones",
+   "qb_rating": -0.016793,
+   "qb_starts": 90,
+   "rank": 25,
+   "record": {
+    "losses": 4,
+    "ties": 0,
+    "wins": 2
+   },
+   "team": "IND"
   },
   {
    "conference": "AFC",
@@ -2405,7 +2405,7 @@
    "points_against": 23.477004,
    "points_for": 18.214792,
    "qb": "Geno Smith",
-   "qb_rating": -0.080497,
+   "qb_rating": -0.080494,
    "qb_starts": 104,
    "rank": 29,
    "record": {
@@ -2488,7 +2488,7 @@
    "points_against": 24.314335,
    "points_for": 18.004739,
    "qb": "Malik Willis",
-   "qb_rating": -0.063513,
+   "qb_rating": -0.054811,
    "qb_starts": 11,
    "rank": 30,
    "record": {
@@ -2571,7 +2571,7 @@
    "points_against": 29.403577,
    "points_for": 21.131935,
    "qb": "Jacoby Brissett",
-   "qb_rating": -0.02944,
+   "qb_rating": -0.030503,
    "qb_starts": 70,
    "rank": 31,
    "record": {
@@ -2585,8 +2585,20 @@
    "conference": "AFC",
    "def_epa": 0.055871,
    "division": "AFC South",
-   "elo": 1291.317592,
+   "elo": 1324.772044,
    "last5": [
+    {
+     "code": "6",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "IND",
+     "result": "W",
+     "score": "26-20",
+     "season": 2026,
+     "week": 6
+    },
     {
      "code": "23",
      "date": "2026-10-11",
@@ -2634,33 +2646,21 @@
      "score": "20-24",
      "season": 2026,
      "week": 2
-    },
-    {
-     "code": "13",
-     "date": "2026-09-13",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "NYJ",
-     "result": "L",
-     "score": "10-23",
-     "season": 2026,
-     "week": 1
     }
    ],
    "name": "Tennessee Titans",
    "net_epa": -0.161653,
    "off_epa": -0.105782,
-   "points_against": 23.852029,
-   "points_for": 15.983962,
+   "points_against": 23.466826,
+   "points_for": 16.985565,
    "qb": "Cam Ward",
    "qb_rating": -0.142367,
-   "qb_starts": 22,
+   "qb_starts": 23,
    "rank": 32,
    "record": {
     "losses": 5,
     "ties": 0,
-    "wins": 0
+    "wins": 1
    },
    "team": "TEN"
   }
