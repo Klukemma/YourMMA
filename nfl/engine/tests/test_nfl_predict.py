@@ -11,11 +11,41 @@ import nfl_predict as npd
 import nfl_standalone
 
 
-def test_the_week_is_the_one_with_the_next_kickoff(games):
-    played = games[games["played"]]
-    last = played.iloc[-1]
-    season, week, _ = npd.current_week(games, last["kickoff"] - pd.Timedelta(minutes=1))
-    assert (season, week) == (int(last["season"]), int(last["week"]))
+def _schedule(played_through):
+    """A two-week season and the start of the playoffs: Thursday, Sunday,
+    Monday games, played up to `played_through` (inclusive)."""
+    rows = [("w1_thu", 2025, 1, "REG", "2025-09-11 00:15"), ("w1_sun", 2025, 1, "REG", "2025-09-14 17:00"),
+            ("w1_mon", 2025, 1, "REG", "2025-09-16 00:15"), ("w2_thu", 2025, 2, "REG", "2025-09-19 00:15"),
+            ("w2_sun", 2025, 2, "REG", "2025-09-21 17:00"), ("wc", 2025, 19, "WC", "2026-01-10 21:30")]
+    g = pd.DataFrame(rows, columns=["game_id", "season", "week", "game_type", "kickoff"])
+    g["kickoff"] = pd.to_datetime(g["kickoff"])
+    order = list(g["game_id"])
+    g["played"] = [order.index(x) <= order.index(played_through) if played_through else False for x in g["game_id"]]
+    return g
+
+
+@pytest.mark.parametrize("now,played_through,expected", [
+    ("2025-09-12 12:00", "w1_thu", (2025, 1)),     # between Thursday and Sunday
+    ("2025-09-15 12:00", "w1_sun", (2025, 1)),     # Monday night still to come
+    ("2025-09-16 12:00", "w1_mon", (2025, 2)),     # week 1 done: the next one
+    ("2025-12-30 12:00", "w2_sun", (2025, 19)),    # regular season over: the playoffs
+    ("2026-02-20 12:00", "wc", (2025, 19)),        # season over: the last week played
+])
+def test_the_week_is_the_one_with_the_next_kickoff(now, played_through, expected):
+    season, week, _ = npd.current_week(_schedule(played_through), pd.Timestamp(now))
+    assert (season, week) == expected
+
+
+def test_a_quarterback_off_the_active_roster_cannot_start_or_stand_in():
+    rosters = pd.DataFrame([
+        {"season": 2026, "week": 4, "team": "NYG", "gsis_id": "dart", "status": "RES"},
+        {"season": 2026, "week": 6, "team": "NYG", "gsis_id": "winston", "status": "ACT"},
+        {"season": 2026, "week": 5, "team": "NYG", "gsis_id": "backup", "status": "INA"},
+    ])
+    assert npd.off_roster(rosters, 2026, 6) == {"dart"}      # last week's inactive is not this week's
+    state = {"team_qbs": {"NYG": [(2026, 1, "dart", 30.0), (2026, 5, "winston", 30.0)]}}
+    assert npd.stand_in(state, "NYG", 2026, {("winston", "Jameis Winston")}, set(), {}) == "dart"
+    assert npd.stand_in(state, "NYG", 2026, {("winston", "Jameis Winston"), ("dart", None)}, set(), {}) is None
 
 
 def _game(kickoff="2026-10-25T17:00:00Z", **kw):

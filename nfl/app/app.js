@@ -137,11 +137,12 @@ function qbText(qb) {
   return `${esc(qb.name || qb.id)}${esc(src)} · ${signed(qb.rating, 2)} EPA/dropback${esc(first)}${hurt}`;
 }
 
-function injuryList(code, list) {
+function injuryList(code, list, total) {
   if (!list || !list.length) return `<div><div class="eyebrow">${esc(code)} injuries</div><div class="mini">None listed out, doubtful or questionable.</div></div>`;
   const items = list.map((i) => `<li><span class="st ${esc(String(i.status).toLowerCase())}">${esc(i.status)}</span>
     <span><b>${esc(i.name)}</b> ${esc(i.position)}${i.injury ? ` · ${esc(i.injury)}` : ""}</span></li>`).join("");
-  return `<div><div class="eyebrow">${esc(code)} injuries</div><ul class="inj">${items}</ul></div>`;
+  const more = total > list.length ? `<div class="mini">+${total - list.length} more on the report</div>` : "";
+  return `<div><div class="eyebrow">${esc(code)} injuries</div><ul class="inj">${items}</ul>${more}</div>`;
 }
 
 // ---------------------------------------------------------------- players
@@ -220,7 +221,8 @@ function gameRow(g, d) {
   const mvpOut = (g.alerts || []).filter((a) => a.role === "most valuable player" && a.status !== "questionable");
   for (const a of mvpOut) tags.push(`<span class="tag bad">${esc(a.team)} MVP ${esc(AVAIL_WORD[a.status] || a.status)}</span>`);
   if ((g.news || []).length) tags.push(`<span class="tag flat">News ${(g.news || []).length}</span>`);
-  const injured = (g.home_injuries || []).length + (g.away_injuries || []).length;
+  const injured = (g.home_injuries_total ?? (g.home_injuries || []).length)
+    + (g.away_injuries_total ?? (g.away_injuries || []).length);
   if (injured) tags.push(`<span class="tag flat">Injuries ${injured}</span>`);
   tags.push(resultTag(g));
 
@@ -268,7 +270,7 @@ function gameRow(g, d) {
         <div class="two">${tdList(g.away, g.away_td)}${tdList(g.home, g.home_td)}</div>
         <div class="mini">${esc((d.caveats && d.caveats.td) || "")}</div>` : ""}
       ${newsList(g.news)}
-      <div class="two">${injuryList(g.away, g.away_injuries)}${injuryList(g.home, g.home_injuries)}</div>
+      <div class="two">${injuryList(g.away, g.away_injuries, g.away_injuries_total)}${injuryList(g.home, g.home_injuries, g.home_injuries_total)}</div>
       <div class="two">${formDetail(g.away, g.away_form)}${formDetail(g.home, g.home_form)}</div>
     </div>
   </details>`;

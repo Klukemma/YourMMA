@@ -61,8 +61,11 @@ def build(out=OUT, data_dir=DATA):
         raise FileNotFoundError("missing app data: " + ", ".join(missing)
                                 + ". Run nfl/engine/nfl_predict.py first.")
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    # </ inside JSON would close the script block early.
-    blob = json.dumps(data, separators=(",", ":"), allow_nan=False).replace("</", "<\\/")
+    # Every "<" escaped, not just "</": "<!--" followed by "<script" in any
+    # data string puts the HTML parser into a state where the closing tag
+    # no longer ends the block, and the offline page dies. \u003c is the
+    # same character to JSON and to JavaScript.
+    blob = json.dumps(data, separators=(",", ":"), allow_nan=False).replace("<", "\\u003c")
     inline = (f'<script>window.__YOURNFL_BUILT__ = "{stamp}";\n'
               f"window.__YOURNFL_DATA__ = {blob};</script>\n"
               f"<script>\n{app}\n</script>")

@@ -46,6 +46,7 @@ def test_played_means_both_scores(games):
     assert (played["result"] == played["home_score"] - played["away_score"]).all()
 
 
+@pytest.mark.snapshot
 def test_every_completed_game_has_team_stats(games, team_games):
     """nflverse posts results within hours and statistics overnight, so the
     last few days' finals may have none yet; anything older must."""

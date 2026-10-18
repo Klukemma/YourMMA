@@ -32,3 +32,9 @@ def qb_games():
 def built(games, team_games, qb_games):
     frame, state = nf.build_with_state(games, team_games, qb_games, nm.ELO)
     return frame, state
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers", "snapshot: checks the health of the committed nflverse snapshot, which "
+                   "depends on nflverse's publishing clock - reported by the runner, never a gate")

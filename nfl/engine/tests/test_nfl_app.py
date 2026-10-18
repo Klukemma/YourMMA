@@ -46,7 +46,8 @@ def test_the_service_worker_keeps_to_its_own_caches():
     # The MMA worker deletes every "yourmma-" cache on activate.
     assert re.search(r'const CACHE = "yournfl-v\d+"', sw)
     assert 'startsWith("yournfl-")' in sw and "yourmma-" not in sw.split("*/")[-1].replace("yourmma-\" cache", "")
-    assert 'includes("/data/")) return networkFirst' in sw
+    # The data, and the offline page that carries data inside it, network first.
+    assert 'url.pathname.includes("/data/") || url.pathname.endsWith("/yournfl.html")) return networkFirst' in sw
     for path in re.findall(r'^\s+"([^"]+)",?$', sw.split("const SHELL = [")[1].split("];")[0], flags=re.M):
         assert (APP / path).exists() or path == "./", path
 
@@ -74,3 +75,14 @@ def test_the_apps_elo_chance_matches_python():
     out = json.loads(subprocess.run(["node", "-e", script], capture_output=True, text=True, check=True).stdout)
     for (a, b), p in zip(pairs, out):
         assert p == pytest.approx(ne.expected(a - b), abs=1e-12)
+
+
+def test_no_data_string_can_end_the_offline_pages_script(tmp_path):
+    import nfl_standalone
+    data = tmp_path / "data"
+    data.mkdir()
+    for name in nfl_standalone.PAYLOADS:
+        (data / f"{name}.json").write_text(json.dumps({"x": "A <!--<script> B </script> C"}))
+    html = nfl_standalone.build(tmp_path / "x.html", data).read_text()
+    blob = html.split("window.__YOURNFL_DATA__ = ")[1].split(";</script>")[0]
+    assert "<" not in blob and json.loads(blob)["week"]["x"] == "A <!--<script> B </script> C"

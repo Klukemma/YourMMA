@@ -7,7 +7,7 @@
 // app's. A worker's scope is its own directory, so neither controls the other.
 //
 // Bump CACHE when the shape of what is cached changes.
-const CACHE = "yournfl-v1";
+const CACHE = "yournfl-v2";
 
 const SHELL = [
   "./",
@@ -73,7 +73,9 @@ self.addEventListener("fetch", (event) => {
     const cache = await caches.open(CACHE);
     // The week's picks: network first, so last week's slate is never shown
     // as this week's while a connection exists.
-    if (url.pathname.includes("/data/")) return networkFirst(request, cache);
+    // yournfl.html carries its week inside the page, and app.js prefers that
+    // to data/*.json - served stale, it would show last week's slate.
+    if (url.pathname.includes("/data/") || url.pathname.endsWith("/yournfl.html")) return networkFirst(request, cache);
     if (request.mode === "navigate") {
       const response = await staleWhileRevalidate(request, cache);
       return response || cache.match("index.html") || fetch(request);

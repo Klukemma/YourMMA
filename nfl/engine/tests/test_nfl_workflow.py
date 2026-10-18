@@ -5,11 +5,21 @@ from pathlib import Path
 WF = Path(__file__).resolve().parents[3] / ".github" / "workflows"
 
 
-def test_it_queues_with_the_mma_runner():
+def test_it_has_its_own_queue():
+    """A shared concurrency group lets a new run cancel the other workflow's
+    pending one; the two touch different files and push with a retry."""
     nfl = (WF / "nfl.yml").read_text()
     mma = (WF / "update-dataset.yml").read_text()
-    group = "group: update-dataset-${{ github.ref }}"
-    assert group in nfl and group in mma
+    assert "group: nfl-${{ github.ref }}" in nfl and "cancel-in-progress: false" in nfl
+    assert "group: nfl-" not in mma
+    assert "git pull --rebase --autostash" in nfl
+
+
+def test_snapshot_health_never_gates_a_run():
+    nfl = (WF / "nfl.yml").read_text()
+    assert 'pytest nfl/engine/tests -q -m "not snapshot"' in nfl
+    snap = nfl.split("- name: Snapshot checks")[1].split("- name:")[0]
+    assert "continue-on-error: true" in snap
 
 
 def test_the_key_comes_from_the_secret():

@@ -37,11 +37,13 @@ on:
 permissions:
   contents: write
 
-# THE SAME QUEUE AS THE MMA RUNNER. Both commit to the branch they run on;
-# two runs pushing at once is how a rebase loses a build. Queued, the second
-# checks out after the first has pushed.
+# ITS OWN QUEUE. GitHub keeps one running and one pending run per group and
+# a newly queued run cancels the pending one, so sharing the MMA runner's
+# group would let a Sunday NFL run silently cancel a queued MMA dispatch.
+# The two touch different files (nfl/ against app/ and engine/), and the
+# rebase-and-retry push below absorbs one landing while the other runs.
 concurrency:
-  group: update-dataset-${{ github.ref }}
+  group: nfl-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -67,7 +69,7 @@ jobs:
       # hours before the statistics behind them - and a red test there would
       # throw away the run's picks and the prices it paid for.
       - name: Tests
-        run: python -m pytest nfl/engine/tests -q
+        run: python -m pytest nfl/engine/tests -q -m "not snapshot"
 
       - name: Run
         env:
@@ -91,6 +93,13 @@ jobs:
             fi
             python nfl/engine/nfl_predict.py 2>&1 | tee nfl.log
           fi
+
+      # The snapshot's health (every final with its statistics, and so on)
+      # depends on nflverse's clock, so it is reported, never a gate.
+      - name: Snapshot checks
+        if: always()
+        continue-on-error: true
+        run: python -m pytest nfl/engine/tests -q -m snapshot
 
       - name: Commit
         run: |

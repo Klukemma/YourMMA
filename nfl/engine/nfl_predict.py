@@ -110,7 +110,7 @@ def log_pick(log, game, now):
     fields = ("game_id", "season", "week", "game_type", "kickoff", "home", "away",
               "pick", "pick_prob", "home_prob", "model_prob", "market_prob", "market_source",
               "tier", "model_spread", "market_spread", "spread_pick", "model_total",
-              "market_total", "total_pick", "home_qb", "away_qb")
+              "market_total", "total_pick", "home_qb", "away_qb", "market")
     log["picks"][game["game_id"]] = dict(
         {k: game.get(k) for k in fields}, **keep, last_logged=stamp(now))
     return True
@@ -190,6 +190,19 @@ def ruled_out_qbs(injuries, season, week, team):
             if i["position"] == "QB" and i["status"] == "Out"}
 
 
+def off_roster(rosters, season, week):
+    """gsis ids whose latest weekly roster row this season, up to this week,
+    is anything but active - injured reserve and the other reserve lists
+    are not on the injury report, so this is where they show."""
+    if rosters is None or not len(rosters):
+        return set()
+    r = rosters[(rosters["season"] == season) & (rosters["week"] <= week)].sort_values("week")
+    latest = r.groupby("gsis_id").tail(1)
+    # A game-day inactive from an earlier week says nothing about this one.
+    gone = latest[(latest["status"] != "ACT") & ~((latest["status"] == "INA") & (latest["week"] != week))]
+    return set(gone["gsis_id"].dropna())
+
+
 def stand_in(state, team, season, ruled_out, elsewhere, names):
     """Who starts when the projected starter cannot: the quarterback who most
     recently threw for THIS team THIS season (a last starter from another
@@ -198,7 +211,7 @@ def stand_in(state, team, season, ruled_out, elsewhere, names):
     not another team's starter this week. None when nobody qualifies: the
     model then reads a replacement-level unknown."""
     out_ids = {i for i, _ in ruled_out if i}
-    out_names = {n for _, n in ruled_out}
+    out_names = {n for _, n in ruled_out if n}
     for s, _kick, qb, dropbacks in reversed(state.get("team_qbs", {}).get(team, [])):
         if s != season:
             break
@@ -208,16 +221,19 @@ def stand_in(state, team, season, ruled_out, elsewhere, names):
     return None
 
 
-def replace_ruled_out(row, state, injuries, names, season, week, elsewhere=frozenset()):
-    """If a projected starter is listed Out, start stand_in() instead.
-    `elsewhere` is every other game's projected starters this week.
+def replace_ruled_out(row, state, injuries, names, season, week, elsewhere=frozenset(),
+                      unavailable=frozenset()):
+    """If a projected starter is listed Out - or is off the active roster
+    (`unavailable`: injured reserve and the like) - start stand_in()
+    instead. `elsewhere` is every other game's projected starters this week.
     Returns (row, {side: name of the quarterback replaced})."""
     replaced = {}
     for side in ("home", "away"):
         qb_id = row[f"{side}_qb_used"]
         out = ruled_out_qbs(injuries, season, week, row[side])
+        out |= {(q, names.get(q)) for q in unavailable}
         name = names.get(qb_id)
-        if not isinstance(qb_id, str) or not (qb_id in {i for i, _ in out} or (name and name in {n for _, n in out})):
+        if not isinstance(qb_id, str) or not (qb_id in {i for i, _ in out} or (name and name in {n for _, n in out if n})):
             continue
         alt = stand_in(state, row[side], season, out | {(qb_id, name)}, elsewhere, names)
         row = nf.with_quarterback(row, side, alt, state, "replaced")
@@ -299,6 +315,10 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
         kickoff = pd.Timestamp(row["kickoff"])
         status = "final" if row["played"] else ("in progress" if kickoff <= now else "upcoming")
         market = no.market_for(cache, row, now=clock)
+        # The whole list: the QB check below must see a Doubtful starter even
+        # when eight teammates are listed Out ahead of him; only the display
+        # is cut to INJURIES_PER_TEAM.
+        full_injuries = {s: injuries_for(injuries, season, week, row[s]) for s in ("home", "away")}
         game = {
             "game_id": row["game_id"], "season": season, "week": week, "game_type": row["game_type"],
             "kickoff": stamp(kickoff), "status": status,
@@ -313,8 +333,10 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
             "away_qb": qb_info(row, "away", state, qb_names),
             "home_form": nform.form(games, row["home"], kickoff, season),
             "away_form": nform.form(games, row["away"], kickoff, season),
-            "home_injuries": injuries_for(injuries, season, week, row["home"])[:INJURIES_PER_TEAM],
-            "away_injuries": injuries_for(injuries, season, week, row["away"])[:INJURIES_PER_TEAM],
+            "home_injuries": full_injuries["home"][:INJURIES_PER_TEAM],
+            "away_injuries": full_injuries["away"][:INJURIES_PER_TEAM],
+            "home_injuries_total": len(full_injuries["home"]),
+            "away_injuries_total": len(full_injuries["away"]),
             "market": market,
         }
         key = nplayers.for_game(players, row, season, week, kickoff)
@@ -330,7 +352,8 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
         if status == "upcoming":
             elsewhere = {q for _, r in slate.iterrows() if r["game_id"] != row["game_id"]
                          for q in (r["home_qb_used"], r["away_qb_used"]) if isinstance(q, str)}
-            row, replaced = replace_ruled_out(row, state, injuries, qb_names, season, week, elsewhere)
+            row, replaced = replace_ruled_out(row, state, injuries, qb_names, season, week, elsewhere,
+                                              off_roster(players.rosters, season, week))
             for side, name in replaced.items():
                 game[f"{side}_qb"] = qb_info(row, side, state, qb_names)
                 game[f"{side}_qb"]["replaced"] = name
@@ -343,6 +366,9 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
                     "pick", "pick_prob", "home_prob", "model_prob", "market_prob", "market_source",
                     "tier", "model_spread", "market_spread", "spread_pick", "model_total",
                     "market_total", "total_pick")})
+                # The price the pick was made against, not today's.
+                if logged.get("market"):
+                    game["market"] = logged["market"]
                 # The quarterbacks the logged pick was computed with - a
                 # replaced starter must not reappear once the game is on.
                 for side in ("home", "away"):
@@ -356,7 +382,7 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
         for side in ("home", "away"):
             qb = game[f"{side}_qb"]
             if qb:
-                hurt = [i for i in game[f"{side}_injuries"]
+                hurt = [i for i in full_injuries[side]
                         if i["position"] == "QB" and (i["gsis_id"] == qb["id"] or i["name"] == qb["name"])
                         and i["status"] in ("Out", "Doubtful")]
                 qb["injury_status"] = hurt[0]["status"] if hurt else None
