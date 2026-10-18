@@ -144,6 +144,58 @@ function injuryList(code, list) {
   return `<div><div class="eyebrow">${esc(code)} injuries</div><ul class="inj">${items}</ul></div>`;
 }
 
+// ---------------------------------------------------------------- players
+
+// Key players, touchdown chances and news - shown, not applied: none of it
+// moves the pick except the starting quarterback.
+const AVAIL_WORD = { out: "Out", doubtful: "Doubtful", questionable: "Questionable", active: "" };
+
+function alertLine(a) {
+  return `<div class="alert ${esc(a.status)}"><b>${esc(a.team)} ${esc(a.name)}</b>
+    <span class="mini">${esc(a.position)} · ${esc(a.role)}</span> - ${esc(a.reason || AVAIL_WORD[a.status] || a.status)}</div>`;
+}
+
+function statusBadge(p) {
+  return p.status && p.status !== "active"
+    ? ` <span class="st ${esc(p.status)}">${esc(AVAIL_WORD[p.status] || p.status)}</span>` : "";
+}
+
+function keyPlayers(code, kp) {
+  if (!kp) return "";
+  const off = (kp.offense || []).map((p) => `<li><span class="rk num">${esc(p.rank)}</span>
+    <span><b>${esc(p.name)}</b> ${esc(p.position)}${statusBadge(p)}
+    <div class="mini">${signed(p.value, 1)} EPA · ${esc(p.line)}</div></span></li>`).join("");
+  const dfn = (kp.defense || []).map((p) => `<li><span class="rk num">D</span>
+    <span><b>${esc(p.name)}</b> ${esc(p.position)}${statusBadge(p)}
+    <div class="mini">${esc(p.line)}</div></span></li>`).join("");
+  if (!off && !dfn) return "";
+  return `<div><div class="eyebrow">${esc(code)} · most valuable</div><ul class="kp">${off}${dfn}</ul></div>`;
+}
+
+function tdList(code, list) {
+  if (!list || !list.length) return "";
+  const items = list.map((p) => `<li><span class="num tdp">${pct(p.prob)}</span>
+    <span><b>${esc(p.name)}</b> ${esc(p.position)}${statusBadge(p)}</span></li>`).join("");
+  return `<div><div class="eyebrow">${esc(code)} · touchdown</div><ul class="kp">${items}</ul></div>`;
+}
+
+function ago(iso) {
+  const h = (Date.now() - new Date(iso).getTime()) / 3.6e6;
+  if (!(h >= 0)) return "";
+  return h < 1 ? "just now" : h < 24 ? `${Math.round(h)}h ago` : `${Math.round(h / 24)}d ago`;
+}
+
+function newsList(items) {
+  if (!items || !items.length) return "";
+  const li = items.map((n) => {
+    const safe = /^https?:\/\//.test(n.link || "");
+    const title = safe ? `<a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a>` : esc(n.title);
+    const who = (n.players || []).length ? ` · ${esc(n.players.join(", "))}` : "";
+    return `<li>${title}<div class="mini">${esc(n.source)} · ${esc(ago(n.published))}${who}</div></li>`;
+  }).join("");
+  return `<div class="news"><div class="eyebrow">Player news · shown, not applied</div><ul class="plain news">${li}</ul></div>`;
+}
+
 function gameRow(g, d) {
   const p = g.home_prob;
   const awayShare = p == null ? null : 1 - p;
@@ -165,6 +217,9 @@ function gameRow(g, d) {
     if (qb && qb.injury_status) tags.push(`<span class="tag warn">${esc(g[side])} QB ${esc(qb.injury_status)}</span>`);
     if (qb && qb.replaced) tags.push(`<span class="tag warn">${esc(g[side])} backup QB</span>`);
   }
+  const mvpOut = (g.alerts || []).filter((a) => a.role === "most valuable player" && a.status !== "questionable");
+  for (const a of mvpOut) tags.push(`<span class="tag bad">${esc(a.team)} MVP ${esc(AVAIL_WORD[a.status] || a.status)}</span>`);
+  if ((g.news || []).length) tags.push(`<span class="tag flat">News ${(g.news || []).length}</span>`);
   const injured = (g.home_injuries || []).length + (g.away_injuries || []).length;
   if (injured) tags.push(`<span class="tag flat">Injuries ${injured}</span>`);
   tags.push(resultTag(g));
@@ -199,12 +254,20 @@ function gameRow(g, d) {
     <summary>
       <div class="when"><span class="t">${esc(kickTime(g.kickoff))}</span>${status}<span class="mini">${esc(extra)}</span></div>
       <div class="names">${teamRow(g, "away")}${teamRow(g, "home")}</div>
+      ${(g.alerts || []).slice(0, 3).map(alertLine).join("")}
+      ${(g.alerts || []).length > 3 ? `<div class="mini">+${g.alerts.length - 3} more in the detail</div>` : ""}
       ${bar}
       <div class="readout">${readout}</div>
     </summary>
     <div class="detail">
       <dl class="kv">${kv.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl>
       ${qbAlert}
+      ${(g.alerts || []).length > 3 ? g.alerts.slice(3).map(alertLine).join("") : ""}
+      <div class="two">${keyPlayers(g.away, g.away_players)}${keyPlayers(g.home, g.home_players)}</div>
+      ${(g.away_td || g.home_td) ? `<div class="eyebrow">Most likely to score a touchdown</div>
+        <div class="two">${tdList(g.away, g.away_td)}${tdList(g.home, g.home_td)}</div>
+        <div class="mini">${esc((d.caveats && d.caveats.td) || "")}</div>` : ""}
+      ${newsList(g.news)}
       <div class="two">${injuryList(g.away, g.away_injuries)}${injuryList(g.home, g.home_injuries)}</div>
       <div class="two">${formDetail(g.away, g.away_form)}${formDetail(g.home, g.home_form)}</div>
     </div>
@@ -243,7 +306,7 @@ const BOOT = {
     }
     const days = [...byDay.entries()].map(([day, list]) =>
       `<div class="eyebrow day">${esc(day)}</div>${list.map((g) => gameRow(g, d)).join("")}`).join("");
-    const notes = ["tiers", "value_off", "lines", "injuries"]
+    const notes = ["tiers", "value_off", "lines", "players", "news", "injuries"]
       .filter((k) => d.caveats && d.caveats[k])
       .map((k) => `<div class="note">${esc(d.caveats[k])}</div>`).join("");
     el.innerHTML = `
@@ -267,10 +330,11 @@ const BOOT = {
     const teams = d.teams || [];
     const rows = teams.map((t) => {
       const r = t.record || {};
+      const mvp = ((t.key_players || {}).offense || [])[0];
       return `<tr><td class="n">${esc(t.rank)}</td>
         <td><b>${esc(t.team)}</b> <span class="mini">${esc(r.wins ?? 0)}-${esc(r.losses ?? 0)}${r.ties ? `-${esc(r.ties)}` : ""}</span></td>
         <td class="n">${num(t.elo, 0)}</td><td class="n">${signed(t.net_epa, 2)}</td>
-        <td>${esc(t.qb || "—")}</td></tr>`;
+        <td>${mvp ? `${esc(mvp.name)} <span class="mini">${esc(mvp.position)}</span>` : "—"}</td></tr>`;
     }).join("");
     const options = teams.map((t) => `<option value="${esc(t.team)}">${esc(t.team)} · ${esc(t.name)}</option>`).join("");
     el.innerHTML = `
@@ -285,10 +349,11 @@ const BOOT = {
       </div>
       <div class="card"><h2>Power ratings</h2>
         <div class="scroll"><table>
-          <thead><tr><th class="n">#</th><th>Team</th><th class="n">Elo</th><th class="n">Net EPA</th><th>QB</th></tr></thead>
+          <thead><tr><th class="n">#</th><th>Team</th><th class="n">Elo</th><th class="n">Net EPA</th><th>Most valuable</th></tr></thead>
           <tbody>${rows}</tbody></table></div>
         <div class="mini">Net EPA is expected points added per play on offence minus the same allowed on
-          defence, weighted toward recent games. QB is the team's most recent starter.</div>
+          defence, weighted toward recent games. Most valuable is the player whose plays added the most
+          expected points this season.</div>
       </div>`;
     const a = $("cmp-a"), b = $("cmp-b");
     if (teams.length > 1) { a.value = teams[0].team; b.value = teams[1].team; }
@@ -349,7 +414,8 @@ function renderCompare(teams, codeA, codeB, scale) {
     <div class="note">On a neutral field, Elo alone gives <b>${esc(A.team)} ${pct(p)}</b>
       (${pts == null ? "—" : pts >= 0 ? `${esc(A.team)} by ${pts.toFixed(1)}` : `${esc(B.team)} by ${(-pts).toFixed(1)}`}).
       Home field is worth about ${num((scale.hfa || 0) * (scale.points_per_elo || 0.04), 1)} points more.
-      This is the Elo rating only - not the model's pick, which also reads quarterbacks, efficiency, rest and the market.</div>`;
+      This is the Elo rating only - not the model's pick, which also reads quarterbacks, efficiency, rest and the market.</div>
+    <div class="two">${keyPlayers(A.team, A.key_players)}${keyPlayers(B.team, B.key_players)}</div>`;
 }
 
 // ---------------------------------------------------------------- record

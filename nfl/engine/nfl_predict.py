@@ -39,7 +39,9 @@ import nfl_export as nx
 import nfl_features as nf
 import nfl_form as nform
 import nfl_model as nm
+import nfl_news as nnews
 import nfl_odds as no
+import nfl_players as nplayers
 
 LOG = Path(os.environ.get("NFL_PREDICTIONS_LOG") or (nd.DATA / "prediction_history.json"))
 LOG_SCHEMA = 1
@@ -258,7 +260,7 @@ def predict_game(row, models, market, tiers):
 # ---------------------------------------------------------------- the run
 
 def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
-        cache_path=no.CACHE, api_key=None):
+        cache_path=no.CACHE, api_key=None, news_path=nnews.CACHE):
     now = naive_utc(now) if now is not None else now_utc()
     if sync:
         try:
@@ -285,6 +287,12 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
 
     qb_names = _qb_names(games)
     injuries = nd.load_injuries()
+    players = nplayers.PlayerData(injuries=injuries)
+    players.set_schedule(games)
+    news = nnews.load(news_path)
+    if sync:   # the feeds are read where the internet is open - the runner
+        nnews.refresh(news, log=log, now=clock)
+        nnews.save(news, news_path)
     history = load_log(log_path)
     out_games = []
     for _, row in slate.iterrows():
@@ -309,6 +317,14 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
             "away_injuries": injuries_for(injuries, season, week, row["away"])[:INJURIES_PER_TEAM],
             "market": market,
         }
+        key = nplayers.for_game(players, row, season, week, kickoff)
+        game["home_players"], game["away_players"] = key["home"], key["away"]
+        game["alerts"] = key["alerts"]
+        named = {p["name"] for side in ("home", "away") for grp in ("offense", "defense")
+                 for p in key[side][grp]}
+        named |= _roster_names(players, season, (row["home"], row["away"]))
+        game["news"] = nnews.for_game(news, (row["home"], row["away"]), named,
+                                      kickoff.tz_localize("UTC").to_pydatetime())
         if status == "final":
             game["score"] = {"home": int(row["home_score"]), "away": int(row["away_score"])}
         if status == "upcoming":
@@ -359,12 +375,25 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
         "tiers": tiers, "value_enabled_at": backtest["value"]["enabled_at"],
         "caveats": cav, "as_of": stamp(now),
     }, out_dir)
-    nx.write("teams", teams_payload(games, state, qb_names, now, season), out_dir)
+    nx.write("teams", teams_payload(games, state, qb_names, now, season, players), out_dir)
     nx.write("performance", {
         "backtest": backtest, "track_record": nx.track_record(history),
         "trained_on": trained_on, "caveats": cav, "data_through": stamp(last_played)[:10],
     }, out_dir)
     return out_games
+
+
+def _roster_names(players, season, teams):
+    """Full names of everyone on either team's latest weekly roster (active,
+    reserve or inactive) - the names news is matched against."""
+    r = players.rosters
+    if not len(r):
+        return set()
+    r = r[(r["season"] == season) & r["team"].isin(teams) & r["status"].isin(["ACT", "RES", "INA"])]
+    if not len(r):
+        return set()
+    latest = r[r["week"] == r["week"].max()]
+    return {n for n in latest["full_name"].dropna() if len(n.split()) >= 2}
 
 
 def _qb_names(games):
@@ -377,13 +406,17 @@ def _qb_names(games):
     return names
 
 
-def teams_payload(games, state, qb_names, now, season):
+def teams_payload(games, state, qb_names, now, season, players=None):
     order = sorted(nd.TEAMS, key=lambda t: -state["elo"].get(t, 0))
     teams = []
     for rank, code in enumerate(order, 1):
         f = nform.form(games, code, now, season)
         entry = nx.team_entry(code, state, f["record"], rank, qb_names)
         entry["last5"] = f["last5"]
+        if players is not None:
+            kp = nplayers.key_players(players, code, season, now)
+            entry["key_players"] = {grp: [{k: p[k] for k in ("name", "position", "value", "line", "rank")}
+                                          for p in kp[grp]] for grp in ("offense", "defense")}
         teams.append(entry)
     return {"season": season, "teams": teams, "as_of": stamp(now),
             "elo_scale": {"hfa": nm.ELO.hfa, "points_per_elo": nm.ELO.points_per_elo}}

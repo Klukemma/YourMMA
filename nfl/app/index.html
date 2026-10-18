@@ -164,6 +164,19 @@ ul.lastfights li{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
 .inj li{display:flex;gap:6px;align-items:baseline;padding:2px 0}
 .inj .st{font:600 9.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.06em;text-transform:uppercase;min-width:28px}
 .inj .st.out{color:var(--loss)} .inj .st.doubtful{color:var(--gold)} .inj .st.questionable{color:var(--ink-3)}
+/* A listed player not playing: the line the card leads with. */
+.alert{font-size:12.5px;line-height:1.4;margin:6px 0 0;padding:5px 8px;border-radius:7px;
+  border-left:3px solid var(--loss);background:color-mix(in srgb,var(--loss) 9%,transparent);color:var(--ink-2)}
+.alert b{color:var(--ink);font-weight:600}
+.alert.doubtful{border-left-color:var(--gold);background:color-mix(in srgb,var(--gold) 9%,transparent)}
+.alert.questionable{border-left-color:var(--line);background:var(--sunk)}
+ul.kp{list-style:none;padding:0;margin:4px 0 0;font-size:13px}
+ul.kp li{display:flex;gap:8px;align-items:flex-start;padding:3px 0}
+ul.kp .rk{min-width:14px;color:var(--ink-3);font-size:11px;padding-top:2px}
+ul.kp .tdp{min-width:34px;font-weight:600;color:var(--ink)}
+ul.kp .st,.kp .st{font:600 9.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.06em;text-transform:uppercase;margin-left:4px}
+.st.out{color:var(--loss)} .st.doubtful{color:var(--gold)} .st.questionable{color:var(--ink-3)}
+.news ul.news{margin:6px 0 0}.news ul.news li{margin:0 0 8px}.news a{color:var(--blue)}
 
 /* ---- generic ---- */
 .card{background:var(--surface);border:1px solid var(--line-soft);

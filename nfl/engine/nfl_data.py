@@ -39,12 +39,22 @@ GAMES = DATA / "games.csv.gz"
 TEAM_GAMES = DATA / "team_games.csv.gz"
 QB_GAMES = DATA / "qb_games.csv.gz"
 INJURIES = DATA / "injuries.csv.gz"
+PLAYER_GAMES = DATA / "player_games.csv.gz"     # QB/RB/FB/WR/TE, every season
+DEFENSE_GAMES = DATA / "defense_games.csv.gz"   # defenders, this season and last
+SNAPS = DATA / "snaps.csv.gz"                   # offensive snap counts, 2013 on
+ROSTERS = DATA / "rosters.csv.gz"               # weekly roster status, this season
+PLAYER_IDS = DATA / "player_ids.csv.gz"         # gsis <-> pfr ids
 
 RELEASE = "https://github.com/nflverse/nflverse-data/releases/download"
 GAMES_URL = "https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv"
 TEAM_URL = RELEASE + "/stats_team/stats_team_week_{season}.csv"
 PLAYER_URL = RELEASE + "/stats_player/stats_player_week_{season}.csv"
 INJURY_URL = RELEASE + "/injuries/injuries_{season}.csv"
+SNAP_URL = RELEASE + "/snap_counts/snap_counts_{season}.csv"
+ROSTER_URL = RELEASE + "/weekly_rosters/roster_weekly_{season}.csv"
+PLAYERS_URL = RELEASE + "/players/players.csv"
+FIRST_SNAP_SEASON = 2013    # nflverse's snap counts start here
+OFFENSE_POSITIONS = ("QB", "RB", "FB", "WR", "TE")
 
 FIRST_SEASON = 1999
 EASTERN = ZoneInfo("America/New_York")
@@ -104,6 +114,21 @@ QB_COLUMNS = [
     "passing_yards", "passing_tds", "passing_interceptions", "sacks_suffered",
     "passing_epa", "carries", "rushing_yards", "rushing_tds", "rushing_epa",
 ]
+PLAYER_COLUMNS = QB_COLUMNS + [
+    "position", "targets", "receptions", "receiving_yards", "receiving_tds", "receiving_epa",
+    "rushing_fumbles_lost", "receiving_fumbles_lost",
+]
+DEFENSE_COLUMNS = [
+    "player_id", "player_display_name", "position", "season", "week", "season_type",
+    "game_id", "team", "opponent_team", "def_tackles_solo", "def_tackle_assists",
+    "def_tackles_for_loss", "def_sacks", "def_qb_hits", "def_interceptions",
+    "def_pass_defended", "def_fumbles_forced", "def_tds",
+]
+SNAP_COLUMNS = ["game_id", "season", "game_type", "week", "player", "pfr_player_id",
+                "position", "team", "offense_snaps", "offense_pct", "defense_snaps"]
+ROSTER_COLUMNS = ["season", "week", "game_type", "team", "gsis_id", "full_name", "position",
+                  "depth_chart_position", "jersey_number", "status", "status_description_abbr"]
+ID_COLUMNS = ["gsis_id", "pfr_id", "display_name", "position", "latest_team", "status"]
 INJURY_COLUMNS = [
     "season", "game_type", "team", "week", "gsis_id", "position", "full_name",
     "report_primary_injury", "report_status", "practice_status",
@@ -200,7 +225,8 @@ def sync(seasons=None, full=False, log=print):
     _write(games, GAMES)
     log(f"   schedule: {len(games):,} games, seasons {games.season.min()}-{games.season.max()}")
 
-    fetched = {"team": {}, "qb": {}, "injuries": {}}
+    fetched = {"team": {}, "qb": {}, "injuries": {}, "players": {}, "defense": {},
+               "snaps": {}, "rosters": {}}
     for season in seasons:
         try:
             t = _read(TEAM_URL.format(season=season))
@@ -210,8 +236,29 @@ def sync(seasons=None, full=False, log=print):
         try:
             pl = _read(PLAYER_URL.format(season=season))
             fetched["qb"][season] = pl[pl["position"] == "QB"][[c for c in QB_COLUMNS if c in pl.columns]]
+            fetched["players"][season] = pl[pl["position"].isin(OFFENSE_POSITIONS)][
+                list(dict.fromkeys(c for c in PLAYER_COLUMNS if c in pl.columns))]
+            if season >= now - 1:
+                fetched["defense"][season] = pl[pl["position_group"].isin(["DL", "LB", "DB"])][
+                    [c for c in DEFENSE_COLUMNS if c in pl.columns]]
         except Exception as err:
-            log(f"   QB stats {season}: not fetched, keeping what is on file ({str(err)[:120]})")
+            log(f"   player stats {season}: not fetched, keeping what is on file ({str(err)[:120]})")
+        if season >= FIRST_SNAP_SEASON:
+            try:
+                sn = _read(SNAP_URL.format(season=season))
+                # Every position for the seasons the app shows (who played a
+                # finished game); offence only further back (the TD model).
+                if season < now - 1:
+                    sn = sn[sn["position"].isin(OFFENSE_POSITIONS)]
+                fetched["snaps"][season] = sn[[c for c in SNAP_COLUMNS if c in sn.columns]]
+            except Exception as err:
+                log(f"   snap counts {season}: not fetched ({str(err)[:120]})")
+        if season == now:
+            try:
+                ro = _read(ROSTER_URL.format(season=season))
+                fetched["rosters"][season] = ro[[c for c in ROSTER_COLUMNS if c in ro.columns]]
+            except Exception as err:
+                log(f"   rosters {season}: not fetched ({str(err)[:120]})")
         if season >= 2009:   # nflverse's injury reports start in 2009
             try:
                 i = _read(INJURY_URL.format(season=season))
@@ -234,6 +281,23 @@ def sync(seasons=None, full=False, log=print):
     qbs = store("qb", QB_GAMES, ["season", "week", "game_id", "player_id"])
     if qbs is not None:
         _write(qbs, QB_GAMES)
+    players = store("players", PLAYER_GAMES, ["season", "week", "game_id", "player_id"])
+    if players is not None:
+        _write(players, PLAYER_GAMES)
+    defense = store("defense", DEFENSE_GAMES, ["season", "week", "game_id", "player_id"])
+    if defense is not None:
+        _write(defense[defense["season"] >= now - 1], DEFENSE_GAMES)
+    snaps = store("snaps", SNAPS, ["season", "week", "game_id", "team", "player"])
+    if snaps is not None:
+        _write(snaps, SNAPS)
+    rosters = store("rosters", ROSTERS, ["season", "week", "team", "gsis_id"])
+    if rosters is not None:
+        _write(rosters[rosters["season"] >= now], ROSTERS)
+    try:
+        ids = _read(PLAYERS_URL)
+        _write(ids[[c for c in ID_COLUMNS if c in ids.columns]].dropna(subset=["gsis_id"]), PLAYER_IDS)
+    except Exception as err:
+        log(f"   player ids: not fetched, keeping what is on file ({str(err)[:120]})")
     injuries = store("injuries", INJURIES, ["season", "week", "team", "full_name"])
     if injuries is not None:
         # Only recent reports are worth keeping: they are shown beside this
@@ -312,6 +376,50 @@ def load_qb_games(path=QB_GAMES):
     q["dropbacks"] = q["attempts"].fillna(0) + q["sacks_suffered"].fillna(0)
     q["epa"] = q["passing_epa"].fillna(0) + q["rushing_epa"].fillna(0)
     return q
+
+
+def _optional(path, columns=None):
+    path = Path(path)
+    if not path.exists():
+        return pd.DataFrame(columns=columns or [])
+    return pd.read_csv(path, low_memory=False)
+
+
+def load_player_games(path=PLAYER_GAMES):
+    """One row per offensive player (QB/RB/FB/WR/TE) per game he recorded a
+    stat in, with EPA and touchdowns as nflverse computes them."""
+    p = _optional(path, PLAYER_COLUMNS)
+    if len(p):
+        p["team"] = p["team"].map(franchise)
+        p["tds"] = p["rushing_tds"].fillna(0) + p["receiving_tds"].fillna(0)
+        p["epa"] = (p["passing_epa"].fillna(0) + p["rushing_epa"].fillna(0)
+                    + p["receiving_epa"].fillna(0))
+    return p
+
+
+def load_defense_games(path=DEFENSE_GAMES):
+    d = _optional(path, DEFENSE_COLUMNS)
+    if len(d):
+        d["team"] = d["team"].map(franchise)
+    return d
+
+
+def load_snaps(path=SNAPS):
+    s = _optional(path, SNAP_COLUMNS)
+    if len(s):
+        s["team"] = s["team"].map(franchise)
+    return s
+
+
+def load_rosters(path=ROSTERS):
+    r = _optional(path, ROSTER_COLUMNS)
+    if len(r):
+        r["team"] = r["team"].map(franchise)
+    return r
+
+
+def load_player_ids(path=PLAYER_IDS):
+    return _optional(path, ID_COLUMNS)
 
 
 def load_injuries(path=INJURIES):

@@ -48,6 +48,17 @@ CAVEATS = {
         "Injury report from the league's official practice reports via "
         "nflverse: shown, not applied. The model reads only who starts at "
         "quarterback."),
+    "players": (
+        "Most valuable on offence is ranked by expected points added (EPA) this "
+        "season - the points a player's plays added above an average play in "
+        "the same situation; defenders by sacks, takeaways, passes defended and "
+        "tackles for loss. A listed player who is out or doubtful - or the most "
+        "valuable player questionable - is flagged at the top of the game, from "
+        "the official injury report and the weekly roster. Shown, not applied: "
+        "only the starting quarterback moves the pick."),
+    "news": (
+        "Headlines from public NFL news feeds that name one of the two teams or "
+        "their players, published before kickoff. Shown, not applied."),
     "qb": (
         "The quarterback the model assumes is the one the schedule projects "
         "to start. If the injury report says he is out, the number above does "
