@@ -1,0 +1,134 @@
+name: NFL predictions
+
+# The NFL app's runner: nfl/engine on GitHub's machines, which have the open
+# internet (nflverse, the odds API) that the development sandbox does not.
+#
+#   predict   sync this season from nflverse, refit, predict the week, log
+#             the picks before kickoff, grade the finished games, rebuild
+#             nfl/app/data and the standalone page, commit
+#   sync      nflverse snapshot only (all seasons with full=true)
+#   backtest  the walk-forward report, printed
+#
+# On a schedule it runs predict through the season: Tuesday after Monday
+# night (grade the week, post the next one), Thursday before the night game
+# and Sunday morning before the London and early games - those two buy
+# today's prices (3 credits each, from the free tier's 500 a month).
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "predict = this week's picks; sync = data only; backtest = report"
+        type: choice
+        options: [predict, sync, backtest]
+        default: predict
+      refresh_odds:
+        description: "predict only: buy today's prices even if every game has one on file (3 credits)"
+        type: boolean
+        default: false
+      full:
+        description: "sync only: rebuild every season since 1999, not just this one"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "17 10 * 9-12,1-2 TUE"   # after Monday night: grade, post the next week
+    - cron: "17 16 * 9-12,1-2 THU"   # before Thursday night, fresh prices
+    - cron: "47 12 * 9-12,1-2 SUN"   # before the London and 1pm games, fresh prices
+
+permissions:
+  contents: write
+
+# ITS OWN QUEUE. GitHub keeps one running and one pending run per group and
+# a newly queued run cancels the pending one, so sharing the MMA runner's
+# group would let a Sunday NFL run silently cancel a queued MMA dispatch.
+# The two touch different files (nfl/ against app/ and engine/), and the
+# rebase-and-retry push below absorbs one landing while the other runs.
+concurrency:
+  group: nfl-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  nfl:
+    runs-on: ubuntu-latest
+    steps:
+      # The branch, not the dispatch-time commit: a run queued behind another
+      # must build on what that run pushed.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r engine/requirements.txt pytest
+
+      # BEFORE the run, on the snapshot as committed: they check the code.
+      # After it they would also be checking nflverse's clock - results land
+      # hours before the statistics behind them - and a red test there would
+      # throw away the run's picks and the prices it paid for.
+      - name: Tests
+        run: python -m pytest nfl/engine/tests -q -m "not snapshot"
+
+      - name: Run
+        env:
+          # Without it the app uses the schedule's posted lines; with it,
+          # today's prices from the books. Never printed.
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          set -o pipefail
+          MODE="${{ inputs.mode || 'predict' }}"
+          if [ "$MODE" = "sync" ]; then
+            python nfl/engine/nfl_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee nfl.log
+          elif [ "$MODE" = "backtest" ]; then
+            python nfl/engine/nfl_data.py 2>&1 | tee nfl.log
+            python nfl/engine/nfl_backtest.py 2>&1 | tee -a nfl.log
+          else
+            # Scheduled Thursday and Sunday runs, and a dispatch that asks,
+            # buy today's lines; Tuesday's run reuses what is on file unless
+            # a game has none.
+            if [ "${{ inputs.refresh_odds }}" = "true" ] || [ "${{ github.event.schedule }}" = "17 16 * 9-12,1-2 THU" ] || [ "${{ github.event.schedule }}" = "47 12 * 9-12,1-2 SUN" ]; then
+              export ODDS_REFRESH=1
+            fi
+            python nfl/engine/nfl_predict.py 2>&1 | tee nfl.log
+          fi
+
+      # The snapshot's health (every final with its statistics, and so on)
+      # depends on nflverse's clock, so it is reported, never a gate.
+      - name: Snapshot checks
+        if: always()
+        continue-on-error: true
+        run: python -m pytest nfl/engine/tests -q -m snapshot
+
+      - name: Commit
+        run: |
+          PATHS="nfl/data/ nfl/app/data/ nfl/app/yournfl.html"
+          if [ -z "$(git status --porcelain -- $PATHS)" ]; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for p in $PATHS; do
+            if [ -e "$p" ]; then git add -- "$p"; fi
+          done
+          if [ -f nfl/app/data/week.json ]; then
+            LABEL=$(python -c "import json;d=json.load(open('nfl/app/data/week.json'));print(d['season'], d['label'])")
+            PICKS=$(python -c "import json;d=json.load(open('nfl/app/data/week.json'));print(sum(1 for g in d['games'] if g.get('pick') and g['status']=='upcoming'))")
+            git commit -m "NFL: ${LABEL}, ${PICKS} picks"
+          else
+            git commit -m "NFL: refresh data"
+          fi
+          # Rebase and retry: a push overtaken by another run must not throw
+          # away picks and paid-for prices.
+          pushed=0
+          for attempt in 1 2 3; do
+            git push && { pushed=1; break; }
+            echo "push rejected, rebasing onto the branch (attempt $attempt)"
+            git pull --rebase --autostash origin "$(git rev-parse --abbrev-ref HEAD)" || exit 1
+            sleep $((attempt * 3))
+          done
+          if [ "$pushed" != 1 ]; then
+            git push || { echo "::error::push failed after 3 rebases"; exit 1; }
+          fi

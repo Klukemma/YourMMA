@@ -1,0 +1,817 @@
+{
+ "backtest": {
+  "by_season": [
+   {
+    "accuracy": 0.58427,
+    "games": 267,
+    "log_loss": 0.657463,
+    "market_accuracy": 0.595506,
+    "market_log_loss": 0.660067,
+    "season": 2006
+   },
+   {
+    "accuracy": 0.674157,
+    "games": 267,
+    "log_loss": 0.608523,
+    "market_accuracy": 0.685393,
+    "market_log_loss": 0.588231,
+    "season": 2007
+   },
+   {
+    "accuracy": 0.661654,
+    "games": 266,
+    "log_loss": 0.611124,
+    "market_accuracy": 0.672932,
+    "market_log_loss": 0.60784,
+    "season": 2008
+   },
+   {
+    "accuracy": 0.677903,
+    "games": 267,
+    "log_loss": 0.583838,
+    "market_accuracy": 0.692884,
+    "market_log_loss": 0.583262,
+    "season": 2009
+   },
+   {
+    "accuracy": 0.651685,
+    "games": 267,
+    "log_loss": 0.632831,
+    "market_accuracy": 0.655431,
+    "market_log_loss": 0.632427,
+    "season": 2010
+   },
+   {
+    "accuracy": 0.666667,
+    "games": 267,
+    "log_loss": 0.594071,
+    "market_accuracy": 0.666667,
+    "market_log_loss": 0.593121,
+    "season": 2011
+   },
+   {
+    "accuracy": 0.657895,
+    "games": 266,
+    "log_loss": 0.603857,
+    "market_accuracy": 0.646617,
+    "market_log_loss": 0.602284,
+    "season": 2012
+   },
+   {
+    "accuracy": 0.714286,
+    "games": 266,
+    "log_loss": 0.594946,
+    "market_accuracy": 0.710526,
+    "market_log_loss": 0.592372,
+    "season": 2013
+   },
+   {
+    "accuracy": 0.676692,
+    "games": 266,
+    "log_loss": 0.598762,
+    "market_accuracy": 0.669173,
+    "market_log_loss": 0.599081,
+    "season": 2014
+   },
+   {
+    "accuracy": 0.621723,
+    "games": 267,
+    "log_loss": 0.646696,
+    "market_accuracy": 0.621723,
+    "market_log_loss": 0.648818,
+    "season": 2015
+   },
+   {
+    "accuracy": 0.645283,
+    "games": 265,
+    "log_loss": 0.620787,
+    "market_accuracy": 0.645283,
+    "market_log_loss": 0.621574,
+    "season": 2016
+   },
+   {
+    "accuracy": 0.696629,
+    "games": 267,
+    "log_loss": 0.591431,
+    "market_accuracy": 0.70412,
+    "market_log_loss": 0.592183,
+    "season": 2017
+   },
+   {
+    "accuracy": 0.664151,
+    "games": 265,
+    "log_loss": 0.613233,
+    "market_accuracy": 0.664151,
+    "market_log_loss": 0.613542,
+    "season": 2018
+   },
+   {
+    "accuracy": 0.650376,
+    "games": 266,
+    "log_loss": 0.617011,
+    "market_accuracy": 0.642857,
+    "market_log_loss": 0.616297,
+    "season": 2019
+   },
+   {
+    "accuracy": 0.671642,
+    "games": 268,
+    "log_loss": 0.589004,
+    "market_accuracy": 0.675373,
+    "market_log_loss": 0.589952,
+    "season": 2020
+   },
+   {
+    "accuracy": 0.623239,
+    "games": 284,
+    "log_loss": 0.623755,
+    "market_accuracy": 0.623239,
+    "market_log_loss": 0.623186,
+    "season": 2021
+   },
+   {
+    "accuracy": 0.677305,
+    "games": 282,
+    "log_loss": 0.60615,
+    "market_accuracy": 0.659574,
+    "market_log_loss": 0.604963,
+    "season": 2022
+   },
+   {
+    "accuracy": 0.677193,
+    "games": 285,
+    "log_loss": 0.62893,
+    "market_accuracy": 0.677193,
+    "market_log_loss": 0.62697,
+    "season": 2023
+   },
+   {
+    "accuracy": 0.698246,
+    "games": 285,
+    "log_loss": 0.588199,
+    "market_accuracy": 0.705263,
+    "market_log_loss": 0.589214,
+    "season": 2024
+   },
+   {
+    "accuracy": 0.661972,
+    "games": 284,
+    "log_loss": 0.608152,
+    "market_accuracy": 0.661972,
+    "market_log_loss": 0.606989,
+    "season": 2025
+   },
+   {
+    "accuracy": 0.609195,
+    "games": 87,
+    "log_loss": 0.657254,
+    "market_accuracy": 0.62069,
+    "market_log_loss": 0.659838,
+    "season": 2026
+   }
+  ],
+  "calibration": [
+   {
+    "games": 83,
+    "hi": 0.2,
+    "lo": 0.1,
+    "observed": 0.180723,
+    "predicted": 0.161688
+   },
+   {
+    "games": 229,
+    "hi": 0.3,
+    "lo": 0.2,
+    "observed": 0.20524,
+    "predicted": 0.256379
+   },
+   {
+    "games": 364,
+    "hi": 0.4,
+    "lo": 0.3,
+    "observed": 0.384615,
+    "predicted": 0.353367
+   },
+   {
+    "games": 388,
+    "hi": 0.5,
+    "lo": 0.4,
+    "observed": 0.438144,
+    "predicted": 0.445213
+   },
+   {
+    "games": 494,
+    "hi": 0.6,
+    "lo": 0.5,
+    "observed": 0.55668,
+    "predicted": 0.554101
+   },
+   {
+    "games": 538,
+    "hi": 0.7,
+    "lo": 0.6,
+    "observed": 0.620818,
+    "predicted": 0.648623
+   },
+   {
+    "games": 444,
+    "hi": 0.8,
+    "lo": 0.7,
+    "observed": 0.779279,
+    "predicted": 0.74818
+   },
+   {
+    "games": 190,
+    "hi": 0.9,
+    "lo": 0.8,
+    "observed": 0.884211,
+    "predicted": 0.844571
+   },
+   {
+    "games": 19,
+    "hi": 1.0,
+    "lo": 0.9,
+    "observed": 0.947368,
+    "predicted": 0.913419
+   }
+  ],
+  "periods": {
+   "confirm": [
+    2016,
+    2025
+   ],
+   "dev": [
+    2006,
+    2015
+   ],
+   "train_from": 2002
+  },
+  "spread": {
+   "2006-2015": {
+    "0": {
+     "bets": 2599,
+     "hit_rate": 0.519431
+    },
+    "1.5": {
+     "bets": 1447,
+     "hit_rate": 0.521769
+    },
+    "3": {
+     "bets": 667,
+     "hit_rate": 0.523238
+    }
+   },
+   "2016-2025": {
+    "0": {
+     "bets": 2696,
+     "hit_rate": 0.498145
+    },
+    "1.5": {
+     "bets": 1530,
+     "hit_rate": 0.496078
+    },
+    "3": {
+     "bets": 708,
+     "hit_rate": 0.516949
+    }
+   }
+  },
+  "spread_enabled_at": null,
+  "tiers": {
+   "2006-2015": {
+    "LEAN": {
+     "hit_rate": 0.589857,
+     "mean_prob": 0.601212,
+     "picks": 907
+    },
+    "SOLID": {
+     "hit_rate": 0.710627,
+     "mean_prob": 0.698736,
+     "picks": 781
+    },
+    "STRONG": {
+     "hit_rate": 0.813309,
+     "mean_prob": 0.807498,
+     "picks": 541
+    },
+    "TOSS-UP": {
+     "hit_rate": 0.517162,
+     "mean_prob": 0.52624,
+     "picks": 437
+    }
+   },
+   "2016-2025": {
+    "LEAN": {
+     "hit_rate": 0.590398,
+     "mean_prob": 0.599893,
+     "picks": 979
+    },
+    "SOLID": {
+     "hit_rate": 0.721728,
+     "mean_prob": 0.699341,
+     "picks": 787
+    },
+    "STRONG": {
+     "hit_rate": 0.818182,
+     "mean_prob": 0.809996,
+     "picks": 594
+    },
+    "TOSS-UP": {
+     "hit_rate": 0.516624,
+     "mean_prob": 0.527393,
+     "picks": 391
+    }
+   }
+  },
+  "total": {
+   "2006-2015": {
+    "0": {
+     "bets": 2614,
+     "hit_rate": 0.529839
+    },
+    "1.5": {
+     "bets": 1239,
+     "hit_rate": 0.54318
+    },
+    "3": {
+     "bets": 460,
+     "hit_rate": 0.55
+    }
+   },
+   "2016-2025": {
+    "0": {
+     "bets": 2738,
+     "hit_rate": 0.501096
+    },
+    "1.5": {
+     "bets": 1380,
+     "hit_rate": 0.496377
+    },
+    "3": {
+     "bets": 482,
+     "hit_rate": 0.520747
+    }
+   }
+  },
+  "total_enabled_at": null,
+  "value": {
+   "edges": {
+    "0.03": {
+     "2006-2015": {
+      "bets": 1720,
+      "roi": 0.008915,
+      "won": 755
+     },
+     "2016-2025": {
+      "bets": 1853,
+      "roi": -0.089428,
+      "won": 789
+     }
+    },
+    "0.05": {
+     "2006-2015": {
+      "bets": 1244,
+      "roi": 0.028587,
+      "won": 532
+     },
+     "2016-2025": {
+      "bets": 1367,
+      "roi": -0.099161,
+      "won": 566
+     }
+    },
+    "0.08": {
+     "2006-2015": {
+      "bets": 713,
+      "roi": 0.056299,
+      "won": 302
+     },
+     "2016-2025": {
+      "bets": 804,
+      "roi": -0.06897,
+      "won": 327
+     }
+    }
+   },
+   "enabled_at": null
+  },
+  "winner": {
+   "blend": {
+    "2006-2015": {
+     "accuracy": 0.658665,
+     "auc": 0.713541,
+     "brier": 0.212744,
+     "games": 2666,
+     "log_loss": 0.613228,
+     "market_accuracy": 0.661665,
+     "market_brier": 0.211821,
+     "market_log_loss": 0.610766,
+     "roi": {
+      "bets": 2531,
+      "roi": 0.011763,
+      "won": 1094
+     }
+    },
+    "2016-2025": {
+     "accuracy": 0.666667,
+     "auc": 0.72226,
+     "brier": 0.210646,
+     "games": 2751,
+     "log_loss": 0.608718,
+     "market_accuracy": 0.66594,
+     "market_brier": 0.210564,
+     "market_log_loss": 0.608521,
+     "roi": {
+      "bets": 2750,
+      "roi": -0.01467,
+      "won": 1418
+     }
+    }
+   },
+   "elo": {
+    "2006-2015": {
+     "accuracy": 0.649662,
+     "auc": 0.691302,
+     "brier": 0.218495,
+     "games": 2666,
+     "log_loss": 0.62569,
+     "market_accuracy": 0.661665,
+     "market_brier": 0.211821,
+     "market_log_loss": 0.610766,
+     "roi": {
+      "bets": 2531,
+      "roi": 0.012745,
+      "won": 1121
+     }
+    },
+    "2016-2025": {
+     "accuracy": 0.640131,
+     "auc": 0.688982,
+     "brier": 0.221822,
+     "games": 2751,
+     "log_loss": 0.634153,
+     "market_accuracy": 0.66594,
+     "market_brier": 0.210564,
+     "market_log_loss": 0.608521,
+     "roi": {
+      "bets": 2750,
+      "roi": -0.064922,
+      "won": 1191
+     }
+    }
+   },
+   "model": {
+    "2006-2015": {
+     "accuracy": 0.653788,
+     "auc": 0.700584,
+     "brier": 0.216604,
+     "games": 2666,
+     "log_loss": 0.622037,
+     "market_accuracy": 0.661665,
+     "market_brier": 0.211821,
+     "market_log_loss": 0.610766,
+     "roi": {
+      "bets": 2531,
+      "roi": 0.015004,
+      "won": 1157
+     }
+    },
+    "2016-2025": {
+     "accuracy": 0.642675,
+     "auc": 0.702459,
+     "brier": 0.21791,
+     "games": 2751,
+     "log_loss": 0.624842,
+     "market_accuracy": 0.66594,
+     "market_brier": 0.210564,
+     "market_log_loss": 0.608521,
+     "roi": {
+      "bets": 2750,
+      "roi": -0.050159,
+      "won": 1251
+     }
+    }
+   }
+  }
+ },
+ "caveats": {
+  "injuries": "Injury report from the league's official practice reports via nflverse: shown, not applied. The model reads only who starts at quarterback.",
+  "lines": "Model line and model total are the model's own numbers beside the market's. Taking the model's side against the closing spread won 49.8% of 2016-2025 games and against the total 50.1%; -110 needs 52.4% to break even.",
+  "model": "The pick is the model blended with the betting market. The market is hard to beat in the NFL: across 2016-2025 the blend picked 66.7% of winners against the closing favourite's 66.6%, and betting the model where it disagreed with the price lost money. Treat a pick as an opinion with a measured hit rate, not an edge.",
+  "news": "Headlines from public NFL news feeds that name one of the two teams or their players, published before kickoff. Shown, not applied.",
+  "players": "Most valuable on offence is ranked by expected points added (EPA) this season - the points a player's plays added above an average play in the same situation; defenders by sacks, takeaways, passes defended and tackles for loss. A listed player who is out or doubtful - or the most valuable player questionable - is flagged at the top of the game, from the official injury report and the weekly roster. Shown, not applied: only the starting quarterback moves the pick.",
+  "qb": "The quarterback the model assumes is the one the schedule projects to start. If the injury report says he is out, the number above does not know yet.",
+  "td": "Chance of a rushing or receiving touchdown, if he plays - from his recent carries, targets and snaps and his team's expected points from the betting line. In 2020-2025 each team's most likely scorer scored 43.5% of the time (the model said 41.1%). Measured, and shown, not applied.",
+  "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
+  "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
+ },
+ "data_through": "2026-10-18",
+ "generated": "2026-10-18T20:58:07Z",
+ "schema": 1,
+ "td": {
+  "2014-2019": {
+   "auc": {
+    "base": 0.578017,
+    "hgb": 0.735387,
+    "logistic": 0.736879,
+    "usage": 0.727105
+   },
+   "brier": {
+    "base": 0.137505,
+    "hgb": 0.12582,
+    "logistic": 0.125571,
+    "usage": 0.127778
+   },
+   "calibration": [
+    {
+     "hi": 0.05,
+     "lo": 0.0,
+     "observed": 0.039367,
+     "predicted": 0.037008,
+     "rows": 4928
+    },
+    {
+     "hi": 0.1,
+     "lo": 0.05,
+     "observed": 0.066575,
+     "predicted": 0.073953,
+     "rows": 9433
+    },
+    {
+     "hi": 0.15,
+     "lo": 0.1,
+     "observed": 0.117693,
+     "predicted": 0.123349,
+     "rows": 6432
+    },
+    {
+     "hi": 0.2,
+     "lo": 0.15,
+     "observed": 0.185249,
+     "predicted": 0.174126,
+     "rows": 4664
+    },
+    {
+     "hi": 0.3,
+     "lo": 0.2,
+     "observed": 0.254851,
+     "predicted": 0.245711,
+     "rows": 6957
+    },
+    {
+     "hi": 0.4,
+     "lo": 0.3,
+     "observed": 0.348493,
+     "predicted": 0.342909,
+     "rows": 3650
+    },
+    {
+     "hi": 0.5,
+     "lo": 0.4,
+     "observed": 0.431255,
+     "predicted": 0.440482,
+     "rows": 1331
+    },
+    {
+     "hi": 1.0,
+     "lo": 0.5,
+     "observed": 0.550702,
+     "predicted": 0.576012,
+     "rows": 641
+    }
+   ],
+   "log_loss": {
+    "base": 0.443574,
+    "hgb": 0.403683,
+    "logistic": 0.403198,
+    "usage": 0.410046
+   },
+   "rows": 38036,
+   "scored_rate": 0.168656,
+   "top3": {
+    "any_hit_rate": 0.722534,
+    "hit_rate": 0.336246,
+    "mean_prob": 0.327409,
+    "team_games": 3204
+   },
+   "top_pick": {
+    "hgb": {
+     "any_hit_rate": 0.390137,
+     "hit_rate": 0.390137,
+     "mean_prob": 0.386867,
+     "team_games": 3204
+    },
+    "logistic": {
+     "any_hit_rate": 0.390762,
+     "hit_rate": 0.390762,
+     "mean_prob": 0.402291,
+     "team_games": 3204
+    },
+    "usage": {
+     "any_hit_rate": 0.384207,
+     "hit_rate": 0.384207,
+     "mean_prob": 0.416348,
+     "team_games": 3204
+    }
+   }
+  },
+  "2020-2025": {
+   "auc": {
+    "base": 0.571512,
+    "hgb": 0.75343,
+    "logistic": 0.752894,
+    "usage": 0.74164
+   },
+   "brier": {
+    "base": 0.137458,
+    "hgb": 0.122803,
+    "logistic": 0.122874,
+    "usage": 0.125486
+   },
+   "calibration": [
+    {
+     "hi": 0.05,
+     "lo": 0.0,
+     "observed": 0.033926,
+     "predicted": 0.03471,
+     "rows": 6072
+    },
+    {
+     "hi": 0.1,
+     "lo": 0.05,
+     "observed": 0.06522,
+     "predicted": 0.074419,
+     "rows": 9583
+    },
+    {
+     "hi": 0.15,
+     "lo": 0.1,
+     "observed": 0.113646,
+     "predicted": 0.123659,
+     "rows": 7277
+    },
+    {
+     "hi": 0.2,
+     "lo": 0.15,
+     "observed": 0.178822,
+     "predicted": 0.173875,
+     "rows": 5128
+    },
+    {
+     "hi": 0.3,
+     "lo": 0.2,
+     "observed": 0.256631,
+     "predicted": 0.245492,
+     "rows": 7088
+    },
+    {
+     "hi": 0.4,
+     "lo": 0.3,
+     "observed": 0.37377,
+     "predicted": 0.343919,
+     "rows": 3660
+    },
+    {
+     "hi": 0.5,
+     "lo": 0.4,
+     "observed": 0.443976,
+     "predicted": 0.44299,
+     "rows": 1660
+    },
+    {
+     "hi": 1.0,
+     "lo": 0.5,
+     "observed": 0.582563,
+     "predicted": 0.568148,
+     "rows": 757
+    }
+   ],
+   "log_loss": {
+    "base": 0.443989,
+    "hgb": 0.394567,
+    "logistic": 0.395115,
+    "usage": 0.40315
+   },
+   "rows": 41225,
+   "scored_rate": 0.168344,
+   "top3": {
+    "any_hit_rate": 0.737744,
+    "hit_rate": 0.348592,
+    "mean_prob": 0.330168,
+    "team_games": 3386
+   },
+   "top_pick": {
+    "hgb": {
+     "any_hit_rate": 0.435027,
+     "hit_rate": 0.435027,
+     "mean_prob": 0.400849,
+     "team_games": 3386
+    },
+    "logistic": {
+     "any_hit_rate": 0.435027,
+     "hit_rate": 0.435027,
+     "mean_prob": 0.410719,
+     "team_games": 3386
+    },
+    "usage": {
+     "any_hit_rate": 0.431187,
+     "hit_rate": 0.431187,
+     "mean_prob": 0.42242,
+     "team_games": 3386
+    }
+   }
+  },
+  "dev_choice": {
+   "hgb": 0.403683,
+   "logistic": 0.403198,
+   "prefers": "logistic"
+  },
+  "features": [
+   "pos_QB",
+   "pos_RB",
+   "pos_FB",
+   "pos_WR",
+   "pos_TE",
+   "ew_carries",
+   "ew_targets",
+   "ew_receptions",
+   "ew_rushing_tds",
+   "ew_receiving_tds",
+   "ew_rushing_yards",
+   "ew_receiving_yards",
+   "ew_scored",
+   "ew_snap_pct",
+   "ew_carry_share",
+   "ew_target_share",
+   "l4_carries",
+   "l4_targets",
+   "l4_tds",
+   "l4_snap_pct",
+   "td_per_touch",
+   "games",
+   "games_season",
+   "new_team",
+   "implied",
+   "home",
+   "playoff",
+   "xtd",
+   "log_xtd",
+   "log_ew_carries",
+   "log_ew_targets",
+   "log_ew_receptions",
+   "log_ew_rushing_yards",
+   "log_ew_receiving_yards",
+   "log_l4_carries",
+   "log_l4_targets"
+  ],
+  "model": "logistic",
+  "periods": {
+   "confirm": [
+    2020,
+    2025
+   ],
+   "dev": [
+    2014,
+    2019
+   ],
+   "train_from": 2013
+  }
+ },
+ "track_record": {
+  "accuracy": 0.714286,
+  "ats": {
+   "correct": 1,
+   "picks": 7
+  },
+  "basis": "one pick per game, the last one logged before kickoff",
+  "by_season": [
+   {
+    "correct": 5,
+    "picks": 7,
+    "season": 2026
+   }
+  ],
+  "by_week": [
+   {
+    "correct": 5,
+    "picks": 7,
+    "season": 2026,
+    "week": 6
+   }
+  ],
+  "correct": 5,
+  "graded": 7,
+  "log_loss": 0.703716,
+  "logged": 12,
+  "pending": 5,
+  "td": {
+   "picks": 0,
+   "scored": 0
+  },
+  "totals": {
+   "correct": 1,
+   "picks": 7
+  }
+ },
+ "trained_on": 6484
+}
