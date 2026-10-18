@@ -8,8 +8,12 @@ the time, linked to the article. Nothing here moves a number: news is SHOWN,
 NOT APPLIED, as the MMA app's fight-week news is.
 
 POINT IN TIME. An item carries `published` (the feed's own date) and
-`gathered` (when this code first saw it). A game shows only items published
-before its kickoff, so a match report can never appear as pre-game news.
+`gathered` (when this code first saw it). A game shows only items that were
+both published AND gathered before its kickoff. The gathered time is our own
+clock and the only one that can be trusted: one feed's dates run hours
+behind (RotoWire stamped "won't return Sunday" - an in-game injury - before
+the 1pm kickoff it happened in), and a match report must never appear as
+pre-game news.
 
 MATCHING. A player is matched by his full name as the roster prints it
 (two words at least, whole words only - "Allen" alone would match half the
@@ -39,6 +43,13 @@ FEEDS = {
     "RotoWire": "https://www.rotowire.com/rss/news.php?sport=NFL",
 }
 USER_AGENT = "YourNFL/1.0 (+https://github.com/Klukemma/YourMMA)"
+# Not news: sportsbook promotions and TV listings name every team playing.
+NOT_NEWS = re.compile(
+    r"promo code|bonus code|bonus bets|sign-?up bonus|sportsbook promo|kalshi|"
+    r"how to watch|live stream|tv channel|where to watch|best bets|player props?\b|parlay|"
+    r"betting promos|open thread|live chat|live updates|discussion|odds, predictions|expert picks|"
+    r"odds, spreads|odds, picks|picks, predictions",
+    re.IGNORECASE)
 
 
 def _now():
@@ -180,10 +191,12 @@ def for_game(cache, teams, players, kickoff, limit=PER_GAME):
     player_re = _pattern(players)
     matched = []
     for it in cache["items"].values():
-        published = _parse_date(it["published"])
-        if published is None or published >= kickoff:
+        published, gathered = _parse_date(it["published"]), _parse_date(it.get("gathered"))
+        if published is None or gathered is None or published >= kickoff or gathered >= kickoff:
             continue
         text = f"{it['title']} {it['summary']}"
+        if NOT_NEWS.search(it["title"]):
+            continue
         hit_players = sorted({m.group(0) for m in player_re.finditer(text)}) if player_re else []
         hit_teams = sorted({team_names[m.group(0).lower()] for m in team_re.finditer(text)}) if team_re else []
         if hit_players or hit_teams:

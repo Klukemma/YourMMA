@@ -65,3 +65,28 @@ def test_published_after_kickoff_is_never_pre_game_news():
 def test_a_surname_alone_is_not_a_player():
     items = nn.for_game(_cache(), ("NYJ", "NE"), {"Josh Allen"}, KICK)
     assert items == []                           # "Allen and the Bills" names neither team
+
+
+def test_promotions_and_tv_listings_are_not_news():
+    c = nn.empty()
+    spam = b"""<?xml version="1.0"?><rss version="2.0"><channel>
+<item><title>Use BetMGM bonus code CBSSPORTS for Chiefs-Raiders</title><link>https://example.com/s1</link>
+<pubDate>Sat, 17 Oct 2026 12:00:00 GMT</pubDate></item>
+<item><title>NFL today: How to watch Chiefs vs Raiders, TV channels</title><link>https://example.com/s2</link>
+<pubDate>Sat, 17 Oct 2026 12:00:00 GMT</pubDate></item>
+<item><title>Chiefs activate Rashee Rice from injured reserve</title><link>https://example.com/s3</link>
+<pubDate>Sat, 17 Oct 2026 12:00:00 GMT</pubDate></item></channel></rss>"""
+    nn.merge(c, nn.parse_feed(spam, "Test"), NOW)
+    assert [i["link"] for i in nn.for_game(c, ("KC", "LV"), set(), KICK)] == ["https://example.com/s3"]
+
+
+def test_news_fetched_after_kickoff_is_not_pre_game_news_whatever_its_date_says():
+    """A feed whose clock runs behind stamps an in-game injury before the
+    kickoff it happened in; only our own fetch time can be trusted."""
+    c = nn.empty()
+    late = b"""<?xml version="1.0"?><rss version="2.0"><channel>
+<item><title>Patrick Mahomes: Won't return Sunday</title><link>https://example.com/late</link>
+<pubDate>Sun, 18 Oct 2026 11:45:00 GMT</pubDate></item></channel></rss>"""
+    after_kickoff = datetime(2026, 10, 18, 21, 0, tzinfo=timezone.utc)
+    nn.merge(c, nn.parse_feed(late, "Late clock"), after_kickoff)
+    assert nn.for_game(c, ("KC", "LV"), {"Patrick Mahomes"}, KICK) == []
