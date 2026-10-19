@@ -36,7 +36,9 @@ SCHEMA = 1
 KEEP_DAYS = 10
 PER_GAME = 8
 FEEDS = {
-    "ESPN": "https://www.espn.com/espn/rss/nfl/news",
+    # ESPN's feed answered the runner with an empty body; Pro Football
+    # Rumors is injury, roster and transaction news, the player news wanted.
+    "Pro Football Rumors": "https://www.profootballrumors.com/feed",
     "CBS Sports": "https://www.cbssports.com/rss/headlines/nfl/",
     "ProFootballTalk": "https://profootballtalk.nbcsports.com/feed/",
     "Yahoo Sports": "https://sports.yahoo.com/nfl/rss.xml",

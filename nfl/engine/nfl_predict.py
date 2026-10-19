@@ -431,6 +431,7 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
     nx.write("week", {
         "season": season, "week": week, "game_type": game_type, "label": week_label(week, game_type),
         "games": out_games, "data_through": stamp(last_played)[:10], "trained_on": trained_on,
+        "byes": byes(slate, game_type),
         "tiers": tiers, "value_enabled_at": backtest["value"]["enabled_at"],
         "caveats": cav, "as_of": stamp(now),
     }, out_dir)
@@ -468,6 +469,15 @@ def touchdown_picks(live, players, row, side, game, market, injuries, off, seaso
     return [{"gsis_id": p["gsis_id"], "name": p["name"], "position": p["position"],
              "prob": p["prob"], "tds_season": p["tds_season"], "games_season": p["games_season"],
              "status": status.get(p["gsis_id"], "active")} for p in picks]
+
+
+def byes(slate, game_type):
+    """Teams with no game in a regular-season week, as the week's header
+    lists them."""
+    if game_type != "REG":
+        return []
+    playing = set(slate["home"]) | set(slate["away"])
+    return sorted(set(nd.TEAMS) - playing)
 
 
 def _roster_names(players, season, teams):

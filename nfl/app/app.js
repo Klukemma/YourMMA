@@ -322,6 +322,7 @@ const BOOT = {
         <h1>${esc(d.label)}</h1>
         <div class="mini">${games.length} games · ${predicted} with a pick · model trained on
           ${Number(d.trained_on || 0).toLocaleString()} games</div>
+        ${(d.byes || []).length ? `<div class="mini">On bye: ${d.byes.map(esc).join(", ")}</div>` : ""}
       </div>
       <div class="note warnbox">${esc(d.caveats && d.caveats.model)}</div>
       ${upsetCard(games)}

@@ -185,3 +185,9 @@ def test_touchdown_picks_are_graded_from_the_box_score():
     p = log["picks"]["g"]
     assert [t["scored"] for t in p["home_td"]] == [True, False] and p["away_td"][0]["scored"] is False
     assert npd.grade_touchdowns(log, box) == 0
+
+
+def test_byes_are_the_teams_without_a_regular_season_game():
+    slate = pd.DataFrame({"home": ["KC", "BUF"], "away": ["LV", "MIA"]})
+    assert len(npd.byes(slate, "REG")) == 28 and "KC" not in npd.byes(slate, "REG")
+    assert npd.byes(slate, "WC") == []

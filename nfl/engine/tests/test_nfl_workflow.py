@@ -38,3 +38,9 @@ def test_the_refresh_schedules_are_the_ones_named_in_the_run_step():
     nfl = (WF / "nfl.yml").read_text()
     for cron in ('"17 16 * 9-12,1-2 THU"', '"47 12 * 9-12,1-2 SUN"'):
         assert f"cron: {cron}" in nfl and f"github.event.schedule }}}}\" = {cron}" in nfl
+
+
+def test_every_game_day_has_a_run_before_it():
+    nfl = (WF / "nfl.yml").read_text()
+    for day in ("TUE", "THU", "SAT", "SUN", "MON"):
+        assert f"9-12,1-2 {day}" in nfl, day
