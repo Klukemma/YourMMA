@@ -161,11 +161,33 @@ function statusBadge(p) {
     ? ` <span class="st ${esc(p.status)}">${esc(AVAIL_WORD[p.status] || p.status)}</span>` : "";
 }
 
+// Projected yards, if he plays: the middle of what his usage points to.
+function projText(pr) {
+  if (!pr) return "";
+  const parts = [];
+  if (pr.pass_yds != null) parts.push(`${Math.round(pr.pass_yds)} pass`);
+  if (pr.rush_yds != null && pr.rush_yds >= 5) parts.push(`${Math.round(pr.rush_yds)} rush`);
+  if (pr.rec_yds != null && pr.rec_yds >= 5) parts.push(`${Math.round(pr.rec_yds)} rec`);
+  return parts.length ? `proj. ${parts.join(" · ")} yds` : "";
+}
+
+function leadersList(code, leaders) {
+  if (!leaders || !Object.keys(leaders).length) return "";
+  const li = ["passing", "rushing", "receiving"].filter((k) => leaders[k]).map((k) => {
+    const l = leaders[k];
+    const result = l.actual != null
+      ? ` <span class="st ${l.over ? "scored" : "questionable"}">${Math.round(l.actual)} (${l.over ? "over" : "under"})</span>` : "";
+    return `<li><span class="num tdp">${Math.round(l.yards)}</span>
+      <span><b>${esc(l.name)}</b> ${esc(l.position)}${statusBadge(l)}${result}<div class="mini">${esc(k)} yards</div></span></li>`;
+  }).join("");
+  return `<div><div class="eyebrow">${esc(code)} · projected leaders</div><ul class="kp">${li}</ul></div>`;
+}
+
 function keyPlayers(code, kp) {
   if (!kp) return "";
   const off = (kp.offense || []).map((p) => `<li><span class="rk num">${esc(p.rank)}</span>
     <span><b>${esc(p.name)}</b> ${esc(p.position)}${statusBadge(p)}
-    <div class="mini">${signed(p.value, 1)} EPA · ${esc(p.line)}</div></span></li>`).join("");
+    <div class="mini">${signed(p.value, 1)} EPA · ${esc(p.line)}</div>${p.proj ? `<div class="mini">${esc(projText(p.proj))}</div>` : ""}</span></li>`).join("");
   const dfn = (kp.defense || []).map((p) => `<li><span class="rk num">D</span>
     <span><b>${esc(p.name)}</b> ${esc(p.position)}${statusBadge(p)}
     <div class="mini">${esc(p.line)}</div></span></li>`).join("");
@@ -274,6 +296,8 @@ function gameRow(g, d) {
       ${(g.away_td || g.home_td) ? `<div class="eyebrow">Most likely to score a touchdown</div>
         <div class="two">${tdList(g.away, g.away_td)}${tdList(g.home, g.home_td)}</div>
         <div class="mini">${esc((d.caveats && d.caveats.td) || "")}</div>` : ""}
+      ${(g.away_leaders || g.home_leaders) ? `<div class="two">${leadersList(g.away, g.away_leaders)}${leadersList(g.home, g.home_leaders)}</div>
+        <div class="mini">${esc((d.caveats && d.caveats.props) || "")}</div>` : ""}
       ${newsList(g.news)}
       <div class="two">${injuryList(g.away, g.away_injuries, g.away_injuries_total)}${injuryList(g.home, g.home_injuries, g.home_injuries_total)}</div>
       <div class="two">${formDetail(g.away, g.away_form)}${formDetail(g.home, g.home_form)}</div>
@@ -548,6 +572,19 @@ function renderRecord(d) {
     ${tdCal ? `<div class="scroll"><table><thead><tr><th class="n">Said</th><th class="n">Players</th><th class="n">Avg said</th><th class="n">Scored</th></tr></thead><tbody>${tdCal}</tbody></table></div>` : ""}
     ${(t.td || {}).picks ? `<div class="mini">Live: ${esc(t.td.scored)} of ${esc(t.td.picks)} touchdown picks scored.</div>` : ""}
   </div>` : "";
+  const props = d.props || {};
+  const propPeriods = Object.keys(props).filter((k) => /^20/.test(k));
+  const propRows = propPeriods.flatMap((k) => ["pass", "rush", "rec"].map((stat) => {
+    const r = (props[k] || {})[stat] || {}, mae = r.mae || {}, over = r.over || {}, m = (props.model || {})[stat];
+    return `<tr><td>${esc(k)} ${esc({ pass: "passing", rush: "rushing", rec: "receiving" }[stat])}</td>
+      <td class="n">${num(mae[m], 1)}</td><td class="n">${num(mae.mean, 1)}</td><td class="n">${pct(over[m], 1)}</td></tr>`;
+  })).join("");
+  const propCard = propRows ? `<div class="card"><h2>Yardage projections</h2>
+    <div class="scroll"><table><thead><tr><th>Period</th><th class="n">Off by</th><th class="n">Own avg off by</th><th class="n">Went over</th></tr></thead>
+    <tbody>${propRows}</tbody></table></div>
+    <div class="mini">"Off by" is the average miss in yards; "own avg" is the miss from simply using the player's
+      recent average. A middle projection should be beaten about half the time.</div>
+    ${(t.yards || {}).picks ? `<div class="mini">Live: ${esc(t.yards.over)} of ${esc(t.yards.picks)} projected leaders went over.</div>` : ""}</div>` : "";
   const calCard = cal ? `<div class="card"><h2>Calibration</h2>
     <div class="scroll"><table><thead><tr><th class="n">Home win %</th><th class="n">Games</th><th class="n">Said</th><th class="n">Happened</th></tr></thead>
     <tbody>${cal}</tbody></table></div><div class="mini">${esc(conf)}, the pick's probability for the home side.</div></div>` : "";
@@ -559,7 +596,7 @@ function renderRecord(d) {
 
   return `<div class="event"><div class="eyebrow">The model's own record</div><h1>Record</h1>
       <div class="mini">Live picks are graded against final scores; the backtest replays every season since ${esc(per.dev[0])}.</div></div>
-    ${tiles}${liveNote}${weekCard}${winners}${tierCard}${valueCard}${linesCard}${tdCard}${calCard}`;
+    ${tiles}${liveNote}${weekCard}${winners}${tierCard}${valueCard}${linesCard}${tdCard}${propCard}${calCard}`;
 }
 
 // ---------------------------------------------------------------- method
@@ -574,9 +611,18 @@ const METHOD_HTML = `
         (expected points added per play, weighted toward recent games), the starting quarterback's own
         efficiency per dropback, rest, bye weeks, short weeks, travel across time zones, division games
         and neutral sites.</li>
-      <li><b>The pick</b> - the model blended with the betting market's no-vig price, with the weights
-        learned from how the two did on earlier seasons. The market is very good in the NFL, so the pick
-        leans on it heavily.</li>
+      <li><b>The pick</b> - the model blended with the betting market's no-vig moneyline and its spread,
+        with the weights learned from how they did on earlier seasons. The market is very good in the NFL,
+        so the pick leans on it heavily.</li>
+    </ul></div>
+  <div class="card"><h2>Players</h2>
+    <ul class="plain">
+      <li><b>Most valuable</b> - expected points added this season on offence; sacks, takeaways and passes
+        defended on defence. A key player out or doubtful is flagged at the top of the game.</li>
+      <li><b>Touchdowns</b> - each player's chance of a rushing or receiving touchdown if he plays, from his
+        recent carries, targets and snaps and his team's expected points.</li>
+      <li><b>Yards</b> - the middle of what his recent usage and the game point to, if he plays.</li>
+      <li>All three are measured on past seasons - see Record - and logged before kickoff, then graded.</li>
     </ul></div>
   <div class="card"><h2>Every number is point-in-time</h2>
     <ul class="plain">

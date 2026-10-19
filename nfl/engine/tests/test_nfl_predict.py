@@ -191,3 +191,29 @@ def test_byes_are_the_teams_without_a_regular_season_game():
     slate = pd.DataFrame({"home": ["KC", "BUF"], "away": ["LV", "MIA"]})
     assert len(npd.byes(slate, "REG")) == 28 and "KC" not in npd.byes(slate, "REG")
     assert npd.byes(slate, "WC") == []
+
+
+def test_upcoming_games_carry_projected_leaders(run_output):
+    out, _, _ = run_output
+    week = json.loads((out / "week.json").read_text())
+    upcoming = [g for g in week["games"] if g["status"] == "upcoming"]
+    for g in upcoming:
+        for side in ("home_leaders", "away_leaders"):
+            leaders = g[side]
+            assert set(leaders) <= {"passing", "rushing", "receiving"} and "passing" in leaders
+            assert all(l["yards"] >= 0 and l["status"] != "out" for l in leaders.values())
+    perf = json.loads((out / "performance.json").read_text())
+    assert perf["props"]["model"] and "props" in week["caveats"]
+
+
+def test_yardage_leaders_are_graded_from_the_box_score():
+    log = {"schema": 1, "picks": {"g": {"final": {"home": 24, "away": 17},
+                                        "home_leaders": {"passing": {"gsis_id": "a", "yards": 250.0},
+                                                         "receiving": {"gsis_id": "b", "yards": 70.0}},
+                                        "away_leaders": {"rushing": {"gsis_id": "c", "yards": 60.0}}}}}
+    box = pd.DataFrame({"game_id": ["g", "g"], "player_id": ["a", "b"], "passing_yards": [301.0, 0.0],
+                        "rushing_yards": [5.0, 0.0], "receiving_yards": [0.0, 44.0]})
+    assert npd.grade_yards(log, box) == 1
+    p = log["picks"]["g"]
+    assert p["home_leaders"]["passing"]["over"] is True and p["home_leaders"]["receiving"]["over"] is False
+    assert p["away_leaders"]["rushing"]["actual"] == 0.0     # no box-score line: he gained nothing

@@ -1,17 +1,24 @@
 {
- "as_of": "2026-10-18T21:05:01Z",
+ "as_of": "2026-10-19T14:08:17Z",
+ "byes": [
+  "CIN",
+  "DET",
+  "MIA",
+  "MIN"
+ ],
  "caveats": {
   "injuries": "Injury report from the league's official practice reports via nflverse: shown, not applied. The model reads only who starts at quarterback.",
   "lines": "Model line and model total are the model's own numbers beside the market's. Taking the model's side against the closing spread won 49.8% of 2016-2025 games and against the total 50.1%; -110 needs 52.4% to break even.",
-  "model": "The pick is the model blended with the betting market. The market is hard to beat in the NFL: across 2016-2025 the blend picked 66.7% of winners against the closing favourite's 66.6%, and betting the model where it disagreed with the price lost money. Treat a pick as an opinion with a measured hit rate, not an edge.",
+  "model": "The pick is the model blended with the betting market. The market is hard to beat in the NFL: across 2016-2025 the blend picked 66.4% of winners against the closing favourite's 66.6%, and betting the model where it disagreed with the price lost money. Treat a pick as an opinion with a measured hit rate, not an edge.",
   "news": "Headlines from public NFL news feeds that name one of the two teams or their players, published before kickoff. Shown, not applied.",
   "players": "Most valuable on offence is ranked by expected points added (EPA) this season - the points a player's plays added above an average play in the same situation; defenders by sacks, takeaways, passes defended and tackles for loss. A listed player who is out or doubtful - or the most valuable player questionable - is flagged at the top of the game, from the official injury report and the weekly roster. Shown, not applied: only the starting quarterback moves the pick.",
+  "props": "Projected yards are the middle of what the player's recent usage and his team's expected points point to, if he plays. In 2020-2025: passing 56 yards off on average (his own average: 67); rushing 18 yards off on average (his own average: 18); receiving 18 yards off on average (his own average: 20). Players went over about half the time, as a middle number should. Shown, not applied.",
   "qb": "The quarterback the model assumes is the one the schedule projects to start. If the injury report says he is out, the number above does not know yet.",
   "td": "Chance of a rushing or receiving touchdown, if he plays - from his recent carries, targets and snaps and his team's expected points from the betting line. In 2020-2025 each team's most likely scorer scored 43.5% of the time (the model said 41.1%). Measured, and shown, not applied.",
   "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
   "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
  },
- "data_through": "2026-10-18",
+ "data_through": "2026-10-19",
  "game_type": "REG",
  "games": [
   {
@@ -409,7 +416,17 @@
    "week": 6
   },
   {
-   "alerts": [],
+   "alerts": [
+    {
+     "name": "Will Anderson Jr.",
+     "position": "DE",
+     "reason": "did not play",
+     "role": "#1 defender",
+     "side": "away",
+     "status": "out",
+     "team": "HOU"
+    }
+   ],
    "away": "HOU",
    "away_form": {
     "last5": [
@@ -528,8 +545,8 @@
       "name": "Will Anderson Jr.",
       "position": "DE",
       "rank": 1,
-      "reason": null,
-      "status": "active",
+      "reason": "did not play",
+      "status": "out",
       "value": 11.5
      },
      {
@@ -793,11 +810,29 @@
     {
      "name": "Lamar Jackson",
      "position": "QB",
-     "reason": "Out on the injury report (ankle)",
+     "reason": "did not play",
      "role": "most valuable player",
      "side": "away",
      "status": "out",
      "team": "BAL"
+    },
+    {
+     "name": "Harold Fannin Jr.",
+     "position": "TE",
+     "reason": "did not play",
+     "role": "#2 on offence",
+     "side": "home",
+     "status": "out",
+     "team": "CLE"
+    },
+    {
+     "name": "Mason Graham",
+     "position": "DT",
+     "reason": "did not play",
+     "role": "#1 defender",
+     "side": "home",
+     "status": "out",
+     "team": "CLE"
     }
    ],
    "away": "BAL",
@@ -956,7 +991,7 @@
       "name": "Lamar Jackson",
       "position": "QB",
       "rank": 1,
-      "reason": "Out on the injury report (ankle)",
+      "reason": "did not play",
       "status": "out",
       "value": 42.199811
      },
@@ -1141,8 +1176,8 @@
       "name": "Mason Graham",
       "position": "DT",
       "rank": 1,
-      "reason": "Questionable on the injury report (knee)",
-      "status": "questionable",
+      "reason": "did not play",
+      "status": "out",
       "value": 5.5
      },
      {
@@ -1176,8 +1211,8 @@
       "name": "Harold Fannin Jr.",
       "position": "TE",
       "rank": 2,
-      "reason": null,
-      "status": "active",
+      "reason": "did not play",
+      "status": "out",
       "value": 8.914064
      },
      {
@@ -1241,7 +1276,7 @@
    "stadium": "Huntington Bank Field",
    "status": "final",
    "tier": "LEAN",
-   "tier_hit_rate": 0.590398,
+   "tier_hit_rate": 0.584192,
    "total_pick": {
     "edge": 2.630227,
     "line": 39.5,
@@ -1691,7 +1726,7 @@
    "stadium": "Lincoln Financial Field",
    "status": "final",
    "tier": "LEAN",
-   "tier_hit_rate": 0.590398,
+   "tier_hit_rate": 0.584192,
    "total_pick": {
     "edge": 4.102938,
     "line": 39.5,
@@ -1702,9 +1737,18 @@
   {
    "alerts": [
     {
+     "name": "Michael Penix Jr.",
+     "position": "QB",
+     "reason": "did not play",
+     "role": "#2 on offence",
+     "side": "home",
+     "status": "out",
+     "team": "ATL"
+    },
+    {
      "name": "C.J. Henderson",
      "position": "CB",
-     "reason": "Out on the injury report (groin)",
+     "reason": "did not play",
      "role": "#1 defender",
      "side": "home",
      "status": "out",
@@ -1713,7 +1757,7 @@
     {
      "name": "Kyle Monangai",
      "position": "RB",
-     "reason": "Out on the injury report (thumb)",
+     "reason": "did not play",
      "role": "#3 on offence",
      "side": "away",
      "status": "out",
@@ -1722,19 +1766,10 @@
     {
      "name": "Dayo Odeyingbo",
      "position": "DE",
-     "reason": "Out on the injury report (quadricep)",
+     "reason": "did not play",
      "role": "#2 defender",
      "side": "away",
      "status": "out",
-     "team": "CHI"
-    },
-    {
-     "name": "Caleb Williams",
-     "position": "QB",
-     "reason": "Questionable on the injury report (hamstring)",
-     "role": "most valuable player",
-     "side": "away",
-     "status": "questionable",
      "team": "CHI"
     }
    ],
@@ -1881,7 +1916,7 @@
       "name": "Dayo Odeyingbo",
       "position": "DE",
       "rank": 2,
-      "reason": "Out on the injury report (quadricep)",
+      "reason": "did not play",
       "status": "out",
       "value": 4.75
      }
@@ -1894,8 +1929,8 @@
       "name": "Caleb Williams",
       "position": "QB",
       "rank": 1,
-      "reason": "Questionable on the injury report (hamstring)",
-      "status": "questionable",
+      "reason": null,
+      "status": "active",
       "value": 23.889643
      },
      {
@@ -1916,7 +1951,7 @@
       "name": "Kyle Monangai",
       "position": "RB",
       "rank": 3,
-      "reason": "Out on the injury report (thumb)",
+      "reason": "did not play",
       "status": "out",
       "value": 6.327036
      }
@@ -2036,7 +2071,7 @@
       "name": "C.J. Henderson",
       "position": "CB",
       "rank": 1,
-      "reason": "Out on the injury report (groin)",
+      "reason": "did not play",
       "status": "out",
       "value": 4.25
      },
@@ -2047,8 +2082,8 @@
       "name": "Za'Darius Smith",
       "position": "DE",
       "rank": 2,
-      "reason": "Questionable on the injury report (neck)",
-      "status": "questionable",
+      "reason": null,
+      "status": "active",
       "value": 4.0
      }
     ],
@@ -2071,8 +2106,8 @@
       "name": "Michael Penix Jr.",
       "position": "QB",
       "rank": 2,
-      "reason": null,
-      "status": "active",
+      "reason": "did not play",
+      "status": "out",
       "value": 26.098156
      },
      {
@@ -2136,7 +2171,7 @@
    "stadium": "Mercedes-Benz Stadium",
    "status": "final",
    "tier": "TOSS-UP",
-   "tier_hit_rate": 0.516624,
+   "tier_hit_rate": 0.487705,
    "total_pick": {
     "edge": 5.942299,
     "line": 52.5,
@@ -2149,20 +2184,11 @@
     {
      "name": "Jaxson Dart",
      "position": "QB",
-     "reason": "on a reserve list",
+     "reason": "did not play",
      "role": "most valuable player",
      "side": "home",
      "status": "out",
      "team": "NYG"
-    },
-    {
-     "name": "Chris Olave",
-     "position": "WR",
-     "reason": "Questionable on the injury report (illness)",
-     "role": "most valuable player",
-     "side": "away",
-     "status": "questionable",
-     "team": "NO"
     }
    ],
    "away": "NO",
@@ -2321,8 +2347,8 @@
       "name": "Chris Olave",
       "position": "WR",
       "rank": 1,
-      "reason": "Questionable on the injury report (illness)",
-      "status": "questionable",
+      "reason": null,
+      "status": "active",
       "value": 38.062942
      },
      {
@@ -2515,7 +2541,7 @@
       "name": "Jaxson Dart",
       "position": "QB",
       "rank": 1,
-      "reason": "on a reserve list",
+      "reason": "did not play",
       "status": "out",
       "value": 24.484685
      },
@@ -2591,7 +2617,7 @@
    "stadium": "MetLife Stadium",
    "status": "final",
    "tier": "TOSS-UP",
-   "tier_hit_rate": 0.516624,
+   "tier_hit_rate": 0.487705,
    "total_pick": {
     "edge": 2.09224,
     "line": 46.5,
@@ -2604,7 +2630,7 @@
     {
      "name": "Mack Hollins",
      "position": "WR",
-     "reason": "on a reserve list",
+     "reason": "did not play",
      "role": "#2 on offence",
      "side": "home",
      "status": "out",
@@ -2613,7 +2639,7 @@
     {
      "name": "Adonai Mitchell",
      "position": "WR",
-     "reason": "Out on the injury report (finger)",
+     "reason": "did not play",
      "role": "#2 on offence",
      "side": "away",
      "status": "out",
@@ -2787,7 +2813,7 @@
       "name": "Adonai Mitchell",
       "position": "WR",
       "rank": 2,
-      "reason": "Out on the injury report (finger)",
+      "reason": "did not play",
       "status": "out",
       "value": 8.644263
      },
@@ -2995,7 +3021,7 @@
       "name": "Mack Hollins",
       "position": "WR",
       "rank": 2,
-      "reason": "on a reserve list",
+      "reason": "did not play",
       "status": "out",
       "value": 12.884917
      },
@@ -3060,7 +3086,7 @@
    "stadium": "Gillette Stadium",
    "status": "final",
    "tier": "STRONG",
-   "tier_hit_rate": 0.818182,
+   "tier_hit_rate": 0.820244,
    "total_pick": {
     "edge": 0.677801,
     "line": 43.5,
@@ -3071,21 +3097,21 @@
   {
    "alerts": [
     {
+     "name": "Chris Godwin Jr.",
+     "position": "WR",
+     "reason": "did not play",
+     "role": "most valuable player",
+     "side": "home",
+     "status": "out",
+     "team": "TB"
+    },
+    {
      "name": "Roman Wilson",
      "position": "WR",
-     "reason": "Out on the injury report (finger)",
+     "reason": "did not play",
      "role": "#3 on offence",
      "side": "away",
      "status": "out",
-     "team": "PIT"
-    },
-    {
-     "name": "Pat Freiermuth",
-     "position": "TE",
-     "reason": "Questionable on the injury report (calf)",
-     "role": "most valuable player",
-     "side": "away",
-     "status": "questionable",
      "team": "PIT"
     }
    ],
@@ -3252,8 +3278,8 @@
       "name": "Pat Freiermuth",
       "position": "TE",
       "rank": 1,
-      "reason": "Questionable on the injury report (calf)",
-      "status": "questionable",
+      "reason": null,
+      "status": "active",
       "value": 11.546
      },
      {
@@ -3274,7 +3300,7 @@
       "name": "Roman Wilson",
       "position": "WR",
       "rank": 3,
-      "reason": "Out on the injury report (finger)",
+      "reason": "did not play",
       "status": "out",
       "value": 6.347061
      }
@@ -3436,8 +3462,8 @@
       "name": "Josiah Trotter",
       "position": "LB",
       "rank": 1,
-      "reason": "Questionable on the injury report (knee)",
-      "status": "questionable",
+      "reason": null,
+      "status": "active",
       "value": 5.25
      },
      {
@@ -3460,8 +3486,8 @@
       "name": "Chris Godwin Jr.",
       "position": "WR",
       "rank": 1,
-      "reason": null,
-      "status": "active",
+      "reason": "did not play",
+      "status": "out",
       "value": 6.917724
      },
      {
@@ -3536,7 +3562,7 @@
    "stadium": "Raymond James Stadium",
    "status": "final",
    "tier": "LEAN",
-   "tier_hit_rate": 0.590398,
+   "tier_hit_rate": 0.584192,
    "total_pick": {
     "edge": 3.244595,
     "line": 38.5,
@@ -3547,21 +3573,21 @@
   {
    "alerts": [
     {
-     "name": "Alec Pierce",
-     "position": "WR",
-     "reason": "on a reserve list",
-     "role": "#3 on offence",
+     "name": "Tyler Warren",
+     "position": "TE",
+     "reason": "did not play",
+     "role": "most valuable player",
      "side": "home",
      "status": "out",
      "team": "IND"
     },
     {
-     "name": "Tyler Warren",
-     "position": "TE",
-     "reason": "Questionable on the injury report (groin)",
-     "role": "most valuable player",
+     "name": "Alec Pierce",
+     "position": "WR",
+     "reason": "did not play",
+     "role": "#3 on offence",
      "side": "home",
-     "status": "questionable",
+     "status": "out",
      "team": "IND"
     }
    ],
@@ -3873,8 +3899,8 @@
       "name": "Tyler Warren",
       "position": "TE",
       "rank": 1,
-      "reason": "Questionable on the injury report (groin)",
-      "status": "questionable",
+      "reason": "did not play",
+      "status": "out",
       "value": 11.978465
      },
      {
@@ -3895,7 +3921,7 @@
       "name": "Alec Pierce",
       "position": "WR",
       "rank": 3,
-      "reason": "on a reserve list",
+      "reason": "did not play",
       "status": "out",
       "value": 2.565828
      }
@@ -3949,7 +3975,7 @@
    "stadium": "Lucas Oil Stadium",
    "status": "final",
    "tier": "SOLID",
-   "tier_hit_rate": 0.721728,
+   "tier_hit_rate": 0.725974,
    "total_pick": {
     "edge": 2.181968,
     "line": 44.5,
@@ -4091,8 +4117,8 @@
       "name": "Budda Baker",
       "position": "S",
       "rank": 1,
-      "reason": "Questionable on the injury report (not injury related - resting player)",
-      "status": "questionable",
+      "reason": null,
+      "status": "active",
       "value": 5.5
      },
      {
@@ -4344,6 +4370,10 @@
    "pick": "LA",
    "pick_prob": 0.852641,
    "roof": "dome",
+   "score": {
+    "away": 18,
+    "home": 16
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 1.967917,
@@ -4351,9 +4381,9 @@
     "team": "ARI"
    },
    "stadium": "SoFi Stadium",
-   "status": "in progress",
+   "status": "final",
    "tier": "STRONG",
-   "tier_hit_rate": 0.818182,
+   "tier_hit_rate": 0.820244,
    "total_pick": {
     "edge": 0.026092,
     "line": 51.5,
@@ -4362,7 +4392,17 @@
    "week": 6
   },
   {
-   "alerts": [],
+   "alerts": [
+    {
+     "name": "Greg Rousseau",
+     "position": "LB",
+     "reason": "did not play",
+     "role": "#1 defender",
+     "side": "away",
+     "status": "out",
+     "team": "BUF"
+    }
+   ],
    "away": "BUF",
    "away_form": {
     "last5": [
@@ -4481,8 +4521,8 @@
       "name": "Greg Rousseau",
       "position": "LB",
       "rank": 1,
-      "reason": null,
-      "status": "active",
+      "reason": "did not play",
+      "status": "out",
       "value": 12.5
      },
      {
@@ -4748,6 +4788,10 @@
    "pick": "BUF",
    "pick_prob": 0.696111,
    "roof": "dome",
+   "score": {
+    "away": 33,
+    "home": 30
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 0.690711,
@@ -4755,9 +4799,9 @@
     "team": "BUF"
    },
    "stadium": "Allegiant Stadium",
-   "status": "in progress",
+   "status": "final",
    "tier": "SOLID",
-   "tier_hit_rate": 0.721728,
+   "tier_hit_rate": 0.725974,
    "total_pick": {
     "edge": 0.049017,
     "line": 53.5,
@@ -4770,7 +4814,7 @@
     {
      "name": "Tyquan Thornton",
      "position": "WR",
-     "reason": "on a reserve list",
+     "reason": "did not play",
      "role": "#2 on offence",
      "side": "home",
      "status": "out",
@@ -4779,8 +4823,17 @@
     {
      "name": "Tre Harris",
      "position": "WR",
-     "reason": "Out on the injury report (hamstring)",
+     "reason": "did not play",
      "role": "#2 on offence",
+     "side": "away",
+     "status": "out",
+     "team": "LAC"
+    },
+    {
+     "name": "Theo Wease Jr.",
+     "position": "WR",
+     "reason": "did not play",
+     "role": "#3 on offence",
      "side": "away",
      "status": "out",
      "team": "LAC"
@@ -4960,7 +5013,7 @@
       "name": "Tre Harris",
       "position": "WR",
       "rank": 2,
-      "reason": "Out on the injury report (hamstring)",
+      "reason": "did not play",
       "status": "out",
       "value": 4.799194
      },
@@ -4971,8 +5024,8 @@
       "name": "Theo Wease Jr.",
       "position": "WR",
       "rank": 3,
-      "reason": null,
-      "status": "active",
+      "reason": "did not play",
+      "status": "out",
       "value": 2.996485
      }
     ]
@@ -5133,7 +5186,7 @@
       "name": "Tyquan Thornton",
       "position": "WR",
       "rank": 2,
-      "reason": "on a reserve list",
+      "reason": "did not play",
       "status": "out",
       "value": 19.036908
      },
@@ -5185,6 +5238,10 @@
    "pick": "KC",
    "pick_prob": 0.787467,
    "roof": "outdoors",
+   "score": {
+    "away": 6,
+    "home": 22
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 1.931636,
@@ -5192,9 +5249,9 @@
     "team": "KC"
    },
    "stadium": "GEHA Field at Arrowhead Stadium",
-   "status": "in progress",
+   "status": "final",
    "tier": "STRONG",
-   "tier_hit_rate": 0.818182,
+   "tier_hit_rate": 0.820244,
    "total_pick": {
     "edge": 0.505418,
     "line": 41.5,
@@ -5207,7 +5264,7 @@
     {
      "name": "Edgerrin Cooper",
      "position": "LB",
-     "reason": "on a reserve list",
+     "reason": "did not play",
      "role": "#1 defender",
      "side": "home",
      "status": "out",
@@ -5408,6 +5465,7 @@
      "name": "Javonte Williams",
      "position": "RB",
      "prob": 0.566061,
+     "scored": true,
      "status": "active",
      "tds_season": 7
     },
@@ -5417,6 +5475,7 @@
      "name": "George Pickens",
      "position": "WR",
      "prob": 0.35145,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -5426,6 +5485,7 @@
      "name": "CeeDee Lamb",
      "position": "WR",
      "prob": 0.346944,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     }
@@ -5576,7 +5636,7 @@
       "name": "Edgerrin Cooper",
       "position": "LB",
       "rank": 1,
-      "reason": "on a reserve list",
+      "reason": "did not play",
       "status": "out",
       "value": 6.0
      },
@@ -5646,6 +5706,7 @@
      "name": "Christian Watson",
      "position": "WR",
      "prob": 0.439649,
+     "scored": false,
      "status": "active",
      "tds_season": 6
     },
@@ -5655,6 +5716,7 @@
      "name": "MarShawn Lloyd",
      "position": "RB",
      "prob": 0.379595,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -5664,11 +5726,13 @@
      "name": "Matthew Golden",
      "position": "WR",
      "prob": 0.352845,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     }
    ],
    "kickoff": "2026-10-19T00:20:00Z",
+   "logged_at": "2026-10-18T21:05:01Z",
    "market": {
     "as_of": "2026-10-18T21:01:38Z",
     "away_ml": -107.0,
@@ -5697,6 +5761,10 @@
    "pick": "GB",
    "pick_prob": 0.505321,
    "roof": "outdoors",
+   "score": {
+    "away": 13,
+    "home": 23
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 4.807209,
@@ -5704,9 +5772,9 @@
     "team": "GB"
    },
    "stadium": "Lambeau Field",
-   "status": "upcoming",
+   "status": "final",
    "tier": "TOSS-UP",
-   "tier_hit_rate": 0.516624,
+   "tier_hit_rate": 0.487705,
    "total_pick": {
     "edge": 2.905191,
     "line": 53.5,
@@ -5855,6 +5923,29 @@
     }
    ],
    "away_injuries_total": 13,
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0039910",
+     "name": "Jayden Daniels",
+     "position": "QB",
+     "status": "active",
+     "yards": 215.284973
+    },
+    "receiving": {
+     "gsis_id": "00-0035659",
+     "name": "Terry McLaurin",
+     "position": "WR",
+     "status": "active",
+     "yards": 47.77147
+    },
+    "rushing": {
+     "gsis_id": "00-0039910",
+     "name": "Jayden Daniels",
+     "position": "QB",
+     "status": "active",
+     "yards": 29.191114
+    }
+   },
    "away_name": "Washington Commanders",
    "away_players": {
     "defense": [
@@ -5888,6 +5979,11 @@
       "line": "459 pass yds, 3 TD, 0 INT, 203 rush yds",
       "name": "Jayden Daniels",
       "position": "QB",
+      "proj": {
+       "pass_yds": 215.284973,
+       "rec_yds": null,
+       "rush_yds": 29.191114
+      },
       "rank": 1,
       "reason": null,
       "status": "active",
@@ -5899,6 +5995,11 @@
       "line": "14 rec, 203 yds, 1 TD",
       "name": "Terry McLaurin",
       "position": "WR",
+      "proj": {
+       "pass_yds": null,
+       "rec_yds": 47.77147,
+       "rush_yds": 0.0
+      },
       "rank": 2,
       "reason": null,
       "status": "active",
@@ -5934,6 +6035,11 @@
      "name": "Terry McLaurin",
      "position": "WR",
      "prob": 0.268201,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 47.77147,
+      "rush_yds": 0.0
+     },
      "status": "active",
      "tds_season": 1
     },
@@ -5943,6 +6049,11 @@
      "name": "Jayden Daniels",
      "position": "QB",
      "prob": 0.26407,
+     "proj": {
+      "pass_yds": 215.284973,
+      "rec_yds": null,
+      "rush_yds": 29.191114
+     },
      "status": "active",
      "tds_season": 2
     },
@@ -5952,6 +6063,11 @@
      "name": "Stefon Diggs",
      "position": "WR",
      "prob": 0.215679,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 41.713969,
+      "rush_yds": 0.0
+     },
      "status": "questionable",
      "tds_season": 3
     }
@@ -6092,6 +6208,29 @@
     }
    ],
    "home_injuries_total": 10,
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0037834",
+     "name": "Brock Purdy",
+     "position": "QB",
+     "status": "active",
+     "yards": 271.737827
+    },
+    "receiving": {
+     "gsis_id": "00-0031408",
+     "name": "Mike Evans",
+     "position": "WR",
+     "status": "questionable",
+     "yards": 50.364312
+    },
+    "rushing": {
+     "gsis_id": "00-0033280",
+     "name": "Christian McCaffrey",
+     "position": "RB",
+     "status": "active",
+     "yards": 46.782347
+    }
+   },
    "home_name": "San Francisco 49ers",
    "home_players": {
     "defense": [
@@ -6125,6 +6264,11 @@
       "line": "1,196 pass yds, 13 TD, 2 INT, 128 rush yds",
       "name": "Brock Purdy",
       "position": "QB",
+      "proj": {
+       "pass_yds": 271.737827,
+       "rec_yds": null,
+       "rush_yds": 15.215199
+      },
       "rank": 1,
       "reason": null,
       "status": "active",
@@ -6136,6 +6280,11 @@
       "line": "24 rec, 326 yds, 3 TD",
       "name": "Mike Evans",
       "position": "WR",
+      "proj": {
+       "pass_yds": null,
+       "rec_yds": 50.364312,
+       "rush_yds": 0.0
+      },
       "rank": 2,
       "reason": "Questionable on the injury report (ribs)",
       "status": "questionable",
@@ -6147,6 +6296,11 @@
       "line": "21 rec, 268 yds, 4 TD",
       "name": "George Kittle",
       "position": "TE",
+      "proj": {
+       "pass_yds": null,
+       "rec_yds": 49.069921,
+       "rush_yds": null
+      },
       "rank": 3,
       "reason": null,
       "status": "active",
@@ -6154,7 +6308,7 @@
      }
     ]
    },
-   "home_prob": 0.78096,
+   "home_prob": 0.756239,
    "home_qb": {
     "change": false,
     "id": "00-0037834",
@@ -6172,6 +6326,11 @@
      "name": "Christian McCaffrey",
      "position": "RB",
      "prob": 0.630533,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 36.061968,
+      "rush_yds": 46.782347
+     },
      "status": "active",
      "tds_season": 5
     },
@@ -6181,6 +6340,11 @@
      "name": "Mike Evans",
      "position": "WR",
      "prob": 0.413811,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 50.364312,
+      "rush_yds": 0.0
+     },
      "status": "questionable",
      "tds_season": 3
     },
@@ -6190,6 +6354,11 @@
      "name": "George Kittle",
      "position": "TE",
      "prob": 0.382177,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 49.069921,
+      "rush_yds": null
+     },
      "status": "active",
      "tds_season": 4
     }
@@ -6215,13 +6384,13 @@
    "market_source": "the-odds-api",
    "market_spread": 7.5,
    "market_total": 52.0,
-   "model_prob": 0.818988,
+   "model_prob": 0.816952,
    "model_spread": 11.122173,
-   "model_total": 50.249424,
+   "model_total": 50.311625,
    "neutral": false,
    "news": [],
    "pick": "SF",
-   "pick_prob": 0.78096,
+   "pick_prob": 0.756239,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
@@ -6232,39 +6401,39 @@
    "stadium": "Levi's Stadium",
    "status": "upcoming",
    "tier": "STRONG",
-   "tier_hit_rate": 0.818182,
+   "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 1.750576,
+    "edge": 1.688375,
     "line": 52.0,
     "side": "UNDER"
    },
    "week": 6
   }
  ],
- "generated": "2026-10-18T21:05:46Z",
+ "generated": "2026-10-19T14:10:16Z",
  "label": "Week 6",
  "schema": 1,
  "season": 2026,
  "tiers": {
   "LEAN": {
-   "hit_rate": 0.590398,
-   "mean_prob": 0.599893,
-   "picks": 979
+   "hit_rate": 0.584192,
+   "mean_prob": 0.601694,
+   "picks": 1164
   },
   "SOLID": {
-   "hit_rate": 0.721728,
-   "mean_prob": 0.699341,
-   "picks": 787
+   "hit_rate": 0.725974,
+   "mean_prob": 0.704023,
+   "picks": 770
   },
   "STRONG": {
-   "hit_rate": 0.818182,
-   "mean_prob": 0.809996,
-   "picks": 594
+   "hit_rate": 0.820244,
+   "mean_prob": 0.821815,
+   "picks": 573
   },
   "TOSS-UP": {
-   "hit_rate": 0.516624,
-   "mean_prob": 0.527393,
-   "picks": 391
+   "hit_rate": 0.487705,
+   "mean_prob": 0.532046,
+   "picks": 244
   }
  },
  "trained_on": 6484,

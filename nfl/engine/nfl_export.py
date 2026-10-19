@@ -103,7 +103,7 @@ def pct(x):
     return "—" if x is None or x != x else f"{x * 100:.1f}%"
 
 
-def caveats(backtest, td=None):
+def caveats(backtest, td=None, props=None):
     confirm = f"{backtest['periods']['confirm'][0]}-{backtest['periods']['confirm'][1]}"
     blend = backtest["winner"]["blend"][confirm]
     spread = backtest["spread"][confirm]["0"]["hit_rate"]
@@ -121,6 +121,18 @@ def caveats(backtest, td=None):
             f"targets and snaps and his team's expected points from the betting line. In {period} "
             f"each team's most likely scorer scored {pct(top['hit_rate'])} of the time "
             f"(the model said {pct(top['mean_prob'])}). Measured, and shown, not applied.")
+    if props:
+        period = [k for k in props if k[:2] == "20"][-1]
+        parts = []
+        for stat, word in (("pass", "passing"), ("rush", "rushing"), ("rec", "receiving")):
+            mae = (props[period].get(stat) or {}).get("mae") or {}
+            chosen, own = mae.get(props["model"][stat]), mae.get("mean")
+            if chosen is not None and own is not None:
+                parts.append(f"{word} {chosen:.0f} yards off on average (his own average: {own:.0f})")
+        out["props"] = (
+            "Projected yards are the middle of what the player's recent usage and his team's "
+            f"expected points point to, if he plays. In {period}: " + "; ".join(parts) +
+            ". Players went over about half the time, as a middle number should. Shown, not applied.")
     return out
 
 
@@ -166,6 +178,10 @@ def track_record(log):
         "log_loss": (sum(ll) / len(ll)) if ll else None,
         "pending": sum(1 for p in picks if p.get("correct") is None and not p.get("void")),
         "ats": {"picks": len(ats), "correct": sum(1 for p in ats if p["spread_correct"])},
+        "yards": {"picks": sum(1 for p in picks for side in ("home_leaders", "away_leaders")
+                               for l in (p.get(side) or {}).values() if l.get("over") is not None),
+                  "over": sum(1 for p in picks for side in ("home_leaders", "away_leaders")
+                              for l in (p.get(side) or {}).values() if l.get("over"))},
         "td": {"picks": sum(1 for p in picks for side in ("home_td", "away_td") for t in (p.get(side) or [])
                             if t.get("scored") is not None),
                "scored": sum(1 for p in picks for side in ("home_td", "away_td") for t in (p.get(side) or [])
