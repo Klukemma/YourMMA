@@ -176,15 +176,20 @@ def test_upcoming_games_carry_the_likeliest_scorers(run_output):
 
 def test_touchdown_picks_are_graded_from_the_box_score():
     log = {"schema": 1, "picks": {"g": {"final": {"home": 24, "away": 17},
-                                        "home_td": [{"gsis_id": "a"}, {"gsis_id": "b"}],
-                                        "away_td": [{"gsis_id": "c"}]}}}
+                                        "home_td": [{"gsis_id": "a", "name": "A"}, {"gsis_id": "b", "name": "B"},
+                                                    {"gsis_id": "d", "name": "D"}],
+                                        "away_td": [{"gsis_id": "c", "name": "C"}]}}}
     box = pd.DataFrame({"game_id": ["g", "g"], "player_id": ["a", "c"],
                         "rushing_tds": [1, 0], "receiving_tds": [0, 0]})
-    assert npd.grade_touchdowns(log, pd.DataFrame(columns=box.columns)) == 0   # box score not in yet
-    assert npd.grade_touchdowns(log, box) == 1
+    snaps = pd.DataFrame({"game_id": ["g", "g", "g"], "player": ["A", "B", "C"],
+                          "offense_snaps": [50, 30, 40], "defense_snaps": [0, 0, 0]})
+    assert npd.grade_touchdowns(log, pd.DataFrame(columns=box.columns), snaps) == 0   # box score not in yet
+    assert npd.grade_touchdowns(log, box) == 0                # b and d: no box line, no snaps yet
+    assert npd.grade_touchdowns(log, box, snaps) == 1
     p = log["picks"]["g"]
-    assert [t["scored"] for t in p["home_td"]] == [True, False] and p["away_td"][0]["scored"] is False
-    assert npd.grade_touchdowns(log, box) == 0
+    assert [t["scored"] for t in p["home_td"]] == [True, False, None] and p["away_td"][0]["scored"] is False
+    assert p["home_td"][2]["played"] is False                 # D took no snap: not a miss
+    assert npd.grade_touchdowns(log, box, snaps) == 0
 
 
 def test_byes_are_the_teams_without_a_regular_season_game():
@@ -200,7 +205,9 @@ def test_upcoming_games_carry_projected_leaders(run_output):
     for g in upcoming:
         for side in ("home_leaders", "away_leaders"):
             leaders = g[side]
-            assert set(leaders) <= {"passing", "rushing", "receiving"} and "passing" in leaders
+            # Shape only: whether a team has a projectable quarterback this
+            # week depends on the snapshot, and a snapshot never gates a run.
+            assert set(leaders) <= {"passing", "rushing", "receiving"}
             assert all(l["yards"] >= 0 and l["status"] != "out" for l in leaders.values())
     perf = json.loads((out / "performance.json").read_text())
     assert perf["props"]["model"] and "props" in week["caveats"]
@@ -211,9 +218,17 @@ def test_yardage_leaders_are_graded_from_the_box_score():
                                         "home_leaders": {"passing": {"gsis_id": "a", "yards": 250.0},
                                                          "receiving": {"gsis_id": "b", "yards": 70.0}},
                                         "away_leaders": {"rushing": {"gsis_id": "c", "yards": 60.0}}}}}
+    for leaders in ("home_leaders", "away_leaders"):
+        for l, name in zip(log["picks"]["g"][leaders].values(), ("A", "B") if leaders == "home_leaders" else ("C",)):
+            l["name"] = name
     box = pd.DataFrame({"game_id": ["g", "g"], "player_id": ["a", "b"], "passing_yards": [301.0, 0.0],
                         "rushing_yards": [5.0, 0.0], "receiving_yards": [0.0, 44.0]})
-    assert npd.grade_yards(log, box) == 1
+    # C has no box line and the snap counts are not in: wait.
+    assert npd.grade_yards(log, box) == 0
+    snaps = pd.DataFrame({"game_id": ["g", "g", "g"], "player": ["A", "B", "Z"],
+                          "offense_snaps": [60, 50, 40], "defense_snaps": [0, 0, 0]})
+    assert npd.grade_yards(log, box, snaps) == 1
     p = log["picks"]["g"]
     assert p["home_leaders"]["passing"]["over"] is True and p["home_leaders"]["receiving"]["over"] is False
-    assert p["away_leaders"]["rushing"]["actual"] == 0.0     # no box-score line: he gained nothing
+    # C took no snap: the projection was "if he plays", so it is not a miss.
+    assert p["away_leaders"]["rushing"]["played"] is False and p["away_leaders"]["rushing"]["over"] is None

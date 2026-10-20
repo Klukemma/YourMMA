@@ -40,7 +40,8 @@ on:
     - cron: "17 12 * 9-12,1-2 THU"   # before Thursday night, fresh prices
     - cron: "17 13 * 9-12,1-2 SAT"   # after Friday's final injury report (and Saturday games)
     - cron: "17 6 * 9-12,1-2 SUN"    # before the London and 1pm games, fresh prices
-    - cron: "47 15 * 9-12,1-2 SUN"   # before the late games: inactives, news
+    - cron: "47 15 * 9-12,1-2 SUN"   # before the late games: news
+    - cron: "17 13 * 11-12 FRI"      # the holiday-season Friday games
     - cron: "17 15 * 9-12,1-2 MON"   # before Monday night
 
 permissions:

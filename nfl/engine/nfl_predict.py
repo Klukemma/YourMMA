@@ -119,21 +119,51 @@ def log_pick(log, game, now):
     return True
 
 
-def grade_touchdowns(log, player_games):
+def _snap_index(snaps):
+    """{game_id: {player name: snaps taken}} from the snap counts."""
+    if snaps is None or not len(snaps):
+        return {}
+    taken = snaps["offense_snaps"].fillna(0) + snaps.get("defense_snaps", 0 * snaps["offense_snaps"]).fillna(0)
+    out = {}
+    for gid, name, n in zip(snaps["game_id"], snaps["player"], taken):
+        out.setdefault(gid, {})[name] = out.get(gid, {}).get(name, 0) + float(n)
+    return out
+
+
+def _played(snap_index, gid, pick):
+    """True / False once the game's snap counts are in, None before."""
+    game = snap_index.get(gid)
+    if game is None:
+        return None
+    return game.get(pick.get("name"), 0) > 0
+
+
+def grade_touchdowns(log, player_games, snaps=None):
     """Mark each logged touchdown pick scored or not, once its game's box
-    score is in (results arrive hours before player statistics)."""
+    score and snap counts are in (results arrive hours before player
+    statistics). Every probability was IF HE PLAYS: a pick who took no
+    snap is marked played=False and left out of the record, not counted
+    as a miss."""
     if player_games is None or not len(player_games):
         return 0
     by_game = player_games.groupby("game_id")
+    snap_index = _snap_index(snaps)
     graded = 0
     for gid, p in log["picks"].items():
         if not p.get("final") or p.get("td_graded") or gid not in by_game.groups:
             continue
         box = by_game.get_group(gid)
         tds = dict(zip(box["player_id"], box["rushing_tds"].fillna(0) + box["receiving_tds"].fillna(0)))
-        for side in ("home_td", "away_td"):
-            for pick in p.get(side) or []:
-                pick["scored"] = bool(tds.get(pick.get("gsis_id"), 0) >= 1)
+        picks = [t for side in ("home_td", "away_td") for t in (p.get(side) or [])]
+        if any(t.get("gsis_id") not in tds and _played(snap_index, gid, t) is None for t in picks):
+            continue                  # no box line and no snap counts yet: wait
+        for pick in picks:
+            if pick.get("gsis_id") in tds:
+                pick["scored"] = bool(tds[pick["gsis_id"]] >= 1)
+            elif _played(snap_index, gid, pick):
+                pick["scored"] = False
+            else:
+                pick["played"], pick["scored"] = False, None
         p["td_graded"] = True
         graded += 1
     return graded
@@ -433,8 +463,8 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
         out_games.append(game)
 
     graded = grade(history, games)
-    grade_touchdowns(history, players.offense)
-    grade_yards(history, players.offense)
+    grade_touchdowns(history, players.offense, players.snaps)
+    grade_yards(history, players.offense, players.snaps)
     save_log(history, log_path)
     log(f"   logged {sum(1 for g in out_games if g['status'] == 'upcoming')} picks, graded {graded}")
 
@@ -514,8 +544,10 @@ def yardage(live, players, row, side, game, market, injuries, off, season, week)
     implied_for, implied_against = _implied(game, market, home)
     status, exclude, roster = _who_plays(players, row, side, injuries, off, season, week)
     starter = row[f"{side}_qb_used"] if isinstance(row[f"{side}_qb_used"], str) else None
+    named = (game.get(f"{side}_qb") or {}).get("name")
     proj = nprops.project_team(live, row[side], implied_for, implied_against, home, exclude=exclude,
-                               roster=roster, playoff=row["game_type"] != "REG", starter=starter)
+                               roster=roster, playoff=row["game_type"] != "REG", starter=starter,
+                               starter_name=named)
     by_id = {p["gsis_id"]: {k: p[k] for k in ("pass_yds", "rush_yds", "rec_yds")} for p in proj}
     leaders = {}
     for key, word in (("pass_yds", "passing"), ("rush_yds", "rushing"), ("rec_yds", "receiving")):
@@ -526,26 +558,34 @@ def yardage(live, players, row, side, game, market, injuries, off, season, week)
     return by_id, leaders
 
 
-def grade_yards(log, player_games):
+def grade_yards(log, player_games, snaps=None):
     """Each logged yardage leader's actual yards and whether he went over
-    his projection, once the box score is in."""
+    his projection, once the box score and snap counts are in. A leader who
+    took no snap is marked played=False and left out - the projection was
+    IF HE PLAYS - rather than graded a zero-yard under."""
     if player_games is None or not len(player_games):
         return 0
     by_game = player_games.groupby("game_id")
+    snap_index = _snap_index(snaps)
     cols = {"passing": "passing_yards", "rushing": "rushing_yards", "receiving": "receiving_yards"}
     graded = 0
     for gid, p in log["picks"].items():
         if not p.get("final") or p.get("yards_graded") or gid not in by_game.groups:
             continue
-        box = by_game.get_group(gid).set_index("player_id")
+        box = by_game.get_group(gid).groupby("player_id")[list(cols.values())].sum(min_count=1)
+        leaders = [l for side in ("home_leaders", "away_leaders") for l in (p.get(side) or {}).values()]
+        if any(l.get("gsis_id") not in box.index and _played(snap_index, gid, l) is None for l in leaders):
+            continue                  # no box line and no snap counts yet: wait
         for side in ("home_leaders", "away_leaders"):
             for stat, leader in (p.get(side) or {}).items():
                 if leader.get("gsis_id") in box.index:
-                    actual = float(box.loc[leader["gsis_id"], cols[stat]] if not isinstance(
-                        box.loc[leader["gsis_id"]], pd.DataFrame) else box.loc[leader["gsis_id"], cols[stat]].sum())
-                    actual = 0.0 if actual != actual else actual
-                else:
+                    actual = box.loc[leader["gsis_id"], cols[stat]]
+                    actual = 0.0 if actual != actual else float(actual)
+                elif _played(snap_index, gid, leader):
                     actual = 0.0
+                else:
+                    leader["played"], leader["actual"], leader["over"] = False, None, None
+                    continue
                 leader["actual"] = actual
                 leader["over"] = None if actual == leader["yards"] else actual > leader["yards"]
         p["yards_graded"] = True

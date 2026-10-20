@@ -271,3 +271,15 @@ def test_live_reads_what_the_backtest_read(props_built, hidden):
                         assert c[key] == pytest.approx(expected.loc[c["gsis_id"], s], abs=1e-9), (c, s)
                         matched[s] += 1
     assert matched["pass"] >= 10 and matched["rush"] > 80 and matched["rec"] > 100, matched
+
+
+
+def test_a_named_starter_without_history_is_projected_not_replaced(live):
+    """A rookie's first start: the card names him, so his yards are his -
+    projected as a debut - never handed to the veteran behind him."""
+    team = next(t for t, st in live.state["teams"].items() if st.qb)
+    out = npp.project_team(live, team, 23.0, 20.0, True, starter="00-ROOKIE-QB",
+                              starter_name="Rookie Starter")
+    passers = [c for c in out if c["pass_yds"] is not None]
+    assert [c["gsis_id"] for c in passers] == ["00-ROOKIE-QB"]
+    assert passers[0]["name"] == "Rookie Starter" and passers[0]["pass_yds"] > 0

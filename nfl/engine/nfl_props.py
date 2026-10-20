@@ -752,8 +752,19 @@ def _project(live, pool, team, implied_for, implied_against, home, playoff, star
     return out
 
 
+class _Debut:
+    """A named starter with no NFL history - a rookie's first start: read as
+    build() reads a debut row, so the live projection is the backtest's."""
+
+    def __init__(self, name, position="QB"):
+        self.name, self.position = name, position
+
+    def read(self, season, team, position, p):
+        return _debut(position)
+
+
 def project_team(live, team, implied_for, implied_against, home, exclude=(), roster=None,
-                 playoff=False, starter=None, min_usage=MIN_USAGE):
+                 playoff=False, starter=None, min_usage=MIN_USAGE, starter_name=None):
     """Every candidate's projected (median) passing, rushing and receiving
     yards in `team`'s next game, IF HE PLAYS. Most total yards first;
     unrounded (the app rounds for display).
@@ -763,8 +774,9 @@ def project_team(live, team, implied_for, implied_against, home, exclude=(), ros
     rush_yds is None for a TE, rec_yds for a QB. pass_yds is given to one
     quarterback, the expected starter (expected_starter(): `starter` if
     named, else the one who took most of the team's snaps in its last game,
-    else the candidate with most recent pass attempts), and is his yards IF
-    HE STARTS - the passing model was fitted on starters only, so it has
+    else the candidate with most recent pass attempts; a named starter with
+    no history - a rookie's first start - is projected as a debut, never
+    replaced), and is his yards IF HE STARTS - the passing model was fitted on starters only, so it has
     nothing to say about a backup's mop-up series. It is None for everyone
     else.
 
@@ -777,7 +789,16 @@ def project_team(live, team, implied_for, implied_against, home, exclude=(), ros
     """
     exclude = set(exclude or ())
     pool = [(g, pl) for g, pl in candidates(live, team, roster, min_usage) if g not in exclude]
-    qb = expected_starter(live, team, pool, starter)
+    # A NAMED STARTER STARTS. He is put in the pool whatever the roster and
+    # usage rules say - with his history if he has one, as a debut if not -
+    # so his yards are never handed to a backup the card does not name.
+    if starter is not None and starter not in exclude:
+        if starter not in {g for g, _ in pool}:
+            pl = live.state["players"].get(starter) or _Debut(starter_name or starter)
+            pool.append((starter, pl))
+        qb = starter
+    else:
+        qb = expected_starter(live, team, pool, None)
     out = _project(live, pool, team, implied_for, implied_against, home, playoff, qb)
     out.sort(key=lambda c: -sum(c[k] or 0.0 for k in LIVE_KEY.values()))
     return out

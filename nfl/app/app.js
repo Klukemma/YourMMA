@@ -175,7 +175,8 @@ function leadersList(code, leaders) {
   if (!leaders || !Object.keys(leaders).length) return "";
   const li = ["passing", "rushing", "receiving"].filter((k) => leaders[k]).map((k) => {
     const l = leaders[k];
-    const result = l.actual != null
+    const result = l.played === false ? ` <span class="st questionable">Did not play</span>`
+      : l.actual != null
       ? ` <span class="st ${l.over ? "scored" : "questionable"}">${Math.round(l.actual)} (${l.over ? "over" : "under"})</span>` : "";
     return `<li><span class="num tdp">${Math.round(l.yards)}</span>
       <span><b>${esc(l.name)}</b> ${esc(l.position)}${statusBadge(l)}${result}<div class="mini">${esc(k)} yards</div></span></li>`;
@@ -198,7 +199,8 @@ function keyPlayers(code, kp) {
 function tdList(code, list) {
   if (!list || !list.length) return "";
   const items = list.map((p) => {
-    const result = p.scored === true ? ` <span class="st scored">Scored</span>`
+    const result = p.played === false ? ` <span class="st questionable">Did not play</span>`
+      : p.scored === true ? ` <span class="st scored">Scored</span>`
       : p.scored === false ? ` <span class="st questionable">No TD</span>` : "";
     const season = p.games_season ? `<div class="mini">${esc(p.tds_season)} TD in ${esc(p.games_season)} games this season</div>` : "";
     return `<li><span class="num tdp">${pct(p.prob)}</span>
@@ -622,7 +624,9 @@ const METHOD_HTML = `
       <li><b>Touchdowns</b> - each player's chance of a rushing or receiving touchdown if he plays, from his
         recent carries, targets and snaps and his team's expected points.</li>
       <li><b>Yards</b> - the middle of what his recent usage and the game point to, if he plays.</li>
-      <li>All three are measured on past seasons - see Record - and logged before kickoff, then graded.</li>
+      <li>Touchdowns and yards are measured on past seasons - see Record - and logged before kickoff,
+        then graded; a player who did not play is left out, since both were "if he plays". The
+        most-valuable list describes this season so far.</li>
     </ul></div>
   <div class="card"><h2>Every number is point-in-time</h2>
     <ul class="plain">
