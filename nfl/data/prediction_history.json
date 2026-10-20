@@ -56,8 +56,7 @@
     "line": 51.5,
     "side": "UNDER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_BAL_CLE": {
    "away": "BAL",
@@ -116,8 +115,7 @@
     "line": 39.5,
     "side": "OVER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_BUF_LV": {
    "away": "BUF",
@@ -175,8 +173,7 @@
     "line": 53.5,
     "side": "OVER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_CAR_PHI": {
    "away": "CAR",
@@ -234,8 +231,7 @@
     "line": 39.5,
     "side": "OVER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_CHI_ATL": {
    "away": "CHI",
@@ -293,8 +289,7 @@
     "line": 52.5,
     "side": "UNDER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_DAL_GB": {
    "away": "DAL",
@@ -432,8 +427,7 @@
     "line": 53.5,
     "side": "UNDER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_LAC_KC": {
    "away": "LAC",
@@ -491,8 +485,7 @@
     "line": 41.5,
     "side": "OVER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_NO_NYG": {
    "away": "NO",
@@ -550,8 +543,7 @@
     "line": 46.5,
     "side": "UNDER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_NYJ_NE": {
    "away": "NYJ",
@@ -609,8 +601,7 @@
     "line": 43.5,
     "side": "UNDER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_PIT_TB": {
    "away": "PIT",
@@ -668,8 +659,7 @@
     "line": 38.5,
     "side": "OVER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_TEN_IND": {
    "away": "TEN",
@@ -727,34 +717,10 @@
     "line": 44.5,
     "side": "UNDER"
    },
-   "week": 6,
-   "yards_graded": true
+   "week": 6
   },
   "2026_06_WAS_SF": {
    "away": "WAS",
-   "away_leaders": {
-    "passing": {
-     "gsis_id": "00-0039910",
-     "name": "Jayden Daniels",
-     "position": "QB",
-     "status": "active",
-     "yards": 215.284973
-    },
-    "receiving": {
-     "gsis_id": "00-0035659",
-     "name": "Terry McLaurin",
-     "position": "WR",
-     "status": "active",
-     "yards": 47.77147
-    },
-    "rushing": {
-     "gsis_id": "00-0039910",
-     "name": "Jayden Daniels",
-     "position": "QB",
-     "status": "active",
-     "yards": 29.191114
-    }
-   },
    "away_qb": {
     "change": false,
     "id": "00-0039910",
@@ -771,11 +737,7 @@
      "name": "Terry McLaurin",
      "position": "WR",
      "prob": 0.268201,
-     "proj": {
-      "pass_yds": null,
-      "rec_yds": 47.77147,
-      "rush_yds": 0.0
-     },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -785,11 +747,7 @@
      "name": "Jayden Daniels",
      "position": "QB",
      "prob": 0.26407,
-     "proj": {
-      "pass_yds": 215.284973,
-      "rec_yds": null,
-      "rush_yds": 29.191114
-     },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -799,43 +757,21 @@
      "name": "Stefon Diggs",
      "position": "WR",
      "prob": 0.215679,
-     "proj": {
-      "pass_yds": null,
-      "rec_yds": 41.713969,
-      "rush_yds": 0.0
-     },
+     "scored": true,
      "status": "questionable",
      "tds_season": 3
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 17,
+    "home": 23
+   },
    "first_logged": "2026-10-18T14:04:05Z",
    "game_id": "2026_06_WAS_SF",
    "game_type": "REG",
    "home": "SF",
-   "home_leaders": {
-    "passing": {
-     "gsis_id": "00-0037834",
-     "name": "Brock Purdy",
-     "position": "QB",
-     "status": "active",
-     "yards": 271.737827
-    },
-    "receiving": {
-     "gsis_id": "00-0031408",
-     "name": "Mike Evans",
-     "position": "WR",
-     "status": "questionable",
-     "yards": 50.364312
-    },
-    "rushing": {
-     "gsis_id": "00-0033280",
-     "name": "Christian McCaffrey",
-     "position": "RB",
-     "status": "active",
-     "yards": 46.782347
-    }
-   },
-   "home_prob": 0.756239,
+   "home_prob": 0.78096,
    "home_qb": {
     "change": false,
     "id": "00-0037834",
@@ -852,11 +788,7 @@
      "name": "Christian McCaffrey",
      "position": "RB",
      "prob": 0.630533,
-     "proj": {
-      "pass_yds": null,
-      "rec_yds": 36.061968,
-      "rush_yds": 46.782347
-     },
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -866,11 +798,7 @@
      "name": "Mike Evans",
      "position": "WR",
      "prob": 0.413811,
-     "proj": {
-      "pass_yds": null,
-      "rec_yds": 50.364312,
-      "rush_yds": 0.0
-     },
+     "scored": false,
      "status": "questionable",
      "tds_season": 3
     },
@@ -880,17 +808,13 @@
      "name": "George Kittle",
      "position": "TE",
      "prob": 0.382177,
-     "proj": {
-      "pass_yds": null,
-      "rec_yds": 49.069921,
-      "rush_yds": null
-     },
+     "scored": true,
      "status": "active",
      "tds_season": 4
     }
    ],
    "kickoff": "2026-10-20T00:15:00Z",
-   "last_logged": "2026-10-19T14:08:17Z",
+   "last_logged": "2026-10-18T21:05:01Z",
    "market": {
     "as_of": "2026-10-18T21:01:38Z",
     "away_ml": 330.0,
@@ -911,24 +835,1764 @@
    "market_source": "the-odds-api",
    "market_spread": 7.5,
    "market_total": 52.0,
-   "model_prob": 0.816952,
+   "model_prob": 0.818988,
    "model_spread": 11.122173,
-   "model_total": 50.311625,
+   "model_total": 50.249424,
    "pick": "SF",
-   "pick_prob": 0.756239,
+   "pick_prob": 0.78096,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 3.622173,
     "line": -7.5,
     "team": "SF"
    },
+   "td_graded": true,
    "tier": "STRONG",
+   "total_correct": true,
    "total_pick": {
-    "edge": 1.688375,
+    "edge": 1.750576,
     "line": 52.0,
     "side": "UNDER"
    },
    "week": 6
+  },
+  "2026_07_CIN_BAL": {
+   "away": "CIN",
+   "away_qb": {
+    "change": false,
+    "id": "00-0036442",
+    "injury_status": null,
+    "name": "Joe Burrow",
+    "rating": 0.109943,
+    "source": "projected",
+    "starts": 89
+   },
+   "away_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0038597",
+     "name": "Chase Brown",
+     "position": "RB",
+     "prob": 0.453841,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0036410",
+     "name": "Tee Higgins",
+     "position": "WR",
+     "prob": 0.352795,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0036900",
+     "name": "Ja'Marr Chase",
+     "position": "WR",
+     "prob": 0.322083,
+     "status": "active",
+     "tds_season": 4
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_CIN_BAL",
+   "game_type": "REG",
+   "home": "BAL",
+   "home_prob": 0.553938,
+   "home_qb": {
+    "change": false,
+    "id": "00-0035993",
+    "injury_status": null,
+    "name": "Tyler Huntley",
+    "rating": -0.011535,
+    "source": "projected",
+    "starts": 17
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0032764",
+     "name": "Derrick Henry",
+     "position": "RB",
+     "prob": 0.530138,
+     "status": "active",
+     "tds_season": 8
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0039064",
+     "name": "Zay Flowers",
+     "position": "WR",
+     "prob": 0.426608,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0034753",
+     "name": "Mark Andrews",
+     "position": "TE",
+     "prob": 0.255554,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "kickoff": "2026-10-25T17:00:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": 125.0,
+    "best_away_book": "Bovada",
+    "best_away_ml": 130.0,
+    "best_home_book": "BetUS",
+    "best_home_ml": -145.0,
+    "books": 9,
+    "home_ml": -148.0,
+    "home_prob": 0.572635,
+    "opening_spread": 2.5,
+    "opening_total": 51.0,
+    "source": "the-odds-api",
+    "spread": 2.5,
+    "total": 51.0
+   },
+   "market_prob": 0.572635,
+   "market_source": "the-odds-api",
+   "market_spread": 2.5,
+   "market_total": 51.0,
+   "model_prob": 0.460062,
+   "model_spread": -0.647879,
+   "model_total": 47.161077,
+   "pick": "BAL",
+   "pick_prob": 0.553938,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 3.147879,
+    "line": 2.5,
+    "team": "CIN"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 3.838923,
+    "line": 51.0,
+    "side": "UNDER"
+   },
+   "week": 7
+  },
+  "2026_07_CLE_TEN": {
+   "away": "CLE",
+   "away_qb": {
+    "change": false,
+    "id": "00-0033537",
+    "injury_status": null,
+    "name": "Deshaun Watson",
+    "rating": -0.075351,
+    "source": "projected",
+    "starts": 81
+   },
+   "away_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0040784",
+     "name": "Quinshon Judkins",
+     "position": "RB",
+     "prob": 0.317509,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0041037",
+     "name": "Denzel Boston",
+     "position": "WR",
+     "prob": 0.298054,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040663",
+     "name": "Harold Fannin",
+     "position": "TE",
+     "prob": 0.233314,
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_CLE_TEN",
+   "game_type": "REG",
+   "home": "TEN",
+   "home_prob": 0.444165,
+   "home_qb": {
+    "change": false,
+    "id": "00-0040676",
+    "injury_status": null,
+    "name": "Cam Ward",
+    "rating": -0.144102,
+    "source": "projected",
+    "starts": 23
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0035261",
+     "name": "Tony Pollard",
+     "position": "RB",
+     "prob": 0.270777,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0041438",
+     "name": "Carnell Tate",
+     "position": "WR",
+     "prob": 0.263083,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038117",
+     "name": "Wan'Dale Robinson",
+     "position": "WR",
+     "prob": 0.193404,
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "kickoff": "2026-10-25T17:00:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": -130.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": -120.0,
+    "best_home_book": "BetRivers",
+    "best_home_ml": 112.0,
+    "books": 9,
+    "home_ml": 105.0,
+    "home_prob": 0.464037,
+    "opening_spread": -1.5,
+    "opening_total": 38.5,
+    "source": "the-odds-api",
+    "spread": -1.5,
+    "total": 38.5
+   },
+   "market_prob": 0.464037,
+   "market_source": "the-odds-api",
+   "market_spread": -1.5,
+   "market_total": 38.5,
+   "model_prob": 0.406391,
+   "model_spread": -2.851728,
+   "model_total": 37.39194,
+   "pick": "CLE",
+   "pick_prob": 0.555835,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 1.351728,
+    "line": -1.5,
+    "team": "CLE"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 1.10806,
+    "line": 38.5,
+    "side": "UNDER"
+   },
+   "week": 7
+  },
+  "2026_07_DAL_PHI": {
+   "away": "DAL",
+   "away_qb": {
+    "change": false,
+    "id": "00-0033077",
+    "injury_status": null,
+    "name": "Dak Prescott",
+    "rating": 0.083141,
+    "source": "projected",
+    "starts": 151
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036997",
+     "name": "Javonte Williams",
+     "position": "RB",
+     "prob": 0.504294,
+     "status": "active",
+     "tds_season": 8
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036358",
+     "name": "CeeDee Lamb",
+     "position": "WR",
+     "prob": 0.347195,
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0037247",
+     "name": "George Pickens",
+     "position": "WR",
+     "prob": 0.322175,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_DAL_PHI",
+   "game_type": "REG",
+   "home": "PHI",
+   "home_prob": 0.335439,
+   "home_qb": {
+    "change": false,
+    "id": "00-0038400",
+    "injury_status": null,
+    "name": "Tanner McKee",
+    "rating": -0.088009,
+    "replaced": "Jalen Hurts",
+    "source": "replaced",
+    "starts": 3
+   },
+   "home_td": [
+    {
+     "games_season": 4,
+     "gsis_id": "00-0036912",
+     "name": "DeVonta Smith",
+     "position": "WR",
+     "prob": 0.299978,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 2,
+     "gsis_id": "00-0037258",
+     "name": "Dameon Pierce",
+     "position": "RB",
+     "prob": 0.299777,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0034351",
+     "name": "Dallas Goedert",
+     "position": "TE",
+     "prob": 0.265879,
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "kickoff": "2026-10-27T00:15:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": -220.0,
+    "best_away_book": "BetUS",
+    "best_away_ml": -215.0,
+    "best_home_book": "BetOnline.ag",
+    "best_home_ml": 186.0,
+    "books": 9,
+    "home_ml": 180.0,
+    "home_prob": 0.341112,
+    "opening_spread": -4.5,
+    "opening_total": 44.0,
+    "source": "the-odds-api",
+    "spread": -4.5,
+    "total": 44.0
+   },
+   "market_prob": 0.341112,
+   "market_source": "the-odds-api",
+   "market_spread": -4.5,
+   "market_total": 44.0,
+   "model_prob": 0.538466,
+   "model_spread": 1.558642,
+   "model_total": 45.645997,
+   "pick": "DAL",
+   "pick_prob": 0.664561,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 6.058642,
+    "line": 4.5,
+    "team": "PHI"
+   },
+   "tier": "SOLID",
+   "total_pick": {
+    "edge": 1.645997,
+    "line": 44.0,
+    "side": "OVER"
+   },
+   "week": 7
+  },
+  "2026_07_DEN_ARI": {
+   "away": "DEN",
+   "away_qb": {
+    "change": false,
+    "id": "00-0039732",
+    "injury_status": null,
+    "name": "Bo Nix",
+    "rating": -0.000694,
+    "source": "projected",
+    "starts": 42
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036158",
+     "name": "J.K. Dobbins",
+     "position": "RB",
+     "prob": 0.351637,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0040730",
+     "name": "RJ Harvey",
+     "position": "RB",
+     "prob": 0.323206,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036613",
+     "name": "Jaylen Waddle",
+     "position": "WR",
+     "prob": 0.239782,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_DEN_ARI",
+   "game_type": "REG",
+   "home": "ARI",
+   "home_prob": 0.323372,
+   "home_qb": {
+    "change": false,
+    "id": "00-0033119",
+    "injury_status": null,
+    "name": "Jacoby Brissett",
+    "rating": -0.02528,
+    "source": "projected",
+    "starts": 71
+   },
+   "home_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0041027",
+     "name": "Jeremiyah Love",
+     "position": "RB",
+     "prob": 0.298914,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0037744",
+     "name": "Trey McBride",
+     "position": "TE",
+     "prob": 0.29115,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038559",
+     "name": "Michael Wilson",
+     "position": "WR",
+     "prob": 0.277141,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "kickoff": "2026-10-25T20:05:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": -220.0,
+    "best_away_book": "BetUS",
+    "best_away_ml": -210.0,
+    "best_home_book": "FanDuel",
+    "best_home_ml": 198.0,
+    "books": 9,
+    "home_ml": 180.0,
+    "home_prob": 0.34188,
+    "opening_spread": -4.5,
+    "opening_total": 43.5,
+    "source": "the-odds-api",
+    "spread": -4.5,
+    "total": 43.5
+   },
+   "market_prob": 0.34188,
+   "market_source": "the-odds-api",
+   "market_spread": -4.5,
+   "market_total": 43.5,
+   "model_prob": 0.351358,
+   "model_spread": -5.048118,
+   "model_total": 46.416482,
+   "pick": "DEN",
+   "pick_prob": 0.676628,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 0.548118,
+    "line": -4.5,
+    "team": "DEN"
+   },
+   "tier": "SOLID",
+   "total_pick": {
+    "edge": 2.916482,
+    "line": 43.5,
+    "side": "OVER"
+   },
+   "week": 7
+  },
+  "2026_07_GB_DET": {
+   "away": "GB",
+   "away_qb": {
+    "change": false,
+    "id": "00-0036264",
+    "injury_status": null,
+    "name": "Jordan Love",
+    "rating": 0.125889,
+    "source": "projected",
+    "starts": 58
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038124",
+     "name": "Christian Watson",
+     "position": "WR",
+     "prob": 0.405903,
+     "status": "active",
+     "tds_season": 6
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040667",
+     "name": "Matthew Golden",
+     "position": "WR",
+     "prob": 0.370095,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038996",
+     "name": "Tucker Kraft",
+     "position": "TE",
+     "prob": 0.301444,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_GB_DET",
+   "game_type": "REG",
+   "home": "DET",
+   "home_prob": 0.593112,
+   "home_qb": {
+    "change": false,
+    "id": "00-0033106",
+    "injury_status": null,
+    "name": "Jared Goff",
+    "rating": 0.150468,
+    "source": "projected",
+    "starts": 165
+   },
+   "home_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0039139",
+     "name": "Jahmyr Gibbs",
+     "position": "RB",
+     "prob": 0.791454,
+     "status": "active",
+     "tds_season": 9
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0036963",
+     "name": "Amon-Ra St. Brown",
+     "position": "WR",
+     "prob": 0.46317,
+     "status": "active",
+     "tds_season": 5
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0039065",
+     "name": "Sam LaPorta",
+     "position": "TE",
+     "prob": 0.390684,
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-10-25T20:25:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": 140.0,
+    "best_away_book": "Bovada",
+    "best_away_ml": 150.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -162.0,
+    "books": 9,
+    "home_ml": -165.0,
+    "home_prob": 0.601084,
+    "opening_spread": 3.0,
+    "opening_total": 53.5,
+    "source": "the-odds-api",
+    "spread": 3.0,
+    "total": 53.5
+   },
+   "market_prob": 0.601084,
+   "market_source": "the-odds-api",
+   "market_spread": 3.0,
+   "market_total": 53.5,
+   "model_prob": 0.611024,
+   "model_spread": 3.197533,
+   "model_total": 53.582153,
+   "pick": "DET",
+   "pick_prob": 0.593112,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 0.197533,
+    "line": -3.0,
+    "team": "DET"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 0.082153,
+    "line": 53.5,
+    "side": "OVER"
+   },
+   "week": 7
+  },
+  "2026_07_IND_MIN": {
+   "away": "IND",
+   "away_qb": {
+    "change": false,
+    "id": "00-0035710",
+    "injury_status": null,
+    "name": "Daniel Jones",
+    "rating": -0.025307,
+    "source": "projected",
+    "starts": 90
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036223",
+     "name": "Jonathan Taylor",
+     "position": "RB",
+     "prob": 0.449805,
+     "status": "active",
+     "tds_season": 7
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0040128",
+     "name": "Tyler Warren",
+     "position": "TE",
+     "prob": 0.257768,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038997",
+     "name": "Josh Downs",
+     "position": "WR",
+     "prob": 0.191295,
+     "status": "active",
+     "tds_season": 0
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_IND_MIN",
+   "game_type": "REG",
+   "home": "MIN",
+   "home_prob": 0.709174,
+   "home_qb": {
+    "change": false,
+    "id": "00-0035228",
+    "injury_status": null,
+    "name": "Kyler Murray",
+    "rating": 0.008595,
+    "source": "projected",
+    "starts": 91
+   },
+   "home_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0033293",
+     "name": "Aaron Jones",
+     "position": "RB",
+     "prob": 0.477753,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0038994",
+     "name": "Jordan Addison",
+     "position": "WR",
+     "prob": 0.317302,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0036322",
+     "name": "Justin Jefferson",
+     "position": "WR",
+     "prob": 0.26992,
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-10-25T17:00:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": 223.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": 235.0,
+    "best_home_book": "BetUS",
+    "best_home_ml": -265.0,
+    "books": 9,
+    "home_ml": -275.0,
+    "home_prob": 0.702789,
+    "opening_spread": 6.0,
+    "opening_total": 41.5,
+    "source": "the-odds-api",
+    "spread": 6.0,
+    "total": 41.5
+   },
+   "market_prob": 0.702789,
+   "market_source": "the-odds-api",
+   "market_spread": 6.0,
+   "market_total": 41.5,
+   "model_prob": 0.812533,
+   "model_spread": 10.485177,
+   "model_total": 44.433012,
+   "pick": "MIN",
+   "pick_prob": 0.709174,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 4.485177,
+    "line": -6.0,
+    "team": "MIN"
+   },
+   "tier": "SOLID",
+   "total_pick": {
+    "edge": 2.933012,
+    "line": 41.5,
+    "side": "OVER"
+   },
+   "week": 7
+  },
+  "2026_07_KC_SEA": {
+   "away": "KC",
+   "away_qb": {
+    "change": false,
+    "id": "00-0033873",
+    "injury_status": null,
+    "name": "Patrick Mahomes",
+    "rating": 0.104066,
+    "source": "projected",
+    "starts": 152
+   },
+   "away_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0038134",
+     "name": "Kenneth Walker III",
+     "position": "RB",
+     "prob": 0.562317,
+     "status": "active",
+     "tds_season": 8
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0039894",
+     "name": "Xavier Worthy",
+     "position": "WR",
+     "prob": 0.218664,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0039067",
+     "name": "Rashee Rice",
+     "position": "WR",
+     "prob": 0.203065,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_KC_SEA",
+   "game_type": "REG",
+   "home": "SEA",
+   "home_prob": 0.552989,
+   "home_qb": {
+    "change": false,
+    "id": "00-0035704",
+    "injury_status": null,
+    "name": "Drew Lock",
+    "rating": -0.018133,
+    "source": "projected",
+    "starts": 30
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038543",
+     "name": "Jaxon Smith-Njigba",
+     "position": "WR",
+     "prob": 0.450515,
+     "status": "active",
+     "tds_season": 7
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038797",
+     "name": "Emanuel Wilson",
+     "position": "RB",
+     "prob": 0.277049,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0039793",
+     "name": "AJ Barner",
+     "position": "TE",
+     "prob": 0.239689,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "kickoff": "2026-10-26T00:20:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": 120.0,
+    "best_away_book": "BetOnline.ag",
+    "best_away_ml": 122.0,
+    "best_home_book": "FanDuel",
+    "best_home_ml": -134.0,
+    "books": 9,
+    "home_ml": -140.0,
+    "home_prob": 0.562044,
+    "opening_spread": 2.5,
+    "opening_total": 42.5,
+    "source": "the-odds-api",
+    "spread": 2.5,
+    "total": 42.5
+   },
+   "market_prob": 0.562044,
+   "market_source": "the-odds-api",
+   "market_spread": 2.5,
+   "market_total": 42.5,
+   "model_prob": 0.585203,
+   "model_spread": 3.050329,
+   "model_total": 43.20796,
+   "pick": "SEA",
+   "pick_prob": 0.552989,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 0.550329,
+    "line": -2.5,
+    "team": "SEA"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 0.70796,
+    "line": 42.5,
+    "side": "OVER"
+   },
+   "week": 7
+  },
+  "2026_07_LA_LV": {
+   "away": "LA",
+   "away_qb": {
+    "change": false,
+    "id": "00-0026498",
+    "injury_status": null,
+    "name": "Matthew Stafford",
+    "rating": 0.09342,
+    "source": "projected",
+    "starts": 258
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0037840",
+     "name": "Kyren Williams",
+     "position": "RB",
+     "prob": 0.563525,
+     "status": "active",
+     "tds_season": 5
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0039075",
+     "name": "Puka Nacua",
+     "position": "WR",
+     "prob": 0.482835,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0031381",
+     "name": "Davante Adams",
+     "position": "WR",
+     "prob": 0.313132,
+     "status": "active",
+     "tds_season": 4
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_LA_LV",
+   "game_type": "REG",
+   "home": "LV",
+   "home_prob": 0.334578,
+   "home_qb": {
+    "change": false,
+    "id": "00-0029604",
+    "injury_status": null,
+    "name": "Kirk Cousins",
+    "rating": 0.043675,
+    "source": "projected",
+    "starts": 177
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040122",
+     "name": "Ashton Jeanty",
+     "position": "RB",
+     "prob": 0.4365,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0039338",
+     "name": "Brock Bowers",
+     "position": "TE",
+     "prob": 0.375059,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038563",
+     "name": "Tre Tucker",
+     "position": "WR",
+     "prob": 0.240833,
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-10-25T20:25:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": -210.0,
+    "best_away_book": "BetUS",
+    "best_away_ml": -200.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": 185.0,
+    "books": 9,
+    "home_ml": 175.0,
+    "home_prob": 0.349296,
+    "opening_spread": -4.5,
+    "opening_total": 48.0,
+    "source": "the-odds-api",
+    "spread": -4.5,
+    "total": 48.0
+   },
+   "market_prob": 0.349296,
+   "market_source": "the-odds-api",
+   "market_spread": -4.5,
+   "market_total": 48.0,
+   "model_prob": 0.41029,
+   "model_spread": -2.779952,
+   "model_total": 50.601019,
+   "pick": "LA",
+   "pick_prob": 0.665422,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 1.720048,
+    "line": 4.5,
+    "team": "LV"
+   },
+   "tier": "SOLID",
+   "total_pick": {
+    "edge": 2.601019,
+    "line": 48.0,
+    "side": "OVER"
+   },
+   "week": 7
+  },
+  "2026_07_MIA_NYJ": {
+   "away": "MIA",
+   "away_qb": {
+    "change": false,
+    "id": "00-0038128",
+    "injury_status": null,
+    "name": "Malik Willis",
+    "rating": -0.054811,
+    "source": "projected",
+    "starts": 11
+   },
+   "away_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0040198",
+     "name": "Ollie Gordon",
+     "position": "RB",
+     "prob": 0.274557,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0039880",
+     "name": "Malik Washington",
+     "position": "WR",
+     "prob": 0.217238,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 2,
+     "gsis_id": "00-0041523",
+     "name": "Caleb Douglas",
+     "position": "WR",
+     "prob": 0.209234,
+     "status": "active",
+     "tds_season": 0
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_MIA_NYJ",
+   "game_type": "REG",
+   "home": "NYJ",
+   "home_prob": 0.653339,
+   "home_qb": {
+    "change": false,
+    "id": "00-0030565",
+    "injury_status": null,
+    "name": "Geno Smith",
+    "rating": -0.071508,
+    "source": "projected",
+    "starts": 105
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0039794",
+     "name": "Braelon Allen",
+     "position": "RB",
+     "prob": 0.367479,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 3,
+     "gsis_id": "00-0038120",
+     "name": "Breece Hall",
+     "position": "RB",
+     "prob": 0.360115,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0037740",
+     "name": "Garrett Wilson",
+     "position": "WR",
+     "prob": 0.325604,
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-10-25T17:00:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": 192.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": 205.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -230.0,
+    "books": 9,
+    "home_ml": -230.0,
+    "home_prob": 0.670527,
+    "opening_spread": 5.0,
+    "opening_total": 39.0,
+    "source": "the-odds-api",
+    "spread": 5.0,
+    "total": 39.0
+   },
+   "market_prob": 0.670527,
+   "market_source": "the-odds-api",
+   "market_spread": 5.0,
+   "market_total": 39.0,
+   "model_prob": 0.496499,
+   "model_spread": 0.306706,
+   "model_total": 41.202468,
+   "pick": "NYJ",
+   "pick_prob": 0.653339,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 4.693294,
+    "line": 5.0,
+    "team": "MIA"
+   },
+   "tier": "SOLID",
+   "total_pick": {
+    "edge": 2.202468,
+    "line": 39.0,
+    "side": "OVER"
+   },
+   "week": 7
+  },
+  "2026_07_NE_CHI": {
+   "away": "NE",
+   "away_qb": {
+    "change": false,
+    "id": "00-0039851",
+    "injury_status": null,
+    "name": "Drake Maye",
+    "rating": 0.122671,
+    "source": "projected",
+    "starts": 38
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036875",
+     "name": "Rhamondre Stevenson",
+     "position": "RB",
+     "prob": 0.337834,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 2,
+     "gsis_id": "00-0035676",
+     "name": "A.J. Brown",
+     "position": "WR",
+     "prob": 0.275168,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0033090",
+     "name": "Hunter Henry",
+     "position": "TE",
+     "prob": 0.221738,
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_NE_CHI",
+   "game_type": "REG",
+   "home": "CHI",
+   "home_prob": 0.574425,
+   "home_qb": {
+    "change": false,
+    "id": "00-0039918",
+    "injury_status": null,
+    "name": "Caleb Williams",
+    "rating": 0.070985,
+    "source": "projected",
+    "starts": 39
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036275",
+     "name": "D'Andre Swift",
+     "position": "RB",
+     "prob": 0.476671,
+     "status": "active",
+     "tds_season": 6
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0040236",
+     "name": "Kyle Monangai",
+     "position": "RB",
+     "prob": 0.402649,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040126",
+     "name": "Colston Loveland",
+     "position": "TE",
+     "prob": 0.300149,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "kickoff": "2026-10-23T00:15:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": 132.0,
+    "best_away_book": "LowVig.ag",
+    "best_away_ml": 142.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -148.0,
+    "books": 9,
+    "home_ml": -160.0,
+    "home_prob": 0.589806,
+    "opening_spread": 3.0,
+    "opening_total": 50.5,
+    "source": "the-odds-api",
+    "spread": 3.0,
+    "total": 50.5
+   },
+   "market_prob": 0.589806,
+   "market_source": "the-odds-api",
+   "market_spread": 3.0,
+   "market_total": 50.5,
+   "model_prob": 0.50889,
+   "model_spread": -0.552504,
+   "model_total": 46.433429,
+   "pick": "CHI",
+   "pick_prob": 0.574425,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 3.552504,
+    "line": 3.0,
+    "team": "NE"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 4.066571,
+    "line": 50.5,
+    "side": "UNDER"
+   },
+   "week": 7
+  },
+  "2026_07_NYG_HOU": {
+   "away": "NYG",
+   "away_qb": {
+    "change": false,
+    "id": "00-0031503",
+    "injury_status": null,
+    "name": "Jameis Winston",
+    "rating": -0.037974,
+    "source": "projected",
+    "starts": 96
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0039337",
+     "name": "Malik Nabers",
+     "position": "WR",
+     "prob": 0.290987,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0037838",
+     "name": "Isaiah Likely",
+     "position": "TE",
+     "prob": 0.258868,
+     "status": "active",
+     "tds_season": 5
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040715",
+     "name": "Cam Skattebo",
+     "position": "RB",
+     "prob": 0.200835,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_NYG_HOU",
+   "game_type": "REG",
+   "home": "HOU",
+   "home_prob": 0.789053,
+   "home_qb": {
+    "change": false,
+    "id": "00-0039163",
+    "injury_status": null,
+    "name": "C.J. Stroud",
+    "rating": 0.04835,
+    "source": "projected",
+    "starts": 57
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040583",
+     "name": "Woody Marks",
+     "position": "RB",
+     "prob": 0.406088,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0036554",
+     "name": "Nico Collins",
+     "position": "WR",
+     "prob": 0.346907,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0035685",
+     "name": "David Montgomery",
+     "position": "RB",
+     "prob": 0.262533,
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-10-25T17:00:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": 360.0,
+    "best_away_book": "DraftKings",
+    "best_away_ml": 400.0,
+    "best_home_book": "BetUS",
+    "best_home_ml": -450.0,
+    "books": 9,
+    "home_ml": -475.0,
+    "home_prob": 0.791667,
+    "opening_spread": 10.0,
+    "opening_total": 43.0,
+    "source": "the-odds-api",
+    "spread": 10.0,
+    "total": 43.0
+   },
+   "market_prob": 0.791667,
+   "market_source": "the-odds-api",
+   "market_spread": 10.0,
+   "market_total": 43.0,
+   "model_prob": 0.736605,
+   "model_spread": 7.693852,
+   "model_total": 47.216774,
+   "pick": "HOU",
+   "pick_prob": 0.789053,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 2.306148,
+    "line": 10.0,
+    "team": "NYG"
+   },
+   "tier": "STRONG",
+   "total_pick": {
+    "edge": 4.216774,
+    "line": 43.0,
+    "side": "OVER"
+   },
+   "week": 7
+  },
+  "2026_07_PIT_NO": {
+   "away": "PIT",
+   "away_qb": {
+    "change": false,
+    "id": "00-0023459",
+    "injury_status": null,
+    "name": "Aaron Rodgers",
+    "rating": -0.067082,
+    "source": "projected",
+    "starts": 284
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0037228",
+     "name": "Jaylen Warren",
+     "position": "RB",
+     "prob": 0.471587,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0035640",
+     "name": "D.K. Metcalf",
+     "position": "WR",
+     "prob": 0.323881,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0041489",
+     "name": "Germie Bernard",
+     "position": "WR",
+     "prob": 0.267611,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_PIT_NO",
+   "game_type": "REG",
+   "home": "NO",
+   "home_prob": 0.365741,
+   "home_qb": {
+    "change": false,
+    "id": "00-0040743",
+    "injury_status": null,
+    "name": "Tyler Shough",
+    "rating": -0.017269,
+    "source": "projected",
+    "starts": 15
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0037239",
+     "name": "Chris Olave",
+     "position": "WR",
+     "prob": 0.310473,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0039424",
+     "name": "Devaughn Vele",
+     "position": "WR",
+     "prob": 0.258176,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0038551",
+     "name": "Kendre Miller",
+     "position": "RB",
+     "prob": 0.234487,
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "kickoff": "2026-10-25T13:30:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": -180.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": -174.0,
+    "best_home_book": "BetOnline.ag",
+    "best_home_ml": 157.0,
+    "books": 9,
+    "home_ml": 150.0,
+    "home_prob": 0.381271,
+    "opening_spread": -3.5,
+    "opening_total": 44.5,
+    "source": "the-odds-api",
+    "spread": -3.5,
+    "total": 44.5
+   },
+   "market_prob": 0.381271,
+   "market_source": "the-odds-api",
+   "market_spread": -3.5,
+   "market_total": 44.5,
+   "model_prob": 0.419761,
+   "model_spread": -2.077835,
+   "model_total": 46.205066,
+   "pick": "PIT",
+   "pick_prob": 0.634259,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 1.422165,
+    "line": 3.5,
+    "team": "NO"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 1.705066,
+    "line": 44.5,
+    "side": "OVER"
+   },
+   "week": 7
+  },
+  "2026_07_SF_ATL": {
+   "away": "SF",
+   "away_qb": {
+    "change": false,
+    "id": "00-0037834",
+    "injury_status": null,
+    "name": "Brock Purdy",
+    "rating": 0.184181,
+    "source": "projected",
+    "starts": 59
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0033280",
+     "name": "Christian McCaffrey",
+     "position": "RB",
+     "prob": 0.621232,
+     "status": "active",
+     "tds_season": 7
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0033288",
+     "name": "George Kittle",
+     "position": "TE",
+     "prob": 0.364472,
+     "status": "active",
+     "tds_season": 5
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0031408",
+     "name": "Mike Evans",
+     "position": "WR",
+     "prob": 0.341834,
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_SF_ATL",
+   "game_type": "REG",
+   "home": "ATL",
+   "home_prob": 0.364361,
+   "home_qb": {
+    "change": false,
+    "id": "00-0039917",
+    "injury_status": null,
+    "name": "Michael Penix Jr.",
+    "rating": 0.02056,
+    "source": "projected",
+    "starts": 16
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038542",
+     "name": "Bijan Robinson",
+     "position": "RB",
+     "prob": 0.558623,
+     "status": "active",
+     "tds_season": 5
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0037238",
+     "name": "Drake London",
+     "position": "WR",
+     "prob": 0.389343,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036970",
+     "name": "Kyle Pitts",
+     "position": "TE",
+     "prob": 0.223888,
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-10-25T17:00:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": -182.0,
+    "best_away_book": "BetUS",
+    "best_away_ml": -165.0,
+    "best_home_book": "FanDuel",
+    "best_home_ml": 160.0,
+    "books": 8,
+    "home_ml": 145.9,
+    "home_prob": 0.388001,
+    "opening_spread": -3.5,
+    "opening_total": 50.5,
+    "source": "the-odds-api",
+    "spread": -3.5,
+    "total": 50.5
+   },
+   "market_prob": 0.388001,
+   "market_source": "the-odds-api",
+   "market_spread": -3.5,
+   "market_total": 50.5,
+   "model_prob": 0.316834,
+   "model_spread": -5.225199,
+   "model_total": 51.303029,
+   "pick": "SF",
+   "pick_prob": 0.635639,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 1.725199,
+    "line": -3.5,
+    "team": "SF"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 0.803029,
+    "line": 50.5,
+    "side": "OVER"
+   },
+   "week": 7
+  },
+  "2026_07_TB_CAR": {
+   "away": "TB",
+   "away_qb": {
+    "change": false,
+    "id": "00-0041251",
+    "injury_status": null,
+    "name": "Jalon Daniels",
+    "rating": -0.126548,
+    "source": "projected",
+    "starts": 3
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0039361",
+     "name": "Bucky Irving",
+     "position": "RB",
+     "prob": 0.390401,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040129",
+     "name": "Emeka Egbuka",
+     "position": "WR",
+     "prob": 0.310075,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0033921",
+     "name": "Chris Godwin",
+     "position": "WR",
+     "prob": 0.196916,
+     "status": "active",
+     "tds_season": 0
+    }
+   ],
+   "first_logged": "2026-10-20T15:11:45Z",
+   "game_id": "2026_07_TB_CAR",
+   "game_type": "REG",
+   "home": "CAR",
+   "home_prob": 0.603807,
+   "home_qb": {
+    "change": false,
+    "id": "00-0039150",
+    "injury_status": null,
+    "name": "Bryce Young",
+    "rating": 0.017274,
+    "source": "projected",
+    "starts": 47
+   },
+   "home_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0036555",
+     "name": "Chuba Hubbard",
+     "position": "RB",
+     "prob": 0.52687,
+     "status": "active",
+     "tds_season": 6
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0040124",
+     "name": "Tetairoa McMillan",
+     "position": "WR",
+     "prob": 0.386739,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0039491",
+     "name": "Jalen Coker",
+     "position": "WR",
+     "prob": 0.339729,
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "kickoff": "2026-10-25T17:00:00Z",
+   "last_logged": "2026-10-20T15:11:45Z",
+   "market": {
+    "as_of": "2026-10-20T15:11:45Z",
+    "away_ml": 145.0,
+    "best_away_book": "DraftKings",
+    "best_away_ml": 160.0,
+    "best_home_book": "BetUS",
+    "best_home_ml": -165.0,
+    "books": 9,
+    "home_ml": -175.0,
+    "home_prob": 0.606701,
+    "opening_spread": 3.0,
+    "opening_total": 44.5,
+    "source": "the-odds-api",
+    "spread": 3.0,
+    "total": 44.5
+   },
+   "market_prob": 0.606701,
+   "market_source": "the-odds-api",
+   "market_spread": 3.0,
+   "market_total": 44.5,
+   "model_prob": 0.676735,
+   "model_spread": 5.602487,
+   "model_total": 42.463831,
+   "pick": "CAR",
+   "pick_prob": 0.603807,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 2.602487,
+    "line": -3.0,
+    "team": "CAR"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 2.036169,
+    "line": 44.5,
+    "side": "UNDER"
+   },
+   "week": 7
   }
  },
  "schema": 1
