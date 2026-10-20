@@ -13,8 +13,8 @@ use Add to Home Screen. `nfl/app/yournfl.html` is a single offline copy of the s
 | Layer | What it is | Measured, 2016-2025 (walk-forward) |
 |---|---|---|
 | Elo | 538-style team ratings with a margin-of-victory multiplier and offseason regression | 64.0% of winners |
-| Model | logistic regression on Elo, offensive/defensive EPA per play, the starting QB's EPA per dropback, rest, byes, short weeks, time zones, division and neutral-site flags | 64.3% |
-| Pick | the model blended with the no-vig market price; the blend is fitted on earlier seasons' out-of-sample predictions | 66.7% (closing favourite: 66.6%) |
+| Model | L1-regularised logistic regression on Elo, offensive/defensive EPA per play, the starting QB's EPA per dropback, rest, byes, short weeks, time zones, division and neutral-site flags | 64.4%, log loss 0.6245 |
+| Pick | the model blended with the market's no-vig moneyline and its spread; the blend is fitted on earlier seasons' (from 2003) out-of-sample predictions | 66.4%, log loss 0.6080 (closing favourite: 66.6%, 0.6085) |
 
 The confidence bands (STRONG 75%+, SOLID 65%+, LEAN 55%+, TOSS-UP) are probability bands,
 and each one's hit rate is measured on 2016-2025 and printed in the app. No game is ever
@@ -41,10 +41,40 @@ Every game card also carries:
   usage alone (0.403), it scores 0.395 in 2020-2025. Each team's most likely scorer scored
   43.5% of the time against the 41.1% the model gave, and at least one of the top three scored
   74% of the time. These picks are logged before kickoff and graded from the box score.
+- **Projected yards.** Passing, rushing and receiving yards for each key player, plus each
+  team's projected leaders (`nfl_props.py`). Each projection is the middle of what his recent
+  usage and his team's expected points point to. Measured 2020-2025:
+  - passing: 56 yards off on average, against 67 for the QB's own recent average;
+  - rushing: 18 off, against 19;
+  - receiving: 18 off, against 20.
+
+  Players went over about half the time, as a middle number should. Each team's leaders are
+  logged before kickoff and graded.
 - **Player news.** Headlines from public NFL news feeds (`nfl_news.py`, fetched by the runner)
   that name either team or one of their rostered players, published before kickoff.
 
 All of these are shown, not applied. The pick moves only for the starting quarterback.
+
+## What was tried and not shipped
+
+Each family was explored in parallel against the same walk-forward harness. The rule:
+choose on 2006-2015, and ship only what does not make 2016-2025 worse for the pick.
+
+- **Shipped, from the learner family:** an L1 winner model, the spread as a third blend
+  input, and blend history from 2003. The pick's 2016-2025 log loss went from 0.6087 to
+  0.6080, under the market's 0.6085.
+- **Model alone better, pick not, so not shipped:**
+  - a starting-QB adjustment to Elo with a moving home-field edge;
+  - a "QB form gap" feature (the starter against the quarterbacks behind the team's recent
+    EPA).
+
+  Both improve the model in both periods. They do not improve the pick in 2016-2025,
+  because the closing line already prices quarterback changes.
+- **No gain:**
+  - EPA variants: decay, pass/rush splits, opponent adjustment, turnover luck;
+  - Elo tuning;
+  - recency weighting, rolling windows, gradient boosting, calibration;
+  - roughly 200 spread and total configurations. None beats -110 in both periods.
 
 ## The rules it keeps
 
@@ -74,6 +104,7 @@ All of these are shown, not applied. The pick moves only for the starting quarte
     nfl/engine/nfl_form.py        record and last five beside each team
     nfl/engine/nfl_players.py     most valuable players and whether they play
     nfl/engine/nfl_td.py          anytime-touchdown model, walk-forward and live
+    nfl/engine/nfl_props.py       passing/rushing/receiving yard projections
     nfl/engine/nfl_news.py        player news from public RSS feeds
     nfl/engine/nfl_predict.py     the weekly run: picks, log, grading, app data
     nfl/engine/nfl_export.py      app payloads and caveats

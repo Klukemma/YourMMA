@@ -10,9 +10,12 @@ name: NFL predictions
 #   backtest  the walk-forward report, printed
 #
 # On a schedule it runs predict through the season: Tuesday after Monday
-# night (grade the week, post the next one), Thursday before the night game
-# and Sunday morning before the London and early games - those two buy
-# today's prices (3 credits each, from the free tier's 500 a month).
+# night (grade the week, post the next one), Thursday before the night game,
+# Saturday after Friday's final injury report, Sunday morning before the
+# London and early games, and Monday before the night game. Thursday and
+# Sunday buy today's prices (3 credits each, from the free tier's 500 a
+# month); the others reuse prices on file unless a game has none - and every
+# run reads the news feeds, so news lands before each kickoff.
 on:
   workflow_dispatch:
     inputs:
@@ -30,9 +33,16 @@ on:
         type: boolean
         default: false
   schedule:
+    # GitHub starts scheduled runs late under load - the first Tuesday run
+    # began five hours after its slot - so every game-day run sits hours
+    # ahead of the first kickoff it has to beat.
     - cron: "17 10 * 9-12,1-2 TUE"   # after Monday night: grade, post the next week
-    - cron: "17 16 * 9-12,1-2 THU"   # before Thursday night, fresh prices
-    - cron: "47 12 * 9-12,1-2 SUN"   # before the London and 1pm games, fresh prices
+    - cron: "17 12 * 9-12,1-2 THU"   # before Thursday night, fresh prices
+    - cron: "17 13 * 9-12,1-2 SAT"   # after Friday's final injury report (and Saturday games)
+    - cron: "17 6 * 9-12,1-2 SUN"    # before the London and 1pm games, fresh prices
+    - cron: "47 15 * 9-12,1-2 SUN"   # before the late games: news
+    - cron: "17 13 * 11-12 FRI"      # the holiday-season Friday games
+    - cron: "17 15 * 9-12,1-2 MON"   # before Monday night
 
 permissions:
   contents: write
@@ -88,7 +98,7 @@ jobs:
             # Scheduled Thursday and Sunday runs, and a dispatch that asks,
             # buy today's lines; Tuesday's run reuses what is on file unless
             # a game has none.
-            if [ "${{ inputs.refresh_odds }}" = "true" ] || [ "${{ github.event.schedule }}" = "17 16 * 9-12,1-2 THU" ] || [ "${{ github.event.schedule }}" = "47 12 * 9-12,1-2 SUN" ]; then
+            if [ "${{ inputs.refresh_odds }}" = "true" ] || [ "${{ github.event.schedule }}" = "17 12 * 9-12,1-2 THU" ] || [ "${{ github.event.schedule }}" = "17 6 * 9-12,1-2 SUN" ]; then
               export ODDS_REFRESH=1
             fi
             python nfl/engine/nfl_predict.py 2>&1 | tee nfl.log

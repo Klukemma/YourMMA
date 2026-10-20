@@ -31,7 +31,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy.stats import norm
 
 import nfl_backtest as bt
 import nfl_data as nd
@@ -42,6 +41,7 @@ import nfl_model as nm
 import nfl_news as nnews
 import nfl_odds as no
 import nfl_players as nplayers
+import nfl_props as nprops
 import nfl_td as ntd
 
 LOG = Path(os.environ.get("NFL_PREDICTIONS_LOG") or (nd.DATA / "prediction_history.json"))
@@ -112,27 +112,58 @@ def log_pick(log, game, now):
     fields = ("game_id", "season", "week", "game_type", "kickoff", "home", "away",
               "pick", "pick_prob", "home_prob", "model_prob", "market_prob", "market_source",
               "tier", "model_spread", "market_spread", "spread_pick", "model_total",
-              "market_total", "total_pick", "home_qb", "away_qb", "market", "home_td", "away_td")
+              "market_total", "total_pick", "home_qb", "away_qb", "market", "home_td", "away_td",
+              "home_leaders", "away_leaders")
     log["picks"][game["game_id"]] = dict(
         {k: game.get(k) for k in fields}, **keep, last_logged=stamp(now))
     return True
 
 
-def grade_touchdowns(log, player_games):
+def _snap_index(snaps):
+    """{game_id: {player name: snaps taken}} from the snap counts."""
+    if snaps is None or not len(snaps):
+        return {}
+    taken = snaps["offense_snaps"].fillna(0) + snaps.get("defense_snaps", 0 * snaps["offense_snaps"]).fillna(0)
+    out = {}
+    for gid, name, n in zip(snaps["game_id"], snaps["player"], taken):
+        out.setdefault(gid, {})[name] = out.get(gid, {}).get(name, 0) + float(n)
+    return out
+
+
+def _played(snap_index, gid, pick):
+    """True / False once the game's snap counts are in, None before."""
+    game = snap_index.get(gid)
+    if game is None:
+        return None
+    return game.get(pick.get("name"), 0) > 0
+
+
+def grade_touchdowns(log, player_games, snaps=None):
     """Mark each logged touchdown pick scored or not, once its game's box
-    score is in (results arrive hours before player statistics)."""
+    score and snap counts are in (results arrive hours before player
+    statistics). Every probability was IF HE PLAYS: a pick who took no
+    snap is marked played=False and left out of the record, not counted
+    as a miss."""
     if player_games is None or not len(player_games):
         return 0
     by_game = player_games.groupby("game_id")
+    snap_index = _snap_index(snaps)
     graded = 0
     for gid, p in log["picks"].items():
         if not p.get("final") or p.get("td_graded") or gid not in by_game.groups:
             continue
         box = by_game.get_group(gid)
         tds = dict(zip(box["player_id"], box["rushing_tds"].fillna(0) + box["receiving_tds"].fillna(0)))
-        for side in ("home_td", "away_td"):
-            for pick in p.get(side) or []:
-                pick["scored"] = bool(tds.get(pick.get("gsis_id"), 0) >= 1)
+        picks = [t for side in ("home_td", "away_td") for t in (p.get(side) or [])]
+        if any(t.get("gsis_id") not in tds and _played(snap_index, gid, t) is None for t in picks):
+            continue                  # no box line and no snap counts yet: wait
+        for pick in picks:
+            if pick.get("gsis_id") in tds:
+                pick["scored"] = bool(tds[pick["gsis_id"]] >= 1)
+            elif _played(snap_index, gid, pick):
+                pick["scored"] = False
+            else:
+                pick["played"], pick["scored"] = False, None
         p["td_graded"] = True
         graded += 1
     return graded
@@ -266,10 +297,13 @@ def replace_ruled_out(row, state, injuries, names, season, week, elsewhere=froze
 def predict_game(row, models, market, tiers):
     """The blended numbers for one game that has not started."""
     market_p = market.get("home_prob") if market else None
-    if market_p is None and market and market.get("spread") is not None:
-        market_p = float(norm.cdf(market["spread"] / bt.SPREAD_SD))
+    spread_p = (float(nm.spread_prob(market["spread"]))
+                if market and market.get("spread") is not None else None)
+    if market_p is None:
+        market_p = spread_p
     frame = row.to_frame().T.infer_objects()
-    p = models.predict(frame, market_p=[market_p if market_p is not None else np.nan]).iloc[0]
+    p = models.predict(frame, market_p=[market_p if market_p is not None else np.nan],
+                       spread_p=[spread_p if spread_p is not None else np.nan]).iloc[0]
     home_prob = float(p["blend_prob"])
     pick_home = home_prob >= 0.5
     pick_prob = home_prob if pick_home else 1 - home_prob
@@ -330,6 +364,9 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
     td_built = ntd.build_with_state(games, ntd.load_lines())
     td_report = ntd.report(td_built[0], ntd.walk_forward(td_built[0]))
     td_live = ntd.fit_live(season, games=games, built=td_built)
+    props_built = nprops.build_with_state(games, nprops.load_lines())
+    props_report = nprops.report(props_built[0], nprops.walk_forward(props_built[0]))
+    props_live = nprops.fit_live(season, games=games, built=props_built)
     news = nnews.load(news_path)
     if sync:   # the feeds are read where the internet is open - the runner
         nnews.refresh(news, log=log, now=clock)
@@ -387,6 +424,11 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
             for side in ("home", "away"):
                 game[f"{side}_td"] = touchdown_picks(td_live, players, row, side, game, market,
                                                      full_injuries[side], out_now, season, week)
+                proj, game[f"{side}_leaders"] = yardage(props_live, players, row, side, game, market,
+                                                        full_injuries[side], out_now, season, week)
+                for p in game[f"{side}_players"]["offense"] + game[f"{side}_td"]:
+                    if p.get("gsis_id") in proj:
+                        p["proj"] = proj[p["gsis_id"]]
             log_pick(history, game, now)
         else:
             logged = history["picks"].get(row["game_id"])
@@ -398,7 +440,7 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
                 # The price the pick was made against, not today's.
                 if logged.get("market"):
                     game["market"] = logged["market"]
-                for side in ("home_td", "away_td"):
+                for side in ("home_td", "away_td", "home_leaders", "away_leaders"):
                     if logged.get(side):
                         game[side] = logged[side]
                 # The quarterbacks the logged pick was computed with - a
@@ -421,22 +463,25 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
         out_games.append(game)
 
     graded = grade(history, games)
-    grade_touchdowns(history, players.offense)
+    grade_touchdowns(history, players.offense, players.snaps)
+    grade_yards(history, players.offense, players.snaps)
     save_log(history, log_path)
     log(f"   logged {sum(1 for g in out_games if g['status'] == 'upcoming')} picks, graded {graded}")
 
     last_played = games[games["played"]]["kickoff"].max()
     trained_on = models[season].trained_on
-    cav = nx.caveats(backtest, td_report)
+    cav = nx.caveats(backtest, td_report, props_report)
     nx.write("week", {
         "season": season, "week": week, "game_type": game_type, "label": week_label(week, game_type),
         "games": out_games, "data_through": stamp(last_played)[:10], "trained_on": trained_on,
+        "byes": byes(slate, game_type),
         "tiers": tiers, "value_enabled_at": backtest["value"]["enabled_at"],
         "caveats": cav, "as_of": stamp(now),
     }, out_dir)
     nx.write("teams", teams_payload(games, state, qb_names, now, season, players), out_dir)
     nx.write("performance", {
         "backtest": backtest, "track_record": nx.track_record(history), "td": td_report,
+        "props": props_report,
         "trained_on": trained_on, "caveats": cav, "data_through": stamp(last_played)[:10],
     }, out_dir)
     return out_games
@@ -450,10 +495,35 @@ def touchdown_picks(live, players, row, side, game, market, injuries, off, seaso
     active roster are left out, Doubtful and Questionable ones kept and
     marked - every probability is conditional on the player playing."""
     home = side == "home"
+    implied, _against = _implied(game, market, home)
+    status, exclude, roster = _who_plays(players, row, side, injuries, off, season, week)
+    picks = ntd.predict_team(live, row[side], implied, home, exclude=exclude, roster=roster,
+                             playoff=row["game_type"] != "REG")[:TD_SHOWN]
+    return [{"gsis_id": p["gsis_id"], "name": p["name"], "position": p["position"],
+             "prob": p["prob"], "tds_season": p["tds_season"], "games_season": p["games_season"],
+             "status": status.get(p["gsis_id"], "active")} for p in picks]
+
+
+def byes(slate, game_type):
+    """Teams with no game in a regular-season week, as the week's header
+    lists them."""
+    if game_type != "REG":
+        return []
+    playing = set(slate["home"]) | set(slate["away"])
+    return sorted(set(nd.TEAMS) - playing)
+
+
+def _implied(game, market, home):
+    """(this side's, the other side's) expected points: the market's total
+    and spread when priced, else the model's own."""
     total, spread = (market or {}).get("total"), (market or {}).get("spread")
     if total is None or spread is None:
         total, spread = game.get("model_total"), game.get("model_spread")
-    implied = ntd.implied_points(total, spread, home)
+    return ntd.implied_points(total, spread, home), ntd.implied_points(total, spread, not home)
+
+
+def _who_plays(players, row, side, injuries, off, season, week):
+    """({gsis: injury status}, ids not playing, the active roster or None)."""
     status = {i["gsis_id"]: i["status"].lower() for i in injuries if i.get("gsis_id")}
     exclude = {g for g, st in status.items() if st == "out"} | set(off)
     roster = None
@@ -463,11 +533,64 @@ def touchdown_picks(live, players, row, side, game, market, injuries, off, seaso
         if len(mine):
             latest = mine[mine["week"] == mine["week"].max()]
             roster = list(latest[latest["status"] == "ACT"]["gsis_id"].dropna())
-    picks = ntd.predict_team(live, row[side], implied, home, exclude=exclude, roster=roster,
-                             playoff=row["game_type"] != "REG")[:TD_SHOWN]
-    return [{"gsis_id": p["gsis_id"], "name": p["name"], "position": p["position"],
-             "prob": p["prob"], "tds_season": p["tds_season"], "games_season": p["games_season"],
-             "status": status.get(p["gsis_id"], "active")} for p in picks]
+    return status, exclude, roster
+
+
+def yardage(live, players, row, side, game, market, injuries, off, season, week):
+    """Every likely player's projected (median) yards for a game still to
+    come, if he plays: {gsis: {pass_yds, rush_yds, rec_yds}}, and the
+    team's projected leaders - passer, rusher, receiver."""
+    home = side == "home"
+    implied_for, implied_against = _implied(game, market, home)
+    status, exclude, roster = _who_plays(players, row, side, injuries, off, season, week)
+    starter = row[f"{side}_qb_used"] if isinstance(row[f"{side}_qb_used"], str) else None
+    named = (game.get(f"{side}_qb") or {}).get("name")
+    proj = nprops.project_team(live, row[side], implied_for, implied_against, home, exclude=exclude,
+                               roster=roster, playoff=row["game_type"] != "REG", starter=starter,
+                               starter_name=named)
+    by_id = {p["gsis_id"]: {k: p[k] for k in ("pass_yds", "rush_yds", "rec_yds")} for p in proj}
+    leaders = {}
+    for key, word in (("pass_yds", "passing"), ("rush_yds", "rushing"), ("rec_yds", "receiving")):
+        best = max((p for p in proj if p[key] is not None), key=lambda p: p[key], default=None)
+        if best is not None:
+            leaders[word] = {"gsis_id": best["gsis_id"], "name": best["name"], "position": best["position"],
+                             "yards": best[key], "status": status.get(best["gsis_id"], "active")}
+    return by_id, leaders
+
+
+def grade_yards(log, player_games, snaps=None):
+    """Each logged yardage leader's actual yards and whether he went over
+    his projection, once the box score and snap counts are in. A leader who
+    took no snap is marked played=False and left out - the projection was
+    IF HE PLAYS - rather than graded a zero-yard under."""
+    if player_games is None or not len(player_games):
+        return 0
+    by_game = player_games.groupby("game_id")
+    snap_index = _snap_index(snaps)
+    cols = {"passing": "passing_yards", "rushing": "rushing_yards", "receiving": "receiving_yards"}
+    graded = 0
+    for gid, p in log["picks"].items():
+        if not p.get("final") or p.get("yards_graded") or gid not in by_game.groups:
+            continue
+        box = by_game.get_group(gid).groupby("player_id")[list(cols.values())].sum(min_count=1)
+        leaders = [l for side in ("home_leaders", "away_leaders") for l in (p.get(side) or {}).values()]
+        if any(l.get("gsis_id") not in box.index and _played(snap_index, gid, l) is None for l in leaders):
+            continue                  # no box line and no snap counts yet: wait
+        for side in ("home_leaders", "away_leaders"):
+            for stat, leader in (p.get(side) or {}).items():
+                if leader.get("gsis_id") in box.index:
+                    actual = box.loc[leader["gsis_id"], cols[stat]]
+                    actual = 0.0 if actual != actual else float(actual)
+                elif _played(snap_index, gid, leader):
+                    actual = 0.0
+                else:
+                    leader["played"], leader["actual"], leader["over"] = False, None, None
+                    continue
+                leader["actual"] = actual
+                leader["over"] = None if actual == leader["yards"] else actual > leader["yards"]
+        p["yards_graded"] = True
+        graded += 1
+    return graded
 
 
 def _roster_names(players, season, teams):

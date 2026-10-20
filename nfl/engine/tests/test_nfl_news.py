@@ -90,3 +90,13 @@ def test_news_fetched_after_kickoff_is_not_pre_game_news_whatever_its_date_says(
     after_kickoff = datetime(2026, 10, 18, 21, 0, tzinfo=timezone.utc)
     nn.merge(c, nn.parse_feed(late, "Late clock"), after_kickoff)
     assert nn.for_game(c, ("KC", "LV"), {"Patrick Mahomes"}, KICK) == []
+
+
+def test_a_syndicated_story_appears_once():
+    c = nn.empty()
+    dup = b"""<?xml version="1.0"?><rss version="2.0"><channel>
+<item><title>Chiefs activate Rashee Rice</title><link>https://a.example/1</link><pubDate>Sat, 17 Oct 2026 12:00:00 GMT</pubDate></item>
+<item><title>Chiefs activate Rashee Rice.</title><link>https://b.example/1</link><pubDate>Sat, 17 Oct 2026 12:05:00 GMT</pubDate></item>
+</channel></rss>"""
+    nn.merge(c, nn.parse_feed(dup, "Test"), NOW)
+    assert len(nn.for_game(c, ("KC", "LV"), set(), KICK)) == 1
