@@ -204,4 +204,11 @@ def for_game(cache, teams, players, kickoff, limit=PER_GAME):
         if hit_players or hit_teams:
             matched.append(dict(it, players=hit_players, teams=hit_teams))
     matched.sort(key=lambda it: (not it["players"], -_parse_date(it["published"]).timestamp()))
-    return matched[:limit]
+    # One story, once: Yahoo syndicates ProFootballTalk and others word for word.
+    seen, unique = set(), []
+    for it in matched:
+        key = re.sub(r"[^a-z0-9]+", " ", it["title"].lower()).strip()
+        if key not in seen:
+            seen.add(key)
+            unique.append(it)
+    return unique[:limit]

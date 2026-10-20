@@ -36,7 +36,7 @@ def test_picks_prices_and_the_app_are_committed_after_the_tests():
 
 def test_the_refresh_schedules_are_the_ones_named_in_the_run_step():
     nfl = (WF / "nfl.yml").read_text()
-    for cron in ('"17 16 * 9-12,1-2 THU"', '"47 12 * 9-12,1-2 SUN"'):
+    for cron in ('"17 12 * 9-12,1-2 THU"', '"17 6 * 9-12,1-2 SUN"'):
         assert f"cron: {cron}" in nfl and f"github.event.schedule }}}}\" = {cron}" in nfl
 
 
