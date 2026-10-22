@@ -513,10 +513,18 @@ def test_every_fighter_with_history_has_a_positive_career_minutes(ufc_careers):
     assert (ufc_careers.loc[with_history, "r_cd_minutes"] > 0).all()
 
 
-def test_debut_rows_are_the_only_ones_without_a_strikes_per_minute(ufc_careers):
-    """cd_bouts is what separates 'no history' from 'genuinely zero'."""
+def test_debut_rows_are_the_only_ones_without_a_strikes_per_minute(ufc, ufc_careers):
+    """cd_bouts is what separates 'no history' from 'genuinely zero'.
+
+    A provisional result (sync_wiki.py, while the Kaggle source lags) carries
+    no statistics: it adds to cd_bouts and to no rate, so a fighter whose
+    only earlier bouts are provisional has history and no SLpM yet. What
+    holds everywhere is that a missing SLpM means no earlier bout with
+    statistics; on the archive proper, that means a debut."""
     missing = ufc_careers["r_cd_slpm"].isna()
-    assert (ufc_careers.loc[missing, "r_cd_bouts"] == 0).all()
+    assert (ufc_careers.loc[missing, "r_cd_breakdown_bouts"] == 0).all()
+    proper = ~ufc["fight_id"].astype(str).str.startswith("wiki_")
+    assert (ufc_careers.loc[missing & proper, "r_cd_bouts"] == 0).all()
 
 
 def test_about_a_quarter_of_rows_have_a_debutant_in_one_corner(ufc_careers):
@@ -832,7 +840,10 @@ def test_the_pooled_finish_rates_reproduce_the_league_constants(ufc):
     mis-parsed method string could not agree to four decimal places.
     """
     import matchup as mu
-    final = cs.final_stats(ufc.sort_values("date").reset_index(drop=True))
+    # Measured on the archive proper: provisional results added since
+    # (sync_wiki.py) are new bouts, not a second route to the same number.
+    proper = ufc[~ufc["fight_id"].astype(str).str.startswith("wiki_")]
+    final = cs.final_stats(proper.sort_values("date").reset_index(drop=True))
     minutes = final["cd_minutes"]
     for column, league in (("cd_ko_for_per15", mu.LEAGUE_KO_FOR_PER_MIN),
                            ("cd_sub_for_per15", mu.LEAGUE_SUB_FOR_PER_MIN)):
