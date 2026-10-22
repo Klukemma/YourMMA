@@ -2996,6 +2996,10 @@ ODDS_NAME_ALIASES = {
     "loopy godinez": "lupita godinez",
     "mick parkin": "michael parkin",
     "daria zhelezniakova": "darya zheleznyakova",
+    "alexander volkanovski": "alex volkanovski",
+    "ramazan temirov": "ramazonbek temirov",
+    "abdul rakhman yakhyaev": "abdulrakhman yakhyaev",
+    "abus magomedov": "abusupyian magomedov",
 }
 
 
