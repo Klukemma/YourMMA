@@ -258,10 +258,17 @@ STAT_PROBE = "r_total_str_landed"
 
 
 def blank_stat_rows(local, probe=STAT_PROBE):
-    """Boolean mask of bouts whose measured statistics never arrived."""
+    """Boolean mask of bouts whose measured statistics never arrived.
+
+    A provisional row (sync_wiki.py) never had any. It is replaced whole by
+    sync once upstream has the bout, never filled here: its corners were
+    assigned by rating, so upstream's red-corner counts could land in the
+    blue corner's columns.
+    """
     if probe not in local.columns:
         return pd.Series(False, index=local.index)
-    return local[probe].isna()
+    from sync_wiki import is_provisional
+    return local[probe].isna() & ~is_provisional(local)
 
 
 def repair_blank_stats(local, fresh, probe=STAT_PROBE):
@@ -521,6 +528,14 @@ def cmd_fix_units(args):
 def cmd_sync(args):
     local = pd.read_csv(LOCAL_CSV, low_memory=False)
     local['date'] = pd.to_datetime(local['date'], errors='coerce')
+    # Results sync_wiki.py added while this dataset lagged. Upstream's rows
+    # for the same bouts carry the statistics those lack, so they go, and
+    # sync_wiki.py rebuilds whatever upstream still does not have.
+    from sync_wiki import is_provisional
+    provisional = is_provisional(local)
+    if provisional.any():
+        print(f"Dropping {int(provisional.sum())} provisional rows (sync_wiki.py rebuilds them)")
+        local = local[~provisional].reset_index(drop=True)
     cutoff = local['date'].max()
     print(f"Local:  {len(local):,} fights through {cutoff.date()}")
 

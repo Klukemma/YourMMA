@@ -203,6 +203,29 @@ It also runs as a GitHub Action (`.github/workflows/update-dataset.yml`),
 weekly and on demand — Actions → Update UFC dataset → Run workflow, which works
 from the GitHub mobile app. Needs a `KAGGLE_API_TOKEN` repository secret.
 
+### While Kaggle lags
+
+The Kaggle dataset stopped at 2026-08-08, and UFCStats answers scripts with a
+JavaScript challenge. So the sync then runs `sync_wiki.py`, which reads every
+UFC event after the archive's last date off its Wikipedia page. Each bout is
+added as a **provisional** row (`fight_id` starting `wiki_`), holding the
+result only: winner, method, round, time, scheduled rounds, title flag and
+division. There are no strike statistics. Each fighter keeps their own name, id
+and rating series. The rows are rebuilt on every run and dropped as soon as
+Kaggle has the bouts.
+
+```bash
+python engine/sync_wiki.py sync --dry-run   # what would be added (network)
+python engine/sync_wiki.py measure          # replay the archive's last events (offline)
+```
+
+`measure` cuts the archive before its last 8 events and rebuilds them from
+Wikipedia, then compares the two:
+
+- winner, method, round, time and division: 96 of 96;
+- fighters on their own id: 157, and the other 35 correctly treated as debutants;
+- pre-fight ratings: identical.
+
 ### Ratings
 
 Upstream has no rating columns, so new fights get them from `ratings.py`.
