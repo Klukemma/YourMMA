@@ -50,8 +50,8 @@ RUN_OPTUNA = False
 # ==============================================================================
 # 2. EVENT DETAILS
 # ==============================================================================
-EVENT_NAME = "UFC Fight Night: Buckley vs. Malott"
-EVENT_DATE = "2026-10-17"  # Format: YYYY-MM-DD
+EVENT_NAME = "UFC 333: Volkanovski vs. Evloev"
+EVENT_DATE = "2026-10-24"  # Format: YYYY-MM-DD
 
 # ==============================================================================
 # 3. FIGHT CARD
@@ -59,26 +59,32 @@ EVENT_DATE = "2026-10-17"  # Format: YYYY-MM-DD
 # Format: (Red_Corner, Blue_Corner, is_5_rounds, is_title_fight)
 # - is_5_rounds: True for main events and title fights
 # - is_title_fight: True if fighting for a championship
+#
+# Bout list reconciled 2026-10-22 from UFC.com, Wikipedia, F4W, theScore,
+# Bloody Elbow and UFCStats' event page; every bout on two sources or more.
+# No source states corners: the champion is listed first in the title bouts,
+# otherwise the first-billed fighter.
 
 FIGHT_CARD = [
-    # Main Event (5 rounds, non-title) - Welterweight
-    ("Joaquin Buckley", "Mike Malott", True, False),           # 0 - Main Event, Welterweight (5 rounds)
-
     # Main Card
-    ("Erin Blanchfield", "Jasmine Jasudavicius"),              # 1 - Co-Main, Women's Flyweight
-    ("Kyle Nelson", "Cristian Perez"),                         # 2 - Lightweight (Perez, listed as Cristian Perez Gonzalez: UFC debut)
-    ("Marc-Andre Barriault", "Kyle Daukaus"),                  # 3 - Middleweight
-    ("Louis Jourdain", "Timmy Cuamba"),                        # 4 - Bantamweight (Jourdain: UFC debut, DWCS)
-    ("Mandel Nallo", "Nate Landwehr"),                         # 5 - Lightweight (Landwehr up from featherweight; weighed 155.5/155 on 10-16)
+    ("Alexander Volkanovski", "Movsar Evloev", True, True),    # 0 - Main Event, Featherweight title (5 rounds)
+    ("Petr Yan", "Merab Dvalishvili", True, True),             # 1 - Co-Main, Bantamweight title (5 rounds; trilogy)
+    ("Lone'er Kavanagh", "Ramazan Temirov"),                   # 2 - Flyweight
+    ("Alexander Volkov", "Rizvan Kuniev"),                     # 3 - Heavyweight
+    ("Aaron Pico", "Losene Keita"),                            # 4 - Featherweight (Keita replaced Arnold Allen, reported 2026-09-18)
 
     # Preliminary Card
-    ("Tanner Boser", "Jhonata Diniz"),                         # 6 - Heavyweight
-    ("Julien Leblanc", "Nick Galanti"),                        # 7 - Middleweight (Galanti replaced Gilbert Urbina; UFC debut)
-    ("Javad Mahjoub", "Joel Faglier"),                         # 8 - Heavyweight (Faglier replaced Louie Sutherland; both UFC debuts)
-    ("Katlyn Cerminara", "Mackenzie Stiller"),                 # 9 - Women's Flyweight (Stiller replaced the injured Jamey-Lyn Horth; UFC debut)
-    ("Chad Anheliger", "Steven Koslow"),                       # 10 - Bantamweight
-    ("Melissa Croden", "Chelsea Chandler"),                    # 11 - Women's Bantamweight
-    ("Cody Chovancek", "SuYoung You"),                         # 12 - Bantamweight (Chovancek: UFC debut)
+    ("Azamat Murzakanov", "Dominick Reyes"),                   # 5 - Light Heavyweight
+    ("Nikita Krylov", "Abdul Rakhman Yakhyaev"),               # 6 - Light Heavyweight
+    ("Abus Magomedov", "Cam Rowston"),                         # 7 - Middleweight
+    ("Grant Dawson", "Nurullo Aliev"),                         # 8 - Lightweight
+
+    # Early Preliminary Card
+    ("Colby Thicknesse", "Asaf Chopurov"),                     # 9 - Bantamweight (Chopurov: UFC debut, 11-0)
+    ("Abubakar Vagaev", "Jacob Malkoun"),                      # 10 - Middleweight (Vagaev up from welterweight)
+    ("Bolaji Oki", "Daniel Santos"),                           # 11 - Featherweight (Oki down from lightweight)
+    ("Kody Steele", "Noah Gugnon"),                            # 12 - Lightweight
+    ("Iasmin Lucindo", "Nicolle Caliari"),                     # 13 - Women's Strawweight
 ]
 
 # ==============================================================================
@@ -87,7 +93,7 @@ FIGHT_CARD = [
 # Home advantage only counts when ONE fighter is home and the other is NOT.
 # If both fighters are "home" (e.g., both USA-based), no advantage.
 #
-# UFC Fight Night: Buckley vs. Malott - Rogers Place, Edmonton, AB, Canada
+# UFC 333: Volkanovski vs. Evloev - Etihad Arena, Yas Island, Abu Dhabi, UAE
 # (arena: the standard cage, so no cage_size)
 #
 # Home flags are left off this card: nobody's base was checked fight by
@@ -99,19 +105,20 @@ FIGHT_CARD = [
 # is wrong whenever one of them is changing class.
 
 FIGHT_CONTEXTS = {
-    0: {"division": "welterweight"},
-    1: {"division": "women's flyweight"},
-    2: {"division": "lightweight"},
-    3: {"division": "middleweight"},
-    4: {"division": "bantamweight"},
-    5: {"division": "lightweight"},
-    6: {"division": "heavyweight"},
+    0: {"division": "featherweight"},
+    1: {"division": "bantamweight"},
+    2: {"division": "flyweight"},
+    3: {"division": "heavyweight"},
+    4: {"division": "featherweight"},
+    5: {"division": "light heavyweight"},
+    6: {"division": "light heavyweight"},
     7: {"division": "middleweight"},
-    8: {"division": "heavyweight"},
-    9: {"division": "women's flyweight"},
-    10: {"division": "bantamweight"},
-    11: {"division": "women's bantamweight"},
-    12: {"division": "bantamweight"},
+    8: {"division": "lightweight"},
+    9: {"division": "bantamweight"},
+    10: {"division": "middleweight"},
+    11: {"division": "featherweight"},
+    12: {"division": "lightweight"},
+    13: {"division": "women's strawweight"},
 }
 
 # ==============================================================================
