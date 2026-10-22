@@ -80,11 +80,16 @@ STAT_COL = "r_total_str_landed"
 
 
 def blank_window_bounds(csv_path=None):
-    """Re-derive the hole from the dataset so the constants cannot go stale."""
-    df = pd.read_csv(csv_path or UFC_CSV, usecols=["date", STAT_COL],
+    """Re-derive the hole from the dataset so the constants cannot go stale.
+
+    Provisional rows (sync_wiki.py: results read off Wikipedia while the
+    Kaggle source lags) carry no statistics by design and are not this hole.
+    """
+    df = pd.read_csv(csv_path or UFC_CSV, usecols=["date", "fight_id", STAT_COL],
                      low_memory=False)
     dates = pd.to_datetime(df["date"], errors="coerce")
-    blank = dates[df[STAT_COL].isna() & dates.notna()]
+    provisional = df["fight_id"].astype(str).str.startswith("wiki_")
+    blank = dates[df[STAT_COL].isna() & dates.notna() & ~provisional]
     if blank.empty:
         return None, None, 0
     return blank.min(), blank.max(), len(blank)

@@ -240,21 +240,32 @@ jobs:
           elif [ "${{ inputs.mode }}" = "repair" ]; then
             python engine/sync_kaggle.py repair \
               ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee sync.log
-          elif [ "${{ inputs.mode }}" != "sync" ]; then
+          # A SCHEDULED RUN HAS NO INPUTS. The Monday cron arrives with an
+          # empty mode, and this branch used to send it to
+          # `sync_kaggle.py ""` - every scheduled sync failed in seconds and
+          # the dataset stopped at the last manual sync. Empty means sync.
+          elif [ -n "${{ inputs.mode }}" ] && [ "${{ inputs.mode }}" != "sync" ]; then
             python engine/sync_kaggle.py "${{ inputs.mode }}" 2>&1 | tee sync.log
           else
             python engine/sync_kaggle.py sync \
               ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee sync.log
+            # THEN WHAT KAGGLE STILL LACKS. The Kaggle dataset stopped at
+            # 2026-08-08 and UFCStats answers scripts with a JavaScript
+            # challenge, so every event since is read off its Wikipedia page
+            # and added as a provisional result row (no strike statistics).
+            # Kaggle's own rows replace them whenever it catches up.
+            python engine/sync_wiki.py sync \
+              ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee -a sync.log
           fi
 
       - name: Verify the dataset still loads and ratings are consistent
-        if: ${{ (inputs.mode == 'sync' || inputs.mode == 'repair' || inputs.mode == 'fetch-odds' || inputs.mode == 'fetch-odds-history') && !inputs.dry_run }}
+        if: ${{ (inputs.mode == 'sync' || github.event_name == 'schedule' || inputs.mode == 'repair' || inputs.mode == 'fetch-odds' || inputs.mode == 'fetch-odds-history') && !inputs.dry_run }}
         run: |
           pip install pytest
           python -m pytest engine/tests/ -q
 
       - name: Commit the updated dataset
-        if: ${{ (inputs.mode == 'sync' || inputs.mode == 'repair' || inputs.mode == 'fetch-odds' || inputs.mode == 'fetch-odds-history') && !inputs.dry_run }}
+        if: ${{ (inputs.mode == 'sync' || github.event_name == 'schedule' || inputs.mode == 'repair' || inputs.mode == 'fetch-odds' || inputs.mode == 'fetch-odds-history') && !inputs.dry_run }}
         run: |
           # --porcelain sees untracked files; `git diff` does not, so a
           # brand-new file (data/odds.csv) reported "nothing to commit" and
@@ -276,7 +287,8 @@ jobs:
             git commit -m "Repair ${ROWS} bouts with missing statistics (${FILLED} cells)"
           else
             NEW=$(grep -oP 'New fights: \K[0-9,]+' sync.log || echo "?")
-            git commit -m "Update UFC dataset: +${NEW} fights through ${THROUGH}"
+            WIKI=$(grep -oP 'Provisional fights: \K[0-9,]+' sync.log || echo "0")
+            git commit -m "Update UFC dataset: +${NEW} fights, ${WIKI} provisional from Wikipedia, through ${THROUGH}"
           fi
           # REBASE, THEN PUSH, AND TRY AGAIN. A run that takes four minutes
           # can easily be overtaken by a push to the same branch, and a

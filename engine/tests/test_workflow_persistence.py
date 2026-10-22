@@ -203,3 +203,12 @@ def test_a_push_that_never_lands_fails_the_run():
     text = WORKFLOW.read_text()
     loops = text.count("for attempt in 1 2 3")
     assert loops and text.count('echo "::error::push failed after 3 rebases"') == loops
+
+
+def test_a_scheduled_run_syncs():
+    """The Monday cron carries no inputs. An empty mode must take the sync
+    branch and reach the verify and commit steps - it used to be sent to
+    `sync_kaggle.py ""` and fail, so the dataset stopped updating."""
+    text = (Path(__file__).resolve().parents[2] / ".github" / "workflows" / "update-dataset.yml").read_text()
+    assert 'elif [ -n "${{ inputs.mode }}" ] && [ "${{ inputs.mode }}" != "sync" ]; then' in text
+    assert text.count("inputs.mode == 'sync' || github.event_name == 'schedule'") == 2
