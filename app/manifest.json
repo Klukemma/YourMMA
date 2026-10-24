@@ -6,11 +6,17 @@
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "portrait",
-  "background_color": "#14151b",
-  "theme_color": "#14151b",
-  "categories": ["sports", "utilities"],
+  "background_color": "#0b0c10",
+  "theme_color": "#0b0c10",
+  "categories": [
+    "sports",
+    "utilities"
+  ],
   "lang": "en",
   "dir": "ltr",
   "icons": [
@@ -37,6 +43,32 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Compare fighters",
+      "short_name": "Compare",
+      "url": "./?tab=compare",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Track record",
+      "short_name": "Record",
+      "url": "./?tab=record",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
