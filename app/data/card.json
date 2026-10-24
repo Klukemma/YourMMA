@@ -2,8 +2,8 @@
  "caveats": {
   "flag": "A second model, fitted only on bets that had already settled, guessing whether each pick is wrong. Its flags score about 0.70 where 0.5 is a coin toss - real, not decisive. Most of what it reads is the gap between this model and the market, so a fight nobody has priced cannot be scored and is shown as such rather than assumed safe.",
   "intel": "Sourced news gathered before the bell - injuries, late replacements, a change of camp - about things the model cannot read from a record. NONE OF IT MOVES THE PREDICTION. The one soft factor we could label at scale, 298 late replacements from Wikipedia, measured -3.5% against the model and -4.4% against the blend with both intervals spanning zero, needing roughly 1,800 labels to resolve. So this is shown beside the number, not folded into it: it tells you why a fight might not go the way the model thinks, and leaves the number something that was actually measured.",
-  "model": "Walk-forward accuracy 61.7%, AUC 0.66. Flat-stake ROI on the confirm period (2020 onward, 2,339 priced bets) is -1.8%. Treat a pick as an opinion, not an edge.",
-  "parlay": "Combined probability multiplies the legs, which assumes the fights are independent; they are not quite. Backtested on the confirm period, 3-leg parlays returned +21.8% over 224 parlays - promising but about 1.5 standard deviations, and those parlays share legs, so this is NOT an established edge.",
+  "model": "Walk-forward accuracy 61.7%, AUC 0.66. Flat-stake ROI on the confirm period (2020 onward, 2,339 priced bets) is -0.2%, somewhere between -3.9% and +3.4%. Treat a pick as an opinion, not an edge.",
+  "parlay": "Combined probability multiplies the legs, which assumes the fights are independent; they are not quite. Backtested on the confirm period, 3-leg parlays returned +21.6% over 224 parlays - promising but about 1.5 standard deviations, and those parlays share legs, so this is NOT an established edge.",
   "simulation": "20,000 simulations from both fighters' measured rates. As a winner picker this is weaker than the model (AUC 0.559 against 0.66), so the model's probability is the headline. Method and round are where the simulation is the only source, and there it finishes 55% of fights where the sport finishes 47% - read DEC as firmer and SUB as softer."
  },
  "dataset_end": "2026-10-17",
@@ -260,7 +260,7 @@
     "verified": true
    },
    "confidence": 0.542308,
-   "edge": 0.041555,
+   "edge": -0.215109,
    "intel": [
     {
      "applies": false,
@@ -403,7 +403,7 @@
    },
    "title_fight": true,
    "win_prob": 0.528424,
-   "win_prob_model": 0.628332
+   "win_prob_model": 0.371668
   },
   {
    "blue": "Ramazan Temirov",
@@ -445,7 +445,7 @@
     "verified": true
    },
    "confidence": 0.542308,
-   "edge": -0.003172,
+   "edge": -0.03989,
    "intel": [],
    "market_prob": 0.509298,
    "method": "Decision",
@@ -540,7 +540,7 @@
    },
    "title_fight": false,
    "win_prob": 0.502384,
-   "win_prob_model": 0.518359
+   "win_prob_model": 0.481641
   },
   {
    "blue": "Rizvan Kuniev",
@@ -958,7 +958,7 @@
     "verified": true
    },
    "confidence": 0.592,
-   "edge": -0.122419,
+   "edge": -0.210915,
    "intel": [
     {
      "applies": false,
@@ -1063,7 +1063,7 @@
    },
    "title_fight": false,
    "win_prob": 0.605317,
-   "win_prob_model": 0.544248
+   "win_prob_model": 0.455752
   },
   {
    "blue": "Abdul Rakhman Yakhyaev",
@@ -1592,7 +1592,7 @@
     "verified": true
    },
    "confidence": 0.542308,
-   "edge": 0.14768,
+   "edge": -0.334672,
    "intel": [],
    "market_prob": 0.583446,
    "method": "Decision",
@@ -1687,7 +1687,7 @@
    },
    "title_fight": false,
    "win_prob": 0.502291,
-   "win_prob_model": 0.741176
+   "win_prob_model": 0.258824
   },
   {
    "blue": "Daniel Santos",
@@ -1898,7 +1898,7 @@
     "verified": true
    },
    "confidence": 0.542308,
-   "edge": -0.015648,
+   "edge": -0.184352,
    "intel": [],
    "market_prob": 0.590164,
    "method": "Decision",
@@ -1997,7 +1997,7 @@
    },
    "title_fight": false,
    "win_prob": 0.546535,
-   "win_prob_model": 0.584352
+   "win_prob_model": 0.415648
   },
   {
    "blue": "Nicolle Caliari",
@@ -2156,8 +2156,8 @@
  "generated": "2026-10-22T18:17:53Z",
  "parlays": [
   {
-   "combined_prob": 0.5845755240000001,
-   "fair_odds": 71,
+   "combined_prob": 0.584576,
+   "fair_odds": -141,
    "legs": [
     {
      "fight": "Lucindo vs Caliari",

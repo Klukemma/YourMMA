@@ -267,20 +267,29 @@ def report(graded, ungraded, total_logged):
             print(f"       {pred['event_date']}  {pred['red_corner']} vs {pred['blue_corner']}")
 
 
-def write_back(graded, ungraded, path):
-    """Record outcomes in the history file."""
+def write_back(graded, ungraded, path, index):
+    """Record outcomes in the history file.
+
+    EACH LOGGED PICK AGAINST ITS OWN BOUT. This used to key the outcome on the
+    pair of names and stamp it, with the graded pick's `correct`, onto every
+    log of that pair: 25 rows ended up contradicting their own pick (a second
+    log picking the loser marked right), and a rematch logged months later
+    would have been graded before the fight. Now every row is matched by the
+    same date-tolerant rule grade() uses, judged by its own predicted winner,
+    and left pending when no bout matches it.
+    """
     history = json.loads(Path(path).read_text())
-    outcome = {}
-    for r in graded:
-        key = (norm_name(r['red_corner']), norm_name(r['blue_corner']))
-        outcome[key] = (r['actual_winner'], r['correct'])
     for pred in history['predictions']:
-        key = (norm_name(pred['red_corner']), norm_name(pred['blue_corner']))
-        if key in outcome:
-            winner, correct = outcome[key]
-            pred['actual_winner'] = winner
-            pred['correct'] = bool(correct)
-            pred['status'] = 'correct' if correct else 'incorrect'
+        result = find_result(pred, index)
+        if result is None:
+            continue
+        _, winner, _ = result
+        if not isinstance(winner, str) or not winner.strip():
+            continue
+        correct = norm_name(winner) == norm_name(pred.get('predicted_winner'))
+        pred['actual_winner'] = winner
+        pred['correct'] = bool(correct)
+        pred['status'] = 'correct' if correct else 'incorrect'
     graded_rows = [p for p in history['predictions'] if p.get('status') in ('correct', 'incorrect')]
     history['summary'] = {
         'total': len(history['predictions']),
@@ -312,7 +321,7 @@ def main():
               f"different event names\n")
     report(graded, ungraded, len(predictions))
     if args.write:
-        write_back(graded, ungraded, HISTORY)
+        write_back(graded, ungraded, HISTORY, index)
 
 
 if __name__ == '__main__':

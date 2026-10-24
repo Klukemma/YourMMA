@@ -20,11 +20,52 @@ from pathlib import Path
 SCHEMA_VERSION = 3
 
 # Sits beside every model probability shown in the app.
-MODEL_CAVEAT = (
-    "Walk-forward accuracy 61.7%, AUC 0.66. Flat-stake ROI on the confirm "
-    "period (2020 onward, 2,339 priced bets) is -1.8%. Treat a pick as an "
-    "opinion, not an edge."
-)
+# The return figures in these two caveats are READ, not typed: they come from
+# experiments/strategies.json, the file the Record tab shows. Typed by hand
+# they had drifted - the card said -1.8% (one year's figure) where the
+# confirm period's measured return is -0.2%, so two screens of one app
+# disagreed. Missing file, missing figure: never a stale literal.
+STRATEGIES = Path(__file__).resolve().parent / "experiments" / "strategies.json"
+
+
+def _measured():
+    try:
+        return json.loads(STRATEGIES.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def _signed_pct(x):
+    return f"{'+' if x >= 0 else '-'}{abs(x) * 100:.1f}%"
+
+
+def model_caveat(measured=None):
+    m = _measured() if measured is None else measured
+    row = next((r for r in m.get("strategies", []) if r.get("label") == "MODEL"), None)
+    text = "Walk-forward accuracy 61.7%, AUC 0.66."
+    if row and row.get("roi") is not None and row.get("bets"):
+        text += (f" Flat-stake ROI on the confirm period ({m.get('confirm_from', 2020)} onward, "
+                 f"{row['bets']:,} priced bets) is {_signed_pct(row['roi'])}")
+        if row.get("roi_low") is not None and row.get("roi_high") is not None:
+            text += f", somewhere between {_signed_pct(row['roi_low'])} and {_signed_pct(row['roi_high'])}"
+        text += "."
+    return text + " Treat a pick as an opinion, not an edge."
+
+
+def parlay_caveat(measured=None):
+    m = _measured() if measured is None else measured
+    row = next((r for r in m.get("parlays", []) if r.get("label") == "3 legs"), None)
+    text = ("Combined probability multiplies the legs, which assumes the fights are "
+            "independent; they are not quite.")
+    if row and row.get("roi") is not None and row.get("parlays"):
+        text += (f" Backtested on the confirm period, 3-leg parlays returned "
+                 f"{_signed_pct(row['roi'])} over {row['parlays']:,} parlays - promising but about "
+                 "1.5 standard deviations, and those parlays share legs, so this is NOT "
+                 "an established edge.")
+    return text
+
+
+MODEL_CAVEAT = model_caveat()
 
 SIMULATION_CAVEAT = (
     "20,000 simulations from both fighters' measured rates. As a winner "
@@ -53,13 +94,7 @@ INTEL_CAVEAT = (
     "thinks, and leaves the number something that was actually measured."
 )
 
-PARLAY_CAVEAT = (
-    "Combined probability multiplies the legs, which assumes the fights are "
-    "independent; they are not quite. Backtested on the confirm period, "
-    "3-leg parlays returned +21.8% over 224 parlays - promising but about "
-    "1.5 standard deviations, and those parlays share legs, so this is NOT "
-    "an established edge."
-)
+PARLAY_CAVEAT = parlay_caveat()
 
 
 def _clean(value):
@@ -227,8 +262,8 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
                      "red_form": _form_payload(s.get("red_form")),
                      "blue_form": _form_payload(s.get("blue_form"))}
                     for s in skipped],
-        "caveats": {"model": MODEL_CAVEAT, "simulation": SIMULATION_CAVEAT,
-                    "parlay": PARLAY_CAVEAT, "flag": FLAG_CAVEAT,
+        "caveats": {"model": model_caveat(), "simulation": SIMULATION_CAVEAT,
+                    "parlay": parlay_caveat(), "flag": FLAG_CAVEAT,
                     "intel": INTEL_CAVEAT},
         "parlays": parlays or [],
     }
@@ -258,6 +293,13 @@ def _simulation_payload(summary):
     }
 
 
+def american(p):
+    """A probability as the American price that breaks even on it."""
+    if p is None or not 0 < p < 1:
+        return None
+    return -int(round(100 * p / (1 - p))) if p >= 0.5 else int(round(100 * (1 - p) / p))
+
+
 def parlay_payload(candidates):
     """The suggested parlays, with the combined probability spelled out."""
     legs = [{"fight": c.get("matchup"), "pick": c.get("pick"),
@@ -276,10 +318,11 @@ def parlay_payload(candidates):
             combined *= leg["prob"]
         out.append({
             "legs": chosen,
-            "combined_prob": combined,
-            # What the bookmaker would have to pay for this to break even.
-            "fair_odds": (None if not combined
-                          else int(round((1.0 / combined - 1.0) * 100))),
+            "combined_prob": _clean(None if combined is None else round(combined, 6)),
+            # What the bookmaker would have to pay for this to break even, as
+            # an American price: a parlay more likely than not is a favourite
+            # (-141 at 58%), not "+71", which no book would print.
+            "fair_odds": american(combined),
         })
     return out
 
@@ -320,6 +363,62 @@ def names_payload(name_by_id):
     }
 
 
+def by_event(history, limit=10):
+    """Graded picks per card, newest first: [{date, event, graded, correct}].
+
+    Counted by grade.py's own rules, so the cards add up to its unique-bout
+    record: picks logged after their card never count, a bout is its most
+    recent pick, and a bout logged twice (a card renamed and re-logged) is one
+    bout - matched as grade.py matches, the same two fighters within its date
+    tolerance (an Australian card is logged a day apart, sometimes across a
+    month end). Keyed by the card's date, not its name.
+    """
+    from collections import Counter
+    from grade import DATE_TOLERANCE, deduplicate
+    from name_resolution import norm_name
+
+    def day(pick):
+        try:
+            return datetime.strptime(str(pick.get("event_date"))[:10], "%Y-%m-%d")
+        except ValueError:
+            return None
+
+    kept = []          # [(pair, day, pick)]
+    for pick in deduplicate((history or {}).get("predictions", [])):
+        if pick.get("status") not in ("correct", "incorrect") or day(pick) is None:
+            continue
+        pair = tuple(sorted((norm_name(pick.get("red_corner")), norm_name(pick.get("blue_corner")))))
+        twin = next((i for i, (p, d, _) in enumerate(kept)
+                     if p == pair and abs(d - day(pick)) <= DATE_TOLERANCE), None)
+        if twin is None:
+            kept.append((pair, day(pick), pick))
+        elif str(pick.get("timestamp") or "") > str(kept[twin][2].get("timestamp") or ""):
+            kept[twin] = (pair, day(pick), pick)
+    cards = {}
+    for _, _, pick in kept:
+        card = cards.setdefault(str(pick.get("event_date") or "")[:10],
+                                {"names": Counter(), "graded": 0, "correct": 0})
+        card["names"][pick.get("event_name") or ""] += 1
+        card["graded"] += 1
+        card["correct"] += pick["status"] == "correct"
+    rows = [{"date": date, "event": card["names"].most_common(1)[0][0],
+             "graded": card["graded"], "correct": card["correct"]}
+            for date, card in cards.items() if date]
+    return sorted(rows, key=lambda r: r["date"], reverse=True)[:limit]
+
+
+def upcoming(history, today=None):
+    """Bouts picked and still to be fought: pending picks dated today or
+    later, one per bout. "Pending" alone also counts picks whose fight never
+    happened (a withdrawal, a renamed card), which will never be graded."""
+    from name_resolution import norm_name
+    today = today or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    bouts = {tuple(sorted((norm_name(p.get("red_corner")), norm_name(p.get("blue_corner")))))
+             for p in (history or {}).get("predictions", [])
+             if p.get("status") == "pending" and str(p.get("event_date") or "")[:10] >= today}
+    return len(bouts)
+
+
 def performance_payload(history, auc_by_year=None, backtest=None,
                         strategies=None):
     """The track record and what the strategies actually returned.
@@ -346,6 +445,8 @@ def performance_payload(history, auc_by_year=None, backtest=None,
             "unique_bouts": summary.get("unique_bouts_graded"),
             "accuracy": _clean(summary.get("accuracy")),
             "accuracy_basis": "unique bouts",
+            "by_event": by_event(history),
+            "upcoming": upcoming(history),
         },
         "auc_by_year": auc_by_year or [],
         "roi_by_year": backtest or [],

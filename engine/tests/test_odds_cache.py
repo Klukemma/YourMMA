@@ -429,3 +429,48 @@ def test_a_missing_bout_reaches_none_of_its_fighters_other_fights():
              now="2026-10-01T00:00:00Z")
     served = oc.for_card(cache, [("Andre Fili", "Kai Kamaka III", "2026-10-10")])
     assert "kai kamaka" not in served and "someone else" in served
+
+
+# --- a respelled first name -------------------------------------------------
+
+def _cache_with(*bouts):
+    cache = oc.empty()
+    for a, b, date in bouts:
+        cache["fights"][oc.fight_key(a, b, date)] = {
+            "fighter_a": a, "fighter_b": b, "date": date, "odds_a": -110, "odds_b": -105,
+            "book_a": "DK", "book_b": "DK", "first_seen": "2026-10-20T00:00:00Z",
+            "last_seen": "2026-10-22T00:00:00Z", "commence_time": f"{date}T20:30:00Z"}
+    return cache
+
+
+@pytest.mark.parametrize("card,feed", [
+    (("Alexander Volkanovski", "Movsar Evloev"), ("Alex Volkanovski", "Movsar Evloev")),
+    (("Lone'er Kavanagh", "Ramazan Temirov"), ("Lone'er Kavanagh", "Ramazonbek Temirov")),
+    (("Nikita Krylov", "Abdul Rakhman Yakhyaev"), ("Abdulrakhman Yakhyaev", "Nikita Krylov")),
+    (("Abus Magomedov", "Cam Rowston"), ("Abusupyian Magomedov", "Cam Rowston")),
+])
+def test_a_respelled_first_name_still_finds_the_bout(card, feed):
+    """The four UFC 333 bouts that went unpriced until aliases were typed."""
+    cache = _cache_with((*feed, "2026-10-24"))
+    entry = oc.find(cache, *card, "2026-10-24")
+    assert entry is not None and {entry["fighter_a"], entry["fighter_b"]} == set(feed)
+    odds = oc.for_card(cache, [(*card, "2026-10-24")])
+    for name in card:
+        assert name.lower() in odds
+
+
+def test_a_respelling_is_refused_when_two_bouts_qualify():
+    cache = _cache_with(("Alex Smith", "Bo Jones", "2026-10-24"), ("Al Smith", "Ben Jones", "2026-10-24"))
+    assert oc.find(cache, "Alexander Smith", "Bobby Jones", "2026-10-24") is None
+
+
+def test_a_respelling_needs_both_opponents_and_both_initials():
+    cache = _cache_with(("Alex Volkanovski", "Movsar Evloev", "2026-10-24"))
+    assert oc.find(cache, "Alexander Volkanovski", "Diego Lopes", "2026-10-24") is None
+    assert oc.find(cache, "Xander Volkanovski", "Movsar Evloev", "2026-10-24") is None
+    assert oc.find(cache, "Alexander Volkanovski", "Movsar Evloev", "2026-11-14") is None
+
+
+def test_brothers_are_never_matched_by_surname():
+    cache = _cache_with(("Said Nurmagomedov", "Sharabutdin Nurmagomedov", "2026-10-24"))
+    assert oc.find(cache, "Saidyokub Nurmagomedov", "Shamil Nurmagomedov", "2026-10-24") is None

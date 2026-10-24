@@ -212,3 +212,13 @@ def test_a_scheduled_run_syncs():
     text = (Path(__file__).resolve().parents[2] / ".github" / "workflows" / "update-dataset.yml").read_text()
     assert 'elif [ -n "${{ inputs.mode }}" ] && [ "${{ inputs.mode }}" != "sync" ]; then' in text
     assert text.count("inputs.mode == 'sync' || github.event_name == 'schedule'") == 2
+
+
+def test_a_sync_grades_the_picks_its_results_settle():
+    """No step ran grade.py, so the Record tab stayed at the last hand-run
+    grade while the results to grade it sat in the dataset."""
+    text = WORKFLOW.read_text()
+    sync = text[text.rindex("python engine/sync_kaggle.py sync"):]
+    block = sync[:sync.index("Verify the dataset")]
+    assert block.index("sync_wiki.py sync") < block.index("python engine/grade.py --write")
+    assert 'inputs.dry_run }}" != "true"' in block

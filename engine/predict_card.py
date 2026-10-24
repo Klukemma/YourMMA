@@ -2580,8 +2580,14 @@ def predict_fight_prod(red_name, blue_name, event_date=None, is_5rnd=False, is_t
         'winner': (r_resolved or red_name) if p_win > 0.5 else (b_resolved or blue_name),
         'win_prob': max(p_win, 1 - p_win),
         # The model without the market. Every edge is measured from this.
+        # FOR THE PICK, NOT FOR THE MODEL'S FAVOURITE. The pick follows the
+        # blend, so where the market outweighs the model the two disagree, and
+        # max(p, 1 - p) printed the other fighter's chance under the pick's
+        # name (Vagaev, UFC 333: "model alone 74%" for a model 26% underdog)
+        # and priced the pick's odds against it. Below 50% here means the
+        # model would have picked the other corner.
         'red_win_prob_model': float(p_win_model),
-        'win_prob_model': float(max(p_win_model, 1 - p_win_model)),
+        'win_prob_model': float(p_win_model if p_win > 0.5 else 1 - p_win_model),
         'market_prob': market_devigged,
         'market_blended': market_devigged is not None,
         'confidence': raw_confidence,

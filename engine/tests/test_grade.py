@@ -231,3 +231,36 @@ def test_the_engine_checks_the_cutoff_before_buying_a_line():
     guard = source.index("if _grade.picks_may_be_logged(EVENT_DATE, first_start=_card_first_start()):")
     assert guard < source.index("_should_fetch, _why = _odds_cache.decide(")
     assert "first_start=_first_start)" in source
+
+
+def _history(tmp_path, preds):
+    path = tmp_path / "history.json"
+    path.write_text(json.dumps({"predictions": preds, "summary": {}}))
+    return path
+
+
+def test_write_back_grades_each_log_against_its_own_bout(results, tmp_path):
+    """A second log of the same bout that picked the loser is wrong, not
+    stamped with the other log's 'right' - and a rematch months later is
+    still to come, not graded from the first fight."""
+    from grade import write_back
+    preds = [
+        dict(_pred('Alice One', 'Bob Two', 'Bob Two', '2026-02-01'), status='pending'),
+        dict(_pred('Alice One', 'Bob Two', 'Alice One', '2026-02-01', stamp='2026-01-02T00:00:00'), status='pending'),
+        dict(_pred('Alice One', 'Bob Two', 'Bob Two', '2026-12-12', stamp='2026-12-01T00:00:00'), status='pending'),
+    ]
+    graded, ungraded = grade(deduplicate(preds), results)
+    path = _history(tmp_path, preds)
+    write_back(graded, ungraded, path, results)
+    out = json.loads(path.read_text())["predictions"]
+    assert (out[0]["status"], out[0]["correct"]) == ("correct", True)
+    assert (out[1]["status"], out[1]["correct"]) == ("incorrect", False)
+    assert out[2]["status"] == "pending" and "correct" not in out[2]
+
+
+def test_the_shipped_history_never_contradicts_its_own_pick():
+    from name_resolution import norm_name
+    history = json.loads((ENGINE / "data" / "prediction_history.json").read_text())
+    for p in history["predictions"]:
+        if p.get("status") in ("correct", "incorrect"):
+            assert p["correct"] == (norm_name(p["actual_winner"]) == norm_name(p["predicted_winner"])), p

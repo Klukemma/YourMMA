@@ -272,3 +272,28 @@ def test_the_app_draws_the_record_beside_both_names():
     app = (Path(__file__).resolve().parents[2] / "app" / "app.js").read_text()
     assert "formLine(f.red_form)" in app and "formLine(f.blue_form)" in app
     assert "formLine(s.red_form)" in app
+
+
+def test_the_cards_on_the_record_add_up_the_way_grading_counts():
+    """Recent cards on the Record tab: one pick per bout, the last logged
+    before the card; a pick logged after it never counts; the same bout
+    logged a day apart across a month end is one bout."""
+    def pick(red, blue, date, status, stamp, event="E"):
+        return {"red_corner": red, "blue_corner": blue, "event_date": date,
+                "event_name": event, "status": status, "timestamp": stamp,
+                "predicted_winner": red}
+    history = {"predictions": [
+        pick("A", "B", "2026-10-17", "incorrect", "2026-10-15T10:00:00"),
+        pick("A", "B", "2026-10-17", "correct", "2026-10-17T09:00:00"),     # later, same card: this one
+        pick("A", "B", "2026-10-17", "incorrect", "2026-10-18T09:00:00"),   # after the card: never counts
+        pick("C", "D", "2026-10-17", "correct", "2026-10-16T10:00:00"),
+        pick("E", "F", "2026-01-31", "correct", "2026-01-29T10:00:00", "UFC 325 - Sydney"),
+        pick("E", "F", "2026-02-01", "correct", "2026-01-30T10:00:00", "UFC 325 - Australia"),
+        pick("G", "H", "2026-10-24", "pending", "2026-10-22T10:00:00"),
+    ]}
+    rows = ax.by_event(history)
+    assert [r["date"] for r in rows] == ["2026-10-17", "2026-02-01"]
+    assert rows[0] == {"date": "2026-10-17", "event": "E", "graded": 2, "correct": 2}
+    assert rows[1]["graded"] == 1
+    payload = ax.performance_payload(history)
+    assert payload["track_record"]["by_event"] == rows

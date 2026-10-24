@@ -143,7 +143,11 @@ def test_the_shipping_path_blends_and_keeps_the_raw_model():
     src = _source()
     assert "p_win_model = p_win" in src, "the raw model probability is not kept"
     assert "p_win = _blend.blend(p_win, market_devigged)" in src
-    assert "'win_prob_model': float(max(p_win_model, 1 - p_win_model))" in src
+    # The model's chance for the PICK, on the same side test as 'winner': not
+    # the model's own favourite, which is the other fighter wherever the
+    # market outweighed the model.
+    assert "'win_prob_model': float(p_win_model if p_win > 0.5 else 1 - p_win_model)" in src
+    assert "'winner': (r_resolved or red_name) if p_win > 0.5 else (b_resolved or blue_name)" in src
 
 
 def test_the_blend_devigs_rather_than_using_the_raw_implied_price():

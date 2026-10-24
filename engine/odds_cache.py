@@ -226,7 +226,42 @@ def find(cache, fighter_a, fighter_b, date):
             continue
         if abs((when - day).days) <= DATE_WINDOW_DAYS:
             return entry
-    return None
+    return _respelled(cache, fighter_a, fighter_b, day)
+
+
+def _initial_and_surname(name):
+    parts = _core(name).split()
+    return (parts[0][:1], parts[-1]) if parts else ("", "")
+
+
+def _respelled(cache, fighter_a, fighter_b, day):
+    """The one bout on file with the same two surnames and first initials.
+
+    The feed respells first names: Alex for Alexander Volkanovski, Ramazonbek
+    for Ramazan Temirov, Abdulrakhman for Abdul Rakhman Yakhyaev, Abusupyian
+    for Abus Magomedov - four on UFC 333 alone, each unpriced (and a credit
+    spent on every run) until someone typed an alias. Both fighters together
+    anchor the match: a different fight would need two people with these two
+    surnames and initials meeting within a day of the card. When two bouts on
+    file qualify, or the two surnames are the same (brothers), it refuses
+    rather than guess - a wrong price is worse than none.
+    """
+    want = sorted((_initial_and_surname(fighter_a), _initial_and_surname(fighter_b)))
+    if not want[0][1] or not want[1][1] or want[0][1] == want[1][1]:
+        return None
+    hits = []
+    for entry in cache["fights"].values():
+        got = sorted((_initial_and_surname(entry.get("fighter_a", "")),
+                      _initial_and_surname(entry.get("fighter_b", ""))))
+        if got != want:
+            continue
+        try:
+            when = datetime.strptime(entry["date"], "%Y-%m-%d")
+        except (KeyError, ValueError):
+            continue
+        if abs((when - day).days) <= DATE_WINDOW_DAYS:
+            hits.append(entry)
+    return hits[0] if len(hits) == 1 else None
 
 
 def _utc(stamp):
@@ -371,7 +406,14 @@ def for_card(cache, fights, existing=None):
             for key in [k for k in out if _core(k) in gone]:
                 del out[key]
             continue
-        out.update(_entry_odds(entry))
+        odds = _entry_odds(entry)
+        out.update(odds)
+        # Served under the card's own spelling too, so the matcher finds this
+        # bout's price by exact name rather than reaching it by a near one.
+        for card_name in (fighter_a, fighter_b):
+            side = [k for k in odds if _initial_and_surname(k) == _initial_and_surname(card_name)]
+            if len(side) == 1:
+                out[card_name.lower()] = odds[side[0]]
     return out
 
 
