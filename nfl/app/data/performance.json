@@ -162,11 +162,11 @@
     "season": 2025
    },
    {
-    "accuracy": 0.630435,
-    "games": 92,
-    "log_loss": 0.659651,
-    "market_accuracy": 0.619565,
-    "market_log_loss": 0.661446,
+    "accuracy": 0.634409,
+    "games": 93,
+    "log_loss": 0.658285,
+    "market_accuracy": 0.623656,
+    "market_log_loss": 0.660136,
     "season": 2026
    }
   ],
@@ -506,8 +506,8 @@
   "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
   "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
  },
- "data_through": "2026-10-20",
- "generated": "2026-10-22T17:16:52Z",
+ "data_through": "2026-10-22",
+ "generated": "2026-10-24T16:38:35Z",
  "props": {
   "2014-2019": {
    "pass": {
@@ -1522,16 +1522,16 @@
   }
  },
  "track_record": {
-  "accuracy": 0.75,
+  "accuracy": 0.769231,
   "ats": {
    "correct": 4,
-   "picks": 12
+   "picks": 13
   },
   "basis": "one pick per game, the last one logged before kickoff",
   "by_season": [
    {
-    "correct": 9,
-    "picks": 12,
+    "correct": 10,
+    "picks": 13,
     "season": 2026
    }
   ],
@@ -1541,24 +1541,30 @@
     "picks": 12,
     "season": 2026,
     "week": 6
+   },
+   {
+    "correct": 1,
+    "picks": 1,
+    "season": 2026,
+    "week": 7
    }
   ],
-  "correct": 9,
-  "graded": 12,
-  "log_loss": 0.697656,
+  "correct": 10,
+  "graded": 13,
+  "log_loss": 0.684808,
   "logged": 26,
-  "pending": 14,
+  "pending": 13,
   "td": {
-   "picks": 12,
-   "scored": 5
+   "picks": 18,
+   "scored": 9
   },
   "totals": {
    "correct": 5,
-   "picks": 12
+   "picks": 13
   },
   "yards": {
-   "over": 0,
-   "picks": 0
+   "over": 4,
+   "picks": 6
   }
  },
  "trained_on": 6484
