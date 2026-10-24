@@ -44,3 +44,13 @@ def test_every_game_day_has_a_run_before_it():
     nfl = (WF / "nfl.yml").read_text()
     for day in ("TUE", "THU", "SAT", "SUN", "MON"):
         assert f"9-12,1-2 {day}" in nfl, day
+
+
+def test_a_failed_run_keeps_the_prices_it_paid_for():
+    """An exception after the purchase used to lose the paid-for odds, and the
+    next run bought them again."""
+    text = (WF / "nfl.yml").read_text()
+    step = text.split("- name: Keep the prices a failed run paid for")[1].split("- name:")[0]
+    assert "if: failure() && (inputs.mode || 'predict') == 'predict'" in step
+    assert "nfl/data/odds_cache.json" in step and "git push" in step
+    assert text.index("- name: Run") < text.index("- name: Keep the prices a failed run paid for")

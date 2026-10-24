@@ -139,11 +139,14 @@ def caveats(backtest, td=None, props=None):
 def team_entry(code, state, record, rank, qb_names):
     name, conf, div, _ = nd.TEAMS[code]
     qb = state["last_qb"].get(code)
+    off, dfn = state["off_epa"].get(code), state["def_epa"].get(code)
     return {
         "team": code, "name": name, "conference": conf, "division": f"{conf} {div}",
         "elo": state["elo"].get(code), "rank": rank,
-        "off_epa": state["off_epa"].get(code), "def_epa": state["def_epa"].get(code),
-        "net_epa": (state["off_epa"].get(code, 0) - state["def_epa"].get(code, 0)),
+        "off_epa": off, "def_epa": dfn,
+        # Missing is missing: a team with no measured offence or defence has
+        # no net figure, not a made-up 0 or its offence alone.
+        "net_epa": None if off is None or dfn is None else off - dfn,
         "points_for": state["points_for"].get(code), "points_against": state["points_against"].get(code),
         "qb": qb_names.get(qb), "qb_rating": state["qb_rating"].get(qb),
         "qb_starts": state["qb_starts"].get(qb),

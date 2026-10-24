@@ -59,6 +59,18 @@ OFFENSE_POSITIONS = ("QB", "RB", "FB", "WR", "TE")
 FIRST_SEASON = 1999
 EASTERN = ZoneInfo("America/New_York")
 
+
+def eastern_day(t):
+    """The calendar day a game is played on, as the schedule dates it.
+
+    Kickoffs are stored in UTC, where every night game - Thursday, Sunday,
+    Monday - falls on the next day: Monday night's game read as Tuesday.
+    For display only; point-in-time logic compares the timestamps."""
+    import pandas as pd
+    t = pd.Timestamp(t)
+    t = t.tz_localize("UTC") if t.tzinfo is None else t
+    return t.tz_convert(EASTERN).strftime("%Y-%m-%d")
+
 # Old code -> the franchise's code today.
 FRANCHISE = {"OAK": "LV", "SD": "LAC", "STL": "LA"}
 

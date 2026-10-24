@@ -104,6 +104,36 @@ jobs:
             python nfl/engine/nfl_predict.py 2>&1 | tee nfl.log
           fi
 
+      # A RUN THAT FAILS AFTER BUYING PRICES STILL KEEPS THEM. An exception
+      # after the purchase (an nflverse column change reaching the player
+      # layer, say) would throw away credits already spent, and every run
+      # after it would buy them again until the crash was fixed. Each file is
+      # written whole by its own save(), so committing it alone is safe.
+      - name: Keep the prices a failed run paid for
+        if: failure() && (inputs.mode || 'predict') == 'predict'
+        run: |
+          PATHS="nfl/data/odds_cache.json nfl/data/news.json"
+          if [ -z "$(git status --porcelain -- $PATHS)" ]; then
+            echo "No prices or news to keep."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for p in $PATHS; do
+            if [ -e "$p" ]; then git add -- "$p"; fi
+          done
+          git commit -m "NFL: keep the prices and news a failed run gathered"
+          pushed=0
+          for attempt in 1 2 3; do
+            git push && { pushed=1; break; }
+            echo "push rejected, rebasing onto the branch (attempt $attempt)"
+            git pull --rebase --autostash origin "$(git rev-parse --abbrev-ref HEAD)" || exit 1
+            sleep $((attempt * 3))
+          done
+          if [ "$pushed" != 1 ]; then
+            git push || { echo "::error::push failed after 3 rebases"; exit 1; }
+          fi
+
       # The snapshot's health (every final with its statistics, and so on)
       # depends on nflverse's clock, so it is reported, never a gate.
       - name: Snapshot checks

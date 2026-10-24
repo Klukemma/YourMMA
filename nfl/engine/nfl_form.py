@@ -16,6 +16,8 @@ a game's own result can never appear beside it.
 
 import pandas as pd
 
+import nfl_data as nd
+
 
 def team_games(games, team):
     """Every game the franchise has played, newest first, from its side."""
@@ -63,7 +65,7 @@ def form(games, team, before, season, n=5):
             "season": r["season"],
             "week": r["week"],
             "game_type": r["game_type"],
-            "date": r["kickoff"].strftime("%Y-%m-%d"),
+            "date": nd.eastern_day(r["kickoff"]),
         })
     out = {"record": tally(regular), "last5": last}
     if post:

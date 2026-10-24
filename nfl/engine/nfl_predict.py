@@ -473,7 +473,7 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
     cav = nx.caveats(backtest, td_report, props_report)
     nx.write("week", {
         "season": season, "week": week, "game_type": game_type, "label": week_label(week, game_type),
-        "games": out_games, "data_through": stamp(last_played)[:10], "trained_on": trained_on,
+        "games": out_games, "data_through": nd.eastern_day(last_played), "trained_on": trained_on,
         "byes": byes(slate, game_type),
         "tiers": tiers, "value_enabled_at": backtest["value"]["enabled_at"],
         "caveats": cav, "as_of": stamp(now),
@@ -482,7 +482,7 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
     nx.write("performance", {
         "backtest": backtest, "track_record": nx.track_record(history), "td": td_report,
         "props": props_report,
-        "trained_on": trained_on, "caveats": cav, "data_through": stamp(last_played)[:10],
+        "trained_on": trained_on, "caveats": cav, "data_through": nd.eastern_day(last_played),
     }, out_dir)
     return out_games
 
