@@ -56,9 +56,29 @@ leave the app computing against last year's numbers.
 - It will not simulate a fighter it cannot measure. More than half a fighter's
   rates assumed means no simulation, because a confident 50/50 between two
   league-average fighters wearing real names is worse than saying nothing.
-- Every screen carries what its numbers are worth out of sample. The best
-  strategy returned +0.3% over 2,339 bets and the interval spans zero; that
-  sentence ships with the page rather than living in a commit message.
+- Every screen carries what its numbers are worth out of sample, read from
+  the measurement rather than typed: the card's return figure and the Record
+  tab's strategy table both come from `engine/experiments/strategies.json`,
+  each with its range, and no strategy's range excludes zero.
+
+## One design, two apps
+
+YourMMA and YourNFL share one stylesheet and one piece of app chrome (install,
+the menu, theme, the update notice, the icons): `shared/desk.css` and
+`shared/desk.js`. Each app carries a copy inlined between marker comments, so
+each stays one page and one script for its service worker and its offline
+file. Edit the shared files and copy them in:
+
+    python3 scripts/sync_desk.py          # write both apps' copies
+    python3 scripts/sync_desk.py --check  # what the tests run
+
+`engine/tests/test_desk_ui.py` (and the NFL suite, for its own copy) fails if
+either copy drifts from its source.
+
+The install offer is part of the page now: an Install banner and a menu entry
+on both apps. Android's own prompt is used where the browser offers one; on an
+iPhone the button shows the three Safari steps, and inside another app's
+browser it says to open the page in the real browser first.
 
 ## Serving it
 

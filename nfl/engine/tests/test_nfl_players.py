@@ -92,3 +92,18 @@ def test_the_most_valuable_player_out_leads_the_alerts():
     assert out["alerts"][0]["name"] == "Pat Q" and out["alerts"][0]["role"] == "most valuable player"
     # A questionable #3 is not an alert; a questionable MVP would be.
     assert [a["name"] for a in out["alerts"]] == ["Pat Q"]
+
+
+def test_a_player_who_produced_is_never_flagged_as_not_playing():
+    """The snap counts spell 'Chris Godwin' where the roster has 'Chris
+    Godwin Jr.'; matched exactly, the finished game opened with a false
+    'did not play' for a player who had just produced. A box-score line
+    settles it by id, and names are compared without suffixes."""
+    snaps = pd.DataFrame([{"game_id": "g4", "team": "TB", "player": "Chris Godwin", "offense_snaps": 51, "defense_snaps": 0},
+                          {"game_id": "g4", "team": "TB", "player": "Other Guy", "offense_snaps": 30, "defense_snaps": 0}])
+    offense = pd.DataFrame([{"game_id": "g4", "player_id": "mev", "season": 2026}])
+    d = _data(snaps=snaps)
+    d.offense = offense
+    assert npl.availability(d, {"gsis_id": "cg", "name": "Chris Godwin Jr."}, "TB", 2026, 4, "g4")["status"] == "active"
+    assert npl.availability(d, {"gsis_id": "mev", "name": "Mike Evans"}, "TB", 2026, 4, "g4")["status"] == "active"
+    assert npl.availability(d, {"gsis_id": "x", "name": "Not There"}, "TB", 2026, 4, "g4")["reason"] == "did not play"

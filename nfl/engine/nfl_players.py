@@ -25,6 +25,8 @@ For a game already played, availability is what happened: a player with no
 stats in it did not play.
 """
 
+import re
+
 import pandas as pd
 
 import nfl_data as nd
@@ -171,6 +173,25 @@ def key_players(data, team, season, before):
 
 # ------------------------------------------------------------- availability
 
+_NAME_SUFFIX = re.compile(r"\s+(jr|sr|ii|iii|iv|v)\.?$", re.I)
+
+
+def _plain_name(name):
+    """'Chris Godwin Jr.' and 'Chris Godwin' alike: lowercase, no suffix, no
+    punctuation."""
+    text = _NAME_SUFFIX.sub("", str(name or "").strip())
+    return re.sub(r"[^a-z ]", "", text.lower().replace("-", " ")).strip()
+
+
+def _box_score_line(data, pid, game_id):
+    """Whether the player has a stat line, offence or defence, in that game."""
+    for frame in (data.offense, data.defense):
+        if len(frame) and "player_id" in frame.columns and \
+                ((frame["game_id"] == game_id) & (frame["player_id"] == pid)).any():
+            return True
+    return False
+
+
 def availability(data, player, team, season, week, played_game=None):
     """{status, reason} for one player in one game.
 
@@ -182,10 +203,18 @@ def availability(data, player, team, season, week, played_game=None):
     # snap, not just the plays that make a box score (a receiver who was
     # never thrown to still played). nflverse posts them hours after the
     # result; until then, the pre-game report stands.
+    #
+    # A box-score line in that game settles it first, by id. The snap counts
+    # spell names their own way ("Chris Godwin" where the roster has "Chris
+    # Godwin Jr."), and an exact-name match flagged players who had just
+    # produced as "did not play"; names are compared without suffixes and
+    # punctuation for the rest.
     if played_game is not None and len(data.snaps):
         snaps = data.snaps[(data.snaps["game_id"] == played_game) & (data.snaps["team"] == team)]
         if len(snaps):
-            mine = snaps[snaps["player"] == name]
+            if _box_score_line(data, pid, played_game):
+                return {"status": "active", "reason": None}
+            mine = snaps[snaps["player"].map(_plain_name) == _plain_name(name)]
             played = bool(len(mine)) and float(mine[["offense_snaps", "defense_snaps"]].fillna(0).sum(axis=1).max()) > 0
             return {"status": "active" if played else "out", "reason": None if played else "did not play"}
 

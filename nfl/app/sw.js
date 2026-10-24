@@ -7,7 +7,7 @@
 // app's. A worker's scope is its own directory, so neither controls the other.
 //
 // Bump CACHE when the shape of what is cached changes.
-const CACHE = "yournfl-v2";
+const CACHE = "yournfl-v3";
 
 const SHELL = [
   "./",
@@ -19,6 +19,12 @@ const SHELL = [
   "icons/maskable-192.png",
   "icons/maskable-512.png",
   "icons/apple-touch-icon.png",
+  // The data too, so an installed app opened with no signal has something to
+  // show on its first launch. Served network-first all the same: these are
+  // only the fallback.
+  "data/week.json",
+  "data/teams.json",
+  "data/performance.json",
 ];
 
 // One file at a time: cache.addAll() rejects the whole install on one 404.

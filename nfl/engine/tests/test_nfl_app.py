@@ -86,3 +86,16 @@ def test_no_data_string_can_end_the_offline_pages_script(tmp_path):
     html = nfl_standalone.build(tmp_path / "x.html", data).read_text()
     blob = html.split("window.__YOURNFL_DATA__ = ")[1].split(";</script>")[0]
     assert "<" not in blob and json.loads(blob)["week"]["x"] == "A <!--<script> B </script> C"
+
+
+def test_the_shared_design_is_the_mma_apps_too():
+    """The NFL runner runs only these tests, so it checks its own copy of the
+    shared stylesheet and app chrome against the source as well."""
+    shared = APP.parents[1] / "shared"
+    html = (APP / "index.html").read_text()
+    js = (APP / "app.js").read_text()
+    css_block = html.split("/* desk.css:begin")[1].split("/* desk.css:end */")[0]
+    js_block = js.split("// desk.js:begin")[1].split("// desk.js:end")[0]
+    assert css_block.split("\n", 1)[1].strip() == (shared / "desk.css").read_text().strip()
+    assert js_block.split("\n", 1)[1].strip() == (shared / "desk.js").read_text().strip()
+    assert "DESK.banner()" in js and "beforeinstallprompt" in js

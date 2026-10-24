@@ -86,6 +86,21 @@ def physical(df):
     return out
 
 
+def placeholder_twins(df, ids):
+    """Placeholder ids ('new_<hex>', 'unk_<name>') a sync wrote for a fighter
+    the archive later holds under a real id that is exported too.
+
+    Exported as they were, 27 fighters - two on this week's card among them -
+    appeared twice in the search, and picking the placeholder showed a
+    one-bout career. A placeholder with no real twin stays: it is the only
+    record of that fighter. The placeholder's bout is not folded into the real
+    career, because the engine's own career columns leave it out too.
+    """
+    import pending_rows
+    canon = pending_rows._canon_ids(df)
+    return {i for i in ids if canon.get(i, i) != i and canon.get(i) in ids}
+
+
 def build(out_dir=DEFAULT_OUT):
     df = pd.read_csv(UFC_CSV, low_memory=False).sort_values("date")
     df = df.reset_index(drop=True)
@@ -103,6 +118,12 @@ def build(out_dir=DEFAULT_OUT):
         measurements = body.get(fighter_id, {})
         row.extend(ax._clean(measurements.get(key)) for key in extra)
 
+    twins = placeholder_twins(df, set(fighters["ids"]))
+    keep = [k for k, fighter_id in enumerate(fighters["ids"]) if fighter_id not in twins]
+    fighters["ids"] = [fighters["ids"][k] for k in keep]
+    fighters["values"] = [fighters["values"][k] for k in keep]
+    names = {i: n for i, n in latest_names(df).items() if i not in twins}
+
     history = json.loads(HISTORY.read_text()) if HISTORY.exists() else {}
     rows, meta = strategies()
     performance = ax.performance_payload(
@@ -116,7 +137,7 @@ def build(out_dir=DEFAULT_OUT):
 
     written = ax.write_all(out_dir, {
         "fighters": fighters,
-        "names": ax.names_payload(latest_names(df)),
+        "names": ax.names_payload(names),
         "performance": performance,
         "constants": ax.constants_payload(mu),
     })
@@ -139,7 +160,8 @@ DESCRIPTIONS = {
     "MODEL": "Bet every confident pick",
     "FADE (flagged only)": "Bet against the picks the second model flags as "
                            "likely wrong",
-    "COMBINED": "Model picks, minus the flagged ones",
+    "COMBINED": "Model picks, but bet against the ones the second model "
+                "flags as likely wrong",
 }
 
 

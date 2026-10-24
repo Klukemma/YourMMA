@@ -256,6 +256,13 @@ jobs:
             # Kaggle's own rows replace them whenever it catches up.
             python engine/sync_wiki.py sync \
               ${{ inputs.dry_run && '--dry-run' || '' }} 2>&1 | tee -a sync.log
+            # Then grade every logged pick the new results settle, so the
+            # app's record moves with the data rather than waiting for
+            # someone to run this by hand. prediction_history.json is under
+            # engine/data/, so the commit below carries it.
+            if [ "${{ inputs.dry_run }}" != "true" ]; then
+              python engine/grade.py --write 2>&1 | tee -a sync.log
+            fi
           fi
 
       - name: Verify the dataset still loads and ratings are consistent

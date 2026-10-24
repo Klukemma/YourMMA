@@ -21,7 +21,7 @@
 // not fail on a missing extra: a 404 on one icon should not cost the user an
 // offline app.
 
-const CACHE = "yourmma-v2";
+const CACHE = "yourmma-v3";
 
 // "./" is the start_url. The rest is everything the shell needs to render
 // before it asks for any data.
@@ -36,6 +36,14 @@ const SHELL = [
   "icons/maskable-192.png",
   "icons/maskable-512.png",
   "icons/apple-touch-icon.png",
+  // The data too, so an installed app opened with no signal has something to
+  // show on its first launch. Served network-first all the same: these are
+  // only the fallback.
+  "data/card.json",
+  "data/performance.json",
+  "data/names.json",
+  "data/constants.json",
+  "data/fighters.json",
 ];
 
 self.addEventListener("install", (event) => {
