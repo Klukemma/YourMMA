@@ -5,11 +5,16 @@
 //
 // Two strategies, because the app is two things:
 //
-//   the shell (HTML, JS, icons)  stale-while-revalidate. Serve the cached
-//       copy at once so the app opens instantly and offline, then fetch a
-//       fresh one in the background for next launch. The cost is that a push
-//       lands one launch late, which is the right trade for a page you open
-//       on a phone on a bus.
+//   the page and its code (HTML, JS)  network first, with a short wait.
+//       Ask the network; if it has not answered within SHELL_WAIT the cached
+//       copy is served and the network's answer, when it comes, refreshes the
+//       cache for next time. Offline it opens from the cache at once. This
+//       was stale-while-revalidate until a redesign shipped and an installed
+//       app kept showing the old screens for a whole launch: an update
+//       should land the first time the app is opened with a signal.
+//
+//   the icons and manifest  stale-while-revalidate: they rarely change, and
+//       a launch late is fine for them.
 //
 //   the data (data/*.json)  network-first. The card, the odds and the record
 //       change whenever the workflow runs, and showing yesterday's card as
@@ -21,7 +26,9 @@
 // not fail on a missing extra: a 404 on one icon should not cost the user an
 // offline app.
 
-const CACHE = "yourmma-v3";
+const CACHE = "yourmma-v4";
+// How long the page waits for the network before opening from the cache.
+const SHELL_WAIT = 2500;
 
 // "./" is the start_url. The rest is everything the shell needs to render
 // before it asks for any data.
@@ -67,11 +74,21 @@ self.addEventListener("activate", (event) => {
   })());
 });
 
-async function networkFirst(request, cache) {
-  try {
-    const fresh = await fetch(request);
+// Network first. With `wait`, a slow network is not waited on: after that
+// many milliseconds the cached copy is served, and the network's answer
+// still refreshes the cache when it lands (event.waitUntil keeps the worker
+// alive for it).
+async function networkFirst(request, cache, event, wait = 0) {
+  const fetching = fetch(request).then((fresh) => {
     if (fresh && fresh.ok) cache.put(request, fresh.clone());
     return fresh;
+  });
+  fetching.catch(() => {});
+  if (event) event.waitUntil(fetching.catch(() => {}));
+  try {
+    if (!wait) return await fetching;
+    const fallback = new Promise((resolve) => setTimeout(() => resolve(cache.match(request)), wait));
+    return (await Promise.race([fetching, fallback])) || await fetching;
   } catch (err) {
     const cached = await cache.match(request);
     if (cached) return cached;
@@ -100,12 +117,13 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
-    if (url.pathname.includes("/data/")) return networkFirst(request, cache);
+    if (url.pathname.includes("/data/")) return networkFirst(request, cache, event);
     if (request.mode === "navigate") {
       // A navigation to any URL in scope is the one page there is.
-      const response = await staleWhileRevalidate(request, cache);
-      return response || cache.match("index.html") || fetch(request);
+      const response = await networkFirst(request, cache, event, SHELL_WAIT).catch(() => null);
+      return response || (await cache.match("index.html")) || fetch(request);
     }
+    if (/\.(html|js)$/.test(url.pathname)) return networkFirst(request, cache, event, SHELL_WAIT);
     return staleWhileRevalidate(request, cache);
   })());
 });
