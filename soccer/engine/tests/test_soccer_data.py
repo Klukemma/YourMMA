@@ -130,3 +130,39 @@ def test_every_club_badge_is_readable():
     # A club whose own colours read keeps them.
     assert st.display("Arsenal")["fg"] == "#FFFFFF" and st.display("Dortmund")["fg"] == "#000000"
     assert st.display("Crystal Palace")["fg"] == "#FFFFFF"     # was red on blue
+
+
+def test_a_failed_or_wrong_download_keeps_what_is_on_file(tmp_path):
+    matches, fixtures = tmp_path / "m.csv.gz", tmp_path / "f.csv"
+    good = {sd.SEASON_URL.format(code="2526", league="SP1"): NEW.encode(), sd.FIXTURES_URL: NEW.encode()}
+    sd.sync(seasons=[2025], fetch=good.get, log=lambda *_: None, matches_path=matches, fixtures_path=fixtures)
+    assert len(sd.load_matches(matches)) == 1 and len(sd.load_fixtures(fixtures)) == 1
+
+    def flaky(url):
+        if "SP1" in url:
+            raise ConnectionError("503")
+        if url == sd.FIXTURES_URL:
+            return b"<html><body>Service unavailable</body></html>"
+        return None
+    lines = []
+    sd.sync(seasons=[2025], fetch=flaky, log=lines.append, matches_path=matches, fixtures_path=fixtures)
+    assert len(sd.load_matches(matches)) == 1 and len(sd.load_fixtures(fixtures)) == 1
+    assert any("KEPT ON FILE" in line for line in lines)
+
+
+def test_a_price_is_dated_when_it_was_first_seen(tmp_path):
+    fixtures = tmp_path / "f.csv"
+    fx = sd.frame(sd.parse(NEW.replace(",2,1,H,2,1,H,14,12,6,4,5,7,2,3,0,1,", ",,,,,,,,,,,,,,,,,").encode()))
+    fx["fetched_at"] = pd.Timestamp("2026-10-30 16:00")
+    fx.to_csv(fixtures, index=False)
+    again = sd.frame(sd.parse(NEW.replace(",2,1,H,2,1,H,14,12,6,4,5,7,2,3,0,1,", ",,,,,,,,,,,,,,,,,").encode()))
+    assert sd.first_seen(again, sd.load_fixtures(fixtures), pd.Timestamp("2026-11-01 07:17")).iloc[0] == pd.Timestamp("2026-10-30 16:00")
+    moved = again.assign(avg_h=2.5)
+    assert sd.first_seen(moved, sd.load_fixtures(fixtures), pd.Timestamp("2026-11-01 07:17")).iloc[0] == pd.Timestamp("2026-11-01 07:17")
+
+
+def test_the_result_is_read_from_the_goals():
+    rows = sd.parse(OLD.replace("1,1,D,0,0,D", "1,0,,0,0,D").encode(), 2006)
+    assert rows[0]["result"] == "H"
+    rows = sd.parse(OLD.replace("1,1,D,0,0,D", ",1,H,0,0,D").encode(), 2006)
+    assert rows[0]["result"] is None

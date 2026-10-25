@@ -13,11 +13,14 @@ name: Soccer predictions
 # On a schedule it runs predict through the season (August to May).
 # football-data.co.uk posts the weekend's fixtures with prices on Friday
 # afternoon and the midweek's on Tuesday afternoon, and its results after
-# each round; so: Friday and Tuesday evenings for the new picks, Saturday
-# and Sunday mornings to refresh before the day's games and grade the
-# day before, and Monday and Thursday to grade the round just played.
-# GitHub starts scheduled runs late under load, so each sits well ahead of
-# the kickoffs it has to beat.
+# each round; so: twice on Friday and Tuesday afternoons for the new picks
+# (the early run beats a 16:30 UTC Friday kickoff in Serie A; the later one
+# catches prices posted after it), Saturday and Sunday mornings to refresh
+# before the day's games and grade the day before, Monday and Thursday to
+# grade the round just played, and every morning over the Christmas and New
+# Year fixtures. GitHub starts scheduled runs late under load, and a match
+# that kicks off before any run has posted its price gets no pick - it is
+# never picked afterwards.
 on:
   workflow_dispatch:
     inputs:
@@ -31,12 +34,16 @@ on:
         type: boolean
         default: false
   schedule:
-    - cron: "47 16 * 8-12,1-5 FRI"   # the weekend's fixtures and prices
+    - cron: "47 13 * 8-12,1-5 FRI"   # the weekend's fixtures and prices
+    - cron: "47 16 * 8-12,1-5 FRI"   # ...and prices posted later in the afternoon
     - cron: "17 7 * 8-12,1-5 SAT"    # before Saturday's early games
     - cron: "17 7 * 8-12,1-5 SUN"    # before Sunday's; grade Saturday
     - cron: "17 9 * 8-12,1-5 MON"    # grade the weekend
-    - cron: "47 16 * 8-12,1-5 TUE"   # the midweek fixtures and prices
+    - cron: "47 13 * 8-12,1-5 TUE"   # the midweek fixtures and prices
+    - cron: "47 16 * 8-12,1-5 TUE"   # ...and prices posted later in the afternoon
     - cron: "17 9 * 8-12,1-5 THU"    # grade the midweek round
+    - cron: "17 8 20-31 12 *"        # the Christmas fixtures
+    - cron: "17 8 1-3 1 *"           # ...and New Year's
 
 permissions:
   contents: write

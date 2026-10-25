@@ -184,8 +184,27 @@ def parse(body, season=None):
                 rec[column] = value if value in ("H", "D", "A") else None
             else:
                 rec[column] = _number(value) if value is not None else None
+        # The result is read from the goals: a file whose FTR is missing, or a
+        # row with a result but a goal count missing, would otherwise grade a
+        # pick against nothing or crash the table.
+        hg, ag = rec["hg"], rec["ag"]
+        rec["result"] = None if hg is None or ag is None else "H" if hg > ag else "A" if hg < ag else "D"
         out.append(rec)
     return out
+
+
+REQUIRED = ("Div", "Date", "HomeTeam", "AwayTeam")
+
+
+def looks_right(body):
+    """Whether a downloaded body is a football-data.co.uk CSV at all: an
+    HTML error page served with a 200 must not replace a good file."""
+    try:
+        text = body.decode("utf-8-sig") if isinstance(body, bytes) else body
+    except UnicodeDecodeError:
+        text = body.decode("latin-1")
+    head = text.lstrip("\ufeff").split("\n", 1)[0]
+    return all(col in head.split(",") for col in REQUIRED)
 
 
 def frame(rows, columns=COLUMNS):
@@ -246,17 +265,32 @@ def sync(seasons=None, full=False, today=None, fetch=_fetch, log=print,
     elif seasons is None:
         month = pd.Timestamp(today or datetime.now(timezone.utc)).month
         seasons = [now - 1, now] if month in (7, 8) else [now]
-    fetched = {}
+    fetched, problems = {}, []
     for season in seasons:
         for league in LEAGUES:
-            body = fetch(SEASON_URL.format(code=season_code(season), league=league))
+            # One file failing (a 503, a timeout, a page that is not the CSV)
+            # keeps that league-season as it is on file; it never costs the
+            # run the other files or the fixtures.
+            try:
+                body = fetch(SEASON_URL.format(code=season_code(season), league=league))
+            except Exception as err:          # noqa: BLE001 - logged, kept, run continues
+                problems.append(f"{league} {season}")
+                log(f"   {league} {season}: download failed ({err.__class__.__name__}); kept what is on file")
+                continue
             if not body:
                 log(f"   {league} {season}: not published")
+                continue
+            if not looks_right(body):
+                problems.append(f"{league} {season}")
+                log(f"   {league} {season}: NOT A football-data.co.uk CSV; kept what is on file")
                 continue
             rows = parse(body, season)
             if rows:
                 fetched[(league, season)] = rows
                 log(f"   {league} {season}: {len(rows)} matches")
+            else:
+                problems.append(f"{league} {season}")
+                log(f"   {league} {season}: NO ROWS PARSED (format change?); kept what is on file")
     old = load_matches(matches_path) if Path(matches_path).exists() else frame([])
     if fetched:
         keep = ~old.set_index(["league", "season"]).index.isin(list(fetched))
@@ -268,16 +302,49 @@ def sync(seasons=None, full=False, today=None, fetch=_fetch, log=print,
     _write(merged, Path(matches_path))
     log(f"   matches: {len(merged)} on file, {merged['result'].notna().sum()} with a result")
 
-    body = fetch(FIXTURES_URL)
-    if body:
+    try:
+        body = fetch(FIXTURES_URL)
+    except Exception as err:                  # noqa: BLE001 - logged, kept
+        body = None
+        problems.append("fixtures")
+        log(f"   fixtures: download failed ({err.__class__.__name__}); kept what is on file")
+    if body and not looks_right(body):
+        problems.append("fixtures")
+        log("   fixtures: NOT A football-data.co.uk CSV; kept what is on file")
+    elif body:
         stamp = pd.Timestamp(datetime.now(timezone.utc).replace(tzinfo=None)).floor("s")
         fx = frame(parse(body))
-        fx["fetched_at"] = stamp
         fx = order(fx[fx["league"].isin(LEAGUES)])
+        fx["fetched_at"] = first_seen(fx, load_fixtures(fixtures_path), stamp)
         Path(fixtures_path).parent.mkdir(parents=True, exist_ok=True)
         fx.to_csv(fixtures_path, index=False)
-        log(f"   fixtures: {len(fx)} still to play, prices as of {stamp:%Y-%m-%d %H:%M} UTC")
+        log(f"   fixtures: {len(fx)} still to play, fetched {stamp:%Y-%m-%d %H:%M} UTC")
+    if problems:
+        log(f"   KEPT ON FILE after a failed or unreadable download: {', '.join(problems)}")
     return merged
+
+
+PRICE_COLUMNS = ("avg_h", "avg_d", "avg_a", "avg_o25", "avg_u25")
+
+
+def first_seen(fx, old, stamp):
+    """When each fixture's prices were first seen: the earlier fetch's time
+    where the match was on file with the same prices, this fetch's
+    otherwise. The fixtures file is re-fetched every run, and a Friday price
+    must not be labelled as Sunday's."""
+    out = pd.Series(stamp, index=fx.index)
+    if old is None or not len(old) or "fetched_at" not in old:
+        return out
+    prev = old.drop_duplicates("match_id", keep="last").set_index("match_id")
+    for i, row in fx.iterrows():
+        if row["match_id"] not in prev.index:
+            continue
+        p = prev.loc[row["match_id"]]
+        same = all((pd.isna(row[c]) and pd.isna(p[c])) or (not pd.isna(row[c]) and not pd.isna(p[c])
+                   and abs(float(row[c]) - float(p[c])) < 1e-9) for c in PRICE_COLUMNS)
+        if same and not pd.isna(p["fetched_at"]):
+            out[i] = p["fetched_at"]
+    return out
 
 
 # ------------------------------------------------------------- loaders

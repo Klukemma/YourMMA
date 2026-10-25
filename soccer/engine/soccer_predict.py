@@ -53,6 +53,11 @@ def combined(matches, fixtures, now):
     already in the results file is a played match and comes from there."""
     up = fixtures[fixtures["kickoff"] > now].drop(columns=["fetched_at"], errors="ignore")
     up = up[~up["match_id"].isin(matches["match_id"])]
+    # A match already played - perhaps earlier than the fixtures file says -
+    # is in the results under its own date; never pick it again.
+    played = set(zip(matches.loc[matches["result"].notna(), "league"], matches.loc[matches["result"].notna(), "season"],
+                     matches.loc[matches["result"].notna(), "home"], matches.loc[matches["result"].notna(), "away"]))
+    up = up[[k not in played for k in zip(up["league"], up["season"], up["home"], up["away"])]]
     frame = pd.concat([matches, up], ignore_index=True)
     return sd.order(frame)
 
@@ -154,7 +159,7 @@ def three(df_row):
     return {"p_h": float(df_row["p_h"]), "p_d": float(df_row["p_d"]), "p_a": float(df_row["p_a"])}
 
 
-def match_entry(row, model_p, blend_p, model_only, p_o25, market_o25, matches, now, fetched_at):
+def match_entry(row, model_p, blend_p, model_only, p_o25, market_o25, matches, now, priced_at):
     probs = {"H": blend_p["p_h"], "D": blend_p["p_d"], "A": blend_p["p_a"]}
     has = all(v == v and v is not None for v in probs.values())
     pick = max(probs, key=probs.get) if has else None
@@ -172,7 +177,9 @@ def match_entry(row, model_p, blend_p, model_only, p_o25, market_o25, matches, n
                    "best": {"h": row.get("max_h"), "d": row.get("max_d"), "a": row.get("max_a")}},
         "p_o25": p_o25, "model_o25": float(model_p["p_o25"]) if model_p["p_o25"] == model_p["p_o25"] else None,
         "market_o25": market_o25,
-        "prices_at": stamp(fetched_at),
+        # When these prices were first fetched (soccer_data.first_seen), and
+        # only where there are prices.
+        "prices_at": stamp(priced_at) if has_mkt else None,
         "home_form": sx.form_payload(matches, row["home"], row["date"]),
         "away_form": sx.form_payload(matches, row["away"], row["date"]),
     }
@@ -192,22 +199,28 @@ def log_fields(e):
                 prices_at=e["prices_at"], price_source="football-data.co.uk")
 
 
-def final_entry(p, matches):
-    """A logged pick whose match is over, for the Matches tab: the pick as
-    it was logged before kickoff, beside the result."""
-    row = matches[matches["match_id"] == p["match_id"]]
-    date = row["date"].iloc[0] if len(row) else str(p["kickoff"])[:10]
-    return {
+def logged_entry(p, matches):
+    """A logged pick whose match has kicked off, for the Matches tab: the
+    pick as it was logged before kickoff, beside the result once it is in
+    ("final") and until then as "started" - never dropped in between."""
+    date = str(p["kickoff"])[:10]
+    out = {
         "match_id": p["match_id"], "league": p["league"], "season": p["season"], "kickoff": p["kickoff"],
-        "status": "final", "home": st.display(p["home"]), "away": st.display(p["away"]),
+        "status": "final" if p.get("final") else "started",
+        "home": st.display(p["home"]), "away": st.display(p["away"]),
         "p_h": p.get("p_h"), "p_d": p.get("p_d"), "p_a": p.get("p_a"), "pick": p.get("pick"),
         "pick_prob": p.get("pick_prob"), "model": p.get("model"), "market": p.get("market"),
-        "prices": p.get("prices"), "p_o25": p.get("p_o25"), "market_o25": p.get("market_o25"),
-        "prices_at": p.get("prices_at"), "logged_at": p.get("last_logged"),
-        "score": {"home": p["final"]["home"], "away": p["final"]["away"]}, "correct": p.get("correct"),
+        "prices": p.get("prices"), "p_o25": p.get("p_o25"), "model_o25": p.get("model_o25"),
+        "market_o25": p.get("market_o25"), "prices_at": p.get("prices_at"), "logged_at": p.get("last_logged"),
         "home_form": sx.form_payload(matches, p["home"], date),
         "away_form": sx.form_payload(matches, p["away"], date),
     }
+    pos = sx.positions(matches, p["league"], int(p["season"]), date)
+    out["home_position"], out["away_position"] = pos.get(p["home"]), pos.get(p["away"])
+    if p.get("final"):
+        out["score"] = {"home": p["final"]["home"], "away": p["final"]["away"]}
+        out["correct"] = p.get("correct")
+    return out
 
 
 # ------------------------------------------------------------- the run
@@ -220,6 +233,7 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print):
     matches = sd.load_matches()
     fixtures = sd.load_fixtures()
     fetched_at = fixtures["fetched_at"].max() if len(fixtures) else None
+    priced_at = dict(zip(fixtures["match_id"], fixtures["fetched_at"])) if len(fixtures) else {}
     frame = combined(matches, fixtures, now)
     log(f"2. model ({smod.MODEL}) over {len(frame):,} matches")
     preds = smod.predict(frame)
@@ -236,22 +250,29 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print):
         e = match_entry(row, preds.loc[i], blended.loc[i], bool(blended.loc[i, "model_only"]),
                         None if pd.isna(goals_used[i]) else float(goals_used[i]),
                         None if pd.isna(mkt_o25[i]) else float(mkt_o25[i]),
-                        matches, now, fetched_at)
+                        matches, now, priced_at.get(row["match_id"]))
         e["status"] = "upcoming"
         entries.append(e)
 
     log("3. log and grade")
     history = sl.load(log_path)
     logged = sum(sl.log_pick(history, log_fields(e), now) for e in entries if e["pick"])
-    graded = sl.grade(history, matches)
+    graded = sl.grade(history, matches, now)
     sl.save(history, log_path)
     for e in entries:
         p = history["picks"].get(e["match_id"])
         if p:
             e["logged_at"] = p.get("last_logged")
-    finals = [final_entry(p, matches) for p in history["picks"].values()
-              if p.get("final") and pd.Timestamp(p["kickoff"]).tz_localize(None) >= now - BEHIND]
-    log(f"   {len(entries)} upcoming, {logged} logged, {graded} graded, {len(finals)} recent results")
+    # Top-league results only: a second-tier match must not set "results to".
+    top_done = matches["league"].isin(sd.TOP) & matches["result"].notna()
+    data_through = matches.loc[top_done, "date"].max() if top_done.any() else None
+    window = min(now - BEHIND, pd.Timestamp(data_through) - BEHIND) if isinstance(data_through, str) else now - BEHIND
+    # Every logged pick that has kicked off in the window: graded beside its
+    # result, or "started" until the result is in.
+    shown_picks = [logged_entry(p, matches) for p in history["picks"].values()
+                   if not p.get("void") and sl.naive_utc(p["kickoff"]) <= now
+                   and sl.naive_utc(p["kickoff"]) >= window]
+    log(f"   {len(entries)} upcoming, {logged} logged, {graded} graded, {len(shown_picks)} kicked off or over")
 
     log("4. write the app data")
     bts = backtest_summary(frame, preds, blended, weights, goals_used)
@@ -261,26 +282,30 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print):
     # model's own view is shown beside it.
     basis = "market"
     caveats = sx.caveats(bts, basis)
-    data_through = matches.loc[matches["result"].notna(), "date"].max()
-    # The latest round's results, as facts (no pick: none was logged for
-    # them), so the tab is never empty between rounds.
-    shown = {e["match_id"] for e in finals}
-    last = matches[matches["league"].isin(sd.TOP) & matches["result"].notna()
-                   & (matches["date"] >= (pd.Timestamp(data_through) - pd.Timedelta(days=4)).strftime("%Y-%m-%d"))
-                   & ~matches["match_id"].isin(shown)] if isinstance(data_through, str) else matches.iloc[:0]
+    # The latest round's results, as facts, so the tab is never empty between
+    # rounds: only matches no pick was ever logged for (a logged one is shown
+    # with its pick above, whatever its id became).
+    logged_pairs = {sl.pairing(p) for p in history["picks"].values()}
+    last = matches[top_done & (matches["date"] >= (pd.Timestamp(data_through) - BEHIND).strftime("%Y-%m-%d"))] \
+        if isinstance(data_through, str) else matches.iloc[:0]
+    last = last[[(l, int(se), h, a) not in logged_pairs
+                 for l, se, h, a in zip(last["league"], last["season"], last["home"], last["away"])]]
     results = [{"match_id": r.match_id, "league": r.league, "date": r.date, "kickoff": stamp(r.kickoff),
                 "home": st.display(r.home), "away": st.display(r.away), "hg": int(r.hg), "ag": int(r.ag)}
                for r in last.itertuples()]
     sx.write("matches", {
         "season": season, "season_label": season_label, "leagues": sx.leagues(), "league_order": list(sd.TOP),
-        "matches": finals + entries, "results": results, "data_through": data_through, "prices_at": stamp(fetched_at),
+        "matches": shown_picks + entries, "results": results, "data_through": data_through,
+        "prices_at": stamp(fetched_at),
         "caveats": caveats, "basis": basis, "generated": sx.now_stamp(now),
     }, out_dir)
-    sx.write("tables", sx.tables_payload(matches, season, ratings=ratings or None, generated=sx.now_stamp(now),
+    # The combined frame, so a league whose season has fixtures but no
+    # results yet still has its clubs (and their ratings) listed.
+    sx.write("tables", sx.tables_payload(frame, season, ratings=ratings or None, generated=sx.now_stamp(now),
                                          caveat=caveats, season_label=season_label), out_dir)
     sx.write("performance", {"backtest": bts, "basis": basis, "track_record": live_record(history),
                              "generated": sx.now_stamp(now)}, out_dir)
-    return {"entries": entries, "finals": finals, "backtest": bts, "weights": weights}
+    return {"entries": entries, "shown": shown_picks, "backtest": bts, "weights": weights}
 
 
 def main(argv=None):

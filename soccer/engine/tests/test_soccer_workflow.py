@@ -34,3 +34,10 @@ def test_runs_follow_the_fixtures_and_the_results():
     soccer = (WF / "soccer.yml").read_text()
     for day in ("FRI", "SAT", "SUN", "MON", "TUE", "THU"):
         assert f"8-12,1-5 {day}" in soccer, day
+
+
+def test_a_friday_serie_a_kickoff_at_half_past_four_has_a_run_before_it():
+    soccer = (WF / "soccer.yml").read_text()
+    for day in ("FRI", "TUE"):
+        assert f'"47 13 * 8-12,1-5 {day}"' in soccer, day
+    assert '"17 8 20-31 12 *"' in soccer

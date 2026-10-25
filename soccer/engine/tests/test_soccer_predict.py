@@ -29,6 +29,10 @@ def _league(seed=0):
             date = day + pd.Timedelta(days=7 * (k // 5))
             if season == 2026 and date > pd.Timestamp("2026-10-20"):
                 break
+            # Each home-away pairing is played once a league season: the
+            # fixtures below are still to come in 2026.
+            if season == 2026 and (h, a) in (("Arsenal", "Chelsea"), ("Leeds", "Stoke")):
+                continue
             hg, ag = rng.poisson(1.5), rng.poisson(1.1)
             rows.append({"match_id": sd.match_id("E0", date.date(), h, a), "league": "E0", "season": season,
                          "date": date.strftime("%Y-%m-%d"), "time": "15:00",
@@ -128,3 +132,23 @@ def test_the_standalone_page_carries_the_data(run, tmp_path):
     html = out.read_text()
     assert "window.__YOURSOCCER_DATA__" in html and '<script type="module" src="app.js">' not in html
     assert 'rel="manifest"' not in html
+
+
+def test_a_kicked_off_pick_stays_on_screen_until_its_result_lands(run):
+    run("2026-10-30 18:00")
+    m, _, perf, _ = run("2026-10-31 15:30")
+    shown = {e["match_id"]: e for e in m["matches"]}
+    arsenal = next(k for k in shown if "arsenal" in k)
+    assert shown[arsenal]["status"] == "started" and shown[arsenal]["pick"] and "score" not in shown[arsenal]
+    assert perf["track_record"]["pending"] == 2
+
+
+def test_latest_results_never_list_a_match_that_had_a_pick(run):
+    run("2026-10-30 18:00")
+    played = _league()
+    extra = _fixtures().drop(columns=["fetched_at"]).assign(hg=[0, 1], ag=[2, 1], result=["A", "D"])
+    m, _, _, _ = run("2026-11-05 09:17", results=pd.concat([played, sd.frame(extra.to_dict("records"))]))
+    logged = {e["match_id"] for e in m["matches"] if e["status"] == "final"}
+    assert len(logged) == 2
+    assert not logged & {r["match_id"] for r in m["results"]}
+    assert all(e.get("prices_at") is None for e in m["matches"] if e["home"]["name"].startswith("Leeds"))

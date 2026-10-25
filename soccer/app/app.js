@@ -511,6 +511,7 @@ function formDetail(club, form) {
       <span class="mini"><br>${esc(shortDate(b.date))}${b.league_name ? ` · ${esc(b.league_name)}` : ""}</span></span></li>`).join("");
   return `<div class="panel"><div class="eyebrow">${esc(club.name)} · last ${form.length}</div><ul class="list">${items}</ul></div>`;
 }
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 const ordinal = (n) => {
   const s = ["th", "st", "nd", "rd"], v = n % 100;
   return `${n}${s[(v - 20) % 10] || s[v] || s[0]}`;
@@ -601,7 +602,7 @@ function matchRow(m, d) {
     ["Market", m.market ? `${three(m.market)} <span class="mini">the prices with the bookmakers' cut removed</span>` : "—"],
     ["Prices", m.prices && m.prices.avg ? `<span class="nowrap">${esc(m.home.code)} ${odds(m.prices.avg.h)}</span> · <span class="nowrap">draw ${odds(m.prices.avg.d)}</span> · <span class="nowrap">${esc(m.away.code)} ${odds(m.prices.avg.a)}</span>` : "—"],
   ];
-  if (m.prices_at) built.push(["Priced", esc(localStamp(m.prices_at))]);
+  if (m.prices_at) built.push(["Prices fetched", esc(localStamp(m.prices_at))]);
   if (m.logged_at) built.push(["Logged", `${esc(localStamp(m.logged_at))} <span class="mini">before kickoff</span>`]);
   const rows = (l) => l.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join("");
   const forms = formDetail(m.home, m.home_form) + formDetail(m.away, m.away_form);
@@ -689,9 +690,9 @@ const BOOT = {
       <div class="hero">
         <div class="eyebrow">${esc(d.season_label || "This week")}</div>
         <h1>Matches</h1>
-        <div class="facts">${[`${matches.length} matches`, `${picks} picks`,
+        <div class="facts">${[plural(matches.length, "match", "matches"), plural(picks, "pick", "picks"),
           d.data_through ? `results to ${esc(shortDate(d.data_through))}` : "",
-          d.prices_at ? `prices from ${esc(localStamp(d.prices_at))}` : ""].filter(Boolean).join(" · ")}</div>
+          d.prices_at ? `prices fetched ${esc(localStamp(d.prices_at))}` : ""].filter(Boolean).join(" · ")}</div>
       </div>
       ${fold(d.caveats && d.caveats.model)}
       ${seg}
@@ -703,7 +704,7 @@ const BOOT = {
     el.querySelectorAll("[data-filter]").forEach((b) => b.addEventListener("click", () => {
       const k = b.getAttribute("data-filter");
       el.querySelectorAll("[data-filter]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-      el.querySelectorAll("details.match").forEach((m) => { m.hidden = k !== "all" && m.getAttribute("data-league") !== k; });
+      el.querySelectorAll("details.match, li[data-league]").forEach((m) => { m.hidden = k !== "all" && m.getAttribute("data-league") !== k; });
       el.querySelectorAll("[data-day]").forEach((day) => {
         day.hidden = ![...day.querySelectorAll("details.match")].some((m) => !m.hidden);
       });
@@ -863,7 +864,9 @@ function renderRecord(d) {
 // ---------------------------------------------------------------- method
 
 function methodHtml() {
-  const market = MATCHES && MATCHES.basis === "market";
+  // The pick is the market, recalibrated, unless the data says otherwise -
+  // the Method tab can open before Matches has loaded.
+  const market = !(MATCHES && MATCHES.basis === "blend");
   return `
   <div class="hero"><div class="eyebrow">What this is</div><h1>How it works</h1></div>
   <div class="card"><h2>Reading a pick</h2>${LEGEND}</div>

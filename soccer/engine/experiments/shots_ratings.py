@@ -328,6 +328,13 @@ def rate(matches, **params):
         for key in {(lg[i], season[i]) for i in range(d0, d1) if L_TIER[lg[i]] == 1}:
             teams = roster[key]
             n = len(teams)
+            # A league whose roster is not yet whole - the new season's file
+            # not posted, only this weekend's fixtures known - has no table to
+            # read stakes from (and too few places to index): nothing at stake.
+            if n <= max(P["eur_place"], P["n_rel"]):
+                for t in teams:
+                    stake[t] = (0.0, 0.0, 0.0, float("nan"))
+                continue
             total = 2 * (n - 1)
             order_t = np.lexsort((-gdf[teams], -pts[teams]))
             ranked = pts[teams][order_t]
