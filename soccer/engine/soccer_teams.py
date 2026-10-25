@@ -183,6 +183,31 @@ TEAMS = {
 }
 
 NEUTRAL = ("#5B6170", "#FFFFFF")
+# The badge's code is three bold capitals: held to the 3:1 WCAG asks of large
+# text and UI glyphs, which keeps a club's own white-on-red (Arsenal, 4.5:1)
+# and replaces only the clashes (Crystal Palace's red on blue, 1.5:1).
+MIN_CONTRAST = 3.0
+
+
+def _luminance(hex_colour):
+    h = hex_colour.lstrip("#")
+    rgb = [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+    lin = [c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4 for c in rgb]
+    return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+
+
+def contrast(a, b):
+    la, lb = sorted((_luminance(a), _luminance(b)), reverse=True)
+    return (la + 0.05) / (lb + 0.05)
+
+
+def readable(bg, fg):
+    """The club's own text colour where it reads on its background; white
+    or black, whichever reads better, where it does not (Crystal Palace's
+    red on blue, say)."""
+    if contrast(bg, fg) >= MIN_CONTRAST:
+        return fg
+    return max(("#FFFFFF", "#000000"), key=lambda c: contrast(bg, c))
 
 
 def display(key):
@@ -192,4 +217,4 @@ def display(key):
     else:
         letters = "".join(ch for ch in str(key).upper() if ch.isalpha())
         name, code, (bg, fg) = key, letters[:3] or "?", NEUTRAL
-    return {"name": name, "code": code, "bg": bg, "fg": fg}
+    return {"name": name, "code": code, "bg": bg, "fg": readable(bg, fg)}

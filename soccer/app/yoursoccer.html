@@ -1,0 +1,1535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>YourSoccer Pick Desk</title>
+<meta name="description" content="Predictions for Europe's top five soccer leagues, blended with the betting market, with each club's form, the league tables and the model's own measured record.">
+<meta name="theme-color" content="#f3f4f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c10" media="(prefers-color-scheme: dark)">
+<!-- iOS ignores the manifest: Add to Home Screen reads these instead. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="YourSoccer">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* desk.css:begin - copied from shared/desk.css by scripts/sync_desk.py; edit that file */
+/* The Desk design system: one stylesheet for YourMMA, YourNFL and
+   YourSoccer. This file is the source. scripts/sync_desk.py copies it into
+   every app's index.html, and a test fails if any copy drifts - so the apps
+   look like one family because they are drawing from one sheet, not because
+   copies were kept in step by hand.
+
+   Red is the red corner and the home side; blue the blue corner and the away
+   side, as the sports themselves colour them. Teal and orange carry
+   good/bad: the green/red pair failed the deutan check (dE 4.3), these
+   clear it (11.6). Coloured TEXT uses the *-ink tokens, which keep 4.5:1 on
+   every surface they sit on; the base tokens are for fills and tints. */
+:root{
+  --ground:#f3f4f7; --surface:#ffffff; --raised:#ffffff; --sunk:#eceef2;
+  --line:#dfe2e8; --line-soft:#e9ebf0; --line-strong:#8a95ab;
+  --ink:#11131a; --ink-2:#4a505f; --ink-3:#656b7c;
+  --accent:#e23d43; --red:#e23d43; --blue:#2f72de;
+  --gain:#14998a; --loss:#d45a2c; --gold:#a8730e;
+  --gain-ink:#0f7065; --loss-ink:#a54622; --gold-ink:#845a0b; --red-ink:#c11d23; --blue-ink:#2563c7;
+  --win:#0e7a6d; --lose:#c2501f; --even:#6b6f7d;
+  --chip:#eef0f4; --chip-edge:rgba(0,0,0,.10);
+  --seg-on:#ffffff; --accent-fill:#d4393f;
+  --shadow:0 1px 2px rgba(17,19,26,.05),0 6px 20px rgba(17,19,26,.06);
+  --shadow-lg:0 -8px 40px rgba(17,19,26,.18);
+  --radius:16px; --radius-sm:11px;
+  --bar-h:52px;
+  --appbar-h:60px;   /* the row inside the app bar; the bar adds a 1px border */
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0b0c10; --surface:#14161d; --raised:#1a1d26; --sunk:#101218;
+  --line:#272b36; --line-soft:#1e212b; --line-strong:#5e6882;
+  --ink:#f1f3f8; --ink-2:#a8aebd; --ink-3:#878ea0;
+  --accent:#ef4d52; --red:#ef4d52; --blue:#4f8ff7;
+  --gain:#2ec4a6; --loss:#f07a4c; --gold:#e1a93c;
+  --gain-ink:#2ec4a6; --loss-ink:#f07a4c; --gold-ink:#e1a93c; --red-ink:#f35b60; --blue-ink:#4f8ff7;
+  --win:#12806f; --lose:#f07a4c;
+  --chip:#1d2029; --chip-edge:rgba(255,255,255,.22);
+  --seg-on:#2b2f3b; --accent-fill:#ce4247;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.25);
+  --shadow-lg:0 -10px 44px rgba(0,0,0,.6);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ground:#0b0c10; --surface:#14161d; --raised:#1a1d26; --sunk:#101218;
+  --line:#272b36; --line-soft:#1e212b; --line-strong:#5e6882;
+  --ink:#f1f3f8; --ink-2:#a8aebd; --ink-3:#878ea0;
+  --accent:#ef4d52; --red:#ef4d52; --blue:#4f8ff7;
+  --gain:#2ec4a6; --loss:#f07a4c; --gold:#e1a93c;
+  --gain-ink:#2ec4a6; --loss-ink:#f07a4c; --gold-ink:#e1a93c; --red-ink:#f35b60; --blue-ink:#4f8ff7;
+  --win:#12806f; --lose:#f07a4c;
+  --chip:#1d2029; --chip-edge:rgba(255,255,255,.22);
+  --seg-on:#2b2f3b; --accent-fill:#ce4247;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.25);
+  --shadow-lg:0 -10px 44px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+/* Must beat any component's display: a class selector outranks the
+   user-agent [hidden] rule. */
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{min-height:100%}
+/* A bottom sheet holds the page still behind it. */
+html:has(.sheet-back){overflow:hidden}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font:400 15px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:none;
+}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  font-weight:600;letter-spacing:.01em;margin:0;text-wrap:balance;line-height:1.08}
+h1{font-size:30px} h2{font-size:21px} h3{font-size:17px}
+a{color:var(--blue-ink);text-underline-offset:2px}
+button{font:inherit;color:inherit}
+code{font:500 .92em "IBM Plex Mono",ui-monospace,monospace}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.mini{font-size:12.5px;color:var(--ink-3);line-height:1.45}
+.lede{color:var(--ink-2);font-size:14.5px;max-width:62ch;margin:0}
+.eyebrow{font:600 11px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
+
+/* ---------------------------------------------------------------- shell */
+.appbar{
+  position:sticky;top:0;z-index:20;
+  padding-top:env(safe-area-inset-top,0px);
+  background:color-mix(in srgb,var(--ground) 86%,transparent);
+  -webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);
+  border-bottom:1px solid var(--line-soft);
+}
+.appbar-in{max-width:760px;margin:0 auto;padding:0 10px 0 16px;
+  display:flex;align-items:center;gap:10px;height:var(--appbar-h)}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:inherit;min-width:0}
+.brand .logo{width:32px;height:32px;border-radius:9px;flex:none;box-shadow:0 0 0 1px var(--line)}
+.brand-name{font:700 22px/1 "Barlow Condensed",sans-serif;letter-spacing:.03em;
+  text-transform:uppercase;white-space:nowrap}
+.brand-name span{color:var(--accent)}
+.brand>span{min-width:0;overflow:hidden}
+.brand-sub{display:block;font:500 11px/1.2 "IBM Plex Sans",sans-serif;color:var(--ink-3);
+  letter-spacing:0;text-transform:none;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar .spacer{flex:1}
+/* The sport switch: the apps are one family. The current one is a label,
+   the others links - each with a 44px hit area around a 36px pill. */
+.switch{display:flex;background:var(--chip);border-radius:999px;padding:3px;gap:2px;flex:none}
+.switch a,.switch span{display:inline-flex;align-items:center;justify-content:center;min-height:36px;
+  font:700 12px/1 "IBM Plex Sans",sans-serif;letter-spacing:.06em;
+  padding:0 12px;border-radius:999px;text-decoration:none;color:var(--ink-3);min-width:44px;text-align:center}
+.switch a{position:relative}
+.switch a::after{content:"";position:absolute;inset:-4px -2px}
+.switch span[aria-current]{background:var(--seg-on);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+/* Three sports and the app's name share a phone's width: the switch is
+   compact (its hit areas stay 44px tall), and on a narrow phone the name
+   steps down a size and then the logo gives way. */
+.switch:has(>:nth-child(3)) a,.switch:has(>:nth-child(3)) span{padding:0 9px;min-width:0;font-size:11.5px;letter-spacing:.04em}
+@media (max-width:420px){
+  .appbar-in{gap:6px}
+  .brand{gap:7px}
+  .brand-name{font-size:19px;letter-spacing:.02em}
+}
+@media (max-width:380px){
+  .brand-name{font-size:17px}
+  .switch:has(>:nth-child(3)) a,.switch:has(>:nth-child(3)) span{padding:0 8px}
+}
+@media (max-width:340px){.brand .logo{display:none}}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;flex:none;
+  width:44px;height:44px;border-radius:12px;border:0;background:none;color:var(--ink-2);cursor:pointer}
+.iconbtn:active{background:var(--chip)}
+.iconbtn svg{width:22px;height:22px}
+
+.wrap{max-width:760px;margin:0 auto;
+  padding:14px 14px calc(var(--bar-h) + 28px + env(safe-area-inset-bottom,0px))}
+section.view{display:flex;flex-direction:column;gap:14px}
+
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:color-mix(in srgb,var(--surface) 88%,transparent);
+  -webkit-backdrop-filter:saturate(1.4) blur(16px);backdrop-filter:saturate(1.4) blur(16px);
+  border-top:1px solid var(--line-soft);
+  padding:4px max(8px,env(safe-area-inset-left,0px)) max(4px,env(safe-area-inset-bottom,0px));
+}
+.tabbar-in{max-width:520px;margin:0 auto;display:flex;gap:4px}
+.tabbar button{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-height:var(--bar-h);justify-content:center;
+  background:none;border:0;border-radius:14px;padding:3px 2px;cursor:pointer;
+  color:var(--ink-3);font:600 10.5px/1.1 "IBM Plex Sans",sans-serif;letter-spacing:.04em;
+}
+.tabbar button svg{width:24px;height:24px;transition:transform .18s ease}
+.tabbar button .pill{display:flex;align-items:center;justify-content:center;
+  width:56px;height:30px;border-radius:999px;transition:background .18s ease}
+.tabbar button[aria-selected="true"]{color:var(--ink)}
+.tabbar button[aria-selected="true"] .pill{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+
+/* ------------------------------------------------------------- headers */
+.hero{display:flex;flex-direction:column;gap:6px;padding:4px 2px 2px}
+.hero h1{font-size:31px}
+/* One quiet line of facts under a title - not a row of pills, which is
+   what a pick's tags look like. */
+.hero .facts{font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.hero .facts .warn{color:var(--gold-ink);font-weight:600}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  margin:6px 2px -4px}
+.section-head h2{font-size:19px}
+/* A day or card section that stays in view while its games scroll past,
+   pinned exactly under the app bar. */
+.sticky-head{position:sticky;top:calc(var(--appbar-h) + 1px + env(safe-area-inset-top,0px));z-index:5;
+  margin:4px -14px 0;padding:8px 16px 6px;color:var(--ink-2);
+  background:color-mix(in srgb,var(--ground) 92%,transparent);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+
+/* ---------------------------------------------------------- chips, tags */
+.chip,.tag{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  font:600 11.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.02em;
+  padding:6px 9px;border-radius:999px;background:var(--chip);color:var(--ink-2);border:0}
+.chip.num,.tag.num{font-family:"IBM Plex Mono",monospace;font-weight:500;letter-spacing:0}
+.tag.good,.chip.good{background:color-mix(in srgb,var(--gain) 15%,transparent);color:var(--gain-ink)}
+.tag.warn,.chip.warn{background:color-mix(in srgb,var(--gold) 16%,transparent);color:var(--gold-ink)}
+.tag.bad,.chip.bad{background:color-mix(in srgb,var(--loss) 15%,transparent);color:var(--loss-ink)}
+.tag.flat,.chip.flat{color:var(--ink-2)}
+.tag.accent,.chip.accent{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--red-ink)}
+button.chip{min-height:44px;padding:0 14px;font-size:13px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chips:has(>button.chip){gap:8px}
+.scroller{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -14px;padding:0 14px 2px;
+  -webkit-overflow-scrolling:touch}
+.scroller::-webkit-scrollbar{display:none}
+
+/* Segmented control: a filter with at most a handful of choices. */
+.seg{display:flex;background:var(--chip);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:none;border-radius:9px;min-height:44px;padding:0 6px;cursor:pointer;
+  font:600 12.5px/1 "IBM Plex Sans",sans-serif;color:var(--ink-3)}
+.seg button[aria-pressed="true"]{background:var(--seg-on);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.16)}
+
+/* A tap shows a press. iOS applies :active only when a touchstart listener
+   exists; desk.js adds one. */
+details.match>summary:active,details.fold>summary:active,details.cardfold>summary:active{
+  background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.tabbar button:active .pill,.seg button:active,.switch a:active,button.chip:active,.sheet .row:active,.detail-close:active{
+  background:color-mix(in srgb,var(--ink) 9%,transparent)}
+
+/* ---------------------------------------------------------------- cards */
+.card{background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:11px}
+.card h2{font-size:20px}
+.note{background:var(--sunk);border:1px solid var(--line-soft);border-radius:var(--radius-sm);
+  padding:12px 14px;font-size:13px;color:var(--ink-2);line-height:1.55}
+.note b{color:var(--ink);font-weight:600}
+.warnbox{border-left:3px solid var(--gold)}
+.err{border-left:3px solid var(--loss)}
+/* An explainer folded to its first lines: the numbers come first, the
+   caveat is one tap away and never gone. */
+details.fold{background:var(--sunk);border:1px solid var(--line-soft);border-radius:var(--radius-sm)}
+details.fold>summary{list-style:none;cursor:pointer;padding:11px 14px;display:flex;gap:10px;align-items:flex-start;
+  font-size:13px;color:var(--ink-2);line-height:1.5;min-height:44px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary .ic{flex:none;color:var(--gold-ink);margin-top:1px}
+details.fold>summary .ic svg{width:18px;height:18px}
+details.fold>summary .clip{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+details.fold[open]>summary .clip{display:block;-webkit-line-clamp:unset}
+details.fold>summary .more{margin-left:auto;flex:none;color:var(--blue-ink);font-weight:600;font-size:12.5px}
+details.fold[open]>summary .more{display:none}
+details.fold .fold-body{padding:0 14px 13px 42px;display:flex;flex-direction:column;gap:9px;
+  font-size:13px;color:var(--ink-2);line-height:1.55}
+/* A secondary section of an opened match, folded to its title. */
+details.fold.sub{background:var(--surface)}
+details.fold.sub>summary{align-items:center}
+details.fold.sub>summary b{color:var(--ink);font-weight:600}
+details.fold.sub .fold-body{padding:0 12px 12px}
+/* A record card folded to its title and what it found. A details inside a
+   .card, never a flex details: Safari has ignored flex on details. */
+details.cardfold>summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:5px;
+  min-height:44px;justify-content:center}
+details.cardfold>summary::-webkit-details-marker{display:none}
+details.cardfold .cf-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+details.cardfold .cf-head svg{flex:none;width:20px;height:20px;color:var(--ink-3);transition:transform .2s ease}
+details.cardfold[open] .cf-head svg{transform:rotate(180deg)}
+details.cardfold .take{font-size:14px;line-height:1.45;color:var(--ink-2)}
+.cardfold-body{display:flex;flex-direction:column;gap:11px;margin-top:11px}
+/* A legend: the real element on the left, what it means on the right. */
+.gloss{display:grid;grid-template-columns:auto 1fr;gap:10px 12px;margin:0;font-size:13.5px;align-items:baseline}
+.gloss dt{justify-self:start} .gloss dd{margin:0;color:var(--ink-2)}
+
+/* ------------------------------------------------------- the match card */
+/* One fight or one game: two sides, a probability bar, the pick. Tapping
+   it opens the detail. */
+.matches{display:flex;flex-direction:column;gap:10px}
+details.match{background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;
+  scroll-margin-top:calc(var(--appbar-h) + 1px + env(safe-area-inset-top,0px) + 8px)}
+/* 28px: the sticky day head a match sits under. */
+.day details.match{scroll-margin-top:calc(var(--appbar-h) + 1px + 28px + env(safe-area-inset-top,0px) + 8px)}
+details.match[open]{border-color:var(--line)}
+details.match>summary{list-style:none;cursor:pointer;padding:12px 14px 13px;display:flex;flex-direction:column;gap:9px}
+details.match>summary::-webkit-details-marker{display:none}
+details.match>summary:focus-visible{outline:2px solid var(--blue);outline-offset:-2px;border-radius:var(--radius)}
+.match-top{display:flex;align-items:center;gap:6px;min-height:22px}
+.match-top .when{font-size:12.5px;color:var(--ink-2);font-weight:500}
+details.match .chev{margin-left:auto;color:var(--ink-3);display:flex;transition:transform .2s ease}
+details.match .chev svg{width:20px;height:20px}
+details.match[open]>summary .chev{transform:rotate(180deg)}
+.badge{font:700 10.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.09em;text-transform:uppercase;
+  padding:4px 7px;border-radius:6px;background:var(--chip);color:var(--ink-2)}
+/* Neutral: red is the red corner and the home side, not "important". */
+.badge.accent{background:color-mix(in srgb,var(--ink) 12%,transparent);color:var(--ink)}
+.badge.gold{background:color-mix(in srgb,var(--gold) 17%,transparent);color:var(--gold-ink)}
+.badge.live{background:color-mix(in srgb,var(--loss) 16%,transparent);color:var(--loss-ink)}
+
+.sides{display:flex;flex-direction:column;gap:7px}
+/* A side: the corner's colour, the name over its record and last five, and
+   on the right the side's own chance. */
+.side{display:grid;grid-template-columns:4px minmax(0,1fr) auto;column-gap:11px;align-items:center}
+.side .mark{grid-row:1 / span 2;align-self:stretch;border-radius:4px;background:var(--line)}
+.side.r .mark{background:var(--red)} .side.b .mark{background:var(--blue)}
+.side .who{grid-column:2;display:flex;align-items:center;gap:7px;min-width:0}
+.side .nm{font-weight:600;font-size:15.5px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side .sub{grid-column:2;display:flex;align-items:center;gap:8px;min-width:0;margin-top:4px;flex-wrap:wrap}
+.side .rec{font-size:12.5px;color:var(--ink-2);font-weight:600;white-space:nowrap}
+.side .rec.none{font-weight:400;color:var(--ink-3)}
+.side .rec .src{font-style:normal;font-size:10.5px;font-weight:700;color:var(--ink-3);margin-left:3px}
+.side .p{grid-row:1 / span 2;grid-column:3;text-align:right;font:600 19px/1 "IBM Plex Mono",monospace;
+  color:var(--ink-3);font-variant-numeric:tabular-nums;padding-left:6px}
+.side .p small{font-size:12px;font-weight:500;margin-left:1px;color:var(--ink-3)}
+.side.picked .p{color:var(--ink)}
+/* With a pick made, the other side steps back so the pick reads first. */
+.side.picked .nm{font-weight:700}
+.sides:has(.picked) .side:not(.picked):not(.lost) .nm{font-weight:500;color:var(--ink-2)}
+.side.picked .p{font-size:22px}
+.sides:has(.picked) .side:not(.picked) .p{font-size:16px}
+.side .score{grid-row:1 / span 2;grid-column:3;font:600 22px/1 "IBM Plex Mono",monospace;padding-left:6px}
+.side.lost .nm,.side.lost .score{color:var(--ink-3)}
+/* Team badge: the club's colour behind its code, with an edge so a navy or
+   black badge does not vanish into a dark card. */
+.teamchip{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:24px;
+  padding:0 5px;border-radius:7px;font:700 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.04em;
+  color:#fff;background:var(--ink-3);box-shadow:inset 0 0 0 1px var(--chip-edge)}
+.side .at{font:700 10.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+/* Soccer's third result: a slim row between the two clubs. */
+.side.d .mark{background:var(--even)}
+.side.draw .nm{font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.side.draw.picked .nm{color:var(--ink);font-weight:700}
+
+.probbar{display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--sunk);gap:2px}
+.probbar i{display:block;min-width:2px}
+.probbar .r{background:var(--red)} .probbar .b{background:var(--blue)} .probbar .d{background:var(--even)}
+.probbar.none i{background:var(--line)}
+.probbar.has-pick i:not(.pk){opacity:.35}
+
+.pickline{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pickline .pick{display:inline-flex;align-items:center;gap:6px;font:700 12.5px/1 "IBM Plex Sans",sans-serif;
+  padding:6px 10px 6px 8px;border-radius:999px;background:var(--ink);color:var(--surface)}
+.pickline .pick svg{width:14px;height:14px}
+.pickline .pick .odds{font:500 12px/1 "IBM Plex Mono",monospace;opacity:.72;margin-left:2px}
+/* What the pick says beyond who: one quiet line of facts, not more pills. */
+.factline{font:500 12px/1.35 "IBM Plex Mono",monospace;color:var(--ink-3);margin-top:-3px}
+.factline .warn{color:var(--loss-ink);font-weight:600}
+
+/* Last results, newest first: a win a filled teal circle, a loss an orange
+   ring - they differ by shape as well as hue. */
+.last5{display:inline-flex;gap:3px;flex:none}
+.res{display:inline-flex;flex:none;align-items:center;justify-content:center;
+  width:21px;height:21px;border-radius:50%;font:700 9.5px/1 "IBM Plex Sans",sans-serif;
+  color:#fff;letter-spacing:0}
+.res.w{background:var(--win)} .res.d,.res.nc,.res.t{background:var(--even)}
+.res.l{background:none;color:var(--lose);box-shadow:inset 0 0 0 1.5px var(--lose)}
+/* A score inside the circle ("2-1") needs a pill, not a circle. */
+.last5.score5 .res{width:27px;border-radius:11px;font-size:9.5px;letter-spacing:-.02em}
+
+.alert{font-size:12.5px;line-height:1.4;padding:7px 10px;border-radius:9px;
+  border-left:3px solid var(--loss);background:color-mix(in srgb,var(--loss) 10%,transparent);color:var(--ink-2)}
+.alert b{color:var(--ink);font-weight:600}
+.alert.doubtful{border-left-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.alert.questionable{border-left-color:var(--line);background:var(--sunk)}
+
+/* The opened match. */
+.detail{border-top:1px solid var(--line-soft);padding:14px;
+  display:flex;flex-direction:column;gap:12px;background:var(--sunk)}
+.detail-close{align-self:center;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 18px;
+  border:0;border-radius:999px;background:var(--chip);color:var(--ink-2);font:600 13px/1 "IBM Plex Sans",sans-serif;cursor:pointer}
+.detail-close svg{width:16px;height:16px;transform:rotate(180deg)}
+.panel{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius-sm);
+  padding:12px 13px;display:flex;flex-direction:column;gap:8px}
+.panel>.eyebrow:first-child{margin-bottom:1px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13.5px;margin:0}
+.kv dt{color:var(--ink-3)} .kv dd{margin:0;min-width:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:440px){.two{grid-template-columns:1fr}}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat3>div{background:var(--sunk);border-radius:10px;padding:9px 10px}
+.stat3 .k{font:600 10.5px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.stat3 .v{font:600 17px/1.1 "IBM Plex Mono",monospace;margin-top:4px}
+ul.list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column}
+ul.list li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line-soft);font-size:13.5px}
+ul.list li:last-child{border-bottom:0}
+ul.list li .end{margin-left:auto;flex:none;text-align:right}
+ul.list .rk{min-width:22px;color:var(--ink-3);font-size:12px;padding-top:1px}
+ul.list .lead{min-width:40px;font-weight:600;color:var(--ink)}
+.st{font:700 10.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.06em;text-transform:uppercase;margin-left:5px;white-space:nowrap}
+.st.out{color:var(--loss-ink)} .st.doubtful{color:var(--gold-ink)} .st.questionable{color:var(--ink-3)} .st.scored{color:var(--gain-ink)}
+.news a{color:var(--ink);text-decoration:none;font-weight:500}
+.news a::after{content:" ↗";color:var(--blue-ink)}
+
+/* Bars split into labelled parts (KO / SUB / DEC). */
+.method{display:flex;gap:2px;height:28px;border-radius:8px;overflow:hidden;background:var(--line-soft)}
+.method i{display:flex;align-items:center;justify-content:center;
+  font:600 10.5px/1 "IBM Plex Mono",monospace;color:#fff;min-width:0;font-style:normal}
+.method .ko{background:#8c4b8f} .method .sb{background:#367399} .method .dc{background:#6b7280}
+.method .dr{background:var(--line)}
+.rounds{display:flex;align-items:flex-end;gap:6px;height:48px}
+.rounds div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.rounds b{display:block;width:100%;background:var(--blue);border-radius:4px 4px 0 0;opacity:.8}
+.rounds span{font:500 11px/1 "IBM Plex Mono",monospace;color:var(--ink-3)}
+
+/* Ranked lists of picks (most doubtful first, and the like). */
+ul.rank{list-style:none;padding:0;margin:0}
+ul.rank li{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line-soft);font-size:14px}
+ul.rank li:last-child{border-bottom:0}
+ul.rank li b{color:var(--ink);font-weight:600}
+ul.rank li .num{margin-left:auto;font-weight:600;font-size:15px}
+ul.rank .num.warn{color:var(--loss-ink)} ul.rank .num.good{color:var(--gain-ink)} ul.rank .num.flat{color:var(--ink-3)}
+.meter{flex:none;width:52px;height:6px;border-radius:9px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--loss);border-radius:9px}
+.meter.good i{background:var(--gain)} .meter.flat i{background:var(--ink-3)}
+
+/* ------------------------------------------------------------ compare */
+.pickers{display:grid;grid-template-columns:1fr;gap:10px}
+.pickers.pair{grid-template-columns:1fr 1fr}
+.field{display:flex;flex-direction:column;gap:6px;position:relative}
+.field label{font:600 10.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3)}
+.field input,.field select{width:100%;min-height:46px;padding:11px 13px;border-radius:12px;font-size:16px;
+  background:var(--raised);color:var(--ink);border:1px solid var(--line-strong);font-family:inherit;-webkit-appearance:none;appearance:none}
+.field select{background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
+.field input:focus,.field select:focus{outline:2px solid var(--blue);outline-offset:-1px}
+.field.r input,.field.r select{box-shadow:inset 3px 0 0 var(--red)}
+.field.b input,.field.b select{box-shadow:inset 3px 0 0 var(--blue)}
+/* Suggestions under a search box: real buttons, because a phone's datalist
+   is unreliable (iOS shows it in a strip, if at all). */
+.suggest{display:flex;flex-direction:column;background:var(--raised);border:1px solid var(--line);
+  border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.suggest button{border:0;background:none;text-align:left;padding:12px 13px;font-size:15px;cursor:pointer;
+  border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;gap:8px}
+.suggest button:last-child{border-bottom:0}
+.suggest button:active{background:var(--chip)}
+.suggest button:focus-visible{outline-offset:-2px}
+.suggest .mini{white-space:nowrap}
+/* A search box scrolls to the top when it takes the keyboard, so its
+   suggestions are not under the keyboard. (Hiding the title instead moved
+   the page as a suggestion was tapped, and the tap missed.) */
+.pickers .field{scroll-margin-top:calc(var(--appbar-h) + 1px + env(safe-area-inset-top,0px) + 10px)}
+.tape-head{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 4px}
+.tape-head .l{text-align:right}
+.tape{display:grid;grid-template-columns:1fr auto 1fr;gap:9px 10px;align-items:center;font-size:14px}
+.tape .lab{text-align:center;font:600 10.5px/1.25 "IBM Plex Sans",sans-serif;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);max-width:110px}
+.tape .l{text-align:right;justify-self:end} .tape .r2{text-align:left;justify-self:start}
+.tape .win{font-weight:700;color:var(--ink);padding:2px 7px;border-radius:7px}
+.tape .win.r{background:color-mix(in srgb,var(--red) 15%,transparent)}
+.tape .win.b{background:color-mix(in srgb,var(--blue) 15%,transparent)}
+.tape .head{font:700 16px/1.15 "Barlow Condensed",sans-serif;letter-spacing:.02em}
+.tape .head.l{color:var(--red-ink)} .tape .head.r2{color:var(--blue-ink)}
+.adv{display:flex;flex-direction:column;gap:10px}
+.adv-row{display:grid;grid-template-columns:78px 1fr 86px;gap:8px;align-items:center}
+.advval{font:500 11px/1.25 "IBM Plex Mono",monospace;color:var(--ink-2);text-align:right}
+.advval small{display:block;font:500 10.5px/1.2 "IBM Plex Sans",sans-serif;color:var(--ink-3);white-space:nowrap}
+.adv-row .lab{font:600 11px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--ink-3)}
+.gauge{position:relative;height:22px;background:var(--sunk);border-radius:6px}
+.gauge .mid{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line)}
+.gauge i{position:absolute;top:4px;bottom:4px;border-radius:3px}
+
+/* -------------------------------------------------------- record, charts */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (min-width:560px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--radius-sm);padding:13px 13px 12px;box-shadow:var(--shadow)}
+.tile .k{font:600 11px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3)}
+.tile .v{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
+  font-size:26px;font-weight:600;margin-top:7px;line-height:1}
+.tile .s{font-size:11.5px;color:var(--ink-3);margin-top:5px;line-height:1.35}
+.tile.hero-tile{grid-column:1 / -1;display:flex;align-items:center;gap:16px}
+.tile.hero-tile .v{font-size:38px;margin-top:4px}
+.tile.wide{grid-column:1 / -1}
+.ring{flex:none;width:76px;height:76px}
+.v.gain{color:var(--gain-ink)} .v.loss{color:var(--loss-ink)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font:600 11px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-3)}
+td.n,th.n{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+th.n{white-space:normal;vertical-align:bottom}
+td.n .mini{display:block;margin-top:2px;font-size:11px}
+td.gain{color:var(--gain-ink)} td.loss{color:var(--loss-ink)}
+/* A table that has to fit a phone without scrolling. */
+table.tight th,table.tight td{padding:8px 5px}
+/* A row's description on its own full-width row under it. */
+tr.has-sub td{border-bottom:0;padding-bottom:2px}
+tr.sub td{padding-top:0;font-size:12.5px;color:var(--ink-3)}
+tr.grp td{font:600 11px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink-3);padding-top:14px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
+svg{display:block;max-width:100%;height:auto}
+/* Chart text: px inside an SVG are user units, so this scales with the
+   viewBox and beats the presentation attributes. */
+.card svg[role="img"] text{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:22px;fill:var(--ink-3)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;
+  margin-right:5px;vertical-align:-1px}
+ul.plain{margin:0;padding-left:18px;font-size:14px;color:var(--ink-2);line-height:1.6}
+ul.plain li{margin-bottom:6px}
+ul.plain li b{color:var(--ink)}
+.mvp{margin-top:4px;color:var(--ink-2);white-space:nowrap}
+
+/* ------------------------------------------------------------ loading */
+.skeleton{display:flex;flex-direction:column;gap:10px}
+.skeleton i{display:block;height:118px;border-radius:var(--radius);background:var(--surface);
+  border:1px solid var(--line-soft);position:relative;overflow:hidden}
+.skeleton i.short{height:64px}
+.skeleton i::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--ink) 5%,transparent),transparent);
+  transform:translateX(-100%);animation:shimmer 1.3s infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+.loading{color:var(--ink-3);font-size:13.5px;padding:22px 0;text-align:center}
+.empty{text-align:center;padding:26px 12px;color:var(--ink-3);font-size:14px}
+
+/* ------------------------------------------------ install, sheet, toast */
+.banner{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--radius);padding:12px 12px 12px 14px;box-shadow:var(--shadow)}
+.banner img{width:42px;height:42px;border-radius:11px;flex:none}
+.banner .txt{flex:1;min-width:0}
+.banner .txt b{display:block;font-size:14.5px}
+.banner .txt span{font-size:12.5px;color:var(--ink-3)}
+@media (max-width:430px){
+  .banner{padding:6px 6px 6px 14px}
+  .banner img,.banner .btn svg,.banner .txt span{display:none}
+}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;
+  padding:10px 16px;border-radius:12px;border:0;cursor:pointer;text-decoration:none;
+  font:700 14px/1 "IBM Plex Sans",sans-serif;background:var(--accent-fill);color:#fff}
+.btn.ghost{background:var(--chip);color:var(--ink)}
+.btn.small{min-height:44px;padding:8px 13px;font-size:13px;border-radius:10px}
+.btn svg{width:18px;height:18px}
+.btn:active{filter:brightness(.92)}
+
+.sheet-back{position:fixed;inset:0;z-index:60;background:rgba(5,6,10,.5);
+  display:flex;align-items:flex-end;justify-content:center;animation:fade .18s ease}
+.sheet{width:100%;max-width:560px;background:var(--surface);border-radius:22px 22px 0 0;
+  box-shadow:var(--shadow-lg);padding:8px 18px calc(20px + env(safe-area-inset-bottom,0px));
+  max-height:88vh;max-height:88dvh;overflow:auto;position:relative;overscroll-behavior:contain;
+  animation:rise .24s cubic-bezier(.2,.8,.2,1)}
+.sheet .grab{width:38px;height:5px;border-radius:9px;background:var(--line);margin:4px auto 12px}
+.sheet .sheet-x{position:absolute;top:6px;right:8px}
+.sheet h2{font-size:23px;margin-bottom:4px;padding-right:44px}
+.sheet .row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.sheet .row:last-child{border-bottom:0}
+.sheet button.row{width:100%;border:0;border-bottom:1px solid var(--line-soft);background:none;text-align:left;cursor:pointer}
+.sheet a.row{text-decoration:none;color:inherit}
+.sheet .row .ic{width:38px;height:38px;border-radius:11px;background:var(--chip);display:flex;
+  align-items:center;justify-content:center;flex:none;color:var(--ink-2)}
+.sheet .row .ic svg{width:21px;height:21px}
+.sheet .row .t{flex:1;min-width:0;font-size:14.5px}
+.sheet .row .t small{display:block;color:var(--ink-3);font-size:12.5px;margin-top:2px}
+.sheet ol.steps{margin:10px 0 4px;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:12px}
+.sheet ol.steps li{counter-increment:s;display:flex;gap:12px;align-items:center;font-size:15px}
+.sheet ol.steps li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;
+  background:var(--chip);display:flex;align-items:center;justify-content:center;font:700 13px/1 "IBM Plex Sans",sans-serif}
+.sheet ol.steps>li>span{flex:1;min-width:0}
+/* An icon inside a sentence, drawn the size of the words around it. */
+svg.inl{display:inline-block;width:1.25em;height:1.25em;vertical-align:-.28em;color:var(--blue-ink);margin:0 1px}
+.sheet .actions{display:flex;gap:10px;margin-top:16px}
+.sheet .actions .btn{flex:1}
+
+.toast{position:fixed;left:50%;z-index:70;bottom:calc(var(--bar-h) + 26px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%);max-width:calc(100% - 28px);display:flex;align-items:center;gap:12px;
+  background:var(--ink);color:var(--surface);border-radius:14px;padding:11px 12px 11px 16px;
+  font-size:14px;box-shadow:var(--shadow-lg);animation:toastrise .22s ease}
+.toast button{border:0;background:none;color:inherit;text-decoration:underline;text-underline-offset:3px;
+  font:700 13.5px/1 "IBM Plex Sans",sans-serif;padding:8px 6px;cursor:pointer;white-space:nowrap}
+@keyframes rise{from{transform:translateY(16px);opacity:0}}
+@keyframes toastrise{from{transform:translate(-50%,16px);opacity:0}}
+@keyframes fade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+@media (min-width:760px){
+  .wrap{padding-left:20px;padding-right:20px}
+  .sticky-head{margin-left:-20px;margin-right:-20px;padding-left:22px}
+}
+.days{display:flex;flex-direction:column;gap:12px}
+.day .matches{margin-top:4px}
+.nowrap{white-space:nowrap}
+/* desk.css:end */
+</style>
+</head>
+<body>
+<header class="appbar">
+  <div class="appbar-in">
+    <a class="brand" href="./" aria-label="YourSoccer, back to the matches">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#14151b"/>
+        <circle cx="16" cy="16" r="10" fill="#e04a4a"/>
+        <path d="M16 12.2l3.6 2.6-1.4 4.2h-4.4l-1.4-4.2z" fill="#14151b"/>
+        <path d="M16 12.2V7.6M19.6 14.8l4.2-1.6M18.2 19l2.6 3.6M13.8 19l-2.6 3.6M12.4 14.8l-4.2-1.6" stroke="#14151b" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <span><span class="brand-name">Your<span>Soccer</span></span><span class="brand-sub" id="stamp">Pick Desk</span></span>
+    </a>
+    <span class="spacer"></span>
+    <nav class="switch" id="sport-switch" aria-label="Sport"><a href="../../app/">MMA</a><a href="../../nfl/app/">NFL</a><span aria-current="page">Soccer</span></nav>
+    <button class="iconbtn" id="menu-btn" type="button" aria-label="Menu and settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="view" id="view-matches"><div class="loading">Loading the matches…</div></section>
+  <section class="view" id="view-tables" hidden><div class="loading">Loading…</div></section>
+  <section class="view" id="view-record" hidden><div class="loading">Loading…</div></section>
+  <section class="view" id="view-method" hidden></section>
+</main>
+
+<nav class="tabbar" aria-label="Sections">
+  <div class="tabbar-in" role="tablist">
+    <button role="tab" id="tab-matches" aria-selected="true" aria-controls="view-matches"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8.2l3.3 2.4-1.3 3.9H10l-1.3-3.9z"/><path d="M12 8.2V3.6M15.3 10.6l4.3-1.4M14 14.5l2.7 3.7M10 14.5l-2.7 3.7M8.7 10.6L4.4 9.2"/></svg></span>Matches</button>
+    <button role="tab" id="tab-tables" aria-selected="false" aria-controls="view-tables"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Tables</button>
+    <button role="tab" id="tab-record" aria-selected="false" aria-controls="view-record"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Record</button>
+    <button role="tab" id="tab-method" aria-selected="false" aria-controls="view-method"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></span>Method</button>
+  </div>
+</nav>
+
+<script>window.__YOURSOCCER_BUILT__ = "2026-10-25 22:06 UTC";
+window.__YOURSOCCER_DATA__ = {"matches":{"basis":"market","caveats":{"draws":"A draw is rarely the single likeliest result, so it is rarely the pick - even though about a quarter of matches end level. Its chance is always shown.","model":"The pick is the betting market's chances, recalibrated on earlier seasons: across 2016-2025 the model alone picked 53.3% of results and the market 54.1%, and blending the model in added nothing the market did not already know. The model's own chances are shown beside each pick, labelled. Betting the model where it disagreed with the price did not make money. Treat a pick as an opinion with a measured hit rate, not an edge.","news":"The model does not read team news - injuries, suspensions, rotation. The betting market does, which is part of why the pick leans on it.","rating":"The model rates each club's attack and defence from its goals, shots on target and shots, weighted toward recent matches; a promoted club carries its rating up with a measured step. The rating is the model's own view - the pick on each match is the market's chances, recalibrated, because the market forecasts better.","rating_short":"The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first."},"data_through":"2026-10-21","generated":"2026-10-25T22:06:11Z","league_order":["E0","SP1","I1","D1","F1"],"leagues":{"D1":{"country":"Germany","name":"Bundesliga","short":"GER"},"E0":{"country":"England","name":"Premier League","short":"ENG"},"F1":{"country":"France","name":"Ligue 1","short":"FRA"},"I1":{"country":"Italy","name":"Serie A","short":"ITA"},"SP1":{"country":"Spain","name":"La Liga","short":"ESP"}},"matches":[{"away":{"bg":"#FFFFFF","code":"LYO","fg":"#1A3D8F","name":"Lyon"},"away_form":[{"date":"2026-10-18","ga":1,"gf":2,"home":true,"league":"F1","league_name":"Ligue 1","opponent":"Nice","opponent_name":"Nice","result":"W"},{"date":"2026-10-09","ga":2,"gf":1,"home":false,"league":"F1","league_name":"Ligue 1","opponent":"Lens","opponent_name":"Lens","result":"L"},{"date":"2026-09-19","ga":0,"gf":4,"home":true,"league":"F1","league_name":"Ligue 1","opponent":"Rennes","opponent_name":"Rennes","result":"W"},{"date":"2026-09-12","ga":0,"gf":0,"home":false,"league":"F1","league_name":"Ligue 1","opponent":"Paris FC","opponent_name":"Paris FC","result":"D"},{"date":"2026-09-04","ga":1,"gf":3,"home":true,"league":"F1","league_name":"Ligue 1","opponent":"Auxerre","opponent_name":"Auxerre","result":"W"}],"away_key":"Lyon","away_position":1,"home":{"bg":"#004170","code":"PSG","fg":"#FFFFFF","name":"Paris Saint-Germain"},"home_form":[{"date":"2026-10-17","ga":1,"gf":3,"home":false,"league":"F1","league_name":"Ligue 1","opponent":"Strasbourg","opponent_name":"Strasbourg","result":"W"},{"date":"2026-10-10","ga":1,"gf":3,"home":true,"league":"F1","league_name":"Ligue 1","opponent":"Le Mans","opponent_name":"Le Mans","result":"W"},{"date":"2026-09-20","ga":1,"gf":2,"home":false,"league":"F1","league_name":"Ligue 1","opponent":"Marseille","opponent_name":"Marseille","result":"W"},{"date":"2026-09-13","ga":0,"gf":1,"home":false,"league":"F1","league_name":"Ligue 1","opponent":"Brest","opponent_name":"Brest","result":"W"},{"date":"2026-09-04","ga":2,"gf":1,"home":true,"league":"F1","league_name":"Ligue 1","opponent":"Monaco","opponent_name":"Monaco","result":"L"}],"home_key":"Paris SG","home_position":2,"kickoff":"2026-10-26T19:30:00Z","league":"F1","logged_at":"2026-10-25T22:06:11Z","market":{"p_a":0.1538330879855056,"p_d":0.1899558373910089,"p_h":0.6562110746234854},"market_o25":0.6813953488372093,"match_id":"F1-20261026-parissg-lyon","model":{"p_a":0.1726283474624874,"p_d":0.21514975311362036,"p_h":0.6122218994238924},"model_o25":0.6056317211342221,"p_a":0.1369543458331468,"p_d":0.1794844856497051,"p_h":0.6835611685171481,"p_o25":0.6813953488372093,"pick":"H","pick_prob":0.6835611685171481,"prices":{"avg":{"a":6.1,"d":4.94,"h":1.43},"best":{"a":6.5,"d":5.25,"h":1.48}},"prices_at":"2026-10-25T13:01:48Z","season":2026,"status":"upcoming"},{"away":{"bg":"#D91A21","code":"OSA","fg":"#FFFFFF","name":"Osasuna"},"away_form":[{"date":"2026-10-18","ga":0,"gf":2,"home":true,"league":"SP1","league_name":"La Liga","opponent":"Santander","opponent_name":"Racing Santander","result":"W"},{"date":"2026-10-11","ga":5,"gf":2,"home":false,"league":"SP1","league_name":"La Liga","opponent":"Betis","opponent_name":"Real Betis","result":"L"},{"date":"2026-09-19","ga":1,"gf":1,"home":true,"league":"SP1","league_name":"La Liga","opponent":"Vallecano","opponent_name":"Rayo Vallecano","result":"D"},{"date":"2026-09-16","ga":4,"gf":0,"home":false,"league":"SP1","league_name":"La Liga","opponent":"Ath Madrid","opponent_name":"Atl\u00e9tico Madrid","result":"L"},{"date":"2026-09-12","ga":2,"gf":0,"home":true,"league":"SP1","league_name":"La Liga","opponent":"Espanol","opponent_name":"Espanyol","result":"L"}],"away_key":"Osasuna","away_position":10,"home":{"bg":"#D81E05","code":"SEV","fg":"#FFFFFF","name":"Sevilla"},"home_form":[{"date":"2026-10-18","ga":4,"gf":1,"home":false,"league":"SP1","league_name":"La Liga","opponent":"Real Madrid","opponent_name":"Real Madrid","result":"L"},{"date":"2026-10-12","ga":3,"gf":3,"home":false,"league":"SP1","league_name":"La Liga","opponent":"Levante","opponent_name":"Levante","result":"D"},{"date":"2026-09-19","ga":3,"gf":1,"home":true,"league":"SP1","league_name":"La Liga","opponent":"Barcelona","opponent_name":"Barcelona","result":"L"},{"date":"2026-09-16","ga":0,"gf":1,"home":false,"league":"SP1","league_name":"La Liga","opponent":"La Coruna","opponent_name":"Deportivo La Coru\u00f1a","result":"W"},{"date":"2026-09-11","ga":0,"gf":1,"home":true,"league":"SP1","league_name":"La Liga","opponent":"Valencia","opponent_name":"Valencia","result":"W"}],"home_key":"Sevilla","home_position":6,"kickoff":"2026-10-26T20:00:00Z","league":"SP1","logged_at":"2026-10-25T22:06:11Z","market":{"p_a":0.233983286908078,"p_d":0.2785515320334262,"p_h":0.48746518105849584},"market_o25":0.44297082228116713,"match_id":"SP1-20261026-sevilla-osasuna","model":{"p_a":0.24035787867711278,"p_d":0.2647540507797855,"p_h":0.4948880705431017},"model_o25":0.48864900802001043,"p_a":0.22168358358653514,"p_d":0.2789667143139924,"p_h":0.4993497020994724,"p_o25":0.44297082228116713,"pick":"H","pick_prob":0.4993497020994724,"prices":{"avg":{"a":4.0,"d":3.36,"h":1.92},"best":{"a":4.33,"d":3.4,"h":1.95}},"prices_at":"2026-10-25T13:01:48Z","season":2026,"status":"upcoming"}],"prices_at":"2026-10-25T13:01:48Z","results":[{"ag":2,"away":{"bg":"#034694","code":"CHE","fg":"#FFFFFF","name":"Chelsea"},"date":"2026-10-17","hg":0,"home":{"bg":"#003399","code":"EVE","fg":"#FFFFFF","name":"Everton"},"kickoff":"2026-10-17T11:30:00Z","league":"E0","match_id":"E0-20261017-everton-chelsea"},{"ag":1,"away":{"bg":"#CB3524","code":"ATM","fg":"#FFFFFF","name":"Atl\u00e9tico Madrid"},"date":"2026-10-17","hg":0,"home":{"bg":"#007FC8","code":"ESP","fg":"#FFFFFF","name":"Espanyol"},"kickoff":"2026-10-17T12:00:00Z","league":"SP1","match_id":"SP1-20261017-espanol-athmadrid"},{"ag":0,"away":{"bg":"#12A0D7","code":"NAP","fg":"#000000","name":"Napoli"},"date":"2026-10-17","hg":1,"home":{"bg":"#000000","code":"VEN","fg":"#F37321","name":"Venezia"},"kickoff":"2026-10-17T13:00:00Z","league":"I1","match_id":"I1-20261017-venezia-napoli"},{"ag":3,"away":{"bg":"#BA3733","code":"FCA","fg":"#FFFFFF","name":"Augsburg"},"date":"2026-10-17","hg":4,"home":{"bg":"#000000","code":"SVE","fg":"#FFFFFF","name":"Elversberg"},"kickoff":"2026-10-17T13:30:00Z","league":"D1","match_id":"D1-20261017-elversberg-augsburg"},{"ag":0,"away":{"bg":"#FFFFFF","code":"VFB","fg":"#E32219","name":"Stuttgart"},"date":"2026-10-17","hg":1,"home":{"bg":"#0A3F86","code":"HSV","fg":"#FFFFFF","name":"Hamburg"},"kickoff":"2026-10-17T13:30:00Z","league":"D1","match_id":"D1-20261017-hamburg-stuttgart"},{"ag":1,"away":{"bg":"#C3141E","code":"M05","fg":"#FFFFFF","name":"Mainz"},"date":"2026-10-17","hg":0,"home":{"bg":"#004D9D","code":"S04","fg":"#FFFFFF","name":"Schalke"},"kickoff":"2026-10-17T13:30:00Z","league":"D1","match_id":"D1-20261017-schalke04-mainz"},{"ag":0,"away":{"bg":"#FDE100","code":"BVB","fg":"#000000","name":"Dortmund"},"date":"2026-10-17","hg":0,"home":{"bg":"#EB1923","code":"FCU","fg":"#FFFFFF","name":"Union Berlin"},"kickoff":"2026-10-17T13:30:00Z","league":"D1","match_id":"D1-20261017-unionberlin-dortmund"},{"ag":2,"away":{"bg":"#0058A3","code":"SCP","fg":"#FFFFFF","name":"Paderborn"},"date":"2026-10-17","hg":2,"home":{"bg":"#1D9053","code":"SVW","fg":"#FFFFFF","name":"Werder Bremen"},"kickoff":"2026-10-17T13:30:00Z","league":"D1","match_id":"D1-20261017-werderbremen-paderborn"},{"ag":2,"away":{"bg":"#C8102E","code":"LIV","fg":"#FFFFFF","name":"Liverpool"},"date":"2026-10-17","hg":1,"home":{"bg":"#E30613","code":"BRE","fg":"#FFFFFF","name":"Brentford"},"kickoff":"2026-10-17T14:00:00Z","league":"E0","match_id":"E0-20261017-brentford-liverpool"},{"ag":0,"away":{"bg":"#F5A12D","code":"HUL","fg":"#000000","name":"Hull City"},"date":"2026-10-17","hg":1,"home":{"bg":"#FFFFFF","code":"FUL","fg":"#000000","name":"Fulham"},"kickoff":"2026-10-17T14:00:00Z","league":"E0","match_id":"E0-20261017-fulham-hull"},{"ag":2,"away":{"bg":"#0044A9","code":"IPS","fg":"#FFFFFF","name":"Ipswich Town"},"date":"2026-10-17","hg":3,"home":{"bg":"#6CABDD","code":"MCI","fg":"#1C2C5B","name":"Manchester City"},"kickoff":"2026-10-17T14:00:00Z","league":"E0","match_id":"E0-20261017-mancity-ipswich"},{"ag":0,"away":{"bg":"#05642C","code":"ELC","fg":"#FFFFFF","name":"Elche"},"date":"2026-10-17","hg":0,"home":{"bg":"#FFE667","code":"VIL","fg":"#005187","name":"Villarreal"},"kickoff":"2026-10-17T14:15:00Z","league":"SP1","match_id":"SP1-20261017-villarreal-elche"},{"ag":3,"away":{"bg":"#004170","code":"PSG","fg":"#FFFFFF","name":"Paris Saint-Germain"},"date":"2026-10-17","hg":1,"home":{"bg":"#009FE3","code":"STR","fg":"#000000","name":"Strasbourg"},"kickoff":"2026-10-17T15:15:00Z","league":"F1","match_id":"F1-20261017-strasbourg-parissg"},{"ag":3,"away":{"bg":"#0068A8","code":"INT","fg":"#000000","name":"Inter"},"date":"2026-10-17","hg":1,"home":{"bg":"#1A2F48","code":"BOL","fg":"#FFFFFF","name":"Bologna"},"kickoff":"2026-10-17T16:00:00Z","league":"I1","match_id":"I1-20261017-bologna-inter"},{"ag":1,"away":{"bg":"#FFFFFF","code":"RBL","fg":"#DD0741","name":"RB Leipzig"},"date":"2026-10-17","hg":6,"home":{"bg":"#DC052D","code":"FCB","fg":"#FFFFFF","name":"Bayern Munich"},"kickoff":"2026-10-17T16:30:00Z","league":"D1","match_id":"D1-20261017-bayernmunich-rbleipzig"},{"ag":1,"away":{"bg":"#670E36","code":"AVL","fg":"#95BFE5","name":"Aston Villa"},"date":"2026-10-17","hg":0,"home":{"bg":"#241F20","code":"NEW","fg":"#FFFFFF","name":"Newcastle United"},"kickoff":"2026-10-17T16:30:00Z","league":"E0","match_id":"E0-20261017-newcastle-astonvilla"},{"ag":5,"away":{"bg":"#A50044","code":"BAR","fg":"#EDBB00","name":"Barcelona"},"date":"2026-10-17","hg":2,"home":{"bg":"#00954C","code":"BET","fg":"#FFFFFF","name":"Real Betis"},"kickoff":"2026-10-17T16:30:00Z","league":"SP1","match_id":"SP1-20261017-betis-barcelona"},{"ag":1,"away":{"bg":"#E30613","code":"BRE","fg":"#FFFFFF","name":"Brest"},"date":"2026-10-17","hg":1,"home":{"bg":"#E01E13","code":"LIL","fg":"#FFFFFF","name":"Lille"},"kickoff":"2026-10-17T18:45:00Z","league":"F1","match_id":"F1-20261017-lille-brest"},{"ag":3,"away":{"bg":"#FFDD00","code":"RCL","fg":"#E2001A","name":"Lens"},"date":"2026-10-17","hg":1,"home":{"bg":"#005BAC","code":"TRO","fg":"#FFFFFF","name":"Troyes"},"kickoff":"2026-10-17T18:45:00Z","league":"F1","match_id":"F1-20261017-troyes-lens"},{"ag":0,"away":{"bg":"#A41F35","code":"GEN","fg":"#FFFFFF","name":"Genoa"},"date":"2026-10-17","hg":2,"home":{"bg":"#8E1F2F","code":"ROM","fg":"#F0BC42","name":"Roma"},"kickoff":"2026-10-17T18:45:00Z","league":"I1","match_id":"I1-20261017-roma-genoa"},{"ag":0,"away":{"bg":"#EE2523","code":"ATH","fg":"#FFFFFF","name":"Athletic Club"},"date":"2026-10-17","hg":0,"home":{"bg":"#FFFFFF","code":"VAL","fg":"#000000","name":"Valencia"},"kickoff":"2026-10-17T19:00:00Z","league":"SP1","match_id":"SP1-20261017-valencia-athbilbao"},{"ag":3,"away":{"bg":"#FFDD00","code":"LEC","fg":"#D7141A","name":"Lecce"},"date":"2026-10-18","hg":0,"home":{"bg":"#000000","code":"UDI","fg":"#FFFFFF","name":"Udinese"},"kickoff":"2026-10-18T10:30:00Z","league":"I1","match_id":"I1-20261018-udinese-lecce"},{"ag":0,"away":{"bg":"#008D36","code":"RAC","fg":"#FFFFFF","name":"Racing Santander"},"date":"2026-10-18","hg":2,"home":{"bg":"#D91A21","code":"OSA","fg":"#FFFFFF","name":"Osasuna"},"kickoff":"2026-10-18T12:00:00Z","league":"SP1","match_id":"SP1-20261018-osasuna-santander"},{"ag":0,"away":{"bg":"#EB172B","code":"SUN","fg":"#FFFFFF","name":"Sunderland"},"date":"2026-10-18","hg":2,"home":{"bg":"#DA291C","code":"BOU","fg":"#000000","name":"Bournemouth"},"kickoff":"2026-10-18T13:00:00Z","league":"E0","match_id":"E0-20261018-bournemouth-sunderland"},{"ag":0,"away":{"bg":"#1B458F","code":"CRY","fg":"#FFFFFF","name":"Crystal Palace"},"date":"2026-10-18","hg":5,"home":{"bg":"#0057B8","code":"BHA","fg":"#FFFFFF","name":"Brighton"},"kickoff":"2026-10-18T13:00:00Z","league":"E0","match_id":"E0-20261018-brighton-crystalpalace"},{"ag":1,"away":{"bg":"#DA291C","code":"MUN","fg":"#FBE122","name":"Manchester United"},"date":"2026-10-18","hg":1,"home":{"bg":"#FFFFFF","code":"LEE","fg":"#1D428A","name":"Leeds United"},"kickoff":"2026-10-18T13:00:00Z","league":"E0","match_id":"E0-20261018-leeds-manunited"},{"ag":5,"away":{"bg":"#2FAEE0","code":"MAR","fg":"#000000","name":"Marseille"},"date":"2026-10-18","hg":2,"home":{"bg":"#000000","code":"ANG","fg":"#FFFFFF","name":"Angers"},"kickoff":"2026-10-18T13:00:00Z","league":"F1","match_id":"F1-20261018-angers-marseille"},{"ag":3,"away":{"bg":"#003DA5","code":"COM","fg":"#FFFFFF","name":"Como"},"date":"2026-10-18","hg":1,"home":{"bg":"#482E92","code":"FIO","fg":"#FFFFFF","name":"Fiorentina"},"kickoff":"2026-10-18T13:00:00Z","league":"I1","match_id":"I1-20261018-fiorentina-como"},{"ag":1,"away":{"bg":"#000000","code":"SCF","fg":"#FFFFFF","name":"Freiburg"},"date":"2026-10-18","hg":2,"home":{"bg":"#E32221","code":"B04","fg":"#000000","name":"Leverkusen"},"kickoff":"2026-10-18T13:30:00Z","league":"D1","match_id":"D1-20261018-leverkusen-freiburg"},{"ag":1,"away":{"bg":"#0761AF","code":"ALA","fg":"#FFFFFF","name":"Alav\u00e9s"},"date":"2026-10-18","hg":2,"home":{"bg":"#8AC3EE","code":"CEL","fg":"#000000","name":"Celta Vigo"},"kickoff":"2026-10-18T14:15:00Z","league":"SP1","match_id":"SP1-20261018-celta-alaves"},{"ag":3,"away":{"bg":"#FFFFFF","code":"AJA","fg":"#005BAC","name":"Auxerre"},"date":"2026-10-18","hg":1,"home":{"bg":"#7FB4E3","code":"HAC","fg":"#00305E","name":"Le Havre"},"kickoff":"2026-10-18T15:15:00Z","league":"F1","match_id":"F1-20261018-lehavre-auxerre"},{"ag":0,"away":{"bg":"#E2001A","code":"ASM","fg":"#FFFFFF","name":"Monaco"},"date":"2026-10-18","hg":1,"home":{"bg":"#F58113","code":"FCL","fg":"#000000","name":"Lorient"},"kickoff":"2026-10-18T15:15:00Z","league":"F1","match_id":"F1-20261018-lorient-monaco"},{"ag":3,"away":{"bg":"#E2001A","code":"REN","fg":"#000000","name":"Rennes"},"date":"2026-10-18","hg":4,"home":{"bg":"#1D2E5C","code":"PFC","fg":"#FFFFFF","name":"Paris FC"},"kickoff":"2026-10-18T15:15:00Z","league":"F1","match_id":"F1-20261018-parisfc-rennes"},{"ag":2,"away":{"bg":"#1961B5","code":"TSG","fg":"#FFFFFF","name":"Hoffenheim"},"date":"2026-10-18","hg":1,"home":{"bg":"#000000","code":"BMG","fg":"#FFFFFF","name":"M\u00f6nchengladbach"},"kickoff":"2026-10-18T15:30:00Z","league":"D1","match_id":"D1-20261018-mgladbach-hoffenheim"},{"ag":1,"away":{"bg":"#EF0107","code":"ARS","fg":"#FFFFFF","name":"Arsenal"},"date":"2026-10-18","hg":0,"home":{"bg":"#DD0000","code":"NFO","fg":"#FFFFFF","name":"Nottingham Forest"},"kickoff":"2026-10-18T15:30:00Z","league":"E0","match_id":"E0-20261018-nottmforest-arsenal"},{"ag":2,"away":{"bg":"#1E71B8","code":"ATA","fg":"#000000","name":"Atalanta"},"date":"2026-10-18","hg":3,"home":{"bg":"#FB090B","code":"MIL","fg":"#000000","name":"Milan"},"kickoff":"2026-10-18T16:00:00Z","league":"I1","match_id":"I1-20261018-milan-atalanta"},{"ag":5,"away":{"bg":"#0067B1","code":"RSO","fg":"#FFFFFF","name":"Real Sociedad"},"date":"2026-10-18","hg":2,"home":{"bg":"#0E74B9","code":"MAL","fg":"#FFFFFF","name":"M\u00e1laga"},"kickoff":"2026-10-18T16:30:00Z","league":"SP1","match_id":"SP1-20261018-malaga-sociedad"},{"ag":1,"away":{"bg":"#C8102E","code":"NIC","fg":"#000000","name":"Nice"},"date":"2026-10-18","hg":2,"home":{"bg":"#FFFFFF","code":"LYO","fg":"#1A3D8F","name":"Lyon"},"kickoff":"2026-10-18T18:45:00Z","league":"F1","match_id":"F1-20261018-lyon-nice"},{"ag":3,"away":{"bg":"#87D8F7","code":"LAZ","fg":"#15366F","name":"Lazio"},"date":"2026-10-18","hg":0,"home":{"bg":"#000000","code":"JUV","fg":"#FFFFFF","name":"Juventus"},"kickoff":"2026-10-18T18:45:00Z","league":"I1","match_id":"I1-20261018-juventus-lazio"},{"ag":1,"away":{"bg":"#D81E05","code":"SEV","fg":"#FFFFFF","name":"Sevilla"},"date":"2026-10-18","hg":4,"home":{"bg":"#FFFFFF","code":"RMA","fg":"#00529F","name":"Real Madrid"},"kickoff":"2026-10-18T19:00:00Z","league":"SP1","match_id":"SP1-20261018-realmadrid-sevilla"},{"ag":0,"away":{"bg":"#002350","code":"CAG","fg":"#FFFFFF","name":"Cagliari"},"date":"2026-10-19","hg":4,"home":{"bg":"#E2001A","code":"MON","fg":"#FFFFFF","name":"Monza"},"kickoff":"2026-10-19T16:30:00Z","league":"I1","match_id":"I1-20261019-monza-cagliari"},{"ag":3,"away":{"bg":"#8A1E03","code":"TOR","fg":"#FFFFFF","name":"Torino"},"date":"2026-10-19","hg":0,"home":{"bg":"#FFDD00","code":"PAR","fg":"#1B4593","name":"Parma"},"kickoff":"2026-10-19T18:45:00Z","league":"I1","match_id":"I1-20261019-parma-torino"},{"ag":1,"away":{"bg":"#6CABDD","code":"COV","fg":"#000000","name":"Coventry City"},"date":"2026-10-19","hg":3,"home":{"bg":"#132257","code":"TOT","fg":"#FFFFFF","name":"Tottenham Hotspur"},"kickoff":"2026-10-19T19:00:00Z","league":"E0","match_id":"E0-20261019-tottenham-coventry"},{"ag":1,"away":{"bg":"#E53027","code":"RAY","fg":"#FFFFFF","name":"Rayo Vallecano"},"date":"2026-10-19","hg":1,"home":{"bg":"#005999","code":"GET","fg":"#FFFFFF","name":"Getafe"},"kickoff":"2026-10-19T19:00:00Z","league":"SP1","match_id":"SP1-20261019-getafe-vallecano"},{"ag":1,"away":{"bg":"#EE2523","code":"ATH","fg":"#FFFFFF","name":"Athletic Club"},"date":"2026-10-21","hg":3,"home":{"bg":"#B4053F","code":"LEV","fg":"#FFFFFF","name":"Levante"},"kickoff":"2026-10-21T18:00:00Z","league":"SP1","match_id":"SP1-20261021-levante-athbilbao"}],"schema":1,"season":2026,"season_label":"2026-27 season"},"tables":{"caveats":{"draws":"A draw is rarely the single likeliest result, so it is rarely the pick - even though about a quarter of matches end level. Its chance is always shown.","model":"The pick is the betting market's chances, recalibrated on earlier seasons: across 2016-2025 the model alone picked 53.3% of results and the market 54.1%, and blending the model in added nothing the market did not already know. The model's own chances are shown beside each pick, labelled. Betting the model where it disagreed with the price did not make money. Treat a pick as an opinion with a measured hit rate, not an edge.","news":"The model does not read team news - injuries, suspensions, rotation. The betting market does, which is part of why the pick leans on it.","rating":"The model rates each club's attack and defence from its goals, shots on target and shots, weighted toward recent matches; a promoted club carries its rating up with a measured step. The rating is the model's own view - the pick on each match is the market's chances, recalibrated, because the market forecasts better.","rating_short":"The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first."},"generated":"2026-10-25T22:06:11Z","leagues":[{"code":"E0","name":"Premier League","rows":[{"club":{"bg":"#6CABDD","code":"MCI","fg":"#1C2C5B","name":"Manchester City"},"drawn":0,"form":[{"date":"2026-10-17","ga":2,"gf":3,"home":true,"league":"E0","opponent":"Ipswich","result":"W"},{"date":"2026-10-11","ga":0,"gf":3,"home":false,"league":"E0","opponent":"Liverpool","result":"W"},{"date":"2026-09-20","ga":3,"gf":5,"home":true,"league":"E0","opponent":"Sunderland","result":"W"},{"date":"2026-09-13","ga":0,"gf":1,"home":false,"league":"E0","opponent":"Man United","result":"W"},{"date":"2026-09-05","ga":0,"gf":1,"home":true,"league":"E0","opponent":"Coventry","result":"W"}],"ga":7,"gd":12,"gf":19,"lost":0,"played":7,"points":21,"position":1,"rating":0.6603727470932417,"team":"Man City","won":7},{"club":{"bg":"#EF0107","code":"ARS","fg":"#FFFFFF","name":"Arsenal"},"drawn":0,"form":[{"date":"2026-10-18","ga":0,"gf":1,"home":false,"league":"E0","opponent":"Nott'm Forest","result":"W"},{"date":"2026-10-10","ga":1,"gf":2,"home":true,"league":"E0","opponent":"Leeds","result":"W"},{"date":"2026-09-19","ga":3,"gf":0,"home":false,"league":"E0","opponent":"Brighton","result":"L"},{"date":"2026-09-12","ga":0,"gf":2,"home":false,"league":"E0","opponent":"Sunderland","result":"W"},{"date":"2026-09-06","ga":1,"gf":2,"home":true,"league":"E0","opponent":"Chelsea","result":"W"}],"ga":5,"gd":6,"gf":11,"lost":1,"played":7,"points":18,"position":2,"rating":0.5833094624781526,"team":"Arsenal","won":6},{"club":{"bg":"#0057B8","code":"BHA","fg":"#FFFFFF","name":"Brighton"},"drawn":1,"form":[{"date":"2026-10-18","ga":0,"gf":5,"home":true,"league":"E0","opponent":"Crystal Palace","result":"W"},{"date":"2026-10-10","ga":0,"gf":2,"home":false,"league":"E0","opponent":"Sunderland","result":"W"},{"date":"2026-09-19","ga":0,"gf":3,"home":true,"league":"E0","opponent":"Arsenal","result":"W"},{"date":"2026-09-13","ga":0,"gf":5,"home":false,"league":"E0","opponent":"Coventry","result":"W"},{"date":"2026-09-05","ga":1,"gf":1,"home":true,"league":"E0","opponent":"Leeds","result":"D"}],"ga":5,"gd":18,"gf":23,"lost":1,"played":7,"points":16,"position":3,"rating":0.398508881308548,"team":"Brighton","won":5},{"club":{"bg":"#034694","code":"CHE","fg":"#FFFFFF","name":"Chelsea"},"drawn":1,"form":[{"date":"2026-10-17","ga":0,"gf":2,"home":false,"league":"E0","opponent":"Everton","result":"W"},{"date":"2026-10-10","ga":1,"gf":5,"home":true,"league":"E0","opponent":"Bournemouth","result":"W"},{"date":"2026-09-18","ga":3,"gf":0,"home":false,"league":"E0","opponent":"Brentford","result":"L"},{"date":"2026-09-12","ga":2,"gf":2,"home":true,"league":"E0","opponent":"Hull","result":"D"},{"date":"2026-09-06","ga":2,"gf":1,"home":false,"league":"E0","opponent":"Arsenal","result":"L"}],"ga":13,"gd":4,"gf":17,"lost":2,"played":7,"points":13,"position":4,"rating":0.1706097342639028,"team":"Chelsea","won":4},{"club":{"bg":"#C8102E","code":"LIV","fg":"#FFFFFF","name":"Liverpool"},"drawn":3,"form":[{"date":"2026-10-17","ga":1,"gf":2,"home":false,"league":"E0","opponent":"Brentford","result":"W"},{"date":"2026-10-11","ga":3,"gf":0,"home":true,"league":"E0","opponent":"Man City","result":"L"},{"date":"2026-09-20","ga":0,"gf":1,"home":false,"league":"E0","opponent":"Bournemouth","result":"W"},{"date":"2026-09-12","ga":0,"gf":0,"home":true,"league":"E0","opponent":"Fulham","result":"D"},{"date":"2026-09-04","ga":0,"gf":2,"home":false,"league":"E0","opponent":"Ipswich","result":"W"}],"ga":8,"gd":1,"gf":9,"lost":1,"played":7,"points":12,"position":5,"rating":0.28978604807791397,"team":"Liverpool","won":3},{"club":{"bg":"#E30613","code":"BRE","fg":"#FFFFFF","name":"Brentford"},"drawn":4,"form":[{"date":"2026-10-17","ga":2,"gf":1,"home":true,"league":"E0","opponent":"Liverpool","result":"L"},{"date":"2026-10-10","ga":2,"gf":2,"home":false,"league":"E0","opponent":"Aston Villa","result":"D"},{"date":"2026-09-18","ga":0,"gf":3,"home":true,"league":"E0","opponent":"Chelsea","result":"W"},{"date":"2026-09-12","ga":2,"gf":2,"home":false,"league":"E0","opponent":"Bournemouth","result":"D"},{"date":"2026-09-05","ga":1,"gf":1,"home":true,"league":"E0","opponent":"Sunderland","result":"D"}],"ga":8,"gd":5,"gf":13,"lost":1,"played":7,"points":10,"position":6,"rating":-0.028057819181899646,"team":"Brentford","won":2},{"club":{"bg":"#FFFFFF","code":"LEE","fg":"#1D428A","name":"Leeds United"},"drawn":4,"form":[{"date":"2026-10-18","ga":1,"gf":1,"home":true,"league":"E0","opponent":"Man United","result":"D"},{"date":"2026-10-10","ga":2,"gf":1,"home":false,"league":"E0","opponent":"Arsenal","result":"L"},{"date":"2026-09-20","ga":0,"gf":0,"home":true,"league":"E0","opponent":"Crystal Palace","result":"D"},{"date":"2026-09-14","ga":1,"gf":4,"home":true,"league":"E0","opponent":"Newcastle","result":"W"},{"date":"2026-09-05","ga":1,"gf":1,"home":false,"league":"E0","opponent":"Brighton","result":"D"}],"ga":6,"gd":3,"gf":9,"lost":1,"played":7,"points":10,"position":7,"rating":-0.03244814946273045,"team":"Leeds","won":2},{"club":{"bg":"#003399","code":"EVE","fg":"#FFFFFF","name":"Everton"},"drawn":4,"form":[{"date":"2026-10-17","ga":2,"gf":0,"home":true,"league":"E0","opponent":"Chelsea","result":"L"},{"date":"2026-10-11","ga":2,"gf":2,"home":false,"league":"E0","opponent":"Hull","result":"D"},{"date":"2026-09-19","ga":0,"gf":1,"home":true,"league":"E0","opponent":"Ipswich","result":"W"},{"date":"2026-09-12","ga":0,"gf":0,"home":false,"league":"E0","opponent":"Tottenham","result":"D"},{"date":"2026-09-06","ga":2,"gf":2,"home":true,"league":"E0","opponent":"Man United","result":"D"}],"ga":7,"gd":1,"gf":8,"lost":1,"played":7,"points":10,"position":8,"rating":-0.08581534504960953,"team":"Everton","won":2},{"club":{"bg":"#F5A12D","code":"HUL","fg":"#000000","name":"Hull City"},"drawn":3,"form":[{"date":"2026-10-17","ga":1,"gf":0,"home":false,"league":"E0","opponent":"Fulham","result":"L"},{"date":"2026-10-11","ga":2,"gf":2,"home":true,"league":"E0","opponent":"Everton","result":"D"},{"date":"2026-09-19","ga":2,"gf":1,"home":false,"league":"E0","opponent":"Newcastle","result":"L"},{"date":"2026-09-12","ga":2,"gf":2,"home":false,"league":"E0","opponent":"Chelsea","result":"D"},{"date":"2026-09-05","ga":0,"gf":0,"home":true,"league":"E0","opponent":"Aston Villa","result":"D"}],"ga":7,"gd":1,"gf":8,"lost":2,"played":7,"points":9,"position":9,"rating":-0.43582021779202984,"team":"Hull","won":2},{"club":{"bg":"#0044A9","code":"IPS","fg":"#FFFFFF","name":"Ipswich Town"},"drawn":0,"form":[{"date":"2026-10-17","ga":3,"gf":2,"home":false,"league":"E0","opponent":"Man City","result":"L"},{"date":"2026-10-10","ga":1,"gf":2,"home":true,"league":"E0","opponent":"Fulham","result":"W"},{"date":"2026-09-19","ga":1,"gf":0,"home":false,"league":"E0","opponent":"Everton","result":"L"},{"date":"2026-09-12","ga":2,"gf":3,"home":false,"league":"E0","opponent":"Crystal Palace","result":"W"},{"date":"2026-09-04","ga":2,"gf":0,"home":true,"league":"E0","opponent":"Liverpool","result":"L"}],"ga":15,"gd":-4,"gf":11,"lost":4,"played":7,"points":9,"position":10,"rating":-0.3725234702865534,"team":"Ipswich","won":3},{"club":{"bg":"#241F20","code":"NEW","fg":"#FFFFFF","name":"Newcastle United"},"drawn":2,"form":[{"date":"2026-10-17","ga":1,"gf":0,"home":true,"league":"E0","opponent":"Aston Villa","result":"L"},{"date":"2026-10-12","ga":4,"gf":1,"home":false,"league":"E0","opponent":"Coventry","result":"L"},{"date":"2026-09-19","ga":1,"gf":2,"home":true,"league":"E0","opponent":"Hull","result":"W"},{"date":"2026-09-14","ga":4,"gf":1,"home":false,"league":"E0","opponent":"Leeds","result":"L"},{"date":"2026-09-05","ga":2,"gf":2,"home":true,"league":"E0","opponent":"Bournemouth","result":"D"}],"ga":14,"gd":-4,"gf":10,"lost":3,"played":7,"points":8,"position":11,"rating":-0.1474725377565016,"team":"Newcastle","won":2},{"club":{"bg":"#670E36","code":"AVL","fg":"#95BFE5","name":"Aston Villa"},"drawn":2,"form":[{"date":"2026-10-17","ga":0,"gf":1,"home":false,"league":"E0","opponent":"Newcastle","result":"W"},{"date":"2026-10-10","ga":2,"gf":2,"home":true,"league":"E0","opponent":"Brentford","result":"D"},{"date":"2026-09-19","ga":2,"gf":3,"home":false,"league":"E0","opponent":"Tottenham","result":"W"},{"date":"2026-09-12","ga":2,"gf":1,"home":true,"league":"E0","opponent":"Nott'm Forest","result":"L"},{"date":"2026-09-05","ga":0,"gf":0,"home":false,"league":"E0","opponent":"Hull","result":"D"}],"ga":11,"gd":-4,"gf":7,"lost":3,"played":7,"points":8,"position":12,"rating":-0.02074184161910897,"team":"Aston Villa","won":2},{"club":{"bg":"#DA291C","code":"MUN","fg":"#FBE122","name":"Manchester United"},"drawn":4,"form":[{"date":"2026-10-18","ga":1,"gf":1,"home":false,"league":"E0","opponent":"Leeds","result":"D"},{"date":"2026-10-10","ga":1,"gf":1,"home":true,"league":"E0","opponent":"Tottenham","result":"D"},{"date":"2026-09-20","ga":1,"gf":1,"home":false,"league":"E0","opponent":"Fulham","result":"D"},{"date":"2026-09-13","ga":1,"gf":0,"home":true,"league":"E0","opponent":"Man City","result":"L"},{"date":"2026-09-06","ga":2,"gf":2,"home":false,"league":"E0","opponent":"Everton","result":"D"}],"ga":10,"gd":0,"gf":10,"lost":2,"played":7,"points":7,"position":13,"rating":0.291637028507292,"team":"Man United","won":1},{"club":{"bg":"#1B458F","code":"CRY","fg":"#FFFFFF","name":"Crystal Palace"},"drawn":1,"form":[{"date":"2026-10-18","ga":5,"gf":0,"home":false,"league":"E0","opponent":"Brighton","result":"L"},{"date":"2026-10-11","ga":1,"gf":3,"home":true,"league":"E0","opponent":"Nott'm Forest","result":"W"},{"date":"2026-09-20","ga":0,"gf":0,"home":false,"league":"E0","opponent":"Leeds","result":"D"},{"date":"2026-09-12","ga":3,"gf":2,"home":true,"league":"E0","opponent":"Ipswich","result":"L"},{"date":"2026-09-05","ga":2,"gf":3,"home":false,"league":"E0","opponent":"Fulham","result":"W"}],"ga":17,"gd":-8,"gf":9,"lost":4,"played":7,"points":7,"position":14,"rating":-0.2621305150935276,"team":"Crystal Palace","won":2},{"club":{"bg":"#DA291C","code":"BOU","fg":"#000000","name":"Bournemouth"},"drawn":3,"form":[{"date":"2026-10-18","ga":0,"gf":2,"home":true,"league":"E0","opponent":"Sunderland","result":"W"},{"date":"2026-10-10","ga":5,"gf":1,"home":false,"league":"E0","opponent":"Chelsea","result":"L"},{"date":"2026-09-20","ga":1,"gf":0,"home":true,"league":"E0","opponent":"Liverpool","result":"L"},{"date":"2026-09-12","ga":2,"gf":2,"home":true,"league":"E0","opponent":"Brentford","result":"D"},{"date":"2026-09-05","ga":2,"gf":2,"home":false,"league":"E0","opponent":"Newcastle","result":"D"}],"ga":13,"gd":-4,"gf":9,"lost":3,"played":7,"points":6,"position":15,"rating":0.10329923911002048,"team":"Bournemouth","won":1},{"club":{"bg":"#132257","code":"TOT","fg":"#FFFFFF","name":"Tottenham Hotspur"},"drawn":3,"form":[{"date":"2026-10-19","ga":1,"gf":3,"home":true,"league":"E0","opponent":"Coventry","result":"W"},{"date":"2026-10-10","ga":1,"gf":1,"home":false,"league":"E0","opponent":"Man United","result":"D"},{"date":"2026-09-19","ga":3,"gf":2,"home":true,"league":"E0","opponent":"Aston Villa","result":"L"},{"date":"2026-09-12","ga":0,"gf":0,"home":true,"league":"E0","opponent":"Everton","result":"D"},{"date":"2026-09-05","ga":0,"gf":0,"home":false,"league":"E0","opponent":"Nott'm Forest","result":"D"}],"ga":10,"gd":-4,"gf":6,"lost":3,"played":7,"points":6,"position":16,"rating":-0.16130412640839364,"team":"Tottenham","won":1},{"club":{"bg":"#6CABDD","code":"COV","fg":"#000000","name":"Coventry City"},"drawn":0,"form":[{"date":"2026-10-19","ga":3,"gf":1,"home":false,"league":"E0","opponent":"Tottenham","result":"L"},{"date":"2026-10-12","ga":1,"gf":4,"home":true,"league":"E0","opponent":"Newcastle","result":"W"},{"date":"2026-09-19","ga":0,"gf":1,"home":false,"league":"E0","opponent":"Nott'm Forest","result":"W"},{"date":"2026-09-13","ga":5,"gf":0,"home":true,"league":"E0","opponent":"Brighton","result":"L"},{"date":"2026-09-05","ga":1,"gf":0,"home":false,"league":"E0","opponent":"Man City","result":"L"}],"ga":14,"gd":-8,"gf":6,"lost":5,"played":7,"points":6,"position":17,"rating":-0.3701503467062228,"team":"Coventry","won":2},{"club":{"bg":"#FFFFFF","code":"FUL","fg":"#000000","name":"Fulham"},"drawn":2,"form":[{"date":"2026-10-17","ga":0,"gf":1,"home":true,"league":"E0","opponent":"Hull","result":"W"},{"date":"2026-10-10","ga":2,"gf":1,"home":false,"league":"E0","opponent":"Ipswich","result":"L"},{"date":"2026-09-20","ga":1,"gf":1,"home":true,"league":"E0","opponent":"Man United","result":"D"},{"date":"2026-09-12","ga":0,"gf":0,"home":false,"league":"E0","opponent":"Liverpool","result":"D"},{"date":"2026-09-05","ga":3,"gf":2,"home":true,"league":"E0","opponent":"Crystal Palace","result":"L"}],"ga":10,"gd":-3,"gf":7,"lost":4,"played":7,"points":5,"position":18,"rating":-0.09343078137422345,"team":"Fulham","won":1},{"club":{"bg":"#DD0000","code":"NFO","fg":"#FFFFFF","name":"Nottingham Forest"},"drawn":2,"form":[{"date":"2026-10-18","ga":1,"gf":0,"home":true,"league":"E0","opponent":"Arsenal","result":"L"},{"date":"2026-10-11","ga":3,"gf":1,"home":false,"league":"E0","opponent":"Crystal Palace","result":"L"},{"date":"2026-09-19","ga":1,"gf":0,"home":true,"league":"E0","opponent":"Coventry","result":"L"},{"date":"2026-09-12","ga":1,"gf":2,"home":false,"league":"E0","opponent":"Aston Villa","result":"W"},{"date":"2026-09-05","ga":0,"gf":0,"home":true,"league":"E0","opponent":"Tottenham","result":"D"}],"ga":9,"gd":-4,"gf":5,"lost":4,"played":7,"points":5,"position":19,"rating":-0.03537892866943837,"team":"Nott'm Forest","won":1},{"club":{"bg":"#EB172B","code":"SUN","fg":"#FFFFFF","name":"Sunderland"},"drawn":1,"form":[{"date":"2026-10-18","ga":2,"gf":0,"home":false,"league":"E0","opponent":"Bournemouth","result":"L"},{"date":"2026-10-10","ga":2,"gf":0,"home":true,"league":"E0","opponent":"Brighton","result":"L"},{"date":"2026-09-20","ga":5,"gf":3,"home":false,"league":"E0","opponent":"Man City","result":"L"},{"date":"2026-09-12","ga":2,"gf":0,"home":true,"league":"E0","opponent":"Arsenal","result":"L"},{"date":"2026-09-05","ga":1,"gf":1,"home":false,"league":"E0","opponent":"Brentford","result":"D"}],"ga":14,"gd":-8,"gf":6,"lost":5,"played":7,"points":4,"position":20,"rating":-0.24590056867160404,"team":"Sunderland","won":1}],"short":"ENG"},{"code":"SP1","name":"La Liga","rows":[{"club":{"bg":"#A50044","code":"BAR","fg":"#EDBB00","name":"Barcelona"},"drawn":0,"form":[{"date":"2026-10-17","ga":2,"gf":5,"home":false,"league":"SP1","opponent":"Betis","result":"W"},{"date":"2026-10-10","ga":0,"gf":3,"home":true,"league":"SP1","opponent":"Getafe","result":"W"},{"date":"2026-09-19","ga":1,"gf":3,"home":false,"league":"SP1","opponent":"Sevilla","result":"W"},{"date":"2026-09-16","ga":2,"gf":7,"home":true,"league":"SP1","opponent":"Santander","result":"W"},{"date":"2026-09-13","ga":2,"gf":4,"home":false,"league":"SP1","opponent":"Levante","result":"W"}],"ga":9,"gd":30,"gf":39,"lost":0,"played":9,"points":27,"position":1,"rating":1.247545372838911,"team":"Barcelona","won":9},{"club":{"bg":"#CB3524","code":"ATM","fg":"#FFFFFF","name":"Atl\u00e9tico Madrid"},"drawn":1,"form":[{"date":"2026-10-17","ga":0,"gf":1,"home":false,"league":"SP1","opponent":"Espanol","result":"W"},{"date":"2026-10-10","ga":1,"gf":2,"home":false,"league":"SP1","opponent":"Alaves","result":"W"},{"date":"2026-09-20","ga":1,"gf":2,"home":true,"league":"SP1","opponent":"Real Madrid","result":"W"},{"date":"2026-09-16","ga":0,"gf":4,"home":true,"league":"SP1","opponent":"Osasuna","result":"W"},{"date":"2026-09-13","ga":0,"gf":3,"home":false,"league":"SP1","opponent":"Sociedad","result":"W"}],"ga":8,"gd":11,"gf":19,"lost":1,"played":9,"points":22,"position":2,"rating":0.4899102305813031,"team":"Ath Madrid","won":7},{"club":{"bg":"#FFFFFF","code":"RMA","fg":"#00529F","name":"Real Madrid"},"drawn":0,"form":[{"date":"2026-10-18","ga":1,"gf":4,"home":true,"league":"SP1","opponent":"Sevilla","result":"W"},{"date":"2026-10-10","ga":0,"gf":1,"home":true,"league":"SP1","opponent":"Villarreal","result":"W"},{"date":"2026-09-20","ga":2,"gf":1,"home":false,"league":"SP1","opponent":"Ath Madrid","result":"L"},{"date":"2026-09-15","ga":2,"gf":3,"home":false,"league":"SP1","opponent":"Elche","result":"W"},{"date":"2026-09-12","ga":1,"gf":4,"home":true,"league":"SP1","opponent":"Vallecano","result":"W"}],"ga":9,"gd":14,"gf":23,"lost":2,"played":9,"points":21,"position":3,"rating":0.7716047901056918,"team":"Real Madrid","won":7},{"club":{"bg":"#00954C","code":"BET","fg":"#FFFFFF","name":"Real Betis"},"drawn":1,"form":[{"date":"2026-10-17","ga":5,"gf":2,"home":true,"league":"SP1","opponent":"Barcelona","result":"L"},{"date":"2026-10-11","ga":2,"gf":5,"home":true,"league":"SP1","opponent":"Osasuna","result":"W"},{"date":"2026-09-20","ga":1,"gf":1,"home":false,"league":"SP1","opponent":"La Coruna","result":"D"},{"date":"2026-09-17","ga":0,"gf":1,"home":true,"league":"SP1","opponent":"Getafe","result":"W"},{"date":"2026-09-14","ga":1,"gf":2,"home":false,"league":"SP1","opponent":"Villarreal","result":"W"}],"ga":14,"gd":2,"gf":16,"lost":2,"played":9,"points":19,"position":4,"rating":0.1751925529126499,"team":"Betis","won":6},{"club":{"bg":"#0067B1","code":"RSO","fg":"#FFFFFF","name":"Real Sociedad"},"drawn":1,"form":[{"date":"2026-10-18","ga":2,"gf":5,"home":false,"league":"SP1","opponent":"Malaga","result":"W"},{"date":"2026-10-11","ga":2,"gf":3,"home":true,"league":"SP1","opponent":"La Coruna","result":"W"},{"date":"2026-09-20","ga":2,"gf":3,"home":false,"league":"SP1","opponent":"Valencia","result":"W"},{"date":"2026-09-13","ga":3,"gf":0,"home":true,"league":"SP1","opponent":"Ath Madrid","result":"L"},{"date":"2026-09-07","ga":2,"gf":3,"home":false,"league":"SP1","opponent":"Elche","result":"W"}],"ga":17,"gd":0,"gf":17,"lost":3,"played":9,"points":16,"position":5,"rating":-0.08708502650088268,"team":"Sociedad","won":5},{"club":{"bg":"#D81E05","code":"SEV","fg":"#FFFFFF","name":"Sevilla"},"drawn":2,"form":[{"date":"2026-10-18","ga":4,"gf":1,"home":false,"league":"SP1","opponent":"Real Madrid","result":"L"},{"date":"2026-10-12","ga":3,"gf":3,"home":false,"league":"SP1","opponent":"Levante","result":"D"},{"date":"2026-09-19","ga":3,"gf":1,"home":true,"league":"SP1","opponent":"Barcelona","result":"L"},{"date":"2026-09-16","ga":0,"gf":1,"home":false,"league":"SP1","opponent":"La Coruna","result":"W"},{"date":"2026-09-11","ga":0,"gf":1,"home":true,"league":"SP1","opponent":"Valencia","result":"W"}],"ga":16,"gd":-2,"gf":14,"lost":3,"played":9,"points":14,"position":6,"rating":-0.08557716878697574,"team":"Sevilla","won":4},{"club":{"bg":"#0761AF","code":"ALA","fg":"#FFFFFF","name":"Alav\u00e9s"},"drawn":2,"form":[{"date":"2026-10-18","ga":2,"gf":1,"home":false,"league":"SP1","opponent":"Celta","result":"L"},{"date":"2026-10-10","ga":2,"gf":1,"home":true,"league":"SP1","opponent":"Ath Madrid","result":"L"},{"date":"2026-09-19","ga":0,"gf":0,"home":false,"league":"SP1","opponent":"Ath Bilbao","result":"D"},{"date":"2026-09-15","ga":1,"gf":0,"home":true,"league":"SP1","opponent":"Valencia","result":"L"},{"date":"2026-09-12","ga":2,"gf":1,"home":false,"league":"SP1","opponent":"Santander","result":"L"}],"ga":10,"gd":3,"gf":13,"lost":4,"played":9,"points":11,"position":7,"rating":-0.03239455079625886,"team":"Alaves","won":3},{"club":{"bg":"#8AC3EE","code":"CEL","fg":"#000000","name":"Celta Vigo"},"drawn":5,"form":[{"date":"2026-10-18","ga":1,"gf":2,"home":true,"league":"SP1","opponent":"Alaves","result":"W"},{"date":"2026-10-11","ga":0,"gf":0,"home":false,"league":"SP1","opponent":"Elche","result":"D"},{"date":"2026-09-19","ga":0,"gf":5,"home":true,"league":"SP1","opponent":"Santander","result":"W"},{"date":"2026-09-13","ga":1,"gf":1,"home":true,"league":"SP1","opponent":"Malaga","result":"D"},{"date":"2026-09-07","ga":1,"gf":1,"home":false,"league":"SP1","opponent":"Getafe","result":"D"}],"ga":7,"gd":3,"gf":10,"lost":2,"played":9,"points":11,"position":8,"rating":-0.07322606774458862,"team":"Celta","won":2},{"club":{"bg":"#1B5EAB","code":"DEP","fg":"#FFFFFF","name":"Deportivo La Coru\u00f1a"},"drawn":5,"form":[{"date":"2026-10-16","ga":1,"gf":1,"home":true,"league":"SP1","opponent":"Levante","result":"D"},{"date":"2026-10-11","ga":3,"gf":2,"home":false,"league":"SP1","opponent":"Sociedad","result":"L"},{"date":"2026-09-20","ga":1,"gf":1,"home":true,"league":"SP1","opponent":"Betis","result":"D"},{"date":"2026-09-16","ga":1,"gf":0,"home":true,"league":"SP1","opponent":"Sevilla","result":"L"},{"date":"2026-09-13","ga":1,"gf":1,"home":false,"league":"SP1","opponent":"Getafe","result":"D"}],"ga":12,"gd":1,"gf":13,"lost":2,"played":9,"points":11,"position":9,"rating":-0.31639676857765053,"team":"La Coruna","won":2},{"club":{"bg":"#D91A21","code":"OSA","fg":"#FFFFFF","name":"Osasuna"},"drawn":2,"form":[{"date":"2026-10-18","ga":0,"gf":2,"home":true,"league":"SP1","opponent":"Santander","result":"W"},{"date":"2026-10-11","ga":5,"gf":2,"home":false,"league":"SP1","opponent":"Betis","result":"L"},{"date":"2026-09-19","ga":1,"gf":1,"home":true,"league":"SP1","opponent":"Vallecano","result":"D"},{"date":"2026-09-16","ga":4,"gf":0,"home":false,"league":"SP1","opponent":"Ath Madrid","result":"L"},{"date":"2026-09-12","ga":2,"gf":0,"home":true,"league":"SP1","opponent":"Espanol","result":"L"}],"ga":18,"gd":-8,"gf":10,"lost":4,"played":9,"points":11,"position":10,"rating":-0.1911213465684629,"team":"Osasuna","won":3},{"club":{"bg":"#B4053F","code":"LEV","fg":"#FFFFFF","name":"Levante"},"drawn":4,"form":[{"date":"2026-10-21","ga":1,"gf":3,"home":true,"league":"SP1","opponent":"Ath Bilbao","result":"W"},{"date":"2026-10-16","ga":1,"gf":1,"home":false,"league":"SP1","opponent":"La Coruna","result":"D"},{"date":"2026-10-12","ga":3,"gf":3,"home":true,"league":"SP1","opponent":"Sevilla","result":"D"},{"date":"2026-09-20","ga":3,"gf":1,"home":false,"league":"SP1","opponent":"Villarreal","result":"L"},{"date":"2026-09-13","ga":4,"gf":2,"home":true,"league":"SP1","opponent":"Barcelona","result":"L"}],"ga":17,"gd":-2,"gf":15,"lost":3,"played":9,"points":10,"position":11,"rating":-0.26083167510443483,"team":"Levante","won":2},{"club":{"bg":"#FFE667","code":"VIL","fg":"#005187","name":"Villarreal"},"drawn":3,"form":[{"date":"2026-10-17","ga":0,"gf":0,"home":true,"league":"SP1","opponent":"Elche","result":"D"},{"date":"2026-10-10","ga":1,"gf":0,"home":false,"league":"SP1","opponent":"Real Madrid","result":"L"},{"date":"2026-09-20","ga":1,"gf":3,"home":true,"league":"SP1","opponent":"Levante","result":"W"},{"date":"2026-09-17","ga":1,"gf":3,"home":false,"league":"SP1","opponent":"Malaga","result":"W"},{"date":"2026-09-14","ga":2,"gf":1,"home":true,"league":"SP1","opponent":"Betis","result":"L"}],"ga":13,"gd":0,"gf":13,"lost":4,"played":9,"points":9,"position":12,"rating":0.23719840137230697,"team":"Villarreal","won":2},{"club":{"bg":"#EE2523","code":"ATH","fg":"#FFFFFF","name":"Athletic Club"},"drawn":3,"form":[{"date":"2026-10-21","ga":3,"gf":1,"home":false,"league":"SP1","opponent":"Levante","result":"L"},{"date":"2026-10-17","ga":0,"gf":0,"home":false,"league":"SP1","opponent":"Valencia","result":"D"},{"date":"2026-09-19","ga":0,"gf":0,"home":true,"league":"SP1","opponent":"Alaves","result":"D"},{"date":"2026-09-12","ga":1,"gf":1,"home":true,"league":"SP1","opponent":"Elche","result":"D"},{"date":"2026-09-05","ga":0,"gf":3,"home":true,"league":"SP1","opponent":"Ath Madrid","result":"W"}],"ga":9,"gd":-1,"gf":8,"lost":3,"played":8,"points":9,"position":13,"rating":0.11243346966194312,"team":"Ath Bilbao","won":2},{"club":{"bg":"#E53027","code":"RAY","fg":"#FFFFFF","name":"Rayo Vallecano"},"drawn":3,"form":[{"date":"2026-10-19","ga":1,"gf":1,"home":false,"league":"SP1","opponent":"Getafe","result":"D"},{"date":"2026-09-19","ga":1,"gf":1,"home":false,"league":"SP1","opponent":"Osasuna","result":"D"},{"date":"2026-09-15","ga":1,"gf":2,"home":true,"league":"SP1","opponent":"Espanol","result":"W"},{"date":"2026-09-12","ga":4,"gf":1,"home":false,"league":"SP1","opponent":"Real Madrid","result":"L"},{"date":"2026-09-05","ga":2,"gf":3,"home":true,"league":"SP1","opponent":"Santander","result":"W"}],"ga":17,"gd":-5,"gf":12,"lost":3,"played":8,"points":9,"position":14,"rating":0.010602867675645111,"team":"Vallecano","won":2},{"club":{"bg":"#005999","code":"GET","fg":"#FFFFFF","name":"Getafe"},"drawn":3,"form":[{"date":"2026-10-19","ga":1,"gf":1,"home":true,"league":"SP1","opponent":"Vallecano","result":"D"},{"date":"2026-10-10","ga":3,"gf":0,"home":false,"league":"SP1","opponent":"Barcelona","result":"L"},{"date":"2026-09-20","ga":0,"gf":1,"home":true,"league":"SP1","opponent":"Malaga","result":"W"},{"date":"2026-09-17","ga":1,"gf":0,"home":false,"league":"SP1","opponent":"Betis","result":"L"},{"date":"2026-09-13","ga":1,"gf":1,"home":true,"league":"SP1","opponent":"La Coruna","result":"D"}],"ga":11,"gd":-6,"gf":5,"lost":4,"played":9,"points":9,"position":15,"rating":-0.1896625739071648,"team":"Getafe","won":2},{"club":{"bg":"#007FC8","code":"ESP","fg":"#FFFFFF","name":"Espanyol"},"drawn":2,"form":[{"date":"2026-10-17","ga":1,"gf":0,"home":true,"league":"SP1","opponent":"Ath Madrid","result":"L"},{"date":"2026-10-09","ga":1,"gf":1,"home":false,"league":"SP1","opponent":"Malaga","result":"D"},{"date":"2026-09-18","ga":3,"gf":1,"home":true,"league":"SP1","opponent":"Elche","result":"L"},{"date":"2026-09-15","ga":2,"gf":1,"home":false,"league":"SP1","opponent":"Vallecano","result":"L"},{"date":"2026-09-12","ga":0,"gf":2,"home":false,"league":"SP1","opponent":"Osasuna","result":"W"}],"ga":12,"gd":-1,"gf":11,"lost":5,"played":9,"points":8,"position":16,"rating":-0.22747850606823317,"team":"Espanol","won":2},{"club":{"bg":"#008D36","code":"RAC","fg":"#FFFFFF","name":"Racing Santander"},"drawn":2,"form":[{"date":"2026-10-18","ga":2,"gf":0,"home":false,"league":"SP1","opponent":"Osasuna","result":"L"},{"date":"2026-10-11","ga":2,"gf":2,"home":true,"league":"SP1","opponent":"Valencia","result":"D"},{"date":"2026-09-19","ga":5,"gf":0,"home":false,"league":"SP1","opponent":"Celta","result":"L"},{"date":"2026-09-16","ga":7,"gf":2,"home":false,"league":"SP1","opponent":"Barcelona","result":"L"},{"date":"2026-09-12","ga":1,"gf":2,"home":true,"league":"SP1","opponent":"Alaves","result":"W"}],"ga":25,"gd":-12,"gf":13,"lost":5,"played":9,"points":8,"position":17,"rating":-0.5424413755804078,"team":"Santander","won":2},{"club":{"bg":"#05642C","code":"ELC","fg":"#FFFFFF","name":"Elche"},"drawn":4,"form":[{"date":"2026-10-17","ga":0,"gf":0,"home":false,"league":"SP1","opponent":"Villarreal","result":"D"},{"date":"2026-10-11","ga":0,"gf":0,"home":true,"league":"SP1","opponent":"Celta","result":"D"},{"date":"2026-09-18","ga":1,"gf":3,"home":false,"league":"SP1","opponent":"Espanol","result":"W"},{"date":"2026-09-15","ga":3,"gf":2,"home":true,"league":"SP1","opponent":"Real Madrid","result":"L"},{"date":"2026-09-12","ga":1,"gf":1,"home":false,"league":"SP1","opponent":"Ath Bilbao","result":"D"}],"ga":17,"gd":-6,"gf":11,"lost":4,"played":9,"points":7,"position":18,"rating":-0.23856002795250886,"team":"Elche","won":1},{"club":{"bg":"#FFFFFF","code":"VAL","fg":"#000000","name":"Valencia"},"drawn":3,"form":[{"date":"2026-10-17","ga":0,"gf":0,"home":true,"league":"SP1","opponent":"Ath Bilbao","result":"D"},{"date":"2026-10-11","ga":2,"gf":2,"home":false,"league":"SP1","opponent":"Santander","result":"D"},{"date":"2026-09-20","ga":3,"gf":2,"home":true,"league":"SP1","opponent":"Sociedad","result":"L"},{"date":"2026-09-15","ga":0,"gf":1,"home":false,"league":"SP1","opponent":"Alaves","result":"W"},{"date":"2026-09-11","ga":1,"gf":0,"home":false,"league":"SP1","opponent":"Sevilla","result":"L"}],"ga":15,"gd":-9,"gf":6,"lost":5,"played":9,"points":6,"position":19,"rating":-0.2516339282631699,"team":"Valencia","won":1},{"club":{"bg":"#0E74B9","code":"MAL","fg":"#FFFFFF","name":"M\u00e1laga"},"drawn":4,"form":[{"date":"2026-10-18","ga":5,"gf":2,"home":true,"league":"SP1","opponent":"Sociedad","result":"L"},{"date":"2026-10-09","ga":1,"gf":1,"home":true,"league":"SP1","opponent":"Espanol","result":"D"},{"date":"2026-09-20","ga":1,"gf":0,"home":false,"league":"SP1","opponent":"Getafe","result":"L"},{"date":"2026-09-17","ga":3,"gf":1,"home":true,"league":"SP1","opponent":"Villarreal","result":"L"},{"date":"2026-09-13","ga":1,"gf":1,"home":false,"league":"SP1","opponent":"Celta","result":"D"}],"ga":18,"gd":-12,"gf":6,"lost":5,"played":9,"points":4,"position":20,"rating":-0.5800890627680001,"team":"Malaga","won":0}],"short":"ESP"},{"code":"I1","name":"Serie A","rows":[{"club":{"bg":"#0068A8","code":"INT","fg":"#000000","name":"Inter"},"drawn":1,"form":[{"date":"2026-10-17","ga":1,"gf":3,"home":false,"league":"I1","opponent":"Bologna","result":"W"},{"date":"2026-10-10","ga":0,"gf":3,"home":true,"league":"I1","opponent":"Parma","result":"W"},{"date":"2026-09-19","ga":2,"gf":2,"home":false,"league":"I1","opponent":"Roma","result":"D"},{"date":"2026-09-14","ga":3,"gf":5,"home":true,"league":"I1","opponent":"Udinese","result":"W"},{"date":"2026-09-05","ga":2,"gf":3,"home":true,"league":"I1","opponent":"Napoli","result":"W"}],"ga":9,"gd":12,"gf":21,"lost":0,"played":7,"points":19,"position":1,"rating":0.920143768219252,"team":"Inter","won":6},{"club":{"bg":"#87D8F7","code":"LAZ","fg":"#15366F","name":"Lazio"},"drawn":1,"form":[{"date":"2026-10-18","ga":0,"gf":3,"home":false,"league":"I1","opponent":"Juventus","result":"W"},{"date":"2026-10-11","ga":1,"gf":3,"home":true,"league":"I1","opponent":"Monza","result":"W"},{"date":"2026-09-19","ga":0,"gf":2,"home":false,"league":"I1","opponent":"Venezia","result":"W"},{"date":"2026-09-12","ga":2,"gf":2,"home":true,"league":"I1","opponent":"Milan","result":"D"},{"date":"2026-09-07","ga":1,"gf":2,"home":false,"league":"I1","opponent":"Udinese","result":"W"}],"ga":4,"gd":10,"gf":14,"lost":0,"played":7,"points":19,"position":2,"rating":0.14975425589919578,"team":"Lazio","won":6},{"club":{"bg":"#8E1F2F","code":"ROM","fg":"#F0BC42","name":"Roma"},"drawn":2,"form":[{"date":"2026-10-17","ga":0,"gf":2,"home":true,"league":"I1","opponent":"Genoa","result":"W"},{"date":"2026-10-11","ga":0,"gf":0,"home":false,"league":"I1","opponent":"Como","result":"D"},{"date":"2026-09-19","ga":2,"gf":2,"home":true,"league":"I1","opponent":"Inter","result":"D"},{"date":"2026-09-14","ga":0,"gf":2,"home":false,"league":"I1","opponent":"Torino","result":"W"},{"date":"2026-09-05","ga":1,"gf":2,"home":true,"league":"I1","opponent":"Atalanta","result":"W"}],"ga":3,"gd":13,"gf":16,"lost":0,"played":7,"points":17,"position":3,"rating":0.5281462881816769,"team":"Roma","won":5},{"club":{"bg":"#FB090B","code":"MIL","fg":"#000000","name":"Milan"},"drawn":3,"form":[{"date":"2026-10-18","ga":2,"gf":3,"home":true,"league":"I1","opponent":"Atalanta","result":"W"},{"date":"2026-10-11","ga":1,"gf":1,"home":false,"league":"I1","opponent":"Sassuolo","result":"D"},{"date":"2026-09-20","ga":0,"gf":3,"home":true,"league":"I1","opponent":"Lecce","result":"W"},{"date":"2026-09-12","ga":2,"gf":2,"home":false,"league":"I1","opponent":"Lazio","result":"D"},{"date":"2026-09-06","ga":1,"gf":1,"home":false,"league":"I1","opponent":"Juventus","result":"D"}],"ga":7,"gd":7,"gf":14,"lost":0,"played":7,"points":15,"position":4,"rating":0.289118572499641,"team":"Milan","won":4},{"club":{"bg":"#003DA5","code":"COM","fg":"#FFFFFF","name":"Como"},"drawn":2,"form":[{"date":"2026-10-18","ga":1,"gf":3,"home":false,"league":"I1","opponent":"Fiorentina","result":"W"},{"date":"2026-10-11","ga":0,"gf":0,"home":true,"league":"I1","opponent":"Roma","result":"D"},{"date":"2026-09-20","ga":2,"gf":0,"home":false,"league":"I1","opponent":"Frosinone","result":"L"},{"date":"2026-09-14","ga":1,"gf":2,"home":true,"league":"I1","opponent":"Parma","result":"W"},{"date":"2026-09-04","ga":1,"gf":4,"home":false,"league":"I1","opponent":"Genoa","result":"W"}],"ga":7,"gd":5,"gf":12,"lost":1,"played":7,"points":14,"position":5,"rating":0.5271036030209277,"team":"Como","won":4},{"club":{"bg":"#FFDD00","code":"FRO","fg":"#0055A4","name":"Frosinone"},"drawn":1,"form":[{"date":"2026-10-16","ga":2,"gf":4,"home":true,"league":"I1","opponent":"Sassuolo","result":"W"},{"date":"2026-10-10","ga":3,"gf":0,"home":false,"league":"I1","opponent":"Napoli","result":"L"},{"date":"2026-09-20","ga":0,"gf":2,"home":true,"league":"I1","opponent":"Como","result":"W"},{"date":"2026-09-12","ga":1,"gf":1,"home":false,"league":"I1","opponent":"Genoa","result":"D"},{"date":"2026-09-06","ga":2,"gf":3,"home":true,"league":"I1","opponent":"Venezia","result":"W"}],"ga":9,"gd":4,"gf":13,"lost":2,"played":7,"points":13,"position":6,"rating":-0.19443815649422413,"team":"Frosinone","won":4},{"club":{"bg":"#002350","code":"CAG","fg":"#FFFFFF","name":"Cagliari"},"drawn":1,"form":[{"date":"2026-10-19","ga":4,"gf":0,"home":false,"league":"I1","opponent":"Monza","result":"L"},{"date":"2026-10-11","ga":1,"gf":1,"home":true,"league":"I1","opponent":"Juventus","result":"D"},{"date":"2026-09-19","ga":0,"gf":1,"home":false,"league":"I1","opponent":"Udinese","result":"W"},{"date":"2026-09-12","ga":1,"gf":2,"home":false,"league":"I1","opponent":"Atalanta","result":"W"},{"date":"2026-09-07","ga":0,"gf":1,"home":true,"league":"I1","opponent":"Lecce","result":"W"}],"ga":7,"gd":-1,"gf":6,"lost":2,"played":7,"points":13,"position":7,"rating":-0.2433646148667885,"team":"Cagliari","won":4},{"club":{"bg":"#000000","code":"JUV","fg":"#FFFFFF","name":"Juventus"},"drawn":2,"form":[{"date":"2026-10-18","ga":3,"gf":0,"home":true,"league":"I1","opponent":"Lazio","result":"L"},{"date":"2026-10-11","ga":1,"gf":1,"home":false,"league":"I1","opponent":"Cagliari","result":"D"},{"date":"2026-09-20","ga":0,"gf":2,"home":true,"league":"I1","opponent":"Atalanta","result":"W"},{"date":"2026-09-13","ga":3,"gf":2,"home":false,"league":"I1","opponent":"Sassuolo","result":"L"},{"date":"2026-09-06","ga":1,"gf":1,"home":true,"league":"I1","opponent":"Milan","result":"D"}],"ga":8,"gd":1,"gf":9,"lost":2,"played":7,"points":11,"position":8,"rating":0.5100768377369115,"team":"Juventus","won":3},{"club":{"bg":"#12A0D7","code":"NAP","fg":"#000000","name":"Napoli"},"drawn":1,"form":[{"date":"2026-10-17","ga":1,"gf":0,"home":false,"league":"I1","opponent":"Venezia","result":"L"},{"date":"2026-10-10","ga":0,"gf":3,"home":true,"league":"I1","opponent":"Frosinone","result":"W"},{"date":"2026-09-20","ga":1,"gf":1,"home":false,"league":"I1","opponent":"Fiorentina","result":"D"},{"date":"2026-09-13","ga":0,"gf":1,"home":true,"league":"I1","opponent":"Bologna","result":"W"},{"date":"2026-09-05","ga":3,"gf":2,"home":false,"league":"I1","opponent":"Inter","result":"L"}],"ga":7,"gd":3,"gf":10,"lost":3,"played":7,"points":10,"position":9,"rating":0.38435823612647835,"team":"Napoli","won":3},{"club":{"bg":"#8A1E03","code":"TOR","fg":"#FFFFFF","name":"Torino"},"drawn":1,"form":[{"date":"2026-10-19","ga":0,"gf":3,"home":false,"league":"I1","opponent":"Parma","result":"W"},{"date":"2026-10-12","ga":1,"gf":2,"home":true,"league":"I1","opponent":"Udinese","result":"W"},{"date":"2026-09-19","ga":1,"gf":1,"home":false,"league":"I1","opponent":"Bologna","result":"D"},{"date":"2026-09-14","ga":2,"gf":0,"home":true,"league":"I1","opponent":"Roma","result":"L"},{"date":"2026-09-05","ga":1,"gf":2,"home":false,"league":"I1","opponent":"Fiorentina","result":"W"}],"ga":9,"gd":1,"gf":10,"lost":3,"played":7,"points":10,"position":10,"rating":-0.2148802963956875,"team":"Torino","won":3},{"club":{"bg":"#1E71B8","code":"ATA","fg":"#000000","name":"Atalanta"},"drawn":0,"form":[{"date":"2026-10-18","ga":3,"gf":2,"home":false,"league":"I1","opponent":"Milan","result":"L"},{"date":"2026-10-12","ga":1,"gf":3,"home":true,"league":"I1","opponent":"Venezia","result":"W"},{"date":"2026-09-20","ga":2,"gf":0,"home":false,"league":"I1","opponent":"Juventus","result":"L"},{"date":"2026-09-12","ga":2,"gf":1,"home":true,"league":"I1","opponent":"Cagliari","result":"L"},{"date":"2026-09-05","ga":2,"gf":1,"home":false,"league":"I1","opponent":"Roma","result":"L"}],"ga":11,"gd":-1,"gf":10,"lost":4,"played":7,"points":9,"position":11,"rating":0.1814151225160523,"team":"Atalanta","won":3},{"club":{"bg":"#FFDD00","code":"LEC","fg":"#D7141A","name":"Lecce"},"drawn":0,"form":[{"date":"2026-10-18","ga":0,"gf":3,"home":false,"league":"I1","opponent":"Udinese","result":"W"},{"date":"2026-10-11","ga":2,"gf":1,"home":true,"league":"I1","opponent":"Bologna","result":"L"},{"date":"2026-09-20","ga":3,"gf":0,"home":false,"league":"I1","opponent":"Milan","result":"L"},{"date":"2026-09-13","ga":2,"gf":3,"home":true,"league":"I1","opponent":"Monza","result":"W"},{"date":"2026-09-07","ga":1,"gf":0,"home":false,"league":"I1","opponent":"Cagliari","result":"L"}],"ga":12,"gd":-3,"gf":9,"lost":4,"played":7,"points":9,"position":12,"rating":-0.35634796701915306,"team":"Lecce","won":3},{"club":{"bg":"#00A752","code":"SAS","fg":"#000000","name":"Sassuolo"},"drawn":2,"form":[{"date":"2026-10-16","ga":4,"gf":2,"home":false,"league":"I1","opponent":"Frosinone","result":"L"},{"date":"2026-10-11","ga":1,"gf":1,"home":true,"league":"I1","opponent":"Milan","result":"D"},{"date":"2026-09-18","ga":2,"gf":1,"home":false,"league":"I1","opponent":"Monza","result":"L"},{"date":"2026-09-13","ga":2,"gf":3,"home":true,"league":"I1","opponent":"Juventus","result":"W"},{"date":"2026-09-06","ga":2,"gf":2,"home":false,"league":"I1","opponent":"Bologna","result":"D"}],"ga":14,"gd":-2,"gf":12,"lost":3,"played":7,"points":8,"position":13,"rating":-0.1956230529877796,"team":"Sassuolo","won":2},{"club":{"bg":"#E2001A","code":"MON","fg":"#FFFFFF","name":"Monza"},"drawn":1,"form":[{"date":"2026-10-19","ga":0,"gf":4,"home":true,"league":"I1","opponent":"Cagliari","result":"W"},{"date":"2026-10-11","ga":3,"gf":1,"home":false,"league":"I1","opponent":"Lazio","result":"L"},{"date":"2026-09-18","ga":1,"gf":2,"home":true,"league":"I1","opponent":"Sassuolo","result":"W"},{"date":"2026-09-13","ga":3,"gf":2,"home":false,"league":"I1","opponent":"Lecce","result":"L"},{"date":"2026-09-06","ga":1,"gf":1,"home":false,"league":"I1","opponent":"Parma","result":"D"}],"ga":15,"gd":-2,"gf":13,"lost":4,"played":7,"points":7,"position":14,"rating":-0.2420851356098468,"team":"Monza","won":2},{"club":{"bg":"#1A2F48","code":"BOL","fg":"#FFFFFF","name":"Bologna"},"drawn":2,"form":[{"date":"2026-10-17","ga":3,"gf":1,"home":true,"league":"I1","opponent":"Inter","result":"L"},{"date":"2026-10-11","ga":1,"gf":2,"home":false,"league":"I1","opponent":"Lecce","result":"W"},{"date":"2026-09-19","ga":1,"gf":1,"home":true,"league":"I1","opponent":"Torino","result":"D"},{"date":"2026-09-13","ga":1,"gf":0,"home":false,"league":"I1","opponent":"Napoli","result":"L"},{"date":"2026-09-06","ga":2,"gf":2,"home":true,"league":"I1","opponent":"Sassuolo","result":"D"}],"ga":10,"gd":-4,"gf":6,"lost":4,"played":7,"points":5,"position":15,"rating":0.05118061852855593,"team":"Bologna","won":1},{"club":{"bg":"#000000","code":"UDI","fg":"#FFFFFF","name":"Udinese"},"drawn":1,"form":[{"date":"2026-10-18","ga":3,"gf":0,"home":true,"league":"I1","opponent":"Lecce","result":"L"},{"date":"2026-10-12","ga":2,"gf":1,"home":false,"league":"I1","opponent":"Torino","result":"L"},{"date":"2026-09-19","ga":1,"gf":0,"home":true,"league":"I1","opponent":"Cagliari","result":"L"},{"date":"2026-09-14","ga":5,"gf":3,"home":false,"league":"I1","opponent":"Inter","result":"L"},{"date":"2026-09-07","ga":2,"gf":1,"home":true,"league":"I1","opponent":"Lazio","result":"L"}],"ga":16,"gd":-7,"gf":9,"lost":5,"played":7,"points":4,"position":16,"rating":-0.2093443780941855,"team":"Udinese","won":1},{"club":{"bg":"#A41F35","code":"GEN","fg":"#FFFFFF","name":"Genoa"},"drawn":1,"form":[{"date":"2026-10-17","ga":2,"gf":0,"home":false,"league":"I1","opponent":"Roma","result":"L"},{"date":"2026-10-10","ga":1,"gf":2,"home":true,"league":"I1","opponent":"Fiorentina","result":"W"},{"date":"2026-09-20","ga":2,"gf":1,"home":false,"league":"I1","opponent":"Parma","result":"L"},{"date":"2026-09-12","ga":1,"gf":1,"home":true,"league":"I1","opponent":"Frosinone","result":"D"},{"date":"2026-09-04","ga":4,"gf":1,"home":true,"league":"I1","opponent":"Como","result":"L"}],"ga":13,"gd":-8,"gf":5,"lost":5,"played":7,"points":4,"position":17,"rating":-0.25787296020589645,"team":"Genoa","won":1},{"club":{"bg":"#482E92","code":"FIO","fg":"#FFFFFF","name":"Fiorentina"},"drawn":1,"form":[{"date":"2026-10-18","ga":3,"gf":1,"home":true,"league":"I1","opponent":"Como","result":"L"},{"date":"2026-10-10","ga":2,"gf":1,"home":false,"league":"I1","opponent":"Genoa","result":"L"},{"date":"2026-09-20","ga":1,"gf":1,"home":true,"league":"I1","opponent":"Napoli","result":"D"},{"date":"2026-09-11","ga":2,"gf":4,"home":false,"league":"I1","opponent":"Venezia","result":"W"},{"date":"2026-09-05","ga":2,"gf":1,"home":true,"league":"I1","opponent":"Torino","result":"L"}],"ga":17,"gd":-9,"gf":8,"lost":5,"played":7,"points":4,"position":18,"rating":-0.16445516265916393,"team":"Fiorentina","won":1},{"club":{"bg":"#FFDD00","code":"PAR","fg":"#1B4593","name":"Parma"},"drawn":1,"form":[{"date":"2026-10-19","ga":3,"gf":0,"home":true,"league":"I1","opponent":"Torino","result":"L"},{"date":"2026-10-10","ga":3,"gf":0,"home":false,"league":"I1","opponent":"Inter","result":"L"},{"date":"2026-09-20","ga":1,"gf":2,"home":true,"league":"I1","opponent":"Genoa","result":"W"},{"date":"2026-09-14","ga":2,"gf":1,"home":false,"league":"I1","opponent":"Como","result":"L"},{"date":"2026-09-06","ga":1,"gf":1,"home":true,"league":"I1","opponent":"Monza","result":"D"}],"ga":13,"gd":-9,"gf":4,"lost":5,"played":7,"points":4,"position":19,"rating":-0.35279886863104903,"team":"Parma","won":1},{"club":{"bg":"#000000","code":"VEN","fg":"#F37321","name":"Venezia"},"drawn":0,"form":[{"date":"2026-10-17","ga":0,"gf":1,"home":true,"league":"I1","opponent":"Napoli","result":"W"},{"date":"2026-10-12","ga":3,"gf":1,"home":false,"league":"I1","opponent":"Atalanta","result":"L"},{"date":"2026-09-19","ga":2,"gf":0,"home":true,"league":"I1","opponent":"Lazio","result":"L"},{"date":"2026-09-11","ga":4,"gf":2,"home":true,"league":"I1","opponent":"Fiorentina","result":"L"},{"date":"2026-09-06","ga":3,"gf":2,"home":false,"league":"I1","opponent":"Frosinone","result":"L"}],"ga":16,"gd":-10,"gf":6,"lost":6,"played":7,"points":3,"position":20,"rating":-0.4215378708583468,"team":"Venezia","won":1}],"short":"ITA"},{"code":"D1","name":"Bundesliga","rows":[{"club":{"bg":"#DC052D","code":"FCB","fg":"#FFFFFF","name":"Bayern Munich"},"drawn":2,"form":[{"date":"2026-10-17","ga":1,"gf":6,"home":true,"league":"D1","opponent":"RB Leipzig","result":"W"},{"date":"2026-10-10","ga":2,"gf":2,"home":false,"league":"D1","opponent":"Augsburg","result":"D"},{"date":"2026-09-18","ga":0,"gf":7,"home":true,"league":"D1","opponent":"Union Berlin","result":"W"},{"date":"2026-09-13","ga":1,"gf":2,"home":false,"league":"D1","opponent":"Elversberg","result":"W"},{"date":"2026-09-05","ga":0,"gf":0,"home":false,"league":"D1","opponent":"Schalke 04","result":"D"}],"ga":5,"gd":17,"gf":22,"lost":0,"played":6,"points":14,"position":1,"rating":1.595222960908448,"team":"Bayern Munich","won":4},{"club":{"bg":"#FDE100","code":"BVB","fg":"#000000","name":"Dortmund"},"drawn":2,"form":[{"date":"2026-10-17","ga":0,"gf":0,"home":false,"league":"D1","opponent":"Union Berlin","result":"D"},{"date":"2026-10-09","ga":2,"gf":2,"home":true,"league":"D1","opponent":"Werder Bremen","result":"D"},{"date":"2026-09-19","ga":0,"gf":1,"home":false,"league":"D1","opponent":"Stuttgart","result":"W"},{"date":"2026-09-12","ga":0,"gf":3,"home":true,"league":"D1","opponent":"Paderborn","result":"W"},{"date":"2026-09-05","ga":2,"gf":3,"home":false,"league":"D1","opponent":"Hoffenheim","result":"W"}],"ga":4,"gd":7,"gf":11,"lost":0,"played":6,"points":14,"position":2,"rating":0.47331808752472604,"team":"Dortmund","won":4},{"club":{"bg":"#000000","code":"SCF","fg":"#FFFFFF","name":"Freiburg"},"drawn":1,"form":[{"date":"2026-10-18","ga":2,"gf":1,"home":false,"league":"D1","opponent":"Leverkusen","result":"L"},{"date":"2026-10-11","ga":1,"gf":2,"home":true,"league":"D1","opponent":"Schalke 04","result":"W"},{"date":"2026-09-19","ga":2,"gf":2,"home":false,"league":"D1","opponent":"Ein Frankfurt","result":"D"},{"date":"2026-09-12","ga":0,"gf":5,"home":true,"league":"D1","opponent":"M'gladbach","result":"W"},{"date":"2026-09-05","ga":0,"gf":1,"home":false,"league":"D1","opponent":"Paderborn","result":"W"}],"ga":6,"gd":9,"gf":15,"lost":1,"played":6,"points":13,"position":3,"rating":0.0380391822511823,"team":"Freiburg","won":4},{"club":{"bg":"#E32221","code":"B04","fg":"#000000","name":"Leverkusen"},"drawn":1,"form":[{"date":"2026-10-18","ga":1,"gf":2,"home":true,"league":"D1","opponent":"Freiburg","result":"W"},{"date":"2026-10-10","ga":3,"gf":4,"home":false,"league":"D1","opponent":"Mainz","result":"W"},{"date":"2026-09-20","ga":0,"gf":2,"home":true,"league":"D1","opponent":"RB Leipzig","result":"W"},{"date":"2026-09-12","ga":2,"gf":2,"home":false,"league":"D1","opponent":"Augsburg","result":"D"},{"date":"2026-09-05","ga":0,"gf":4,"home":true,"league":"D1","opponent":"Union Berlin","result":"W"}],"ga":9,"gd":7,"gf":16,"lost":1,"played":6,"points":13,"position":4,"rating":0.490362811530068,"team":"Leverkusen","won":4},{"club":{"bg":"#C3141E","code":"M05","fg":"#FFFFFF","name":"Mainz"},"drawn":1,"form":[{"date":"2026-10-17","ga":0,"gf":1,"home":false,"league":"D1","opponent":"Schalke 04","result":"W"},{"date":"2026-10-10","ga":4,"gf":3,"home":true,"league":"D1","opponent":"Leverkusen","result":"L"},{"date":"2026-09-19","ga":3,"gf":4,"home":false,"league":"D1","opponent":"M'gladbach","result":"W"},{"date":"2026-09-12","ga":3,"gf":1,"home":true,"league":"D1","opponent":"Ein Frankfurt","result":"L"},{"date":"2026-09-06","ga":0,"gf":5,"home":false,"league":"D1","opponent":"Hamburg","result":"W"}],"ga":10,"gd":4,"gf":14,"lost":2,"played":6,"points":10,"position":5,"rating":0.06401262367843019,"team":"Mainz","won":3},{"club":{"bg":"#000000","code":"SVE","fg":"#FFFFFF","name":"Elversberg"},"drawn":1,"form":[{"date":"2026-10-17","ga":3,"gf":4,"home":true,"league":"D1","opponent":"Augsburg","result":"W"},{"date":"2026-10-10","ga":1,"gf":0,"home":false,"league":"D1","opponent":"Union Berlin","result":"L"},{"date":"2026-09-20","ga":0,"gf":0,"home":false,"league":"D1","opponent":"Schalke 04","result":"D"},{"date":"2026-09-13","ga":2,"gf":1,"home":true,"league":"D1","opponent":"Bayern Munich","result":"L"},{"date":"2026-09-05","ga":3,"gf":4,"home":false,"league":"D1","opponent":"M'gladbach","result":"W"}],"ga":11,"gd":1,"gf":12,"lost":2,"played":6,"points":10,"position":6,"rating":-0.3827342320370024,"team":"Elversberg","won":3},{"club":{"bg":"#FFFFFF","code":"RBL","fg":"#DD0741","name":"RB Leipzig"},"drawn":0,"form":[{"date":"2026-10-17","ga":6,"gf":1,"home":false,"league":"D1","opponent":"Bayern Munich","result":"L"},{"date":"2026-10-10","ga":0,"gf":6,"home":true,"league":"D1","opponent":"Ein Frankfurt","result":"W"},{"date":"2026-09-20","ga":2,"gf":0,"home":false,"league":"D1","opponent":"Leverkusen","result":"L"},{"date":"2026-09-13","ga":0,"gf":5,"home":true,"league":"D1","opponent":"Hamburg","result":"W"},{"date":"2026-09-05","ga":3,"gf":1,"home":false,"league":"D1","opponent":"Werder Bremen","result":"L"}],"ga":11,"gd":5,"gf":16,"lost":3,"played":6,"points":9,"position":7,"rating":0.37775315948380284,"team":"RB Leipzig","won":3},{"club":{"bg":"#1D9053","code":"SVW","fg":"#FFFFFF","name":"Werder Bremen"},"drawn":3,"form":[{"date":"2026-10-17","ga":2,"gf":2,"home":true,"league":"D1","opponent":"Paderborn","result":"D"},{"date":"2026-10-09","ga":2,"gf":2,"home":false,"league":"D1","opponent":"Dortmund","result":"D"},{"date":"2026-09-19","ga":2,"gf":3,"home":true,"league":"D1","opponent":"Augsburg","result":"W"},{"date":"2026-09-12","ga":1,"gf":1,"home":false,"league":"D1","opponent":"FC Koln","result":"D"},{"date":"2026-09-05","ga":1,"gf":3,"home":true,"league":"D1","opponent":"RB Leipzig","result":"W"}],"ga":12,"gd":0,"gf":12,"lost":1,"played":6,"points":9,"position":8,"rating":-0.17008584361967882,"team":"Werder Bremen","won":2},{"club":{"bg":"#0A3F86","code":"HSV","fg":"#FFFFFF","name":"Hamburg"},"drawn":0,"form":[{"date":"2026-10-17","ga":0,"gf":1,"home":true,"league":"D1","opponent":"Stuttgart","result":"W"},{"date":"2026-10-10","ga":2,"gf":3,"home":false,"league":"D1","opponent":"Hoffenheim","result":"W"},{"date":"2026-09-19","ga":1,"gf":2,"home":true,"league":"D1","opponent":"FC Koln","result":"W"},{"date":"2026-09-13","ga":5,"gf":0,"home":false,"league":"D1","opponent":"RB Leipzig","result":"L"},{"date":"2026-09-06","ga":5,"gf":0,"home":true,"league":"D1","opponent":"Mainz","result":"L"}],"ga":15,"gd":-9,"gf":6,"lost":3,"played":6,"points":9,"position":9,"rating":-0.3780523549189876,"team":"Hamburg","won":3},{"club":{"bg":"#BA3733","code":"FCA","fg":"#FFFFFF","name":"Augsburg"},"drawn":2,"form":[{"date":"2026-10-17","ga":4,"gf":3,"home":false,"league":"D1","opponent":"Elversberg","result":"L"},{"date":"2026-10-10","ga":2,"gf":2,"home":true,"league":"D1","opponent":"Bayern Munich","result":"D"},{"date":"2026-09-19","ga":3,"gf":2,"home":false,"league":"D1","opponent":"Werder Bremen","result":"L"},{"date":"2026-09-12","ga":2,"gf":2,"home":true,"league":"D1","opponent":"Leverkusen","result":"D"},{"date":"2026-09-06","ga":1,"gf":4,"home":false,"league":"D1","opponent":"Ein Frankfurt","result":"W"}],"ga":12,"gd":4,"gf":16,"lost":2,"played":6,"points":8,"position":10,"rating":-0.1753090195896294,"team":"Augsburg","won":2},{"club":{"bg":"#E1000F","code":"SGE","fg":"#000000","name":"Eintracht Frankfurt"},"drawn":2,"form":[{"date":"2026-10-16","ga":0,"gf":1,"home":true,"league":"D1","opponent":"FC Koln","result":"W"},{"date":"2026-10-10","ga":6,"gf":0,"home":false,"league":"D1","opponent":"RB Leipzig","result":"L"},{"date":"2026-09-19","ga":2,"gf":2,"home":true,"league":"D1","opponent":"Freiburg","result":"D"},{"date":"2026-09-12","ga":1,"gf":3,"home":false,"league":"D1","opponent":"Mainz","result":"W"},{"date":"2026-09-06","ga":4,"gf":1,"home":true,"league":"D1","opponent":"Augsburg","result":"L"}],"ga":16,"gd":-6,"gf":10,"lost":2,"played":6,"points":8,"position":11,"rating":-0.15488744245578556,"team":"Ein Frankfurt","won":2},{"club":{"bg":"#ED1C24","code":"KOE","fg":"#FFFFFF","name":"K\u00f6ln"},"drawn":1,"form":[{"date":"2026-10-16","ga":1,"gf":0,"home":false,"league":"D1","opponent":"Ein Frankfurt","result":"L"},{"date":"2026-10-11","ga":1,"gf":2,"home":true,"league":"D1","opponent":"M'gladbach","result":"W"},{"date":"2026-09-19","ga":2,"gf":1,"home":false,"league":"D1","opponent":"Hamburg","result":"L"},{"date":"2026-09-12","ga":1,"gf":1,"home":true,"league":"D1","opponent":"Werder Bremen","result":"D"},{"date":"2026-09-04","ga":4,"gf":1,"home":false,"league":"D1","opponent":"Stuttgart","result":"L"}],"ga":11,"gd":-3,"gf":8,"lost":3,"played":6,"points":7,"position":12,"rating":-0.26262584622711604,"team":"FC Koln","won":2},{"club":{"bg":"#FFFFFF","code":"VFB","fg":"#E32219","name":"Stuttgart"},"drawn":0,"form":[{"date":"2026-10-17","ga":1,"gf":0,"home":false,"league":"D1","opponent":"Hamburg","result":"L"},{"date":"2026-10-10","ga":0,"gf":2,"home":false,"league":"D1","opponent":"Paderborn","result":"W"},{"date":"2026-09-19","ga":1,"gf":0,"home":true,"league":"D1","opponent":"Dortmund","result":"L"},{"date":"2026-09-12","ga":2,"gf":1,"home":false,"league":"D1","opponent":"Hoffenheim","result":"L"},{"date":"2026-09-04","ga":1,"gf":4,"home":true,"league":"D1","opponent":"FC Koln","result":"W"}],"ga":10,"gd":-2,"gf":8,"lost":4,"played":6,"points":6,"position":13,"rating":0.366929439039116,"team":"Stuttgart","won":2},{"club":{"bg":"#1961B5","code":"TSG","fg":"#FFFFFF","name":"Hoffenheim"},"drawn":0,"form":[{"date":"2026-10-18","ga":1,"gf":2,"home":false,"league":"D1","opponent":"M'gladbach","result":"W"},{"date":"2026-10-10","ga":3,"gf":2,"home":true,"league":"D1","opponent":"Hamburg","result":"L"},{"date":"2026-09-20","ga":3,"gf":1,"home":false,"league":"D1","opponent":"Paderborn","result":"L"},{"date":"2026-09-12","ga":1,"gf":2,"home":true,"league":"D1","opponent":"Stuttgart","result":"W"},{"date":"2026-09-05","ga":3,"gf":2,"home":true,"league":"D1","opponent":"Dortmund","result":"L"}],"ga":14,"gd":-3,"gf":11,"lost":4,"played":6,"points":6,"position":14,"rating":0.07913001991820678,"team":"Hoffenheim","won":2},{"club":{"bg":"#004D9D","code":"S04","fg":"#FFFFFF","name":"Schalke"},"drawn":2,"form":[{"date":"2026-10-17","ga":1,"gf":0,"home":true,"league":"D1","opponent":"Mainz","result":"L"},{"date":"2026-10-11","ga":2,"gf":1,"home":false,"league":"D1","opponent":"Freiburg","result":"L"},{"date":"2026-09-20","ga":0,"gf":0,"home":true,"league":"D1","opponent":"Elversberg","result":"D"},{"date":"2026-09-11","ga":1,"gf":3,"home":false,"league":"D1","opponent":"Union Berlin","result":"W"},{"date":"2026-09-05","ga":0,"gf":0,"home":true,"league":"D1","opponent":"Bayern Munich","result":"D"}],"ga":7,"gd":-3,"gf":4,"lost":3,"played":6,"points":5,"position":15,"rating":-0.3949489980638483,"team":"Schalke 04","won":1},{"club":{"bg":"#0058A3","code":"SCP","fg":"#FFFFFF","name":"Paderborn"},"drawn":2,"form":[{"date":"2026-10-17","ga":2,"gf":2,"home":false,"league":"D1","opponent":"Werder Bremen","result":"D"},{"date":"2026-10-10","ga":2,"gf":0,"home":true,"league":"D1","opponent":"Stuttgart","result":"L"},{"date":"2026-09-20","ga":1,"gf":3,"home":true,"league":"D1","opponent":"Hoffenheim","result":"W"},{"date":"2026-09-12","ga":3,"gf":0,"home":false,"league":"D1","opponent":"Dortmund","result":"L"},{"date":"2026-09-05","ga":1,"gf":0,"home":true,"league":"D1","opponent":"Freiburg","result":"L"}],"ga":9,"gd":-4,"gf":5,"lost":3,"played":6,"points":5,"position":16,"rating":-0.5214206742805052,"team":"Paderborn","won":1},{"club":{"bg":"#EB1923","code":"FCU","fg":"#FFFFFF","name":"Union Berlin"},"drawn":2,"form":[{"date":"2026-10-17","ga":0,"gf":0,"home":true,"league":"D1","opponent":"Dortmund","result":"D"},{"date":"2026-10-10","ga":0,"gf":1,"home":true,"league":"D1","opponent":"Elversberg","result":"W"},{"date":"2026-09-18","ga":7,"gf":0,"home":false,"league":"D1","opponent":"Bayern Munich","result":"L"},{"date":"2026-09-11","ga":3,"gf":1,"home":true,"league":"D1","opponent":"Schalke 04","result":"L"},{"date":"2026-09-05","ga":4,"gf":0,"home":false,"league":"D1","opponent":"Leverkusen","result":"L"}],"ga":17,"gd":-12,"gf":5,"lost":3,"played":6,"points":5,"position":17,"rating":-0.3466441406437286,"team":"Union Berlin","won":1},{"club":{"bg":"#000000","code":"BMG","fg":"#FFFFFF","name":"M\u00f6nchengladbach"},"drawn":0,"form":[{"date":"2026-10-18","ga":2,"gf":1,"home":true,"league":"D1","opponent":"Hoffenheim","result":"L"},{"date":"2026-10-11","ga":2,"gf":1,"home":false,"league":"D1","opponent":"FC Koln","result":"L"},{"date":"2026-09-19","ga":4,"gf":3,"home":true,"league":"D1","opponent":"Mainz","result":"L"},{"date":"2026-09-12","ga":5,"gf":0,"home":false,"league":"D1","opponent":"Freiburg","result":"L"},{"date":"2026-09-05","ga":4,"gf":3,"home":true,"league":"D1","opponent":"Elversberg","result":"L"}],"ga":20,"gd":-12,"gf":8,"lost":6,"played":6,"points":0,"position":18,"rating":-0.49966604725482977,"team":"M'gladbach","won":0}],"short":"GER"},{"code":"F1","name":"Ligue 1","rows":[{"club":{"bg":"#FFFFFF","code":"LYO","fg":"#1A3D8F","name":"Lyon"},"drawn":2,"form":[{"date":"2026-10-18","ga":1,"gf":2,"home":true,"league":"F1","opponent":"Nice","result":"W"},{"date":"2026-10-09","ga":2,"gf":1,"home":false,"league":"F1","opponent":"Lens","result":"L"},{"date":"2026-09-19","ga":0,"gf":4,"home":true,"league":"F1","opponent":"Rennes","result":"W"},{"date":"2026-09-12","ga":0,"gf":0,"home":false,"league":"F1","opponent":"Paris FC","result":"D"},{"date":"2026-09-04","ga":1,"gf":3,"home":true,"league":"F1","opponent":"Auxerre","result":"W"}],"ga":5,"gd":8,"gf":13,"lost":1,"played":7,"points":14,"position":1,"rating":0.25226950037798357,"team":"Lyon","won":4},{"club":{"bg":"#004170","code":"PSG","fg":"#FFFFFF","name":"Paris Saint-Germain"},"drawn":2,"form":[{"date":"2026-10-17","ga":1,"gf":3,"home":false,"league":"F1","opponent":"Strasbourg","result":"W"},{"date":"2026-10-10","ga":1,"gf":3,"home":true,"league":"F1","opponent":"Le Mans","result":"W"},{"date":"2026-09-20","ga":1,"gf":2,"home":false,"league":"F1","opponent":"Marseille","result":"W"},{"date":"2026-09-13","ga":0,"gf":1,"home":false,"league":"F1","opponent":"Brest","result":"W"},{"date":"2026-09-04","ga":2,"gf":1,"home":true,"league":"F1","opponent":"Monaco","result":"L"}],"ga":9,"gd":5,"gf":14,"lost":1,"played":7,"points":14,"position":2,"rating":0.8409169375579764,"team":"Paris SG","won":4},{"club":{"bg":"#1D2E5C","code":"PFC","fg":"#FFFFFF","name":"Paris FC"},"drawn":2,"form":[{"date":"2026-10-18","ga":3,"gf":4,"home":true,"league":"F1","opponent":"Rennes","result":"W"},{"date":"2026-10-10","ga":1,"gf":0,"home":false,"league":"F1","opponent":"Lorient","result":"L"},{"date":"2026-09-19","ga":1,"gf":2,"home":true,"league":"F1","opponent":"Strasbourg","result":"W"},{"date":"2026-09-12","ga":0,"gf":0,"home":true,"league":"F1","opponent":"Lyon","result":"D"},{"date":"2026-09-06","ga":2,"gf":3,"home":false,"league":"F1","opponent":"Marseille","result":"W"}],"ga":7,"gd":5,"gf":12,"lost":1,"played":7,"points":14,"position":3,"rating":0.06692047224502895,"team":"Paris FC","won":4},{"club":{"bg":"#E01E13","code":"LIL","fg":"#FFFFFF","name":"Lille"},"drawn":2,"form":[{"date":"2026-10-17","ga":1,"gf":1,"home":true,"league":"F1","opponent":"Brest","result":"D"},{"date":"2026-10-10","ga":0,"gf":1,"home":true,"league":"F1","opponent":"Le Havre","result":"W"},{"date":"2026-09-20","ga":2,"gf":1,"home":false,"league":"F1","opponent":"Nice","result":"L"},{"date":"2026-09-13","ga":0,"gf":2,"home":true,"league":"F1","opponent":"Troyes","result":"W"},{"date":"2026-09-03","ga":0,"gf":1,"home":false,"league":"F1","opponent":"Toulouse","result":"W"}],"ga":5,"gd":5,"gf":10,"lost":1,"played":7,"points":14,"position":4,"rating":0.3002692168816561,"team":"Lille","won":4},{"club":{"bg":"#E2001A","code":"ASM","fg":"#FFFFFF","name":"Monaco"},"drawn":2,"form":[{"date":"2026-10-18","ga":1,"gf":0,"home":false,"league":"F1","opponent":"Lorient","result":"L"},{"date":"2026-10-10","ga":2,"gf":2,"home":true,"league":"F1","opponent":"Toulouse","result":"D"},{"date":"2026-09-18","ga":1,"gf":2,"home":true,"league":"F1","opponent":"Lens","result":"W"},{"date":"2026-09-12","ga":1,"gf":1,"home":false,"league":"F1","opponent":"Strasbourg","result":"D"},{"date":"2026-09-04","ga":1,"gf":2,"home":false,"league":"F1","opponent":"Paris SG","result":"W"}],"ga":6,"gd":4,"gf":10,"lost":1,"played":7,"points":14,"position":5,"rating":0.23093713041303054,"team":"Monaco","won":4},{"club":{"bg":"#E2001A","code":"REN","fg":"#000000","name":"Rennes"},"drawn":1,"form":[{"date":"2026-10-18","ga":4,"gf":3,"home":false,"league":"F1","opponent":"Paris FC","result":"L"},{"date":"2026-10-11","ga":1,"gf":4,"home":true,"league":"F1","opponent":"Auxerre","result":"W"},{"date":"2026-09-19","ga":4,"gf":0,"home":false,"league":"F1","opponent":"Lyon","result":"L"},{"date":"2026-09-11","ga":0,"gf":1,"home":true,"league":"F1","opponent":"Marseille","result":"W"},{"date":"2026-09-06","ga":1,"gf":2,"home":false,"league":"F1","opponent":"Angers","result":"W"}],"ga":14,"gd":1,"gf":15,"lost":2,"played":7,"points":13,"position":6,"rating":0.16322022154899218,"team":"Rennes","won":4},{"club":{"bg":"#F58113","code":"FCL","fg":"#000000","name":"Lorient"},"drawn":2,"form":[{"date":"2026-10-18","ga":0,"gf":1,"home":true,"league":"F1","opponent":"Monaco","result":"W"},{"date":"2026-10-10","ga":0,"gf":1,"home":true,"league":"F1","opponent":"Paris FC","result":"W"},{"date":"2026-09-19","ga":2,"gf":1,"home":false,"league":"F1","opponent":"Le Mans","result":"L"},{"date":"2026-09-12","ga":2,"gf":2,"home":true,"league":"F1","opponent":"Toulouse","result":"D"},{"date":"2026-09-05","ga":0,"gf":1,"home":false,"league":"F1","opponent":"Lens","result":"W"}],"ga":6,"gd":1,"gf":7,"lost":2,"played":7,"points":11,"position":7,"rating":-0.09419484796927713,"team":"Lorient","won":3},{"club":{"bg":"#FFDD00","code":"RCL","fg":"#E2001A","name":"Lens"},"drawn":1,"form":[{"date":"2026-10-17","ga":1,"gf":3,"home":false,"league":"F1","opponent":"Troyes","result":"W"},{"date":"2026-10-09","ga":1,"gf":2,"home":true,"league":"F1","opponent":"Lyon","result":"W"},{"date":"2026-09-18","ga":2,"gf":1,"home":false,"league":"F1","opponent":"Monaco","result":"L"},{"date":"2026-09-13","ga":2,"gf":2,"home":false,"league":"F1","opponent":"Le Mans","result":"D"},{"date":"2026-09-05","ga":1,"gf":0,"home":true,"league":"F1","opponent":"Lorient","result":"L"}],"ga":11,"gd":3,"gf":14,"lost":3,"played":7,"points":10,"position":8,"rating":0.41153382362298196,"team":"Lens","won":3},{"club":{"bg":"#2FAEE0","code":"MAR","fg":"#000000","name":"Marseille"},"drawn":0,"form":[{"date":"2026-10-18","ga":2,"gf":5,"home":false,"league":"F1","opponent":"Angers","result":"W"},{"date":"2026-10-11","ga":0,"gf":2,"home":false,"league":"F1","opponent":"Troyes","result":"W"},{"date":"2026-09-20","ga":2,"gf":1,"home":true,"league":"F1","opponent":"Paris SG","result":"L"},{"date":"2026-09-11","ga":1,"gf":0,"home":false,"league":"F1","opponent":"Rennes","result":"L"},{"date":"2026-09-06","ga":3,"gf":2,"home":true,"league":"F1","opponent":"Paris FC","result":"L"}],"ga":10,"gd":4,"gf":14,"lost":4,"played":7,"points":9,"position":9,"rating":0.32307820782763974,"team":"Marseille","won":3},{"club":{"bg":"#E30613","code":"BRE","fg":"#FFFFFF","name":"Brest"},"drawn":3,"form":[{"date":"2026-10-17","ga":1,"gf":1,"home":false,"league":"F1","opponent":"Lille","result":"D"},{"date":"2026-10-10","ga":1,"gf":5,"home":true,"league":"F1","opponent":"Angers","result":"W"},{"date":"2026-09-20","ga":2,"gf":1,"home":false,"league":"F1","opponent":"Auxerre","result":"L"},{"date":"2026-09-13","ga":1,"gf":0,"home":true,"league":"F1","opponent":"Paris SG","result":"L"},{"date":"2026-09-05","ga":1,"gf":2,"home":false,"league":"F1","opponent":"Le Havre","result":"W"}],"ga":10,"gd":3,"gf":13,"lost":2,"played":7,"points":9,"position":10,"rating":-0.059673415717628187,"team":"Brest","won":2},{"club":{"bg":"#5B2A86","code":"TFC","fg":"#FFFFFF","name":"Toulouse"},"drawn":3,"form":[{"date":"2026-10-16","ga":0,"gf":3,"home":false,"league":"F1","opponent":"Le Mans","result":"W"},{"date":"2026-10-10","ga":2,"gf":2,"home":false,"league":"F1","opponent":"Monaco","result":"D"},{"date":"2026-09-19","ga":2,"gf":3,"home":true,"league":"F1","opponent":"Le Havre","result":"W"},{"date":"2026-09-12","ga":2,"gf":2,"home":false,"league":"F1","opponent":"Lorient","result":"D"},{"date":"2026-09-03","ga":1,"gf":0,"home":true,"league":"F1","opponent":"Lille","result":"L"}],"ga":11,"gd":1,"gf":12,"lost":2,"played":7,"points":9,"position":11,"rating":0.0825156311273183,"team":"Toulouse","won":2},{"club":{"bg":"#FFFFFF","code":"AJA","fg":"#005BAC","name":"Auxerre"},"drawn":0,"form":[{"date":"2026-10-18","ga":1,"gf":3,"home":false,"league":"F1","opponent":"Le Havre","result":"W"},{"date":"2026-10-11","ga":4,"gf":1,"home":false,"league":"F1","opponent":"Rennes","result":"L"},{"date":"2026-09-20","ga":1,"gf":2,"home":true,"league":"F1","opponent":"Brest","result":"W"},{"date":"2026-09-12","ga":0,"gf":1,"home":true,"league":"F1","opponent":"Nice","result":"W"},{"date":"2026-09-04","ga":3,"gf":1,"home":false,"league":"F1","opponent":"Lyon","result":"L"}],"ga":17,"gd":-6,"gf":11,"lost":4,"played":7,"points":9,"position":12,"rating":-0.26564431451198667,"team":"Auxerre","won":3},{"club":{"bg":"#C8102E","code":"NIC","fg":"#000000","name":"Nice"},"drawn":2,"form":[{"date":"2026-10-18","ga":2,"gf":1,"home":false,"league":"F1","opponent":"Lyon","result":"L"},{"date":"2026-10-11","ga":1,"gf":2,"home":true,"league":"F1","opponent":"Strasbourg","result":"W"},{"date":"2026-09-20","ga":1,"gf":2,"home":true,"league":"F1","opponent":"Lille","result":"W"},{"date":"2026-09-12","ga":1,"gf":0,"home":false,"league":"F1","opponent":"Auxerre","result":"L"},{"date":"2026-09-05","ga":1,"gf":1,"home":true,"league":"F1","opponent":"Le Mans","result":"D"}],"ga":9,"gd":-3,"gf":6,"lost":3,"played":7,"points":8,"position":13,"rating":-0.20223752649242388,"team":"Nice","won":2},{"club":{"bg":"#009FE3","code":"STR","fg":"#000000","name":"Strasbourg"},"drawn":1,"form":[{"date":"2026-10-17","ga":3,"gf":1,"home":true,"league":"F1","opponent":"Paris SG","result":"L"},{"date":"2026-10-11","ga":2,"gf":1,"home":false,"league":"F1","opponent":"Nice","result":"L"},{"date":"2026-09-19","ga":2,"gf":1,"home":false,"league":"F1","opponent":"Paris FC","result":"L"},{"date":"2026-09-12","ga":1,"gf":1,"home":true,"league":"F1","opponent":"Monaco","result":"D"},{"date":"2026-09-06","ga":2,"gf":6,"home":false,"league":"F1","opponent":"Troyes","result":"W"}],"ga":15,"gd":-3,"gf":12,"lost":4,"played":7,"points":7,"position":14,"rating":0.003721432310289652,"team":"Strasbourg","won":2},{"club":{"bg":"#000000","code":"ANG","fg":"#FFFFFF","name":"Angers"},"drawn":1,"form":[{"date":"2026-10-18","ga":5,"gf":2,"home":true,"league":"F1","opponent":"Marseille","result":"L"},{"date":"2026-10-10","ga":5,"gf":1,"home":false,"league":"F1","opponent":"Brest","result":"L"},{"date":"2026-09-19","ga":0,"gf":2,"home":true,"league":"F1","opponent":"Troyes","result":"W"},{"date":"2026-09-12","ga":0,"gf":0,"home":false,"league":"F1","opponent":"Le Havre","result":"D"},{"date":"2026-09-06","ga":2,"gf":1,"home":true,"league":"F1","opponent":"Rennes","result":"L"}],"ga":15,"gd":-6,"gf":9,"lost":4,"played":7,"points":7,"position":15,"rating":-0.5738838020907473,"team":"Angers","won":2},{"club":{"bg":"#E2001A","code":"LMF","fg":"#FFDD00","name":"Le Mans"},"drawn":3,"form":[{"date":"2026-10-16","ga":3,"gf":0,"home":true,"league":"F1","opponent":"Toulouse","result":"L"},{"date":"2026-10-10","ga":3,"gf":1,"home":false,"league":"F1","opponent":"Paris SG","result":"L"},{"date":"2026-09-19","ga":1,"gf":2,"home":true,"league":"F1","opponent":"Lorient","result":"W"},{"date":"2026-09-13","ga":2,"gf":2,"home":true,"league":"F1","opponent":"Lens","result":"D"},{"date":"2026-09-05","ga":1,"gf":1,"home":false,"league":"F1","opponent":"Nice","result":"D"}],"ga":15,"gd":-5,"gf":10,"lost":3,"played":7,"points":6,"position":16,"rating":-0.4050351793411944,"team":"Le Mans","won":1},{"club":{"bg":"#005BAC","code":"TRO","fg":"#FFFFFF","name":"Troyes"},"drawn":1,"form":[{"date":"2026-10-17","ga":3,"gf":1,"home":true,"league":"F1","opponent":"Lens","result":"L"},{"date":"2026-10-11","ga":2,"gf":0,"home":true,"league":"F1","opponent":"Marseille","result":"L"},{"date":"2026-09-19","ga":2,"gf":0,"home":false,"league":"F1","opponent":"Angers","result":"L"},{"date":"2026-09-13","ga":2,"gf":0,"home":false,"league":"F1","opponent":"Lille","result":"L"},{"date":"2026-09-06","ga":6,"gf":2,"home":true,"league":"F1","opponent":"Strasbourg","result":"L"}],"ga":16,"gd":-11,"gf":5,"lost":5,"played":7,"points":4,"position":17,"rating":-0.45998263596973565,"team":"Troyes","won":1},{"club":{"bg":"#7FB4E3","code":"HAC","fg":"#00305E","name":"Le Havre"},"drawn":2,"form":[{"date":"2026-10-18","ga":3,"gf":1,"home":true,"league":"F1","opponent":"Auxerre","result":"L"},{"date":"2026-10-10","ga":1,"gf":0,"home":false,"league":"F1","opponent":"Lille","result":"L"},{"date":"2026-09-19","ga":3,"gf":2,"home":false,"league":"F1","opponent":"Toulouse","result":"L"},{"date":"2026-09-12","ga":0,"gf":0,"home":true,"league":"F1","opponent":"Angers","result":"D"},{"date":"2026-09-05","ga":2,"gf":1,"home":true,"league":"F1","opponent":"Brest","result":"L"}],"ga":11,"gd":-6,"gf":5,"lost":5,"played":7,"points":2,"position":18,"rating":-0.2771173874714321,"team":"Le Havre","won":0}],"short":"FRA"}],"schema":1,"season":2026,"season_label":"2026-27 season"},"performance":{"backtest":{"by_league":[{"accuracy":0.5568421052631579,"brier":0.5635400776629856,"code":"E0","log_loss":0.9519620873897621,"market_accuracy":0.5563157894736842,"market_log_loss":0.9520181247112498,"matches":3800,"name":"Premier League"},{"accuracy":0.5376315789473685,"brier":0.5739664273029437,"code":"SP1","log_loss":0.9660309756311066,"market_accuracy":0.5381578947368421,"market_log_loss":0.9673390666699235,"matches":3800,"name":"La Liga"},{"accuracy":0.555672545406686,"brier":0.5610230602526848,"code":"I1","log_loss":0.9471247098835073,"market_accuracy":0.5561989997367728,"market_log_loss":0.9490795065894699,"matches":3799,"name":"Serie A"},{"accuracy":0.5235294117647059,"brier":0.5829526065117626,"code":"D1","log_loss":0.9794493585193217,"market_accuracy":0.5248366013071896,"market_log_loss":0.9787510285629077,"matches":3060,"name":"Bundesliga"},{"accuracy":0.5231521426517113,"brier":0.5853731410872365,"code":"F1","log_loss":0.9822978930385611,"market_accuracy":0.5243025596778832,"market_log_loss":0.9827597939815056,"matches":3477,"name":"Ligue 1"}],"calibration":[{"hi":0.4,"lo":0.0,"observed":0.36834782608695654,"picks":2875,"predicted":0.37671748046726006},{"hi":0.45,"lo":0.4,"observed":0.4334924965893588,"picks":2932,"predicted":0.42429587180771855},{"hi":0.5,"lo":0.45,"observed":0.46637485077596497,"picks":2513,"predicted":0.47418931142702586},{"hi":0.55,"lo":0.5,"observed":0.5301810865191147,"picks":1988,"predicted":0.5246640148567345},{"hi":0.6,"lo":0.55,"observed":0.5693245302183849,"picks":1969,"predicted":0.5746857283127736},{"hi":0.65,"lo":0.6,"observed":0.6009389671361502,"picks":1491,"predicted":0.6234524896419616},{"hi":0.7,"lo":0.65,"observed":0.6900858704137393,"picks":1281,"predicted":0.6747993601325705},{"hi":0.8,"lo":0.7,"observed":0.7483836206896551,"picks":1856,"predicted":0.7452334907105216},{"hi":1.0,"lo":0.8,"observed":0.8195926285160039,"picks":1031,"predicted":0.8455394033714446}],"model":"shots_ratings","over_2_5":{"2006-2015":{"log_loss":0.6815938527996448,"market_log_loss":0.679751496920017,"matches":18258},"2016-2025":{"log_loss":0.6752235342369107,"market_log_loss":0.6706596806217283,"matches":17935}},"periods":{"confirm":[2016,2025],"dev":[2006,2015]},"result":{"blend":{"2006-2015":{"accuracy":0.5257133468426529,"brier":0.5852198188242704,"log_loss":0.9813326808506676,"market_accuracy":0.5262610219617723,"market_log_loss":0.9816301022089897,"matches":18259},"2016-2025":{"accuracy":0.5403099910793934,"brier":0.5727602984086082,"log_loss":0.9644884714256772,"market_accuracy":0.5408675289919714,"market_log_loss":0.9651619270661266,"matches":17936}},"model":{"2006-2015":{"accuracy":0.5205652007229311,"brier":0.5897579969695463,"log_loss":0.9878265555926603,"market_accuracy":0.5262610219617723,"market_log_loss":0.9816301022089897,"matches":18259},"2016-2025":{"accuracy":0.5334522747546833,"brier":0.5800638617302322,"log_loss":0.9753568321809251,"market_accuracy":0.5408675289919714,"market_log_loss":0.9651619270661266,"matches":17936}}},"value":{"edges":{"0.02":{"2006-2015":{"bets":13586,"roi":0.0338760488738407},"2016-2025":{"bets":13594,"roi":-0.057292923348536126}},"0.05":{"2006-2015":{"bets":5681,"roi":0.04610631930998069},"2016-2025":{"bets":4835,"roi":-0.06560910031023791}},"0.08":{"2006-2015":{"bets":2197,"roi":0.033491124260355},"2016-2025":{"bets":1451,"roi":-0.061543762922122484}}},"enabled_at":null},"weights":{"season":2026,"w":[1.1101909011803373,0.03906617098046598,0.002790309816008461]}},"basis":"market","generated":"2026-10-25T22:06:11Z","schema":1,"track_record":{"by_week":[],"correct":0,"ou_correct":0,"ou_settled":0,"pending":2,"settled":0}}};</script>
+<script>
+// YourSoccer: the matches still to play in Europe's top five leagues, each
+// club's form, the league tables and the model's own measured record. The
+// engine (soccer/engine) writes data/*.json; this only draws it.
+//
+// A soccer match has three results, so every match card carries three
+// chances - home, draw, away - and the pick is the likeliest of the three.
+
+// desk.js:begin - copied from shared/desk.js by scripts/sync_desk.py; edit that file
+// The Desk app chrome, shared by YourMMA, YourNFL and YourSoccer: install,
+// the app menu, theme, the update notice, the icons and the small pieces
+// every match card is built from. This file is the source;
+// scripts/sync_desk.py copies it into every app's app.js, and a test fails
+// if any copy drifts.
+//
+// No module syntax and one name (DESK): the MMA app runs as a module, the
+// other apps and every standalone file as classic scripts, and the MMA
+// standalone concatenates this with matchup.js.
+const DESK = (() => {
+  const ICONS = {
+    list: '<path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>',
+    compare: '<path d="M7 4v16M17 4v16"/><path d="M3 8h8M13 16h8"/>',
+    chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    shield: '<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/>',
+    download: '<path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/>',
+    more: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    chevron: '<path d="M6 9l6 6 6-6"/>',
+    share: '<path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 00-1 1v8a1 1 0 001 1h14a1 1 0 001-1v-8a1 1 0 00-1-1h-1"/>',
+    plus: '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    moon: '<path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/>',
+    auto: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 010 18z" fill="currentColor"/>',
+    refresh: '<path d="M20 11a8 8 0 10-2.3 5.7"/><path d="M20 4v7h-7"/>',
+    swap: '<path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>',
+    copy: '<rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/>',
+    close: '<path d="M6 6l12 12M18 6L6 18"/>',
+    alert: '<path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5v.3"/>',
+  };
+  const icon = (name, extra = "") =>
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round" aria-hidden="true" ${extra}>${ICONS[name] || ""}</svg>`;
+
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } },
+  };
+
+  const calm = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // A side's whole-number chance - unless another side would print the same
+  // number, when it gets a decimal, so a pick is never "50% v 50%".
+  const share = (s, ...others) => {
+    const a = Math.round(s * 100);
+    return others.some((o) => o != null && Math.round(o * 100) === a) ? (s * 100).toFixed(1) : String(a);
+  };
+
+  // The Close button at the foot of an opened match.
+  const closer = (label) =>
+    `<button class="detail-close" type="button" data-collapse aria-label="Close ${esc(label)}">${icon("chevron")}Close</button>`;
+
+  // A secondary section of an opened match, folded to its title. The caller
+  // escapes the title; an empty body draws nothing.
+  const sub = (title, body) => !body ? "" :
+    `<details class="fold sub"><summary><span class="clip"><b>${title}</b></span><span class="more">Show</span></summary><div class="fold-body">${body}</div></details>`;
+
+  // A record card folded to its title and what it found; the table and its
+  // caveats are one tap away, never gone.
+  const cardFold = (title, take, body) =>
+    `<div class="card"><details class="cardfold"><summary><div class="cf-head"><h2>${title}</h2>${icon("chevron")}</div>${take ? `<div class="take">${take}</div>` : ""}</summary><div class="cardfold-body">${body}</div></details></div>`;
+
+  // An opened match whose summary sits low on the screen scrolls up to it,
+  // so the tap visibly does something. toggle does not bubble, hence capture.
+  document.addEventListener("toggle", (e) => {
+    const d = e.target;
+    if (!d.matches || !d.matches("details.match") || !d.open) return;
+    const bar = document.querySelector(".tabbar");
+    const limit = (bar ? bar.getBoundingClientRect().top : window.innerHeight) - 160;
+    if (d.querySelector("summary").getBoundingClientRect().bottom > limit)
+      d.scrollIntoView({ block: "start", behavior: calm() ? "auto" : "smooth" });
+  }, true);
+  document.addEventListener("click", (e) => {
+    const c = e.target.closest("[data-collapse]");
+    if (!c) return;
+    const d = c.closest("details.match");
+    if (!d) return;
+    d.open = false;
+    const head = document.querySelector(".appbar");
+    if (d.getBoundingClientRect().top < (head ? head.getBoundingClientRect().bottom : 0)) d.scrollIntoView({ block: "start" });
+  });
+  // iOS applies :active (the press feedback) only with a touchstart listener.
+  document.addEventListener("touchstart", () => {}, { passive: true });
+
+  // How long ago, for a stamp: "just now", "3h ago", "2d ago".
+  function ago(iso) {
+    const t = new Date(iso).getTime();
+    if (!Number.isFinite(t)) return "";
+    const m = (Date.now() - t) / 6e4;
+    if (m < 0) return "just now";
+    if (m < 2) return "just now";
+    if (m < 60) return `${Math.round(m)} min ago`;
+    if (m < 60 * 24) return `${Math.round(m / 60)}h ago`;
+    return `${Math.round(m / 1440)}d ago`;
+  }
+
+  let cfg = null;
+
+  /* ------------------------------------------------------------ theme */
+  const THEME_BG = { light: "#f3f4f7", dark: "#0b0c10" };
+  function applyTheme(mode) {
+    const root = document.documentElement;
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode);
+    else root.removeAttribute("data-theme");
+    // The status bar follows the chosen theme, not only the system's.
+    for (const m of document.querySelectorAll('meta[name="theme-color"]')) {
+      const scheme = /dark/.test(m.getAttribute("media") || "") ? "dark" : "light";
+      m.setAttribute("content", THEME_BG[mode === "light" || mode === "dark" ? mode : scheme]);
+    }
+  }
+  const theme = () => store.get(`${cfg.key}.theme`) || "auto";
+
+  /* ------------------------------------------------------------ sheet */
+  // A labelled modal with a close button: the page behind is inert (focus
+  // cannot walk out onto it) and held still, and a swipe down dismisses it.
+  let openSheet = null;
+  function sheet(html) {
+    closeSheet();
+    const back = document.createElement("div");
+    back.className = "sheet-back";
+    back.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab" aria-hidden="true"></div><button class="iconbtn sheet-x" type="button" data-close aria-label="Close">${icon("close")}</button>${html}</div>`;
+    back.addEventListener("click", (e) => { if (e.target === back || e.target.closest("[data-close]")) closeSheet(); });
+    const sh = back.querySelector(".sheet");
+    const h = sh.querySelector("h2");
+    if (h) { h.id = "sheet-title"; sh.setAttribute("aria-labelledby", "sheet-title"); }
+    const prev = document.activeElement;
+    const behind = [...document.body.children];
+    document.body.appendChild(back);
+    behind.forEach((el) => { el.inert = true; });
+    openSheet = { back, prev, behind };
+    let y0 = null;
+    sh.addEventListener("touchstart", (e) => { y0 = sh.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
+    sh.addEventListener("touchmove", (e) => { if (y0 != null) sh.style.transform = `translateY(${Math.max(0, e.touches[0].clientY - y0)}px)`; }, { passive: true });
+    sh.addEventListener("touchend", (e) => {
+      if (y0 == null) return;
+      const dy = e.changedTouches[0].clientY - y0;
+      y0 = null;
+      if (dy > 90) closeSheet();
+      else sh.style.transform = "";
+    });
+    const first = back.querySelector("button,a,[tabindex]");
+    if (first) first.focus({ preventScroll: true });
+    return sh;
+  }
+  function closeSheet() {
+    if (!openSheet) return;
+    const { back, prev, behind } = openSheet;
+    openSheet = null;
+    behind.forEach((el) => { el.inert = false; });
+    back.remove();
+    if (prev && prev.focus) prev.focus({ preventScroll: true });
+  }
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+
+  /* ------------------------------------------------------------ toast */
+  let toastTimer = null;
+  function toast(text, action, onAction, ms = 5000) {
+    document.querySelectorAll(".toast").forEach((t) => t.remove());
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.setAttribute("role", "status");
+    t.innerHTML = `<span>${esc(text)}</span>${action ? `<button type="button">${esc(action)}</button>` : ""}`;
+    if (action) t.querySelector("button").addEventListener("click", () => { t.remove(); onAction && onAction(); });
+    document.body.appendChild(t);
+    clearTimeout(toastTimer);
+    if (ms) toastTimer = setTimeout(() => t.remove(), ms);
+  }
+
+  /* ---------------------------------------------------------- install */
+  // A phone installs the app from the browser's own menu. Chrome tells the
+  // page it can (beforeinstallprompt) and the page can then offer a button;
+  // Safari never does, so on an iPhone the button opens the three steps
+  // instead. Inside another app's browser (a chat or social app) neither
+  // works, and the honest answer is to open the page in the real browser.
+  let deferred = null;
+  const ua = navigator.userAgent || "";
+  const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroid = /android/i.test(ua);
+  const inAppBrowser = /FBAN|FBAV|Instagram|Line\/|Snapchat|Twitter|TikTok|GSA\/|; wv\)|WhatsApp|Telegram|Discord/i.test(ua);
+  const standalone = () =>
+    window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  const served = () => location.protocol.startsWith("http");
+  const canOfferInstall = () => served() && !standalone();
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferred = e;
+    refreshInstallUI();
+  });
+  window.addEventListener("appinstalled", () => {
+    deferred = null;
+    refreshInstallUI();
+    toast(`${cfg ? cfg.name : "The app"} is installed. Open it from your home screen.`);
+  });
+
+  async function install() {
+    if (deferred) {
+      const e = deferred;
+      deferred = null;
+      e.prompt();
+      try { await e.userChoice; } catch (err) { /* dismissed */ }
+      refreshInstallUI();
+      return;
+    }
+    installHelp();
+  }
+
+  function copyLink() {
+    const url = location.href.split("#")[0];
+    const done = () => toast("Link copied. Paste it into Safari or Chrome.");
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => toast(url, null, null, 9000));
+    else toast(url, null, null, 9000);
+  }
+
+  function installHelp() {
+    const name = esc(cfg.name);
+    let body;
+    if (inAppBrowser) {
+      body = `<h2>Open it in your browser</h2>
+        <p class="mini">This page is open inside another app, which cannot install apps.
+          Open it in ${isIOS ? "Safari" : "Chrome"}, then install from there.</p>
+        <ol class="steps">
+          <li><span>Tap the ${icon("more", 'class="inl"')} or ${icon("share", 'class="inl"')} menu of this screen</span></li>
+          <li><span>Choose <b>Open in ${isIOS ? "Safari" : "browser"}</b></span></li>
+          <li><span>Tap <b>Install</b> in ${name}'s menu</span></li>
+        </ol>
+        <div class="actions"><button class="btn ghost" type="button" data-copy>${icon("copy")} Copy link</button>
+          <button class="btn" type="button" data-close>Done</button></div>`;
+    } else if (isIOS) {
+      body = `<h2>Install ${name}</h2>
+        <p class="mini">It opens full screen from your home screen and works with no signal.</p>
+        <ol class="steps">
+          <li><span>Tap ${icon("share", 'class="inl"')} <b>Share</b> in Safari's toolbar</span></li>
+          <li><span>Scroll down and tap ${icon("plus", 'class="inl"')} <b>Add to Home Screen</b></span></li>
+          <li><span>Tap <b>Add</b></span></li>
+        </ol>
+        <p class="mini">Opened from another app's link? Tap ${icon("globe", 'class="inl"')} to open the page in
+          Safari first - only Safari itself can add it. In Chrome on iPhone the Share button is in the
+          address bar. Already installed? Open ${name} from your home screen.</p>
+        <div class="actions"><button class="btn" type="button" data-close>Got it</button></div>`;
+    } else {
+      body = `<h2>Install ${name}</h2>
+        <p class="mini">It opens full screen from your home screen and works with no signal.</p>
+        <ol class="steps">
+          <li><span>Open the browser menu ${icon("more", 'class="inl" style="transform:rotate(90deg)"')}</span></li>
+          <li><span>Tap <b>Install app</b> or <b>Add to Home screen</b></span></li>
+          <li><span>Tap <b>Install</b></span></li>
+        </ol>
+        <p class="mini">${isAndroid ? "Use Chrome, Edge or Samsung Internet." : "In Chrome or Edge on a computer, the install button is in the address bar."}
+          If the menu has no install option, the app may already be installed.</p>
+        <div class="actions"><button class="btn" type="button" data-close>Got it</button></div>`;
+    }
+    const s = sheet(body);
+    const c = s.querySelector("[data-copy]");
+    if (c) c.addEventListener("click", copyLink);
+  }
+
+  // The banner a tab can show above its content, from the second visit
+  // (the menu offers install from the first), until installed or waved off.
+  function banner() {
+    if (!canOfferInstall() || store.get(`${cfg.key}.install-dismissed`)
+        || (+store.get(`${cfg.key}.visits`) || 0) < 2) return "";
+    return `<div class="banner" data-install-banner>
+      <img src="${esc(cfg.icon)}" alt="">
+      <div class="txt"><b>Install ${esc(cfg.name)}</b><span>Full screen, works offline</span></div>
+      <button class="btn small" type="button" data-install>${icon("download")} Install</button>
+      <button class="iconbtn" type="button" data-dismiss aria-label="Not now">${icon("close")}</button>
+    </div>`;
+  }
+  function refreshInstallUI() {
+    document.querySelectorAll("[data-install-banner]").forEach((b) => {
+      if (!canOfferInstall()) b.remove();
+    });
+  }
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-install]")) { e.preventDefault(); install(); }
+    const d = e.target.closest("[data-dismiss]");
+    if (d) {
+      store.set(`${cfg.key}.install-dismissed`, "1");
+      const b = d.closest("[data-install-banner]");
+      if (b) b.remove();
+      toast("You can install it any time from the menu.");
+    }
+  });
+
+  /* ------------------------------------------------------------- menu */
+  function menu() {
+    const t = theme();
+    const opt = (mode, label, ic) =>
+      `<button type="button" data-theme-set="${mode}" aria-pressed="${t === mode}">${icon(ic, 'style="width:16px;height:16px;display:inline;vertical-align:-3px;margin-right:5px"')}${label}</button>`;
+    const rows = [];
+    if (canOfferInstall()) rows.push(`<button class="row" type="button" data-install>
+      <span class="ic">${icon("download")}</span><span class="t">Install ${esc(cfg.name)}<small>Home screen, full screen, offline</small></span></button>`);
+    if (served()) for (const sib of cfg.siblings || (cfg.sibling ? [cfg.sibling] : [])) rows.push(`<a class="row" href="${esc(sib.href)}">
+      <span class="ic">${icon("swap")}</span><span class="t">Open ${esc(sib.name)}<small>${esc(sib.blurb || "")}</small></span></a>`);
+    rows.push(`<button class="row" type="button" data-reload>
+      <span class="ic">${icon("refresh")}</span><span class="t">Refresh<small>${esc(cfg.stamp ? cfg.stamp() : "Fetch the latest picks")}</small></span></button>`);
+    const s = sheet(`<h2>${esc(cfg.name)}</h2>
+      <div class="eyebrow" style="margin:14px 0 8px">Appearance</div>
+      <div class="seg" role="group" aria-label="Theme">${opt("auto", "System", "auto")}${opt("light", "Light", "sun")}${opt("dark", "Dark", "moon")}</div>
+      <div style="margin-top:8px">${rows.join("")}</div>
+      <p class="mini" style="margin-top:10px">For entertainment and analysis. Not betting advice.</p>`);
+    s.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-theme-set]");
+      if (b) {
+        const mode = b.getAttribute("data-theme-set");
+        store.set(`${cfg.key}.theme`, mode);
+        applyTheme(mode);
+        s.querySelectorAll("[data-theme-set]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      }
+      if (e.target.closest("[data-reload]")) { closeSheet(); reload(); }
+    });
+  }
+
+  function reload() {
+    if (cfg.onReload) cfg.onReload();
+    else location.reload();
+  }
+
+  /* --------------------------------------------------- service worker */
+  // The worker is what makes the app installable and what makes it open with
+  // no signal. It is skipped on file:// because a file:// page has no origin
+  // to scope one to - the standalone build carries its data on the page.
+  // When a new version takes over, say so and offer the reload, rather than
+  // leaving the old screen up until the next launch.
+  function serviceWorker() {
+    if (!("serviceWorker" in navigator) || !location.protocol.startsWith("http")) return;
+    const hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (hadController) toast("A new version is ready.", "Reload", () => location.reload(), 0);
+    });
+    const go = () => navigator.serviceWorker.register("sw.js").catch(() => {
+      // No worker means no offline copy. The app still works online, so this
+      // is not worth a message on the page.
+    });
+    if (document.readyState === "complete") go();
+    else window.addEventListener("load", go);
+  }
+
+  /* ------------------------------------------------------------- init */
+  // cfg: { key, name, icon, siblings: [{name, href, blurb}], stamp(), onReload() }
+  function init(options) {
+    cfg = options;
+    store.set(`${cfg.key}.visits`, String((+store.get(`${cfg.key}.visits`) || 0) + 1));
+    applyTheme(theme());
+    const m = document.getElementById("menu-btn");
+    if (m) m.addEventListener("click", menu);
+    // The sport switch links to the other apps on the same site; a saved
+    // file has no neighbour to link to.
+    const sw = document.getElementById("sport-switch");
+    if (sw && !served()) sw.hidden = true;
+    if (!served()) document.querySelectorAll("[data-served-only]").forEach((x) => { x.hidden = true; });
+    serviceWorker();
+  }
+
+  // Wire a bottom tab bar: tabs are <button id="tab-NAME">, views
+  // <section id="view-NAME">. boot[NAME]() runs the first time a tab opens.
+  // Each tab keeps its scroll position, as a native tab bar does.
+  function tabs(names, boot, storageKey, fallback) {
+    const started = {}, pos = {};
+    let current = null;
+    for (const t of names) {
+      const v = document.getElementById(`view-${t}`);
+      v.setAttribute("role", "tabpanel");
+      v.setAttribute("aria-labelledby", `tab-${t}`);
+    }
+    function show(name, scroll) {
+      if (current) pos[current] = window.scrollY;
+      for (const t of names) {
+        document.getElementById(`view-${t}`).hidden = t !== name;
+        const tab = document.getElementById(`tab-${t}`);
+        tab.setAttribute("aria-selected", String(t === name));
+        tab.tabIndex = t === name ? 0 : -1;
+      }
+      current = name;
+      store.set(storageKey, name);
+      if (scroll) window.scrollTo({ top: pos[name] || 0 });
+      if (!started[name]) { started[name] = true; boot[name](); }
+    }
+    for (const t of names) {
+      document.getElementById(`tab-${t}`).addEventListener("click", () => {
+        const already = document.getElementById(`tab-${t}`).getAttribute("aria-selected") === "true";
+        // Tapping the open tab again goes back to its top, as native apps do.
+        if (already) { pos[t] = 0; window.scrollTo({ top: 0, behavior: calm() ? "auto" : "smooth" }); }
+        else show(t, true);
+      });
+    }
+    const list = document.querySelector('[role="tablist"]');
+    if (list) list.addEventListener("keydown", (e) => {
+      const i = names.findIndex((t) => document.getElementById(`tab-${t}`) === document.activeElement);
+      if (i < 0) return;
+      const n = names.length;
+      const j = { ArrowRight: (i + 1) % n, ArrowLeft: (i + n - 1) % n, Home: 0, End: n - 1 }[e.key];
+      if (j == null) return;
+      e.preventDefault();
+      document.getElementById(`tab-${names[j]}`).focus();
+      show(names[j], true);
+    });
+    // A home-screen shortcut opens a tab directly (manifest "shortcuts").
+    let first = new URLSearchParams(location.search).get("tab") || store.get(storageKey);
+    if (!names.includes(first)) first = fallback;
+    show(first, false);
+    return { show, restart(name) { started[name] = false; } };
+  }
+
+  const skeleton = (n = 4) =>
+    `<div class="skeleton" aria-label="Loading"><i class="short"></i>${"<i></i>".repeat(n)}</div>`;
+
+  return { icon, esc, ago, sheet, closeSheet, toast, install, banner, init, tabs, skeleton, store,
+    share, closer, sub, cardFold, calm };
+})();
+// desk.js:end
+
+const $ = (id) => document.getElementById(id);
+const pct = (x, d = 0) => (x == null ? "—" : `${(x * 100).toFixed(d)}%`);
+// Rounded before the sign is taken: -0.004 is "0.00", not "−0.00".
+const signed = (x, d = 1) => {
+  if (x == null) return "—";
+  const r = Number(Number(x).toFixed(d));
+  return r === 0 ? (0).toFixed(d) : `${r > 0 ? "+" : "−"}${Math.abs(r).toFixed(d)}`;
+};
+const num = (x, d = 2) => (x == null ? "—" : Number(x).toFixed(d));
+const esc = DESK.esc;
+const icon = DESK.icon;
+// A decimal price as the American odds the other two apps print: 2.50 is
+// +150, 1.50 is −200.
+const american = (dec) => {
+  if (dec == null || !(dec > 1)) return null;
+  return dec >= 2 ? Math.round((dec - 1) * 100) : Math.round(-100 / (dec - 1));
+};
+const odds = (dec) => {
+  const o = american(dec);
+  return o == null ? "—" : o > 0 ? `+${o}` : `−${Math.abs(o)}`;
+};
+const shortDate = (d) => {
+  const t = new Date(`${d}T12:00:00Z`);
+  return Number.isNaN(t.getTime()) ? (d || "") : t.toLocaleDateString(undefined, { day: "numeric", month: "short", timeZone: "UTC" });
+};
+const localStamp = (iso) => {
+  const t = new Date(iso);
+  return Number.isNaN(t.getTime()) ? String(iso || "") : t.toLocaleString(undefined,
+    { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });
+};
+// Kickoff is stored in UTC; the phone shows its own time zone.
+const kickTime = (iso) => new Date(iso).toLocaleString(undefined, { weekday: "short", hour: "numeric", minute: "2-digit" });
+const dayKey = (iso) => new Date(iso).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
+
+async function load(name) {
+  const embedded = window.__YOURSOCCER_DATA__;
+  if (embedded && embedded[name]) return embedded[name];
+  const res = await fetch(`data/${name}.json`, { cache: "no-cache" });
+  if (!res.ok) throw new Error(`${name}.json — ${res.status}`);
+  return res.json();
+}
+
+// A caveat folded to its first two lines, the rest one tap away.
+const fold = (text, extra = "") => !text ? "" : `<details class="fold">
+    <summary><span class="ic">${icon("info")}</span><span class="clip">${esc(text)}</span><span class="more">More</span></summary>
+    ${extra ? `<div class="fold-body">${extra}</div>` : ""}</details>`;
+
+// A failed load says so in words and offers to try again; the developer's
+// hint is one tap away.
+function fail(el, error, what, retry) {
+  el.innerHTML = `<div class="note err"><b>Could not load ${esc(what)}.</b> Check the connection and try again.${
+    retry ? `<div style="margin-top:10px"><button class="btn small ghost" type="button" data-retry>${icon("refresh")} Try again</button></div>` : ""}</div>
+    ${fold(`${error.message}. The runner writes these files; to build them locally, run python soccer/engine/soccer_predict.py.`)}`;
+  const b = el.querySelector("[data-retry]");
+  if (b) b.addEventListener("click", () => retry());
+}
+
+// A club's badge: its colours behind its three-letter code.
+const teamChip = (club) => club
+  ? `<span class="teamchip" style="background:${esc(club.bg)};color:${esc(club.fg)}">${esc(club.code)}</span>` : "";
+
+// ---------------------------------------------------------------- form
+
+// A club's last five league matches beside its name, newest on the left: a
+// filled teal circle a win, an orange ring a loss, grey a draw, and the
+// score from the club's side inside. In either tier, so a promoted club's
+// run-in shows in August. Not a model input.
+const RESULT_WORD = { W: "won", D: "drew", L: "lost" };
+const FORM_LEGEND = `Under each club: its league position, then its last five league matches,
+  newest first - a filled teal circle a win, an orange ring a loss, grey a draw, with the score
+  from the club's side. Open a match for opponents and dates.`;
+const formTip = (b) => `${RESULT_WORD[b.result] || b.result} ${b.gf}-${b.ga} ${b.home ? "v" : "at"} ${b.opponent} · ${b.date}`;
+function formLine(form, position) {
+  const pos = position ? `<span class="rec num">${esc(ordinal(position))}</span>` : "";
+  if (!form || !form.length) return pos || `<span class="rec none">no matches yet</span>`;
+  const dots = form.map((b) =>
+    `<span class="res ${esc(String(b.result).toLowerCase())}" title="${esc(formTip(b))}" aria-hidden="true">${esc(b.gf)}-${esc(b.ga)}</span>`).join("");
+  const said = `<span class="sr">, last ${form.length}: ${esc(form.map((b) => `${RESULT_WORD[b.result] || b.result} ${b.gf}-${b.ga}`).join(", "))}</span>`;
+  return `${pos}<span class="last5 score5">${dots}</span>${said}`;
+}
+function formDetail(club, form) {
+  if (!form || !form.length) return "";
+  const items = form.map((b) => `<li><span class="res ${esc(String(b.result).toLowerCase())}" aria-hidden="true">${esc(b.gf)}-${esc(b.ga)}</span>
+      <span><b>${esc(b.result === "W" ? "Won" : b.result === "L" ? "Lost" : "Drew")} ${esc(b.gf)}-${esc(b.ga)}</b> ${b.home ? "v" : "at"} ${esc(b.opponent_name || b.opponent)}
+      <span class="mini"><br>${esc(shortDate(b.date))}${b.league_name ? ` · ${esc(b.league_name)}` : ""}</span></span></li>`).join("");
+  return `<div class="panel"><div class="eyebrow">${esc(club.name)} · last ${form.length}</div><ul class="list">${items}</ul></div>`;
+}
+const ordinal = (n) => {
+  const s = ["th", "st", "nd", "rd"], v = n % 100;
+  return `${n}${s[(v - 20) % 10] || s[v] || s[0]}`;
+};
+
+// ---------------------------------------------------------------- matches
+
+const PICK_WORD = { H: "home win", D: "draw", A: "away win" };
+// Where a match stands by the phone's own clock: past kickoff it is no longer
+// upcoming, whatever the file says. Nothing here reads a result - "final"
+// comes only from the data.
+const phase = (m, now = Date.now()) => m.status === "final" ? "final"
+  : Date.parse(m.kickoff) <= now ? "started" : "upcoming";
+const STATUS_WORD = { final: "Full time", started: "Kicked off", upcoming: "" };
+
+// One outcome row: a club (or the draw), its chance on the right.
+function outcome(kind, m) {
+  const club = kind === "H" ? m.home : kind === "A" ? m.away : null;
+  const p = { H: m.p_h, D: m.p_d, A: m.p_a }[kind];
+  const others = ["H", "D", "A"].filter((k) => k !== kind).map((k) => ({ H: m.p_h, D: m.p_d, A: m.p_a }[k]));
+  const picked = m.pick === kind;
+  const scored = m.score && m.score.home != null;
+  const lost = m.status === "final" && m.score && (
+    kind === "H" ? m.score.home < m.score.away : kind === "A" ? m.score.away < m.score.home : m.score.home !== m.score.away);
+  const right = kind !== "D" && scored
+    ? `<span class="score num">${esc(kind === "H" ? m.score.home : m.score.away)}</span>`
+    : `<span class="p">${p == null ? "—" : `${DESK.share(p, ...others)}<small>%</small>`}</span>`;
+  if (kind === "D") {
+    return `<div class="side d draw${picked ? " picked" : ""}${lost ? " lost" : ""}">
+        <span class="mark"></span>
+        <div class="who"><span class="nm">Draw</span></div>
+        ${scored ? "" : right}
+      </div>`;
+  }
+  const side = kind === "H" ? "home" : "away";
+  return `<div class="side ${kind === "H" ? "r" : "b"}${picked ? " picked" : ""}${lost ? " lost" : ""}">
+      <span class="mark"></span>
+      <div class="who">${teamChip(club)}<span class="nm" title="${esc(club.name)}">${esc(club.name)}</span>${kind === "H" ? `<span class="at">home</span>` : ""}</div>
+      ${right}
+      <div class="sub">${formLine(m[`${side}_form`], m[`${side}_position`])}</div>
+    </div>`;
+}
+
+function resultTag(m) {
+  if (m.status !== "final" || !m.pick || !m.score) return "";
+  return m.correct ? `<span class="tag good">${icon("check", 'style="width:13px;height:13px"')} Right</span>` : `<span class="tag bad">Wrong</span>`;
+}
+
+const pickName = (m, k) => k === "H" ? m.home.name : k === "A" ? m.away.name : "Draw";
+const priceOf = (m, k, set = "avg") => ((m.prices || {})[set] || {})[{ H: "h", D: "d", A: "a" }[k]];
+
+function matchRow(m, d) {
+  const ph = phase(m);
+  const bar = m.p_h == null
+    ? `<div class="probbar none"><i style="flex:1"></i></div>`
+    : `<div class="probbar${m.pick ? " has-pick" : ""}" role="img" aria-label="${esc(m.home.name)} ${pct(m.p_h)}, draw ${pct(m.p_d)}, ${esc(m.away.name)} ${pct(m.p_a)}">
+        <i class="r${m.pick === "H" ? " pk" : ""}" style="flex:${m.p_h}"></i><i class="d${m.pick === "D" ? " pk" : ""}" style="flex:${m.p_d}"></i><i class="b${m.pick === "A" ? " pk" : ""}" style="flex:${m.p_a}"></i></div>`;
+  const statusWord = STATUS_WORD[ph] || "";
+  const status = statusWord ? `<span class="badge ${ph === "final" ? "" : "live"}">${esc(statusWord)}</span>` : "";
+  const league = (d.leagues || {})[m.league] || {};
+
+  const tags = [];
+  if (m.pick && !m.market) tags.push(`<span class="tag warn" title="No price was posted for this match">Model only</span>`);
+  tags.push(resultTag(m));
+  const price = m.pick ? priceOf(m, m.pick) : null;
+  const pickLine = m.pick
+    ? `<span class="pick">${icon("check")}<span class="sr">Pick: </span>${esc(m.pick === "D" ? "Draw" : pickName(m, m.pick))}${
+        price != null ? `<span class="odds num">${odds(price)}</span>` : ""}</span>${tags.join("")}`
+    : `<span class="mini">${esc(m.no_pick_reason || "No pick.")}</span>${tags.join("")}`;
+  const facts = [];
+  if (m.p_o25 != null) facts.push(m.p_o25 >= 0.5 ? `Over 2.5 goals ${pct(m.p_o25)}` : `Under 2.5 goals ${pct(1 - m.p_o25)}`);
+
+  // The pick first: who, how sure, the prices. How the number is built is
+  // one tap away.
+  const three = (x) => x ? `${esc(m.home.code)} ${pct(x.p_h, 1)} · draw ${pct(x.p_d, 1)} · ${esc(m.away.code)} ${pct(x.p_a, 1)}` : "—";
+  const lead = [
+    ["Pick", m.pick ? `<b>${esc(pickName(m, m.pick))}${m.pick === "D" ? "" : " to win"}</b> <span class="num">${pct(m.pick_prob, 1)}</span>
+      <span class="mini">${!m.market ? "model alone - no market price"
+        : d.basis === "market" ? "the market's chances, recalibrated" : "model and market blended"}</span>` : "—"],
+    ["Price", price == null ? "—" : `<span class="num">${odds(price)}</span> <span class="mini">average${
+      priceOf(m, m.pick, "best") != null ? ` · best ${odds(priceOf(m, m.pick, "best"))}` : ""}</span>`],
+    ["Goals", m.p_o25 == null ? "—" : `Over 2.5 <span class="num">${pct(m.p_o25, 1)}</span> <span class="mini">${
+      m.market_o25 != null ? "the over/under market" : "model alone - no over/under price"}${
+      m.market_o25 != null && m.model_o25 != null ? ` · model ${pct(m.model_o25, 1)}` : ""}</span>`],
+  ];
+  const built = [
+    ["Model alone", three(m.model)],
+    ["Market", m.market ? `${three(m.market)} <span class="mini">the prices with the bookmakers' cut removed</span>` : "—"],
+    ["Prices", m.prices && m.prices.avg ? `<span class="nowrap">${esc(m.home.code)} ${odds(m.prices.avg.h)}</span> · <span class="nowrap">draw ${odds(m.prices.avg.d)}</span> · <span class="nowrap">${esc(m.away.code)} ${odds(m.prices.avg.a)}</span>` : "—"],
+  ];
+  if (m.prices_at) built.push(["Priced", esc(localStamp(m.prices_at))]);
+  if (m.logged_at) built.push(["Logged", `${esc(localStamp(m.logged_at))} <span class="mini">before kickoff</span>`]);
+  const rows = (l) => l.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join("");
+  const forms = formDetail(m.home, m.home_form) + formDetail(m.away, m.away_form);
+
+  return `<details class="match" data-status="${esc(ph)}" data-league="${esc(m.league)}">
+    <summary>
+      <div class="match-top"><span class="when">${esc(kickTime(m.kickoff))}</span><span class="badge">${esc(league.short || m.league)}</span>${status}<span class="chev">${icon("chevron")}</span></div>
+      <div class="sides">${outcome("H", m)}${outcome("D", m)}${outcome("A", m)}</div>
+      ${bar}
+      <div class="pickline">${pickLine}</div>
+      ${facts.length ? `<div class="factline num">${facts.join(" · ")}</div>` : ""}
+    </summary>
+    <div class="detail">
+      <div class="panel"><div class="eyebrow">The pick</div>
+        <dl class="kv">${rows(lead)}</dl>
+        <details class="fold"><summary><span class="clip">How the number is built: model alone, market, prices, when priced</span><span class="more">Show</span></summary>
+          <div class="fold-body" style="padding-left:14px"><dl class="kv">${rows(built)}</dl></div></details>
+      </div>
+      ${DESK.sub("Last 5 matches", forms && `<div class="two">${forms}</div>`)}
+      ${DESK.closer(`${m.home.name} v ${m.away.name}`)}
+    </div>
+  </details>`;
+}
+
+// One legend for every chip and term, on the Method tab and in the
+// matches' "Reading the matches" fold. It defines words; it never copies a
+// measured number, which would go stale silently.
+const LEGEND = `<dl class="gloss">
+  <dt><b class="num">48%</b></dt><dd>The chance of each result - home win, draw, away win. Record says how each is built and how well it has done.</dd>
+  <dt><span class="pickline"><span class="pick">${icon("check")}Arsenal<span class="odds num">−150</span></span></span></dt>
+    <dd>The pick, the likeliest of the three results, and its price. −150 means stake 150 to win 100; +240 means stake 100 to win 240.</dd>
+  <dt><span class="factline">Over 2.5 goals 58%</span></dt><dd>The chance of three or more goals in the match.</dd>
+  <dt><span class="tag warn">Model only</span></dt><dd>No price was posted, so the chances are the model's alone.</dd>
+  <dt><span class="last5 score5"><span class="res w">2-1</span><span class="res l">0-1</span></span></dt><dd>The last five league matches, newest first, with the score from the club's side.</dd>
+  <dt><b>Market</b></dt><dd>The bookmakers' prices turned into chances, with their cut removed.</dd>
+  <dt><b>Walk-forward</b></dt><dd>Judged only on matches after the ones the model learned from.</dd>
+  <dt><b>Log loss</b></dt><dd>How far the chances were from what happened; lower is better. Three even chances score 1.099.</dd>
+</dl>`;
+
+let MATCHES = null;
+// The header's second line: when the picks were made.
+function stamp() {
+  const s = $("stamp");
+  if (!s || !MATCHES) return;
+  const made = MATCHES.generated ? DESK.ago(MATCHES.generated) : "";
+  s.textContent = made ? `Updated ${made}` : "Pick Desk";
+}
+
+const BOOT = {
+  async matches() {
+    const el = $("view-matches");
+    el.innerHTML = DESK.skeleton(4);
+    let d;
+    try { d = await load("matches"); } catch (e) { return fail(el, e, "the matches", () => BOOT.matches()); }
+    MATCHES = d;
+    stamp();
+    const matches = (d.matches || []).slice().sort((a, b) => Date.parse(a.kickoff) - Date.parse(b.kickoff));
+    const picks = matches.filter((m) => m.pick).length;
+    const byDay = new Map();
+    for (const m of matches) {
+      const k = dayKey(m.kickoff);
+      if (!byDay.has(k)) byDay.set(k, []);
+      byDay.get(k).push(m);
+    }
+    const days = [...byDay.entries()].map(([day, list]) =>
+      `<div class="day" data-day><div class="eyebrow sticky-head">${esc(day)}</div>
+        <div class="matches">${list.map((m) => matchRow(m, d)).join("")}</div></div>`).join("");
+    // A league filter: the five leagues by their country's short name.
+    // In the engine's order (the JSON keys come sorted alphabetically).
+    const codes = (d.league_order || Object.keys(d.leagues || {})).filter((c) => matches.some((m) => m.league === c));
+    const seg = codes.length > 1
+      ? `<div class="seg" role="group" aria-label="Show a league">${[["all", "All"], ...codes.map((c) => [c, d.leagues[c].short || c])]
+          .map(([k, label]) => `<button type="button" data-filter="${esc(k)}" aria-pressed="${k === "all"}">${esc(label)}</button>`).join("")}</div>` : "";
+    const notes = Object.values(d.caveats || {}).filter(Boolean).map((t) => `<p style="margin:0">${esc(t)}</p>`).join("");
+    // The latest round's results: facts, with no pick (none was logged).
+    const results = (d.results || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || "") || (a.league || "").localeCompare(b.league || ""));
+    const resultsCard = results.length ? `<div class="card"><h2>Latest results</h2>
+      <ul class="rank">${results.map((r) => `<li data-league="${esc(r.league)}">
+        <span class="mini nowrap" style="min-width:34px">${esc((d.leagues[r.league] || {}).short || r.league)}</span>
+        ${teamChip(r.home)}<span class="num" style="margin:0 2px;font-weight:600">${esc(r.hg)}–${esc(r.ag)}</span>${teamChip(r.away)}
+        <span class="mini" style="margin-left:auto">${esc(shortDate(r.date))}</span></li>`).join("")}</ul>
+      <div class="mini">Full-time results from the last round. Picks are logged only before kickoff, so these have none.</div></div>` : "";
+    el.innerHTML = `
+      ${DESK.banner()}
+      <div class="hero">
+        <div class="eyebrow">${esc(d.season_label || "This week")}</div>
+        <h1>Matches</h1>
+        <div class="facts">${[`${matches.length} matches`, `${picks} picks`,
+          d.data_through ? `results to ${esc(shortDate(d.data_through))}` : "",
+          d.prices_at ? `prices from ${esc(localStamp(d.prices_at))}` : ""].filter(Boolean).join(" · ")}</div>
+      </div>
+      ${fold(d.caveats && d.caveats.model)}
+      ${seg}
+      ${matches.length ? `<div class="days">${days}</div>` : `<div class="empty">No league matches to pick right now. The next fixtures arrive with their prices on Tuesday and Friday afternoons (UK time).</div>`}
+      ${resultsCard}
+      <details class="fold"><summary><span class="ic">${icon("info")}</span><span class="clip"><b>Reading the matches.</b>
+        ${esc(FORM_LEGEND)}</span><span class="more">More</span></summary>
+        <div class="fold-body">${LEGEND}${notes}</div></details>`;
+    el.querySelectorAll("[data-filter]").forEach((b) => b.addEventListener("click", () => {
+      const k = b.getAttribute("data-filter");
+      el.querySelectorAll("[data-filter]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      el.querySelectorAll("details.match").forEach((m) => { m.hidden = k !== "all" && m.getAttribute("data-league") !== k; });
+      el.querySelectorAll("[data-day]").forEach((day) => {
+        day.hidden = ![...day.querySelectorAll("details.match")].some((m) => !m.hidden);
+      });
+    }));
+  },
+
+  async tables() {
+    const el = $("view-tables");
+    el.innerHTML = DESK.skeleton(3);
+    let d;
+    try { d = await load("tables"); } catch (e) { return fail(el, e, "the tables", () => BOOT.tables()); }
+    const leagues = d.leagues || [];
+    const saved = DESK.store.get("yoursoccer.league");
+    let current = leagues.some((l) => l.code === saved) ? saved : (leagues[0] || {}).code;
+    // The table fits a phone: position, club with its last five under it,
+    // played, goal difference, points. The model's own rating of each club
+    // is a list of its own below, ranked by that rating.
+    const table = (l) => {
+      const rows = (l.rows || []).map((r) => `<tr>
+          <td class="n">${esc(r.position)}</td>
+          <td><span style="display:inline-flex;align-items:center;gap:7px">${teamChip(r.club)}<span>${esc(r.club.name)}</span></span>
+            ${r.form && r.form.length ? `<div style="margin-top:5px">${formLine(r.form)}</div>` : ""}</td>
+          <td class="n">${esc(r.played)}</td><td class="n">${signed(r.gd, 0)}</td><td class="n"><b>${esc(r.points)}</b></td></tr>`).join("");
+      const rated = (l.rows || []).filter((r) => r.rating != null).sort((a, b) => b.rating - a.rating);
+      const top = rated.length ? rated[0].rating : 0, low = rated.length ? rated[rated.length - 1].rating : 0;
+      const ratings = rated.length ? `<div class="card"><h2>The model's ratings</h2>
+        <div class="mini">${esc((d.caveats && d.caveats.rating_short) || "How strong the model rates each club right now, strongest first.")}</div>
+        <ul class="rank">${rated.map((r, i) => `<li><span class="num" style="margin:0;min-width:22px;font-size:13px;color:var(--ink-3)">${i + 1}</span>
+          ${teamChip(r.club)}<span>${esc(r.club.name)}</span>
+          <span class="num">${signed(r.rating, 2)}</span>
+          <span class="meter good" aria-hidden="true"><i style="width:${top > low ? Math.round(8 + 92 * (r.rating - low) / (top - low)) : 50}%"></i></span></li>`).join("")}</ul>
+        ${fold(d.caveats && d.caveats.rating)}</div>` : "";
+      return `<div class="card"><h2>${esc(l.name)}</h2>
+        <table class="tight">
+          <thead><tr><th class="n">#</th><th>Club · last five</th><th class="n">P</th><th class="n">GD</th><th class="n">Pts</th></tr></thead>
+          <tbody>${rows}</tbody></table></div>${ratings}`;
+    };
+    const render = () => {
+      const l = leagues.find((x) => x.code === current);
+      el.querySelector("#table-out").innerHTML = l ? table(l) : `<div class="empty">No table yet.</div>`;
+    };
+    el.innerHTML = `
+      <div class="hero"><div class="eyebrow">${esc(d.season_label || "")}</div><h1>Tables</h1>
+        <p class="lede">The league as it stands, and how strong the model rates each club.</p></div>
+      <div class="seg" role="group" aria-label="League">${leagues.map((l) =>
+        `<button type="button" data-league="${esc(l.code)}" aria-pressed="${l.code === current}">${esc(l.short || l.code)}</button>`).join("")}</div>
+      <div id="table-out"></div>`;
+    el.querySelectorAll("[data-league]").forEach((b) => b.addEventListener("click", () => {
+      current = b.getAttribute("data-league");
+      DESK.store.set("yoursoccer.league", current);
+      el.querySelectorAll("[data-league]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      render();
+    }));
+    render();
+  },
+
+  async record() {
+    const el = $("view-record");
+    el.innerHTML = DESK.skeleton(2);
+    let d;
+    try { d = await load("performance"); } catch (e) { return fail(el, e, "the record", () => BOOT.record()); }
+    el.innerHTML = renderRecord(d);
+  },
+
+  method() {
+    $("view-method").innerHTML = methodHtml();
+  },
+};
+
+// ---------------------------------------------------------------- record
+
+// A filled ring for one share: how much of the circle the hit rate covers.
+function ring(share, colour = "var(--gain)") {
+  if (share == null) return "";
+  const r = 32, c = 2 * Math.PI * r, on = Math.max(0, Math.min(1, share)) * c;
+  return `<svg class="ring" viewBox="0 0 76 76" aria-hidden="true">
+    <circle cx="38" cy="38" r="${r}" fill="none" stroke="var(--line)" stroke-width="8"/>
+    <circle cx="38" cy="38" r="${r}" fill="none" stroke="${colour}" stroke-width="8" stroke-linecap="round"
+      stroke-dasharray="${on.toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 38 38)"/></svg>`;
+}
+
+function renderRecord(d) {
+  const b = d.backtest || {};
+  const per = b.periods || { dev: [2006, 2015], confirm: [2016, 2025] };
+  const dev = `${per.dev[0]}-${per.dev[1]}`, conf = `${per.confirm[0]}-${per.confirm[1]}`;
+  const t = d.track_record || {};
+  const W = b.result || {};
+  const bl = (W.blend || {})[conf] || {};
+  const tiles = `
+    <div class="tiles">
+      <div class="tile hero-tile">${ring(bl.accuracy)}
+        <div><div class="k">Picks right, ${esc(conf)}</div><div class="v">${pct(bl.accuracy, 1)}</div>
+        <div class="s">of ${bl.matches == null ? "—" : bl.matches.toLocaleString()} matches, each picked only from the ones before · betting favourite ${pct(bl.market_accuracy, 1)}</div></div></div>
+      <div class="tile"><div class="k">Live so far</div><div class="v">${t.settled ? `${esc(t.correct)}-${esc(t.settled - t.correct)}` : "—"}</div>
+        <div class="s">${t.settled ? `${pct(t.correct / t.settled, 1)} · ${esc(t.pending ?? 0)} still to play · logged before kickoff` : `no settled picks yet · ${esc(t.pending ?? 0)} logged`}</div></div>
+      <div class="tile"><div class="k">Over / under 2.5</div><div class="v">${t.ou_settled ? `${esc(t.ou_correct)}-${esc(t.ou_settled - t.ou_correct)}` : "—"}</div>
+        <div class="s">live, the side the chance favoured</div></div>
+    </div>`;
+  const wrow = (key, label) => {
+    const r = W[key] || {};
+    const a = r[dev] || {}, c = r[conf] || {};
+    return `<tr><td>${esc(label)}</td><td class="n">${pct(a.accuracy, 1)}</td><td class="n">${pct(c.accuracy, 1)}</td><td class="n">${num(c.log_loss, 4)}</td></tr>`;
+  };
+  const mk = (W.blend || {})[conf] || {}, mkDev = (W.blend || {})[dev] || {};
+  const winners = `<div class="card"><h2>Picking results</h2>
+    <div class="scroll"><table><thead><tr><th></th><th class="n">${esc(dev)}</th><th class="n">${esc(conf)}</th><th class="n">Log loss</th></tr></thead>
+    <tbody>${wrow("model", "Model alone")}${wrow("blend", d.basis === "market" ? "Pick (market, recalibrated)" : "Pick (blend)")}
+    <tr><td>Betting favourite</td><td class="n">${pct(mkDev.market_accuracy, 1)}</td><td class="n">${pct(mk.market_accuracy, 1)}</td><td class="n">${num(mk.market_log_loss, 4)}</td></tr></tbody></table></div>
+    ${fold(`Every match predicted only from matches on earlier days. ${dev} is where choices were made; ${conf} was left untouched to judge them. Three results, so log loss for three even chances is 1.099; lower is better.`)}</div>`;
+
+  const leagues = (b.by_league || []).map((r) => `<tr><td>${esc(r.name)}</td><td class="n">${esc(r.matches)}</td>
+      <td class="n">${pct(r.accuracy, 1)}</td><td class="n">${pct(r.market_accuracy, 1)}</td><td class="n">${num(r.log_loss, 3)}<span class="mini">market ${num(r.market_log_loss, 3)}</span></td></tr>`).join("");
+  const leagueCard = leagues ? DESK.cardFold("By league", `${esc(conf)}: each league's picks against its betting favourite.`,
+    `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Matches</th><th class="n">Pick</th><th class="n">Favourite</th><th class="n">Log loss</th></tr></thead>
+    <tbody>${leagues}</tbody></table></div>`) : "";
+
+  const ou = b.over_2_5 || {};
+  const ouCard = ou[conf] ? DESK.cardFold("Over / under 2.5 goals",
+    `${esc(conf)}: the model's log loss ${num(ou[conf].log_loss, 4)} against the market's ${num(ou[conf].market_log_loss, 4)} (lower is better) - so the chance shown is the market's.`,
+    `<div class="scroll"><table><thead><tr><th>Log loss</th><th class="n">${esc(dev)}</th><th class="n">${esc(conf)}</th></tr></thead><tbody>
+      <tr><td>Model alone</td><td class="n">${num((ou[dev] || {}).log_loss, 4)}</td><td class="n">${num(ou[conf].log_loss, 4)}</td></tr>
+      <tr><td>Market (shown)</td><td class="n">${num((ou[dev] || {}).market_log_loss, 4)}</td><td class="n">${num(ou[conf].market_log_loss, 4)}</td></tr>
+    </tbody></table></div>`) : "";
+
+  const v = b.value || {};
+  const vrows = Object.entries(v.edges || {}).map(([edge, r]) => {
+    const cell = (x) => !x || x.roi == null ? `<td class="n">—</td>`
+      : `<td class="n ${x.roi >= 0 ? "gain" : "loss"}">${signed(x.roi * 100, 1)}%<span class="mini">${esc(x.bets)} bets</span></td>`;
+    return `<tr><td class="n">${pct(Number(edge))}</td>${cell(r[dev])}${cell(r[conf])}</tr>`;
+  }).join("");
+  const valueCard = vrows ? DESK.cardFold("Betting the disagreements", v.enabled_at == null
+      ? "It did not make money in both periods at any edge, so no match is ever labelled a bet."
+      : `Profitable in both periods from a ${esc(pct(v.enabled_at))} edge.`,
+    `<div class="scroll"><table><thead><tr><th class="n">Edge</th><th class="n">${esc(dev)}</th><th class="n">${esc(conf)}</th></tr></thead>
+    <tbody>${vrows}</tbody></table></div>
+    <div class="mini">One unit at the best posted price on every result the model alone rated at least this far above the
+      market with the bookmakers' cut removed (return per bet, bets beside).</div>`) : "";
+
+  const cal = (b.calibration || []).map((r) =>
+    `<tr><td class="n">${pct(r.lo)}-${pct(r.hi)}</td><td class="n">${esc(r.picks)}</td><td class="n">${pct(r.predicted, 1)}</td><td class="n">${pct(r.observed, 1)}</td></tr>`).join("");
+  const calCard = cal ? DESK.cardFold("Calibration", `${esc(conf)}: the pick's chance, against how often the pick happened.`,
+    `<div class="scroll"><table><thead><tr><th class="n">Pick's chance</th><th class="n">Picks</th><th class="n">Said</th><th class="n">Happened</th></tr></thead>
+    <tbody>${cal}</tbody></table></div>`) : "";
+
+  const weeks = (t.by_week || []).slice(-8).reverse().map((w) =>
+    `<li><span><b>${esc(w.label)}</b></span><span class="num ${w.correct / w.settled >= 0.5 ? "good" : "warn"}">${esc(w.correct)}/${esc(w.settled)}</span></li>`).join("");
+  const weekCard = weeks ? `<div class="card"><h2>Live, week by week</h2><ul class="rank">${weeks}</ul>
+    <div class="mini">Picks logged before each kickoff, graded against the full-time result.</div></div>` : "";
+  const liveNote = t.settled ? "" : `<div class="note">No settled picks yet: the live record starts with the first matches
+    picked before kickoff, and grows every weekend. The tables below are the walk-forward backtest.</div>`;
+
+  return `<div class="hero"><div class="eyebrow">Measured, not claimed</div><h1>Track record</h1>
+      <p class="lede">Live picks are graded against full-time results; the backtest replays every season since ${esc(per.dev[0])}.</p></div>
+    ${tiles}${liveNote}${winners}${weekCard}${leagueCard}${ouCard}${valueCard}${calCard}`;
+}
+
+// ---------------------------------------------------------------- method
+
+function methodHtml() {
+  const market = MATCHES && MATCHES.basis === "market";
+  return `
+  <div class="hero"><div class="eyebrow">What this is</div><h1>How it works</h1></div>
+  <div class="card"><h2>Reading a pick</h2>${LEGEND}</div>
+  <div class="card"><h2>Three results, one pick</h2>
+    <ul class="plain">
+      <li><b>The model</b> - rates every club's attack and defence from its goals, shots on target and
+        shots, weighted toward recent matches, and turns two clubs' ratings into the chance of every score.
+        Promoted clubs carry their rating up from the second tier with a measured step. Of three models
+        built and measured, it came closest to the market.</li>
+      <li><b>The pick</b> - ${market
+        ? `the betting market's chances, recalibrated on earlier seasons. Blended with the market, the model
+          added nothing the market did not already know, so the blend gives it no weight - the market's
+          prices are the better forecast, and the app says so. The model's own chances are shown in every
+          opened match, labelled "Model alone".`
+        : `the model blended with the betting market's prices, with the weight learned from how the two did
+          on earlier seasons. The market is very good at soccer, so the pick leans on it heavily.`}</li>
+      <li><b>Goals</b> - the chance of three or more goals: the over/under market's, with the bookmakers'
+        cut removed; the model's own chance is beside it.</li>
+    </ul></div>
+  <div class="card"><h2>Every number is point-in-time</h2>
+    <ul class="plain">
+      <li>A match is predicted only from matches played on earlier days - the same rule for the backtest and for this weekend.</li>
+      <li>Promoted clubs carry their rating up from the second tier, so a club is not a stranger in August.</li>
+      <li>A pick is logged before kickoff and frozen when the match starts; the live record grades only those.</li>
+    </ul></div>
+  <div class="card"><h2>What it does not do</h2>
+    <ul class="plain">
+      <li>It does not read team news - injuries, suspensions, rotation. The market does, which is one reason the pick leans on it.</li>
+      <li>Cup and European matches are not predicted; only the five leagues.</li>
+      <li>No match is labelled a bet unless betting the model against the price made money in both periods (see Record).</li>
+    </ul></div>
+  <div class="note">Data: football-data.co.uk (results, match statistics and bookmakers' prices for the
+    Premier League, La Liga, Serie A, the Bundesliga, Ligue 1 and their second tiers). For entertainment and
+    analysis - not betting advice.</div>`;
+}
+
+// ---------------------------------------------------------------- start
+
+DESK.init({
+  key: "yoursoccer",
+  name: "YourSoccer",
+  icon: "icons/icon-192.png",
+  siblings: [{ name: "YourMMA", href: "../../app/", blurb: "The MMA fight desk" },
+    { name: "YourNFL", href: "../../nfl/app/", blurb: "The NFL pick desk" }],
+  stamp: () => (MATCHES && MATCHES.generated ? `Picks updated ${DESK.ago(MATCHES.generated)}` : "Fetch the latest picks"),
+  onReload: () => location.reload(),
+});
+DESK.tabs(["matches", "tables", "record", "method"], BOOT, "yoursoccer.tab", "matches");
+setInterval(stamp, 60000);
+
+</script>
+</body>
+</html>

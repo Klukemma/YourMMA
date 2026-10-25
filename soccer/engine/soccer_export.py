@@ -97,9 +97,12 @@ def caveats(bt, basis="blend"):
             "The model does not read team news - injuries, suspensions, rotation. The betting market "
             "does, which is part of why the pick leans on it."),
     }
-    if (bt or {}).get("rating_note"):
-        out["rating"] = bt["rating_note"]
-        out["rating_short"] = bt.get("rating_short")
+    out["rating_short"] = ("The goal difference a match each club would expect against an average club "
+                           "of its league on a neutral pitch, by the model's ratings, strongest first.")
+    out["rating"] = ("The model rates each club's attack and defence from its goals, shots on target and "
+                     "shots, weighted toward recent matches; a promoted club carries its rating up with a "
+                     "measured step. The rating is the model's own view - the pick on each match is the "
+                     "market's chances, recalibrated, because the market forecasts better.")
     return out
 
 

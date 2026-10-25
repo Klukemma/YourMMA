@@ -85,8 +85,10 @@ CHOSEN ON DEV (2006-2015) ONLY, by grids on DEV log loss:
             stakes on/off, late_rounds {5,8,12}
   rejected  extra rating channels (goals-only, SOT-only, fast + slow) beside the mix,
             an early-season slope, league-specific slopes.
-Ablation on DEV (same pipeline): goals-only proxy 0.9904, SOT-only 0.9932,
-the mix 0.9878; the mix without the stakes terms 0.9895.
+Ablation on DEV (same pipeline, everything else as chosen): the mix 0.98783;
+goals-only proxy 0.99119 (0.9904 with its own k); SOT-only 0.99321; goals +
+SOT without shots 0.98806; no stakes terms 0.98948; no rho 0.98883 (draws
+0.242 vs 0.260 actual); draw inflation 0.98785; fixed tier step 0.98781.
 """
 
 import math
@@ -430,6 +432,17 @@ def rate(matches, **params):
     out = pd.DataFrame(index=m.index[order], data=feats.to_numpy(), columns=feats.columns).loc[m.index]
     out.attrs["steps"] = step_log
     out.attrs["channels"] = C
+    # Each club's rating after every result in `matches`, for display only:
+    # the goal difference a match it would expect against an average club of
+    # its own league on a neutral pitch (channel 0).
+    ratings = {}
+    for t in range(T):
+        l = t_league[t]
+        if l < 0 or not has_ref[l]:
+            continue
+        egd = (math.exp(MU + att[t, 0] - ref_def[l, 0]) - math.exp(MU + ref_att[l, 0] - dfn[t, 0]))
+        ratings[uniq[t][1]] = {"league": LEAGUES[l], "egd": float(egd)}
+    out.attrs["ratings"] = ratings
     return out
 
 
@@ -601,6 +614,7 @@ def predict_walk_forward(matches, **params):
     feats = rate(matches, **params)
     preds = calibrate(matches, feats, **params)
     preds.attrs["steps"] = feats.attrs.get("steps")
+    preds.attrs["ratings"] = feats.attrs.get("ratings")
     return preds
 
 

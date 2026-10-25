@@ -1,119 +1,122 @@
-"""The soccer model the app runs, and the blend with the market.
+"""What the soccer app shows, as the walk-forward research decided it.
 
-  model   CHOSEN by the walk-forward research in soccer/engine/experiments
-          (see soccer/README.md for the numbers): every match - finished or
-          still to play - predicted only from matches on earlier days.
-  blend   logarithmic pooling of the model's home/draw/away chances with the
-          market's (the pre-match prices with the bookmakers' cut removed),
-          each season's weights fitted on the model's OUT-OF-SAMPLE
-          predictions for earlier seasons only (soccer_backtest.fit_pool).
-  goals   the chance of three or more goals, pooled the same way with the
-          over/under 2.5 market where one was posted.
+Three goals models were built and measured against the market, 2006-2015
+to choose and 2016-2025 to confirm (experiments/; the numbers are in
+soccer/README.md). None beat the market's pre-match prices, and none added
+to them: pooled with the market, every model lost to the market pooled with
+itself on the choosing period. So:
+
+  the pick   the market's home/draw/away chances (the pre-match prices with
+             the bookmakers' cut removed), RECALIBRATED: p_k is proportional
+             to q_k^beta * exp(c_k), each season's (beta, c_draw, c_away)
+             fitted on every earlier season. The market's favourites win a
+             little more often than its prices say, and the draw is priced a
+             little short; this is the correction, measured out of sample.
+  goals      the over/under 2.5 market with the cut removed. Recalibrating
+             it the same way did not improve it over the choosing period.
+  the model  the best of the three, on both periods: shots-based ratings
+             (experiments/shots_ratings.py) - each club's attack and defence
+             from goals, shots on target and shots, turned into the chance of
+             every score. SHOWN beside the pick as the model's own view,
+             never blended into it. Where no price was posted, it is all
+             there is, and the app says so.
 
 The same procedure produces the backtest the app prints and this week's
-picks, so the record shown is the record of this procedure.
+numbers, so the record shown is the record of this procedure.
 """
 
 import numpy as np
 import pandas as pd
+from scipy.optimize import minimize
 
 import soccer_backtest as bt
 import soccer_data as sd
-from experiments import dixon_coles, elo_goals
+from experiments import shots_ratings
 
-# Which model the app runs: "dixon_coles", "elo_goals" or "ensemble" (the
-# two averaged in log space). Set from the research verdict.
-MODEL = "ensemble"
-# Constrain the model's pooling weight to be >= 0: a negative weight is a
-# contrarian signal, not a forecast. Set from the research verdict.
-NONNEGATIVE = True
+MODEL = "shots_ratings"
+MIN_TRAIN = 1000
 
 
-def _ensemble(frames):
-    """Equal-weight average of log-probabilities, renormalised; the mean of
-    the over-2.5 chances."""
-    logs = np.mean([np.log(np.clip(f[["p_h", "p_d", "p_a"]].to_numpy(float), 1e-9, 1)) for f in frames], axis=0)
-    p = np.exp(logs)
-    p /= p.sum(axis=1, keepdims=True)
-    out = pd.DataFrame(p, index=frames[0].index, columns=["p_h", "p_d", "p_a"])
-    out["p_o25"] = np.mean([f["p_o25"].to_numpy(float) for f in frames], axis=0)
-    missing = np.any([f[["p_h", "p_d", "p_a"]].isna().any(axis=1).to_numpy() for f in frames], axis=0)
-    out.loc[missing, ["p_h", "p_d", "p_a"]] = np.nan
-    return out
+def predict(frame):
+    """The model's own p_h, p_d, p_a, p_o25 for every top-league row of
+    `frame` (finished matches and fixtures still to play), each from matches
+    on earlier days; club ratings in .attrs["ratings"]."""
+    return shots_ratings.predict_walk_forward(frame)
 
 
-def predict(frame, model=MODEL):
-    """p_h, p_d, p_a, p_o25 for every top-league row of `frame` (finished
-    matches and fixtures still to play), each from matches on earlier days."""
-    if model == "dixon_coles":
-        return dixon_coles.predict_walk_forward(frame)
-    if model == "elo_goals":
-        return elo_goals.predict_walk_forward(frame)
-    return _ensemble([dixon_coles.predict_walk_forward(frame), elo_goals.predict_walk_forward(frame)])
+# ------------------------------------------------------------- the pick
+
+def _log3(q):
+    return np.log(np.clip(q[["p_h", "p_d", "p_a"]].to_numpy(float), 1e-9, 1))
 
 
-# ------------------------------------------------------------- the blend
-
-def fit_weights(frame, preds, before_season, nonnegative=NONNEGATIVE):
-    """Pooling weights from every scored match of seasons before
-    `before_season` (model out of sample, market pre-match)."""
-    mkt = bt.no_vig(frame, "pre")
-    ok = bt.scored(frame) & preds[["p_h", "p_d", "p_a"]].notna().all(axis=1) & (frame["season"] < before_season)
-    if ok.sum() < 1000:
-        return None
-    return bt.fit_pool(preds[ok], mkt[ok], frame.loc[ok, "result"], nonnegative=nonnegative)
+def recalibrate(q, w):
+    """p_k proportional to q_k^beta * exp(c_k); w = (beta, c_draw, c_away)."""
+    beta, c_d, c_a = w
+    z = beta * _log3(q) + np.array([0.0, c_d, c_a])
+    z -= z.max(axis=1, keepdims=True)
+    e = np.exp(z)
+    return pd.DataFrame(e / e.sum(axis=1, keepdims=True), index=q.index, columns=["p_h", "p_d", "p_a"])
 
 
-def blend(frame, preds, nonnegative=NONNEGATIVE):
-    """Blended home/draw/away for every row with a model number and a full
-    pre-match price, each season pooled with weights from earlier seasons.
-    Rows without a price keep the model's own chances and are flagged
-    model_only. Returns (frame of p_h, p_d, p_a, model_only; {season: w})."""
-    mkt = bt.no_vig(frame, "pre")
+def fit_recalibration(q, result):
+    """(beta, c_draw, c_away) minimising log loss on these matches, with an
+    analytic gradient and tight tolerances (the general pooling fit stopped
+    early on this surface)."""
+    idx = bt.outcome_index(result).to_numpy()
+    lq = _log3(q)
+    onehot = np.zeros_like(lq)
+    onehot[np.arange(len(idx)), idx] = 1.0
+
+    def loss(w):
+        beta, c_d, c_a = w
+        z = beta * lq + np.array([0.0, c_d, c_a])
+        z -= z.max(axis=1, keepdims=True)
+        logp = z - np.log(np.exp(z).sum(axis=1, keepdims=True))
+        p = np.exp(logp)
+        n = len(idx)
+        g_beta = -((onehot - p) * lq).sum() / n
+        g_c = -(onehot - p).sum(axis=0) / n
+        return -logp[np.arange(n), idx].mean(), np.array([g_beta, g_c[1], g_c[2]])
+
+    fit = minimize(loss, x0=np.array([1.0, 0.0, 0.0]), jac=True, method="L-BFGS-B",
+                   options={"gtol": 1e-10, "ftol": 1e-14, "maxiter": 1000})
+    return tuple(float(v) for v in fit.x)
+
+
+def pick(frame, preds):
+    """The chances the app shows for every top-league row: the recalibrated
+    market where all three prices were posted, the model's own where not
+    (flagged model_only). Each season uses weights fitted on earlier seasons
+    only. Returns (frame of p_h, p_d, p_a, model_only; {season: weights})."""
+    q = bt.no_vig(frame, "pre")
+    priced = q.notna().all(axis=1)
     out = preds[["p_h", "p_d", "p_a"]].copy()
     out["model_only"] = True
     weights = {}
-    has = preds[["p_h", "p_d", "p_a"]].notna().all(axis=1)
-    for season in sorted(frame.loc[has, "season"].unique()):
-        w = fit_weights(frame, preds, season, nonnegative)
-        if w is None:
+    top = frame["league"].isin(sd.TOP)
+    for season in sorted(frame.loc[top & priced, "season"].unique()):
+        train = bt.scored(frame) & (frame["season"] < season)
+        if train.sum() < MIN_TRAIN:
             continue
+        w = fit_recalibration(q[train], frame.loc[train, "result"])
         weights[int(season)] = w
-        rows = has & (frame["season"] == season) & mkt.notna().all(axis=1)
-        if rows.any():
-            out.loc[rows, ["p_h", "p_d", "p_a"]] = bt.pool(preds[rows], mkt[rows], w).to_numpy()
-            out.loc[rows, "model_only"] = False
-    out.loc[~has, ["p_h", "p_d", "p_a"]] = np.nan
+        rows = top & priced & (frame["season"] == season)
+        out.loc[rows, ["p_h", "p_d", "p_a"]] = recalibrate(q[rows], w).to_numpy()
+        out.loc[rows, "model_only"] = False
+    out.loc[~top, ["p_h", "p_d", "p_a"]] = np.nan
     return out, weights
 
 
-def _logit(p):
-    p = np.clip(np.asarray(p, float), 1e-6, 1 - 1e-6)
-    return np.log(p / (1 - p))
-
+# ------------------------------------------------------------- goals
 
 def goals(frame, preds):
-    """The over-2.5 chance used: model and market pooled on the logit scale,
-    each season fitted on earlier seasons; the model alone where no
-    over/under price was posted."""
-    from scipy.optimize import minimize
-    mkt = bt.no_vig_total(frame)
-    total = frame["hg"] + frame["ag"]
+    """The over-2.5 chance the app shows: the over/under market with the
+    cut removed - recalibrating it, as the pick is, did not improve it over
+    the whole choosing period - and the model's own where no over/under
+    price was posted."""
+    q = bt.no_vig_total(frame)
     out = preds["p_o25"].copy()
-    has = preds["p_o25"].notna() & mkt.notna()
-    for season in sorted(frame.loc[has, "season"].unique()):
-        train = has & (frame["season"] < season) & total.notna() & frame["league"].isin(sd.TOP)
-        if train.sum() < 1000:
-            continue
-        a, b = _logit(preds.loc[train, "p_o25"]), _logit(mkt[train])
-        y = (total[train] > 2.5).astype(float).to_numpy()
-
-        def loss(w):
-            z = w[0] * a + w[1] * b + w[2]
-            return float(np.mean(np.logaddexp(0, z) - y * z))
-
-        w = minimize(loss, x0=np.array([0.1, 0.9, 0.0]), method="L-BFGS-B").x
-        rows = has & (frame["season"] == season)
-        z = w[0] * _logit(preds.loc[rows, "p_o25"]) + w[1] * _logit(mkt[rows]) + w[2]
-        out[rows] = 1 / (1 + np.exp(-z))
+    priced = q.notna() & frame["league"].isin(sd.TOP)
+    out[priced] = q[priced]
     return out

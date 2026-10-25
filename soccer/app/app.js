@@ -592,8 +592,9 @@ function matchRow(m, d) {
         : d.basis === "market" ? "the market's chances, recalibrated" : "model and market blended"}</span>` : "—"],
     ["Price", price == null ? "—" : `<span class="num">${odds(price)}</span> <span class="mini">average${
       priceOf(m, m.pick, "best") != null ? ` · best ${odds(priceOf(m, m.pick, "best"))}` : ""}</span>`],
-    ["Goals", m.p_o25 == null ? "—" : `Over 2.5 <span class="num">${pct(m.p_o25, 1)}</span>${
-      m.market_o25 != null ? ` <span class="mini">market ${pct(m.market_o25, 1)}</span>` : ""}`],
+    ["Goals", m.p_o25 == null ? "—" : `Over 2.5 <span class="num">${pct(m.p_o25, 1)}</span> <span class="mini">${
+      m.market_o25 != null ? "the over/under market" : "model alone - no over/under price"}${
+      m.market_o25 != null && m.model_o25 != null ? ` · model ${pct(m.model_o25, 1)}` : ""}</span>`],
   ];
   const built = [
     ["Model alone", three(m.model)],
@@ -675,6 +676,14 @@ const BOOT = {
       ? `<div class="seg" role="group" aria-label="Show a league">${[["all", "All"], ...codes.map((c) => [c, d.leagues[c].short || c])]
           .map(([k, label]) => `<button type="button" data-filter="${esc(k)}" aria-pressed="${k === "all"}">${esc(label)}</button>`).join("")}</div>` : "";
     const notes = Object.values(d.caveats || {}).filter(Boolean).map((t) => `<p style="margin:0">${esc(t)}</p>`).join("");
+    // The latest round's results: facts, with no pick (none was logged).
+    const results = (d.results || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || "") || (a.league || "").localeCompare(b.league || ""));
+    const resultsCard = results.length ? `<div class="card"><h2>Latest results</h2>
+      <ul class="rank">${results.map((r) => `<li data-league="${esc(r.league)}">
+        <span class="mini nowrap" style="min-width:34px">${esc((d.leagues[r.league] || {}).short || r.league)}</span>
+        ${teamChip(r.home)}<span class="num" style="margin:0 2px;font-weight:600">${esc(r.hg)}–${esc(r.ag)}</span>${teamChip(r.away)}
+        <span class="mini" style="margin-left:auto">${esc(shortDate(r.date))}</span></li>`).join("")}</ul>
+      <div class="mini">Full-time results from the last round. Picks are logged only before kickoff, so these have none.</div></div>` : "";
     el.innerHTML = `
       ${DESK.banner()}
       <div class="hero">
@@ -686,7 +695,8 @@ const BOOT = {
       </div>
       ${fold(d.caveats && d.caveats.model)}
       ${seg}
-      ${matches.length ? `<div class="days">${days}</div>` : `<div class="empty">No matches in the next few days. The next fixtures arrive with their prices on Tuesday and Friday.</div>`}
+      ${matches.length ? `<div class="days">${days}</div>` : `<div class="empty">No league matches to pick right now. The next fixtures arrive with their prices on Tuesday and Friday afternoons (UK time).</div>`}
+      ${resultsCard}
       <details class="fold"><summary><span class="ic">${icon("info")}</span><span class="clip"><b>Reading the matches.</b>
         ${esc(FORM_LEGEND)}</span><span class="more">More</span></summary>
         <div class="fold-body">${LEGEND}${notes}</div></details>`;
@@ -812,10 +822,10 @@ function renderRecord(d) {
 
   const ou = b.over_2_5 || {};
   const ouCard = ou[conf] ? DESK.cardFold("Over / under 2.5 goals",
-    `${esc(conf)}: log loss ${num(ou[conf].log_loss, 4)} against the market's ${num(ou[conf].market_log_loss, 4)}; lower is better.`,
-    `<div class="scroll"><table><thead><tr><th></th><th class="n">${esc(dev)}</th><th class="n">${esc(conf)}</th></tr></thead><tbody>
-      <tr><td>Chance used here</td><td class="n">${num((ou[dev] || {}).log_loss, 4)}</td><td class="n">${num(ou[conf].log_loss, 4)}</td></tr>
-      <tr><td>Market</td><td class="n">${num((ou[dev] || {}).market_log_loss, 4)}</td><td class="n">${num(ou[conf].market_log_loss, 4)}</td></tr>
+    `${esc(conf)}: the model's log loss ${num(ou[conf].log_loss, 4)} against the market's ${num(ou[conf].market_log_loss, 4)} (lower is better) - so the chance shown is the market's.`,
+    `<div class="scroll"><table><thead><tr><th>Log loss</th><th class="n">${esc(dev)}</th><th class="n">${esc(conf)}</th></tr></thead><tbody>
+      <tr><td>Model alone</td><td class="n">${num((ou[dev] || {}).log_loss, 4)}</td><td class="n">${num(ou[conf].log_loss, 4)}</td></tr>
+      <tr><td>Market (shown)</td><td class="n">${num((ou[dev] || {}).market_log_loss, 4)}</td><td class="n">${num(ou[conf].market_log_loss, 4)}</td></tr>
     </tbody></table></div>`) : "";
 
   const v = b.value || {};
@@ -859,9 +869,10 @@ function methodHtml() {
   <div class="card"><h2>Reading a pick</h2>${LEGEND}</div>
   <div class="card"><h2>Three results, one pick</h2>
     <ul class="plain">
-      <li><b>The model</b> - two goals models, averaged: one rates every club's attack and defence from
-        the scores of its recent matches (Dixon-Coles), the other is a goal-based Elo rating. Together they
-        give the chance of every result.</li>
+      <li><b>The model</b> - rates every club's attack and defence from its goals, shots on target and
+        shots, weighted toward recent matches, and turns two clubs' ratings into the chance of every score.
+        Promoted clubs carry their rating up from the second tier with a measured step. Of three models
+        built and measured, it came closest to the market.</li>
       <li><b>The pick</b> - ${market
         ? `the betting market's chances, recalibrated on earlier seasons. Blended with the market, the model
           added nothing the market did not already know, so the blend gives it no weight - the market's
@@ -869,8 +880,8 @@ function methodHtml() {
           opened match, labelled "Model alone".`
         : `the model blended with the betting market's prices, with the weight learned from how the two did
           on earlier seasons. The market is very good at soccer, so the pick leans on it heavily.`}</li>
-      <li><b>Goals</b> - the chance of three or more goals: the models' scores pooled with the over/under
-        market the same way.</li>
+      <li><b>Goals</b> - the chance of three or more goals: the over/under market's, with the bookmakers'
+        cut removed; the model's own chance is beside it.</li>
     </ul></div>
   <div class="card"><h2>Every number is point-in-time</h2>
     <ul class="plain">

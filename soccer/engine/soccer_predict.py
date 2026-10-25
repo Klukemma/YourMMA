@@ -7,10 +7,11 @@ One run:
   1. refreshes this season's results and the fixtures file - the matches
      still to play, with the bookmakers' Friday/Tuesday prices - from
      football-data.co.uk;
-  2. runs the model over every match since 2005-06, finished or not, each
-     predicted only from matches on earlier days, and blends it with the
-     market season by season exactly as the backtest does - so the record
-     the app prints is the record of this procedure;
+  2. recalibrates the market's chances season by season and runs the model
+     over every match since 2005-06, finished or not, each predicted only
+     from matches on earlier days - exactly as the backtest does, so the
+     record the app prints is the record of this procedure (soccer_model
+     says what is shown and why);
   3. logs a pick for every top-league match in the next week that has not
      kicked off (prediction_history.json) and grades every logged pick
      whose result is in;
@@ -95,13 +96,14 @@ def backtest_summary(frame, preds, blended, weights, goals_used):
     total = frame["hg"] + frame["ag"]
     over = {}
     for lo, hi in (bt.DEV, bt.CONFIRM):
-        sel = (has & frame["season"].between(lo, hi) & goals_used.notna()
+        # The model's own chance against the market's (which is the one shown).
+        sel = (has & frame["season"].between(lo, hi) & preds["p_o25"].notna()
                & bt.no_vig_total(frame).notna() & total.notna())
         if not sel.any():
             continue
         y = (total[sel] > 2.5).astype(float)
         over[f"{lo}-{hi}"] = {"matches": int(sel.sum()),
-                              "log_loss": bt.binary_log_loss(goals_used[sel], y),
+                              "log_loss": bt.binary_log_loss(preds.loc[sel, "p_o25"], y),
                               "market_log_loss": bt.binary_log_loss(bt.no_vig_total(frame[sel]), y)}
     # Betting the disagreements: the RAW model (no market in it) against the
     # price - an edge measured against a number that already contains the
@@ -210,7 +212,7 @@ def final_entry(p, matches):
 
 # ------------------------------------------------------------- the run
 
-def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, model=None):
+def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print):
     now = pd.Timestamp(now) if now is not None else now_utc()
     if sync:
         log("1. sync")
@@ -219,10 +221,11 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, mo
     fixtures = sd.load_fixtures()
     fetched_at = fixtures["fetched_at"].max() if len(fixtures) else None
     frame = combined(matches, fixtures, now)
-    log(f"2. model ({model or smod.MODEL}) over {len(frame):,} matches")
-    preds = smod.predict(frame, model or smod.MODEL)
-    blended, weights = smod.blend(frame, preds)
+    log(f"2. model ({smod.MODEL}) over {len(frame):,} matches")
+    preds = smod.predict(frame)
+    blended, weights = smod.pick(frame, preds)
     goals_used = smod.goals(frame, preds)
+    ratings = {team: r["egd"] for team, r in (preds.attrs.get("ratings") or {}).items()}
     mkt_o25 = bt.no_vig_total(frame)
 
     upcoming = frame["league"].isin(sd.TOP) & frame["result"].isna() & (frame["kickoff"] > now) \
@@ -254,18 +257,26 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, mo
     bts = backtest_summary(frame, preds, blended, weights, goals_used)
     season = sd.current_season(now)
     season_label = f"{season}-{(season + 1) % 100:02d} season"
-    # What the pick is, in words, read from the weights the blend fitted: a
-    # model the pooling gave no weight is not described as blended in.
-    w = (bts.get("weights") or {}).get("w")
-    basis = "market" if w is not None and w[0] <= 1e-9 else "blend"
+    # The pick is the recalibrated market (soccer_model says why); the
+    # model's own view is shown beside it.
+    basis = "market"
     caveats = sx.caveats(bts, basis)
     data_through = matches.loc[matches["result"].notna(), "date"].max()
+    # The latest round's results, as facts (no pick: none was logged for
+    # them), so the tab is never empty between rounds.
+    shown = {e["match_id"] for e in finals}
+    last = matches[matches["league"].isin(sd.TOP) & matches["result"].notna()
+                   & (matches["date"] >= (pd.Timestamp(data_through) - pd.Timedelta(days=4)).strftime("%Y-%m-%d"))
+                   & ~matches["match_id"].isin(shown)] if isinstance(data_through, str) else matches.iloc[:0]
+    results = [{"match_id": r.match_id, "league": r.league, "date": r.date, "kickoff": stamp(r.kickoff),
+                "home": st.display(r.home), "away": st.display(r.away), "hg": int(r.hg), "ag": int(r.ag)}
+               for r in last.itertuples()]
     sx.write("matches", {
         "season": season, "season_label": season_label, "leagues": sx.leagues(), "league_order": list(sd.TOP),
-        "matches": finals + entries, "data_through": data_through, "prices_at": stamp(fetched_at),
+        "matches": finals + entries, "results": results, "data_through": data_through, "prices_at": stamp(fetched_at),
         "caveats": caveats, "basis": basis, "generated": sx.now_stamp(now),
     }, out_dir)
-    sx.write("tables", sx.tables_payload(matches, season, ratings=None, generated=sx.now_stamp(now),
+    sx.write("tables", sx.tables_payload(matches, season, ratings=ratings or None, generated=sx.now_stamp(now),
                                          caveat=caveats, season_label=season_label), out_dir)
     sx.write("performance", {"backtest": bts, "basis": basis, "track_record": live_record(history),
                              "generated": sx.now_stamp(now)}, out_dir)

@@ -120,3 +120,13 @@ def test_club_chips_are_three_letters_and_a_stranger_gets_a_neutral_one():
     assert all(len(v[1]) == 3 and v[2].startswith("#") and v[3].startswith("#") for v in st.TEAMS.values())
     stranger = st.display("Nobody FC")
     assert stranger["code"] == "NOB" and stranger["name"] == "Nobody FC" and (stranger["bg"], stranger["fg"]) == st.NEUTRAL
+
+
+def test_every_club_badge_is_readable():
+    import soccer_teams as st
+    for key in st.TEAMS:
+        d = st.display(key)
+        assert st.contrast(d["bg"], d["fg"]) >= st.MIN_CONTRAST, (key, d)
+    # A club whose own colours read keeps them.
+    assert st.display("Arsenal")["fg"] == "#FFFFFF" and st.display("Dortmund")["fg"] == "#000000"
+    assert st.display("Crystal Palace")["fg"] == "#FFFFFF"     # was red on blue
