@@ -1,13 +1,13 @@
-"""Copy the shared Desk design system into both apps.
+"""Copy the shared Desk design system into every app.
 
     python3 scripts/sync_desk.py          # write
-    python3 scripts/sync_desk.py --check  # exit 1 if either app has drifted
+    python3 scripts/sync_desk.py --check  # exit 1 if any app has drifted
 
 shared/desk.css goes into each app's index.html and shared/desk.js into each
 app's app.js, between marker comments. The copies are inlined rather than
 linked so that each app stays one page and one script: the service worker
 caches its own directory, and the standalone builders (engine/build_standalone.py,
-nfl/engine/nfl_standalone.py) inline exactly those two files into the offline
+nfl/engine/nfl_standalone.py, soccer/engine/soccer_standalone.py) inline exactly those two files into the offline
 page. Edit the shared files, never the copies - the tests compare them.
 """
 
@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SHARED = ROOT / "shared"
-APPS = (ROOT / "app", ROOT / "nfl" / "app")
+APPS = (ROOT / "app", ROOT / "nfl" / "app", ROOT / "soccer" / "app")
 
 CSS_BEGIN = "/* desk.css:begin - copied from shared/desk.css by scripts/sync_desk.py; edit that file */"
 CSS_END = "/* desk.css:end */"

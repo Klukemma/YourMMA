@@ -1253,7 +1253,8 @@ DESK.init({
   key: "yournfl",
   name: "YourNFL",
   icon: "icons/icon-192.png",
-  siblings: [{ name: "YourMMA", href: "../../app/", blurb: "The MMA fight desk" }],
+  siblings: [{ name: "YourMMA", href: "../../app/", blurb: "The MMA fight desk" },
+    { name: "YourSoccer", href: "../../soccer/app/", blurb: "Europe's top five leagues" }],
   stamp: () => (WEEK && WEEK.generated ? `Picks updated ${DESK.ago(WEEK.generated)}` : "Fetch the latest picks"),
   onReload: () => location.reload(),
 });

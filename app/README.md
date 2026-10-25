@@ -61,19 +61,20 @@ leave the app computing against last year's numbers.
   tab's strategy table both come from `engine/experiments/strategies.json`,
   each with its range, and no strategy's range excludes zero.
 
-## One design, two apps
+## One design, three apps
 
-YourMMA and YourNFL share one stylesheet and one piece of app chrome (install,
-the menu, theme, the update notice, the icons): `shared/desk.css` and
+YourMMA, YourNFL and YourSoccer (`soccer/app/`, see `soccer/README.md`) share one
+stylesheet and one piece of app chrome (install, the menu, theme, the update
+notice, the icons, the match-card pieces): `shared/desk.css` and
 `shared/desk.js`. Each app carries a copy inlined between marker comments, so
 each stays one page and one script for its service worker and its offline
 file. Edit the shared files and copy them in:
 
-    python3 scripts/sync_desk.py          # write both apps' copies
+    python3 scripts/sync_desk.py          # write every app's copy
     python3 scripts/sync_desk.py --check  # what the tests run
 
-`engine/tests/test_desk_ui.py` (and the NFL suite, for its own copy) fails if
-either copy drifts from its source.
+`engine/tests/test_desk_ui.py` fails if any copy drifts from its source, and
+checks that the MMA | NFL | Soccer switch links each app to the other two.
 
 The install offer is part of the page now: an Install banner and a menu entry
 on both apps. Android's own prompt is used where the browser offers one; on an
