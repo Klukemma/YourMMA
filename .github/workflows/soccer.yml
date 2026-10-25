@@ -1,24 +1,42 @@
 name: Soccer predictions
 
 # The soccer app's runner: soccer/engine on GitHub's machines, which have
-# the open internet (football-data.co.uk, the odds API) that the development
-# sandbox does not.
+# the open internet (football-data.co.uk) that the development sandbox
+# does not.
 #
-#   sync      football-data.co.uk snapshot: this season's results and the
-#             fixtures still to play (every season since 2005-06 with
-#             full=true)
+#   predict   sync this season's results and the fixtures still to play,
+#             run the model over every match since 2005-06, blend it with the
+#             market, log the picks before kickoff, grade the finished ones,
+#             rebuild soccer/app/data and the standalone page, commit
+#   sync      football-data.co.uk snapshot only (every season with full=true)
+#
+# On a schedule it runs predict through the season (August to May).
+# football-data.co.uk posts the weekend's fixtures with prices on Friday
+# afternoon and the midweek's on Tuesday afternoon, and its results after
+# each round; so: Friday and Tuesday evenings for the new picks, Saturday
+# and Sunday mornings to refresh before the day's games and grade the
+# day before, and Monday and Thursday to grade the round just played.
+# GitHub starts scheduled runs late under load, so each sits well ahead of
+# the kickoffs it has to beat.
 on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "sync = data only"
+        description: "predict = this week's picks; sync = data only"
         type: choice
-        options: [sync]
-        default: sync
+        options: [predict, sync]
+        default: predict
       full:
         description: "sync only: rebuild every season since 2005-06, not just this one"
         type: boolean
         default: false
+  schedule:
+    - cron: "47 16 * 8-12,1-5 FRI"   # the weekend's fixtures and prices
+    - cron: "17 7 * 8-12,1-5 SAT"    # before Saturday's early games
+    - cron: "17 7 * 8-12,1-5 SUN"    # before Sunday's; grade Saturday
+    - cron: "17 9 * 8-12,1-5 MON"    # grade the weekend
+    - cron: "47 16 * 8-12,1-5 TUE"   # the midweek fixtures and prices
+    - cron: "17 9 * 8-12,1-5 THU"    # grade the midweek round
 
 permissions:
   contents: write
@@ -34,6 +52,8 @@ jobs:
   soccer:
     runs-on: ubuntu-latest
     steps:
+      # The branch, not the dispatch-time commit: a run queued behind another
+      # must build on what that run pushed.
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
@@ -46,25 +66,48 @@ jobs:
       - name: Install dependencies
         run: pip install -r engine/requirements.txt pytest
 
+      # BEFORE the run, on the snapshot as committed: they check the code,
+      # not football-data.co.uk's publishing clock.
       - name: Tests
         run: python -m pytest soccer/engine/tests -q -m "not snapshot"
 
       - name: Run
         run: |
           set -o pipefail
-          python soccer/engine/soccer_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee soccer.log
+          MODE="${{ inputs.mode || 'predict' }}"
+          if [ "$MODE" = "sync" ]; then
+            python soccer/engine/soccer_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee soccer.log
+          else
+            python soccer/engine/soccer_predict.py 2>&1 | tee soccer.log
+          fi
+
+      # The snapshot's health (every top-league club has a display name, and
+      # so on) depends on what the site has published: reported, never a gate.
+      - name: Snapshot checks
+        if: always()
+        continue-on-error: true
+        run: python -m pytest soccer/engine/tests -q -m snapshot
 
       - name: Commit
         run: |
-          PATHS="soccer/data/"
+          PATHS="soccer/data/ soccer/app/data/ soccer/app/yoursoccer.html"
           if [ -z "$(git status --porcelain -- $PATHS)" ]; then
             echo "Nothing changed."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- $PATHS
-          git commit -m "Soccer: refresh data"
+          for p in $PATHS; do
+            if [ -e "$p" ]; then git add -- "$p"; fi
+          done
+          if [ -f soccer/app/data/matches.json ]; then
+            PICKS=$(python -c "import json;d=json.load(open('soccer/app/data/matches.json'));print(sum(1 for m in d['matches'] if m.get('pick') and m.get('status')=='upcoming'))")
+            git commit -m "Soccer: ${PICKS} picks"
+          else
+            git commit -m "Soccer: refresh data"
+          fi
+          # Rebase and retry: a push overtaken by another run must not throw
+          # away the picks.
           pushed=0
           for attempt in 1 2 3; do
             git push && { pushed=1; break; }

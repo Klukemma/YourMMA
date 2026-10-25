@@ -64,19 +64,30 @@ def pct(x, d=1):
     return "—" if x is None or x != x else f"{x * 100:.{d}f}%"
 
 
-def caveats(bt):
-    """What the reader is told, with every number read from the backtest."""
+def caveats(bt, basis="blend"):
+    """What the reader is told, with every number read from the backtest.
+
+    basis "market": the pooling gave the model no weight, so the pick is
+    the market's chances recalibrated on earlier seasons, and is called
+    that - the model's own chances are shown beside it, labelled."""
     res = (bt or {}).get("result", {})
     conf = (bt or {}).get("periods", {}).get("confirm", [2016, 2025])
     key = f"{conf[0]}-{conf[1]}"
     blend = (res.get("blend") or {}).get(key, {})
+    model = (res.get("model") or {}).get(key, {})
     value = (bt or {}).get("value", {})
-    out = {
-        "model": (
+    lead = ("The pick is the betting market's chances, recalibrated on earlier seasons: across "
+            f"{key} the model alone picked {pct(model.get('accuracy'))} of results and the market "
+            f"{pct(blend.get('market_accuracy'))}, and blending the model in added nothing the market "
+            "did not already know. The model's own chances are shown beside each pick, labelled"
+            if basis == "market" else
             f"The pick is the model blended with the betting market, which is hard to beat at soccer: "
             f"across {key} the blend picked {pct(blend.get('accuracy'))} of results against the betting "
-            f"favourite's {pct(blend.get('market_accuracy'))}"
-            + (", and betting the model where it disagreed with the price did not make money. "
+            f"favourite's {pct(blend.get('market_accuracy'))}")
+    out = {
+        "model": (
+            lead
+            + (". Betting the model where it disagreed with the price did not make money. "
                if value.get("enabled_at") is None else ". ")
             + "Treat a pick as an opinion with a measured hit rate, not an edge."),
         "draws": (

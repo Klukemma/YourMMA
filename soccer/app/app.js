@@ -588,7 +588,8 @@ function matchRow(m, d) {
   const three = (x) => x ? `${esc(m.home.code)} ${pct(x.p_h, 1)} · draw ${pct(x.p_d, 1)} · ${esc(m.away.code)} ${pct(x.p_a, 1)}` : "—";
   const lead = [
     ["Pick", m.pick ? `<b>${esc(pickName(m, m.pick))}${m.pick === "D" ? "" : " to win"}</b> <span class="num">${pct(m.pick_prob, 1)}</span>
-      <span class="mini">${m.market ? "model and market blended" : "model alone - no market price"}</span>` : "—"],
+      <span class="mini">${!m.market ? "model alone - no market price"
+        : d.basis === "market" ? "the market's chances, recalibrated" : "model and market blended"}</span>` : "—"],
     ["Price", price == null ? "—" : `<span class="num">${odds(price)}</span> <span class="mini">average${
       priceOf(m, m.pick, "best") != null ? ` · best ${odds(priceOf(m, m.pick, "best"))}` : ""}</span>`],
     ["Goals", m.p_o25 == null ? "—" : `Over 2.5 <span class="num">${pct(m.p_o25, 1)}</span>${
@@ -628,7 +629,7 @@ function matchRow(m, d) {
 // matches' "Reading the matches" fold. It defines words; it never copies a
 // measured number, which would go stale silently.
 const LEGEND = `<dl class="gloss">
-  <dt><b class="num">48%</b></dt><dd>The chance of each result - home win, draw, away win - from the model blended with the betting market.</dd>
+  <dt><b class="num">48%</b></dt><dd>The chance of each result - home win, draw, away win. Record says how each is built and how well it has done.</dd>
   <dt><span class="pickline"><span class="pick">${icon("check")}Arsenal<span class="odds num">−150</span></span></span></dt>
     <dd>The pick, the likeliest of the three results, and its price. −150 means stake 150 to win 100; +240 means stake 100 to win 240.</dd>
   <dt><span class="factline">Over 2.5 goals 58%</span></dt><dd>The chance of three or more goals in the match.</dd>
@@ -668,7 +669,8 @@ const BOOT = {
       `<div class="day" data-day><div class="eyebrow sticky-head">${esc(day)}</div>
         <div class="matches">${list.map((m) => matchRow(m, d)).join("")}</div></div>`).join("");
     // A league filter: the five leagues by their country's short name.
-    const codes = Object.keys(d.leagues || {}).filter((c) => matches.some((m) => m.league === c));
+    // In the engine's order (the JSON keys come sorted alphabetically).
+    const codes = (d.league_order || Object.keys(d.leagues || {})).filter((c) => matches.some((m) => m.league === c));
     const seg = codes.length > 1
       ? `<div class="seg" role="group" aria-label="Show a league">${[["all", "All"], ...codes.map((c) => [c, d.leagues[c].short || c])]
           .map(([k, label]) => `<button type="button" data-filter="${esc(k)}" aria-pressed="${k === "all"}">${esc(label)}</button>`).join("")}</div>` : "";
@@ -798,7 +800,7 @@ function renderRecord(d) {
   const mk = (W.blend || {})[conf] || {}, mkDev = (W.blend || {})[dev] || {};
   const winners = `<div class="card"><h2>Picking results</h2>
     <div class="scroll"><table><thead><tr><th></th><th class="n">${esc(dev)}</th><th class="n">${esc(conf)}</th><th class="n">Log loss</th></tr></thead>
-    <tbody>${wrow("model", "Model alone")}${wrow("blend", "Pick (blend)")}
+    <tbody>${wrow("model", "Model alone")}${wrow("blend", d.basis === "market" ? "Pick (market, recalibrated)" : "Pick (blend)")}
     <tr><td>Betting favourite</td><td class="n">${pct(mkDev.market_accuracy, 1)}</td><td class="n">${pct(mk.market_accuracy, 1)}</td><td class="n">${num(mk.market_log_loss, 4)}</td></tr></tbody></table></div>
     ${fold(`Every match predicted only from matches on earlier days. ${dev} is where choices were made; ${conf} was left untouched to judge them. Three results, so log loss for three even chances is 1.099; lower is better.`)}</div>`;
 
@@ -851,15 +853,24 @@ function renderRecord(d) {
 // ---------------------------------------------------------------- method
 
 function methodHtml() {
-  const m = (MATCHES && MATCHES.method) || {};
+  const market = MATCHES && MATCHES.basis === "market";
   return `
   <div class="hero"><div class="eyebrow">What this is</div><h1>How it works</h1></div>
   <div class="card"><h2>Reading a pick</h2>${LEGEND}</div>
   <div class="card"><h2>Three results, one pick</h2>
     <ul class="plain">
-      <li><b>The model</b> - ${esc(m.model || "a goals model rates every club's attack and defence from the matches it has played, and turns two clubs' ratings into the chance of every score.")}</li>
-      <li><b>The pick</b> - the model blended with the betting market's prices, with the weight learned from how the two did on earlier seasons. The market is very good at soccer, so the pick leans on it heavily.</li>
-      <li><b>Goals</b> - the chance of three or more goals comes from the same scores.</li>
+      <li><b>The model</b> - two goals models, averaged: one rates every club's attack and defence from
+        the scores of its recent matches (Dixon-Coles), the other is a goal-based Elo rating. Together they
+        give the chance of every result.</li>
+      <li><b>The pick</b> - ${market
+        ? `the betting market's chances, recalibrated on earlier seasons. Blended with the market, the model
+          added nothing the market did not already know, so the blend gives it no weight - the market's
+          prices are the better forecast, and the app says so. The model's own chances are shown in every
+          opened match, labelled "Model alone".`
+        : `the model blended with the betting market's prices, with the weight learned from how the two did
+          on earlier seasons. The market is very good at soccer, so the pick leans on it heavily.`}</li>
+      <li><b>Goals</b> - the chance of three or more goals: the models' scores pooled with the over/under
+        market the same way.</li>
     </ul></div>
   <div class="card"><h2>Every number is point-in-time</h2>
     <ul class="plain">

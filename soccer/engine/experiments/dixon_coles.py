@@ -1,4 +1,4 @@
-"""Candidate model: a time-decayed Dixon-Coles rating, refitted every week.
+"""Candidate model: a time-decayed Dixon-Coles rating, refitted twice a week.
 
 THE MODEL. Per country, the top tier and the second tier are rated together
 (names are stable across tiers, so a promoted team arrives with the matches
@@ -15,23 +15,51 @@ with the Dixon-Coles low-score correction
     tau(0,0) = 1 - lambda*nu*rho    tau(0,1) = 1 + lambda*rho
     tau(1,0) = 1 + nu*rho           tau(1,1) = 1 - rho        (else 1)
 
-FITTING. Weighted maximum likelihood with exponential time decay, w = 2 **
-(-age_days / half_life), plus a ridge that pulls each team toward the
-average of ITS tier (the tier of its latest match before the fit):
+mu is per country, h_l and rho are fitted per country (h per tier).
 
-    max  sum_m w_m log P(x_m, y_m)  -  ridge * sum_i [(att_i - A_t(i))^2 + (def_i - D_t(i))^2]
+FITTING. Weighted maximum likelihood with exponential time decay,
+w = 2 ** (-age_days / half_life), and a ridge split into a team's QUALITY
+(att + def, what decides 1X2) and its OPENNESS (att - def, what decides the
+goal total):
 
-A_1 = D_1 = 0 (the top tier is the reference), A_2, D_2 are free: the
-cross-tier gap is learnt from the teams that move between tiers, and a team
-with little recent data starts average-for-its-tier rather than
-average-for-the-top-tier. (A plain ridge toward 0 drags every second-tier
-team up toward top-tier level and so overrates promoted sides.)
+    max  sum_m w_m log P(x_m, y_m)
+         - ridge/2      * sum_i (da_i + dd_i)^2
+         - ridge_open/2 * sum_i (da_i - dd_i)^2
 
-POINT IN TIME. Every fixture in a calendar week (Monday-Sunday) is predicted
-from one fit on matches dated strictly before that Monday (refit="week"), or
-optionally the week is split Mon-Thu / Fri-Sun with a fit before each half
-(refit="half"). The tier a team is shrunk toward comes from its latest match
-before the cut. Nothing else is read.
+where da_i, dd_i are the deviations from the prior mean. With
+tier_prior=True the prior mean is the average of the team's tier (the tier
+of its latest match before the fit; A_2, D_2 free, top tier = 0); with
+tier_prior=False it is 0. Solved by damped Newton steps on the exact
+Hessian, warm-started from the previous fit (3-5 steps a fit).
+
+POINT IN TIME. Fixtures are predicted in blocks, each from one fit on
+matches dated strictly before the block's first day:
+  refit="market" (chosen)  Fri-Mon from a fit before Friday, Tue-Thu from a fit
+                           before Tuesday - the moments football-data.co.uk
+                           collects the pre-match price the app picks against
+  refit="week"             Mon-Sun from a fit before Monday
+  refit="half"             Mon-Thu before Monday, Fri-Sun before Friday
+  refit="day"              every match day from a fit before that day
+Nothing but dates, teams, leagues, seasons and the goals of earlier matches
+is read: no prices, no match statistics.
+
+DEV CHOICES (2006-2015 log loss; market 0.9816). Grids, in order:
+  1. half_life {120,180,270,365,540} x ridge {1,3,10,30} (one ridge, tier
+     prior, weekly): best 365 / 1 -> 0.99279; O/U wanted a bigger ridge
+  2. half_life {300,400,540} x ridge {0.1,0.3,1} x ridge_open {1,3,10,30}:
+     best 300 / 0.3 / 30 -> 0.99230
+  3. at that point: ridge_open {100,300} worse; refit half 0.99222; tier
+     prior off 0.99228; season_discount {0.8,0.6} worse (0.99283, 0.99429);
+     tier2_weight 0.5 worse (0.99264); half_life 220 worse
+  4. half_life {250,300,350} x ridge {0.1,0.3,1} x ridge_open {20,40,60} x
+     tier_prior {on,off}, refit half: best 350 / 0.1 / 40 / off -> 0.99205
+  5. half_life {350,420,500} x ridge {0.03,0.1} x tier_prior; refit
+     {market, half, week, day} at the best: market 0.99204, half 0.99205,
+     week 0.99213, day 0.99197 (day not taken: it would read Saturday's
+     results for Sunday games, which the Friday price the app picks against
+     cannot)
+The tier prior helps at a strong ridge (ridge 1: 0.9923 vs 0.9927) but
+not at the chosen weak one, so it is off.
 
 OUTPUT. p_h, p_d, p_a and p_o25 from the 0-10 x 0-10 score matrix
 (renormalised), for top-tier matches from the second season of the data on.
@@ -54,7 +82,9 @@ if str(ENGINE) not in sys.path:
 import soccer_data as sd  # noqa: E402
 
 MAX_GOALS = 10
-DEFAULTS = dict(half_life=270.0, ridge=3.0, refit="week", tier_prior=True, window_half_lives=8.0,
+# Chosen on DEV (2006-2015) only - see tune_dev and the grid in the module notes.
+DEFAULTS = dict(half_life=350.0, ridge=0.1, ridge_open=40.0, season_discount=1.0, tier2_weight=1.0,
+                refit="market", tier_prior=False, window_half_lives=8.0,
                 rho_bounds=(-0.25, 0.25))
 COUNTRY = {code: meta[1] for code, meta in sd.LEAGUES.items()}
 TIER = {code: meta[2] for code, meta in sd.LEAGUES.items()}
@@ -101,18 +131,21 @@ def _objective(theta, n, hi, ai, lg, x, y, w, lgam, tt, ridge, tier_prior, masks
     A = np.where(tt == 1, A2, 0.0) if tier_prior else 0.0
     D = np.where(tt == 1, D2, 0.0) if tier_prior else 0.0
     ra, rd = att - A, dfn - D
-    f = -float(w @ ll) + ridge * float(ra @ ra + rd @ rd) + 1e-3 * (A2 * A2 + D2 * D2)
+    rq, ro = ridge
+    sq, so = ra + rd, ra - rd                       # quality and openness deviations (x2)
+    f = -float(w @ ll) + 0.5 * rq * float(sq @ sq) + 0.5 * ro * float(so @ so) + 1e-3 * (A2 * A2 + D2 * D2)
+    pa, pd_ = rq * sq + ro * so, rq * sq - ro * so  # penalty gradient wrt att, def
 
     g = np.empty_like(theta)
-    g[:n] = -(np.bincount(hi, gh, n) + np.bincount(ai, ga, n)) + 2 * ridge * ra
-    g[n:2 * n] = (np.bincount(ai, gh, n) + np.bincount(hi, ga, n)) + 2 * ridge * rd
+    g[:n] = -(np.bincount(hi, gh, n) + np.bincount(ai, ga, n)) + pa
+    g[n:2 * n] = (np.bincount(ai, gh, n) + np.bincount(hi, ga, n)) + pd_
     g[2 * n] = -(gh.sum() + ga.sum())
     g[2 * n + 1:2 * n + 3] = -np.bincount(lg, gh, 2)
     g[2 * n + 3] = -float(w @ grho)
     if tier_prior:
         sel = tt == 1
-        g[2 * n + 4] = -2 * ridge * ra[sel].sum() + 2e-3 * A2
-        g[2 * n + 5] = -2 * ridge * rd[sel].sum() + 2e-3 * D2
+        g[2 * n + 4] = -pa[sel].sum() + 2e-3 * A2
+        g[2 * n + 5] = -pd_[sel].sum() + 2e-3 * D2
     else:
         g[2 * n + 4] = 2e-3 * A2
         g[2 * n + 5] = 2e-3 * D2
@@ -155,18 +188,28 @@ def _hessian(theta, n, hi, ai, lg, w, tt, ridge, tier_prior, masks, struct):
     H = np.bincount(struct[0], vals, P * P).reshape(P, P)
     H = -H
     idx = np.arange(2 * n)
-    H[idx, idx] += 2 * ridge
+    rq, ro = ridge
+    H[idx, idx] += rq + ro
+    H[np.arange(n), n + np.arange(n)] += rq - ro
+    H[n + np.arange(n), np.arange(n)] += rq - ro
     H[2 * n + 4, 2 * n + 4] += 2e-3
     H[2 * n + 5, 2 * n + 5] += 2e-3
     if tier_prior:
         sel = np.flatnonzero(tt == 1)
         k = len(sel)
-        H[sel, 2 * n + 4] -= 2 * ridge
-        H[2 * n + 4, sel] -= 2 * ridge
-        H[n + sel, 2 * n + 5] -= 2 * ridge
-        H[2 * n + 5, n + sel] -= 2 * ridge
-        H[2 * n + 4, 2 * n + 4] += 2 * ridge * k
-        H[2 * n + 5, 2 * n + 5] += 2 * ridge * k
+        a, b = 2 * n + 4, 2 * n + 5
+        H[sel, a] -= rq + ro
+        H[a, sel] -= rq + ro
+        H[n + sel, b] -= rq + ro
+        H[b, n + sel] -= rq + ro
+        H[sel, b] -= rq - ro
+        H[b, sel] -= rq - ro
+        H[n + sel, a] -= rq - ro
+        H[a, n + sel] -= rq - ro
+        H[a, a] += (rq + ro) * k
+        H[b, b] += (rq + ro) * k
+        H[a, b] += (rq - ro) * k
+        H[b, a] += (rq - ro) * k
     return H
 
 
@@ -246,6 +289,14 @@ def score_matrix_probs(lam, nu, rho, max_goals=MAX_GOALS):
 
 # ----------------------------------------------------------- walk forward
 
+def _ridges(p):
+    """(quality, openness) ridge. `ridge` alone = the same on both, which is
+    ridge * sum(att^2 + def^2)."""
+    r = float(p["ridge"])
+    ro = p.get("ridge_open")
+    return (r, r if ro is None else float(ro))
+
+
 def _blocks(days, refit):
     """The cut (an epoch day) for each match: its week's Monday, or, with
     refit='half', the Friday for Fri-Sun matches."""
@@ -253,6 +304,10 @@ def _blocks(days, refit):
     monday = days - weekday
     if refit == "half":
         return np.where(weekday >= 4, monday + 4, monday)
+    if refit == "market":                          # Fri-Mon from Friday, Tue-Thu from Tuesday
+        return np.where(weekday >= 4, monday + 4, np.where(weekday == 0, monday - 3, monday + 1))
+    if refit == "day":
+        return days
     return monday
 
 
@@ -275,6 +330,7 @@ def _country_walk_inner(df, p, first_season):
     x = df["hg"].to_numpy(float)
     y = df["ag"].to_numpy(float)
     played = ~(np.isnan(x) | np.isnan(y))
+    season = df["season"].to_numpy().astype(int)
     target = (lg == 0) & (df["season"].to_numpy() >= first_season)
     cuts = _blocks(days, p["refit"])
     hl = float(p["half_life"])
@@ -307,8 +363,12 @@ def _country_walk_inner(df, p, first_season):
         n = len(active)
         theta0 = np.concatenate([att_g[active], def_g[active], glob])
         w = np.power(2.0, -(cut - days[tr]) / hl)
+        if p["season_discount"] != 1.0:             # extra discount per season boundary crossed
+            w = w * np.power(float(p["season_discount"]), season[pred].max() - season[tr])
+        if p["tier2_weight"] != 1.0:
+            w = np.where(lg[tr] == 1, w * float(p["tier2_weight"]), w)
         theta = fit(loc[H[tr]], loc[Aw[tr]], lg[tr], x[tr], y[tr], w, tt, theta0,
-                    float(p["ridge"]), bool(p["tier_prior"]), tuple(p["rho_bounds"]))
+                    _ridges(p), bool(p["tier_prior"]), tuple(p["rho_bounds"]))
         att, dfn, mu, h, rho, A2, D2 = _unpack(theta, n)
         att_g[active], def_g[active] = att, dfn
         glob = theta[2 * n:].copy()

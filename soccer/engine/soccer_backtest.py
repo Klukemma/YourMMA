@@ -149,8 +149,11 @@ def pool(model, market, w):
     return pd.DataFrame(p, index=model.index, columns=["p_h", "p_d", "p_a"])
 
 
-def fit_pool(model, market, result):
-    """The pooling weights that minimise log loss on these matches."""
+def fit_pool(model, market, result, nonnegative=False):
+    """The pooling weights that minimise log loss on these matches. With
+    nonnegative=True the model's weight cannot go below zero: a negative
+    weight bets against the model, a contrarian signal rather than a
+    forecast."""
     from scipy.optimize import minimize
     idx = outcome_index(result).to_numpy()
     lm, lq = _log3(model), _log3(market)
@@ -162,11 +165,12 @@ def fit_pool(model, market, result):
         logp = z - np.log(np.exp(z).sum(axis=1, keepdims=True))
         return -logp[np.arange(len(idx)), idx].mean()
 
-    fit = minimize(loss, x0=np.array([0.2, 0.8, 0.0, 0.0]), method="L-BFGS-B")
+    bounds = [(0.0, None) if nonnegative else (None, None), (None, None), (None, None), (None, None)]
+    fit = minimize(loss, x0=np.array([0.2, 0.8, 0.0, 0.0]), method="L-BFGS-B", bounds=bounds)
     return tuple(float(v) for v in fit.x)
 
 
-def blend_walk_forward(matches, preds, first=DEV[0] + 2):
+def blend_walk_forward(matches, preds, first=DEV[0] + 2, nonnegative=False):
     """Out-of-sample blended probabilities: each season's pooling weights are
     fitted on the model's out-of-sample predictions for EARLIER seasons only.
     Returns (blended frame, {season: weights})."""
@@ -181,7 +185,7 @@ def blend_walk_forward(matches, preds, first=DEV[0] + 2):
         test = ok & (matches["season"] == season)
         if train.sum() < 1000 or not test.any():
             continue
-        w = fit_pool(preds[train], mkt[train], matches.loc[train, "result"])
+        w = fit_pool(preds[train], mkt[train], matches.loc[train, "result"], nonnegative=nonnegative)
         weights[int(season)] = w
         out.loc[test] = pool(preds[test], mkt[test], w).to_numpy()
     return out, weights

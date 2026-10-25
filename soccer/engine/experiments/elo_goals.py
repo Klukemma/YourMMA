@@ -7,34 +7,40 @@ RATINGS. One Elo pool per country spanning its top and second tier: a
 promoted or relegated team carries its rating, so the gap between the tiers
 is set by the teams that move between them. Before a match on day D
 
-    E_home = 1 / (1 + 10^(-(R_home + H_league - R_away) / 400))
+    x = (R_home + H + h_home_team - R_away) / 400,   E_home = 1 / (1 + 10^-x)
 
-and after every match of day D (never before all of day D is predicted)
+and only after every match of day D has its numbers, day D's results update
 
-    R_home += K_home * G * (S - E_home),   R_away -= K_away * G * (S - E_home)
-    G = max(1, |goal margin|)^lam          (S = 1 / 0.5 / 0)
-    H_league += k_hfa * G * (S - E_home)   (home advantage learns per league)
+    R_home += K * G * (S - E_home),   R_away -= K * G * (S - E_home)
+    G = max(1, |margin|)^lam,   S = 0.5 + 0.5 * tanh(margin / tau)
+    h_home_team += k_ht * G * (S - E_home)   (a team's own home edge)
 
-K is boosted for a team's first n_new matches in a tier it has just entered.
+(S is a goal-based soft result: with tau 1.75 a 1-goal win counts 0.76,
+2 goals 0.91, 3 goals 0.97; a draw 0.5.)
 At a team's first match of a new season its rating regresses toward the
 end-of-last-season mean of the tier it now plays in:
-    R += rho * (M_tier - R),  then  + d_up / d_down if it changed tier.
+    R += rho * (M_tier - R)
 A team new to the data starts at M_tier + offset, the offset MEASURED as the
 mean (end-of-first-season rating - tier mean) of earlier newcomers to that
 tier (shrunk to a prior with weight prior_n). The warm-up season 2005-06
-starts every top-tier team at 1500 and every second-tier team at 1500 - gap0.
+starts every top-tier team at 1500 and every second-tier team at 1500 - gap0
+(K doubled while warming up); it is never predicted.
+
+STAKES. From the league table as of the day before: a team is "dead" when no
+line (1st, 4th, 6th, safety) is within 3 points per game left of it.
 
 GOALS. Per team, exponentially weighted (half-life hl matches) attack and
 defence ratios relative to the league's EW home/away scoring averages,
-optionally opponent-adjusted:
+opponent-adjusted:
     lam_h = L_home * A_home * D_away,   lam_a = L_away * A_away * D_home
-    P(over 2.5) = 1 - Poisson(lam_h + lam_a) CDF at 2, then a logistic
-    recalibration fitted on earlier seasons.
+    P(over 2.5) = 1 - Poisson(lam_h + lam_a) CDF at 2, recalibrated by a
+    logistic on (logit P, |x|) fitted on earlier seasons only.
 
-MAPPING. A multinomial logit (or ordered logit) of H/D/A on
-x = (R_home + H_league - R_away)/400, x^2 and the expected total goals,
-with league draw intercepts, refitted every season on earlier seasons only
-(recency-weighted).
+MAPPING. An ordered logit: home-minus-away latent  b0 + b1 x + b2 (dead_h -
+dead_a); draw band of half-width exp(g0 + g1 |x| + g2 log(lam_h + lam_a) +
+g3 any_dead) around it. Refitted every season on the 8 earlier seasons'
+top-league matches (recency half-life 4 seasons). A multinomial logit and
+other features are available as options.
 
 Every number for a match on day D comes from matches on earlier days only.
 """
@@ -57,36 +63,39 @@ import soccer_data as sd  # noqa: E402
 LEAGUE_INFO = {code: (meta[1], meta[2]) for code, meta in sd.LEAGUES.items()}
 TOP = list(sd.TOP)
 
+# Defaults = the parameters chosen on DEV (2006-2015) only; see the grids in
+# the module notes at the bottom.
 ELO_DEFAULTS = dict(
-    k=20.0,            # base K
-    lam=0.5,           # goal-margin exponent in G
-    hfa0=70.0,         # starting home advantage (Elo points)
-    k_hfa=0.0,         # learning rate of the per-league home advantage
-    rho=0.2,           # between-season regression toward the tier mean
+    k=12.0,            # base K
+    lam=0.6,           # goal-margin exponent in G
+    tau=1.75,          # >0: soft target S = 0.5 + 0.5 tanh(margin / tau); 0 = W/D/L
+    gmode="max1",      # G = max(1,|m|)^lam ('max1') or ((1+|m|)/2)^lam ('plus1')
+    hfa0=50.0,         # home advantage (Elo points), per league
+    k_hfa=0.0,         # learning rate of the per-league home advantage (0 = fixed)
+    k_ht=1.0,          # learning rate of a team's own home edge on top (0 = off)
+    rho=0.05,          # between-season regression toward the tier mean
     d_up=0.0,          # extra shift for a promoted team
     d_down=0.0,        # extra shift for a relegated team
     gap0=150.0,        # warm-up: second tier starts this far below the top tier
-    new_off0=-50.0,    # prior for a newcomer's offset from its tier mean
-    prior_n=10.0,      # weight of that prior, in newcomers
+    new_off0=0.0,      # prior for a newcomer's offset from its tier mean ...
+    prior_n=10.0,      # ... and its weight, in newcomers (the rest is measured)
     k_new=1.0,         # K multiplier for a team new to its tier ...
     n_new=0,           # ... for its first n_new matches there
-    ac=0.0,            # autocorrelation damping (538 style); 0 = off
-    warm_k=1.0,        # K multiplier during the warm-up season
+    k_t2=1.0,          # K multiplier in second-tier matches
     k_early=1.0,       # K multiplier for every team's first n_early matches of a season
     n_early=0,
+    ac=0.0,            # autocorrelation damping (538 style); 0 = off
+    warm_k=2.0,        # K multiplier during the warm-up season
     returning="regress",  # a team back after a season away: 'regress' or 'new'
-    k_ht=0.0,          # learning rate of a team's own home edge (0 = off)
-    gmode="max1",      # G = max(1,|m|)^lam ('max1') or ((1+|m|)/2)^lam ('plus1')
-    tau=0.0,           # >0: soft target S = 0.5 + 0.5 tanh(m / tau) instead of W/D/L
     # goals
-    hl=20.0,           # half-life (matches) of a team's attack/defence ratios
-    hl_league=400.0,   # half-life (matches) of the league scoring averages
+    hl=60.0,           # half-life (matches) of a team's attack/defence ratios
+    hl_league=2000.0,  # half-life (matches) of the league scoring averages
     adj=1,             # opponent-adjust the attack/defence ratios
     phi=0.6,           # tier change: ratios shrink toward 1 by this factor
 )
 MAP_DEFAULTS = dict(
     mapping="ordered", # 'ordered' (ordered logit) or 'mnl' (multinomial)
-    feats="x,dead|",   # location features | draw-width features
+    feats="x,dead|ax,tot,deadany",  # location features | draw-width features
     window=8,          # seasons of history for the mapping fit
     season_hl=4.0,     # recency weight half-life (seasons) inside the window
     ridge=1e-3,
@@ -293,7 +302,7 @@ def run_ratings(P, **params):
             if ac and gd != 0:
                 wdr = dr if gd > 0 else -dr
                 G *= ac / (ac + max(wdr, -0.9 * ac * 1000.0) * 0.001)
-            kk = k * (p["warm_k"] if s == first_season else 1.0)
+            kk = k * (p["warm_k"] if s == first_season else 1.0) * (p["k_t2"] if t == 2 else 1.0)
             delta = G * (S - E)
             R[hk] += kk * kmult(hk) * delta
             R[ak] -= kk * kmult(ak) * delta
@@ -570,3 +579,41 @@ def predict_walk_forward(matches, **params):
     df = pd.DataFrame(out, index=matches.index, columns=["p_h", "p_d", "p_a", "p_o25"])
     df.loc[df[["p_h", "p_d", "p_a"]].isna().any(axis=1), ["p_h", "p_d", "p_a"]] = np.nan
     return df
+
+
+# ------------------------------------------------------------- notes
+#
+# CHOSEN ON DEV (2006-2015 log loss, walk-forward) ONLY, by coordinate
+# grids (each line: the grid, then the pick):
+#   k {8,9,10,11,12,13,14,15,18,20,25,30} x lam {0.3,0.45,0.6,0.75,0.9,1.0}
+#     x tau {0 (W/D/L),0.5,1,1.25,1.5,1.75,2,2.5} x rho {0,.03,.05,.08,.1,.2,.25,.4}
+#     -> k 12, lam 0.6, tau 1.75, rho 0.05   (surface flat within 1e-4 nearby)
+#   gmode {max1, plus1} -> max1;  ac {0, 2.2} -> 0
+#   hfa0 {40,50,60,70,80,90} -> 50 (flat);  k_hfa {0,.25,.5,1,2} -> 0
+#   k_ht {0,.5,1,2,4} -> 1
+#   warm_k {1,2,3,4} x gap0 {50,100,150,200,250} -> 2, 150
+#   new_off0 {-100,-50,0} x prior_n {3,10,30} x returning {regress,new} -> 0, 10, regress
+#   d_up, d_down {-40..40} -> 0, 0;  k_new {1,1.5,2,3} x n_new {10,20} -> 1
+#   k_early {1,1.5,2,3} x n_early {5,10} -> 1;  k_t2 {.6,.8,1,1.25,1.5} -> 1
+#   mapping {ordered, mnl} x feats (x, x2, x3, |x|, tot, league, dead, sup, xb,
+#     moved; location vs draw-width) -> ordered, 'x,dead|ax,tot,deadany'
+#   window {4,8,12} x season_hl {2,4,100} x warm_from -> 8, 4, 2005-10-01
+#   goals (over 2.5 log loss): hl {10,20,40,60,90,140} x adj {0,1}
+#     x phi {.3,.4,.6,1} x hl_league {200..5000} x ou_calib {0,1,2} -> 60, 1, .6, 2000, 2
+
+
+def _main():
+    import time
+    import soccer_backtest as bt
+    t0 = time.time()
+    matches = sd.load_matches()
+    preds = predict_walk_forward(matches)
+    print(f"walk-forward in {time.time() - t0:.1f}s")
+    print(bt._fmt(bt.report(matches, preds, "elo_goals")))
+    blend, weights = bt.blend_walk_forward(matches, preds)
+    print(bt._fmt(bt.report(matches, blend, "blend")))
+    return preds
+
+
+if __name__ == "__main__":
+    _main()
