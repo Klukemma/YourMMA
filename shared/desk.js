@@ -1,10 +1,11 @@
-// The Desk app chrome, shared by YourMMA and YourNFL: install, the app menu,
-// theme, the update notice and the icons. This file is the source;
-// scripts/sync_desk.py copies it into both apps' app.js, and a test fails if
-// either copy drifts.
+// The Desk app chrome, shared by YourMMA, YourNFL and YourSoccer: install,
+// the app menu, theme, the update notice, the icons and the small pieces
+// every match card is built from. This file is the source;
+// scripts/sync_desk.py copies it into every app's app.js, and a test fails
+// if any copy drifts.
 //
 // No module syntax and one name (DESK): the MMA app runs as a module, the
-// NFL app and both standalone files as classic scripts, and the MMA
+// other apps and every standalone file as classic scripts, and the MMA
 // standalone concatenates this with matchup.js.
 const DESK = (() => {
   const ICONS = {
@@ -41,6 +42,51 @@ const DESK = (() => {
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } },
   };
 
+  const calm = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // A side's whole-number chance - unless another side would print the same
+  // number, when it gets a decimal, so a pick is never "50% v 50%".
+  const share = (s, ...others) => {
+    const a = Math.round(s * 100);
+    return others.some((o) => o != null && Math.round(o * 100) === a) ? (s * 100).toFixed(1) : String(a);
+  };
+
+  // The Close button at the foot of an opened match.
+  const closer = (label) =>
+    `<button class="detail-close" type="button" data-collapse aria-label="Close ${esc(label)}">${icon("chevron")}Close</button>`;
+
+  // A secondary section of an opened match, folded to its title. The caller
+  // escapes the title; an empty body draws nothing.
+  const sub = (title, body) => !body ? "" :
+    `<details class="fold sub"><summary><span class="clip"><b>${title}</b></span><span class="more">Show</span></summary><div class="fold-body">${body}</div></details>`;
+
+  // A record card folded to its title and what it found; the table and its
+  // caveats are one tap away, never gone.
+  const cardFold = (title, take, body) =>
+    `<div class="card"><details class="cardfold"><summary><div class="cf-head"><h2>${title}</h2>${icon("chevron")}</div>${take ? `<div class="take">${take}</div>` : ""}</summary><div class="cardfold-body">${body}</div></details></div>`;
+
+  // An opened match whose summary sits low on the screen scrolls up to it,
+  // so the tap visibly does something. toggle does not bubble, hence capture.
+  document.addEventListener("toggle", (e) => {
+    const d = e.target;
+    if (!d.matches || !d.matches("details.match") || !d.open) return;
+    const bar = document.querySelector(".tabbar");
+    const limit = (bar ? bar.getBoundingClientRect().top : window.innerHeight) - 160;
+    if (d.querySelector("summary").getBoundingClientRect().bottom > limit)
+      d.scrollIntoView({ block: "start", behavior: calm() ? "auto" : "smooth" });
+  }, true);
+  document.addEventListener("click", (e) => {
+    const c = e.target.closest("[data-collapse]");
+    if (!c) return;
+    const d = c.closest("details.match");
+    if (!d) return;
+    d.open = false;
+    const head = document.querySelector(".appbar");
+    if (d.getBoundingClientRect().top < (head ? head.getBoundingClientRect().bottom : 0)) d.scrollIntoView({ block: "start" });
+  });
+  // iOS applies :active (the press feedback) only with a touchstart listener.
+  document.addEventListener("touchstart", () => {}, { passive: true });
+
   // How long ago, for a stamp: "just now", "3h ago", "2d ago".
   function ago(iso) {
     const t = new Date(iso).getTime();
@@ -70,24 +116,42 @@ const DESK = (() => {
   const theme = () => store.get(`${cfg.key}.theme`) || "auto";
 
   /* ------------------------------------------------------------ sheet */
+  // A labelled modal with a close button: the page behind is inert (focus
+  // cannot walk out onto it) and held still, and a swipe down dismisses it.
   let openSheet = null;
   function sheet(html) {
     closeSheet();
     const back = document.createElement("div");
     back.className = "sheet-back";
-    back.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+    back.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab" aria-hidden="true"></div><button class="iconbtn sheet-x" type="button" data-close aria-label="Close">${icon("close")}</button>${html}</div>`;
     back.addEventListener("click", (e) => { if (e.target === back || e.target.closest("[data-close]")) closeSheet(); });
-    document.body.appendChild(back);
+    const sh = back.querySelector(".sheet");
+    const h = sh.querySelector("h2");
+    if (h) { h.id = "sheet-title"; sh.setAttribute("aria-labelledby", "sheet-title"); }
     const prev = document.activeElement;
-    openSheet = { back, prev };
+    const behind = [...document.body.children];
+    document.body.appendChild(back);
+    behind.forEach((el) => { el.inert = true; });
+    openSheet = { back, prev, behind };
+    let y0 = null;
+    sh.addEventListener("touchstart", (e) => { y0 = sh.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
+    sh.addEventListener("touchmove", (e) => { if (y0 != null) sh.style.transform = `translateY(${Math.max(0, e.touches[0].clientY - y0)}px)`; }, { passive: true });
+    sh.addEventListener("touchend", (e) => {
+      if (y0 == null) return;
+      const dy = e.changedTouches[0].clientY - y0;
+      y0 = null;
+      if (dy > 90) closeSheet();
+      else sh.style.transform = "";
+    });
     const first = back.querySelector("button,a,[tabindex]");
     if (first) first.focus({ preventScroll: true });
-    return back.querySelector(".sheet");
+    return sh;
   }
   function closeSheet() {
     if (!openSheet) return;
-    const { back, prev } = openSheet;
+    const { back, prev, behind } = openSheet;
     openSheet = null;
+    behind.forEach((el) => { el.inert = false; });
     back.remove();
     if (prev && prev.focus) prev.focus({ preventScroll: true });
   }
@@ -196,9 +260,11 @@ const DESK = (() => {
     if (c) c.addEventListener("click", copyLink);
   }
 
-  // The banner a tab can show above its content, until installed or waved off.
+  // The banner a tab can show above its content, from the second visit
+  // (the menu offers install from the first), until installed or waved off.
   function banner() {
-    if (!canOfferInstall() || store.get(`${cfg.key}.install-dismissed`)) return "";
+    if (!canOfferInstall() || store.get(`${cfg.key}.install-dismissed`)
+        || (+store.get(`${cfg.key}.visits`) || 0) < 2) return "";
     return `<div class="banner" data-install-banner>
       <img src="${esc(cfg.icon)}" alt="">
       <div class="txt"><b>Install ${esc(cfg.name)}</b><span>Full screen, works offline</span></div>
@@ -228,11 +294,11 @@ const DESK = (() => {
     const opt = (mode, label, ic) =>
       `<button type="button" data-theme-set="${mode}" aria-pressed="${t === mode}">${icon(ic, 'style="width:16px;height:16px;display:inline;vertical-align:-3px;margin-right:5px"')}${label}</button>`;
     const rows = [];
-    if (canOfferInstall()) rows.push(`<button class="row" type="button" data-install style="width:100%;border:0;border-bottom:1px solid var(--line-soft);background:none;text-align:left;cursor:pointer">
+    if (canOfferInstall()) rows.push(`<button class="row" type="button" data-install>
       <span class="ic">${icon("download")}</span><span class="t">Install ${esc(cfg.name)}<small>Home screen, full screen, offline</small></span></button>`);
-    if (cfg.sibling && served()) rows.push(`<a class="row" href="${esc(cfg.sibling.href)}" style="text-decoration:none;color:inherit">
-      <span class="ic">${icon("swap")}</span><span class="t">Open ${esc(cfg.sibling.name)}<small>${esc(cfg.sibling.blurb || "")}</small></span></a>`);
-    rows.push(`<button class="row" type="button" data-reload style="width:100%;border:0;border-bottom:1px solid var(--line-soft);background:none;text-align:left;cursor:pointer">
+    if (served()) for (const sib of cfg.siblings || (cfg.sibling ? [cfg.sibling] : [])) rows.push(`<a class="row" href="${esc(sib.href)}">
+      <span class="ic">${icon("swap")}</span><span class="t">Open ${esc(sib.name)}<small>${esc(sib.blurb || "")}</small></span></a>`);
+    rows.push(`<button class="row" type="button" data-reload>
       <span class="ic">${icon("refresh")}</span><span class="t">Refresh<small>${esc(cfg.stamp ? cfg.stamp() : "Fetch the latest picks")}</small></span></button>`);
     const s = sheet(`<h2>${esc(cfg.name)}</h2>
       <div class="eyebrow" style="margin:14px 0 8px">Appearance</div>
@@ -277,13 +343,14 @@ const DESK = (() => {
   }
 
   /* ------------------------------------------------------------- init */
-  // cfg: { key, name, icon, sibling: {name, href, blurb}, stamp(), onReload() }
+  // cfg: { key, name, icon, siblings: [{name, href, blurb}], stamp(), onReload() }
   function init(options) {
     cfg = options;
+    store.set(`${cfg.key}.visits`, String((+store.get(`${cfg.key}.visits`) || 0) + 1));
     applyTheme(theme());
     const m = document.getElementById("menu-btn");
     if (m) m.addEventListener("click", menu);
-    // The sport switch links to the other app on the same site; a saved
+    // The sport switch links to the other apps on the same site; a saved
     // file has no neighbour to link to.
     const sw = document.getElementById("sport-switch");
     if (sw && !served()) sw.hidden = true;
@@ -293,25 +360,47 @@ const DESK = (() => {
 
   // Wire a bottom tab bar: tabs are <button id="tab-NAME">, views
   // <section id="view-NAME">. boot[NAME]() runs the first time a tab opens.
+  // Each tab keeps its scroll position, as a native tab bar does.
   function tabs(names, boot, storageKey, fallback) {
-    const started = {};
+    const started = {}, pos = {};
+    let current = null;
+    for (const t of names) {
+      const v = document.getElementById(`view-${t}`);
+      v.setAttribute("role", "tabpanel");
+      v.setAttribute("aria-labelledby", `tab-${t}`);
+    }
     function show(name, scroll) {
+      if (current) pos[current] = window.scrollY;
       for (const t of names) {
         document.getElementById(`view-${t}`).hidden = t !== name;
-        document.getElementById(`tab-${t}`).setAttribute("aria-selected", String(t === name));
+        const tab = document.getElementById(`tab-${t}`);
+        tab.setAttribute("aria-selected", String(t === name));
+        tab.tabIndex = t === name ? 0 : -1;
       }
+      current = name;
       store.set(storageKey, name);
-      if (scroll) window.scrollTo({ top: 0 });
+      if (scroll) window.scrollTo({ top: pos[name] || 0 });
       if (!started[name]) { started[name] = true; boot[name](); }
     }
     for (const t of names) {
       document.getElementById(`tab-${t}`).addEventListener("click", () => {
         const already = document.getElementById(`tab-${t}`).getAttribute("aria-selected") === "true";
         // Tapping the open tab again goes back to its top, as native apps do.
-        if (already) window.scrollTo({ top: 0, behavior: "smooth" });
+        if (already) { pos[t] = 0; window.scrollTo({ top: 0, behavior: calm() ? "auto" : "smooth" }); }
         else show(t, true);
       });
     }
+    const list = document.querySelector('[role="tablist"]');
+    if (list) list.addEventListener("keydown", (e) => {
+      const i = names.findIndex((t) => document.getElementById(`tab-${t}`) === document.activeElement);
+      if (i < 0) return;
+      const n = names.length;
+      const j = { ArrowRight: (i + 1) % n, ArrowLeft: (i + n - 1) % n, Home: 0, End: n - 1 }[e.key];
+      if (j == null) return;
+      e.preventDefault();
+      document.getElementById(`tab-${names[j]}`).focus();
+      show(names[j], true);
+    });
     // A home-screen shortcut opens a tab directly (manifest "shortcuts").
     let first = new URLSearchParams(location.search).get("tab") || store.get(storageKey);
     if (!names.includes(first)) first = fallback;
@@ -322,5 +411,6 @@ const DESK = (() => {
   const skeleton = (n = 4) =>
     `<div class="skeleton" aria-label="Loading"><i class="short"></i>${"<i></i>".repeat(n)}</div>`;
 
-  return { icon, esc, ago, sheet, closeSheet, toast, install, banner, init, tabs, skeleton, store };
+  return { icon, esc, ago, sheet, closeSheet, toast, install, banner, init, tabs, skeleton, store,
+    share, closer, sub, cardFold, calm };
 })();
