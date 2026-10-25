@@ -7,7 +7,9 @@
 // app's. A worker's scope is its own directory, so neither controls the other.
 //
 // Bump CACHE when the shape of what is cached changes.
-const CACHE = "yournfl-v3";
+const CACHE = "yournfl-v4";
+// How long the page waits for the network before opening from the cache.
+const SHELL_WAIT = 2500;
 
 const SHELL = [
   "./",
@@ -47,11 +49,21 @@ self.addEventListener("activate", (event) => {
   })());
 });
 
-async function networkFirst(request, cache) {
-  try {
-    const fresh = await fetch(request);
+// Network first. With `wait`, a slow network is not waited on: after that
+// many milliseconds the cached copy is served, and the network's answer
+// still refreshes the cache when it lands (event.waitUntil keeps the worker
+// alive for it).
+async function networkFirst(request, cache, event, wait = 0) {
+  const fetching = fetch(request).then((fresh) => {
     if (fresh && fresh.ok) cache.put(request, fresh.clone());
     return fresh;
+  });
+  fetching.catch(() => {});
+  if (event) event.waitUntil(fetching.catch(() => {}));
+  try {
+    if (!wait) return await fetching;
+    const fallback = new Promise((resolve) => setTimeout(() => resolve(cache.match(request)), wait));
+    return (await Promise.race([fetching, fallback])) || await fetching;
   } catch (err) {
     const cached = await cache.match(request);
     if (cached) return cached;
@@ -81,11 +93,13 @@ self.addEventListener("fetch", (event) => {
     // as this week's while a connection exists.
     // yournfl.html carries its week inside the page, and app.js prefers that
     // to data/*.json - served stale, it would show last week's slate.
-    if (url.pathname.includes("/data/") || url.pathname.endsWith("/yournfl.html")) return networkFirst(request, cache);
+    if (url.pathname.includes("/data/") || url.pathname.endsWith("/yournfl.html")) return networkFirst(request, cache, event);
     if (request.mode === "navigate") {
-      const response = await staleWhileRevalidate(request, cache);
-      return response || cache.match("index.html") || fetch(request);
+      // A navigation to any URL in scope is the one page there is.
+      const response = await networkFirst(request, cache, event, SHELL_WAIT).catch(() => null);
+      return response || (await cache.match("index.html")) || fetch(request);
     }
+    if (/\.(html|js)$/.test(url.pathname)) return networkFirst(request, cache, event, SHELL_WAIT);
     return staleWhileRevalidate(request, cache);
   })());
 });

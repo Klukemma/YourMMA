@@ -12,13 +12,14 @@
 import { makeMatchup, makeForm } from "./matchup.js";
 
 // desk.js:begin - copied from shared/desk.js by scripts/sync_desk.py; edit that file
-// The Desk app chrome, shared by YourMMA and YourNFL: install, the app menu,
-// theme, the update notice and the icons. This file is the source;
-// scripts/sync_desk.py copies it into both apps' app.js, and a test fails if
-// either copy drifts.
+// The Desk app chrome, shared by YourMMA, YourNFL and YourSoccer: install,
+// the app menu, theme, the update notice, the icons and the small pieces
+// every match card is built from. This file is the source;
+// scripts/sync_desk.py copies it into every app's app.js, and a test fails
+// if any copy drifts.
 //
 // No module syntax and one name (DESK): the MMA app runs as a module, the
-// NFL app and both standalone files as classic scripts, and the MMA
+// other apps and every standalone file as classic scripts, and the MMA
 // standalone concatenates this with matchup.js.
 const DESK = (() => {
   const ICONS = {
@@ -55,6 +56,51 @@ const DESK = (() => {
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } },
   };
 
+  const calm = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // A side's whole-number chance - unless another side would print the same
+  // number, when it gets a decimal, so a pick is never "50% v 50%".
+  const share = (s, ...others) => {
+    const a = Math.round(s * 100);
+    return others.some((o) => o != null && Math.round(o * 100) === a) ? (s * 100).toFixed(1) : String(a);
+  };
+
+  // The Close button at the foot of an opened match.
+  const closer = (label) =>
+    `<button class="detail-close" type="button" data-collapse aria-label="Close ${esc(label)}">${icon("chevron")}Close</button>`;
+
+  // A secondary section of an opened match, folded to its title. The caller
+  // escapes the title; an empty body draws nothing.
+  const sub = (title, body) => !body ? "" :
+    `<details class="fold sub"><summary><span class="clip"><b>${title}</b></span><span class="more">Show</span></summary><div class="fold-body">${body}</div></details>`;
+
+  // A record card folded to its title and what it found; the table and its
+  // caveats are one tap away, never gone.
+  const cardFold = (title, take, body) =>
+    `<div class="card"><details class="cardfold"><summary><div class="cf-head"><h2>${title}</h2>${icon("chevron")}</div>${take ? `<div class="take">${take}</div>` : ""}</summary><div class="cardfold-body">${body}</div></details></div>`;
+
+  // An opened match whose summary sits low on the screen scrolls up to it,
+  // so the tap visibly does something. toggle does not bubble, hence capture.
+  document.addEventListener("toggle", (e) => {
+    const d = e.target;
+    if (!d.matches || !d.matches("details.match") || !d.open) return;
+    const bar = document.querySelector(".tabbar");
+    const limit = (bar ? bar.getBoundingClientRect().top : window.innerHeight) - 160;
+    if (d.querySelector("summary").getBoundingClientRect().bottom > limit)
+      d.scrollIntoView({ block: "start", behavior: calm() ? "auto" : "smooth" });
+  }, true);
+  document.addEventListener("click", (e) => {
+    const c = e.target.closest("[data-collapse]");
+    if (!c) return;
+    const d = c.closest("details.match");
+    if (!d) return;
+    d.open = false;
+    const head = document.querySelector(".appbar");
+    if (d.getBoundingClientRect().top < (head ? head.getBoundingClientRect().bottom : 0)) d.scrollIntoView({ block: "start" });
+  });
+  // iOS applies :active (the press feedback) only with a touchstart listener.
+  document.addEventListener("touchstart", () => {}, { passive: true });
+
   // How long ago, for a stamp: "just now", "3h ago", "2d ago".
   function ago(iso) {
     const t = new Date(iso).getTime();
@@ -84,24 +130,42 @@ const DESK = (() => {
   const theme = () => store.get(`${cfg.key}.theme`) || "auto";
 
   /* ------------------------------------------------------------ sheet */
+  // A labelled modal with a close button: the page behind is inert (focus
+  // cannot walk out onto it) and held still, and a swipe down dismisses it.
   let openSheet = null;
   function sheet(html) {
     closeSheet();
     const back = document.createElement("div");
     back.className = "sheet-back";
-    back.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+    back.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab" aria-hidden="true"></div><button class="iconbtn sheet-x" type="button" data-close aria-label="Close">${icon("close")}</button>${html}</div>`;
     back.addEventListener("click", (e) => { if (e.target === back || e.target.closest("[data-close]")) closeSheet(); });
-    document.body.appendChild(back);
+    const sh = back.querySelector(".sheet");
+    const h = sh.querySelector("h2");
+    if (h) { h.id = "sheet-title"; sh.setAttribute("aria-labelledby", "sheet-title"); }
     const prev = document.activeElement;
-    openSheet = { back, prev };
+    const behind = [...document.body.children];
+    document.body.appendChild(back);
+    behind.forEach((el) => { el.inert = true; });
+    openSheet = { back, prev, behind };
+    let y0 = null;
+    sh.addEventListener("touchstart", (e) => { y0 = sh.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
+    sh.addEventListener("touchmove", (e) => { if (y0 != null) sh.style.transform = `translateY(${Math.max(0, e.touches[0].clientY - y0)}px)`; }, { passive: true });
+    sh.addEventListener("touchend", (e) => {
+      if (y0 == null) return;
+      const dy = e.changedTouches[0].clientY - y0;
+      y0 = null;
+      if (dy > 90) closeSheet();
+      else sh.style.transform = "";
+    });
     const first = back.querySelector("button,a,[tabindex]");
     if (first) first.focus({ preventScroll: true });
-    return back.querySelector(".sheet");
+    return sh;
   }
   function closeSheet() {
     if (!openSheet) return;
-    const { back, prev } = openSheet;
+    const { back, prev, behind } = openSheet;
     openSheet = null;
+    behind.forEach((el) => { el.inert = false; });
     back.remove();
     if (prev && prev.focus) prev.focus({ preventScroll: true });
   }
@@ -210,9 +274,11 @@ const DESK = (() => {
     if (c) c.addEventListener("click", copyLink);
   }
 
-  // The banner a tab can show above its content, until installed or waved off.
+  // The banner a tab can show above its content, from the second visit
+  // (the menu offers install from the first), until installed or waved off.
   function banner() {
-    if (!canOfferInstall() || store.get(`${cfg.key}.install-dismissed`)) return "";
+    if (!canOfferInstall() || store.get(`${cfg.key}.install-dismissed`)
+        || (+store.get(`${cfg.key}.visits`) || 0) < 2) return "";
     return `<div class="banner" data-install-banner>
       <img src="${esc(cfg.icon)}" alt="">
       <div class="txt"><b>Install ${esc(cfg.name)}</b><span>Full screen, works offline</span></div>
@@ -242,11 +308,11 @@ const DESK = (() => {
     const opt = (mode, label, ic) =>
       `<button type="button" data-theme-set="${mode}" aria-pressed="${t === mode}">${icon(ic, 'style="width:16px;height:16px;display:inline;vertical-align:-3px;margin-right:5px"')}${label}</button>`;
     const rows = [];
-    if (canOfferInstall()) rows.push(`<button class="row" type="button" data-install style="width:100%;border:0;border-bottom:1px solid var(--line-soft);background:none;text-align:left;cursor:pointer">
+    if (canOfferInstall()) rows.push(`<button class="row" type="button" data-install>
       <span class="ic">${icon("download")}</span><span class="t">Install ${esc(cfg.name)}<small>Home screen, full screen, offline</small></span></button>`);
-    if (cfg.sibling && served()) rows.push(`<a class="row" href="${esc(cfg.sibling.href)}" style="text-decoration:none;color:inherit">
-      <span class="ic">${icon("swap")}</span><span class="t">Open ${esc(cfg.sibling.name)}<small>${esc(cfg.sibling.blurb || "")}</small></span></a>`);
-    rows.push(`<button class="row" type="button" data-reload style="width:100%;border:0;border-bottom:1px solid var(--line-soft);background:none;text-align:left;cursor:pointer">
+    if (served()) for (const sib of cfg.siblings || (cfg.sibling ? [cfg.sibling] : [])) rows.push(`<a class="row" href="${esc(sib.href)}">
+      <span class="ic">${icon("swap")}</span><span class="t">Open ${esc(sib.name)}<small>${esc(sib.blurb || "")}</small></span></a>`);
+    rows.push(`<button class="row" type="button" data-reload>
       <span class="ic">${icon("refresh")}</span><span class="t">Refresh<small>${esc(cfg.stamp ? cfg.stamp() : "Fetch the latest picks")}</small></span></button>`);
     const s = sheet(`<h2>${esc(cfg.name)}</h2>
       <div class="eyebrow" style="margin:14px 0 8px">Appearance</div>
@@ -291,13 +357,14 @@ const DESK = (() => {
   }
 
   /* ------------------------------------------------------------- init */
-  // cfg: { key, name, icon, sibling: {name, href, blurb}, stamp(), onReload() }
+  // cfg: { key, name, icon, siblings: [{name, href, blurb}], stamp(), onReload() }
   function init(options) {
     cfg = options;
+    store.set(`${cfg.key}.visits`, String((+store.get(`${cfg.key}.visits`) || 0) + 1));
     applyTheme(theme());
     const m = document.getElementById("menu-btn");
     if (m) m.addEventListener("click", menu);
-    // The sport switch links to the other app on the same site; a saved
+    // The sport switch links to the other apps on the same site; a saved
     // file has no neighbour to link to.
     const sw = document.getElementById("sport-switch");
     if (sw && !served()) sw.hidden = true;
@@ -307,25 +374,47 @@ const DESK = (() => {
 
   // Wire a bottom tab bar: tabs are <button id="tab-NAME">, views
   // <section id="view-NAME">. boot[NAME]() runs the first time a tab opens.
+  // Each tab keeps its scroll position, as a native tab bar does.
   function tabs(names, boot, storageKey, fallback) {
-    const started = {};
+    const started = {}, pos = {};
+    let current = null;
+    for (const t of names) {
+      const v = document.getElementById(`view-${t}`);
+      v.setAttribute("role", "tabpanel");
+      v.setAttribute("aria-labelledby", `tab-${t}`);
+    }
     function show(name, scroll) {
+      if (current) pos[current] = window.scrollY;
       for (const t of names) {
         document.getElementById(`view-${t}`).hidden = t !== name;
-        document.getElementById(`tab-${t}`).setAttribute("aria-selected", String(t === name));
+        const tab = document.getElementById(`tab-${t}`);
+        tab.setAttribute("aria-selected", String(t === name));
+        tab.tabIndex = t === name ? 0 : -1;
       }
+      current = name;
       store.set(storageKey, name);
-      if (scroll) window.scrollTo({ top: 0 });
+      if (scroll) window.scrollTo({ top: pos[name] || 0 });
       if (!started[name]) { started[name] = true; boot[name](); }
     }
     for (const t of names) {
       document.getElementById(`tab-${t}`).addEventListener("click", () => {
         const already = document.getElementById(`tab-${t}`).getAttribute("aria-selected") === "true";
         // Tapping the open tab again goes back to its top, as native apps do.
-        if (already) window.scrollTo({ top: 0, behavior: "smooth" });
+        if (already) { pos[t] = 0; window.scrollTo({ top: 0, behavior: calm() ? "auto" : "smooth" }); }
         else show(t, true);
       });
     }
+    const list = document.querySelector('[role="tablist"]');
+    if (list) list.addEventListener("keydown", (e) => {
+      const i = names.findIndex((t) => document.getElementById(`tab-${t}`) === document.activeElement);
+      if (i < 0) return;
+      const n = names.length;
+      const j = { ArrowRight: (i + 1) % n, ArrowLeft: (i + n - 1) % n, Home: 0, End: n - 1 }[e.key];
+      if (j == null) return;
+      e.preventDefault();
+      document.getElementById(`tab-${names[j]}`).focus();
+      show(names[j], true);
+    });
     // A home-screen shortcut opens a tab directly (manifest "shortcuts").
     let first = new URLSearchParams(location.search).get("tab") || store.get(storageKey);
     if (!names.includes(first)) first = fallback;
@@ -336,14 +425,19 @@ const DESK = (() => {
   const skeleton = (n = 4) =>
     `<div class="skeleton" aria-label="Loading"><i class="short"></i>${"<i></i>".repeat(n)}</div>`;
 
-  return { icon, esc, ago, sheet, closeSheet, toast, install, banner, init, tabs, skeleton, store };
+  return { icon, esc, ago, sheet, closeSheet, toast, install, banner, init, tabs, skeleton, store,
+    share, closer, sub, cardFold, calm };
 })();
 // desk.js:end
 
 const $ = (id) => document.getElementById(id);
 const pct = (x, d = 0) => (x == null ? "—" : `${(x * 100).toFixed(d)}%`);
-const signed = (x, d = 1) =>
-  x == null ? "—" : `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(d)}`;
+// Rounded before the sign is taken: -0.004 is "0.00", not "−0.00".
+const signed = (x, d = 1) => {
+  if (x == null) return "—";
+  const r = Number(Number(x).toFixed(d));
+  return r === 0 ? (0).toFixed(d) : `${r > 0 ? "+" : "−"}${Math.abs(r).toFixed(d)}`;
+};
 const num = (x, d = 2) => (x == null ? "—" : x.toFixed(d));
 // Round the whole duration first: rounding only the seconds printed 599.6 s
 // as "9:60".
@@ -355,7 +449,7 @@ const clock = (s) => {
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const odds = (o) => (o == null ? "—" : o > 0 ? `+${o}` : `${o}`);
+const odds = (o) => (o == null ? "—" : o > 0 ? `+${o}` : o < 0 ? `−${Math.abs(o)}` : "0");
 const icon = DESK.icon;
 // A card date ("2026-10-24") as the poster prints it. Read as UTC so a phone
 // west of Greenwich does not move the fight to the day before.
@@ -387,24 +481,22 @@ async function load(name) {
   return res.json();
 }
 
-function fail(el, error, what) {
-  el.innerHTML =
-    `<div class="note err"><b>Could not load ${esc(what)}.</b><br>` +
-    `${esc(error.message)}<br>` +
-    `This page reads files the engine writes into <code>app/data/</code>. ` +
-    `If they are missing, run <code>python3 engine/build_app_data.py</code>.</div>`;
-}
-
 // A caveat folded to its first two lines, the rest one tap away.
 const fold = (text, extra = "") => !text ? "" : `<details class="fold">
     <summary><span class="ic">${icon("info")}</span><span class="clip">${esc(text)}</span><span class="more">More</span></summary>
     ${extra ? `<div class="fold-body">${extra}</div>` : ""}</details>`;
 
+// A failed load says so in words and offers to try again; the developer's
+// hint is one tap away.
+function fail(el, error, what, retry) {
+  el.innerHTML = `<div class="note err"><b>Could not load ${esc(what)}.</b> Check the connection and try again.${
+    retry ? `<div style="margin-top:10px"><button class="btn small ghost" type="button" data-retry>${icon("refresh")} Try again</button></div>` : ""}</div>
+    ${fold(`${error.message}. This page reads files the engine writes into app/data/; to build them locally, run python3 engine/build_app_data.py.`)}`;
+  const b = el.querySelector("[data-retry]");
+  if (b) b.addEventListener("click", () => retry());
+}
+
 /* ------------------------------------------------------------------ card */
-const TAG_TONE = {
-  "STRONG BET": "good", "GOOD BET": "good", LEAN: "flat",
-  RISKY: "warn", AVOID: "warn", LOCK: "good", STRONG: "good", VALUE: "warn",
-};
 
 /* --------------------------------------------------- the second layer */
 // A separate model, fitted only on bets that had already settled, guessing
@@ -429,7 +521,7 @@ function doubtCard(fights, caveat) {
   const row = (f) => `<li>
       <span><b>${esc(f.pick)}</b> <span class="mini">over ${esc(f.pick === f.red ? f.blue : f.red)}</span></span>
       <span class="num ${doubtTone(f.p_fail)}">${Math.round(f.p_fail * 100)}%</span>
-      <span class="meter" aria-hidden="true"><i style="width:${Math.round(f.p_fail * 100)}%"></i></span>
+      <span class="meter ${doubtTone(f.p_fail)}" aria-hidden="true"><i style="width:${Math.round(f.p_fail * 100)}%"></i></span>
     </li>`;
 
   return `<div class="card">
@@ -464,6 +556,8 @@ const KIND_LABEL = {
   personal: "Personal", opponent_switch: "Opponent changed", motivation: "Motivation",
   confidence: "Confidence", other: "Note",
 };
+// News that could change the fight itself gets the gold chip.
+const SERIOUS = new Set(["injury", "short_notice", "missed_weight", "opponent_switch"]);
 const sourceHost = (u) => {
   try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return "source"; }
 };
@@ -486,7 +580,8 @@ function newsBlock(news) {
 }
 
 // A fighter's pro record and last five results beside the name, newest on
-// the left: a green circle is a win, red a loss, grey a draw or no contest,
+// the left: a filled teal circle is a win, an orange ring a loss, a grey
+// circle a draw or no contest,
 // and the two letters say how it ended - K1 knockout in round 1, S2
 // submission in round 2, DC decision, DQ, NC. From Sherdog (the whole pro
 // career), or the UFC archive alone when Sherdog has nothing (marked UFC).
@@ -494,11 +589,27 @@ function newsBlock(news) {
 // against - is marked with an asterisk. Not a model input.
 const RESULT_WORD = { W: "Win", L: "Loss", D: "Draw", NC: "No contest" };
 const FORM_LEGEND = `Under each name: pro record, then the last five fights, newest
-  first - green a win, red (ringed) a loss, grey a draw or no contest. K1 is a
+  first - a filled teal circle a win, an orange ring a loss, a grey circle a draw or no contest. K1 is a
   knockout in round 1, S2 a submission in round 2, DC a decision, DQ a
   disqualification, NC a no contest. * means the Sherdog record was matched by
   name only, so it could be a namesake's; UFC means UFC bouts only. Open a fight
   for each opponent and date. Not a model input.`;
+// One legend for every chip and term, on the Method tab and in the card's
+// "Reading the card" fold. It defines words; it never copies a measured
+// number, which would go stale silently.
+const LEGEND = `<dl class="gloss">
+  <dt><b class="num">52%</b></dt><dd>Each fighter's chance to win: the model blended with the betting market.</dd>
+  <dt><span class="pickline"><span class="pick">${icon("check")}Evloev<span class="odds num">−105</span></span></span></dt>
+    <dd>The pick and its price. −150 means stake 150 to win 100; +120 means stake 100 to win 120.</dd>
+  <dt><span class="factline">Doubt 28%</span></dt><dd>A second model's chance the pick loses, fitted only on bets that had settled. At 50% or more it becomes a gold chip.</dd>
+  <dt><span class="tag flat">News 4</span></dt><dd>Fight-week news the scout found, with sources: shown, not applied. Gold for an injury, short notice, a missed weight or a new opponent.</dd>
+  <dt><span class="factline">Finish 61%</span></dt><dd>The model's call on whether the fight ends early or goes the distance.</dd>
+  <dt><span class="last5"><span class="res w">DC</span><span class="res l">K1</span></span></dt><dd>The last five fights, newest first; open a fight for opponents and dates.</dd>
+  <dt><b>Market</b></dt><dd>The betting price turned into a chance, with the bookmaker's cut removed.</dd>
+  <dt><b>Walk-forward</b></dt><dd>Judged only on fights after the ones the model learned from.</dd>
+  <dt><b>AUC</b></dt><dd>How often the winner is rated above the loser; 0.50 is a coin toss.</dd>
+  <dt><b>Return</b></dt><dd>Profit per unit staked, one unit a bet.</dd>
+</dl>`;
 const fightTip = (b) => `${RESULT_WORD[b.result] || b.result} · ${b.method || b.code}${
   b.opponent ? ` · vs ${b.opponent}` : ""}${b.date ? ` · ${b.date}` : ""}${b.event ? ` · ${b.event}` : ""}`;
 function formLine(form) {
@@ -510,10 +621,13 @@ function formLine(form) {
   const text = `${r.wins}-${r.losses}${r.draws ? `-${r.draws}` : ""}${r.nc ? ` (${r.nc} NC)` : ""}`;
   const marks = `${form.source === "ufc" ? ` <i class="src" title="UFC bouts only - no pro record found">UFC</i>` : ""}${
     form.verified === false ? `<i class="src" title="Sherdog record matched by name only">*</i>` : ""}`;
+  // The dots are hidden from a screen reader, which hears one short line
+  // instead; the opened bout lists each fight in full.
   const dots = (form.last5 || []).map((b) =>
-    `<span class="res ${esc(String(b.result).toLowerCase())}" role="img"
-       title="${esc(fightTip(b))}" aria-label="${esc(fightTip(b))}">${esc(b.code)}</span>`).join("");
-  return `<span class="rec num">${esc(text)}${marks}</span><span class="last5">${dots}</span>`;
+    `<span class="res ${esc(String(b.result).toLowerCase())}" title="${esc(fightTip(b))}" aria-hidden="true">${esc(b.code)}</span>`).join("");
+  const said = (form.last5 || []).length
+    ? `<span class="sr">, last ${form.last5.length}: ${esc(form.last5.map((b) => RESULT_WORD[b.result] || b.result).join(", "))}</span>` : "";
+  return `<span class="rec num">${esc(text)}${marks}</span><span class="last5">${dots}</span>${said}`;
 }
 // The same five fights as text, in the opened bout: a phone shows no
 // tooltips, so this is where the opponent, date and event can be read.
@@ -533,7 +647,7 @@ function side(corner, name, record, share, picked) {
   return `<div class="side ${corner}${picked ? " picked" : ""}">
       <span class="mark"></span>
       <div class="who"><span class="nm">${esc(name)}</span></div>
-      <span class="p">${share == null ? "—" : `${Math.round(share * 100)}<small>%</small>`}</span>
+      <span class="p">${share == null ? "—" : `${DESK.share(share, 1 - share)}<small>%</small>`}</span>
       <div class="sub">${record}</div>
     </div>`;
 }
@@ -548,9 +662,9 @@ function boutRow(f, i) {
 
   const bar = redShare == null
     ? `<div class="probbar none"><i style="flex:1"></i></div>`
-    : `<div class="probbar" role="img" aria-label="${esc(f.red)} ${pct(redShare)}, ${esc(f.blue)} ${pct(1 - redShare)}">
-         <i class="r" style="flex:${redShare}"></i>
-         <i class="b" style="flex:${1 - redShare}"></i>
+    : `<div class="probbar${f.pick != null ? " has-pick" : ""}" role="img" aria-label="${esc(f.red)} ${pct(redShare)}, ${esc(f.blue)} ${pct(1 - redShare)}">
+         <i class="r${f.pick != null && redPicked ? " pk" : ""}" style="flex:${redShare}"></i>
+         <i class="b${f.pick != null && !redPicked ? " pk" : ""}" style="flex:${1 - redShare}"></i>
        </div>`;
 
   const badges = [];
@@ -562,32 +676,28 @@ function boutRow(f, i) {
   if (f.title_fight) badges.push(`<span class="badge gold">Title</span>`);
   if (f.rounds_scheduled === 5) badges.push(`<span class="badge">5 rounds</span>`);
 
+  // Chips only for trouble: a pick the second layer doubts, and news. The
+  // engine's bet labels (LEAN, RISKY, "Parlay STRONG") are a hand-weighted
+  // score nothing has measured, so they are not shown as if they meant
+  // something. Everything else is one quiet line of facts.
   const tags = [];
-  if (f.recommendation)
-    tags.push(`<span class="tag ${TAG_TONE[f.recommendation] || "flat"}">${esc(f.recommendation)}</span>`);
-  if (f.parlay_tier)
-    tags.push(`<span class="tag ${TAG_TONE[f.parlay_tier] || "flat"}">Parlay ${esc(f.parlay_tier)}</span>`);
+  if (f.p_fail != null && f.p_fail >= DOUBT_FLAG)
+    tags.push(`<span class="tag warn num" title="A second model's chance this pick loses">Doubt ${Math.round(f.p_fail * 100)}%</span>`);
+  if (news.length)
+    tags.push(`<span class="tag ${news.some((o) => SERIOUS.has(o.kind)) ? "warn" : "flat"}" title="Fight-week news - shown, not applied">News ${news.length}</span>`);
   // The call worth making, rather than the three-way word that reads
   // "Decision" on fights the model thinks are more likely to end early.
-  {
-    const mpTag = f.method_probs;
-    const fin = f.p_finish != null ? f.p_finish
-      : mpTag ? mpTag["KO/TKO"] + mpTag.Submission : null;
-    if (fin != null)
-      tags.push(`<span class="tag flat num">${
-        fin >= 0.5 ? `Finish ${Math.round(fin * 100)}` :
-                     `Distance ${Math.round((1 - fin) * 100)}`}%</span>`);
-  }
-  if (f.odds != null)
-    tags.push(`<span class="tag flat num" title="The pick's price">${odds(f.odds)}</span>`);
-  if (news.length)
-    tags.push(`<span class="tag warn" title="Fight-week news - shown, not applied">News ${news.length}</span>`);
-  // The second layer. Shown on every scored pick, not only the flagged ones:
-  // "the model thinks it is right about this" is information too. A pick it
-  // could not score gets no tag at all rather than a reassuring one.
-  if (f.p_fail != null)
-    tags.push(`<span class="tag ${doubtTone(f.p_fail)} num"
-      title="A second model's estimate that this pick is wrong">${Math.round(f.p_fail * 100)}% wrong</span>`);
+  const fin = f.p_finish != null ? f.p_finish
+    : f.method_probs ? f.method_probs["KO/TKO"] + f.method_probs.Submission : null;
+  const facts = [];
+  if (fin != null) facts.push(fin >= 0.5 ? `Finish ${Math.round(fin * 100)}%` : `Goes the distance ${Math.round((1 - fin) * 100)}%`);
+  // The second layer below its flag: "the model thinks it is right about
+  // this" is information too. A pick it could not score gets nothing.
+  if (f.p_fail != null && f.p_fail < DOUBT_FLAG) facts.push(`Doubt ${Math.round(f.p_fail * 100)}%`);
+  const pickChip = f.pick == null ? `<span class="mini">No pick</span>`
+    : `<span class="pick">${icon("check")}<span class="sr">Pick: </span>${esc(surname(f.pick))}${
+        f.odds != null ? `<span class="odds num">${odds(f.odds)}</span>` : ""}</span>`;
+  const chev = `<span class="chev">${icon("chevron")}</span>`;
 
   // The model's own method view, as a distribution. Its top class alone is
   // right 47.2% of the time where always saying "Decision" is right 49.4%,
@@ -636,15 +746,19 @@ function boutRow(f, i) {
   const pickPanel = `<div class="panel">
       <div class="eyebrow">The pick</div>
       <dl class="kv">
-        <dt>Pick</dt><dd><b>${esc(f.pick ?? "—")}</b> <span class="num">${pct(p, 1)}</span> <span class="mini">over ${esc(other)}</span></dd>
+        <dt>Pick</dt><dd>${f.pick == null ? `<span class="mini">No pick: no probability for this bout</span>`
+          : `<b>${esc(f.pick)}</b> <span class="num">${pct(p, 1)}</span> <span class="mini">over ${esc(other)}</span>`}</dd>
         ${f.win_prob_model != null ? `<dt>Model alone</dt><dd><span class="num">${pct(f.win_prob_model, 1)}</span>${
           f.win_prob_model < 0.5 ? ` <span class="mini">the model alone would pick ${esc(other)}; the market carries the pick</span>` : ""}</dd>` : ""}
         <dt>Market</dt><dd>${f.market_prob == null ? `<span class="mini">no price</span>`
-          : `<span class="num">${pct(f.market_prob, 1)}</span> <span class="mini">no-vig, at ${esc(odds(f.odds))}</span>`}</dd>
-        ${f.p_fail != null ? `<dt>Doubt</dt><dd><span class="num">${pct(f.p_fail)}</span> <span class="mini">second layer's chance it loses</span></dd>` : ""}
+          : `<span class="num">${pct(f.market_prob, 1)}</span> <span class="mini">the price (${esc(odds(f.odds))}) with the bookmaker's cut removed</span>`}</dd>
+        ${f.p_fail != null ? `<dt>Doubt</dt><dd><span class="num">${pct(f.p_fail)}</span> <span class="mini">a second model's chance this pick loses; flagged at ${pct(DOUBT_FLAG)}</span></dd>` : ""}
       </dl>
     </div>`;
 
+  const forms = formDetail(f.red, f.red_form) + formDetail(f.blue, f.blue_form);
+  const lastFive = DESK.sub("Last 5 fights · opponents and dates", forms && `<div class="two">${forms}</div>`);
+  const closeBtn = DESK.closer(`${f.red} vs ${f.blue}`);
   let detail = "";
   if (sim) {
     const ko = sim.ko ?? 0, sb = sim.sub ?? 0, dc = sim.decision ?? 0;
@@ -655,48 +769,50 @@ function boutRow(f, i) {
     const assumed = (sim.assumed || []).length
       ? `<div class="mini">Assumed from the league average: ${esc(sim.assumed.join(", "))}.
          Those rates were not measured for these fighters.</div>` : "";
+    // The simulation leads with how the fight ends. Its winner is the weaker
+    // of the two winner-pickers, so it is a line, not a headline - and where
+    // it names the other fighter, its caveat sits right there.
+    const simPick = sim.red_win == null || sim.blue_win == null ? null : sim.red_win >= sim.blue_win ? f.red : f.blue;
+    const disagrees = simPick != null && f.pick != null && simPick !== f.pick;
     detail = `
       <div class="detail">
-        ${newsBlock(news)}
         ${pickPanel}
+        ${newsBlock(news)}
         ${methodModel}
         <div class="panel">
-          <div class="eyebrow">Simulated ${(sim.simulations || 0).toLocaleString()} times</div>
-          <div class="stat3">
-            <div><div class="k">${esc(surname(f.red))}</div><div class="v">${pct(sim.red_win, 1)}</div></div>
-            <div><div class="k">${esc(surname(f.blue))}</div><div class="v">${pct(sim.blue_win, 1)}</div></div>
-            <div><div class="k">Lasts</div><div class="v">${clock(sim.mean_seconds)}</div></div>
-          </div>
+          <div class="eyebrow">Simulated ${(sim.simulations || 0).toLocaleString()} times · how it ends</div>
           <div class="method" role="img"
-               aria-label="KO ${pct(ko)}, submission ${pct(sb)}, decision ${pct(dc)}">
-            ${segment("ko", ko, "KO")}${segment("sb", sb, "SUB")}${segment("dc", dc, "DEC")}
+               aria-label="KO ${pct(ko)}, submission ${pct(sb)}, decision ${pct(dc)}, draw ${pct(sim.draw, 1)}">
+            ${segment("ko", ko, "KO")}${segment("sb", sb, "SUB")}${segment("dc", dc, "DEC")}${segment("dr", sim.draw, "DRAW")}
           </div>
-          <div class="mini">KO ${pct(ko)} · Submission ${pct(sb)} · Decision ${pct(dc)} · Draw ${pct(sim.draw, 1)}</div>
+          <div class="mini">KO ${pct(ko)} · Submission ${pct(sb)} · Decision ${pct(dc)} · Draw ${pct(sim.draw, 1)} · lasts ${clock(sim.mean_seconds)} on average</div>
+          <div class="mini">Simulated winner: ${esc(surname(f.red))} ${pct(sim.red_win, 1)} · ${esc(surname(f.blue))} ${pct(sim.blue_win, 1)}${disagrees ? " - <b>not the pick</b>" : ""}</div>
+          ${disagrees && CARD ? fold(CARD.caveats.simulation) : ""}
           ${rounds ? `<div class="eyebrow" style="margin-top:4px">Finish by round</div>
             <div class="rounds">${rounds}</div>` : ""}
           ${assumed}
         </div>
-        <div class="two">${formDetail(f.red, f.red_form)}${formDetail(f.blue, f.blue_form)}</div>
+        ${lastFive}
+        ${closeBtn}
       </div>`;
   } else {
-    detail = `<div class="detail">${newsBlock(news)}${pickPanel}${methodModel}
+    detail = `<div class="detail">${pickPanel}${newsBlock(news)}${methodModel}
       <div class="note">No simulation: too much of these fighters' record is unmeasured, so the
       only honest answer is nothing.</div>
-      <div class="two">${formDetail(f.red, f.red_form)}${formDetail(f.blue, f.blue_form)}</div></div>`;
+      ${lastFive}
+      ${closeBtn}</div>`;
   }
 
   return `<details class="match">
     <summary>
-      <div class="match-top">${badges.join("")}<span class="chev">${icon("chevron")}</span></div>
+      ${badges.length ? `<div class="match-top">${badges.join("")}${chev}</div>` : ""}
       <div class="sides">
         ${side("r", f.red, formLine(f.red_form), redShare, redPicked && f.pick != null)}
         ${side("b", f.blue, formLine(f.blue_form), redShare == null ? null : 1 - redShare, !redPicked && f.pick != null)}
       </div>
       ${bar}
-      <div class="pickline">
-        <span class="pick">${icon("check")}${esc(surname(f.pick) || "No pick")}</span>
-        ${tags.join("")}
-      </div>
+      <div class="pickline">${pickChip}${tags.join("")}${badges.length ? "" : chev}</div>
+      ${facts.length ? `<div class="factline num">${facts.join(" · ")}</div>` : ""}
     </summary>
     ${detail}
   </details>`;
@@ -727,7 +843,7 @@ BOOT.card = async () => {
   el.innerHTML = DESK.skeleton(4);
   let d;
   try { d = await load("card"); }
-  catch (e) { return fail(el, e, "the card"); }
+  catch (e) { return fail(el, e, "the card", () => BOOT.card()); }
   CARD = d;
   stamp();
 
@@ -758,21 +874,19 @@ BOOT.card = async () => {
     <div class="hero">
       <div class="eyebrow">${esc(longDate(d.event.date))}</div>
       <h1>${esc(d.event.name ?? "Fight card")}</h1>
-      <div class="meta">
-        <span class="chip">${d.fights.length} picks</span>
-        ${d.fights.length ? `<span class="chip">${priced} priced</span>` : ""}
-        ${d.skipped?.length ? `<span class="chip warn">${d.skipped.length} not predicted</span>` : ""}
-        ${d.dataset_end ? `<span class="chip">results to ${esc(shortDate(d.dataset_end))}</span>` : ""}
-      </div>
+      <div class="facts">${[`${d.fights.length} picks`, d.fights.length ? `${priced} priced` : "",
+        d.skipped?.length ? `<span class="warn">${d.skipped.length} not predicted</span>` : "",
+        d.dataset_end ? `results to ${esc(shortDate(d.dataset_end))}` : ""].filter(Boolean).join(" · ")}</div>
     </div>
     ${fold(d.caveats.model)}
-    <div class="matches">${d.fights.map(boutRow).join("")}</div>
+    ${d.fights.length ? `<div class="matches">${d.fights.map(boutRow).join("")}</div>`
+      : `<div class="empty">No fights to predict on this card yet.</div>`}
     ${skipped}
-    ${doubtCard(d.fights, d.caveats.flag)}
+    ${d.fights.length ? doubtCard(d.fights, d.caveats.flag) : ""}
     ${parlayCard(d.parlays, d.caveats.parlay)}
     <details class="fold"><summary><span class="ic">${icon("info")}</span><span class="clip"><b>Reading the card.</b>
       ${esc(FORM_LEGEND)}</span><span class="more">More</span></summary>
-      <div class="fold-body">${about}</div></details>`;
+      <div class="fold-body">${LEGEND}${about}</div></details>`;
 };
 
 // The header's second line: when the card was made and how far the data runs.
@@ -801,6 +915,8 @@ const inBand = (v, what) => {
   const C = FIGHTERS.constants;
   return v == null || v < C[`${what}_MIN_CM`] || v > C[`${what}_MAX_CM`] ? null : v;
 };
+// A no-break space keeps each unit with its number, so a label wraps
+// between words and never strands "min" on a line of its own.
 const TAPE = [
   ["Record", (s) => (s.cd_wins == null ? null
     : `${Math.round(s.cd_wins)}–${Math.round(s.cd_losses)}`), "high"],
@@ -808,25 +924,26 @@ const TAPE = [
   ["Win rate", (s) => s.cd_win_rate, "high", pct],
   ["Height", (s) => inBand(s.height_cm, "HEIGHT"), "high", (v) => (v == null ? "—" : `${v.toFixed(0)} cm`)],
   ["Reach", (s) => inBand(s.reach_cm, "REACH"), "high", (v) => (v == null ? "—" : `${v.toFixed(0)} cm`)],
-  ["Strikes landed /min", (s) => s.cd_slpm, "high"],
+  ["Strikes landed per min", (s) => s.cd_slpm, "high"],
   ["Striking accuracy", (s) => s.cd_str_acc, "high", pct],
-  ["Strikes absorbed /min", (s) => s.cd_sapm, "low"],
+  ["Strikes absorbed per min", (s) => s.cd_sapm, "low"],
   ["Striking defence", (s) => s.cd_str_def, "high", pct],
-  ["Takedowns /15min", (s) => s.cd_td_per15, "high"],
+  ["Takedowns per 15 min", (s) => s.cd_td_per15, "high"],
   ["Takedown defence", (s) => s.cd_td_def, "high", pct],
-  ["Submission att /15min", (s) => s.cd_sub_per15, "high"],
+  ["Submission att per 15 min", (s) => s.cd_sub_per15, "high"],
   ["Control share", (s) => s.cd_ctrl_share, "high", pct],
-  ["Knockdowns /15min", (s) => s.cd_kd_per15, "high"],
+  ["Knockdowns per 15 min", (s) => s.cd_kd_per15, "high"],
 ];
 
 // Every gauge is drawn on the same scale: three standard deviations of that
 // advantage across the league. Without one shared scale a small edge in a
 // narrow statistic would look like a large one.
+// Each format is [number, unit], so the unit sits under its number.
 const GAUGES = [
-  ["Striking", "strikingAdvantage", "STRIKE_ADV_SD", (v) => `${signed(v, 2)} strikes/min`],
-  ["Control", "controlAdvantage", "CTRL_ADV_SD", (v) => `${signed(v, 1)} sec/min`],
-  ["Takedowns", "takedownAdvantage", "TD_ADV_SD", (v) => `${signed(v * 15, 2)} per 15min`],
-  ["Submissions", "submissionAdvantage", "SUB_ADV_SD", (v) => `${signed(v * 15, 2)} per 15min`],
+  ["Striking", "strikingAdvantage", "STRIKE_ADV_SD", (v) => [signed(v, 2), "strikes/min"]],
+  ["Control", "controlAdvantage", "CTRL_ADV_SD", (v) => [signed(v, 1), "sec/min"]],
+  ["Takedowns", "takedownAdvantage", "TD_ADV_SD", (v) => [signed(v * 15, 2), "per 15 min"]],
+  ["Submissions", "submissionAdvantage", "SUB_ADV_SD", (v) => [signed(v * 15, 2), "per 15 min"]],
 ];
 
 function renderCompare(redId, blueId) {
@@ -851,7 +968,7 @@ function renderCompare(redId, blueId) {
     let aw = "", bw = "";
     if (typeof va === "number" && typeof vb === "number" && va !== vb) {
       const aBetter = better === "high" ? va > vb : va < vb;
-      aw = aBetter ? "win" : ""; bw = aBetter ? "" : "win";
+      aw = aBetter ? "win r" : ""; bw = aBetter ? "" : "win b";
     }
     return `<div class="l num ${aw}">${f(va)}</div>
             <div class="lab">${label}</div>
@@ -868,14 +985,16 @@ function renderCompare(redId, blueId) {
     const scale = C[sd] * 3;
     const frac = Math.max(-1, Math.min(1, v / scale));
     const half = Math.abs(frac) * 50;
+    // Red's edge grows to the left, under the red column of the tape.
     const sideCss = frac >= 0
-      ? `left:50%;width:${half}%;background:var(--red)`
-      : `right:50%;width:${half}%;background:var(--blue)`;
+      ? `right:50%;width:${half}%;background:var(--red)`
+      : `left:50%;width:${half}%;background:var(--blue)`;
+    const [n, u] = fmt(v);
     return `<div class="adv-row"><div class="lab">${label}</div>
-      <div class="gauge" role="img" aria-label="${label}: ${fmt(v)}">
+      <div class="gauge" role="img" aria-label="${label}: ${n} ${u}">
         <div class="mid"></div><i style="${sideCss}"></i>
       </div>
-      <div class="advval num">${fmt(v)}</div></div>`;
+      <div class="advval num">${n}<small>${u}</small></div></div>`;
   }).join("");
 
   const size = M.sizeAdvantage(fa, fb);
@@ -893,8 +1012,8 @@ function renderCompare(redId, blueId) {
       <h2>Matchup advantage</h2>
       <div class="mini">Each fighter's offence against the other's defence,
         not a difference of two averages. Bars run
-        <span style="color:var(--red)">${esc(NAMES[redId])}</span> right,
-        <span style="color:var(--blue)">${esc(NAMES[blueId])}</span> left,
+        <span style="color:var(--red-ink)">${esc(NAMES[redId])}</span> left,
+        <span style="color:var(--blue-ink)">${esc(NAMES[blueId])}</span> right,
         on a shared scale of three league standard deviations.</div>
       <div class="adv">${gauges}</div>
       <div class="mini">Size ${Number.isFinite(size) ? `${signed(size, 2)} SD` : "not measured"}
@@ -931,7 +1050,8 @@ function attachPicker(inputId, listId, onPick) {
     const q = foldName(input.value);
     if (q.length < 2) { close(); onPick(null); return; }
     const words = q.split(" ");
-    const hits = NAMES.order.filter(([, , f]) => words.every((w) => f.includes(w))).slice(0, 8);
+    // Six, so the list clears an iPhone keyboard.
+    const hits = NAMES.order.filter(([, , f]) => words.every((w) => f.includes(w))).slice(0, 6);
     const exact = hits.find(([, , f]) => f === q);
     onPick(exact ? exact[0] : null);
     if (exact && hits.length === 1) { close(); return; }
@@ -942,6 +1062,18 @@ function attachPicker(inputId, listId, onPick) {
       return `<button type="button" data-id="${esc(id)}"><span>${esc(n)}</span><span class="mini">${esc(rec)}</span></button>`;
     }).join("");
   });
+  // Enter takes the first suggestion, as the keyboard's Search key promises.
+  input.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    const b = list.querySelector("button[data-id]");
+    if (b) b.click();
+    input.blur();
+  });
+  input.addEventListener("focus", () => setTimeout(() => {
+    input.select();
+    input.closest(".field").scrollIntoView({ block: "start", behavior: DESK.calm() ? "auto" : "smooth" });
+  }, 0));
   list.addEventListener("click", (e) => {
     const b = e.target.closest("button[data-id]");
     if (!b) return;
@@ -969,7 +1101,7 @@ BOOT.compare = async () => {
       .sort((a, b) => a[1].localeCompare(b[1]));
     M = makeMatchup(c.matchup);
     FORM = makeForm(c.matchup);
-  } catch (e) { return fail(el, e, "the fighter database"); }
+  } catch (e) { return fail(el, e, "the fighter database", () => BOOT.compare()); }
   if (!CARD) { try { CARD = await load("card"); } catch (e) { /* shortcuts only */ } }
 
   el.innerHTML = `
@@ -1011,7 +1143,8 @@ BOOT.compare = async () => {
 
 /* ---------------------------------------------------------------- record */
 function lineChart(rows, key, opts) {
-  const W = 600, H = 210, L = 58, R = 12, T = 16, B = 38;
+  const W = 600, H = 210, L = 72, R = 12, T = 16, B = 40;
+  const tick = (v) => (opts.fmt ? opts.fmt(v) : v.toFixed(2));
   const xs = rows.map((r) => r.year);
   const ys = rows.map((r) => r[key]);
   const lo = Math.min(opts.floor, ...ys), hi = Math.max(...ys);
@@ -1030,25 +1163,25 @@ function lineChart(rows, key, opts) {
         y2="${Y(t).toFixed(1)}" stroke="var(--line-soft)" stroke-width="1"/>
       <text x="${L - 6}" y="${(Y(t) + 6).toFixed(1)}" text-anchor="end"
         font-size="17" font-family="IBM Plex Mono,monospace"
-        fill="var(--ink-3)">${t.toFixed(2)}</text>`).join("")}
+        fill="var(--ink-3)">${tick(t)}</text>`).join("")}
     ${opts.rule != null ? `<line x1="${L}" x2="${W - R}" y1="${Y(opts.rule).toFixed(1)}"
         y2="${Y(opts.rule).toFixed(1)}" stroke="var(--ink-3)" stroke-width="1"
         stroke-dasharray="3 3"/>` : ""}
     <path d="${area}" fill="url(#g-${key})"/>
-    <path d="${path}" fill="none" stroke="var(--blue)" stroke-width="2.4"
+    <path d="${path}" fill="none" stroke="var(--blue)" stroke-width="3.6"
       stroke-linejoin="round" stroke-linecap="round"/>
     ${ys.map((v, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}"
-        r="${i === ys.length - 1 ? 4.5 : 3}" fill="var(--blue)"
-        stroke="var(--surface)" stroke-width="2"><title>${xs[i]}: ${v.toFixed(3)}</title></circle>`).join("")}
+        r="${i === ys.length - 1 ? 6.5 : 4.5}" fill="var(--blue)"
+        stroke="var(--surface)" stroke-width="2.5"><title>${xs[i]}: ${opts.fmt ? opts.fmt(v) : v.toFixed(3)}</title></circle>`).join("")}
     ${xs.map((x, i) => (i % 2 === 0 || i === xs.length - 1
-      ? `<text x="${X(i).toFixed(1)}" y="${H - 8}" text-anchor="middle"
+      ? `<text x="${X(i).toFixed(1)}" y="${H - 8}" text-anchor="${i === xs.length - 1 ? "end" : "middle"}"
           font-size="17" font-family="IBM Plex Mono,monospace"
           fill="var(--ink-3)">${String(x).slice(2)}</text>` : "")).join("")}
   </svg>`;
 }
 
 function roiChart(rows) {
-  const W = 600, H = 210, L = 58, R = 12, T = 16, B = 38;
+  const W = 600, H = 210, L = 72, R = 12, T = 16, B = 40;
   const vals = rows.map((r) => r.roi);
   const hi = Math.max(0.02, ...vals), lo = Math.min(-0.02, ...vals);
   const X = (i) => L + (i / rows.length) * (W - L - R);
@@ -1082,7 +1215,7 @@ function ring(share, colour = "var(--gain)") {
   if (share == null) return "";
   const r = 32, c = 2 * Math.PI * r, on = Math.max(0, Math.min(1, share)) * c;
   return `<svg class="ring" viewBox="0 0 76 76" aria-hidden="true">
-    <circle cx="38" cy="38" r="${r}" fill="none" stroke="var(--sunk)" stroke-width="8"/>
+    <circle cx="38" cy="38" r="${r}" fill="none" stroke="var(--line)" stroke-width="8"/>
     <circle cx="38" cy="38" r="${r}" fill="none" stroke="${colour}" stroke-width="8" stroke-linecap="round"
       stroke-dasharray="${on.toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 38 38)"/></svg>`;
 }
@@ -1092,19 +1225,31 @@ BOOT.record = async () => {
   el.innerHTML = DESK.skeleton(2);
   let d;
   try { d = await load("performance"); }
-  catch (e) { return fail(el, e, "the record"); }
+  catch (e) { return fail(el, e, "the record", () => BOOT.record()); }
 
   const t = d.track_record;
   const meta = d.strategy_meta || {};
+  const from = meta.confirm_from ?? 2020;
   const strategies = (d.strategies || []).map((s) => `
-    <tr><td><b>${esc(s.name)}</b><br><span class="mini">${esc(s.description)}</span></td>
-      <td class="n">${s.bets.toLocaleString()}</td>
+    <tr class="has-sub"><td><b>${esc(s.name)}</b></td>
+      <td class="n">${s.bets == null ? "—" : s.bets.toLocaleString()}</td>
       <td class="n">${pct(s.hit_rate, 1)}</td>
-      <td class="n" style="color:${s.roi >= 0 ? "var(--gain)" : "var(--loss)"}">
-        ${signed(s.roi * 100, 1)}%${Array.isArray(s.interval) && s.interval[0] != null
-          ? `<br><span class="mini">${signed(s.interval[0] * 100, 1)} to ${signed(s.interval[1] * 100, 1)}</span>` : ""}</td></tr>`).join("");
+      <td class="n ${s.roi == null ? "" : s.roi >= 0 ? "gain" : "loss"}">${s.roi == null ? "—" : `${signed(s.roi * 100, 1)}%`}${
+        Array.isArray(s.interval) && s.interval[0] != null
+          ? `<span class="mini">${signed(s.interval[0] * 100, 1)} to ${signed(s.interval[1] * 100, 1)}</span>` : ""}</td></tr>
+    <tr class="sub"><td colspan="4">${esc(s.description)}</td></tr>`).join("");
+
+  // Does betting the picks make money? The answer, up front.
+  const ms = (d.strategies || []).find((s) => s.name === "MODEL");
+  const iv = ms && Array.isArray(ms.interval) && ms.interval[0] != null ? ms.interval : null;
+  const bettingTile = ms && ms.roi != null ? `<div class="tile wide"><div class="k">Betting every pick since ${esc(from)}</div>
+      <div class="v ${ms.roi >= 0 ? "gain" : "loss"}">${signed(ms.roi * 100, 1)}%</div>
+      <div class="s">return a bet over ${ms.bets.toLocaleString()} priced bets${
+        iv ? `, somewhere between ${signed(iv[0] * 100, 1)}% and ${signed(iv[1] * 100, 1)}%` : ""}${
+        iv && iv[0] < 0 && iv[1] > 0 ? ": not distinguishable from zero" : ""}</div></div>` : "";
 
   const auc = (d.auc_by_year || []).filter((r) => r.auc != null);
+  const acc = (d.auc_by_year || []).filter((r) => r.accuracy != null);
   const roi = (d.roi_by_year || []).filter((r) => r.roi != null);
   const events = (t.by_event || []).slice(0, 8);
 
@@ -1112,25 +1257,18 @@ BOOT.record = async () => {
     <div class="hero">
       <div class="eyebrow">Measured, not claimed</div>
       <h1>Track record</h1>
+      <p class="lede">Live picks are logged before each card and graded against the result.</p>
     </div>
     <div class="tiles">
       <div class="tile hero-tile">${ring(t.accuracy)}
         <div><div class="k">Live accuracy</div>
         <div class="v">${pct(t.accuracy, 1)}</div>
         <div class="s">over ${t.unique_bouts ?? "—"} settled bouts, each picked before the fight</div></div></div>
-      <div class="tile"><div class="k">Upcoming</div>
-        <div class="v">${t.upcoming ?? "—"}</div>
-        <div class="s">picks still to be fought</div></div>
-      <div class="tile"><div class="k">Predictions logged</div>
-        <div class="v">${t.predictions == null ? "—" : t.predictions.toLocaleString()}</div>
-        <div class="s">${t.graded ?? "—"} graded, some bouts more than once; accuracy counts each bout once</div></div>
-      <div class="tile"><div class="k">Bouts in data</div>
-        <div class="v">${(d.bouts || 0).toLocaleString()}</div>
-        <div class="s">results to ${esc(d.dataset_end ?? "—")}</div></div>
-      <div class="tile"><div class="k">Updated</div>
-        <div class="v" style="font-size:20px">${esc(d.generated ? DESK.ago(d.generated) : "—")}</div>
-        <div class="s">when this record was built</div></div>
+      ${bettingTile}
     </div>
+    <div class="mini">${t.upcoming ?? "—"} upcoming · ${t.predictions == null ? "—" : t.predictions.toLocaleString()} predictions logged,
+      ${t.graded ?? "—"} graded (accuracy counts each bout once) · ${d.bouts == null ? "—" : d.bouts.toLocaleString()} bouts,
+      results to ${esc(d.dataset_end ?? "—")} · built ${esc(d.generated ? DESK.ago(d.generated) : "—")}</div>
 
     ${events.length ? `<div class="card">
       <h2>Recent cards</h2>
@@ -1142,7 +1280,7 @@ BOOT.record = async () => {
     <div class="card">
       <h2>The three strategies</h2>
       ${strategies ? `
-        <div class="mini">Confirm period only — ${meta.confirm_from ?? "2020"}
+        <div class="mini">Confirm period only — ${esc(from)}
           onward. Flat stake, one unit a bet.${
             meta.flag_quality != null
               ? ` The flag that drives FADE and COMBINED scores
@@ -1150,7 +1288,7 @@ BOOT.record = async () => {
               : ""}</div>
         <div class="scroll"><table>
           <thead><tr><th>Strategy</th><th class="n">Bets</th><th class="n">Hit</th>
-            <th class="n">Return</th></tr></thead>
+            <th class="n">Return a bet</th></tr></thead>
           <tbody>${strategies}</tbody>
         </table></div>
         ${fold(d.notes.which_number_counts)}`
@@ -1172,11 +1310,14 @@ BOOT.record = async () => {
       </div>
     </div>` : ""}
 
-    ${auc.length ? `<div class="card">
-      <h2>Ranking power by year</h2>
-      <div class="mini">AUC — the chance the winner is ranked above the loser.
-        0.50 is a coin toss, marked by the dashed line.</div>
-      ${lineChart(auc, "auc", { floor: 0.5, rule: 0.5, label: "Model AUC by year" })}
+    ${acc.length > 1 ? `<div class="card">
+      <h2>Model alone, by year</h2>
+      <div class="mini">Share of each year's bouts where the model alone, before the
+        market blend, picked the winner. 50% is a coin toss, marked by the dashed line.</div>
+      ${lineChart(acc, "accuracy", { floor: 0.5, rule: 0.5, fmt: (v) => `${Math.round(v * 100)}%`,
+        label: "Model alone: bouts picked right, by year" })}
+      ${auc.length ? fold(`Ranking power (AUC: the chance the winner is rated above the loser; 0.50 is a coin toss), by year: ${
+        auc.map((r) => `${r.year} ${r.auc.toFixed(2)}`).join(" · ")}.`) : ""}
     </div>` : ""}
 
     ${fold(d.notes.leak)}`;
@@ -1187,37 +1328,22 @@ BOOT.method = () => {
   $("view-method").innerHTML = `
     <div class="hero">
       <div class="eyebrow">What this is</div>
-      <h1>How it works, and what it is worth</h1>
+      <h1>How it works</h1>
     </div>
+    <div class="card"><h2>Reading a pick</h2>${LEGEND}</div>
     <div class="card">
       <h2>Two layers</h2>
-      <p class="lede">A statistical model ranks who wins — that is the
-        percentage on the Card tab. A Monte Carlo simulation then runs each
-        matchup 20,000 times from both fighters' measured rates, which is where
-        the method, round and duration come from.</p>
+      <p class="lede">A statistical model rates each fighter from the bouts they
+        had already fought. Its chance is then blended with the betting market's
+        (the price with the bookmaker's cut removed), with the weight learned
+        from earlier years. That blend is the percentage on the Card tab;
+        "Model alone" in an opened bout is the number before it. A Monte Carlo
+        simulation then runs each matchup 20,000 times from both fighters'
+        measured rates, which is where the method, round and duration come from.</p>
       <p class="lede">The simulation is the weaker winner-picker of the two
         (AUC 0.559 against the model's 0.66), so it is shown beside the model
         and never instead of it. When they disagree they are using different
         information, and that is worth seeing rather than averaging away.</p>
-    </div>
-    <div class="card">
-      <h2>Every number is point-in-time</h2>
-      <p class="lede">A fighter is described only by bouts that had already
-        happened when the fight took place. That sounds obvious and it was not
-        true until recently: the dataset's <code>wins</code> column is a
-        fighter's <em>lifetime</em> record as of the day the data was
-        downloaded, pasted onto every fight of their career. A model reading it
-        could see how each career turned out.</p>
-      <p class="lede">It inflated historical accuracy to 78% and a backtest to
-        +16.2%. Both were fiction. The honest figures are the ones in this app.</p>
-    </div>
-    <div class="card">
-      <h2>Where the results come from</h2>
-      <p class="lede">UFC fight statistics, through a public dataset of
-        UFCStats. When that dataset falls behind, the latest results are read
-        from each event's Wikipedia page and added as provisional bouts:
-        winner, method and round, but no strike counts. They are replaced the
-        day the full statistics arrive.</p>
     </div>
     <div class="card">
       <h2>What it does not do</h2>
@@ -1231,6 +1357,20 @@ BOOT.method = () => {
           that it is zero.</li>
       </ul>
     </div>
+    <div class="card">
+      <h2>Where the results come from</h2>
+      <p class="lede">UFC fight statistics, through a public dataset of
+        UFCStats. When that dataset falls behind, the latest results are read
+        from each event's Wikipedia page and added as provisional bouts:
+        winner, method and round, but no strike counts. They are replaced the
+        day the full statistics arrive.</p>
+    </div>
+    <div class="card">
+      <h2>Every number is point-in-time</h2>
+      <p class="lede">A fighter is described only by bouts that had already
+        happened when the fight took place.</p>
+      ${fold("Why this matters: the dataset's wins column is a fighter's lifetime record as of the day it was downloaded, pasted onto every fight of their career, so a model reading it could see how each career turned out. It inflated historical accuracy to 78% and a backtest to +16.2%. Both were fiction; the honest figures are the ones in this app.")}
+    </div>
     <div class="note">Built from UFC results. Nothing here is betting advice,
       and the measured edge is not distinguishable from zero.</div>`;
 };
@@ -1240,7 +1380,7 @@ DESK.init({
   key: "yourmma",
   name: "YourMMA",
   icon: "icons/icon-192.png",
-  sibling: { name: "YourNFL", href: "../nfl/app/", blurb: "The NFL pick desk" },
+  siblings: [{ name: "YourNFL", href: "../nfl/app/", blurb: "The NFL pick desk" }],
   stamp: () => (CARD && CARD.generated ? `Card updated ${DESK.ago(CARD.generated)}` : "Fetch the latest card"),
   onReload: () => location.reload(),
 });

@@ -99,3 +99,24 @@ def test_every_top_league_has_an_odds_feed_and_a_second_tier():
         name, country, tier, key = sd.LEAGUES[code]
         assert tier == 1 and key and key.startswith("soccer_")
         assert any(m[1] == country and m[2] == 2 for m in sd.LEAGUES.values())
+
+
+@pytest.mark.snapshot
+def test_every_club_in_a_top_league_since_2016_has_a_name_code_and_colours():
+    # A snapshot check, not a gate: a newly promoted club shows under its
+    # football-data.co.uk name with a neutral chip until it is added here.
+    import soccer_teams as st
+    m = sd.load_matches()
+    recent = m[m["league"].isin(sd.TOP) & (m["season"] >= 2016)]
+    missing = sorted(set(recent["home"]) - set(st.TEAMS))
+    assert not missing, f"no display entry for {missing}"
+    for (league, season), g in recent.groupby(["league", "season"]):
+        codes = [st.TEAMS[t][1] for t in set(g["home"])]
+        assert len(codes) == len(set(codes)), f"two clubs share a code in {league} {season}"
+
+
+def test_club_chips_are_three_letters_and_a_stranger_gets_a_neutral_one():
+    import soccer_teams as st
+    assert all(len(v[1]) == 3 and v[2].startswith("#") and v[3].startswith("#") for v in st.TEAMS.values())
+    stranger = st.display("Nobody FC")
+    assert stranger["code"] == "NOB" and stranger["name"] == "Nobody FC" and (stranger["bg"], stranger["fg"]) == st.NEUTRAL
