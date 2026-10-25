@@ -1,0 +1,77 @@
+name: Soccer predictions
+
+# The soccer app's runner: soccer/engine on GitHub's machines, which have
+# the open internet (football-data.co.uk, the odds API) that the development
+# sandbox does not.
+#
+#   sync      football-data.co.uk snapshot: this season's results and the
+#             fixtures still to play (every season since 2005-06 with
+#             full=true)
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "sync = data only"
+        type: choice
+        options: [sync]
+        default: sync
+      full:
+        description: "sync only: rebuild every season since 2005-06, not just this one"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+# Its own queue, like the NFL runner's: the soccer engine touches only
+# soccer/, and the rebase-and-retry push below absorbs another runner's
+# commit landing first.
+concurrency:
+  group: soccer-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  soccer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r engine/requirements.txt pytest
+
+      - name: Tests
+        run: python -m pytest soccer/engine/tests -q -m "not snapshot"
+
+      - name: Run
+        run: |
+          set -o pipefail
+          python soccer/engine/soccer_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee soccer.log
+
+      - name: Commit
+        run: |
+          PATHS="soccer/data/"
+          if [ -z "$(git status --porcelain -- $PATHS)" ]; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- $PATHS
+          git commit -m "Soccer: refresh data"
+          pushed=0
+          for attempt in 1 2 3; do
+            git push && { pushed=1; break; }
+            echo "push rejected, rebasing onto the branch (attempt $attempt)"
+            git pull --rebase --autostash origin "$(git rev-parse --abbrev-ref HEAD)" || exit 1
+            sleep $((attempt * 3))
+          done
+          if [ "$pushed" != 1 ]; then
+            git push || { echo "::error::push failed after 3 rebases"; exit 1; }
+          fi
