@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>YourSoccer Pick Desk</title>
+<meta name="description" content="Predictions for Europe's top five soccer leagues, blended with the betting market, with each club's form, the league tables and the model's own measured record.">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f3f4f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c10" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="icon" href="icons/icon-512.png" sizes="512x512" type="image/png">
+<!-- iOS ignores the manifest: Add to Home Screen reads these instead. -->
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="YourSoccer">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* desk.css:begin - copied from shared/desk.css by scripts/sync_desk.py; edit that file */
+/* The Desk design system: one stylesheet for YourMMA, YourNFL and
+   YourSoccer. This file is the source. scripts/sync_desk.py copies it into
+   every app's index.html, and a test fails if any copy drifts - so the apps
+   look like one family because they are drawing from one sheet, not because
+   copies were kept in step by hand.
+
+   Red is the red corner and the home side; blue the blue corner and the away
+   side, as the sports themselves colour them. Teal and orange carry
+   good/bad: the green/red pair failed the deutan check (dE 4.3), these
+   clear it (11.6). Coloured TEXT uses the *-ink tokens, which keep 4.5:1 on
+   every surface they sit on; the base tokens are for fills and tints. */
+:root{
+  --ground:#f3f4f7; --surface:#ffffff; --raised:#ffffff; --sunk:#eceef2;
+  --line:#dfe2e8; --line-soft:#e9ebf0; --line-strong:#8a95ab;
+  --ink:#11131a; --ink-2:#4a505f; --ink-3:#656b7c;
+  --accent:#e23d43; --red:#e23d43; --blue:#2f72de;
+  --gain:#14998a; --loss:#d45a2c; --gold:#a8730e;
+  --gain-ink:#0f7065; --loss-ink:#a54622; --gold-ink:#845a0b; --red-ink:#c11d23; --blue-ink:#2563c7;
+  --win:#0e7a6d; --lose:#c2501f; --even:#6b6f7d;
+  --chip:#eef0f4; --chip-edge:rgba(0,0,0,.10);
+  --seg-on:#ffffff; --accent-fill:#d4393f;
+  --shadow:0 1px 2px rgba(17,19,26,.05),0 6px 20px rgba(17,19,26,.06);
+  --shadow-lg:0 -8px 40px rgba(17,19,26,.18);
+  --radius:16px; --radius-sm:11px;
+  --bar-h:52px;
+  --appbar-h:60px;   /* the row inside the app bar; the bar adds a 1px border */
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0b0c10; --surface:#14161d; --raised:#1a1d26; --sunk:#101218;
+  --line:#272b36; --line-soft:#1e212b; --line-strong:#5e6882;
+  --ink:#f1f3f8; --ink-2:#a8aebd; --ink-3:#878ea0;
+  --accent:#ef4d52; --red:#ef4d52; --blue:#4f8ff7;
+  --gain:#2ec4a6; --loss:#f07a4c; --gold:#e1a93c;
+  --gain-ink:#2ec4a6; --loss-ink:#f07a4c; --gold-ink:#e1a93c; --red-ink:#f35b60; --blue-ink:#4f8ff7;
+  --win:#12806f; --lose:#f07a4c;
+  --chip:#1d2029; --chip-edge:rgba(255,255,255,.22);
+  --seg-on:#2b2f3b; --accent-fill:#ce4247;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.25);
+  --shadow-lg:0 -10px 44px rgba(0,0,0,.6);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ground:#0b0c10; --surface:#14161d; --raised:#1a1d26; --sunk:#101218;
+  --line:#272b36; --line-soft:#1e212b; --line-strong:#5e6882;
+  --ink:#f1f3f8; --ink-2:#a8aebd; --ink-3:#878ea0;
+  --accent:#ef4d52; --red:#ef4d52; --blue:#4f8ff7;
+  --gain:#2ec4a6; --loss:#f07a4c; --gold:#e1a93c;
+  --gain-ink:#2ec4a6; --loss-ink:#f07a4c; --gold-ink:#e1a93c; --red-ink:#f35b60; --blue-ink:#4f8ff7;
+  --win:#12806f; --lose:#f07a4c;
+  --chip:#1d2029; --chip-edge:rgba(255,255,255,.22);
+  --seg-on:#2b2f3b; --accent-fill:#ce4247;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.25);
+  --shadow-lg:0 -10px 44px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+/* Must beat any component's display: a class selector outranks the
+   user-agent [hidden] rule. */
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{min-height:100%}
+/* A bottom sheet holds the page still behind it. */
+html:has(.sheet-back){overflow:hidden}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font:400 15px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:none;
+}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  font-weight:600;letter-spacing:.01em;margin:0;text-wrap:balance;line-height:1.08}
+h1{font-size:30px} h2{font-size:21px} h3{font-size:17px}
+a{color:var(--blue-ink);text-underline-offset:2px}
+button{font:inherit;color:inherit}
+code{font:500 .92em "IBM Plex Mono",ui-monospace,monospace}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.mini{font-size:12.5px;color:var(--ink-3);line-height:1.45}
+.lede{color:var(--ink-2);font-size:14.5px;max-width:62ch;margin:0}
+.eyebrow{font:600 11px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
+
+/* ---------------------------------------------------------------- shell */
+.appbar{
+  position:sticky;top:0;z-index:20;
+  padding-top:env(safe-area-inset-top,0px);
+  background:color-mix(in srgb,var(--ground) 86%,transparent);
+  -webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);
+  border-bottom:1px solid var(--line-soft);
+}
+.appbar-in{max-width:760px;margin:0 auto;padding:0 10px 0 16px;
+  display:flex;align-items:center;gap:10px;height:var(--appbar-h)}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:inherit;min-width:0}
+.brand .logo{width:32px;height:32px;border-radius:9px;flex:none;box-shadow:0 0 0 1px var(--line)}
+.brand-name{font:700 22px/1 "Barlow Condensed",sans-serif;letter-spacing:.03em;
+  text-transform:uppercase;white-space:nowrap}
+.brand-name span{color:var(--accent)}
+.brand>span{min-width:0;overflow:hidden}
+.brand-sub{display:block;font:500 11px/1.2 "IBM Plex Sans",sans-serif;color:var(--ink-3);
+  letter-spacing:0;text-transform:none;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar .spacer{flex:1}
+/* The sport switch: the apps are one family. The current one is a label,
+   the others links - each with a 44px hit area around a 36px pill. */
+.switch{display:flex;background:var(--chip);border-radius:999px;padding:3px;gap:2px;flex:none}
+.switch a,.switch span{display:inline-flex;align-items:center;justify-content:center;min-height:36px;
+  font:700 12px/1 "IBM Plex Sans",sans-serif;letter-spacing:.06em;
+  padding:0 12px;border-radius:999px;text-decoration:none;color:var(--ink-3);min-width:44px;text-align:center}
+.switch a{position:relative}
+.switch a::after{content:"";position:absolute;inset:-4px -2px}
+.switch span[aria-current]{background:var(--seg-on);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+/* Three sports and the app's name share a phone's width: the switch is
+   compact (its hit areas stay 44px tall), and on a narrow phone the name
+   steps down a size and then the logo gives way. */
+.switch:has(>:nth-child(3)) a,.switch:has(>:nth-child(3)) span{padding:0 9px;min-width:0;font-size:11.5px;letter-spacing:.04em}
+@media (max-width:420px){
+  .appbar-in{gap:6px}
+  .brand{gap:7px}
+  .brand-name{font-size:19px;letter-spacing:.02em}
+}
+@media (max-width:380px){
+  .brand-name{font-size:17px}
+  .switch:has(>:nth-child(3)) a,.switch:has(>:nth-child(3)) span{padding:0 8px}
+}
+@media (max-width:340px){.brand .logo{display:none}}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;flex:none;
+  width:44px;height:44px;border-radius:12px;border:0;background:none;color:var(--ink-2);cursor:pointer}
+.iconbtn:active{background:var(--chip)}
+.iconbtn svg{width:22px;height:22px}
+
+.wrap{max-width:760px;margin:0 auto;
+  padding:14px 14px calc(var(--bar-h) + 28px + env(safe-area-inset-bottom,0px))}
+section.view{display:flex;flex-direction:column;gap:14px}
+
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:color-mix(in srgb,var(--surface) 88%,transparent);
+  -webkit-backdrop-filter:saturate(1.4) blur(16px);backdrop-filter:saturate(1.4) blur(16px);
+  border-top:1px solid var(--line-soft);
+  padding:4px max(8px,env(safe-area-inset-left,0px)) max(4px,env(safe-area-inset-bottom,0px));
+}
+.tabbar-in{max-width:520px;margin:0 auto;display:flex;gap:4px}
+.tabbar button{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-height:var(--bar-h);justify-content:center;
+  background:none;border:0;border-radius:14px;padding:3px 2px;cursor:pointer;
+  color:var(--ink-3);font:600 10.5px/1.1 "IBM Plex Sans",sans-serif;letter-spacing:.04em;
+}
+.tabbar button svg{width:24px;height:24px;transition:transform .18s ease}
+.tabbar button .pill{display:flex;align-items:center;justify-content:center;
+  width:56px;height:30px;border-radius:999px;transition:background .18s ease}
+.tabbar button[aria-selected="true"]{color:var(--ink)}
+.tabbar button[aria-selected="true"] .pill{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+
+/* ------------------------------------------------------------- headers */
+.hero{display:flex;flex-direction:column;gap:6px;padding:4px 2px 2px}
+.hero h1{font-size:31px}
+/* One quiet line of facts under a title - not a row of pills, which is
+   what a pick's tags look like. */
+.hero .facts{font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.hero .facts .warn{color:var(--gold-ink);font-weight:600}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  margin:6px 2px -4px}
+.section-head h2{font-size:19px}
+/* A day or card section that stays in view while its games scroll past,
+   pinned exactly under the app bar. */
+.sticky-head{position:sticky;top:calc(var(--appbar-h) + 1px + env(safe-area-inset-top,0px));z-index:5;
+  margin:4px -14px 0;padding:8px 16px 6px;color:var(--ink-2);
+  background:color-mix(in srgb,var(--ground) 92%,transparent);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+
+/* ---------------------------------------------------------- chips, tags */
+.chip,.tag{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  font:600 11.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.02em;
+  padding:6px 9px;border-radius:999px;background:var(--chip);color:var(--ink-2);border:0}
+.chip.num,.tag.num{font-family:"IBM Plex Mono",monospace;font-weight:500;letter-spacing:0}
+.tag.good,.chip.good{background:color-mix(in srgb,var(--gain) 15%,transparent);color:var(--gain-ink)}
+.tag.warn,.chip.warn{background:color-mix(in srgb,var(--gold) 16%,transparent);color:var(--gold-ink)}
+.tag.bad,.chip.bad{background:color-mix(in srgb,var(--loss) 15%,transparent);color:var(--loss-ink)}
+.tag.flat,.chip.flat{color:var(--ink-2)}
+.tag.accent,.chip.accent{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--red-ink)}
+button.chip{min-height:44px;padding:0 14px;font-size:13px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chips:has(>button.chip){gap:8px}
+.scroller{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -14px;padding:0 14px 2px;
+  -webkit-overflow-scrolling:touch}
+.scroller::-webkit-scrollbar{display:none}
+
+/* Segmented control: a filter with at most a handful of choices. */
+.seg{display:flex;background:var(--chip);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:none;border-radius:9px;min-height:44px;padding:0 6px;cursor:pointer;
+  font:600 12.5px/1 "IBM Plex Sans",sans-serif;color:var(--ink-3)}
+.seg button[aria-pressed="true"]{background:var(--seg-on);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.16)}
+
+/* A tap shows a press. iOS applies :active only when a touchstart listener
+   exists; desk.js adds one. */
+details.match>summary:active,details.fold>summary:active,details.cardfold>summary:active{
+  background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.tabbar button:active .pill,.seg button:active,.switch a:active,button.chip:active,.sheet .row:active,.detail-close:active{
+  background:color-mix(in srgb,var(--ink) 9%,transparent)}
+
+/* ---------------------------------------------------------------- cards */
+.card{background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:11px}
+.card h2{font-size:20px}
+.note{background:var(--sunk);border:1px solid var(--line-soft);border-radius:var(--radius-sm);
+  padding:12px 14px;font-size:13px;color:var(--ink-2);line-height:1.55}
+.note b{color:var(--ink);font-weight:600}
+.warnbox{border-left:3px solid var(--gold)}
+.err{border-left:3px solid var(--loss)}
+/* An explainer folded to its first lines: the numbers come first, the
+   caveat is one tap away and never gone. */
+details.fold{background:var(--sunk);border:1px solid var(--line-soft);border-radius:var(--radius-sm)}
+details.fold>summary{list-style:none;cursor:pointer;padding:11px 14px;display:flex;gap:10px;align-items:flex-start;
+  font-size:13px;color:var(--ink-2);line-height:1.5;min-height:44px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary .ic{flex:none;color:var(--gold-ink);margin-top:1px}
+details.fold>summary .ic svg{width:18px;height:18px}
+details.fold>summary .clip{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+details.fold[open]>summary .clip{display:block;-webkit-line-clamp:unset}
+details.fold>summary .more{margin-left:auto;flex:none;color:var(--blue-ink);font-weight:600;font-size:12.5px}
+details.fold[open]>summary .more{display:none}
+details.fold .fold-body{padding:0 14px 13px 42px;display:flex;flex-direction:column;gap:9px;
+  font-size:13px;color:var(--ink-2);line-height:1.55}
+/* A secondary section of an opened match, folded to its title. */
+details.fold.sub{background:var(--surface)}
+details.fold.sub>summary{align-items:center}
+details.fold.sub>summary b{color:var(--ink);font-weight:600}
+details.fold.sub .fold-body{padding:0 12px 12px}
+/* A record card folded to its title and what it found. A details inside a
+   .card, never a flex details: Safari has ignored flex on details. */
+details.cardfold>summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:5px;
+  min-height:44px;justify-content:center}
+details.cardfold>summary::-webkit-details-marker{display:none}
+details.cardfold .cf-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+details.cardfold .cf-head svg{flex:none;width:20px;height:20px;color:var(--ink-3);transition:transform .2s ease}
+details.cardfold[open] .cf-head svg{transform:rotate(180deg)}
+details.cardfold .take{font-size:14px;line-height:1.45;color:var(--ink-2)}
+.cardfold-body{display:flex;flex-direction:column;gap:11px;margin-top:11px}
+/* A legend: the real element on the left, what it means on the right. */
+.gloss{display:grid;grid-template-columns:auto 1fr;gap:10px 12px;margin:0;font-size:13.5px;align-items:baseline}
+.gloss dt{justify-self:start} .gloss dd{margin:0;color:var(--ink-2)}
+
+/* ------------------------------------------------------- the match card */
+/* One fight or one game: two sides, a probability bar, the pick. Tapping
+   it opens the detail. */
+.matches{display:flex;flex-direction:column;gap:10px}
+details.match{background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;
+  scroll-margin-top:calc(var(--appbar-h) + 1px + env(safe-area-inset-top,0px) + 8px)}
+/* 28px: the sticky day head a match sits under. */
+.day details.match{scroll-margin-top:calc(var(--appbar-h) + 1px + 28px + env(safe-area-inset-top,0px) + 8px)}
+details.match[open]{border-color:var(--line)}
+details.match>summary{list-style:none;cursor:pointer;padding:12px 14px 13px;display:flex;flex-direction:column;gap:9px}
+details.match>summary::-webkit-details-marker{display:none}
+details.match>summary:focus-visible{outline:2px solid var(--blue);outline-offset:-2px;border-radius:var(--radius)}
+.match-top{display:flex;align-items:center;gap:6px;min-height:22px}
+.match-top .when{font-size:12.5px;color:var(--ink-2);font-weight:500}
+details.match .chev{margin-left:auto;color:var(--ink-3);display:flex;transition:transform .2s ease}
+details.match .chev svg{width:20px;height:20px}
+details.match[open]>summary .chev{transform:rotate(180deg)}
+.badge{font:700 10.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.09em;text-transform:uppercase;
+  padding:4px 7px;border-radius:6px;background:var(--chip);color:var(--ink-2)}
+/* Neutral: red is the red corner and the home side, not "important". */
+.badge.accent{background:color-mix(in srgb,var(--ink) 12%,transparent);color:var(--ink)}
+.badge.gold{background:color-mix(in srgb,var(--gold) 17%,transparent);color:var(--gold-ink)}
+.badge.live{background:color-mix(in srgb,var(--loss) 16%,transparent);color:var(--loss-ink)}
+
+.sides{display:flex;flex-direction:column;gap:7px}
+/* A side: the corner's colour, the name over its record and last five, and
+   on the right the side's own chance. */
+.side{display:grid;grid-template-columns:4px minmax(0,1fr) auto;column-gap:11px;align-items:center}
+.side .mark{grid-row:1 / span 2;align-self:stretch;border-radius:4px;background:var(--line)}
+.side.r .mark{background:var(--red)} .side.b .mark{background:var(--blue)}
+.side .who{grid-column:2;display:flex;align-items:center;gap:7px;min-width:0}
+.side .nm{font-weight:600;font-size:15.5px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side .sub{grid-column:2;display:flex;align-items:center;gap:8px;min-width:0;margin-top:4px;flex-wrap:wrap}
+.side .rec{font-size:12.5px;color:var(--ink-2);font-weight:600;white-space:nowrap}
+.side .rec.none{font-weight:400;color:var(--ink-3)}
+.side .rec .src{font-style:normal;font-size:10.5px;font-weight:700;color:var(--ink-3);margin-left:3px}
+.side .p{grid-row:1 / span 2;grid-column:3;text-align:right;font:600 19px/1 "IBM Plex Mono",monospace;
+  color:var(--ink-3);font-variant-numeric:tabular-nums;padding-left:6px}
+.side .p small{font-size:12px;font-weight:500;margin-left:1px;color:var(--ink-3)}
+.side.picked .p{color:var(--ink)}
+/* With a pick made, the other side steps back so the pick reads first. */
+.side.picked .nm{font-weight:700}
+.sides:has(.picked) .side:not(.picked):not(.lost) .nm{font-weight:500;color:var(--ink-2)}
+.side.picked .p{font-size:22px}
+.sides:has(.picked) .side:not(.picked) .p{font-size:16px}
+.side .score{grid-row:1 / span 2;grid-column:3;font:600 22px/1 "IBM Plex Mono",monospace;padding-left:6px}
+.side.lost .nm,.side.lost .score{color:var(--ink-3)}
+/* Team badge: the club's colour behind its code, with an edge so a navy or
+   black badge does not vanish into a dark card. */
+.teamchip{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:24px;
+  padding:0 5px;border-radius:7px;font:700 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.04em;
+  color:#fff;background:var(--ink-3);box-shadow:inset 0 0 0 1px var(--chip-edge)}
+.side .at{font:700 10.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+/* Soccer's third result: a slim row between the two clubs. */
+.side.d .mark{background:var(--even)}
+.side.draw .nm{font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.side.draw.picked .nm{color:var(--ink);font-weight:700}
+
+.probbar{display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--sunk);gap:2px}
+.probbar i{display:block;min-width:2px}
+.probbar .r{background:var(--red)} .probbar .b{background:var(--blue)} .probbar .d{background:var(--even)}
+.probbar.none i{background:var(--line)}
+.probbar.has-pick i:not(.pk){opacity:.35}
+
+.pickline{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pickline .pick{display:inline-flex;align-items:center;gap:6px;font:700 12.5px/1 "IBM Plex Sans",sans-serif;
+  padding:6px 10px 6px 8px;border-radius:999px;background:var(--ink);color:var(--surface)}
+.pickline .pick svg{width:14px;height:14px}
+.pickline .pick .odds{font:500 12px/1 "IBM Plex Mono",monospace;opacity:.72;margin-left:2px}
+/* What the pick says beyond who: one quiet line of facts, not more pills. */
+.factline{font:500 12px/1.35 "IBM Plex Mono",monospace;color:var(--ink-3);margin-top:-3px}
+.factline .warn{color:var(--loss-ink);font-weight:600}
+
+/* Last results, newest first: a win a filled teal circle, a loss an orange
+   ring - they differ by shape as well as hue. */
+.last5{display:inline-flex;gap:3px;flex:none}
+.res{display:inline-flex;flex:none;align-items:center;justify-content:center;
+  width:21px;height:21px;border-radius:50%;font:700 9.5px/1 "IBM Plex Sans",sans-serif;
+  color:#fff;letter-spacing:0}
+.res.w{background:var(--win)} .res.d,.res.nc,.res.t{background:var(--even)}
+.res.l{background:none;color:var(--lose);box-shadow:inset 0 0 0 1.5px var(--lose)}
+/* A score inside the circle ("2-1") needs a pill, not a circle. */
+.last5.score5 .res{width:27px;border-radius:11px;font-size:9.5px;letter-spacing:-.02em}
+
+.alert{font-size:12.5px;line-height:1.4;padding:7px 10px;border-radius:9px;
+  border-left:3px solid var(--loss);background:color-mix(in srgb,var(--loss) 10%,transparent);color:var(--ink-2)}
+.alert b{color:var(--ink);font-weight:600}
+.alert.doubtful{border-left-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.alert.questionable{border-left-color:var(--line);background:var(--sunk)}
+
+/* The opened match. */
+.detail{border-top:1px solid var(--line-soft);padding:14px;
+  display:flex;flex-direction:column;gap:12px;background:var(--sunk)}
+.detail-close{align-self:center;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 18px;
+  border:0;border-radius:999px;background:var(--chip);color:var(--ink-2);font:600 13px/1 "IBM Plex Sans",sans-serif;cursor:pointer}
+.detail-close svg{width:16px;height:16px;transform:rotate(180deg)}
+.panel{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius-sm);
+  padding:12px 13px;display:flex;flex-direction:column;gap:8px}
+.panel>.eyebrow:first-child{margin-bottom:1px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13.5px;margin:0}
+.kv dt{color:var(--ink-3)} .kv dd{margin:0;min-width:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:440px){.two{grid-template-columns:1fr}}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat3>div{background:var(--sunk);border-radius:10px;padding:9px 10px}
+.stat3 .k{font:600 10.5px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.stat3 .v{font:600 17px/1.1 "IBM Plex Mono",monospace;margin-top:4px}
+ul.list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column}
+ul.list li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line-soft);font-size:13.5px}
+ul.list li:last-child{border-bottom:0}
+ul.list li .end{margin-left:auto;flex:none;text-align:right}
+ul.list .rk{min-width:22px;color:var(--ink-3);font-size:12px;padding-top:1px}
+ul.list .lead{min-width:40px;font-weight:600;color:var(--ink)}
+.st{font:700 10.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.06em;text-transform:uppercase;margin-left:5px;white-space:nowrap}
+.st.out{color:var(--loss-ink)} .st.doubtful{color:var(--gold-ink)} .st.questionable{color:var(--ink-3)} .st.scored{color:var(--gain-ink)}
+.news a{color:var(--ink);text-decoration:none;font-weight:500}
+.news a::after{content:" ↗";color:var(--blue-ink)}
+
+/* Bars split into labelled parts (KO / SUB / DEC). */
+.method{display:flex;gap:2px;height:28px;border-radius:8px;overflow:hidden;background:var(--line-soft)}
+.method i{display:flex;align-items:center;justify-content:center;
+  font:600 10.5px/1 "IBM Plex Mono",monospace;color:#fff;min-width:0;font-style:normal}
+.method .ko{background:#8c4b8f} .method .sb{background:#367399} .method .dc{background:#6b7280}
+.method .dr{background:var(--line)}
+.rounds{display:flex;align-items:flex-end;gap:6px;height:48px}
+.rounds div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.rounds b{display:block;width:100%;background:var(--blue);border-radius:4px 4px 0 0;opacity:.8}
+.rounds span{font:500 11px/1 "IBM Plex Mono",monospace;color:var(--ink-3)}
+
+/* Ranked lists of picks (most doubtful first, and the like). */
+ul.rank{list-style:none;padding:0;margin:0}
+ul.rank li{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line-soft);font-size:14px}
+ul.rank li:last-child{border-bottom:0}
+ul.rank li b{color:var(--ink);font-weight:600}
+ul.rank li .num{margin-left:auto;font-weight:600;font-size:15px}
+ul.rank .num.warn{color:var(--loss-ink)} ul.rank .num.good{color:var(--gain-ink)} ul.rank .num.flat{color:var(--ink-3)}
+.meter{flex:none;width:52px;height:6px;border-radius:9px;background:var(--sunk);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--loss);border-radius:9px}
+.meter.good i{background:var(--gain)} .meter.flat i{background:var(--ink-3)}
+
+/* ------------------------------------------------------------ compare */
+.pickers{display:grid;grid-template-columns:1fr;gap:10px}
+.pickers.pair{grid-template-columns:1fr 1fr}
+.field{display:flex;flex-direction:column;gap:6px;position:relative}
+.field label{font:600 10.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3)}
+.field input,.field select{width:100%;min-height:46px;padding:11px 13px;border-radius:12px;font-size:16px;
+  background:var(--raised);color:var(--ink);border:1px solid var(--line-strong);font-family:inherit;-webkit-appearance:none;appearance:none}
+.field select{background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
+.field input:focus,.field select:focus{outline:2px solid var(--blue);outline-offset:-1px}
+.field.r input,.field.r select{box-shadow:inset 3px 0 0 var(--red)}
+.field.b input,.field.b select{box-shadow:inset 3px 0 0 var(--blue)}
+/* Suggestions under a search box: real buttons, because a phone's datalist
+   is unreliable (iOS shows it in a strip, if at all). */
+.suggest{display:flex;flex-direction:column;background:var(--raised);border:1px solid var(--line);
+  border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.suggest button{border:0;background:none;text-align:left;padding:12px 13px;font-size:15px;cursor:pointer;
+  border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;gap:8px}
+.suggest button:last-child{border-bottom:0}
+.suggest button:active{background:var(--chip)}
+.suggest button:focus-visible{outline-offset:-2px}
+.suggest .mini{white-space:nowrap}
+/* A search box scrolls to the top when it takes the keyboard, so its
+   suggestions are not under the keyboard. (Hiding the title instead moved
+   the page as a suggestion was tapped, and the tap missed.) */
+.pickers .field{scroll-margin-top:calc(var(--appbar-h) + 1px + env(safe-area-inset-top,0px) + 10px)}
+.tape-head{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 4px}
+.tape-head .l{text-align:right}
+.tape{display:grid;grid-template-columns:1fr auto 1fr;gap:9px 10px;align-items:center;font-size:14px}
+.tape .lab{text-align:center;font:600 10.5px/1.25 "IBM Plex Sans",sans-serif;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);max-width:110px}
+.tape .l{text-align:right;justify-self:end} .tape .r2{text-align:left;justify-self:start}
+.tape .win{font-weight:700;color:var(--ink);padding:2px 7px;border-radius:7px}
+.tape .win.r{background:color-mix(in srgb,var(--red) 15%,transparent)}
+.tape .win.b{background:color-mix(in srgb,var(--blue) 15%,transparent)}
+.tape .head{font:700 16px/1.15 "Barlow Condensed",sans-serif;letter-spacing:.02em}
+.tape .head.l{color:var(--red-ink)} .tape .head.r2{color:var(--blue-ink)}
+.adv{display:flex;flex-direction:column;gap:10px}
+.adv-row{display:grid;grid-template-columns:78px 1fr 86px;gap:8px;align-items:center}
+.advval{font:500 11px/1.25 "IBM Plex Mono",monospace;color:var(--ink-2);text-align:right}
+.advval small{display:block;font:500 10.5px/1.2 "IBM Plex Sans",sans-serif;color:var(--ink-3);white-space:nowrap}
+.adv-row .lab{font:600 11px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--ink-3)}
+.gauge{position:relative;height:22px;background:var(--sunk);border-radius:6px}
+.gauge .mid{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line)}
+.gauge i{position:absolute;top:4px;bottom:4px;border-radius:3px}
+
+/* -------------------------------------------------------- record, charts */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (min-width:560px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--radius-sm);padding:13px 13px 12px;box-shadow:var(--shadow)}
+.tile .k{font:600 11px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3)}
+.tile .v{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
+  font-size:26px;font-weight:600;margin-top:7px;line-height:1}
+.tile .s{font-size:11.5px;color:var(--ink-3);margin-top:5px;line-height:1.35}
+.tile.hero-tile{grid-column:1 / -1;display:flex;align-items:center;gap:16px}
+.tile.hero-tile .v{font-size:38px;margin-top:4px}
+.tile.wide{grid-column:1 / -1}
+.ring{flex:none;width:76px;height:76px}
+.v.gain{color:var(--gain-ink)} .v.loss{color:var(--loss-ink)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font:600 11px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-3)}
+td.n,th.n{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+th.n{white-space:normal;vertical-align:bottom}
+td.n .mini{display:block;margin-top:2px;font-size:11px}
+td.gain{color:var(--gain-ink)} td.loss{color:var(--loss-ink)}
+/* A table that has to fit a phone without scrolling. */
+table.tight th,table.tight td{padding:8px 5px}
+/* A row's description on its own full-width row under it. */
+tr.has-sub td{border-bottom:0;padding-bottom:2px}
+tr.sub td{padding-top:0;font-size:12.5px;color:var(--ink-3)}
+tr.grp td{font:600 11px/1.2 "IBM Plex Sans",sans-serif;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink-3);padding-top:14px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
+svg{display:block;max-width:100%;height:auto}
+/* Chart text: px inside an SVG are user units, so this scales with the
+   viewBox and beats the presentation attributes. */
+.card svg[role="img"] text{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:22px;fill:var(--ink-3)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;
+  margin-right:5px;vertical-align:-1px}
+ul.plain{margin:0;padding-left:18px;font-size:14px;color:var(--ink-2);line-height:1.6}
+ul.plain li{margin-bottom:6px}
+ul.plain li b{color:var(--ink)}
+.mvp{margin-top:4px;color:var(--ink-2);white-space:nowrap}
+
+/* ------------------------------------------------------------ loading */
+.skeleton{display:flex;flex-direction:column;gap:10px}
+.skeleton i{display:block;height:118px;border-radius:var(--radius);background:var(--surface);
+  border:1px solid var(--line-soft);position:relative;overflow:hidden}
+.skeleton i.short{height:64px}
+.skeleton i::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--ink) 5%,transparent),transparent);
+  transform:translateX(-100%);animation:shimmer 1.3s infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+.loading{color:var(--ink-3);font-size:13.5px;padding:22px 0;text-align:center}
+.empty{text-align:center;padding:26px 12px;color:var(--ink-3);font-size:14px}
+
+/* ------------------------------------------------ install, sheet, toast */
+.banner{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--radius);padding:12px 12px 12px 14px;box-shadow:var(--shadow)}
+.banner img{width:42px;height:42px;border-radius:11px;flex:none}
+.banner .txt{flex:1;min-width:0}
+.banner .txt b{display:block;font-size:14.5px}
+.banner .txt span{font-size:12.5px;color:var(--ink-3)}
+@media (max-width:430px){
+  .banner{padding:6px 6px 6px 14px}
+  .banner img,.banner .btn svg,.banner .txt span{display:none}
+}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;
+  padding:10px 16px;border-radius:12px;border:0;cursor:pointer;text-decoration:none;
+  font:700 14px/1 "IBM Plex Sans",sans-serif;background:var(--accent-fill);color:#fff}
+.btn.ghost{background:var(--chip);color:var(--ink)}
+.btn.small{min-height:44px;padding:8px 13px;font-size:13px;border-radius:10px}
+.btn svg{width:18px;height:18px}
+.btn:active{filter:brightness(.92)}
+
+.sheet-back{position:fixed;inset:0;z-index:60;background:rgba(5,6,10,.5);
+  display:flex;align-items:flex-end;justify-content:center;animation:fade .18s ease}
+.sheet{width:100%;max-width:560px;background:var(--surface);border-radius:22px 22px 0 0;
+  box-shadow:var(--shadow-lg);padding:8px 18px calc(20px + env(safe-area-inset-bottom,0px));
+  max-height:88vh;max-height:88dvh;overflow:auto;position:relative;overscroll-behavior:contain;
+  animation:rise .24s cubic-bezier(.2,.8,.2,1)}
+.sheet .grab{width:38px;height:5px;border-radius:9px;background:var(--line);margin:4px auto 12px}
+.sheet .sheet-x{position:absolute;top:6px;right:8px}
+.sheet h2{font-size:23px;margin-bottom:4px;padding-right:44px}
+.sheet .row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.sheet .row:last-child{border-bottom:0}
+.sheet button.row{width:100%;border:0;border-bottom:1px solid var(--line-soft);background:none;text-align:left;cursor:pointer}
+.sheet a.row{text-decoration:none;color:inherit}
+.sheet .row .ic{width:38px;height:38px;border-radius:11px;background:var(--chip);display:flex;
+  align-items:center;justify-content:center;flex:none;color:var(--ink-2)}
+.sheet .row .ic svg{width:21px;height:21px}
+.sheet .row .t{flex:1;min-width:0;font-size:14.5px}
+.sheet .row .t small{display:block;color:var(--ink-3);font-size:12.5px;margin-top:2px}
+.sheet ol.steps{margin:10px 0 4px;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:12px}
+.sheet ol.steps li{counter-increment:s;display:flex;gap:12px;align-items:center;font-size:15px}
+.sheet ol.steps li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;
+  background:var(--chip);display:flex;align-items:center;justify-content:center;font:700 13px/1 "IBM Plex Sans",sans-serif}
+.sheet ol.steps>li>span{flex:1;min-width:0}
+/* An icon inside a sentence, drawn the size of the words around it. */
+svg.inl{display:inline-block;width:1.25em;height:1.25em;vertical-align:-.28em;color:var(--blue-ink);margin:0 1px}
+.sheet .actions{display:flex;gap:10px;margin-top:16px}
+.sheet .actions .btn{flex:1}
+
+.toast{position:fixed;left:50%;z-index:70;bottom:calc(var(--bar-h) + 26px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%);max-width:calc(100% - 28px);display:flex;align-items:center;gap:12px;
+  background:var(--ink);color:var(--surface);border-radius:14px;padding:11px 12px 11px 16px;
+  font-size:14px;box-shadow:var(--shadow-lg);animation:toastrise .22s ease}
+.toast button{border:0;background:none;color:inherit;text-decoration:underline;text-underline-offset:3px;
+  font:700 13.5px/1 "IBM Plex Sans",sans-serif;padding:8px 6px;cursor:pointer;white-space:nowrap}
+@keyframes rise{from{transform:translateY(16px);opacity:0}}
+@keyframes toastrise{from{transform:translate(-50%,16px);opacity:0}}
+@keyframes fade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+@media (min-width:760px){
+  .wrap{padding-left:20px;padding-right:20px}
+  .sticky-head{margin-left:-20px;margin-right:-20px;padding-left:22px}
+}
+.days{display:flex;flex-direction:column;gap:12px}
+.day .matches{margin-top:4px}
+.nowrap{white-space:nowrap}
+/* desk.css:end */
+</style>
+</head>
+<body>
+<header class="appbar">
+  <div class="appbar-in">
+    <a class="brand" href="./" aria-label="YourSoccer, back to the matches">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#14151b"/>
+        <circle cx="16" cy="16" r="10" fill="#e04a4a"/>
+        <path d="M16 12.2l3.6 2.6-1.4 4.2h-4.4l-1.4-4.2z" fill="#14151b"/>
+        <path d="M16 12.2V7.6M19.6 14.8l4.2-1.6M18.2 19l2.6 3.6M13.8 19l-2.6 3.6M12.4 14.8l-4.2-1.6" stroke="#14151b" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <span><span class="brand-name">Your<span>Soccer</span></span><span class="brand-sub" id="stamp">Pick Desk</span></span>
+    </a>
+    <span class="spacer"></span>
+    <nav class="switch" id="sport-switch" aria-label="Sport"><a href="../../app/">MMA</a><a href="../../nfl/app/">NFL</a><span aria-current="page">Soccer</span></nav>
+    <button class="iconbtn" id="menu-btn" type="button" aria-label="Menu and settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="view" id="view-matches"><div class="loading">Loading the matches…</div></section>
+  <section class="view" id="view-tables" hidden><div class="loading">Loading…</div></section>
+  <section class="view" id="view-record" hidden><div class="loading">Loading…</div></section>
+  <section class="view" id="view-method" hidden></section>
+</main>
+
+<nav class="tabbar" aria-label="Sections">
+  <div class="tabbar-in" role="tablist">
+    <button role="tab" id="tab-matches" aria-selected="true" aria-controls="view-matches"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8.2l3.3 2.4-1.3 3.9H10l-1.3-3.9z"/><path d="M12 8.2V3.6M15.3 10.6l4.3-1.4M14 14.5l2.7 3.7M10 14.5l-2.7 3.7M8.7 10.6L4.4 9.2"/></svg></span>Matches</button>
+    <button role="tab" id="tab-tables" aria-selected="false" aria-controls="view-tables"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>Tables</button>
+    <button role="tab" id="tab-record" aria-selected="false" aria-controls="view-record"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Record</button>
+    <button role="tab" id="tab-method" aria-selected="false" aria-controls="view-method"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></span>Method</button>
+  </div>
+</nav>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

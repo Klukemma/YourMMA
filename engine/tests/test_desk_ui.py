@@ -1,4 +1,4 @@
-"""The two apps are one family: one stylesheet, one app chrome, each copy
+"""The apps are one family: one stylesheet, one app chrome, each copy
 identical to its source in shared/, and an install path a phone can find.
 
 The NFL app installed fine on paper and still read as "only works on the web"
@@ -13,13 +13,13 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-APPS = {"mma": ROOT / "app", "nfl": ROOT / "nfl" / "app"}
+APPS = {"mma": ROOT / "app", "nfl": ROOT / "nfl" / "app", "soccer": ROOT / "soccer" / "app"}
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import sync_desk  # noqa: E402
 
 
-def test_both_apps_carry_the_shared_design_unchanged():
+def test_every_app_carries_the_shared_design_unchanged():
     """Edit shared/desk.css or desk.js and run scripts/sync_desk.py."""
     assert sync_desk.drift() == []
     out = subprocess.run([sys.executable, str(ROOT / "scripts" / "sync_desk.py"), "--check"],
@@ -44,7 +44,7 @@ def test_the_shared_script_has_no_module_syntax():
     assert not re.search(r"^\s*(import|export)\s", js, flags=re.M)
 
 
-def test_both_apps_offer_install_and_explain_it_on_an_iphone():
+def test_every_app_offers_install_and_explains_it_on_an_iphone():
     js = (ROOT / "shared" / "desk.js").read_text()
     assert "beforeinstallprompt" in js and "e.prompt()" in js
     assert "Add to Home Screen" in js            # Safari never fires the event
@@ -55,14 +55,17 @@ def test_both_apps_offer_install_and_explain_it_on_an_iphone():
         assert 'id="menu-btn"' in (app / "index.html").read_text()
 
 
-def test_the_sport_switch_links_each_app_to_the_other():
+def test_the_sport_switch_links_each_app_to_the_others_in_one_order():
+    orders = []
     for name, app in APPS.items():
         html = (app / "index.html").read_text()
-        hrefs = re.findall(r'<nav class="switch"[^>]*>.*?</nav>', html, flags=re.S)[0]
-        (link,) = re.findall(r'href="([^"]+)"', hrefs)
-        target = (app / link / "index.html").resolve()
-        other = APPS["nfl" if name == "mma" else "mma"] / "index.html"
-        assert target == other.resolve(), (name, link)
+        nav = re.findall(r'<nav class="switch"[^>]*>.*?</nav>', html, flags=re.S)[0]
+        links = re.findall(r'href="([^"]+)"', nav)
+        targets = {(app / link / "index.html").resolve() for link in links}
+        others = {(a / "index.html").resolve() for n, a in APPS.items() if n != name}
+        assert targets == others, (name, links)
+        orders.append(re.findall(r'>(MMA|NFL|Soccer)<', nav))
+    assert all(o == ["MMA", "NFL", "Soccer"] for o in orders), orders
 
 
 def test_the_mma_search_does_not_rely_on_a_datalist():
@@ -82,11 +85,11 @@ def test_the_tab_bars_have_the_same_shape():
     assert len(set(shapes)) == 1
 
 
-def test_both_scripts_parse_as_the_phone_runs_them():
+def test_every_script_parses_as_the_phone_runs_them():
     """`node --check` let a duplicate top-level declaration through; a
     browser does not, and one SyntaxError blanks every tab. Parse each script
     the way it really runs: the MMA one with its import removed, as the
-    standalone builder does, the NFL one as it is."""
+    standalone builder does, the others as they are."""
     import shutil
     import pytest
     if shutil.which("node") is None:
