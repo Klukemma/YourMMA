@@ -9,6 +9,8 @@ name: Soccer predictions
 #             market, log the picks before kickoff, grade the finished ones,
 #             rebuild soccer/app/data and the standalone page, commit
 #   sync      football-data.co.uk snapshot only (every season with full=true)
+#   probe     save what the free fixture feeds return (probe_feeds.py) as
+#             test fixtures - the sandbox cannot reach them
 #
 # On a schedule it runs predict through the season (August to May).
 # football-data.co.uk posts the weekend's fixtures with prices on Friday
@@ -25,9 +27,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "predict = this week's picks; sync = data only"
+        description: "predict = this week's picks; sync = data only; probe = save the fixture feeds as test fixtures"
         type: choice
-        options: [predict, sync]
+        options: [predict, sync, probe]
         default: predict
       full:
         description: "sync only: rebuild every season since 2005-06, not just this one"
@@ -84,6 +86,8 @@ jobs:
           MODE="${{ inputs.mode || 'predict' }}"
           if [ "$MODE" = "sync" ]; then
             python soccer/engine/soccer_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee soccer.log
+          elif [ "$MODE" = "probe" ]; then
+            python soccer/engine/probe_feeds.py 2>&1 | tee soccer.log
           else
             python soccer/engine/soccer_predict.py 2>&1 | tee soccer.log
           fi
@@ -97,7 +101,7 @@ jobs:
 
       - name: Commit
         run: |
-          PATHS="soccer/data/ soccer/app/data/ soccer/app/yoursoccer.html"
+          PATHS="soccer/data/ soccer/app/data/ soccer/app/yoursoccer.html soccer/engine/tests/fixtures/feeds/"
           if [ -z "$(git status --porcelain -- $PATHS)" ]; then
             echo "Nothing changed."
             exit 0

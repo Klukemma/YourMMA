@@ -24,7 +24,7 @@ def test_tests_gate_the_code_and_snapshot_health_never_gates_a_run():
 
 def test_the_picks_and_the_app_are_committed():
     soccer = (WF / "soccer.yml").read_text()
-    assert 'PATHS="soccer/data/ soccer/app/data/ soccer/app/yoursoccer.html"' in soccer
+    assert 'PATHS="soccer/data/ soccer/app/data/ soccer/app/yoursoccer.html soccer/engine/tests/fixtures/feeds/"' in soccer
     assert "python soccer/engine/soccer_predict.py" in soccer
 
 
