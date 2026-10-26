@@ -36,7 +36,8 @@ def test_grading_marks_the_result_and_the_over_under_once():
     assert p["final"] == {"home": 2, "away": 2, "result": "D"} and p["correct"] is False
     assert p["o25_correct"] is True                  # four goals, over 2.5 was called at 55%
     assert sl.grade(log, results) == 0               # never twice
-    assert sl.record(log) == {"settled": 1, "correct": 0, "ou_settled": 1, "ou_correct": 1, "pending": 1}
+    assert sl.record(log) == {"settled": 1, "correct": 0, "ou_settled": 1, "ou_correct": 1, "pending": 1,
+                              "provisional": 0, "corrected": 0}
 
 
 def test_the_log_round_trips_without_nan(tmp_path):
