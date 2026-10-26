@@ -554,9 +554,18 @@ def _fit_delta(p, res, w):
     return float(minimize_scalar(nll, bounds=(-0.5, 0.5), method="bounded").x)
 
 
-def calibrate(matches, feats, **params):
+SCORE_PARAMS = ["lam", "nu", "rho", "delta"]
+
+
+def calibrate(matches, feats, *, score_params=False, **params):
     """Walk-forward: Poisson regressions + draw terms refitted every
-    refit_days on earlier top-tier matches; probabilities for the top tiers."""
+    refit_days on earlier top-tier matches; probabilities for the top tiers.
+
+    With score_params=True the frame also carries each match's lam and nu
+    (expected home and away goals, as clipped and used), the block's
+    Dixon-Coles rho and draw delta - the whole score matrix, for
+    experiments/score_markets.py. p_h, p_d, p_a and p_o25 are the same
+    either way."""
     P = {**DEFAULTS, **params}
     m = matches
     top = m["league"].isin(sd.TOP).to_numpy()
@@ -576,10 +585,18 @@ def calibrate(matches, feats, **params):
     first = max(P["first_season"], int(np.nanmin(seas)) + 1) if len(seas) else P["first_season"]
     target = top & (seas >= first)
     out = np.full((len(m), 4), np.nan)
+    par = np.full((len(m), len(SCORE_PARAMS)), np.nan)
     tdays = np.unique(day[target])
     fits = {}
+
+    def frame():
+        preds = pd.DataFrame(out, index=m.index, columns=["p_h", "p_d", "p_a", "p_o25"])
+        if score_params:
+            for j, name in enumerate(SCORE_PARAMS):
+                preds[name] = par[:, j]
+        return preds
     if len(tdays) == 0:
-        return pd.DataFrame(out, index=m.index, columns=["p_h", "p_d", "p_a", "p_o25"])
+        return frame()
     start = tdays[0]
     while start <= tdays[-1]:
         end = start + P["refit_days"]
@@ -607,19 +624,20 @@ def calibrate(matches, feats, **params):
             p3 = _inflate(np.column_stack([p_h, p_d, p_a]), delta)
             out[block, :3] = p3
             out[block, 3] = p_o
+            par[block] = np.column_stack([lam, nu, np.full(len(lam), rho), np.full(len(lam), delta)])
             fits[int(start)] = dict(bh=bh, ba=ba, rho=rho, delta=delta, n=int(train.sum()))
         nxt = tdays[tdays >= end]
         if len(nxt) == 0:
             break
         start = nxt[0]
-    preds = pd.DataFrame(out, index=m.index, columns=["p_h", "p_d", "p_a", "p_o25"])
+    preds = frame()
     preds.attrs["fits"] = fits
     return preds
 
 
-def predict_walk_forward(matches, **params):
+def predict_walk_forward(matches, *, score_params=False, **params):
     feats = rate(matches, **params)
-    preds = calibrate(matches, feats, **params)
+    preds = calibrate(matches, feats, score_params=score_params, **params)
     preds.attrs["steps"] = feats.attrs.get("steps")
     preds.attrs["ratings"] = feats.attrs.get("ratings")
     return preds
