@@ -259,9 +259,13 @@ jobs:
             # Then grade every logged pick the new results settle, so the
             # app's record moves with the data rather than waiting for
             # someone to run this by hand. prediction_history.json is under
-            # engine/data/, so the commit below carries it.
+            # engine/data/, so the commit below carries it. The step sends
+            # PREDICTIONS_LOG to scratch for experiments; grading must read
+            # and write the real log, so it is unset here as predict does -
+            # without that the first scheduled grade looked for the scratch
+            # file and failed the whole sync.
             if [ "${{ inputs.dry_run }}" != "true" ]; then
-              python engine/grade.py --write 2>&1 | tee -a sync.log
+              env -u PREDICTIONS_LOG python engine/grade.py --write 2>&1 | tee -a sync.log
             fi
           fi
 

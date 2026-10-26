@@ -222,3 +222,6 @@ def test_a_sync_grades_the_picks_its_results_settle():
     block = sync[:sync.index("Verify the dataset")]
     assert block.index("sync_wiki.py sync") < block.index("python engine/grade.py --write")
     assert 'inputs.dry_run }}" != "true"' in block
+    # The step points PREDICTIONS_LOG at an experiments' scratch file; the
+    # grade must read the real log (the first scheduled run failed on it).
+    assert "env -u PREDICTIONS_LOG python engine/grade.py --write" in block
