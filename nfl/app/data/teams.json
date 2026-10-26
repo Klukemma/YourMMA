@@ -1,69 +1,81 @@
 {
- "as_of": "2026-10-25T18:35:35Z",
+ "as_of": "2026-10-26T12:55:40Z",
  "elo_scale": {
   "hfa": 48.0,
   "points_per_elo": 0.04
  },
- "generated": "2026-10-25T18:36:53Z",
+ "generated": "2026-10-26T12:56:56Z",
  "schema": 1,
  "season": 2026,
  "teams": [
   {
    "conference": "NFC",
-   "def_epa": -0.006318,
+   "def_epa": -0.112423,
    "division": "NFC West",
-   "elo": 1659.494924,
+   "elo": 1670.887615,
    "key_players": {
     "defense": [
      {
-      "line": "3 INT, 5 PD",
-      "name": "Renardo Green",
-      "position": "CB",
+      "line": "3 sacks, 1 INT, 3 PD",
+      "name": "Ernest Jones",
+      "position": "LB",
       "rank": 1,
-      "value": 5.5
+      "value": 6.25
      },
      {
-      "line": "0.5 sacks, 3 FF, 3 PD",
-      "name": "Fred Warner",
-      "position": "MLB",
+      "line": "2 INT, 6 PD, 2 TFL",
+      "name": "Julian Love",
+      "position": "SAF",
       "rank": 2,
-      "value": 5.25
+      "value": 5.5
      }
     ],
     "offense": [
      {
-      "line": "1,460 pass yds, 14 TD, 2 INT, 156 rush yds",
-      "name": "Brock Purdy",
-      "position": "QB",
-      "rank": 1,
-      "value": 73.648555
-     },
-     {
-      "line": "27 rec, 420 yds, 3 TD",
-      "name": "Mike Evans",
+      "line": "58 rec, 867 yds, 8 TD",
+      "name": "Jaxon Smith-Njigba",
       "position": "WR",
-      "rank": 2,
-      "value": 40.915626
+      "rank": 1,
+      "value": 61.188306
      },
      {
-      "line": "26 rec, 337 yds, 5 TD",
-      "name": "George Kittle",
-      "position": "TE",
+      "line": "422 pass yds, 4 TD, 0 INT",
+      "name": "Drew Lock",
+      "position": "QB",
+      "rank": 2,
+      "value": 24.267821
+     },
+     {
+      "line": "18 rec, 199 yds, 1 TD",
+      "name": "Cooper Kupp",
+      "position": "WR",
       "rank": 3,
-      "value": 13.402317
+      "value": 9.428633
      }
     ]
    },
    "last5": [
     {
-     "code": "6",
-     "date": "2026-10-19",
+     "code": "17",
+     "date": "2026-10-25",
      "game_type": "REG",
      "home": true,
      "neutral": false,
-     "opponent": "WAS",
+     "opponent": "KC",
      "result": "W",
-     "score": "23-17",
+     "score": "20-3",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "3",
+     "date": "2026-10-15",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "DEN",
+     "result": "L",
+     "score": "14-17",
      "season": 2026,
      "week": 6
     },
@@ -71,66 +83,54 @@
      "code": "3",
      "date": "2026-10-11",
      "game_type": "REG",
-     "home": false,
+     "home": true,
      "neutral": false,
-     "opponent": "SEA",
-     "result": "W",
-     "score": "32-29",
+     "opponent": "SF",
+     "result": "L",
+     "score": "29-32",
      "season": 2026,
      "week": 5
     },
     {
-     "code": "10",
+     "code": "7",
      "date": "2026-10-04",
      "game_type": "REG",
      "home": true,
      "neutral": false,
-     "opponent": "DEN",
+     "opponent": "LAC",
      "result": "W",
-     "score": "24-14",
+     "score": "30-23",
      "season": 2026,
      "week": 4
     },
     {
-     "code": "6",
+     "code": "2",
      "date": "2026-09-27",
      "game_type": "REG",
-     "home": true,
+     "home": false,
      "neutral": false,
-     "opponent": "ARI",
-     "result": "W",
-     "score": "36-30",
+     "opponent": "WAS",
+     "result": "L",
+     "score": "31-33",
      "season": 2026,
      "week": 3
-    },
-    {
-     "code": "22",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "MIA",
-     "result": "W",
-     "score": "35-13",
-     "season": 2026,
-     "week": 2
     }
    ],
-   "name": "San Francisco 49ers",
-   "net_epa": 0.116702,
-   "off_epa": 0.110384,
-   "points_against": 21.060816,
-   "points_for": 25.790116,
-   "qb": "Brock Purdy",
-   "qb_rating": 0.184181,
-   "qb_starts": 59,
+   "name": "Seattle Seahawks",
+   "net_epa": 0.097449,
+   "off_epa": -0.014974,
+   "points_against": 17.955802,
+   "points_for": 24.500593,
+   "qb": "Sam Darnold",
+   "qb_rating": 0.011428,
+   "qb_starts": 97,
    "rank": 1,
    "record": {
-    "losses": 0,
+    "losses": 3,
     "ties": 0,
-    "wins": 6
+    "wins": 4
    },
-   "team": "SF"
+   "team": "SEA"
   },
   {
    "conference": "AFC",
@@ -258,164 +258,40 @@
   },
   {
    "conference": "NFC",
-   "def_epa": -0.113261,
-   "division": "NFC West",
-   "elo": 1652.338986,
-   "key_players": {
-    "defense": [
-     {
-      "line": "3 sacks, 1 INT, 3 PD",
-      "name": "Ernest Jones",
-      "position": "LB",
-      "rank": 1,
-      "value": 6.25
-     },
-     {
-      "line": "2 INT, 6 PD, 2 TFL",
-      "name": "Julian Love",
-      "position": "SAF",
-      "rank": 2,
-      "value": 5.5
-     }
-    ],
-    "offense": [
-     {
-      "line": "49 rec, 717 yds, 7 TD",
-      "name": "Jaxon Smith-Njigba",
-      "position": "WR",
-      "rank": 1,
-      "value": 48.157334
-     },
-     {
-      "line": "422 pass yds, 4 TD, 0 INT",
-      "name": "Drew Lock",
-      "position": "QB",
-      "rank": 2,
-      "value": 24.267821
-     },
-     {
-      "line": "16 rec, 179 yds, 1 TD",
-      "name": "Cooper Kupp",
-      "position": "WR",
-      "rank": 3,
-      "value": 6.702278
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "3",
-     "date": "2026-10-15",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "DEN",
-     "result": "L",
-     "score": "14-17",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "3",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "SF",
-     "result": "L",
-     "score": "29-32",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "7",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "LAC",
-     "result": "W",
-     "score": "30-23",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "2",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "WAS",
-     "result": "L",
-     "score": "31-33",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "24",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "ARI",
-     "result": "W",
-     "score": "31-7",
-     "season": 2026,
-     "week": 2
-    }
-   ],
-   "name": "Seattle Seahawks",
-   "net_epa": 0.079287,
-   "off_epa": -0.033975,
-   "points_against": 19.617557,
-   "points_for": 25.000659,
-   "qb": "Drew Lock",
-   "qb_rating": -0.018133,
-   "qb_starts": 30,
-   "rank": 3,
-   "record": {
-    "losses": 3,
-    "ties": 0,
-    "wins": 3
-   },
-   "team": "SEA"
-  },
-  {
-   "conference": "NFC",
-   "def_epa": -0.143009,
+   "def_epa": -0.139918,
    "division": "NFC North",
-   "elo": 1629.832257,
+   "elo": 1636.441721,
    "key_players": {
     "defense": [
      {
-      "line": "5.5 sacks, 2 FF, 3 TFL",
+      "line": "6 sacks, 2 FF, 4 TFL",
       "name": "Dallas Turner",
       "position": "LB",
       "rank": 1,
-      "value": 8.25
+      "value": 9.0
      },
      {
-      "line": "4 sacks, 1 INT, 1 FF",
-      "name": "Andrew Van Ginkel",
-      "position": "OLB",
+      "line": "4.5 sacks, 5 PD, 6 TFL",
+      "name": "Blake Cashman",
+      "position": "LB",
       "rank": 2,
-      "value": 7.5
+      "value": 8.5
      }
     ],
     "offense": [
      {
-      "line": "19 rec, 258 yds, 3 TD",
+      "line": "23 rec, 302 yds, 3 TD",
       "name": "Justin Jefferson",
       "position": "WR",
       "rank": 1,
-      "value": 19.472258
+      "value": 20.589927
      },
      {
-      "line": "23 rec, 202 yds, 1 TD",
+      "line": "27 rec, 237 yds, 2 TD",
       "name": "T.J. Hockenson",
       "position": "TE",
       "rank": 2,
-      "value": 17.084726
+      "value": 18.484625
      },
      {
       "line": "276 pass yds, 3 TD, 0 INT",
@@ -427,6 +303,18 @@
     ]
    },
    "last5": [
+    {
+     "code": "6",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "IND",
+     "result": "W",
+     "score": "16-10",
+     "season": 2026,
+     "week": 7
+    },
     {
      "code": "10",
      "date": "2026-10-11",
@@ -474,41 +362,29 @@
      "score": "9-3",
      "season": 2026,
      "week": 2
-    },
-    {
-     "code": "17",
-     "date": "2026-09-13",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "GB",
-     "result": "W",
-     "score": "39-22",
-     "season": 2026,
-     "week": 1
     }
    ],
    "name": "Minnesota Vikings",
-   "net_epa": 0.065589,
-   "off_epa": -0.07742,
-   "points_against": 16.451097,
-   "points_for": 20.780362,
+   "net_epa": 0.0579,
+   "off_epa": -0.082018,
+   "points_against": 15.805987,
+   "points_for": 20.302326,
    "qb": "Kyler Murray",
-   "qb_rating": 0.008595,
-   "qb_starts": 91,
-   "rank": 4,
+   "qb_rating": 0.010839,
+   "qb_starts": 92,
+   "rank": 3,
    "record": {
     "losses": 0,
     "ties": 0,
-    "wins": 5
+    "wins": 6
    },
    "team": "MIN"
   },
   {
    "conference": "AFC",
-   "def_epa": -0.049634,
+   "def_epa": -0.05597,
    "division": "AFC West",
-   "elo": 1613.255478,
+   "elo": 1626.83656,
    "key_players": {
     "defense": [
      {
@@ -551,6 +427,18 @@
     ]
    },
    "last5": [
+    {
+     "code": "14",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "ARI",
+     "result": "W",
+     "score": "30-16",
+     "season": 2026,
+     "week": 7
+    },
     {
      "code": "3",
      "date": "2026-10-15",
@@ -598,35 +486,147 @@
      "score": "30-26",
      "season": 2026,
      "week": 3
-    },
-    {
-     "code": "7",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "JAX",
-     "result": "W",
-     "score": "20-13",
-     "season": 2026,
-     "week": 2
     }
    ],
    "name": "Denver Broncos",
-   "net_epa": -0.000384,
-   "off_epa": -0.050018,
-   "points_against": 19.87745,
-   "points_for": 20.622441,
+   "net_epa": 0.030424,
+   "off_epa": -0.025546,
+   "points_against": 19.489705,
+   "points_for": 21.560197,
    "qb": "Bo Nix",
-   "qb_rating": -0.000694,
-   "qb_starts": 42,
-   "rank": 5,
+   "qb_rating": 0.013619,
+   "qb_starts": 43,
+   "rank": 4,
    "record": {
     "losses": 2,
     "ties": 0,
-    "wins": 4
+    "wins": 5
    },
    "team": "DEN"
+  },
+  {
+   "conference": "NFC",
+   "def_epa": -0.00103,
+   "division": "NFC West",
+   "elo": 1624.153706,
+   "key_players": {
+    "defense": [
+     {
+      "line": "0.5 sacks, 3 FF, 3 PD",
+      "name": "Fred Warner",
+      "position": "MLB",
+      "rank": 1,
+      "value": 5.75
+     },
+     {
+      "line": "3 INT, 5 PD",
+      "name": "Renardo Green",
+      "position": "CB",
+      "rank": 2,
+      "value": 5.5
+     }
+    ],
+    "offense": [
+     {
+      "line": "1,748 pass yds, 15 TD, 4 INT, 161 rush yds",
+      "name": "Brock Purdy",
+      "position": "QB",
+      "rank": 1,
+      "value": 77.60529
+     },
+     {
+      "line": "27 rec, 420 yds, 3 TD",
+      "name": "Mike Evans",
+      "position": "WR",
+      "rank": 2,
+      "value": 40.915626
+     },
+     {
+      "line": "34 rec, 425 yds, 5 TD",
+      "name": "George Kittle",
+      "position": "TE",
+      "rank": 3,
+      "value": 16.053065
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "9",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "ATL",
+     "result": "L",
+     "score": "20-29",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "6",
+     "date": "2026-10-19",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "WAS",
+     "result": "W",
+     "score": "23-17",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "3",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "SEA",
+     "result": "W",
+     "score": "32-29",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "10",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "DEN",
+     "result": "W",
+     "score": "24-14",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "6",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "ARI",
+     "result": "W",
+     "score": "36-30",
+     "season": 2026,
+     "week": 3
+    }
+   ],
+   "name": "San Francisco 49ers",
+   "net_epa": 0.107451,
+   "off_epa": 0.106422,
+   "points_against": 21.854734,
+   "points_for": 25.211104,
+   "qb": "Brock Purdy",
+   "qb_rating": 0.17309,
+   "qb_starts": 60,
+   "rank": 5,
+   "record": {
+    "losses": 1,
+    "ties": 0,
+    "wins": 6
+   },
+   "team": "SF"
   },
   {
    "conference": "AFC",
@@ -877,130 +877,6 @@
    "team": "NE"
   },
   {
-   "conference": "AFC",
-   "def_epa": -0.063432,
-   "division": "AFC West",
-   "elo": 1583.493475,
-   "key_players": {
-    "defense": [
-     {
-      "line": "1 sack, 1 INT, 4 PD",
-      "name": "George Karlaftis",
-      "position": "DE",
-      "rank": 1,
-      "value": 5.0
-     },
-     {
-      "line": "1 sack, 6 PD, 3 TFL",
-      "name": "Nohl Williams",
-      "position": "CB",
-      "rank": 2,
-      "value": 4.75
-     }
-    ],
-    "offense": [
-     {
-      "line": "1,309 pass yds, 9 TD, 3 INT",
-      "name": "Patrick Mahomes",
-      "position": "QB",
-      "rank": 1,
-      "value": 28.520959
-     },
-     {
-      "line": "20 rec, 299 yds, 2 TD",
-      "name": "Travis Kelce",
-      "position": "TE",
-      "rank": 2,
-      "value": 19.575584
-     },
-     {
-      "line": "11 rec, 219 yds, 2 TD",
-      "name": "Tyquan Thornton",
-      "position": "WR",
-      "rank": 3,
-      "value": 19.036908
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "16",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "LAC",
-     "result": "W",
-     "score": "22-6",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "3",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "LV",
-     "result": "W",
-     "score": "30-27",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "14",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "MIA",
-     "result": "W",
-     "score": "24-10",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "3",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "IND",
-     "result": "W",
-     "score": "33-30",
-     "season": 2026,
-     "week": 2
-    },
-    {
-     "code": "21",
-     "date": "2026-09-14",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "DEN",
-     "result": "W",
-     "score": "31-10",
-     "season": 2026,
-     "week": 1
-    }
-   ],
-   "name": "Kansas City Chiefs",
-   "net_epa": 0.096503,
-   "off_epa": 0.033071,
-   "points_against": 18.674718,
-   "points_for": 23.018328,
-   "qb": "Patrick Mahomes",
-   "qb_rating": 0.104066,
-   "qb_starts": 152,
-   "rank": 8,
-   "record": {
-    "losses": 0,
-    "ties": 0,
-    "wins": 5
-   },
-   "team": "KC"
-  },
-  {
    "conference": "NFC",
    "def_epa": 0.004965,
    "division": "NFC North",
@@ -1116,7 +992,7 @@
    "qb": "Caleb Williams",
    "qb_rating": 0.086112,
    "qb_starts": 40,
-   "rank": 9,
+   "rank": 8,
    "record": {
     "losses": 2,
     "ties": 0,
@@ -1126,51 +1002,63 @@
   },
   {
    "conference": "NFC",
-   "def_epa": -0.013954,
+   "def_epa": -0.029326,
    "division": "NFC West",
-   "elo": 1559.290022,
+   "elo": 1578.674648,
    "key_players": {
     "defense": [
      {
-      "line": "2 INT, 1 FF, 8 PD",
+      "line": "2 INT, 1 FF, 9 PD",
       "name": "Quentin Lake",
       "position": "SAF",
       "rank": 1,
-      "value": 7.0
+      "value": 7.5
      },
      {
-      "line": "3.5 sacks, 1 FF, 5 TFL",
+      "line": "4.5 sacks, 1 FF, 5 TFL",
       "name": "Byron Young",
       "position": "LB",
       "rank": 2,
-      "value": 5.75
+      "value": 6.75
      }
     ],
     "offense": [
      {
+      "line": "1,989 pass yds, 14 TD, 7 INT",
+      "name": "Matthew Stafford",
+      "position": "QB",
+      "rank": 1,
+      "value": 22.897186
+     },
+     {
       "line": "30 rec, 480 yds, 4 TD",
       "name": "Davante Adams",
       "position": "WR",
-      "rank": 1,
+      "rank": 2,
       "value": 22.102927
      },
      {
-      "line": "1,794 pass yds, 11 TD, 6 INT",
-      "name": "Matthew Stafford",
-      "position": "QB",
-      "rank": 2,
-      "value": 21.134193
-     },
-     {
-      "line": "37 rec, 417 yds, 2 TD",
-      "name": "Puka Nacua",
-      "position": "WR",
+      "line": "316 rush yds, 99 rec yds, 3 TD",
+      "name": "Blake Corum",
+      "position": "RB",
       "rank": 3,
-      "value": 7.254096
+      "value": 13.290994
      }
     ]
    },
    "last5": [
+    {
+     "code": "14",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "LV",
+     "result": "W",
+     "score": "35-21",
+     "season": 2026,
+     "week": 7
+    },
     {
      "code": "2",
      "date": "2026-10-18",
@@ -1218,79 +1106,439 @@
      "score": "26-30",
      "season": 2026,
      "week": 3
-    },
-    {
-     "code": "22",
-     "date": "2026-09-21",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "NYG",
-     "result": "W",
-     "score": "28-6",
-     "season": 2026,
-     "week": 2
     }
    ],
    "name": "Los Angeles Rams",
-   "net_epa": 0.074361,
-   "off_epa": 0.060407,
-   "points_against": 22.804301,
-   "points_for": 24.652316,
+   "net_epa": 0.095235,
+   "off_epa": 0.065909,
+   "points_against": 22.623871,
+   "points_for": 25.687084,
    "qb": "Matthew Stafford",
-   "qb_rating": 0.09342,
-   "qb_starts": 258,
-   "rank": 10,
+   "qb_rating": 0.089511,
+   "qb_starts": 259,
+   "rank": 9,
    "record": {
     "losses": 4,
     "ties": 0,
-    "wins": 2
+    "wins": 3
    },
    "team": "LA"
   },
   {
    "conference": "AFC",
-   "def_epa": -0.013934,
+   "def_epa": 0.014459,
+   "division": "AFC North",
+   "elo": 1565.49125,
+   "key_players": {
+    "defense": [
+     {
+      "line": "4.5 sacks, 1 FF, 1 PD",
+      "name": "Boye Mafe",
+      "position": "DE",
+      "rank": 1,
+      "value": 7.5
+     },
+     {
+      "line": "4 sacks, 1 PD, 7 TFL",
+      "name": "Dexter Lawrence",
+      "position": "DT",
+      "rank": 2,
+      "value": 6.25
+     }
+    ],
+    "offense": [
+     {
+      "line": "1,653 pass yds, 15 TD, 3 INT",
+      "name": "Joe Burrow",
+      "position": "QB",
+      "rank": 1,
+      "value": 53.532637
+     },
+     {
+      "line": "33 rec, 571 yds, 2 TD",
+      "name": "Tee Higgins",
+      "position": "WR",
+      "rank": 2,
+      "value": 36.992019
+     },
+     {
+      "line": "32 rec, 351 yds, 5 TD",
+      "name": "Ja'Marr Chase",
+      "position": "WR",
+      "rank": 3,
+      "value": 23.858861
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "22",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "BAL",
+     "result": "W",
+     "score": "35-13",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "7",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "MIA",
+     "result": "W",
+     "score": "31-24",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "5",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "JAX",
+     "result": "L",
+     "score": "17-22",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "3",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "PIT",
+     "result": "L",
+     "score": "27-30",
+     "season": 2026,
+     "week": 3
+    },
+    {
+     "code": "14",
+     "date": "2026-09-20",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "HOU",
+     "result": "W",
+     "score": "20-6",
+     "season": 2026,
+     "week": 2
+    }
+   ],
+   "name": "Cincinnati Bengals",
+   "net_epa": 0.067215,
+   "off_epa": 0.081674,
+   "points_against": 22.19524,
+   "points_for": 25.515361,
+   "qb": "Joe Burrow",
+   "qb_rating": 0.133589,
+   "qb_starts": 90,
+   "rank": 10,
+   "record": {
+    "losses": 2,
+    "ties": 0,
+    "wins": 4
+   },
+   "team": "CIN"
+  },
+  {
+   "conference": "AFC",
+   "def_epa": -0.041485,
+   "division": "AFC West",
+   "elo": 1564.944847,
+   "key_players": {
+    "defense": [
+     {
+      "line": "1 sack, 1 INT, 7 PD",
+      "name": "Nohl Williams",
+      "position": "CB",
+      "rank": 1,
+      "value": 6.5
+     },
+     {
+      "line": "1 sack, 1 INT, 5 PD",
+      "name": "George Karlaftis",
+      "position": "DE",
+      "rank": 2,
+      "value": 5.75
+     }
+    ],
+    "offense": [
+     {
+      "line": "1,474 pass yds, 9 TD, 4 INT",
+      "name": "Patrick Mahomes",
+      "position": "QB",
+      "rank": 1,
+      "value": 24.358583
+     },
+     {
+      "line": "24 rec, 343 yds, 2 TD",
+      "name": "Travis Kelce",
+      "position": "TE",
+      "rank": 2,
+      "value": 19.430574
+     },
+     {
+      "line": "11 rec, 219 yds, 2 TD",
+      "name": "Tyquan Thornton",
+      "position": "WR",
+      "rank": 3,
+      "value": 19.036908
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "17",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "SEA",
+     "result": "L",
+     "score": "3-20",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "16",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "LAC",
+     "result": "W",
+     "score": "22-6",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "3",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "LV",
+     "result": "W",
+     "score": "30-27",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "14",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "MIA",
+     "result": "W",
+     "score": "24-10",
+     "season": 2026,
+     "week": 3
+    },
+    {
+     "code": "3",
+     "date": "2026-09-20",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "IND",
+     "result": "W",
+     "score": "33-30",
+     "season": 2026,
+     "week": 2
+    }
+   ],
+   "name": "Kansas City Chiefs",
+   "net_epa": 0.060762,
+   "off_epa": 0.019277,
+   "points_against": 18.807246,
+   "points_for": 21.016495,
+   "qb": "Patrick Mahomes",
+   "qb_rating": 0.088597,
+   "qb_starts": 153,
+   "rank": 11,
+   "record": {
+    "losses": 1,
+    "ties": 0,
+    "wins": 5
+   },
+   "team": "KC"
+  },
+  {
+   "conference": "NFC",
+   "def_epa": 0.058036,
+   "division": "NFC North",
+   "elo": 1564.782755,
+   "key_players": {
+    "defense": [
+     {
+      "line": "5 sacks, 1 FF, 1 PD",
+      "name": "Aidan Hutchinson",
+      "position": "DE",
+      "rank": 1,
+      "value": 7.5
+     },
+     {
+      "line": "5 sacks, 1 PD, 4 TFL",
+      "name": "D.J. Wonnum",
+      "position": "DE",
+      "rank": 2,
+      "value": 6.5
+     }
+    ],
+    "offense": [
+     {
+      "line": "1,788 pass yds, 14 TD, 0 INT",
+      "name": "Jared Goff",
+      "position": "QB",
+      "rank": 1,
+      "value": 62.446836
+     },
+     {
+      "line": "28 rec, 334 yds, 3 TD",
+      "name": "Sam LaPorta",
+      "position": "TE",
+      "rank": 2,
+      "value": 33.044429
+     },
+     {
+      "line": "23 rec, 367 yds, 4 TD",
+      "name": "Jameson Williams",
+      "position": "WR",
+      "rank": 3,
+      "value": 22.905013
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "3",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "GB",
+     "result": "W",
+     "score": "20-17",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "24",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "ARI",
+     "result": "W",
+     "score": "45-21",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "6",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "CAR",
+     "result": "L",
+     "score": "26-32",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "7",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "NYJ",
+     "result": "W",
+     "score": "31-24",
+     "season": 2026,
+     "week": 3
+    },
+    {
+     "code": "10",
+     "date": "2026-09-17",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "BUF",
+     "result": "L",
+     "score": "31-41",
+     "season": 2026,
+     "week": 2
+    }
+   ],
+   "name": "Detroit Lions",
+   "net_epa": 0.024775,
+   "off_epa": 0.082811,
+   "points_against": 24.698609,
+   "points_for": 27.253883,
+   "qb": "Jared Goff",
+   "qb_rating": 0.14122,
+   "qb_starts": 166,
+   "rank": 12,
+   "record": {
+    "losses": 2,
+    "ties": 0,
+    "wins": 4
+   },
+   "team": "DET"
+  },
+  {
+   "conference": "AFC",
+   "def_epa": -0.006451,
    "division": "AFC North",
    "elo": 1557.544364,
    "key_players": {
     "defense": [
      {
-      "line": "4.5 sacks, 1 INT, 1 FF",
+      "line": "5.5 sacks, 1 INT, 1 FF",
       "name": "T.J. Watt",
       "position": "OLB",
       "rank": 1,
-      "value": 11.0
+      "value": 12.25
      },
      {
-      "line": "1 INT, 2 FF, 8 PD",
+      "line": "1 INT, 3 FF, 8 PD",
       "name": "Jamel Dean",
       "position": "CB",
       "rank": 2,
-      "value": 7.0
+      "value": 8.0
      }
     ],
     "offense": [
      {
-      "line": "21 rec, 180 yds, 4 TD",
+      "line": "561 rush yds, 294 rec yds, 2 TD",
+      "name": "Jaylen Warren",
+      "position": "RB",
+      "rank": 1,
+      "value": 11.816565
+     },
+     {
+      "line": "23 rec, 200 yds, 4 TD",
       "name": "Pat Freiermuth",
       "position": "TE",
-      "rank": 1,
-      "value": 9.780125
+      "rank": 2,
+      "value": 10.553431
      },
      {
       "line": "14 rec, 188 yds, 2 TD",
       "name": "Roman Wilson",
       "position": "WR",
-      "rank": 2,
-      "value": 6.347061
-     },
-     {
-      "line": "460 rush yds, 258 rec yds, 2 TD",
-      "name": "Jaylen Warren",
-      "position": "RB",
       "rank": 3,
-      "value": 5.752709
+      "value": 6.347061
      }
     ]
    },
@@ -1357,14 +1605,14 @@
     }
    ],
    "name": "Pittsburgh Steelers",
-   "net_epa": -0.018126,
-   "off_epa": -0.03206,
+   "net_epa": -0.017079,
+   "off_epa": -0.02353,
    "points_against": 20.652021,
    "points_for": 21.604975,
    "qb": "Aaron Rodgers",
-   "qb_rating": -0.067082,
+   "qb_rating": -0.06513,
    "qb_starts": 285,
-   "rank": 11,
+   "rank": 13,
    "record": {
     "losses": 2,
     "ties": 0,
@@ -1373,424 +1621,64 @@
    "team": "PIT"
   },
   {
-   "conference": "AFC",
-   "def_epa": -0.007621,
-   "division": "AFC North",
-   "elo": 1557.231421,
-   "key_players": {
-    "defense": [
-     {
-      "line": "3.5 sacks, 1 FF, 2 PD",
-      "name": "Tavius Robinson",
-      "position": "LB",
-      "rank": 1,
-      "value": 6.25
-     },
-     {
-      "line": "1 INT, 1 FF, 4 PD",
-      "name": "Kyle Hamilton",
-      "position": "SAF",
-      "rank": 2,
-      "value": 5.5
-     }
-    ],
-    "offense": [
-     {
-      "line": "967 pass yds, 6 TD, 1 INT, 144 rush yds",
-      "name": "Lamar Jackson",
-      "position": "QB",
-      "rank": 1,
-      "value": 42.199811
-     },
-     {
-      "line": "32 rec, 471 yds, 2 TD",
-      "name": "Zay Flowers",
-      "position": "WR",
-      "rank": 2,
-      "value": 27.996534
-     },
-     {
-      "line": "16 rec, 233 yds, 1 TD",
-      "name": "Rashod Bateman",
-      "position": "WR",
-      "rank": 3,
-      "value": 15.243812
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "3",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "CLE",
-     "result": "L",
-     "score": "10-13",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "7",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "ATL",
-     "result": "W",
-     "score": "30-23",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "6",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "TEN",
-     "result": "W",
-     "score": "24-18",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "3",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": true,
-     "opponent": "DAL",
-     "result": "W",
-     "score": "34-31",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "7",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "NO",
-     "result": "L",
-     "score": "17-24",
-     "season": 2026,
-     "week": 2
-    }
-   ],
-   "name": "Baltimore Ravens",
-   "net_epa": 0.08017,
-   "off_epa": 0.072549,
-   "points_against": 21.366922,
-   "points_for": 24.140691,
-   "qb": "Tyler Huntley",
-   "qb_rating": -0.011535,
-   "qb_starts": 17,
-   "rank": 12,
-   "record": {
-    "losses": 2,
-    "ties": 0,
-    "wins": 4
-   },
-   "team": "BAL"
-  },
-  {
    "conference": "NFC",
-   "def_epa": 0.060379,
+   "def_epa": -0.019739,
    "division": "NFC North",
-   "elo": 1553.811295,
+   "elo": 1525.756677,
    "key_players": {
     "defense": [
      {
-      "line": "5 sacks, 1 PD, 4 TFL",
-      "name": "D.J. Wonnum",
-      "position": "DE",
-      "rank": 1,
-      "value": 6.5
-     },
-     {
-      "line": "3 sacks, 1 INT, 2 PD",
-      "name": "Derrick Barnes",
-      "position": "LB",
-      "rank": 2,
-      "value": 6.0
-     }
-    ],
-    "offense": [
-     {
-      "line": "1,485 pass yds, 12 TD, 0 INT",
-      "name": "Jared Goff",
-      "position": "QB",
-      "rank": 1,
-      "value": 61.360268
-     },
-     {
-      "line": "27 rec, 316 yds, 3 TD",
-      "name": "Sam LaPorta",
-      "position": "TE",
-      "rank": 2,
-      "value": 31.598561
-     },
-     {
-      "line": "18 rec, 276 yds, 2 TD",
-      "name": "Jameson Williams",
-      "position": "WR",
-      "rank": 3,
-      "value": 20.445965
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "24",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "ARI",
-     "result": "W",
-     "score": "45-21",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "6",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "CAR",
-     "result": "L",
-     "score": "26-32",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "7",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "NYJ",
-     "result": "W",
-     "score": "31-24",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "10",
-     "date": "2026-09-17",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "BUF",
-     "result": "L",
-     "score": "31-41",
-     "season": 2026,
-     "week": 2
-    },
-    {
-     "code": "1",
-     "date": "2026-09-13",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "NO",
-     "result": "W",
-     "score": "31-30",
-     "season": 2026,
-     "week": 1
-    }
-   ],
-   "name": "Detroit Lions",
-   "net_epa": 0.042287,
-   "off_epa": 0.102666,
-   "points_against": 25.55401,
-   "points_for": 28.05987,
-   "qb": "Jared Goff",
-   "qb_rating": 0.150468,
-   "qb_starts": 165,
-   "rank": 13,
-   "record": {
-    "losses": 2,
-    "ties": 0,
-    "wins": 3
-   },
-   "team": "DET"
-  },
-  {
-   "conference": "AFC",
-   "def_epa": -0.057963,
-   "division": "AFC South",
-   "elo": 1546.777234,
-   "key_players": {
-    "defense": [
-     {
-      "line": "7.5 sacks, 1 FF, 1 PD",
-      "name": "Will Anderson Jr.",
-      "position": "DE",
-      "rank": 1,
-      "value": 11.5
-     },
-     {
-      "line": "3 sacks, 1 FF, 4 PD",
-      "name": "Danielle Hunter",
-      "position": "DE",
-      "rank": 2,
-      "value": 6.5
-     }
-    ],
-    "offense": [
-     {
-      "line": "1,714 pass yds, 9 TD, 1 INT",
-      "name": "C.J. Stroud",
-      "position": "QB",
-      "rank": 1,
-      "value": 37.255767
-     },
-     {
-      "line": "22 rec, 323 yds, 3 TD",
-      "name": "Nico Collins",
-      "position": "WR",
-      "rank": 2,
-      "value": 25.194949
-     },
-     {
-      "line": "17 rec, 334 yds, 2 TD",
-      "name": "Jaylin Noel",
-      "position": "WR",
-      "rank": 3,
-      "value": 21.661174
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "3",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": false,
-     "neutral": true,
-     "opponent": "JAX",
-     "result": "W",
-     "score": "34-31",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "23",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "TEN",
-     "result": "W",
-     "score": "26-3",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "4",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "DAL",
-     "result": "L",
-     "score": "30-34",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "2",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "IND",
-     "result": "L",
-     "score": "17-19",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "14",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "CIN",
-     "result": "L",
-     "score": "6-20",
-     "season": 2026,
-     "week": 2
-    }
-   ],
-   "name": "Houston Texans",
-   "net_epa": 0.070595,
-   "off_epa": 0.012632,
-   "points_against": 21.378061,
-   "points_for": 23.851717,
-   "qb": "C.J. Stroud",
-   "qb_rating": 0.04835,
-   "qb_starts": 57,
-   "rank": 14,
-   "record": {
-    "losses": 4,
-    "ties": 0,
-    "wins": 2
-   },
-   "team": "HOU"
-  },
-  {
-   "conference": "NFC",
-   "def_epa": -0.011278,
-   "division": "NFC North",
-   "elo": 1536.728137,
-   "key_players": {
-    "defense": [
-     {
-      "line": "3 sacks, 1 INT, 1 PD",
-      "name": "Edgerrin Cooper",
-      "position": "LB",
-      "rank": 1,
-      "value": 6.0
-     },
-     {
-      "line": "1 sack, 2 INT, 5 PD",
+      "line": "1 sack, 2 INT, 6 PD",
       "name": "Evan Williams",
       "position": "SAF",
+      "rank": 1,
+      "value": 6.5
+     },
+     {
+      "line": "1.5 sacks, 1 INT, 6 PD",
+      "name": "Brandon Cisse",
+      "position": "CB",
       "rank": 2,
       "value": 6.0
      }
     ],
     "offense": [
      {
-      "line": "1,684 pass yds, 11 TD, 4 INT",
+      "line": "1,958 pass yds, 13 TD, 5 INT",
       "name": "Jordan Love",
       "position": "QB",
       "rank": 1,
-      "value": 26.815487
+      "value": 33.740446
      },
      {
-      "line": "29 rec, 538 yds, 6 TD",
+      "line": "34 rec, 595 yds, 6 TD",
       "name": "Christian Watson",
       "position": "WR",
       "rank": 2,
-      "value": 24.181512
+      "value": 29.180285
      },
      {
-      "line": "30 rec, 501 yds, 3 TD",
-      "name": "Matthew Golden",
-      "position": "WR",
+      "line": "29 rec, 297 yds, 2 TD",
+      "name": "Tucker Kraft",
+      "position": "TE",
       "rank": 3,
-      "value": 15.343121
+      "value": 16.762048
      }
     ]
    },
    "last5": [
+    {
+     "code": "3",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "DET",
+     "result": "L",
+     "score": "17-20",
+     "season": 2026,
+     "week": 7
+    },
     {
      "code": "10",
      "date": "2026-10-18",
@@ -1838,31 +1726,19 @@
      "score": "14-35",
      "season": 2026,
      "week": 3
-    },
-    {
-     "code": "3",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "NYJ",
-     "result": "W",
-     "score": "20-17",
-     "season": 2026,
-     "week": 2
     }
    ],
    "name": "Green Bay Packers",
-   "net_epa": 0.035436,
-   "off_epa": 0.024158,
-   "points_against": 20.828358,
-   "points_for": 21.645089,
+   "net_epa": 0.045177,
+   "off_epa": 0.025437,
+   "points_against": 20.745522,
+   "points_for": 21.18058,
    "qb": "Jordan Love",
-   "qb_rating": 0.125889,
-   "qb_starts": 58,
-   "rank": 15,
+   "qb_rating": 0.124822,
+   "qb_starts": 59,
+   "rank": 14,
    "record": {
-    "losses": 2,
+    "losses": 3,
     "ties": 0,
     "wins": 4
    },
@@ -1870,72 +1746,96 @@
   },
   {
    "conference": "AFC",
-   "def_epa": 0.026278,
+   "def_epa": 0.02628,
    "division": "AFC North",
-   "elo": 1525.633919,
+   "elo": 1517.37409,
    "key_players": {
     "defense": [
      {
-      "line": "3 sacks, 1 FF, 1 PD",
-      "name": "Boye Mafe",
-      "position": "DE",
+      "line": "3.5 sacks, 1 FF, 2 PD",
+      "name": "Tavius Robinson",
+      "position": "LB",
       "rank": 1,
-      "value": 5.75
+      "value": 6.25
      },
      {
-      "line": "3 sacks, 1 FF, 1 PD",
-      "name": "Jonathan Allen",
-      "position": "DT",
+      "line": "1 INT, 1 FF, 4 PD",
+      "name": "Kyle Hamilton",
+      "position": "SAF",
       "rank": 2,
-      "value": 5.5
+      "value": 5.75
      }
     ],
     "offense": [
      {
-      "line": "1,361 pass yds, 11 TD, 3 INT",
-      "name": "Joe Burrow",
+      "line": "967 pass yds, 6 TD, 1 INT, 144 rush yds",
+      "name": "Lamar Jackson",
       "position": "QB",
       "rank": 1,
-      "value": 34.085005
+      "value": 42.199811
      },
      {
-      "line": "27 rec, 423 yds, 1 TD",
-      "name": "Tee Higgins",
+      "line": "40 rec, 608 yds, 3 TD",
+      "name": "Zay Flowers",
       "position": "WR",
       "rank": 2,
-      "value": 25.056851
+      "value": 33.892303
      },
      {
-      "line": "27 rec, 289 yds, 4 TD",
-      "name": "Ja'Marr Chase",
+      "line": "18 rec, 266 yds, 1 TD",
+      "name": "Rashod Bateman",
       "position": "WR",
       "rank": 3,
-      "value": 18.058405
+      "value": 17.56322
      }
     ]
    },
    "last5": [
+    {
+     "code": "22",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "CIN",
+     "result": "L",
+     "score": "13-35",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "3",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "CLE",
+     "result": "L",
+     "score": "10-13",
+     "season": 2026,
+     "week": 6
+    },
     {
      "code": "7",
      "date": "2026-10-11",
      "game_type": "REG",
      "home": false,
      "neutral": false,
-     "opponent": "MIA",
+     "opponent": "ATL",
      "result": "W",
-     "score": "31-24",
+     "score": "30-23",
      "season": 2026,
      "week": 5
     },
     {
-     "code": "5",
+     "code": "6",
      "date": "2026-10-04",
      "game_type": "REG",
      "home": true,
      "neutral": false,
-     "opponent": "JAX",
-     "result": "L",
-     "score": "17-22",
+     "opponent": "TEN",
+     "result": "W",
+     "score": "24-18",
      "season": 2026,
      "week": 4
     },
@@ -1944,177 +1844,277 @@
      "date": "2026-09-27",
      "game_type": "REG",
      "home": false,
-     "neutral": false,
-     "opponent": "PIT",
-     "result": "L",
-     "score": "27-30",
+     "neutral": true,
+     "opponent": "DAL",
+     "result": "W",
+     "score": "34-31",
      "season": 2026,
      "week": 3
-    },
-    {
-     "code": "14",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "HOU",
-     "result": "W",
-     "score": "20-6",
-     "season": 2026,
-     "week": 2
-    },
-    {
-     "code": "6",
-     "date": "2026-09-13",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "TB",
-     "result": "W",
-     "score": "33-27",
-     "season": 2026,
-     "week": 1
     }
    ],
-   "name": "Cincinnati Bengals",
-   "net_epa": 0.02765,
-   "off_epa": 0.053927,
-   "points_against": 23.216933,
-   "points_for": 24.461513,
-   "qb": "Joe Burrow",
-   "qb_rating": 0.109943,
-   "qb_starts": 89,
-   "rank": 16,
+   "name": "Baltimore Ravens",
+   "net_epa": 0.029823,
+   "off_epa": 0.056103,
+   "points_against": 22.73023,
+   "points_for": 23.026622,
+   "qb": "Tyler Huntley",
+   "qb_rating": -0.010711,
+   "qb_starts": 18,
+   "rank": 15,
    "record": {
-    "losses": 2,
+    "losses": 3,
     "ties": 0,
-    "wins": 3
+    "wins": 4
    },
-   "team": "CIN"
+   "team": "BAL"
   },
   {
-   "conference": "NFC",
-   "def_epa": 0.015905,
-   "division": "NFC South",
-   "elo": 1499.008909,
+   "conference": "AFC",
+   "def_epa": -0.027837,
+   "division": "AFC South",
+   "elo": 1516.692549,
    "key_players": {
     "defense": [
      {
-      "line": "2 sacks, 2 INT, 3 PD",
-      "name": "Devin Lloyd",
-      "position": "LB",
+      "line": "7.5 sacks, 1 FF, 1 PD",
+      "name": "Will Anderson Jr.",
+      "position": "DE",
       "rank": 1,
-      "value": 8.5
+      "value": 11.5
      },
      {
-      "line": "1 sack, 1 INT, 1 FF",
-      "name": "Bobby Okereke",
-      "position": "ILB",
+      "line": "4 sacks, 1 FF, 4 PD",
+      "name": "Danielle Hunter",
+      "position": "DE",
       "rank": 2,
-      "value": 6.0
+      "value": 7.75
      }
     ],
     "offense": [
      {
-      "line": "1,549 pass yds, 11 TD, 2 INT",
-      "name": "Bryce Young",
+      "line": "1,867 pass yds, 11 TD, 1 INT",
+      "name": "C.J. Stroud",
       "position": "QB",
       "rank": 1,
-      "value": 40.064389
+      "value": 39.609422
      },
      {
-      "line": "32 rec, 471 yds, 2 TD",
-      "name": "Tetairoa McMillan",
+      "line": "24 rec, 329 yds, 3 TD",
+      "name": "Nico Collins",
       "position": "WR",
       "rank": 2,
-      "value": 21.611449
+      "value": 21.349577
      },
      {
-      "line": "426 rush yds, 85 rec yds, 6 TD",
-      "name": "Chuba Hubbard",
-      "position": "RB",
+      "line": "19 rec, 331 yds, 2 TD",
+      "name": "Jaylin Noel",
+      "position": "WR",
       "rank": 3,
-      "value": 16.451797
+      "value": 20.083814
      }
     ]
    },
    "last5": [
     {
-     "code": "11",
+     "code": "6",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "NYG",
+     "result": "L",
+     "score": "21-27",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "3",
      "date": "2026-10-18",
      "game_type": "REG",
      "home": false,
-     "neutral": false,
-     "opponent": "PHI",
+     "neutral": true,
+     "opponent": "JAX",
      "result": "W",
-     "score": "25-14",
+     "score": "34-31",
      "season": 2026,
      "week": 6
     },
     {
-     "code": "6",
+     "code": "23",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "TEN",
+     "result": "W",
+     "score": "26-3",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "4",
      "date": "2026-10-04",
      "game_type": "REG",
      "home": true,
      "neutral": false,
-     "opponent": "DET",
-     "result": "W",
-     "score": "32-26",
+     "opponent": "DAL",
+     "result": "L",
+     "score": "30-34",
      "season": 2026,
      "week": 4
     },
     {
-     "code": "3",
+     "code": "2",
      "date": "2026-09-27",
      "game_type": "REG",
      "home": false,
      "neutral": false,
-     "opponent": "CLE",
+     "opponent": "IND",
      "result": "L",
-     "score": "18-21",
+     "score": "17-19",
      "season": 2026,
      "week": 3
-    },
+    }
+   ],
+   "name": "Houston Texans",
+   "net_epa": 0.032863,
+   "off_epa": 0.005025,
+   "points_against": 21.940255,
+   "points_for": 23.566546,
+   "qb": "C.J. Stroud",
+   "qb_rating": 0.047909,
+   "qb_starts": 58,
+   "rank": 16,
+   "record": {
+    "losses": 5,
+    "ties": 0,
+    "wins": 2
+   },
+   "team": "HOU"
+  },
+  {
+   "conference": "NFC",
+   "def_epa": 0.004393,
+   "division": "NFC South",
+   "elo": 1489.223952,
+   "key_players": {
+    "defense": [
+     {
+      "line": "4.5 sacks, 1 PD, 6 TFL",
+      "name": "Za'Darius Smith",
+      "position": "DE",
+      "rank": 1,
+      "value": 6.5
+     },
+     {
+      "line": "1 FF, 8 PD, 1 TFL",
+      "name": "C.J. Henderson",
+      "position": "CB",
+      "rank": 2,
+      "value": 5.25
+     }
+    ],
+    "offense": [
+     {
+      "line": "38 rec, 616 yds, 1 TD",
+      "name": "Drake London",
+      "position": "WR",
+      "rank": 1,
+      "value": 31.789668
+     },
+     {
+      "line": "1,157 pass yds, 9 TD, 1 INT",
+      "name": "Michael Penix Jr.",
+      "position": "QB",
+      "rank": 2,
+      "value": 22.271346
+     },
+     {
+      "line": "8 rec, 67 yds, 1 TD",
+      "name": "Austin Hooper",
+      "position": "TE",
+      "rank": 3,
+      "value": 7.63357
+     }
+    ]
+   },
+   "last5": [
     {
-     "code": "31",
-     "date": "2026-09-20",
+     "code": "9",
+     "date": "2026-10-25",
      "game_type": "REG",
-     "home": false,
+     "home": true,
      "neutral": false,
-     "opponent": "ATL",
+     "opponent": "SF",
      "result": "W",
-     "score": "34-3",
+     "score": "29-20",
      "season": 2026,
-     "week": 2
+     "week": 7
     },
     {
-     "code": "22",
-     "date": "2026-09-13",
+     "code": "8",
+     "date": "2026-10-18",
      "game_type": "REG",
      "home": true,
      "neutral": false,
      "opponent": "CHI",
      "result": "L",
-     "score": "37-59",
+     "score": "23-31",
      "season": 2026,
-     "week": 1
+     "week": 6
+    },
+    {
+     "code": "7",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "BAL",
+     "result": "L",
+     "score": "23-30",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "21",
+     "date": "2026-10-05",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "NO",
+     "result": "W",
+     "score": "45-24",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "21",
+     "date": "2026-09-24",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "GB",
+     "result": "W",
+     "score": "35-14",
+     "season": 2026,
+     "week": 3
     }
    ],
-   "name": "Carolina Panthers",
-   "net_epa": 0.002992,
-   "off_epa": 0.018897,
-   "points_against": 22.947641,
-   "points_for": 23.6376,
-   "qb": "Bryce Young",
-   "qb_rating": 0.017274,
-   "qb_starts": 47,
+   "name": "Atlanta Falcons",
+   "net_epa": -0.023406,
+   "off_epa": -0.019012,
+   "points_against": 23.792534,
+   "points_for": 23.562961,
+   "qb": "Michael Penix Jr.",
+   "qb_rating": 0.032602,
+   "qb_starts": 17,
    "rank": 17,
    "record": {
-    "losses": 2,
+    "losses": 4,
     "ties": 0,
     "wins": 3
    },
-   "team": "CAR"
+   "team": "ATL"
   },
   {
    "conference": "NFC",
@@ -2241,52 +2241,188 @@
    "team": "PHI"
   },
   {
-   "conference": "AFC",
-   "def_epa": -0.043053,
-   "division": "AFC North",
-   "elo": 1458.558244,
+   "conference": "NFC",
+   "def_epa": -0.054757,
+   "division": "NFC South",
+   "elo": 1475.598783,
    "key_players": {
     "defense": [
      {
-      "line": "1 sack, 3 FF, 2 PD",
-      "name": "Quincy Williams",
-      "position": "LB",
+      "line": "1 INT, 11 PD, 2 TFL",
+      "name": "Jacob Parrish",
+      "position": "CB",
       "rank": 1,
-      "value": 5.75
+      "value": 7.0
      },
      {
-      "line": "4 sacks, 6 TFL",
-      "name": "Mason Graham",
-      "position": "DT",
+      "line": "3 sacks, 1 INT, 2 PD",
+      "name": "Yaya Diaby",
+      "position": "LB",
       "rank": 2,
-      "value": 5.5
+      "value": 6.5
      }
     ],
     "offense": [
      {
-      "line": "17 rec, 345 yds, 3 TD",
-      "name": "Denzel Boston",
+      "line": "9 rec, 178 yds, 1 TD",
+      "name": "Tez Johnson",
       "position": "WR",
       "rank": 1,
-      "value": 16.141108
+      "value": 12.181125
      },
      {
-      "line": "19 rec, 166 yds, 3 TD",
-      "name": "Harold Fannin Jr.",
-      "position": "TE",
+      "line": "27 rec, 243 yds, 0 TD",
+      "name": "Chris Godwin Jr.",
+      "position": "WR",
       "rank": 2,
-      "value": 5.874867
+      "value": 7.829931
      },
      {
-      "line": "3 rec, 39 yds, 1 TD",
-      "name": "Blake Whiteheart",
+      "line": "19 rec, 186 yds, 0 TD",
+      "name": "Cade Otton",
       "position": "TE",
       "rank": 3,
-      "value": 4.1427
+      "value": 4.791978
      }
     ]
    },
    "last5": [
+    {
+     "code": "30",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "CAR",
+     "result": "W",
+     "score": "43-13",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "7",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "PIT",
+     "result": "L",
+     "score": "19-26",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "8",
+     "date": "2026-10-08",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "DAL",
+     "result": "W",
+     "score": "24-16",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "3",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "GB",
+     "result": "L",
+     "score": "14-17",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "7",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "MIN",
+     "result": "L",
+     "score": "16-23",
+     "season": 2026,
+     "week": 3
+    }
+   ],
+   "name": "Tampa Bay Buccaneers",
+   "net_epa": 0.026207,
+   "off_epa": -0.02855,
+   "points_against": 21.442852,
+   "points_for": 22.84086,
+   "qb": "Baker Mayfield",
+   "qb_rating": -0.009389,
+   "qb_starts": 129,
+   "rank": 19,
+   "record": {
+    "losses": 5,
+    "ties": 0,
+    "wins": 2
+   },
+   "team": "TB"
+  },
+  {
+   "conference": "AFC",
+   "def_epa": -0.035942,
+   "division": "AFC North",
+   "elo": 1468.671793,
+   "key_players": {
+    "defense": [
+     {
+      "line": "2 INT, 2 FF, 7 PD",
+      "name": "Denzel Ward",
+      "position": "CB",
+      "rank": 1,
+      "value": 7.5
+     },
+     {
+      "line": "1 sack, 3 FF, 2 PD",
+      "name": "Quincy Williams",
+      "position": "LB",
+      "rank": 2,
+      "value": 6.25
+     }
+    ],
+    "offense": [
+     {
+      "line": "20 rec, 372 yds, 3 TD",
+      "name": "Denzel Boston",
+      "position": "WR",
+      "rank": 1,
+      "value": 9.018578
+     },
+     {
+      "line": "30 rec, 315 yds, 0 TD",
+      "name": "KC Concepcion",
+      "position": "WR",
+      "rank": 2,
+      "value": 5.949604
+     },
+     {
+      "line": "25 rec, 257 yds, 3 TD",
+      "name": "Harold Fannin Jr.",
+      "position": "TE",
+      "rank": 3,
+      "value": 5.24976
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "3",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "TEN",
+     "result": "W",
+     "score": "27-24",
+     "season": 2026,
+     "week": 7
+    },
     {
      "code": "3",
      "date": "2026-10-18",
@@ -2334,180 +2470,44 @@
      "score": "21-18",
      "season": 2026,
      "week": 3
-    },
-    {
-     "code": "4",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "TB",
-     "result": "W",
-     "score": "23-19",
-     "season": 2026,
-     "week": 2
     }
    ],
    "name": "Cleveland Browns",
-   "net_epa": -0.050289,
-   "off_epa": -0.093342,
-   "points_against": 20.463921,
-   "points_for": 17.997342,
+   "net_epa": -0.02986,
+   "off_epa": -0.065802,
+   "points_against": 20.817529,
+   "points_for": 18.897608,
    "qb": "Deshaun Watson",
-   "qb_rating": -0.075351,
-   "qb_starts": 81,
-   "rank": 19,
+   "qb_rating": -0.057207,
+   "qb_starts": 82,
+   "rank": 20,
    "record": {
     "losses": 2,
     "ties": 0,
-    "wins": 4
+    "wins": 5
    },
    "team": "CLE"
   },
   {
    "conference": "NFC",
-   "def_epa": -0.002981,
-   "division": "NFC South",
-   "elo": 1453.882734,
-   "key_players": {
-    "defense": [
-     {
-      "line": "3.5 sacks, 1 PD, 5 TFL",
-      "name": "Za'Darius Smith",
-      "position": "DE",
-      "rank": 1,
-      "value": 5.25
-     },
-     {
-      "line": "1 FF, 6 PD, 1 TFL",
-      "name": "C.J. Henderson",
-      "position": "CB",
-      "rank": 2,
-      "value": 4.25
-     }
-    ],
-    "offense": [
-     {
-      "line": "31 rec, 550 yds, 0 TD",
-      "name": "Drake London",
-      "position": "WR",
-      "rank": 1,
-      "value": 24.81947
-     },
-     {
-      "line": "944 pass yds, 6 TD, 1 INT",
-      "name": "Michael Penix Jr.",
-      "position": "QB",
-      "rank": 2,
-      "value": 15.535655
-     },
-     {
-      "line": "6 rec, 46 yds, 1 TD",
-      "name": "Austin Hooper",
-      "position": "TE",
-      "rank": 3,
-      "value": 6.624531
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "8",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "CHI",
-     "result": "L",
-     "score": "23-31",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "7",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "BAL",
-     "result": "L",
-     "score": "23-30",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "21",
-     "date": "2026-10-05",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "NO",
-     "result": "W",
-     "score": "45-24",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "21",
-     "date": "2026-09-24",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "GB",
-     "result": "W",
-     "score": "35-14",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "31",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "CAR",
-     "result": "L",
-     "score": "3-34",
-     "season": 2026,
-     "week": 2
-    }
-   ],
-   "name": "Atlanta Falcons",
-   "net_epa": -0.023318,
-   "off_epa": -0.026299,
-   "points_against": 24.213926,
-   "points_for": 22.958846,
-   "qb": "Michael Penix Jr.",
-   "qb_rating": 0.02056,
-   "qb_starts": 16,
-   "rank": 20,
-   "record": {
-    "losses": 4,
-    "ties": 0,
-    "wins": 2
-   },
-   "team": "ATL"
-  },
-  {
-   "conference": "NFC",
-   "def_epa": 0.014111,
+   "def_epa": 0.006356,
    "division": "NFC East",
-   "elo": 1433.758462,
+   "elo": 1463.843147,
    "key_players": {
     "defense": [
+     {
+      "line": "1 INT, 10 PD, 1 TD",
+      "name": "Deonte Banks",
+      "position": "CB",
+      "rank": 1,
+      "value": 8.0
+     },
      {
       "line": "3 INT, 2 FF, 5 PD",
       "name": "Jevon Holland",
       "position": "SAF",
-      "rank": 1,
-      "value": 7.75
-     },
-     {
-      "line": "1 INT, 8 PD, 1 TD",
-      "name": "Deonte Banks",
-      "position": "CB",
       "rank": 2,
-      "value": 7.0
+      "value": 7.75
      }
     ],
     "offense": [
@@ -2519,22 +2519,34 @@
       "value": 24.484685
      },
      {
-      "line": "39 rec, 383 yds, 5 TD",
-      "name": "Isaiah Likely",
-      "position": "TE",
-      "rank": 2,
-      "value": 14.678777
-     },
-     {
-      "line": "41 rec, 494 yds, 2 TD",
+      "line": "48 rec, 605 yds, 2 TD",
       "name": "Malik Nabers",
       "position": "WR",
+      "rank": 2,
+      "value": 16.401487
+     },
+     {
+      "line": "41 rec, 395 yds, 5 TD",
+      "name": "Isaiah Likely",
+      "position": "TE",
       "rank": 3,
-      "value": 11.709794
+      "value": 14.289185
      }
     ]
    },
    "last5": [
+    {
+     "code": "6",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "HOU",
+     "result": "W",
+     "score": "27-21",
+     "season": 2026,
+     "week": 7
+    },
     {
      "code": "7",
      "date": "2026-10-18",
@@ -2582,35 +2594,147 @@
      "score": "12-7",
      "season": 2026,
      "week": 3
-    },
-    {
-     "code": "22",
-     "date": "2026-09-21",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "LA",
-     "result": "L",
-     "score": "6-28",
-     "season": 2026,
-     "week": 2
     }
    ],
    "name": "New York Giants",
-   "net_epa": -0.035894,
-   "off_epa": -0.021783,
-   "points_against": 23.483718,
-   "points_for": 22.696351,
-   "qb": "Jameis Winston",
-   "qb_rating": -0.037974,
-   "qb_starts": 96,
+   "net_epa": -0.001631,
+   "off_epa": 0.004725,
+   "points_against": 23.235346,
+   "points_for": 23.126716,
+   "qb": "J.J. McCarthy",
+   "qb_rating": -0.075744,
+   "qb_starts": 11,
    "rank": 21,
    "record": {
     "losses": 2,
     "ties": 1,
-    "wins": 3
+    "wins": 4
    },
    "team": "NYG"
+  },
+  {
+   "conference": "NFC",
+   "def_epa": 0.034787,
+   "division": "NFC South",
+   "elo": 1450.645517,
+   "key_players": {
+    "defense": [
+     {
+      "line": "2 sacks, 2 INT, 3 PD",
+      "name": "Devin Lloyd",
+      "position": "LB",
+      "rank": 1,
+      "value": 8.5
+     },
+     {
+      "line": "1 sack, 1 INT, 1 FF",
+      "name": "Bobby Okereke",
+      "position": "ILB",
+      "rank": 2,
+      "value": 6.75
+     }
+    ],
+    "offense": [
+     {
+      "line": "36 rec, 511 yds, 2 TD",
+      "name": "Tetairoa McMillan",
+      "position": "WR",
+      "rank": 1,
+      "value": 23.172192
+     },
+     {
+      "line": "1,712 pass yds, 12 TD, 4 INT",
+      "name": "Bryce Young",
+      "position": "QB",
+      "rank": 2,
+      "value": 19.882988
+     },
+     {
+      "line": "459 rush yds, 112 rec yds, 6 TD",
+      "name": "Chuba Hubbard",
+      "position": "RB",
+      "rank": 3,
+      "value": 19.482527
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "30",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "TB",
+     "result": "L",
+     "score": "13-43",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "11",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "PHI",
+     "result": "W",
+     "score": "25-14",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "6",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "DET",
+     "result": "W",
+     "score": "32-26",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "3",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "CLE",
+     "result": "L",
+     "score": "18-21",
+     "season": 2026,
+     "week": 3
+    },
+    {
+     "code": "31",
+     "date": "2026-09-20",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "ATL",
+     "result": "W",
+     "score": "34-3",
+     "season": 2026,
+     "week": 2
+    }
+   ],
+   "name": "Carolina Panthers",
+   "net_epa": -0.04455,
+   "off_epa": -0.009763,
+   "points_against": 24.952877,
+   "points_for": 22.57384,
+   "qb": "Bryce Young",
+   "qb_rating": -0.019756,
+   "qb_starts": 48,
+   "rank": 22,
+   "record": {
+    "losses": 3,
+    "ties": 0,
+    "wins": 3
+   },
+   "team": "CAR"
   },
   {
    "conference": "NFC",
@@ -2728,7 +2852,7 @@
    "qb": "Dak Prescott",
    "qb_rating": 0.083141,
    "qb_starts": 151,
-   "rank": 22,
+   "rank": 23,
    "record": {
     "losses": 4,
     "ties": 0,
@@ -2737,134 +2861,10 @@
    "team": "DAL"
   },
   {
-   "conference": "NFC",
-   "def_epa": -0.031096,
-   "division": "NFC South",
-   "elo": 1427.235391,
-   "key_players": {
-    "defense": [
-     {
-      "line": "1 INT, 9 PD, 2 TFL",
-      "name": "Jacob Parrish",
-      "position": "CB",
-      "rank": 1,
-      "value": 6.0
-     },
-     {
-      "line": "1 sack, 1 INT, 2 PD",
-      "name": "Josiah Trotter",
-      "position": "LB",
-      "rank": 2,
-      "value": 5.75
-     }
-    ],
-    "offense": [
-     {
-      "line": "23 rec, 216 yds, 0 TD",
-      "name": "Chris Godwin Jr.",
-      "position": "WR",
-      "rank": 1,
-      "value": 6.809185
-     },
-     {
-      "line": "19 rec, 186 yds, 0 TD",
-      "name": "Cade Otton",
-      "position": "TE",
-      "rank": 2,
-      "value": 5.454387
-     },
-     {
-      "line": "7 rec, 145 yds, 0 TD",
-      "name": "Tez Johnson",
-      "position": "WR",
-      "rank": 3,
-      "value": 3.933411
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "7",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "PIT",
-     "result": "L",
-     "score": "19-26",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "8",
-     "date": "2026-10-08",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "DAL",
-     "result": "W",
-     "score": "24-16",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "3",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "GB",
-     "result": "L",
-     "score": "14-17",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "7",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "MIN",
-     "result": "L",
-     "score": "16-23",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "4",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "CLE",
-     "result": "L",
-     "score": "19-23",
-     "season": 2026,
-     "week": 2
-    }
-   ],
-   "name": "Tampa Bay Buccaneers",
-   "net_epa": -0.023373,
-   "off_epa": -0.05447,
-   "points_against": 22.380947,
-   "points_for": 20.600955,
-   "qb": "Jalon Daniels",
-   "qb_rating": -0.126548,
-   "qb_starts": 3,
-   "rank": 23,
-   "record": {
-    "losses": 5,
-    "ties": 0,
-    "wins": 1
-   },
-   "team": "TB"
-  },
-  {
    "conference": "AFC",
-   "def_epa": 0.01661,
+   "def_epa": 0.002609,
    "division": "AFC South",
-   "elo": 1425.185505,
+   "elo": 1418.576042,
    "key_players": {
     "defense": [
      {
@@ -2875,20 +2875,20 @@
       "value": 6.5
      },
      {
-      "line": "1 sack, 1 FF, 3 PD",
-      "name": "Justin Walley",
-      "position": "CB",
+      "line": "4 sacks, 1 PD, 3 TFL",
+      "name": "Adetomiwa Adebawore",
+      "position": "DT",
       "rank": 2,
-      "value": 3.75
+      "value": 5.25
      }
     ],
     "offense": [
      {
-      "line": "24 rec, 289 yds, 0 TD",
+      "line": "26 rec, 307 yds, 0 TD",
       "name": "Josh Downs",
       "position": "WR",
       "rank": 1,
-      "value": 12.975947
+      "value": 12.191029
      },
      {
       "line": "30 rec, 213 yds, 3 TD",
@@ -2898,15 +2898,27 @@
       "value": 11.978465
      },
      {
-      "line": "26 rec, 227 yds, 1 TD",
+      "line": "29 rec, 258 yds, 1 TD",
       "name": "Keenan Allen",
       "position": "WR",
       "rank": 3,
-      "value": 2.954834
+      "value": 7.901631
      }
     ]
    },
    "last5": [
+    {
+     "code": "6",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "MIN",
+     "result": "L",
+     "score": "10-16",
+     "season": 2026,
+     "week": 7
+    },
     {
      "code": "6",
      "date": "2026-10-18",
@@ -2954,159 +2966,23 @@
      "score": "19-17",
      "season": 2026,
      "week": 3
-    },
-    {
-     "code": "3",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "KC",
-     "result": "L",
-     "score": "30-33",
-     "season": 2026,
-     "week": 2
     }
    ],
    "name": "Indianapolis Colts",
-   "net_epa": -0.036454,
-   "off_epa": -0.019844,
-   "points_against": 25.448059,
-   "points_for": 23.472984,
+   "net_epa": -0.031678,
+   "off_epa": -0.029069,
+   "points_against": 24.503253,
+   "points_for": 22.125686,
    "qb": "Daniel Jones",
-   "qb_rating": -0.025307,
-   "qb_starts": 90,
+   "qb_rating": -0.033365,
+   "qb_starts": 91,
    "rank": 24,
    "record": {
-    "losses": 4,
+    "losses": 5,
     "ties": 0,
     "wins": 2
    },
    "team": "IND"
-  },
-  {
-   "conference": "AFC",
-   "def_epa": 0.030072,
-   "division": "AFC West",
-   "elo": 1420.791772,
-   "key_players": {
-    "defense": [
-     {
-      "line": "3 INT, 6 PD, 1 TFL",
-      "name": "Hezekiah Masses",
-      "position": "CB",
-      "rank": 1,
-      "value": 6.25
-     },
-     {
-      "line": "1.5 sacks, 3 FF, 1 PD",
-      "name": "Nakobe Dean",
-      "position": "LB",
-      "rank": 2,
-      "value": 6.0
-     }
-    ],
-    "offense": [
-     {
-      "line": "1,582 pass yds, 14 TD, 5 INT",
-      "name": "Kirk Cousins",
-      "position": "QB",
-      "rank": 1,
-      "value": 37.690919
-     },
-     {
-      "line": "28 rec, 382 yds, 3 TD",
-      "name": "Brock Bowers",
-      "position": "TE",
-      "rank": 2,
-      "value": 20.604191
-     },
-     {
-      "line": "24 rec, 371 yds, 3 TD",
-      "name": "Tre Tucker",
-      "position": "WR",
-      "rank": 3,
-      "value": 17.707601
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "3",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "BUF",
-     "result": "L",
-     "score": "30-33",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "28",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "NE",
-     "result": "L",
-     "score": "17-45",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "3",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "KC",
-     "result": "L",
-     "score": "27-30",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "8",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "NO",
-     "result": "W",
-     "score": "35-27",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "12",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "LAC",
-     "result": "W",
-     "score": "26-14",
-     "season": 2026,
-     "week": 2
-    }
-   ],
-   "name": "Las Vegas Raiders",
-   "net_epa": -0.088049,
-   "off_epa": -0.057977,
-   "points_against": 25.788095,
-   "points_for": 21.641922,
-   "qb": "Kirk Cousins",
-   "qb_rating": 0.043675,
-   "qb_starts": 177,
-   "rank": 25,
-   "record": {
-    "losses": 3,
-    "ties": 0,
-    "wins": 3
-   },
-   "team": "LV"
   },
   {
    "conference": "NFC",
@@ -3224,7 +3100,7 @@
    "qb": "Jayden Daniels",
    "qb_rating": 0.056145,
    "qb_starts": 28,
-   "rank": 26,
+   "rank": 25,
    "record": {
     "losses": 4,
     "ties": 1,
@@ -3234,47 +3110,47 @@
   },
   {
    "conference": "NFC",
-   "def_epa": 0.014375,
+   "def_epa": 0.018262,
    "division": "NFC South",
    "elo": 1412.634506,
    "key_players": {
     "defense": [
      {
-      "line": "5.5 sacks, 1 FF, 3 PD",
+      "line": "7 sacks, 1 FF, 3 PD",
       "name": "Chase Young",
       "position": "DE",
       "rank": 1,
-      "value": 8.75
+      "value": 10.5
      },
      {
-      "line": "2 INT, 1 FF, 4 PD",
-      "name": "Martin Emerson",
-      "position": "CB",
+      "line": "5.5 sacks, 5 TFL",
+      "name": "Carl Granderson",
+      "position": "DE",
       "rank": 2,
-      "value": 5.25
+      "value": 6.75
      }
     ],
     "offense": [
      {
-      "line": "43 rec, 580 yds, 2 TD",
+      "line": "49 rec, 636 yds, 2 TD",
       "name": "Chris Olave",
       "position": "WR",
       "rank": 1,
-      "value": 39.144683
+      "value": 37.464529
      },
      {
-      "line": "28 rec, 294 yds, 2 TD",
+      "line": "33 rec, 348 yds, 3 TD",
       "name": "Devaughn Vele",
       "position": "WR",
       "rank": 2,
-      "value": 13.829646
+      "value": 22.094331
      },
      {
-      "line": "25 rec, 248 yds, 3 TD",
-      "name": "Juwan Johnson",
-      "position": "TE",
+      "line": "1,721 pass yds, 13 TD, 6 INT, 111 rush yds",
+      "name": "Tyler Shough",
+      "position": "QB",
       "rank": 3,
-      "value": 7.420306
+      "value": 13.059242
      }
     ]
    },
@@ -3341,14 +3217,14 @@
     }
    ],
    "name": "New Orleans Saints",
-   "net_epa": -0.05913,
-   "off_epa": -0.044755,
+   "net_epa": -0.052451,
+   "off_epa": -0.034189,
    "points_against": 24.158658,
    "points_for": 21.265832,
    "qb": "Tyler Shough",
-   "qb_rating": -0.017269,
+   "qb_rating": 0.005563,
    "qb_starts": 16,
-   "rank": 27,
+   "rank": 26,
    "record": {
     "losses": 5,
     "ties": 0,
@@ -3472,7 +3348,7 @@
    "qb": "Justin Herbert",
    "qb_rating": -0.08098,
    "qb_starts": 104,
-   "rank": 28,
+   "rank": 27,
    "record": {
     "losses": 6,
     "ties": 0,
@@ -3481,300 +3357,188 @@
    "team": "LAC"
   },
   {
-   "conference": "NFC",
-   "def_epa": 0.075736,
-   "division": "NFC West",
-   "elo": 1392.830159,
+   "conference": "AFC",
+   "def_epa": 0.038608,
+   "division": "AFC West",
+   "elo": 1401.407145,
    "key_players": {
     "defense": [
      {
-      "line": "3.5 sacks, 1 INT, 4 PD",
-      "name": "Budda Baker",
-      "position": "S",
+      "line": "1.5 sacks, 1 INT, 3 FF",
+      "name": "Nakobe Dean",
+      "position": "LB",
       "rank": 1,
       "value": 7.5
      },
      {
-      "line": "1 sack, 2 FF, 2 TFL",
-      "name": "Baron Browning",
-      "position": "LB",
+      "line": "3 INT, 6 PD, 1 TFL",
+      "name": "Hezekiah Masses",
+      "position": "CB",
+      "rank": 2,
+      "value": 6.25
+     }
+    ],
+    "offense": [
+     {
+      "line": "1,877 pass yds, 16 TD, 5 INT",
+      "name": "Kirk Cousins",
+      "position": "QB",
+      "rank": 1,
+      "value": 29.161617
+     },
+     {
+      "line": "34 rec, 455 yds, 3 TD",
+      "name": "Brock Bowers",
+      "position": "TE",
+      "rank": 2,
+      "value": 23.915006
+     },
+     {
+      "line": "29 rec, 474 yds, 4 TD",
+      "name": "Tre Tucker",
+      "position": "WR",
+      "rank": 3,
+      "value": 20.518511
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "14",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "LA",
+     "result": "L",
+     "score": "21-35",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "3",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "BUF",
+     "result": "L",
+     "score": "30-33",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "28",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "NE",
+     "result": "L",
+     "score": "17-45",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "3",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "KC",
+     "result": "L",
+     "score": "27-30",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "8",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "NO",
+     "result": "W",
+     "score": "35-27",
+     "season": 2026,
+     "week": 3
+    }
+   ],
+   "name": "Las Vegas Raiders",
+   "net_epa": -0.107554,
+   "off_epa": -0.068946,
+   "points_against": 26.709286,
+   "points_for": 21.57773,
+   "qb": "Kirk Cousins",
+   "qb_rating": 0.023405,
+   "qb_starts": 178,
+   "rank": 28,
+   "record": {
+    "losses": 4,
+    "ties": 0,
+    "wins": 3
+   },
+   "team": "LV"
+  },
+  {
+   "conference": "AFC",
+   "def_epa": 0.088576,
+   "division": "AFC East",
+   "elo": 1389.720218,
+   "key_players": {
+    "defense": [
+     {
+      "line": "2 INT, 1 FF, 2 PD",
+      "name": "Michael Taaffe",
+      "position": "SAF",
+      "rank": 1,
+      "value": 4.0
+     },
+     {
+      "line": "2 sacks, 6 TFL",
+      "name": "Zach Sieler",
+      "position": "DE",
       "rank": 2,
       "value": 3.5
      }
     ],
     "offense": [
      {
-      "line": "49 rec, 361 yds, 3 TD",
-      "name": "Trey McBride",
+      "line": "18 rec, 213 yds, 0 TD",
+      "name": "Greg Dulcich",
       "position": "TE",
       "rank": 1,
-      "value": 12.596025
+      "value": 12.762729
      },
      {
-      "line": "22 rec, 225 yds, 0 TD",
-      "name": "Kendrick Bourne",
+      "line": "9 rec, 183 yds, 2 TD",
+      "name": "Caleb Douglas",
       "position": "WR",
       "rank": 2,
-      "value": 10.441018
+      "value": 10.931463
      },
-     {
-      "line": "11 rec, 124 yds, 1 TD",
-      "name": "Elijah Higgins",
-      "position": "TE",
-      "rank": 3,
-      "value": 9.033604
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "2",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "LA",
-     "result": "W",
-     "score": "18-16",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "24",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "DET",
-     "result": "L",
-     "score": "21-45",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "12",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "NYG",
-     "result": "L",
-     "score": "24-36",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "6",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "SF",
-     "result": "L",
-     "score": "30-36",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "24",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "SEA",
-     "result": "L",
-     "score": "7-31",
-     "season": 2026,
-     "week": 2
-    }
-   ],
-   "name": "Arizona Cardinals",
-   "net_epa": -0.101455,
-   "off_epa": -0.02572,
-   "points_against": 28.06322,
-   "points_for": 20.818742,
-   "qb": "Jacoby Brissett",
-   "qb_rating": -0.02528,
-   "qb_starts": 71,
-   "rank": 29,
-   "record": {
-    "losses": 4,
-    "ties": 0,
-    "wins": 2
-   },
-   "team": "ARI"
-  },
-  {
-   "conference": "AFC",
-   "def_epa": 0.019379,
-   "division": "AFC East",
-   "elo": 1381.17156,
-   "key_players": {
-    "defense": [
-     {
-      "line": "5 sacks, 3 FF, 1 PD",
-      "name": "David Bailey",
-      "position": "LB",
-      "rank": 1,
-      "value": 10.0
-     },
-     {
-      "line": "2 FF, 3 PD, 3 TFL",
-      "name": "Jamien Sherwood",
-      "position": "LB",
-      "rank": 2,
-      "value": 4.25
-     }
-    ],
-    "offense": [
-     {
-      "line": "35 rec, 418 yds, 3 TD",
-      "name": "Garrett Wilson",
-      "position": "WR",
-      "rank": 1,
-      "value": 23.49126
-     },
-     {
-      "line": "7 rec, 133 yds, 1 TD",
-      "name": "Omar Cooper Jr.",
-      "position": "WR",
-      "rank": 2,
-      "value": 9.518314
-     },
-     {
-      "line": "9 rec, 123 yds, 0 TD",
-      "name": "Adonai Mitchell",
-      "position": "WR",
-      "rank": 3,
-      "value": 8.644263
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "7",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "NE",
-     "result": "L",
-     "score": "19-26",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "5",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "CLE",
-     "result": "W",
-     "score": "17-12",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "11",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "CHI",
-     "result": "L",
-     "score": "12-23",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "7",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "DET",
-     "result": "L",
-     "score": "24-31",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "3",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "GB",
-     "result": "L",
-     "score": "17-20",
-     "season": 2026,
-     "week": 2
-    }
-   ],
-   "name": "New York Jets",
-   "net_epa": -0.091992,
-   "off_epa": -0.072613,
-   "points_against": 23.729304,
-   "points_for": 18.293312,
-   "qb": "Geno Smith",
-   "qb_rating": -0.071508,
-   "qb_starts": 105,
-   "rank": 30,
-   "record": {
-    "losses": 4,
-    "ties": 0,
-    "wins": 2
-   },
-   "team": "NYJ"
-  },
-  {
-   "conference": "AFC",
-   "def_epa": 0.068233,
-   "division": "AFC East",
-   "elo": 1373.224551,
-   "key_players": {
-    "defense": [
-     {
-      "line": "2 sacks, 5 TFL",
-      "name": "Zach Sieler",
-      "position": "DE",
-      "rank": 1,
-      "value": 3.25
-     },
-     {
-      "line": "1 FF, 2 PD, 2 TFL",
-      "name": "Chris Johnson",
-      "position": "CB",
-      "rank": 2,
-      "value": 2.5
-     }
-    ],
-    "offense": [
      {
       "line": "3 rec, 92 yds, 1 TD",
       "name": "Ryan Miller",
       "position": "WR",
-      "rank": 1,
-      "value": 6.832263
-     },
-     {
-      "line": "13 rec, 127 yds, 0 TD",
-      "name": "Greg Dulcich",
-      "position": "TE",
-      "rank": 2,
-      "value": 3.951231
-     },
-     {
-      "line": "7 rec, 113 yds, 0 TD",
-      "name": "Caleb Douglas",
-      "position": "WR",
       "rank": 3,
-      "value": 3.514767
+      "value": 6.832263
      }
     ]
    },
    "last5": [
+    {
+     "code": "3",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "NYJ",
+     "result": "W",
+     "score": "28-25",
+     "season": 2026,
+     "week": 7
+    },
     {
      "code": "7",
      "date": "2026-10-11",
@@ -3822,72 +3586,308 @@
      "score": "13-35",
      "season": 2026,
      "week": 2
-    },
-    {
-     "code": "14",
-     "date": "2026-09-13",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "LV",
-     "result": "L",
-     "score": "13-27",
-     "season": 2026,
-     "week": 1
     }
    ],
    "name": "Miami Dolphins",
-   "net_epa": -0.120763,
-   "off_epa": -0.05253,
-   "points_against": 24.314335,
-   "points_for": 18.004739,
+   "net_epa": -0.110495,
+   "off_epa": -0.021919,
+   "points_against": 24.382902,
+   "points_for": 19.004265,
    "qb": "Malik Willis",
-   "qb_rating": -0.054811,
-   "qb_starts": 11,
-   "rank": 31,
+   "qb_rating": 0.006526,
+   "qb_starts": 12,
+   "rank": 29,
    "record": {
     "losses": 5,
     "ties": 0,
-    "wins": 0
+    "wins": 1
    },
    "team": "MIA"
   },
   {
-   "conference": "AFC",
-   "def_epa": 0.03973,
-   "division": "AFC South",
-   "elo": 1324.772044,
+   "conference": "NFC",
+   "def_epa": 0.087633,
+   "division": "NFC West",
+   "elo": 1379.249078,
    "key_players": {
     "defense": [
      {
-      "line": "4 sacks, 1 FF, 2 PD",
-      "name": "Jeffery Simmons",
-      "position": "DT",
+      "line": "3.5 sacks, 1 INT, 4 PD",
+      "name": "Budda Baker",
+      "position": "S",
       "rank": 1,
       "value": 7.5
      },
      {
-      "line": "3.5 sacks, 2 PD, 3 TFL",
-      "name": "Jacob Martin",
-      "position": "DE",
+      "line": "1 sack, 2 FF, 2 TFL",
+      "name": "Baron Browning",
+      "position": "LB",
       "rank": 2,
-      "value": 5.25
+      "value": 3.5
      }
     ],
     "offense": [
      {
-      "line": "29 rec, 344 yds, 1 TD",
+      "line": "59 rec, 472 yds, 4 TD",
+      "name": "Trey McBride",
+      "position": "TE",
+      "rank": 1,
+      "value": 19.070591
+     },
+     {
+      "line": "14 rec, 141 yds, 1 TD",
+      "name": "Elijah Higgins",
+      "position": "TE",
+      "rank": 2,
+      "value": 9.391208
+     },
+     {
+      "line": "25 rec, 234 yds, 0 TD",
+      "name": "Kendrick Bourne",
+      "position": "WR",
+      "rank": 3,
+      "value": 5.022858
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "14",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "DEN",
+     "result": "L",
+     "score": "16-30",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "2",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "LA",
+     "result": "W",
+     "score": "18-16",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "24",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "DET",
+     "result": "L",
+     "score": "21-45",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "12",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "NYG",
+     "result": "L",
+     "score": "24-36",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "6",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "SF",
+     "result": "L",
+     "score": "30-36",
+     "season": 2026,
+     "week": 3
+    }
+   ],
+   "name": "Arizona Cardinals",
+   "net_epa": -0.12208,
+   "off_epa": -0.034447,
+   "points_against": 28.256898,
+   "points_for": 20.336867,
+   "qb": "Jacoby Brissett",
+   "qb_rating": -0.030637,
+   "qb_starts": 72,
+   "rank": 30,
+   "record": {
+    "losses": 5,
+    "ties": 0,
+    "wins": 2
+   },
+   "team": "ARI"
+  },
+  {
+   "conference": "AFC",
+   "def_epa": 0.042799,
+   "division": "AFC East",
+   "elo": 1364.675893,
+   "key_players": {
+    "defense": [
+     {
+      "line": "5.5 sacks, 3 FF, 1 PD",
+      "name": "David Bailey",
+      "position": "LB",
+      "rank": 1,
+      "value": 10.75
+     },
+     {
+      "line": "2 FF, 5 PD, 5 TFL",
+      "name": "Jamien Sherwood",
+      "position": "LB",
+      "rank": 2,
+      "value": 5.75
+     }
+    ],
+    "offense": [
+     {
+      "line": "37 rec, 444 yds, 3 TD",
+      "name": "Garrett Wilson",
+      "position": "WR",
+      "rank": 1,
+      "value": 23.852538
+     },
+     {
+      "line": "12 rec, 248 yds, 2 TD",
+      "name": "Omar Cooper Jr.",
+      "position": "WR",
+      "rank": 2,
+      "value": 18.743007
+     },
+     {
+      "line": "1,623 pass yds, 10 TD, 2 INT",
+      "name": "Geno Smith",
+      "position": "QB",
+      "rank": 3,
+      "value": 14.625754
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "3",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "MIA",
+     "result": "L",
+     "score": "25-28",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "7",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "NE",
+     "result": "L",
+     "score": "19-26",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "5",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "CLE",
+     "result": "W",
+     "score": "17-12",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "11",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "CHI",
+     "result": "L",
+     "score": "12-23",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "7",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "DET",
+     "result": "L",
+     "score": "24-31",
+     "season": 2026,
+     "week": 3
+    }
+   ],
+   "name": "New York Jets",
+   "net_epa": -0.080985,
+   "off_epa": -0.038186,
+   "points_against": 24.156373,
+   "points_for": 18.963981,
+   "qb": "Geno Smith",
+   "qb_rating": -0.046053,
+   "qb_starts": 106,
+   "rank": 31,
+   "record": {
+    "losses": 5,
+    "ties": 0,
+    "wins": 2
+   },
+   "team": "NYJ"
+  },
+  {
+   "conference": "AFC",
+   "def_epa": 0.053963,
+   "division": "AFC South",
+   "elo": 1314.658495,
+   "key_players": {
+    "defense": [
+     {
+      "line": "4 sacks, 1 FF, 3 PD",
+      "name": "Jeffery Simmons",
+      "position": "DT",
+      "rank": 1,
+      "value": 8.0
+     },
+     {
+      "line": "3.5 sacks, 2 PD, 4 TFL",
+      "name": "Jacob Martin",
+      "position": "DE",
+      "rank": 2,
+      "value": 5.5
+     }
+    ],
+    "offense": [
+     {
+      "line": "34 rec, 413 yds, 1 TD",
       "name": "Carnell Tate",
       "position": "WR",
       "rank": 1,
-      "value": 8.017126
+      "value": 10.062791
      },
      {
-      "line": "25 rec, 198 yds, 2 TD",
-      "name": "Wan'Dale Robinson",
+      "line": "10 rec, 177 yds, 1 TD",
+      "name": "Elic Ayomanor",
       "position": "WR",
       "rank": 2,
-      "value": 2.29644
+      "value": 3.499618
      },
      {
       "line": "5 rec, 81 yds, 0 TD",
@@ -3899,6 +3899,18 @@
     ]
    },
    "last5": [
+    {
+     "code": "3",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "CLE",
+     "result": "L",
+     "score": "24-27",
+     "season": 2026,
+     "week": 7
+    },
     {
      "code": "6",
      "date": "2026-10-18",
@@ -3946,31 +3958,19 @@
      "score": "7-12",
      "season": 2026,
      "week": 3
-    },
-    {
-     "code": "4",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "PHI",
-     "result": "L",
-     "score": "20-24",
-     "season": 2026,
-     "week": 2
     }
    ],
    "name": "Tennessee Titans",
-   "net_epa": -0.14934,
-   "off_epa": -0.10961,
-   "points_against": 23.466826,
-   "points_for": 16.985565,
+   "net_epa": -0.149807,
+   "off_epa": -0.095844,
+   "points_against": 23.820143,
+   "points_for": 17.687009,
    "qb": "Cam Ward",
-   "qb_rating": -0.144102,
-   "qb_starts": 23,
+   "qb_rating": -0.123626,
+   "qb_starts": 24,
    "rank": 32,
    "record": {
-    "losses": 5,
+    "losses": 6,
     "ties": 0,
     "wins": 1
    },

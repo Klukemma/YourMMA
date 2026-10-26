@@ -873,22 +873,28 @@
    "away": "CIN",
    "away_leaders": {
     "passing": {
+     "actual": 292.0,
      "gsis_id": "00-0036442",
      "name": "Joe Burrow",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 261.852173
     },
     "receiving": {
+     "actual": 62.0,
      "gsis_id": "00-0036900",
      "name": "Ja'Marr Chase",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 55.434985
     },
     "rushing": {
+     "actual": 39.0,
      "gsis_id": "00-0038597",
      "name": "Chase Brown",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 52.680747
@@ -915,6 +921,7 @@
       "rec_yds": 31.736993,
       "rush_yds": 52.680747
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -929,6 +936,7 @@
       "rec_yds": 50.028982,
       "rush_yds": 0.0
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -943,32 +951,44 @@
       "rec_yds": 55.434985,
       "rush_yds": 2.1e-05
      },
+     "scored": true,
      "status": "active",
      "tds_season": 4
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 35,
+    "home": 13
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_CIN_BAL",
    "game_type": "REG",
    "home": "BAL",
    "home_leaders": {
     "passing": {
+     "actual": 298.0,
      "gsis_id": "00-0035993",
      "name": "Tyler Huntley",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 204.314122
     },
     "receiving": {
+     "actual": 137.0,
      "gsis_id": "00-0039064",
      "name": "Zay Flowers",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 77.546313
     },
     "rushing": {
+     "actual": 45.0,
      "gsis_id": "00-0032764",
      "name": "Derrick Henry",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 80.104339
@@ -996,6 +1016,7 @@
       "rec_yds": 4.617279,
       "rush_yds": 80.104339
      },
+     "scored": false,
      "status": "active",
      "tds_season": 8
     },
@@ -1010,6 +1031,7 @@
       "rec_yds": 77.546313,
       "rush_yds": 1.552896
      },
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -1024,6 +1046,7 @@
       "rec_yds": 28.911974,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
@@ -1056,39 +1079,49 @@
    "pick": "CIN",
    "pick_prob": 0.611207,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 2.352121,
     "line": 3.0,
     "team": "BAL"
    },
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": true,
    "total_pick": {
     "edge": 1.141329,
     "line": 46.0,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_CLE_TEN": {
    "away": "CLE",
    "away_leaders": {
     "passing": {
+     "actual": 308.0,
      "gsis_id": "00-0033537",
      "name": "Deshaun Watson",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 189.462007
     },
     "receiving": {
+     "actual": 27.0,
      "gsis_id": "00-0041037",
      "name": "Denzel Boston",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 44.89246
     },
     "rushing": {
+     "actual": 96.0,
      "gsis_id": "00-0040784",
      "name": "Quinshon Judkins",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 46.433077
@@ -1115,6 +1148,7 @@
       "rec_yds": 12.066959,
       "rush_yds": 46.433077
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -1129,6 +1163,7 @@
       "rec_yds": 44.89246,
       "rush_yds": 0.084961
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -1143,32 +1178,44 @@
       "rec_yds": 32.596066,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 27,
+    "home": 24
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_CLE_TEN",
    "game_type": "REG",
    "home": "TEN",
    "home_leaders": {
     "passing": {
+     "actual": 181.0,
      "gsis_id": "00-0040676",
      "name": "Cam Ward",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 190.568492
     },
     "receiving": {
+     "actual": 69.0,
      "gsis_id": "00-0041438",
      "name": "Carnell Tate",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 60.718823
     },
     "rushing": {
+     "actual": 129.0,
      "gsis_id": "00-0035261",
      "name": "Tony Pollard",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 65.111028
@@ -1196,6 +1243,7 @@
       "rec_yds": 3.366973,
       "rush_yds": 65.111028
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -1210,6 +1258,7 @@
       "rec_yds": 60.718823,
       "rush_yds": 0.091119
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -1224,6 +1273,7 @@
       "rec_yds": 39.542594,
       "rush_yds": 0.036051
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     }
@@ -1256,18 +1306,22 @@
    "pick": "CLE",
    "pick_prob": 0.566862,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 1.351728,
     "line": -1.5,
     "team": "CLE"
    },
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": true,
    "total_pick": {
     "edge": 0.372193,
     "line": 37.0,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_DAL_PHI": {
    "away": "DAL",
@@ -1430,7 +1484,7 @@
     }
    ],
    "kickoff": "2026-10-27T00:15:00Z",
-   "last_logged": "2026-10-25T18:35:35Z",
+   "last_logged": "2026-10-26T12:55:40Z",
    "market": {
     "as_of": "2026-10-25T11:33:41Z",
     "away_ml": -225.0,
@@ -1453,7 +1507,7 @@
    "market_total": 44.0,
    "model_prob": 0.541017,
    "model_spread": 1.558642,
-   "model_total": 45.676215,
+   "model_total": 45.703622,
    "pick": "DAL",
    "pick_prob": 0.663037,
    "season": 2026,
@@ -1464,7 +1518,7 @@
    },
    "tier": "SOLID",
    "total_pick": {
-    "edge": 1.676215,
+    "edge": 1.703622,
     "line": 44.0,
     "side": "OVER"
    },
@@ -1474,22 +1528,28 @@
    "away": "DEN",
    "away_leaders": {
     "passing": {
+     "actual": 222.0,
      "gsis_id": "00-0039732",
      "name": "Bo Nix",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 226.939301
     },
     "receiving": {
+     "actual": 48.0,
      "gsis_id": "00-0036613",
      "name": "Jaylen Waddle",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 41.064949
     },
     "rushing": {
+     "actual": 23.0,
      "gsis_id": "00-0036158",
      "name": "J.K. Dobbins",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 53.615022
@@ -1516,6 +1576,7 @@
       "rec_yds": 3.375001,
       "rush_yds": 53.615022
      },
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -1530,6 +1591,7 @@
       "rec_yds": 21.215875,
       "rush_yds": 14.648248
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -1544,32 +1606,44 @@
       "rec_yds": 7.15178,
       "rush_yds": 17.923764
      },
+     "scored": false,
      "status": "questionable",
      "tds_season": 1
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 30,
+    "home": 16
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_DEN_ARI",
    "game_type": "REG",
    "home": "ARI",
    "home_leaders": {
     "passing": {
+     "actual": 272.0,
      "gsis_id": "00-0033119",
      "name": "Jacoby Brissett",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 228.627145
     },
     "receiving": {
+     "actual": 111.0,
      "gsis_id": "00-0037744",
      "name": "Trey McBride",
+     "over": true,
      "position": "TE",
      "status": "active",
      "yards": 66.102137
     },
     "rushing": {
+     "actual": 19.0,
      "gsis_id": "00-0037263",
      "name": "Tyler Allgeier",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 21.931044
@@ -1597,6 +1671,7 @@
       "rec_yds": 66.102137,
       "rush_yds": null
      },
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -1611,6 +1686,7 @@
       "rec_yds": 55.312878,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -1625,6 +1701,7 @@
       "rec_yds": 6.513129,
       "rush_yds": 21.931044
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
@@ -1657,39 +1734,49 @@
    "pick": "DEN",
    "pick_prob": 0.672502,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 0.548118,
     "line": -4.5,
     "team": "DEN"
    },
+   "td_graded": true,
    "tier": "SOLID",
+   "total_correct": true,
    "total_pick": {
     "edge": 2.946699,
     "line": 43.5,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_GB_DET": {
    "away": "GB",
    "away_leaders": {
     "passing": {
+     "actual": 274.0,
      "gsis_id": "00-0036264",
      "name": "Jordan Love",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 283.427215
     },
     "receiving": {
+     "actual": 57.0,
      "gsis_id": "00-0038124",
      "name": "Christian Watson",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 61.03588
     },
     "rushing": {
+     "actual": 36.0,
      "gsis_id": "00-0035700",
      "name": "Josh Jacobs",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 45.172187
@@ -1716,6 +1803,7 @@
       "rec_yds": 61.03588,
       "rush_yds": 0.011669
      },
+     "scored": false,
      "status": "active",
      "tds_season": 6
     },
@@ -1730,6 +1818,7 @@
       "rec_yds": 8.651729,
       "rush_yds": 45.172187
      },
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -1744,32 +1833,44 @@
       "rec_yds": 59.527892,
       "rush_yds": 0.127597
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 17,
+    "home": 20
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_GB_DET",
    "game_type": "REG",
    "home": "DET",
    "home_leaders": {
     "passing": {
+     "actual": 303.0,
      "gsis_id": "00-0033106",
      "name": "Jared Goff",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 307.851377
     },
     "receiving": {
+     "actual": 153.0,
      "gsis_id": "00-0036963",
      "name": "Amon-Ra St. Brown",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 81.056607
     },
     "rushing": {
+     "actual": 116.0,
      "gsis_id": "00-0039139",
      "name": "Jahmyr Gibbs",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 93.458788
@@ -1797,6 +1898,7 @@
       "rec_yds": 35.34196,
       "rush_yds": 93.458788
      },
+     "scored": false,
      "status": "active",
      "tds_season": 9
     },
@@ -1811,6 +1913,7 @@
       "rec_yds": 81.056607,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -1825,6 +1928,7 @@
       "rec_yds": 47.104434,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     }
@@ -1857,39 +1961,49 @@
    "pick": "DET",
    "pick_prob": 0.616866,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 0.302467,
     "line": 3.5,
     "team": "GB"
    },
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": true,
    "total_pick": {
     "edge": 1.887629,
     "line": 55.5,
     "side": "UNDER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_IND_MIN": {
    "away": "IND",
    "away_leaders": {
     "passing": {
+     "actual": 108.0,
      "gsis_id": "00-0035710",
      "name": "Daniel Jones",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 207.817469
     },
     "receiving": {
+     "actual": 18.0,
      "gsis_id": "00-0038997",
      "name": "Josh Downs",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 41.622794
     },
     "rushing": {
+     "actual": 95.0,
      "gsis_id": "00-0036223",
      "name": "Jonathan Taylor",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 71.960259
@@ -1916,6 +2030,7 @@
       "rec_yds": 12.732741,
       "rush_yds": 71.960259
      },
+     "scored": true,
      "status": "active",
      "tds_season": 7
     },
@@ -1930,6 +2045,7 @@
       "rec_yds": 41.622794,
       "rush_yds": 0.147503
      },
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -1944,32 +2060,44 @@
       "rec_yds": 39.48301,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 10,
+    "home": 16
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_IND_MIN",
    "game_type": "REG",
    "home": "MIN",
    "home_leaders": {
     "passing": {
+     "actual": 150.0,
      "gsis_id": "00-0035228",
      "name": "Kyler Murray",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 219.940992
     },
     "receiving": {
+     "actual": 44.0,
      "gsis_id": "00-0036322",
      "name": "Justin Jefferson",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 55.724207
     },
     "rushing": {
+     "actual": 26.0,
      "gsis_id": "00-0033293",
      "name": "Aaron Jones",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 68.913526
@@ -1997,6 +2125,7 @@
       "rec_yds": 16.880766,
       "rush_yds": 68.913526
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -2011,6 +2140,7 @@
       "rec_yds": 43.768138,
       "rush_yds": 1.652728
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -2025,6 +2155,7 @@
       "rec_yds": 1.345247,
       "rush_yds": 37.542493
      },
+     "scored": false,
      "status": "questionable",
      "tds_season": 1
     }
@@ -2057,39 +2188,49 @@
    "pick": "MIN",
    "pick_prob": 0.721745,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 3.985177,
     "line": -6.5,
     "team": "MIN"
    },
+   "td_graded": true,
    "tier": "SOLID",
+   "total_correct": false,
    "total_pick": {
     "edge": 2.913264,
     "line": 41.5,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_KC_SEA": {
    "away": "KC",
    "away_leaders": {
     "passing": {
+     "actual": 165.0,
      "gsis_id": "00-0033873",
      "name": "Patrick Mahomes",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 215.888695
     },
     "receiving": {
+     "actual": 11.0,
      "gsis_id": "00-0039894",
      "name": "Xavier Worthy",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 38.33547
     },
     "rushing": {
+     "actual": 36.0,
      "gsis_id": "00-0038134",
      "name": "Kenneth Walker III",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 91.883716
@@ -2116,6 +2257,7 @@
       "rec_yds": 15.692247,
       "rush_yds": 91.883716
      },
+     "scored": false,
      "status": "active",
      "tds_season": 8
     },
@@ -2130,6 +2272,7 @@
       "rec_yds": 38.33547,
       "rush_yds": 0.123024
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -2144,32 +2287,44 @@
       "rec_yds": 32.92526,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 3,
+    "home": 20
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_KC_SEA",
    "game_type": "REG",
    "home": "SEA",
    "home_leaders": {
     "passing": {
+     "actual": 257.0,
      "gsis_id": "00-0034869",
      "name": "Sam Darnold",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 235.818175
     },
     "receiving": {
+     "actual": 150.0,
      "gsis_id": "00-0038543",
      "name": "Jaxon Smith-Njigba",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 103.144411
     },
     "rushing": {
+     "actual": 100.0,
      "gsis_id": "00-0038797",
      "name": "Emanuel Wilson",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 46.864274
@@ -2197,6 +2352,7 @@
       "rec_yds": 103.144411,
       "rush_yds": 0.800772
      },
+     "scored": true,
      "status": "active",
      "tds_season": 7
     },
@@ -2211,6 +2367,7 @@
       "rec_yds": 3.770691,
       "rush_yds": 46.864274
      },
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -2225,6 +2382,7 @@
       "rec_yds": 23.301573,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
@@ -2257,39 +2415,49 @@
    "pick": "SEA",
    "pick_prob": 0.587584,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 1.45818,
     "line": 3.0,
     "team": "KC"
    },
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": false,
    "total_pick": {
     "edge": 0.771088,
     "line": 42.5,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_LA_LV": {
    "away": "LA",
    "away_leaders": {
     "passing": {
+     "actual": 195.0,
      "gsis_id": "00-0026498",
      "name": "Matthew Stafford",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 278.963488
     },
     "receiving": {
+     "actual": 68.0,
      "gsis_id": "00-0039075",
      "name": "Puka Nacua",
+     "over": false,
      "position": "WR",
      "status": "questionable",
      "yards": 96.2809
     },
     "rushing": {
+     "actual": 99.0,
      "gsis_id": "00-0037840",
      "name": "Kyren Williams",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 54.907118
@@ -2316,6 +2484,7 @@
       "rec_yds": 20.962462,
       "rush_yds": 54.907118
      },
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -2330,6 +2499,7 @@
       "rec_yds": 96.2809,
       "rush_yds": 0.869246
      },
+     "scored": true,
      "status": "questionable",
      "tds_season": 2
     },
@@ -2344,32 +2514,44 @@
       "rec_yds": 5.560797,
       "rush_yds": 28.761965
      },
+     "scored": true,
      "status": "active",
      "tds_season": 2
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 35,
+    "home": 21
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_LA_LV",
    "game_type": "REG",
    "home": "LV",
    "home_leaders": {
     "passing": {
+     "actual": 295.0,
      "gsis_id": "00-0029604",
      "name": "Kirk Cousins",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 256.965237
     },
     "receiving": {
+     "actual": 73.0,
      "gsis_id": "00-0039338",
      "name": "Brock Bowers",
+     "over": true,
      "position": "TE",
      "status": "active",
      "yards": 62.84343
     },
     "rushing": {
+     "actual": 15.0,
      "gsis_id": "00-0040122",
      "name": "Ashton Jeanty",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 47.386061
@@ -2397,6 +2579,7 @@
       "rec_yds": 24.19704,
       "rush_yds": 47.386061
      },
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -2411,6 +2594,7 @@
       "rec_yds": 62.84343,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -2425,6 +2609,7 @@
       "rec_yds": 34.739443,
       "rush_yds": 0.004706
      },
+     "scored": true,
      "status": "active",
      "tds_season": 3
     }
@@ -2457,39 +2642,49 @@
    "pick": "LA",
    "pick_prob": 0.620008,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 0.220048,
     "line": 3.0,
     "team": "LV"
    },
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": true,
    "total_pick": {
     "edge": 2.131237,
     "line": 48.5,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_MIA_NYJ": {
    "away": "MIA",
    "away_leaders": {
     "passing": {
+     "actual": 208.0,
      "gsis_id": "00-0038128",
      "name": "Malik Willis",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 179.693695
     },
     "receiving": {
+     "actual": 70.0,
      "gsis_id": "00-0041523",
      "name": "Caleb Douglas",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 44.274042
     },
     "rushing": {
+     "actual": 103.0,
      "gsis_id": "00-0040198",
      "name": "Ollie Gordon",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 34.702411
@@ -2516,6 +2711,7 @@
       "rec_yds": 4.077267,
       "rush_yds": 34.702411
      },
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -2530,6 +2726,7 @@
       "rec_yds": 43.218682,
       "rush_yds": 1.784235
      },
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -2544,32 +2741,45 @@
       "rec_yds": 44.274042,
       "rush_yds": 0.162738
      },
+     "scored": true,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": false,
+   "final": {
+    "away": 28,
+    "home": 25
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_MIA_NYJ",
    "game_type": "REG",
    "home": "NYJ",
    "home_leaders": {
     "passing": {
+     "actual": 287.0,
      "gsis_id": "00-0030565",
      "name": "Geno Smith",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 218.568482
     },
     "receiving": {
+     "actual": 26.0,
      "gsis_id": "00-0037740",
      "name": "Garrett Wilson",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 66.752481
     },
     "rushing": {
+     "actual": null,
      "gsis_id": "00-0038120",
      "name": "Breece Hall",
+     "over": null,
+     "played": false,
      "position": "RB",
      "status": "questionable",
      "yards": 54.914762
@@ -2597,6 +2807,7 @@
       "rec_yds": 10.990459,
       "rush_yds": 53.224541
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -2604,6 +2815,7 @@
      "games_season": 3,
      "gsis_id": "00-0038120",
      "name": "Breece Hall",
+     "played": false,
      "position": "RB",
      "prob": 0.355889,
      "proj": {
@@ -2611,6 +2823,7 @@
       "rec_yds": 11.842654,
       "rush_yds": 54.914762
      },
+     "scored": null,
      "status": "questionable",
      "tds_season": 1
     },
@@ -2625,6 +2838,7 @@
       "rec_yds": 66.752481,
       "rush_yds": 0.017946
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     }
@@ -2657,18 +2871,22 @@
    "pick": "NYJ",
    "pick_prob": 0.629547,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 3.693294,
     "line": 4.0,
     "team": "MIA"
    },
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": true,
    "total_pick": {
     "edge": 1.68272,
     "line": 39.5,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_NE_CHI": {
    "away": "NE",
@@ -2901,22 +3119,28 @@
    "away": "NYG",
    "away_leaders": {
     "passing": {
+     "actual": 252.0,
      "gsis_id": "00-0039923",
      "name": "J.J. McCarthy",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 187.665339
     },
     "receiving": {
+     "actual": 111.0,
      "gsis_id": "00-0039337",
      "name": "Malik Nabers",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 73.352182
     },
     "rushing": {
+     "actual": 124.0,
      "gsis_id": "00-0040715",
      "name": "Cam Skattebo",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 31.927726
@@ -2943,6 +3167,7 @@
       "rec_yds": 73.352182,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -2957,6 +3182,7 @@
       "rec_yds": 49.915381,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -2971,32 +3197,44 @@
       "rec_yds": 7.328515,
       "rush_yds": 31.927726
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     }
    ],
+   "correct": false,
+   "final": {
+    "away": 27,
+    "home": 21
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_NYG_HOU",
    "game_type": "REG",
    "home": "HOU",
    "home_leaders": {
     "passing": {
+     "actual": 153.0,
      "gsis_id": "00-0039163",
      "name": "C.J. Stroud",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 252.401546
     },
     "receiving": {
+     "actual": 6.0,
      "gsis_id": "00-0036554",
      "name": "Nico Collins",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 57.117937
     },
     "rushing": {
+     "actual": 66.0,
      "gsis_id": "00-0040583",
      "name": "Woody Marks",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 38.190616
@@ -3024,6 +3262,7 @@
       "rec_yds": 11.216983,
       "rush_yds": 38.190616
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -3038,6 +3277,7 @@
       "rec_yds": 57.117937,
       "rush_yds": 0.503172
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -3052,6 +3292,7 @@
       "rec_yds": 38.193452,
       "rush_yds": 0.409706
      },
+     "scored": false,
      "status": "questionable",
      "tds_season": 0
     }
@@ -3084,39 +3325,49 @@
    "pick": "HOU",
    "pick_prob": 0.817437,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 0.334954,
     "line": 10.5,
     "team": "NYG"
    },
+   "td_graded": true,
    "tier": "STRONG",
+   "total_correct": true,
    "total_pick": {
     "edge": 3.76927,
     "line": 42.5,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_PIT_NO": {
    "away": "PIT",
    "away_leaders": {
     "passing": {
+     "actual": 212.0,
      "gsis_id": "00-0023459",
      "name": "Aaron Rodgers",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 246.272728
     },
     "receiving": {
+     "actual": 56.0,
      "gsis_id": "00-0035640",
      "name": "D.K. Metcalf",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 54.683703
     },
     "rushing": {
+     "actual": 101.0,
      "gsis_id": "00-0037228",
      "name": "Jaylen Warren",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 70.271496
@@ -3143,6 +3394,7 @@
       "rec_yds": 24.693037,
       "rush_yds": 70.271496
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -3157,6 +3409,7 @@
       "rec_yds": 54.683703,
       "rush_yds": 0.272702
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -3171,6 +3424,7 @@
       "rec_yds": 38.861169,
       "rush_yds": 0.317736
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
@@ -3186,22 +3440,28 @@
    "home": "NO",
    "home_leaders": {
     "passing": {
+     "actual": 278.0,
      "gsis_id": "00-0040743",
      "name": "Tyler Shough",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 218.131938
     },
     "receiving": {
+     "actual": 56.0,
      "gsis_id": "00-0037239",
      "name": "Chris Olave",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 64.801615
     },
     "rushing": {
+     "actual": 6.0,
      "gsis_id": "00-0038551",
      "name": "Kendre Miller",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 29.733422
@@ -3229,6 +3489,7 @@
       "rec_yds": 64.801615,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -3243,6 +3504,7 @@
       "rec_yds": 41.943782,
       "rush_yds": 0.004161
      },
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -3257,6 +3519,7 @@
       "rec_yds": 3.022851,
       "rush_yds": 29.733422
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     }
@@ -3295,6 +3558,7 @@
     "line": 3.0,
     "team": "NO"
    },
+   "td_graded": true,
    "tier": "LEAN",
    "total_correct": false,
    "total_pick": {
@@ -3302,28 +3566,35 @@
     "line": 43.5,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_SF_ATL": {
    "away": "SF",
    "away_leaders": {
     "passing": {
+     "actual": 288.0,
      "gsis_id": "00-0037834",
      "name": "Brock Purdy",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 254.518326
     },
     "receiving": {
+     "actual": 88.0,
      "gsis_id": "00-0033288",
      "name": "George Kittle",
+     "over": true,
      "position": "TE",
      "status": "active",
      "yards": 51.316932
     },
     "rushing": {
+     "actual": 39.0,
      "gsis_id": "00-0033280",
      "name": "Christian McCaffrey",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 47.70177
@@ -3350,6 +3621,7 @@
       "rec_yds": 39.494049,
       "rush_yds": 47.70177
      },
+     "scored": true,
      "status": "active",
      "tds_season": 7
     },
@@ -3364,6 +3636,7 @@
       "rec_yds": 51.316932,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -3378,32 +3651,44 @@
       "rec_yds": null,
       "rush_yds": 15.614939
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
    ],
+   "correct": false,
+   "final": {
+    "away": 20,
+    "home": 29
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_SF_ATL",
    "game_type": "REG",
    "home": "ATL",
    "home_leaders": {
     "passing": {
+     "actual": 213.0,
      "gsis_id": "00-0039917",
      "name": "Michael Penix",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 254.72897
     },
     "receiving": {
+     "actual": 66.0,
      "gsis_id": "00-0037238",
      "name": "Drake London",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 78.25117
     },
     "rushing": {
+     "actual": 63.0,
      "gsis_id": "00-0038542",
      "name": "Bijan Robinson",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 81.446634
@@ -3431,6 +3716,7 @@
       "rec_yds": 27.604102,
       "rush_yds": 81.446634
      },
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -3445,6 +3731,7 @@
       "rec_yds": 78.25117,
       "rush_yds": 0.10266
      },
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -3459,6 +3746,7 @@
       "rec_yds": 29.378733,
       "rush_yds": null
      },
+     "scored": true,
      "status": "active",
      "tds_season": 3
     }
@@ -3491,39 +3779,49 @@
    "pick": "SF",
    "pick_prob": 0.602242,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 2.725199,
     "line": -2.5,
     "team": "SF"
    },
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": false,
    "total_pick": {
     "edge": 0.783281,
     "line": 50.5,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_TB_CAR": {
    "away": "TB",
    "away_leaders": {
     "passing": {
+     "actual": 0.0,
      "gsis_id": "00-0041251",
      "name": "Jalon Daniels",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 219.865458
     },
     "receiving": {
+     "actual": 27.0,
      "gsis_id": "00-0033921",
      "name": "Chris Godwin",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 36.030451
     },
     "rushing": {
+     "actual": 106.0,
      "gsis_id": "00-0039361",
      "name": "Bucky Irving",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 63.48763
@@ -3550,6 +3848,7 @@
       "rec_yds": 12.695902,
       "rush_yds": 63.48763
      },
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -3564,6 +3863,7 @@
       "rec_yds": 36.030451,
       "rush_yds": 0.250311
      },
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -3578,32 +3878,44 @@
       "rec_yds": 30.357926,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": false,
+   "final": {
+    "away": 43,
+    "home": 13
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_TB_CAR",
    "game_type": "REG",
    "home": "CAR",
    "home_leaders": {
     "passing": {
+     "actual": 163.0,
      "gsis_id": "00-0039150",
      "name": "Bryce Young",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 244.306968
     },
     "receiving": {
+     "actual": 40.0,
      "gsis_id": "00-0040124",
      "name": "Tetairoa McMillan",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 67.545673
     },
     "rushing": {
+     "actual": 33.0,
      "gsis_id": "00-0036555",
      "name": "Chuba Hubbard",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 71.759245
@@ -3631,6 +3943,7 @@
       "rec_yds": 12.116744,
       "rush_yds": 71.759245
      },
+     "scored": false,
      "status": "active",
      "tds_season": 6
     },
@@ -3645,6 +3958,7 @@
       "rec_yds": 67.545673,
       "rush_yds": 0.014612
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -3659,6 +3973,7 @@
       "rec_yds": 50.18395,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     }
@@ -3691,18 +4006,22 @@
    "pick": "CAR",
    "pick_prob": 0.596749,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 2.602487,
     "line": -3.0,
     "team": "CAR"
    },
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": false,
    "total_pick": {
     "edge": 2.055917,
     "line": 44.5,
     "side": "UNDER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   }
  },
  "schema": 1
