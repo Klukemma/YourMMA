@@ -50,8 +50,8 @@ RUN_OPTUNA = False
 # ==============================================================================
 # 2. EVENT DETAILS
 # ==============================================================================
-EVENT_NAME = "UFC 333: Volkanovski vs. Evloev"
-EVENT_DATE = "2026-10-24"  # Format: YYYY-MM-DD
+EVENT_NAME = "UFC Fight Night: Moicano vs. Nolan"
+EVENT_DATE = "2026-10-31"  # Format: YYYY-MM-DD
 
 # ==============================================================================
 # 3. FIGHT CARD
@@ -60,31 +60,28 @@ EVENT_DATE = "2026-10-24"  # Format: YYYY-MM-DD
 # - is_5_rounds: True for main events and title fights
 # - is_title_fight: True if fighting for a championship
 #
-# Bout list reconciled 2026-10-22 from UFC.com, Wikipedia, F4W, theScore,
-# Bloody Elbow and UFCStats' event page; every bout on two sources or more.
-# No source states corners: the champion is listed first in the title bouts,
-# otherwise the first-billed fighter.
+# Bout list reconciled 2026-10-26 from Wikipedia, Tapology, Sherdog, Yahoo,
+# Cageside Press, Heavy, MMA Sucka, AgentMMA, Combat Edge and Rotowire; every
+# bout on two sources or more. Osbourne vs. Durden (moved from UFC 329) is on
+# Wikipedia and AgentMMA, the latter still calling it "targeted". No source
+# states corners: the first-billed fighter is listed first.
 
 FIGHT_CARD = [
     # Main Card
-    ("Alexander Volkanovski", "Movsar Evloev", True, True),    # 0 - Main Event, Featherweight title (5 rounds)
-    ("Petr Yan", "Merab Dvalishvili", True, True),             # 1 - Co-Main, Bantamweight title (5 rounds; trilogy)
-    ("Lone'er Kavanagh", "Ramazan Temirov"),                   # 2 - Flyweight
-    ("Alexander Volkov", "Rizvan Kuniev"),                     # 3 - Heavyweight
-    ("Aaron Pico", "Losene Keita"),                            # 4 - Featherweight (Keita replaced Arnold Allen, reported 2026-09-18)
+    ("Renato Moicano", "Tom Nolan", True, False),              # 0 - Main Event, Lightweight (5 rounds; Nolan replaced Brian Ortega)
+    ("Randy Brown", "Jacobe Smith"),                           # 1 - Co-Main, Welterweight (Smith on 12 days' notice for Carlos Leal)
+    ("Yana Santos", "Luana Santos"),                           # 2 - Women's Bantamweight
+    ("Ode Osbourne", "Cody Durden"),                           # 3 - Flyweight
+    ("Zachary Reese", "Mickey Gall"),                          # 4 - Middleweight (Gall up from welterweight)
+    ("Jean-Paul Lebosnoyani", "Farman Hasanov"),               # 5 - Welterweight
 
     # Preliminary Card
-    ("Azamat Murzakanov", "Dominick Reyes"),                   # 5 - Light Heavyweight
-    ("Nikita Krylov", "Abdul Rakhman Yakhyaev"),               # 6 - Light Heavyweight
-    ("Abus Magomedov", "Cam Rowston"),                         # 7 - Middleweight
-    ("Grant Dawson", "Nurullo Aliev"),                         # 8 - Lightweight
-
-    # Early Preliminary Card
-    ("Colby Thicknesse", "Asaf Chopurov"),                     # 9 - Bantamweight (Chopurov: UFC debut, 11-0)
-    ("Abubakar Vagaev", "Jacob Malkoun"),                      # 10 - Middleweight (Vagaev up from welterweight)
-    ("Bolaji Oki", "Daniel Santos"),                           # 11 - Featherweight (Oki down from lightweight)
-    ("Kody Steele", "Noah Gugnon"),                            # 12 - Lightweight
-    ("Iasmin Lucindo", "Nicolle Caliari"),                     # 13 - Women's Strawweight
+    ("Francis Marshall", "Dakota Hope"),                       # 6 - Featherweight (Hope replaced Gaston Bolanos; down from lightweight)
+    ("Azamat Bekoev", "Andre Petroski"),                       # 7 - Middleweight
+    ("Rodrigo Sezinando", "Theodor Berggren"),                 # 8 - Welterweight
+    ("Julian Erosa", "JeongYeong Lee"),                        # 9 - Featherweight
+    ("Nick Klein", "Joe Kropschot"),                           # 10 - Middleweight (Kropschot: UFC debut, 9-3)
+    ("Talita Alencar", "Piera Rodriguez"),                     # 11 - Women's Strawweight
 ]
 
 # ==============================================================================
@@ -93,11 +90,12 @@ FIGHT_CARD = [
 # Home advantage only counts when ONE fighter is home and the other is NOT.
 # If both fighters are "home" (e.g., both USA-based), no advantage.
 #
-# UFC 333: Volkanovski vs. Evloev - Etihad Arena, Yas Island, Abu Dhabi, UAE
-# (arena: the standard cage, so no cage_size)
+# UFC Fight Night: Moicano vs. Nolan - Meta APEX, Enterprise (Las Vegas), NV (SMALL cage)
 #
 # Home flags are left off this card: nobody's base was checked fight by
-# fight, and a guessed flag is worse than none. Only the division is set.
+# fight, and a guessed flag is worse than none.
+#
+# NOTE: All bouts at the Apex use the SMALL cage -> cage_size: 'small' for every fight.
 #
 # 'division' tells the model the weight class of the bout (e.g. 'lightweight',
 # "women's flyweight"). It feeds the weight-class features the model was
@@ -105,20 +103,18 @@ FIGHT_CARD = [
 # is wrong whenever one of them is changing class.
 
 FIGHT_CONTEXTS = {
-    0: {"division": "featherweight"},
-    1: {"division": "bantamweight"},
-    2: {"division": "flyweight"},
-    3: {"division": "heavyweight"},
-    4: {"division": "featherweight"},
-    5: {"division": "light heavyweight"},
-    6: {"division": "light heavyweight"},
-    7: {"division": "middleweight"},
-    8: {"division": "lightweight"},
-    9: {"division": "bantamweight"},
-    10: {"division": "middleweight"},
-    11: {"division": "featherweight"},
-    12: {"division": "lightweight"},
-    13: {"division": "women's strawweight"},
+    0: {"division": "lightweight", 'cage_size': 'small'},
+    1: {"division": "welterweight", 'cage_size': 'small'},
+    2: {"division": "women's bantamweight", 'cage_size': 'small'},
+    3: {"division": "flyweight", 'cage_size': 'small'},
+    4: {"division": "middleweight", 'cage_size': 'small'},
+    5: {"division": "welterweight", 'cage_size': 'small'},
+    6: {"division": "featherweight", 'cage_size': 'small'},
+    7: {"division": "middleweight", 'cage_size': 'small'},
+    8: {"division": "welterweight", 'cage_size': 'small'},
+    9: {"division": "featherweight", 'cage_size': 'small'},
+    10: {"division": "middleweight", 'cage_size': 'small'},
+    11: {"division": "women's strawweight", 'cage_size': 'small'},
 }
 
 # ==============================================================================
