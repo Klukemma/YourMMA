@@ -23,7 +23,7 @@ OUT = Path(__file__).resolve().parent / "tests" / "fixtures" / "feeds"
 UA = {"User-Agent": "YourSoccer fixtures probe (github.com/Klukemma/YourMMA)"}
 
 ESPN = {"E0": "eng.1", "SP1": "esp.1", "I1": "ita.1", "D1": "ger.1", "F1": "fra.1"}
-ESPN_BOARD = "https://site.api.espn.com/apis/site/v2/sports/soccer/{lg}/scoreboard?dates={span}&limit=500"
+ESPN_BOARD = "https://site.api.espn.com/apis/site/v2/sports/soccer/{lg}/scoreboard"
 ESPN_TEAMS = "https://site.api.espn.com/apis/site/v2/sports/soccer/{lg}/teams"
 FIXTUREDOWNLOAD = "https://fixturedownload.com/feed/json/{slug}-{year}"
 FD_SLUGS = {"E0": ["epl"], "SP1": ["la-liga"], "I1": ["serie-a"], "D1": ["bundesliga"], "F1": ["ligue-1"]}
@@ -38,47 +38,58 @@ def get(url):
 def save(name, payload):
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT / f"{name}.json.gz"
-    with gzip.open(path, "wb", mtime=0) as f:
+    with gzip.GzipFile(path, "wb", mtime=0) as f:
         f.write(json.dumps(payload, separators=(",", ":"), sort_keys=True).encode())
     return path
 
 
+def fetch(name, url, report):
+    """One request, recorded whatever happens; the JSON saved when it parses."""
+    try:
+        status, body = get(url)
+        data = json.loads(body) if status == 200 else None
+        note = None if status == 200 else body[:300].decode("utf-8", "replace")
+    except Exception as e:                               # noqa: BLE001 - a probe reports, never stops
+        status, data, note = repr(e)[:200], None, None
+    entry = {"url": url, "status": status}
+    if note:
+        entry["body"] = note
+    if isinstance(data, dict) and "events" in data:
+        events = data["events"]
+        entry["events"] = len(events)
+        entry["statuses"] = sorted({e.get("status", {}).get("type", {}).get("name", "?") for e in events})
+        entry["first"] = min((e.get("date", "") for e in events), default=None)
+        entry["last"] = max((e.get("date", "") for e in events), default=None)
+    report["feeds"][name] = entry
+    if data is not None:
+        save(name, data)
+    print(f"  {name:<34} {status}  {entry.get('events', '')} {entry.get('first') or ''} {entry.get('last') or ''}",
+          flush=True)
+    return data
+
+
 def main(now=None):
     now = now or datetime.now(timezone.utc)
-    span = f"{(now - timedelta(days=4)):%Y%m%d}-{(now + timedelta(days=12)):%Y%m%d}"
+    days = [now + timedelta(days=k) for k in range(-4, 13)]
+    span = f"{days[0]:%Y%m%d}-{days[-1]:%Y%m%d}"
     report = {"probed": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "span": span, "feeds": {}}
     for code, lg in ESPN.items():
-        for kind, url in (("board", ESPN_BOARD.format(lg=lg, span=span)), ("teams", ESPN_TEAMS.format(lg=lg))):
-            name = f"espn_{code}_{kind}"
-            try:
-                status, body = get(url)
-                data = json.loads(body) if status == 200 else None
-            except Exception as e:                       # noqa: BLE001 - a probe reports, never stops
-                status, data = repr(e)[:200], None
-            report["feeds"][name] = {"url": url, "status": status}
-            if data is not None:
-                save(name, data)
-                if kind == "board":
-                    events = data.get("events", [])
-                    report["feeds"][name]["events"] = len(events)
-                    report["feeds"][name]["statuses"] = sorted({e.get("status", {}).get("type", {}).get("name", "?")
-                                                                for e in events})
-            print(f"  {name:<22} {status}  {report['feeds'][name].get('events', '')}", flush=True)
+        board = ESPN_BOARD.format(lg=lg)
+        fetch(f"espn_{code}_teams", ESPN_TEAMS.format(lg=lg), report)
+        # Which query shapes the scoreboard accepts: none (its default
+        # window), a date range, and one day at a time.
+        fetch(f"espn_{code}_board_default", board, report)
+        fetch(f"espn_{code}_board_range", f"{board}?dates={span}", report)
+        fetch(f"espn_{code}_board_range_limit", f"{board}?dates={span}&limit=100", report)
+        for d in days:
+            fetch(f"espn_{code}_board_{d:%Y%m%d}", f"{board}?dates={d:%Y%m%d}", report)
     for code, slugs in FD_SLUGS.items():
         for slug in slugs:
             for year in (now.year, now.year - 1):
                 url = FIXTUREDOWNLOAD.format(slug=slug, year=year)
                 name = f"fixturedownload_{code}_{year}"
-                try:
-                    status, body = get(url)
-                    data = json.loads(body) if status == 200 and body.strip()[:1] in (b"[", b"{") else None
-                except Exception as e:                   # noqa: BLE001
-                    status, data = repr(e)[:200], None
-                report["feeds"][name] = {"url": url, "status": status,
-                                         "rows": len(data) if isinstance(data, list) else None}
-                if data is not None:
-                    save(name, data)
-                print(f"  {name:<22} {status}  {report['feeds'][name]['rows']}", flush=True)
+                data = fetch(name, url, report)
+                report["feeds"][name]["rows"] = len(data) if isinstance(data, list) else None
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "probe_report.json").write_text(json.dumps(report, indent=1, sort_keys=True) + "\n")
     return 0
