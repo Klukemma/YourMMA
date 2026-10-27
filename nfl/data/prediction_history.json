@@ -1327,22 +1327,28 @@
    "away": "DAL",
    "away_leaders": {
     "passing": {
+     "actual": 212.0,
      "gsis_id": "00-0033077",
      "name": "Dak Prescott",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 253.373892
     },
     "receiving": {
+     "actual": 74.0,
      "gsis_id": "00-0036358",
      "name": "CeeDee Lamb",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 65.0676
     },
     "rushing": {
+     "actual": 155.0,
      "gsis_id": "00-0036997",
      "name": "Javonte Williams",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 65.352418
@@ -1369,6 +1375,7 @@
       "rec_yds": 9.845084,
       "rush_yds": 65.352418
      },
+     "scored": true,
      "status": "active",
      "tds_season": 8
     },
@@ -1383,6 +1390,7 @@
       "rec_yds": 65.0676,
       "rush_yds": 0.0
      },
+     "scored": true,
      "status": "active",
      "tds_season": 4
     },
@@ -1397,32 +1405,44 @@
       "rec_yds": 58.966588,
       "rush_yds": 0.0
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 38,
+    "home": 21
+   },
    "first_logged": "2026-10-20T15:11:45Z",
    "game_id": "2026_07_DAL_PHI",
    "game_type": "REG",
    "home": "PHI",
    "home_leaders": {
     "passing": {
+     "actual": 211.0,
      "gsis_id": "00-0038400",
      "name": "Tanner McKee",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 223.840075
     },
     "receiving": {
+     "actual": 48.0,
      "gsis_id": "00-0034351",
      "name": "Dallas Goedert",
+     "over": true,
      "position": "TE",
      "status": "active",
      "yards": 32.844314
     },
     "rushing": {
+     "actual": 62.0,
      "gsis_id": "00-0034844",
      "name": "Saquon Barkley",
+     "over": true,
      "position": "RB",
      "status": "questionable",
      "yards": 38.780378
@@ -1451,6 +1471,7 @@
       "rec_yds": 7.973912,
       "rush_yds": 35.209851
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -1465,6 +1486,7 @@
       "rec_yds": 32.844314,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -1479,6 +1501,7 @@
       "rec_yds": 3.520538,
       "rush_yds": 38.780378
      },
+     "scored": true,
      "status": "questionable",
      "tds_season": 0
     }
@@ -1511,18 +1534,22 @@
    "pick": "DAL",
    "pick_prob": 0.663037,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 6.058642,
     "line": 4.5,
     "team": "PHI"
    },
+   "td_graded": true,
    "tier": "SOLID",
+   "total_correct": true,
    "total_pick": {
     "edge": 1.703622,
     "line": 44.0,
     "side": "OVER"
    },
-   "week": 7
+   "week": 7,
+   "yards_graded": true
   },
   "2026_07_DEN_ARI": {
    "away": "DEN",
@@ -4022,6 +4049,2807 @@
    },
    "week": 7,
    "yards_graded": true
+  },
+  "2026_08_ARI_DAL": {
+   "away": "ARI",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0033119",
+     "name": "Jacoby Brissett",
+     "position": "QB",
+     "status": "active",
+     "yards": 257.574346
+    },
+    "receiving": {
+     "gsis_id": "00-0037744",
+     "name": "Trey McBride",
+     "position": "TE",
+     "status": "active",
+     "yards": 70.8355
+    },
+    "rushing": {
+     "gsis_id": "00-0037263",
+     "name": "Tyler Allgeier",
+     "position": "RB",
+     "status": "active",
+     "yards": 21.309905
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0033119",
+    "injury_status": null,
+    "name": "Jacoby Brissett",
+    "rating": -0.030637,
+    "source": "projected",
+    "starts": 72
+   },
+   "away_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0037744",
+     "name": "Trey McBride",
+     "position": "TE",
+     "prob": 0.347956,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 70.8355,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0038559",
+     "name": "Michael Wilson",
+     "position": "WR",
+     "prob": 0.312766,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 57.628714,
+      "rush_yds": 0.355861
+     },
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0037263",
+     "name": "Tyler Allgeier",
+     "position": "RB",
+     "prob": 0.226582,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 8.485062,
+      "rush_yds": 21.309905
+     },
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_ARI_DAL",
+   "game_type": "REG",
+   "home": "DAL",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0033077",
+     "name": "Dak Prescott",
+     "position": "QB",
+     "status": "active",
+     "yards": 282.656829
+    },
+    "receiving": {
+     "gsis_id": "00-0036358",
+     "name": "CeeDee Lamb",
+     "position": "WR",
+     "status": "active",
+     "yards": 71.101323
+    },
+    "rushing": {
+     "gsis_id": "00-0036997",
+     "name": "Javonte Williams",
+     "position": "RB",
+     "status": "active",
+     "yards": 72.735238
+    }
+   },
+   "home_prob": 0.703809,
+   "home_qb": {
+    "change": false,
+    "id": "00-0033077",
+    "injury_status": null,
+    "name": "Dak Prescott",
+    "rating": 0.097888,
+    "source": "projected",
+    "starts": 152
+   },
+   "home_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0036997",
+     "name": "Javonte Williams",
+     "position": "RB",
+     "prob": 0.638694,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 9.97628,
+      "rush_yds": 72.735238
+     },
+     "status": "active",
+     "tds_season": 9
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0036358",
+     "name": "CeeDee Lamb",
+     "position": "WR",
+     "prob": 0.4513,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 71.101323,
+      "rush_yds": 0.0
+     },
+     "status": "active",
+     "tds_season": 6
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0037247",
+     "name": "George Pickens",
+     "position": "WR",
+     "prob": 0.3716,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 56.281188,
+      "rush_yds": 0.0
+     },
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "kickoff": "2026-11-01T18:00:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": 240.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": 250.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -285.0,
+    "books": 6,
+    "home_ml": -305.0,
+    "home_prob": 0.71914,
+    "opening_spread": 6.0,
+    "opening_total": 52.0,
+    "source": "the-odds-api",
+    "spread": 6.0,
+    "total": 52.0
+   },
+   "market_prob": 0.71914,
+   "market_source": "the-odds-api",
+   "market_spread": 6.0,
+   "market_total": 52.0,
+   "model_prob": 0.718321,
+   "model_spread": 7.006266,
+   "model_total": 52.600905,
+   "pick": "DAL",
+   "pick_prob": 0.703809,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 1.006266,
+    "line": -6.0,
+    "team": "DAL"
+   },
+   "tier": "SOLID",
+   "total_pick": {
+    "edge": 0.600905,
+    "line": 52.0,
+    "side": "OVER"
+   },
+   "week": 8
+  },
+  "2026_08_ATL_TB": {
+   "away": "ATL",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0039917",
+     "name": "Michael Penix",
+     "position": "QB",
+     "status": "active",
+     "yards": 241.588256
+    },
+    "receiving": {
+     "gsis_id": "00-0037238",
+     "name": "Drake London",
+     "position": "WR",
+     "status": "active",
+     "yards": 73.385338
+    },
+    "rushing": {
+     "gsis_id": "00-0038542",
+     "name": "Bijan Robinson",
+     "position": "RB",
+     "status": "active",
+     "yards": 79.086925
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0039917",
+    "injury_status": null,
+    "name": "Michael Penix Jr.",
+    "rating": 0.032602,
+    "source": "projected",
+    "starts": 17
+   },
+   "away_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0038542",
+     "name": "Bijan Robinson",
+     "position": "RB",
+     "prob": 0.53932,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 28.406149,
+      "rush_yds": 79.086925
+     },
+     "status": "active",
+     "tds_season": 5
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0037238",
+     "name": "Drake London",
+     "position": "WR",
+     "prob": 0.360396,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 73.385338,
+      "rush_yds": 0.071696
+     },
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0036970",
+     "name": "Kyle Pitts",
+     "position": "TE",
+     "prob": 0.207525,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 26.307714,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 4
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_ATL_TB",
+   "game_type": "REG",
+   "home": "TB",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0034855",
+     "name": "Baker Mayfield",
+     "position": "QB",
+     "status": "active",
+     "yards": 221.429122
+    },
+    "receiving": {
+     "gsis_id": "00-0033921",
+     "name": "Chris Godwin",
+     "position": "WR",
+     "status": "active",
+     "yards": 38.218307
+    },
+    "rushing": {
+     "gsis_id": "00-0039361",
+     "name": "Bucky Irving",
+     "position": "RB",
+     "status": "active",
+     "yards": 63.084977
+    }
+   },
+   "home_prob": 0.494892,
+   "home_qb": {
+    "change": false,
+    "id": "00-0034855",
+    "injury_status": null,
+    "name": "Baker Mayfield",
+    "rating": -0.009389,
+    "source": "projected",
+    "starts": 129
+   },
+   "home_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0039361",
+     "name": "Bucky Irving",
+     "position": "RB",
+     "prob": 0.471485,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 12.891293,
+      "rush_yds": 63.084977
+     },
+     "status": "active",
+     "tds_season": 5
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0033921",
+     "name": "Chris Godwin",
+     "position": "WR",
+     "prob": 0.236202,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 38.218307,
+      "rush_yds": 0.247907
+     },
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0036919",
+     "name": "Kenneth Gainwell",
+     "position": "RB",
+     "prob": 0.195954,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 9.516929,
+      "rush_yds": 16.488238
+     },
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "kickoff": "2026-11-01T18:00:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": -102.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": 100.0,
+    "best_home_book": "BetRivers",
+    "best_home_ml": -113.0,
+    "books": 6,
+    "home_ml": -118.0,
+    "home_prob": 0.517364,
+    "opening_spread": -0.0,
+    "opening_total": 45.5,
+    "source": "the-odds-api",
+    "spread": -0.0,
+    "total": 45.5
+   },
+   "market_prob": 0.517364,
+   "market_source": "the-odds-api",
+   "market_spread": -0.0,
+   "market_total": 45.5,
+   "model_prob": 0.54533,
+   "model_spread": 1.573295,
+   "model_total": 44.87249,
+   "pick": "ATL",
+   "pick_prob": 0.505108,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 1.573295,
+    "line": 0.0,
+    "team": "TB"
+   },
+   "tier": "TOSS-UP",
+   "total_pick": {
+    "edge": 0.62751,
+    "line": 45.5,
+    "side": "UNDER"
+   },
+   "week": 8
+  },
+  "2026_08_BAL_BUF": {
+   "away": "BAL",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0035993",
+     "name": "Tyler Huntley",
+     "position": "QB",
+     "status": "active",
+     "yards": 235.576496
+    },
+    "receiving": {
+     "gsis_id": "00-0039064",
+     "name": "Zay Flowers",
+     "position": "WR",
+     "status": "active",
+     "yards": 85.656256
+    },
+    "rushing": {
+     "gsis_id": "00-0032764",
+     "name": "Derrick Henry",
+     "position": "RB",
+     "status": "active",
+     "yards": 74.01842
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0035993",
+    "injury_status": null,
+    "name": "Tyler Huntley",
+    "rating": -0.010711,
+    "source": "projected",
+    "starts": 18
+   },
+   "away_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0032764",
+     "name": "Derrick Henry",
+     "position": "RB",
+     "prob": 0.450644,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 4.944997,
+      "rush_yds": 74.01842
+     },
+     "status": "active",
+     "tds_season": 8
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0039064",
+     "name": "Zay Flowers",
+     "position": "WR",
+     "prob": 0.403707,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 85.656256,
+      "rush_yds": 1.193052
+     },
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0034753",
+     "name": "Mark Andrews",
+     "position": "TE",
+     "prob": 0.21134,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 27.570229,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_BAL_BUF",
+   "game_type": "REG",
+   "home": "BUF",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0034857",
+     "name": "Josh Allen",
+     "position": "QB",
+     "status": "active",
+     "yards": 247.561243
+    },
+    "receiving": {
+     "gsis_id": "00-0037261",
+     "name": "Khalil Shakir",
+     "position": "WR",
+     "status": "active",
+     "yards": 43.737101
+    },
+    "rushing": {
+     "gsis_id": "00-0037248",
+     "name": "James Cook",
+     "position": "RB",
+     "status": "active",
+     "yards": 81.335922
+    }
+   },
+   "home_prob": 0.612886,
+   "home_qb": {
+    "change": false,
+    "id": "00-0034857",
+    "injury_status": null,
+    "name": "Josh Allen",
+    "rating": 0.211431,
+    "source": "projected",
+    "starts": 145
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0037248",
+     "name": "James Cook",
+     "position": "RB",
+     "prob": 0.638708,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 12.658699,
+      "rush_yds": 81.335922
+     },
+     "status": "active",
+     "tds_season": 6
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0034857",
+     "name": "Josh Allen",
+     "position": "QB",
+     "prob": 0.422966,
+     "proj": {
+      "pass_yds": 247.561243,
+      "rec_yds": null,
+      "rush_yds": 23.59348
+     },
+     "status": "active",
+     "tds_season": 8
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0039901",
+     "name": "Keon Coleman",
+     "position": "WR",
+     "prob": 0.309621,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 33.241951,
+      "rush_yds": 0.030345
+     },
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-11-01T18:00:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": 150.0,
+    "best_away_book": "DraftKings",
+    "best_away_ml": 150.0,
+    "best_home_book": "FanDuel",
+    "best_home_ml": -174.0,
+    "books": 6,
+    "home_ml": -180.0,
+    "home_prob": 0.616438,
+    "opening_spread": 3.0,
+    "opening_total": 52.5,
+    "source": "the-odds-api",
+    "spread": 3.0,
+    "total": 52.5
+   },
+   "market_prob": 0.616438,
+   "market_source": "the-odds-api",
+   "market_spread": 3.0,
+   "market_total": 52.5,
+   "model_prob": 0.803268,
+   "model_spread": 10.21482,
+   "model_total": 51.186038,
+   "pick": "BUF",
+   "pick_prob": 0.612886,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 7.21482,
+    "line": -3.0,
+    "team": "BUF"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 1.313962,
+    "line": 52.5,
+    "side": "UNDER"
+   },
+   "week": 8
+  },
+  "2026_08_CAR_GB": {
+   "away": "CAR",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0039150",
+     "name": "Bryce Young",
+     "position": "QB",
+     "status": "active",
+     "yards": 238.475893
+    },
+    "receiving": {
+     "gsis_id": "00-0040124",
+     "name": "Tetairoa McMillan",
+     "position": "WR",
+     "status": "active",
+     "yards": 61.014548
+    },
+    "rushing": {
+     "gsis_id": "00-0036555",
+     "name": "Chuba Hubbard",
+     "position": "RB",
+     "status": "active",
+     "yards": 58.858506
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0039150",
+    "injury_status": null,
+    "name": "Bryce Young",
+    "rating": -0.019756,
+    "source": "projected",
+    "starts": 48
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036555",
+     "name": "Chuba Hubbard",
+     "position": "RB",
+     "prob": 0.416369,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 12.558287,
+      "rush_yds": 58.858506
+     },
+     "status": "active",
+     "tds_season": 6
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040124",
+     "name": "Tetairoa McMillan",
+     "position": "WR",
+     "prob": 0.312742,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 61.014548,
+      "rush_yds": 0.004527
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0039491",
+     "name": "Jalen Coker",
+     "position": "WR",
+     "prob": 0.274722,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 44.807574,
+      "rush_yds": 0.0
+     },
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_CAR_GB",
+   "game_type": "REG",
+   "home": "GB",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0036264",
+     "name": "Jordan Love",
+     "position": "QB",
+     "status": "active",
+     "yards": 260.792242
+    },
+    "receiving": {
+     "gsis_id": "00-0038124",
+     "name": "Christian Watson",
+     "position": "WR",
+     "status": "active",
+     "yards": 57.589217
+    },
+    "rushing": {
+     "gsis_id": "00-0035700",
+     "name": "Josh Jacobs",
+     "position": "RB",
+     "status": "active",
+     "yards": 44.79457
+    }
+   },
+   "home_prob": 0.603748,
+   "home_qb": {
+    "change": false,
+    "id": "00-0036264",
+    "injury_status": null,
+    "name": "Jordan Love",
+    "rating": 0.124822,
+    "source": "projected",
+    "starts": 59
+   },
+   "home_td": [
+    {
+     "games_season": 1,
+     "gsis_id": "00-0035700",
+     "name": "Josh Jacobs",
+     "position": "RB",
+     "prob": 0.427002,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 11.906392,
+      "rush_yds": 44.79457
+     },
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0038124",
+     "name": "Christian Watson",
+     "position": "WR",
+     "prob": 0.399598,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 57.589217,
+      "rush_yds": 0.028212
+     },
+     "status": "active",
+     "tds_season": 6
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0040667",
+     "name": "Matthew Golden",
+     "position": "WR",
+     "prob": 0.369734,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 57.135216,
+      "rush_yds": 0.128917
+     },
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-10-30T00:15:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": 140.0,
+    "best_away_book": "DraftKings",
+    "best_away_ml": 140.0,
+    "best_home_book": "FanDuel",
+    "best_home_ml": -164.0,
+    "books": 7,
+    "home_ml": -166.0,
+    "home_prob": 0.599639,
+    "opening_spread": 3.0,
+    "opening_total": 46.5,
+    "source": "the-odds-api",
+    "spread": 3.0,
+    "total": 47.0
+   },
+   "market_prob": 0.599639,
+   "market_source": "the-odds-api",
+   "market_spread": 3.0,
+   "market_total": 47.0,
+   "model_prob": 0.72889,
+   "model_spread": 6.838457,
+   "model_total": 45.88424,
+   "pick": "GB",
+   "pick_prob": 0.603748,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 3.838457,
+    "line": -3.0,
+    "team": "GB"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 1.11576,
+    "line": 47.0,
+    "side": "UNDER"
+   },
+   "week": 8
+  },
+  "2026_08_CHI_SEA": {
+   "away": "CHI",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0039918",
+     "name": "Caleb Williams",
+     "position": "QB",
+     "status": "active",
+     "yards": 228.288817
+    },
+    "receiving": {
+     "gsis_id": "00-0040735",
+     "name": "Luther Burden",
+     "position": "WR",
+     "status": "active",
+     "yards": 47.94632
+    },
+    "rushing": {
+     "gsis_id": "00-0036275",
+     "name": "D'Andre Swift",
+     "position": "RB",
+     "status": "active",
+     "yards": 50.008863
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0039918",
+    "injury_status": null,
+    "name": "Caleb Williams",
+    "rating": 0.086112,
+    "source": "projected",
+    "starts": 40
+   },
+   "away_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0036275",
+     "name": "D'Andre Swift",
+     "position": "RB",
+     "prob": 0.445636,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 13.47962,
+      "rush_yds": 50.008863
+     },
+     "status": "active",
+     "tds_season": 7
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0040126",
+     "name": "Colston Loveland",
+     "position": "TE",
+     "prob": 0.289369,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 43.140659,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0040735",
+     "name": "Luther Burden",
+     "position": "WR",
+     "prob": 0.246966,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 47.94632,
+      "rush_yds": 0.589263
+     },
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_CHI_SEA",
+   "game_type": "REG",
+   "home": "SEA",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0034869",
+     "name": "Sam Darnold",
+     "position": "QB",
+     "status": "active",
+     "yards": 248.916615
+    },
+    "receiving": {
+     "gsis_id": "00-0038543",
+     "name": "Jaxon Smith-Njigba",
+     "position": "WR",
+     "status": "active",
+     "yards": 107.238479
+    },
+    "rushing": {
+     "gsis_id": "00-0038797",
+     "name": "Emanuel Wilson",
+     "position": "RB",
+     "status": "active",
+     "yards": 51.923072
+    }
+   },
+   "home_prob": 0.596394,
+   "home_qb": {
+    "change": false,
+    "id": "00-0034869",
+    "injury_status": null,
+    "name": "Sam Darnold",
+    "rating": 0.011428,
+    "source": "projected",
+    "starts": 97
+   },
+   "home_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0038543",
+     "name": "Jaxon Smith-Njigba",
+     "position": "WR",
+     "prob": 0.526342,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 107.238479,
+      "rush_yds": 1.283196
+     },
+     "status": "active",
+     "tds_season": 8
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0038797",
+     "name": "Emanuel Wilson",
+     "position": "RB",
+     "prob": 0.333271,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 4.80185,
+      "rush_yds": 51.923072
+     },
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0039793",
+     "name": "AJ Barner",
+     "position": "TE",
+     "prob": 0.272464,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 25.341145,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "kickoff": "2026-11-03T01:15:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": 134.0,
+    "best_away_book": "DraftKings",
+    "best_away_ml": 136.0,
+    "best_home_book": "FanDuel",
+    "best_home_ml": -158.0,
+    "books": 6,
+    "home_ml": -162.0,
+    "home_prob": 0.590279,
+    "opening_spread": 3.0,
+    "opening_total": 46.5,
+    "source": "the-odds-api",
+    "spread": 3.0,
+    "total": 46.5
+   },
+   "market_prob": 0.590279,
+   "market_source": "the-odds-api",
+   "market_spread": 3.0,
+   "market_total": 46.5,
+   "model_prob": 0.64211,
+   "model_spread": 4.080498,
+   "model_total": 44.648008,
+   "pick": "SEA",
+   "pick_prob": 0.596394,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 1.080498,
+    "line": -3.0,
+    "team": "SEA"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 1.851992,
+    "line": 46.5,
+    "side": "UNDER"
+   },
+   "week": 8
+  },
+  "2026_08_CLE_PIT": {
+   "away": "CLE",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0033537",
+     "name": "Deshaun Watson",
+     "position": "QB",
+     "status": "active",
+     "yards": 189.399141
+    },
+    "receiving": {
+     "gsis_id": "00-0041547",
+     "name": "KC Concepcion",
+     "position": "WR",
+     "status": "active",
+     "yards": 45.09046
+    },
+    "rushing": {
+     "gsis_id": "00-0040784",
+     "name": "Quinshon Judkins",
+     "position": "RB",
+     "status": "active",
+     "yards": 50.125395
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0033537",
+    "injury_status": null,
+    "name": "Deshaun Watson",
+    "rating": -0.057207,
+    "source": "projected",
+    "starts": 82
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040784",
+     "name": "Quinshon Judkins",
+     "position": "RB",
+     "prob": 0.315595,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 10.229311,
+      "rush_yds": 50.125395
+     },
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0041037",
+     "name": "Denzel Boston",
+     "position": "WR",
+     "prob": 0.253966,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 43.443846,
+      "rush_yds": 0.044499
+     },
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0040663",
+     "name": "Harold Fannin",
+     "position": "TE",
+     "prob": 0.239763,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 37.031044,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_CLE_PIT",
+   "game_type": "REG",
+   "home": "PIT",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0023459",
+     "name": "Aaron Rodgers",
+     "position": "QB",
+     "status": "active",
+     "yards": 228.702704
+    },
+    "receiving": {
+     "gsis_id": "00-0035640",
+     "name": "D.K. Metcalf",
+     "position": "WR",
+     "status": "active",
+     "yards": 51.912045
+    },
+    "rushing": {
+     "gsis_id": "00-0037228",
+     "name": "Jaylen Warren",
+     "position": "RB",
+     "status": "active",
+     "yards": 70.645196
+    }
+   },
+   "home_prob": 0.634567,
+   "home_qb": {
+    "change": false,
+    "id": "00-0023459",
+    "injury_status": null,
+    "name": "Aaron Rodgers",
+    "rating": -0.06513,
+    "source": "projected",
+    "starts": 285
+   },
+   "home_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0037228",
+     "name": "Jaylen Warren",
+     "position": "RB",
+     "prob": 0.439514,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 22.183314,
+      "rush_yds": 70.645196
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0035640",
+     "name": "D.K. Metcalf",
+     "position": "WR",
+     "prob": 0.295999,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 51.912045,
+      "rush_yds": 0.233267
+     },
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0036139",
+     "name": "Rico Dowdle",
+     "position": "RB",
+     "prob": 0.250756,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 10.881874,
+      "rush_yds": 27.66464
+     },
+     "status": "active",
+     "tds_season": 0
+    }
+   ],
+   "kickoff": "2026-11-01T18:00:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": 176.0,
+    "best_away_book": "BetRivers",
+    "best_away_ml": 188.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -205.0,
+    "books": 6,
+    "home_ml": -210.0,
+    "home_prob": 0.651529,
+    "opening_spread": 4.0,
+    "opening_total": 39.0,
+    "source": "the-odds-api",
+    "spread": 4.0,
+    "total": 39.0
+   },
+   "market_prob": 0.651529,
+   "market_source": "the-odds-api",
+   "market_spread": 4.0,
+   "market_total": 39.0,
+   "model_prob": 0.621247,
+   "model_spread": 3.775152,
+   "model_total": 39.714162,
+   "pick": "PIT",
+   "pick_prob": 0.634567,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 0.224848,
+    "line": 4.0,
+    "team": "CLE"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 0.714162,
+    "line": 39.0,
+    "side": "OVER"
+   },
+   "week": 8
+  },
+  "2026_08_IND_JAX": {
+   "away": "IND",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0035710",
+     "name": "Daniel Jones",
+     "position": "QB",
+     "status": "active",
+     "yards": 223.306133
+    },
+    "receiving": {
+     "gsis_id": "00-0038997",
+     "name": "Josh Downs",
+     "position": "WR",
+     "status": "active",
+     "yards": 41.253404
+    },
+    "rushing": {
+     "gsis_id": "00-0036223",
+     "name": "Jonathan Taylor",
+     "position": "RB",
+     "status": "active",
+     "yards": 69.473985
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0035710",
+    "injury_status": null,
+    "name": "Daniel Jones",
+    "rating": -0.033365,
+    "source": "projected",
+    "starts": 91
+   },
+   "away_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0036223",
+     "name": "Jonathan Taylor",
+     "position": "RB",
+     "prob": 0.507919,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 13.637477,
+      "rush_yds": 69.473985
+     },
+     "status": "active",
+     "tds_season": 8
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0038997",
+     "name": "Josh Downs",
+     "position": "WR",
+     "prob": 0.201145,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 41.253404,
+      "rush_yds": 0.127797
+     },
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0030279",
+     "name": "Keenan Allen",
+     "position": "WR",
+     "prob": 0.173527,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 36.680754,
+      "rush_yds": 0.0
+     },
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_IND_JAX",
+   "game_type": "REG",
+   "home": "JAX",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0036971",
+     "name": "Trevor Lawrence",
+     "position": "QB",
+     "status": "active",
+     "yards": 255.315814
+    },
+    "receiving": {
+     "gsis_id": "00-0038606",
+     "name": "Parker Washington",
+     "position": "WR",
+     "status": "active",
+     "yards": 59.304095
+    },
+    "rushing": {
+     "gsis_id": "00-0040719",
+     "name": "Bhayshul Tuten",
+     "position": "RB",
+     "status": "active",
+     "yards": 52.39029
+    }
+   },
+   "home_prob": 0.742483,
+   "home_qb": {
+    "change": false,
+    "id": "00-0036971",
+    "injury_status": null,
+    "name": "Trevor Lawrence",
+    "rating": 0.117135,
+    "source": "projected",
+    "starts": 86
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040719",
+     "name": "Bhayshul Tuten",
+     "position": "RB",
+     "prob": 0.451676,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 12.886988,
+      "rush_yds": 52.39029
+     },
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038606",
+     "name": "Parker Washington",
+     "position": "WR",
+     "prob": 0.401273,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 59.304095,
+      "rush_yds": 0.009627
+     },
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038935",
+     "name": "Brenton Strange",
+     "position": "TE",
+     "prob": 0.295016,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 38.773122,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "kickoff": "2026-11-01T18:00:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": 310.0,
+    "best_away_book": "BetRivers",
+    "best_away_ml": 320.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -360.0,
+    "books": 6,
+    "home_ml": -390.0,
+    "home_prob": 0.765438,
+    "opening_spread": 7.0,
+    "opening_total": 47.5,
+    "source": "the-odds-api",
+    "spread": 7.0,
+    "total": 47.5
+   },
+   "market_prob": 0.765438,
+   "market_source": "the-odds-api",
+   "market_spread": 7.0,
+   "market_total": 47.5,
+   "model_prob": 0.810261,
+   "model_spread": 10.787494,
+   "model_total": 45.919988,
+   "pick": "JAX",
+   "pick_prob": 0.742483,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 3.787494,
+    "line": -7.0,
+    "team": "JAX"
+   },
+   "tier": "SOLID",
+   "total_pick": {
+    "edge": 1.580012,
+    "line": 47.5,
+    "side": "UNDER"
+   },
+   "week": 8
+  },
+  "2026_08_KC_DEN": {
+   "away": "KC",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0033873",
+     "name": "Patrick Mahomes",
+     "position": "QB",
+     "status": "active",
+     "yards": 221.863842
+    },
+    "receiving": {
+     "gsis_id": "00-0039894",
+     "name": "Xavier Worthy",
+     "position": "WR",
+     "status": "active",
+     "yards": 36.992486
+    },
+    "rushing": {
+     "gsis_id": "00-0038134",
+     "name": "Kenneth Walker III",
+     "position": "RB",
+     "status": "active",
+     "yards": 90.587108
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0033873",
+    "injury_status": null,
+    "name": "Patrick Mahomes",
+    "rating": 0.088597,
+    "source": "projected",
+    "starts": 153
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038134",
+     "name": "Kenneth Walker III",
+     "position": "RB",
+     "prob": 0.563784,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 16.316698,
+      "rush_yds": 90.587108
+     },
+     "status": "active",
+     "tds_season": 8
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0039894",
+     "name": "Xavier Worthy",
+     "position": "WR",
+     "prob": 0.231849,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 36.992486,
+      "rush_yds": 0.116452
+     },
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0030506",
+     "name": "Travis Kelce",
+     "position": "TE",
+     "prob": 0.223777,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 34.235815,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_KC_DEN",
+   "game_type": "REG",
+   "home": "DEN",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0039732",
+     "name": "Bo Nix",
+     "position": "QB",
+     "status": "active",
+     "yards": 210.976368
+    },
+    "receiving": {
+     "gsis_id": "00-0036613",
+     "name": "Jaylen Waddle",
+     "position": "WR",
+     "status": "active",
+     "yards": 41.048239
+    },
+    "rushing": {
+     "gsis_id": "00-0036158",
+     "name": "J.K. Dobbins",
+     "position": "RB",
+     "status": "active",
+     "yards": 43.17799
+    }
+   },
+   "home_prob": 0.444993,
+   "home_qb": {
+    "change": false,
+    "id": "00-0039732",
+    "injury_status": null,
+    "name": "Bo Nix",
+    "rating": 0.013619,
+    "source": "projected",
+    "starts": 43
+   },
+   "home_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0036158",
+     "name": "J.K. Dobbins",
+     "position": "RB",
+     "prob": 0.281424,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 2.22088,
+      "rush_yds": 43.17799
+     },
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 3,
+     "gsis_id": "00-0041496",
+     "name": "Jonah Coleman",
+     "position": "RB",
+     "prob": 0.267569,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 8.857022,
+      "rush_yds": 26.260513
+     },
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040730",
+     "name": "RJ Harvey",
+     "position": "RB",
+     "prob": 0.259547,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 19.745375,
+      "rush_yds": 12.238632
+     },
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "kickoff": "2026-11-01T21:25:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": -125.0,
+    "best_away_book": "DraftKings",
+    "best_away_ml": -125.0,
+    "best_home_book": "FanDuel",
+    "best_home_ml": 108.0,
+    "books": 6,
+    "home_ml": 105.0,
+    "home_prob": 0.467532,
+    "opening_spread": -1.5,
+    "opening_total": 42.5,
+    "source": "the-odds-api",
+    "spread": -1.5,
+    "total": 42.5
+   },
+   "market_prob": 0.467532,
+   "market_source": "the-odds-api",
+   "market_spread": -1.5,
+   "market_total": 42.5,
+   "model_prob": 0.568065,
+   "model_spread": 2.054611,
+   "model_total": 42.347565,
+   "pick": "KC",
+   "pick_prob": 0.555007,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 3.554611,
+    "line": 1.5,
+    "team": "DEN"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 0.152435,
+    "line": 42.5,
+    "side": "UNDER"
+   },
+   "week": 8
+  },
+  "2026_08_LAC_LA": {
+   "away": "LAC",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0036355",
+     "name": "Justin Herbert",
+     "position": "QB",
+     "status": "active",
+     "yards": 207.299313
+    },
+    "receiving": {
+     "gsis_id": "00-0038544",
+     "name": "Quentin Johnston",
+     "position": "WR",
+     "status": "active",
+     "yards": 32.518127
+    },
+    "rushing": {
+     "gsis_id": "00-0040666",
+     "name": "Omarion Hampton",
+     "position": "RB",
+     "status": "active",
+     "yards": 34.483873
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0036355",
+    "injury_status": null,
+    "name": "Justin Herbert",
+    "rating": -0.08098,
+    "source": "projected",
+    "starts": 104
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040666",
+     "name": "Omarion Hampton",
+     "position": "RB",
+     "prob": 0.269481,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 6.422405,
+      "rush_yds": 34.483873
+     },
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0038544",
+     "name": "Quentin Johnston",
+     "position": "WR",
+     "prob": 0.177565,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 32.518127,
+      "rush_yds": 0.001935
+     },
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0039391",
+     "name": "Kimani Vidal",
+     "position": "RB",
+     "prob": 0.17129,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 5.300912,
+      "rush_yds": 16.077578
+     },
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_LAC_LA",
+   "game_type": "REG",
+   "home": "LA",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0026498",
+     "name": "Matthew Stafford",
+     "position": "QB",
+     "status": "active",
+     "yards": 268.444916
+    },
+    "receiving": {
+     "gsis_id": "00-0039075",
+     "name": "Puka Nacua",
+     "position": "WR",
+     "status": "active",
+     "yards": 93.617643
+    },
+    "rushing": {
+     "gsis_id": "00-0037840",
+     "name": "Kyren Williams",
+     "position": "RB",
+     "status": "active",
+     "yards": 54.934331
+    }
+   },
+   "home_prob": 0.73258,
+   "home_qb": {
+    "change": false,
+    "id": "00-0026498",
+    "injury_status": null,
+    "name": "Matthew Stafford",
+    "rating": 0.089511,
+    "source": "projected",
+    "starts": 259
+   },
+   "home_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0037840",
+     "name": "Kyren Williams",
+     "position": "RB",
+     "prob": 0.565045,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 18.473749,
+      "rush_yds": 54.934331
+     },
+     "status": "active",
+     "tds_season": 6
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0039075",
+     "name": "Puka Nacua",
+     "position": "WR",
+     "prob": 0.470717,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 93.617643,
+      "rush_yds": 1.282889
+     },
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0039738",
+     "name": "Blake Corum",
+     "position": "RB",
+     "prob": 0.325156,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 5.954312,
+      "rush_yds": 36.237669
+     },
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-11-01T21:05:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": 270.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": 270.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -310.0,
+    "books": 6,
+    "home_ml": -335.0,
+    "home_prob": 0.740221,
+    "opening_spread": 7.0,
+    "opening_total": 46.0,
+    "source": "the-odds-api",
+    "spread": 7.0,
+    "total": 45.0
+   },
+   "market_prob": 0.740221,
+   "market_source": "the-odds-api",
+   "market_spread": 7.0,
+   "market_total": 45.0,
+   "model_prob": 0.743131,
+   "model_spread": 8.086792,
+   "model_total": 45.558488,
+   "pick": "LA",
+   "pick_prob": 0.73258,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 1.086792,
+    "line": -7.0,
+    "team": "LA"
+   },
+   "tier": "SOLID",
+   "total_pick": {
+    "edge": 0.558488,
+    "line": 45.0,
+    "side": "OVER"
+   },
+   "week": 8
+  },
+  "2026_08_LV_NYJ": {
+   "away": "LV",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0029604",
+     "name": "Kirk Cousins",
+     "position": "QB",
+     "status": "active",
+     "yards": 244.921393
+    },
+    "receiving": {
+     "gsis_id": "00-0039338",
+     "name": "Brock Bowers",
+     "position": "TE",
+     "status": "active",
+     "yards": 58.544189
+    },
+    "rushing": {
+     "gsis_id": "00-0040122",
+     "name": "Ashton Jeanty",
+     "position": "RB",
+     "status": "active",
+     "yards": 42.155965
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0029604",
+    "injury_status": null,
+    "name": "Kirk Cousins",
+    "rating": 0.023405,
+    "source": "projected",
+    "starts": 178
+   },
+   "away_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0040122",
+     "name": "Ashton Jeanty",
+     "position": "RB",
+     "prob": 0.420573,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 25.819157,
+      "rush_yds": 42.155965
+     },
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0039338",
+     "name": "Brock Bowers",
+     "position": "TE",
+     "prob": 0.338977,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 58.544189,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0038563",
+     "name": "Tre Tucker",
+     "position": "WR",
+     "prob": 0.269837,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 37.757281,
+      "rush_yds": 0.0
+     },
+     "status": "active",
+     "tds_season": 4
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_LV_NYJ",
+   "game_type": "REG",
+   "home": "NYJ",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0030565",
+     "name": "Geno Smith",
+     "position": "QB",
+     "status": "active",
+     "yards": 226.254242
+    },
+    "receiving": {
+     "gsis_id": "00-0037740",
+     "name": "Garrett Wilson",
+     "position": "WR",
+     "status": "active",
+     "yards": 59.616066
+    },
+    "rushing": {
+     "gsis_id": "00-0039794",
+     "name": "Braelon Allen",
+     "position": "RB",
+     "status": "active",
+     "yards": 63.201396
+    }
+   },
+   "home_prob": 0.493028,
+   "home_qb": {
+    "change": false,
+    "id": "00-0030565",
+    "injury_status": null,
+    "name": "Geno Smith",
+    "rating": -0.046053,
+    "source": "projected",
+    "starts": 106
+   },
+   "home_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0039794",
+     "name": "Braelon Allen",
+     "position": "RB",
+     "prob": 0.39202,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 14.270224,
+      "rush_yds": 63.201396
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 3,
+     "gsis_id": "00-0041511",
+     "name": "Omar Cooper",
+     "position": "WR",
+     "prob": 0.325829,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 44.654101,
+      "rush_yds": 0.157552
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0037740",
+     "name": "Garrett Wilson",
+     "position": "WR",
+     "prob": 0.284706,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 59.616066,
+      "rush_yds": 0.019476
+     },
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-11-01T18:00:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": -104.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": -102.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -112.0,
+    "books": 6,
+    "home_ml": -116.0,
+    "home_prob": 0.514975,
+    "opening_spread": -0.0,
+    "opening_total": 43.0,
+    "source": "the-odds-api",
+    "spread": -0.0,
+    "total": 43.0
+   },
+   "market_prob": 0.514975,
+   "market_source": "the-odds-api",
+   "market_spread": -0.0,
+   "market_total": 43.0,
+   "model_prob": 0.520936,
+   "model_spread": 1.053512,
+   "model_total": 44.957696,
+   "pick": "LV",
+   "pick_prob": 0.506972,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 1.053512,
+    "line": 0.0,
+    "team": "NYJ"
+   },
+   "tier": "TOSS-UP",
+   "total_pick": {
+    "edge": 1.957696,
+    "line": 43.0,
+    "side": "OVER"
+   },
+   "week": 8
+  },
+  "2026_08_MIN_DET": {
+   "away": "MIN",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0035228",
+     "name": "Kyler Murray",
+     "position": "QB",
+     "status": "active",
+     "yards": 217.562182
+    },
+    "receiving": {
+     "gsis_id": "00-0036322",
+     "name": "Justin Jefferson",
+     "position": "WR",
+     "status": "active",
+     "yards": 58.854941
+    },
+    "rushing": {
+     "gsis_id": "00-0033293",
+     "name": "Aaron Jones",
+     "position": "RB",
+     "status": "active",
+     "yards": 52.962024
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0035228",
+    "injury_status": null,
+    "name": "Kyler Murray",
+    "rating": 0.010839,
+    "source": "projected",
+    "starts": 92
+   },
+   "away_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0033293",
+     "name": "Aaron Jones",
+     "position": "RB",
+     "prob": 0.336796,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 11.68325,
+      "rush_yds": 52.962024
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 2,
+     "gsis_id": "00-0037525",
+     "name": "Jordan Mason",
+     "position": "RB",
+     "prob": 0.276294,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 2.046584,
+      "rush_yds": 41.650008
+     },
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0036322",
+     "name": "Justin Jefferson",
+     "position": "WR",
+     "prob": 0.261557,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 58.854941,
+      "rush_yds": 0.0
+     },
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_MIN_DET",
+   "game_type": "REG",
+   "home": "DET",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0033106",
+     "name": "Jared Goff",
+     "position": "QB",
+     "status": "active",
+     "yards": 269.410164
+    },
+    "receiving": {
+     "gsis_id": "00-0036963",
+     "name": "Amon-Ra St. Brown",
+     "position": "WR",
+     "status": "active",
+     "yards": 82.48185
+    },
+    "rushing": {
+     "gsis_id": "00-0039139",
+     "name": "Jahmyr Gibbs",
+     "position": "RB",
+     "status": "active",
+     "yards": 96.741993
+    }
+   },
+   "home_prob": 0.589651,
+   "home_qb": {
+    "change": false,
+    "id": "00-0033106",
+    "injury_status": null,
+    "name": "Jared Goff",
+    "rating": 0.14122,
+    "source": "projected",
+    "starts": 166
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0039139",
+     "name": "Jahmyr Gibbs",
+     "position": "RB",
+     "prob": 0.724573,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 32.426828,
+      "rush_yds": 96.741993
+     },
+     "status": "active",
+     "tds_season": 9
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036963",
+     "name": "Amon-Ra St. Brown",
+     "position": "WR",
+     "prob": 0.447524,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 82.48185,
+      "rush_yds": 0.002288
+     },
+     "status": "active",
+     "tds_season": 5
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0037240",
+     "name": "Jameson Williams",
+     "position": "WR",
+     "prob": 0.34675,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 48.895164,
+      "rush_yds": 0.111858
+     },
+     "status": "active",
+     "tds_season": 4
+    }
+   ],
+   "kickoff": "2026-11-01T18:00:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": 134.0,
+    "best_away_book": "BetRivers",
+    "best_away_ml": 140.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -155.0,
+    "books": 6,
+    "home_ml": -158.0,
+    "home_prob": 0.588989,
+    "opening_spread": 3.0,
+    "opening_total": 47.0,
+    "source": "the-odds-api",
+    "spread": 3.0,
+    "total": 47.0
+   },
+   "market_prob": 0.588989,
+   "market_source": "the-odds-api",
+   "market_spread": 3.0,
+   "market_total": 47.0,
+   "model_prob": 0.523563,
+   "model_spread": 0.692925,
+   "model_total": 48.198945,
+   "pick": "DET",
+   "pick_prob": 0.589651,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 2.307075,
+    "line": 3.0,
+    "team": "MIN"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 1.198945,
+    "line": 47.0,
+    "side": "OVER"
+   },
+   "week": 8
+  },
+  "2026_08_NE_MIA": {
+   "away": "NE",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0039851",
+     "name": "Drake Maye",
+     "position": "QB",
+     "status": "active",
+     "yards": 236.765123
+    },
+    "receiving": {
+     "gsis_id": "00-0035676",
+     "name": "A.J. Brown",
+     "position": "WR",
+     "status": "active",
+     "yards": 51.20141
+    },
+    "rushing": {
+     "gsis_id": "00-0036875",
+     "name": "Rhamondre Stevenson",
+     "position": "RB",
+     "status": "active",
+     "yards": 32.688792
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0039851",
+    "injury_status": null,
+    "name": "Drake Maye",
+    "rating": 0.133797,
+    "source": "projected",
+    "starts": 39
+   },
+   "away_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0036875",
+     "name": "Rhamondre Stevenson",
+     "position": "RB",
+     "prob": 0.375161,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 19.532723,
+      "rush_yds": 32.688792
+     },
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 3,
+     "gsis_id": "00-0035676",
+     "name": "A.J. Brown",
+     "position": "WR",
+     "prob": 0.30046,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 51.20141,
+      "rush_yds": 0.0
+     },
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0033090",
+     "name": "Hunter Henry",
+     "position": "TE",
+     "prob": 0.258278,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 29.181455,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_NE_MIA",
+   "game_type": "REG",
+   "home": "MIA",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0038128",
+     "name": "Malik Willis",
+     "position": "QB",
+     "status": "active",
+     "yards": 187.108238
+    },
+    "receiving": {
+     "gsis_id": "00-0039880",
+     "name": "Malik Washington",
+     "position": "WR",
+     "status": "active",
+     "yards": 42.530427
+    },
+    "rushing": {
+     "gsis_id": "00-0040198",
+     "name": "Ollie Gordon",
+     "position": "RB",
+     "status": "active",
+     "yards": 42.829015
+    }
+   },
+   "home_prob": 0.219756,
+   "home_qb": {
+    "change": false,
+    "id": "00-0038128",
+    "injury_status": null,
+    "name": "Malik Willis",
+    "rating": 0.006526,
+    "source": "projected",
+    "starts": 12
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0040198",
+     "name": "Ollie Gordon",
+     "position": "RB",
+     "prob": 0.333256,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 5.686141,
+      "rush_yds": 42.829015
+     },
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 3,
+     "gsis_id": "00-0041523",
+     "name": "Caleb Douglas",
+     "position": "WR",
+     "prob": 0.258422,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 42.016216,
+      "rush_yds": 0.160427
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038128",
+     "name": "Malik Willis",
+     "position": "QB",
+     "prob": 0.22388,
+     "proj": {
+      "pass_yds": 187.108238,
+      "rec_yds": null,
+      "rush_yds": 26.467715
+     },
+     "status": "active",
+     "tds_season": 3
+    }
+   ],
+   "kickoff": "2026-11-01T21:25:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": -470.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": -460.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": 360.0,
+    "books": 6,
+    "home_ml": 360.0,
+    "home_prob": 0.209268,
+    "opening_spread": -7.5,
+    "opening_total": 44.5,
+    "source": "the-odds-api",
+    "spread": -8.0,
+    "total": 44.0
+   },
+   "market_prob": 0.209268,
+   "market_source": "the-odds-api",
+   "market_spread": -8.0,
+   "market_total": 44.0,
+   "model_prob": 0.283639,
+   "model_spread": -7.292579,
+   "model_total": 46.432388,
+   "pick": "NE",
+   "pick_prob": 0.780244,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 0.707421,
+    "line": 8.0,
+    "team": "MIA"
+   },
+   "tier": "STRONG",
+   "total_pick": {
+    "edge": 2.432388,
+    "line": 44.0,
+    "side": "OVER"
+   },
+   "week": 8
+  },
+  "2026_08_PHI_WAS": {
+   "away": "PHI",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0038400",
+     "name": "Tanner McKee",
+     "position": "QB",
+     "status": "active",
+     "yards": 215.864398
+    },
+    "receiving": {
+     "gsis_id": "00-0040867",
+     "name": "Makai Lemon",
+     "position": "WR",
+     "status": "active",
+     "yards": 34.703817
+    },
+    "rushing": {
+     "gsis_id": "00-0037258",
+     "name": "Dameon Pierce",
+     "position": "RB",
+     "status": "active",
+     "yards": 38.069937
+    }
+   },
+   "away_qb": {
+    "change": true,
+    "id": "00-0038400",
+    "injury_status": null,
+    "name": "Tanner McKee",
+    "rating": -0.091252,
+    "replaced": "Jalen Hurts",
+    "source": "replaced",
+    "starts": 3
+   },
+   "away_td": [
+    {
+     "games_season": 3,
+     "gsis_id": "00-0037258",
+     "name": "Dameon Pierce",
+     "position": "RB",
+     "prob": 0.271482,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 5.922026,
+      "rush_yds": 38.069937
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0034351",
+     "name": "Dallas Goedert",
+     "position": "TE",
+     "prob": 0.253003,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 32.578425,
+      "rush_yds": null
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0034844",
+     "name": "Saquon Barkley",
+     "position": "RB",
+     "prob": 0.246683,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 2.532383,
+      "rush_yds": 36.102306
+     },
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_PHI_WAS",
+   "game_type": "REG",
+   "home": "WAS",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0039910",
+     "name": "Jayden Daniels",
+     "position": "QB",
+     "status": "active",
+     "yards": 204.335469
+    },
+    "receiving": {
+     "gsis_id": "00-0031588",
+     "name": "Stefon Diggs",
+     "position": "WR",
+     "status": "active",
+     "yards": 40.08008
+    },
+    "rushing": {
+     "gsis_id": "00-0039910",
+     "name": "Jayden Daniels",
+     "position": "QB",
+     "status": "active",
+     "yards": 28.610014
+    }
+   },
+   "home_prob": 0.635389,
+   "home_qb": {
+    "change": false,
+    "id": "00-0039910",
+    "injury_status": null,
+    "name": "Jayden Daniels",
+    "rating": 0.056145,
+    "source": "projected",
+    "starts": 28
+   },
+   "home_td": [
+    {
+     "games_season": 5,
+     "gsis_id": "00-0037256",
+     "name": "Rachaad White",
+     "position": "RB",
+     "prob": 0.244262,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 12.08312,
+      "rush_yds": 22.187816
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 4,
+     "gsis_id": "00-0039910",
+     "name": "Jayden Daniels",
+     "position": "QB",
+     "prob": 0.234149,
+     "proj": {
+      "pass_yds": 204.335469,
+      "rec_yds": null,
+      "rush_yds": 28.610014
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 5,
+     "gsis_id": "00-0031588",
+     "name": "Stefon Diggs",
+     "position": "WR",
+     "prob": 0.233272,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 40.08008,
+      "rush_yds": 0.0
+     },
+     "status": "active",
+     "tds_season": 4
+    }
+   ],
+   "kickoff": "2026-11-02T01:20:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": 168.0,
+    "best_away_book": "BetRivers",
+    "best_away_ml": 170.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -180.0,
+    "books": 6,
+    "home_ml": -200.0,
+    "home_prob": 0.641148,
+    "opening_spread": 4.0,
+    "opening_total": 41.0,
+    "source": "the-odds-api",
+    "spread": 4.0,
+    "total": 41.0
+   },
+   "market_prob": 0.641148,
+   "market_source": "the-odds-api",
+   "market_spread": 4.0,
+   "market_total": 41.0,
+   "model_prob": 0.677699,
+   "model_spread": 5.377824,
+   "model_total": 44.742815,
+   "pick": "WAS",
+   "pick_prob": 0.635389,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 1.377824,
+    "line": -4.0,
+    "team": "WAS"
+   },
+   "tier": "LEAN",
+   "total_pick": {
+    "edge": 3.742815,
+    "line": 41.0,
+    "side": "OVER"
+   },
+   "week": 8
+  },
+  "2026_08_TEN_CIN": {
+   "away": "TEN",
+   "away_leaders": {
+    "passing": {
+     "gsis_id": "00-0040676",
+     "name": "Cam Ward",
+     "position": "QB",
+     "status": "active",
+     "yards": 207.907311
+    },
+    "receiving": {
+     "gsis_id": "00-0041438",
+     "name": "Carnell Tate",
+     "position": "WR",
+     "status": "active",
+     "yards": 63.707421
+    },
+    "rushing": {
+     "gsis_id": "00-0035261",
+     "name": "Tony Pollard",
+     "position": "RB",
+     "status": "active",
+     "yards": 73.003608
+    }
+   },
+   "away_qb": {
+    "change": false,
+    "id": "00-0040676",
+    "injury_status": null,
+    "name": "Cam Ward",
+    "rating": -0.123626,
+    "source": "projected",
+    "starts": 24
+   },
+   "away_td": [
+    {
+     "games_season": 7,
+     "gsis_id": "00-0035261",
+     "name": "Tony Pollard",
+     "position": "RB",
+     "prob": 0.344632,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 5.742075,
+      "rush_yds": 73.003608
+     },
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0041438",
+     "name": "Carnell Tate",
+     "position": "WR",
+     "prob": 0.250778,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 63.707421,
+      "rush_yds": 0.062681
+     },
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "gsis_id": "00-0038117",
+     "name": "Wan'Dale Robinson",
+     "position": "WR",
+     "prob": 0.17392,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 37.821326,
+      "rush_yds": 0.009769
+     },
+     "status": "active",
+     "tds_season": 2
+    }
+   ],
+   "first_logged": "2026-10-27T12:50:29Z",
+   "game_id": "2026_08_TEN_CIN",
+   "game_type": "REG",
+   "home": "CIN",
+   "home_leaders": {
+    "passing": {
+     "gsis_id": "00-0036442",
+     "name": "Joe Burrow",
+     "position": "QB",
+     "status": "active",
+     "yards": 273.151884
+    },
+    "receiving": {
+     "gsis_id": "00-0036900",
+     "name": "Ja'Marr Chase",
+     "position": "WR",
+     "status": "active",
+     "yards": 57.370472
+    },
+    "rushing": {
+     "gsis_id": "00-0038597",
+     "name": "Chase Brown",
+     "position": "RB",
+     "status": "active",
+     "yards": 52.388728
+    }
+   },
+   "home_prob": 0.810573,
+   "home_qb": {
+    "change": false,
+    "id": "00-0036442",
+    "injury_status": null,
+    "name": "Joe Burrow",
+    "rating": 0.133589,
+    "source": "projected",
+    "starts": 90
+   },
+   "home_td": [
+    {
+     "games_season": 6,
+     "gsis_id": "00-0038597",
+     "name": "Chase Brown",
+     "position": "RB",
+     "prob": 0.531701,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 33.038672,
+      "rush_yds": 52.388728
+     },
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036410",
+     "name": "Tee Higgins",
+     "position": "WR",
+     "prob": 0.44307,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 56.759918,
+      "rush_yds": 0.0
+     },
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 6,
+     "gsis_id": "00-0036900",
+     "name": "Ja'Marr Chase",
+     "position": "WR",
+     "prob": 0.392232,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 57.370472,
+      "rush_yds": 0.009559
+     },
+     "status": "active",
+     "tds_season": 5
+    }
+   ],
+   "kickoff": "2026-11-01T18:00:00Z",
+   "last_logged": "2026-10-27T12:50:29Z",
+   "market": {
+    "as_of": "2026-10-25T11:33:41Z",
+    "away_ml": 460.0,
+    "best_away_book": "BetRivers",
+    "best_away_ml": 475.0,
+    "best_home_book": "DraftKings",
+    "best_home_ml": -575.0,
+    "books": 6,
+    "home_ml": -620.0,
+    "home_prob": 0.828244,
+    "opening_spread": 9.5,
+    "opening_total": 46.0,
+    "source": "the-odds-api",
+    "spread": 9.5,
+    "total": 46.0
+   },
+   "market_prob": 0.828244,
+   "market_source": "the-odds-api",
+   "market_spread": 9.5,
+   "market_total": 46.0,
+   "model_prob": 0.866356,
+   "model_spread": 14.174438,
+   "model_total": 44.938294,
+   "pick": "CIN",
+   "pick_prob": 0.810573,
+   "season": 2026,
+   "spread_pick": {
+    "edge": 4.674438,
+    "line": -9.5,
+    "team": "CIN"
+   },
+   "tier": "STRONG",
+   "total_pick": {
+    "edge": 1.061706,
+    "line": 46.0,
+    "side": "UNDER"
+   },
+   "week": 8
   }
  },
  "schema": 1
