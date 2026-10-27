@@ -6,1926 +6,31 @@
   "parlay": "Combined probability multiplies the legs, which assumes the fights are independent; they are not quite. Backtested on the confirm period, 3-leg parlays returned +21.6% over 224 parlays - promising but about 1.5 standard deviations, and those parlays share legs, so this is NOT an established edge.",
   "simulation": "20,000 simulations from both fighters' measured rates. As a winner picker this is weaker than the model (AUC 0.559 against 0.66), so the model's probability is the headline. Method and round are where the simulation is the only source, and there it finishes 55% of fights where the sport finishes 47% - read DEC as firmer and SUB as softer."
  },
- "dataset_end": "2026-10-17",
+ "dataset_end": "2026-10-24",
  "event": {
-  "date": "2026-10-24",
-  "name": "UFC 333: Volkanovski vs. Evloev"
+  "date": "2026-10-31",
+  "name": "UFC Fight Night: Moicano vs. Nolan"
  },
  "fights": [
   {
-   "blue": "Movsar Evloev",
+   "blue": "Tom Nolan",
    "blue_form": {
-    "as_of": "2026-10-22",
+    "as_of": "2026-10-26",
     "last5": [
      {
       "code": "DC",
-      "date": "2026-03-21",
-      "event": "UFC Fight Night 270 - Evloev vs. Murphy",
-      "method": "Decision (Majority)",
-      "opponent": "Lerone Murphy",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-12-07",
-      "event": "UFC 310 - Pantoja vs. Asakura",
+      "date": "2026-06-06",
+      "event": "UFC Fight Night 278 - Muhammad vs. Bonfim",
       "method": "Decision (Unanimous)",
-      "opponent": "Aljamain Sterling",
+      "opponent": "Fares Ziam",
       "result": "W"
      },
      {
-      "code": "DC",
-      "date": "2024-01-20",
-      "event": "UFC 297 - Strickland vs. Du Plessis",
-      "method": "Decision (Unanimous)",
-      "opponent": "Arnold Allen",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2023-05-06",
-      "event": "UFC 288 - Sterling vs. Cejudo",
-      "method": "Decision (Unanimous)",
-      "opponent": "Diego Lopes",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2022-06-04",
-      "event": "UFC Fight Night 207 - Volkov vs. Rozenstruik",
-      "method": "Decision (Unanimous)",
-      "opponent": "Dan Ige",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 0,
-     "nc": 0,
-     "wins": 20
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.542308,
-   "edge": 0.08329,
-   "intel": [
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Alexander Volkanovski",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "motivation",
-     "note": "Newsweek (from 10 News): whether he retires depends on how UFC 333 goes - he would walk away after a bad beating; no plans to retire now.",
-     "source": "https://www.newsweek.com/sports/mma/alex-volkanovski-shares-future-retirement-plans-ahead-of-ufc-333-fight-12354236"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Alexander Volkanovski",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "confidence",
-     "note": "The National (2026-10-06): \"a nice long camp\"; says his grappling prep with Craig Jones gives him confidence against an elite wrestler like Evloev.",
-     "source": "https://www.thenationalnews.com/sport/combat-sports/2026/10/06/im-alex-who-still-fights-volkanovski-returns-to-abu-dhabi-as-ufc-champion-and-a-changed-man/"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Movsar Evloev",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "hard_weight_cut",
-     "note": "PredictionHunt (2026-09-04): said on Sept 2 he cuts about 12 kg to make 145 lb and plans to move to lightweight after this fight.",
-     "source": "https://www.predictionhunt.com/news/evloev-s-featherweight-title-odds-fall-after-he-sep-04-2026"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Movsar Evloev",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "other",
-     "note": "MMA Junkie via MMASucka: says he will not chase a finish and wants to win over 25 minutes on the scorecards.",
-     "source": "https://mmasucka.com/news/movsar-evloev-makes-big-adjustment-ahead-of-ufc-333-title-fight-against-alexander-volkanovski/"
-    }
-   ],
-   "market_prob": 0.494395,
-   "method": "Decision",
-   "method_prob": 0.606003,
-   "method_probs": {
-    "Decision": 0.606003,
-    "KO/TKO": 0.269197,
-    "Submission": 0.1248
-   },
-   "number": 1,
-   "odds": -105,
-   "p_fail": 0.275274,
-   "p_finish": 0.393997,
-   "p_finish_raw": 0.325021,
-   "parlay_tier": null,
-   "pick": "Movsar Evloev",
-   "recommendation": "LEAN",
-   "red": "Alexander Volkanovski",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2026-01-31",
-      "event": "UFC 325 - Volkanovski vs. Lopes 2",
-      "method": "Decision (Unanimous)",
-      "opponent": "Diego Lopes",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-04-12",
-      "event": "UFC 314 - Volkanovski vs. Lopes",
-      "method": "Decision (Unanimous)",
-      "opponent": "Diego Lopes",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2024-02-17",
-      "event": "UFC 298 - Volkanovski vs. Topuria",
-      "method": "KO (Punch)",
-      "opponent": "Ilia Topuria",
-      "result": "L"
-     },
-     {
-      "code": "K1",
-      "date": "2023-10-21",
-      "event": "UFC 294 - Makhachev vs. Volkanovski 2",
-      "method": "KO (Head Kick and Punches)",
-      "opponent": "Islam Makhachev",
-      "result": "L"
-     },
-     {
-      "code": "K3",
-      "date": "2023-07-08",
-      "event": "UFC 290 - Volkanovski vs. Rodriguez",
-      "method": "TKO (Punches)",
-      "opponent": "Yair Rodriguez",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 4,
-     "nc": 0,
-     "wins": 28
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R5",
-   "rounds_scheduled": 5,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.3029,
-    "decision": 0.667,
-    "decision_share": 0.70715,
-    "draw": 0.04015,
-    "finish_by_round": [
-     0.0672,
-     0.06185,
-     0.06,
-     0.0539,
-     0.0499
-    ],
-    "ko": 0.2314,
-    "mean_seconds": 1266.151001,
-    "median_seconds": 1500.0,
-    "red_win": 0.65695,
-    "simulations": 20000,
-    "standard_error": 0.003357,
-    "sub": 0.06145
-   },
-   "title_fight": true,
-   "win_prob": 0.519667,
-   "win_prob_model": 0.595485
-  },
-  {
-   "blue": "Merab Dvalishvili",
-   "blue_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2025-12-06",
-      "event": "UFC 323 - Dvalishvili vs. Yan 2",
-      "method": "Decision (Unanimous)",
-      "opponent": "Petr Yan",
-      "result": "L"
-     },
-     {
-      "code": "DC",
-      "date": "2025-10-04",
-      "event": "UFC 320 - Ankalaev vs. Pereira 2",
-      "method": "Decision (Unanimous)",
-      "opponent": "Cory Sandhagen",
-      "result": "W"
-     },
-     {
-      "code": "S3",
-      "date": "2025-06-07",
-      "event": "UFC 316 - Dvalishvili vs. O'Malley 2",
-      "method": "Submission (North-South Choke)",
-      "opponent": "Sean O'Malley",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-01-18",
-      "event": "UFC 311 - Makhachev vs. Moicano",
-      "method": "Decision (Unanimous)",
-      "opponent": "Umar Nurmagomedov",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-09-14",
-      "event": "UFC 306 - Noche UFC: O'Malley vs. Dvalishvili",
-      "method": "Decision (Unanimous)",
-      "opponent": "Sean O'Malley",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 5,
-     "nc": 0,
-     "wins": 21
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.542308,
-   "edge": -0.215109,
-   "intel": [
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Petr Yan",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "injury",
-     "note": "Low Kick MMA: nine-hour surgery on damaged lumbar discs after the UFC 323 title win (Dec 2025); in mid-June a teammate said he was about two months from training.",
-     "source": "https://www.lowkickmma.com/video-petr-yan-posts-first-video-of-training/"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Petr Yan",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "layoff_return",
-     "note": "AgentMMA: back to pad work after back-surgery recovery; first fight since UFC 323 (2025-12-06).",
-     "source": "https://agentmma.com/news/89623-petr-yan-showcases-relentless-pad-work-following-back-surgery-recovery"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Petr Yan",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "new_camp",
-     "note": "AgentMMA: trilogy camp opened in Kislovodsk under Kairat Nurmaganbetov (partners incl. Kurban Gadzhiev, Asaf Chopurov), then moved to Dubai.",
-     "source": "https://agentmma.com/news/89802-petr-yan-s-camp-for-merab-dvalishvili-rematch-detailed-ahead-of-dubai-stint"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Merab Dvalishvili",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "new_camp",
-     "note": "Yardbarker: added a new coach ('Jesse') for private sessions at Q MMA, Las Vegas, preparing for the Yan trilogy.",
-     "source": "https://www.yardbarker.com/mma/articles/dvalishvili_reveals_training_switch_for_yan_trilogy/s1_17349_44134932"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Merab Dvalishvili",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "other",
-     "note": "Heavy: lost to Henry Cejudo by technical fall in the RAF 12 freestyle wrestling main event (Aug 2026), during this fight's build-up.",
-     "source": "https://heavy.com/sports/ufc/henry-cejudo-defeats-merab-dvalishvili-raf-12/"
-    }
-   ],
-   "market_prob": 0.580676,
-   "method": "Decision",
-   "method_prob": 0.599517,
-   "method_probs": {
-    "Decision": 0.599517,
-    "KO/TKO": 0.257723,
-    "Submission": 0.14276
-   },
-   "number": 2,
-   "odds": -142,
-   "p_fail": 0.245512,
-   "p_finish": 0.400483,
-   "p_finish_raw": 0.323569,
-   "parlay_tier": null,
-   "pick": "Petr Yan",
-   "recommendation": "LEAN",
-   "red": "Petr Yan",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2025-12-06",
-      "event": "UFC 323 - Dvalishvili vs. Yan 2",
-      "method": "Decision (Unanimous)",
-      "opponent": "Merab Dvalishvili",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-07-26",
-      "event": "UFC on ABC 9 - Whittaker vs. de Ridder",
-      "method": "Decision (Unanimous)",
-      "opponent": "Marcus McGhee",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-11-23",
-      "event": "UFC Fight Night 248 - Yan vs. Figueiredo",
-      "method": "Decision (Unanimous)",
-      "opponent": "Deiveson Figueiredo",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-03-09",
-      "event": "UFC 299 - O'Malley vs. Vera 2",
-      "method": "Decision (Unanimous)",
-      "opponent": "Yadong Song",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2023-03-11",
-      "event": "UFC Fight Night 221 - Yan vs. Dvalishvili",
-      "method": "Decision (Unanimous)",
-      "opponent": "Merab Dvalishvili",
-      "result": "L"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 5,
-     "nc": 0,
-     "wins": 20
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R5",
-   "rounds_scheduled": 5,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.30555,
-    "decision": 0.68165,
-    "decision_share": 0.7262,
-    "draw": 0.04455,
-    "finish_by_round": [
-     0.0624,
-     0.0584,
-     0.05495,
-     0.0513,
-     0.04675
-    ],
-    "ko": 0.1486,
-    "mean_seconds": 1284.449951,
-    "median_seconds": 1500.0,
-    "red_win": 0.6499,
-    "simulations": 20000,
-    "standard_error": 0.003373,
-    "sub": 0.1252
-   },
-   "title_fight": true,
-   "win_prob": 0.528424,
-   "win_prob_model": 0.371668
-  },
-  {
-   "blue": "Ramazan Temirov",
-   "blue_form": {
-    "as_of": null,
-    "last5": [
-     {
-      "code": "K1",
-      "date": "2026-07-25",
-      "event": "UFC Fight Night: Ankalaev vs. Guskov",
-      "method": "KO/TKO",
-      "opponent": "Steve Erceg",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-03-01",
-      "event": "UFC Fight Night: Kape vs. Almabayev",
-      "method": "Decision - Unanimous",
-      "opponent": "Charles Johnson",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2024-10-12",
-      "event": "UFC Fight Night: Royval vs. Taira",
-      "method": "KO/TKO",
-      "opponent": "CJ Vergara",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 0,
-     "nc": 0,
-     "wins": 3
-    },
-    "source": "ufc",
-    "verified": true
-   },
-   "confidence": 0.542308,
-   "edge": -0.03989,
-   "intel": [],
-   "market_prob": 0.509298,
-   "method": "Decision",
-   "method_prob": 0.553538,
-   "method_probs": {
-    "Decision": 0.553538,
-    "KO/TKO": 0.324893,
-    "Submission": 0.121569
-   },
-   "number": 3,
-   "odds": -109,
-   "p_fail": 0.30291,
-   "p_finish": 0.446462,
-   "p_finish_raw": 0.569022,
-   "parlay_tier": null,
-   "pick": "Lone'er Kavanagh",
-   "recommendation": "RISKY",
-   "red": "Lone'er Kavanagh",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "S3",
-      "date": "2026-07-11",
-      "event": "UFC 329 - McGregor vs. Holloway 2",
-      "method": "Submission (Rear-Naked Choke)",
-      "opponent": "Brandon Royval",
-      "result": "L"
-     },
-     {
-      "code": "DC",
-      "date": "2026-02-28",
-      "event": "UFC Fight Night 268 - Moreno vs. Kavanagh",
-      "method": "Decision (Unanimous)",
-      "opponent": "Brandon Moreno",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2025-08-23",
-      "event": "UFC Fight Night 257 - Walker vs. Zhang",
-      "method": "KO (Punch)",
-      "opponent": "Charles Johnson",
-      "result": "L"
-     },
-     {
-      "code": "DC",
-      "date": "2025-03-22",
-      "event": "UFC Fight Night 255 - Edwards vs. Brady",
-      "method": "Decision (Unanimous)",
-      "opponent": "Felipe dos Santos",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-11-23",
-      "event": "UFC Fight Night 248 - Yan vs. Figueiredo",
-      "method": "Decision (Unanimous)",
-      "opponent": "Jose Ochoa",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 2,
-     "nc": 0,
-     "wins": 10
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.59765,
-    "decision": 0.44635,
-    "decision_share": 0.48315,
-    "draw": 0.0368,
-    "finish_by_round": [
-     0.21745,
-     0.16765,
-     0.13175
-    ],
-    "ko": 0.3894,
-    "mean_seconds": 638.967529,
-    "median_seconds": 855.0,
-    "red_win": 0.36555,
-    "simulations": 20000,
-    "standard_error": 0.003405,
-    "sub": 0.12745
-   },
-   "title_fight": false,
-   "win_prob": 0.502384,
-   "win_prob_model": 0.481641
-  },
-  {
-   "blue": "Rizvan Kuniev",
-   "blue_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "K3",
-      "date": "2026-07-25",
-      "event": "UFC Fight Night 282 - Ankalaev vs. Guskov",
-      "method": "TKO (Knees)",
-      "opponent": "Tyrell Fortune",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2026-02-07",
-      "event": "UFC Fight Night 266 - Bautista vs. Oliveira",
-      "method": "Decision (Unanimous)",
-      "opponent": "Jailton Almeida",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-06-21",
-      "event": "UFC on ABC 8 - Hill vs. Rountree",
-      "method": "Decision (Split)",
-      "opponent": "Curtis Blaydes",
-      "result": "L"
-     },
-     {
-      "code": "K1",
-      "date": "2024-08-20",
-      "event": "Dana White's Contender Series - Contender Series 2024: Week 2",
-      "method": "TKO (Knee to the Body and Punches)",
-      "opponent": "Hugo Cunha",
-      "result": "W"
-     },
-     {
-      "code": "NC",
-      "date": "2023-04-07",
-      "event": "Professional Fighters League - PFL 2: 2023 Regular Season",
-      "method": "No Contest (Overturned)",
-      "opponent": "Renan Ferreira",
-      "result": "NC"
-     }
-    ],
-    "record": {
-     "draws": 1,
-     "losses": 3,
-     "nc": 1,
-     "wins": 14
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.573123,
-   "edge": 0.102956,
-   "intel": [],
-   "market_prob": 0.523215,
-   "method": "Decision",
-   "method_prob": 0.485054,
-   "method_probs": {
-    "Decision": 0.485054,
-    "KO/TKO": 0.430468,
-    "Submission": 0.084478
-   },
-   "number": 4,
-   "odds": -114,
-   "p_fail": 0.298992,
-   "p_finish": 0.514946,
-   "p_finish_raw": 0.645497,
-   "parlay_tier": null,
-   "pick": "Alexander Volkov",
-   "recommendation": "LEAN",
-   "red": "Alexander Volkov",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2026-05-09",
-      "event": "UFC 328 - Chimaev vs. Strickland",
-      "method": "Decision (Unanimous)",
-      "opponent": "Waldo Cortes-Acosta",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-10-25",
-      "event": "UFC 321 - Aspinall vs. Gane",
-      "method": "Decision (Split)",
-      "opponent": "Jailton Almeida",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-12-07",
-      "event": "UFC 310 - Pantoja vs. Asakura",
-      "method": "Decision (Split)",
-      "opponent": "Ciryl Gane",
-      "result": "L"
-     },
-     {
-      "code": "DC",
-      "date": "2024-06-22",
-      "event": "UFC on ABC 6 - Whittaker vs. Aliskerov",
-      "method": "Decision (Unanimous)",
-      "opponent": "Sergei Pavlovich",
-      "result": "W"
-     },
-     {
-      "code": "S2",
-      "date": "2023-09-09",
-      "event": "UFC 293 - Adesanya vs. Strickland",
-      "method": "Submission (Ezekiel Choke)",
-      "opponent": "Tai Tuivasa",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 11,
-     "nc": 0,
-     "wins": 40
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [
-     "td_acc",
-     "td_att_per15"
-    ],
-    "blue_win": 0.30875,
-    "decision": 0.5968,
-    "decision_share": 0.63295,
-    "draw": 0.03615,
-    "finish_by_round": [
-     0.14335,
-     0.1213,
-     0.1024
-    ],
-    "ko": 0.23645,
-    "mean_seconds": 722.659485,
-    "median_seconds": 900.0,
-    "red_win": 0.6551,
-    "simulations": 20000,
-    "standard_error": 0.003361,
-    "sub": 0.1306
-   },
-   "title_fight": false,
-   "win_prob": 0.551328,
-   "win_prob_model": 0.635667
-  },
-  {
-   "blue": "Losene Keita",
-   "blue_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "K1",
-      "date": "2026-09-05",
-      "event": "UFC Fight Night 287 - Hooker vs. Parnasse",
-      "method": "KO (Punch)",
-      "opponent": "Muhammadjon Naimov",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2026-03-21",
-      "event": "UFC Fight Night 270 - Evloev vs. Murphy",
-      "method": "Decision (Split)",
-      "opponent": "Nathaniel Wood",
-      "result": "L"
-     },
-     {
-      "code": "K2",
-      "date": "2024-12-29",
-      "event": "Oktagon MMA - Oktagon 65: Paradeiser vs. Keita 2",
-      "method": "TKO (Elbow and Punches)",
-      "opponent": "Ronald Paradeiser",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-09-21",
-      "event": "Oktagon MMA - Oktagon 61: Paradeiser vs. Duque",
-      "method": "Decision (Unanimous)",
-      "opponent": "Mateusz Legierski",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2024-07-20",
-      "event": "Oktagon MMA - Oktagon 59: Paradeiser vs. Torres",
-      "method": "TKO (Punch to the Body)",
-      "opponent": "Predrag Bogdanovic",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 2,
-     "nc": 0,
-     "wins": 17
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.573123,
-   "edge": -0.036976,
-   "intel": [
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Aaron Pico",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "opponent_switch",
-     "note": "Cageside Press (2026-09-18): Arnold Allen is out of their UFC 333 bout; former Oktagon champion Losene Keita replaces him.",
-     "replaced_opponent": "Arnold Allen",
-     "source": "https://cagesidepress.com/2026/09/18/with-arnold-allen-out-aaron-pico-gets-losene-keita-at-ufc-333/"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Aaron Pico",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "motivation",
-     "note": "MMA Junkie via MMASucka: chose to stay on the card against the unranked Keita rather than wait for a ranked opponent - \"sitting around and waiting for a ranked guy is not in my agenda.\"",
-     "source": "https://mmasucka.com/news/aaron-pico-reveals-why-arnold-allen-withdrawal-didnt-change-his-ufc-333-plans/"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Losene Keita",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "short_notice",
-     "note": "Cageside Press (2026-09-18): replaces Arnold Allen against Aaron Pico about five weeks out, soon after his KO win at UFC Paris (2026-09-05).",
-     "source": "https://cagesidepress.com/2026/09/18/with-arnold-allen-out-aaron-pico-gets-losene-keita-at-ufc-333/"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Losene Keita",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "other",
-     "note": "Heavy: missed weight for his originally scheduled UFC debut (against Patricio Pitbull) before getting a second chance.",
-     "source": "https://heavy.com/sports/ufc/unexspected-opportunity-losene-keita-ufc-333/"
-    },
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Losene Keita",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "motivation",
-     "note": "AgentMMA: before the booking, offered to fight any top-15 featherweight on short notice.",
-     "source": "https://agentmma.com/news/90198-losene-keita-available-on-short-notice-to-fight-top-15-featherweight"
-    }
-   ],
-   "market_prob": 0.565337,
-   "method": "Decision",
-   "method_prob": 0.448558,
-   "method_probs": {
-    "Decision": 0.448558,
-    "KO/TKO": 0.37329,
-    "Submission": 0.178152
-   },
-   "number": 5,
-   "odds": -137,
-   "p_fail": 0.261385,
-   "p_finish": 0.551442,
-   "p_finish_raw": 0.494278,
-   "parlay_tier": null,
-   "pick": "Aaron Pico",
-   "recommendation": "RISKY",
-   "red": "Aaron Pico",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2026-04-11",
-      "event": "UFC 327 - Prochazka vs. Ulberg",
-      "method": "Decision (Unanimous)",
-      "opponent": "Patricio Freire",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2025-08-16",
-      "event": "UFC 319 - Du Plessis vs. Chimaev",
-      "method": "KO (Spinning Back Elbow)",
-      "opponent": "Lerone Murphy",
-      "result": "L"
-     },
-     {
-      "code": "K1",
-      "date": "2024-02-24",
-      "event": "PFL Super Fights - PFL vs. Bellator Champs",
-      "method": "TKO (Punches)",
-      "opponent": "Henry Corrales",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2023-09-23",
-      "event": "Bellator 299 - Eblen vs. Edwards",
-      "method": "TKO (Punches)",
-      "opponent": "Pedro Carvalho",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2023-04-22",
-      "event": "Bellator 295 - Stots vs. Mix",
-      "method": "Decision (Unanimous)",
-      "opponent": "James Gonzalez",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 5,
-     "nc": 0,
-     "wins": 14
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [
-     "td_acc",
-     "td_att_per15",
-     "td_def"
-    ],
-    "blue_win": 0.44255,
-    "decision": 0.4522,
-    "decision_share": 0.48335,
-    "draw": 0.03115,
-    "finish_by_round": [
-     0.21665,
-     0.17015,
-     0.12985
-    ],
-    "ko": 0.36455,
-    "mean_seconds": 638.657471,
-    "median_seconds": 860.0,
-    "red_win": 0.5263,
-    "simulations": 20000,
-    "standard_error": 0.003531,
-    "sub": 0.1521
-   },
-   "title_fight": false,
-   "win_prob": 0.559273,
-   "win_prob_model": 0.541083
-  },
-  {
-   "blue": "Dominick Reyes",
-   "blue_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2026-04-11",
-      "event": "UFC 327 - Prochazka vs. Ulberg",
-      "method": "Decision (Split)",
-      "opponent": "Johnny Walker",
-      "result": "W"
-     },
-     {
-      "code": "K1",
+      "code": "S1",
       "date": "2025-09-27",
       "event": "UFC Fight Night 260 - Ulberg vs. Reyes",
-      "method": "KO (Punches)",
-      "opponent": "Carlos Ulberg",
-      "result": "L"
-     },
-     {
-      "code": "K1",
-      "date": "2025-04-12",
-      "event": "UFC 314 - Volkanovski vs. Lopes",
-      "method": "KO (Punch)",
-      "opponent": "Nikita Krylov",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2024-12-07",
-      "event": "UFC 310 - Pantoja vs. Asakura",
-      "method": "TKO (Elbows and Punches)",
-      "opponent": "Anthony Smith",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2024-06-08",
-      "event": "UFC on ESPN 57 - Cannonier vs. Imavov",
-      "method": "KO (Punches)",
-      "opponent": "Dustin Jacoby",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 5,
-     "nc": 0,
-     "wins": 16
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.592,
-   "edge": -0.210915,
-   "intel": [
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Azamat Murzakanov",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "injury",
-     "note": "RotoWire (citing Heavy On Sports) lists him with an arm injury - a Paulo Costa high kick damaged his left arm in the TKO loss at UFC 327 (2026-04-11).",
-     "source": "https://web7.rotowire.com/mma/player/azamat-murzakanov-1234"
-    }
-   ],
-   "market_prob": 0.655172,
-   "method": "KO/TKO",
-   "method_prob": 0.581325,
-   "method_probs": {
-    "Decision": 0.288073,
-    "KO/TKO": 0.581325,
-    "Submission": 0.130602
-   },
-   "number": 6,
-   "odds": -200,
-   "p_fail": 0.196392,
-   "p_finish": 0.711927,
-   "p_finish_raw": 0.77077,
-   "parlay_tier": null,
-   "pick": "Azamat Murzakanov",
-   "recommendation": "LEAN",
-   "red": "Azamat Murzakanov",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "K3",
-      "date": "2026-04-11",
-      "event": "UFC 327 - Prochazka vs. Ulberg",
-      "method": "TKO (Head Kick)",
-      "opponent": "Paulo Costa",
-      "result": "L"
-     },
-     {
-      "code": "K1",
-      "date": "2025-10-25",
-      "event": "UFC 321 - Aspinall vs. Gane",
-      "method": "TKO (Punches)",
-      "opponent": "Aleksandar Rakic",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2025-06-07",
-      "event": "UFC 316 - Dvalishvili vs. O'Malley 2",
-      "method": "TKO (Submission to Punches)",
-      "opponent": "Brendson Ribeiro",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2024-08-03",
-      "event": "UFC on ABC 7 - Sandhagen vs. Nurmagomedov",
-      "method": "KO (Punches)",
-      "opponent": "Alonzo Menifield",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2023-04-15",
-      "event": "UFC on ESPN 44 - Holloway vs. Allen",
-      "method": "Decision (Unanimous)",
-      "opponent": "Dustin Jacoby",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 1,
-     "nc": 0,
-     "wins": 16
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.3811,
-    "decision": 0.20625,
-    "decision_share": 0.22215,
-    "draw": 0.0159,
-    "finish_by_round": [
-     0.39215,
-     0.2393,
-     0.1464
-    ],
-    "ko": 0.6961,
-    "mean_seconds": 465.107513,
-    "median_seconds": 415.0,
-    "red_win": 0.603,
-    "simulations": 20000,
-    "standard_error": 0.00346,
-    "sub": 0.08175
-   },
-   "title_fight": false,
-   "win_prob": 0.605317,
-   "win_prob_model": 0.455752
-  },
-  {
-   "blue": "Abdul Rakhman Yakhyaev",
-   "blue_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "K1",
-      "date": "2026-06-27",
-      "event": "UFC Fight Night 280 - Fiziev vs. Torres",
-      "method": "KO (Punches)",
-      "opponent": "Julius Walker",
-      "result": "W"
-     },
-     {
-      "code": "S1",
-      "date": "2026-04-04",
-      "event": "UFC Fight Night 272 - Moicano vs. Duncan",
       "method": "Submission (Rear-Naked Choke)",
-      "opponent": "Brendson Ribeiro",
-      "result": "W"
-     },
-     {
-      "code": "S1",
-      "date": "2025-11-22",
-      "event": "UFC Fight Night 265 - Tsarukyan vs. Hooker",
-      "method": "Submission (Rear-Naked Choke)",
-      "opponent": "Raffael Cerqueira",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2025-08-26",
-      "event": "Dana White's Contender Series - Contender Series 2025: Week 3",
-      "method": "TKO (Knee to the Body and Punches)",
-      "opponent": "Alik Lorenz",
-      "result": "W"
-     },
-     {
-      "code": "S1",
-      "date": "2024-09-26",
-      "event": "Ares 25 - Sola vs. Gagloev",
-      "method": "Submission (Rear-Naked Choke)",
-      "opponent": "Jacky Jeanne",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 0,
-     "nc": 0,
-     "wins": 10
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.742857,
-   "edge": -0.251634,
-   "intel": [
-    {
-     "applies": false,
-     "confidence": "reported",
-     "fighter": "Nikita Krylov",
-     "gathered": "2026-10-22T17:46:00Z",
-     "kind": "injury",
-     "note": "AgentMMA: Robert Whittaker said he broke Krylov's jaw in the round-3 TKO at UFC 329 (2026-07-11); another report said doctors found no fracture.",
-     "source": "https://agentmma.com/news/86263-robert-whittaker-unapologetic-after-breaking-nikita-krylov-s-jaw-at-ufc-329"
-    }
-   ],
-   "market_prob": 0.816233,
-   "method": "KO/TKO",
-   "method_prob": 0.439705,
-   "method_probs": {
-    "Decision": 0.271819,
-    "KO/TKO": 0.439705,
-    "Submission": 0.288476
-   },
-   "number": 7,
-   "odds": -500,
-   "p_fail": 0.105439,
-   "p_finish": 0.728181,
-   "p_finish_raw": 0.819125,
-   "parlay_tier": "STRONG",
-   "pick": "Abdul Rakhman Yakhyaev",
-   "recommendation": "GOOD BET",
-   "red": "Nikita Krylov",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "K3",
-      "date": "2026-07-11",
-      "event": "UFC 329 - McGregor vs. Holloway 2",
-      "method": "TKO (Jaw Injury)",
-      "opponent": "Robert Whittaker",
-      "result": "L"
-     },
-     {
-      "code": "K3",
-      "date": "2026-01-24",
-      "event": "UFC 324 - Gaethje vs. Pimblett",
-      "method": "KO (Punches)",
-      "opponent": "Modestas Bukauskas",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2025-07-26",
-      "event": "UFC on ABC 9 - Whittaker vs. de Ridder",
-      "method": "KO (Punches)",
-      "opponent": "Bogdan Guskov",
-      "result": "L"
-     },
-     {
-      "code": "K1",
-      "date": "2025-04-12",
-      "event": "UFC 314 - Volkanovski vs. Lopes",
-      "method": "KO (Punch)",
-      "opponent": "Dominick Reyes",
-      "result": "L"
-     },
-     {
-      "code": "S1",
-      "date": "2023-03-11",
-      "event": "UFC Fight Night 221 - Yan vs. Dvalishvili",
-      "method": "Submission (Triangle Choke)",
-      "opponent": "Ryan Spann",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 12,
-     "nc": 0,
-     "wins": 31
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R2",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [
-     "td_def"
-    ],
-    "blue_win": 0.5285,
-    "decision": 0.2067,
-    "decision_share": 0.2228,
-    "draw": 0.0161,
-    "finish_by_round": [
-     0.3901,
-     0.2429,
-     0.1442
-    ],
-    "ko": 0.41445,
-    "mean_seconds": 472.946014,
-    "median_seconds": 430.0,
-    "red_win": 0.4554,
-    "simulations": 20000,
-    "standard_error": 0.003521,
-    "sub": 0.36275
-   },
-   "title_fight": false,
-   "win_prob": 0.7576,
-   "win_prob_model": 0.5817
-  },
-  {
-   "blue": "Cam Rowston",
-   "blue_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2026-05-02",
-      "event": "UFC Fight Night 275 - Della Maddalena vs. Prates",
-      "method": "Decision (Unanimous)",
-      "opponent": "Robert Bryczek",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2026-01-31",
-      "event": "UFC 325 - Volkanovski vs. Lopes 2",
-      "method": "TKO (Punches)",
-      "opponent": "Cody Brundage",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2025-09-27",
-      "event": "UFC Fight Night 260 - Ulberg vs. Reyes",
-      "method": "TKO (Punches)",
-      "opponent": "Andre Petroski",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2025-08-19",
-      "event": "Dana White's Contender Series - Contender Series 2025: Week 2",
-      "method": "TKO (Elbow and Punches)",
-      "opponent": "Brandon Holmes",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-02-08",
-      "event": "Eternal MMA 92 - Sydney",
-      "method": "Decision (Unanimous)",
-      "opponent": "Alfred Stoddart",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 3,
-     "nc": 0,
-     "wins": 15
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.542308,
-   "edge": 0.151937,
-   "intel": [],
-   "market_prob": 0.461538,
-   "method": "Decision",
-   "method_prob": 0.436098,
-   "method_probs": {
-    "Decision": 0.436098,
-    "KO/TKO": 0.377408,
-    "Submission": 0.186494
-   },
-   "number": 8,
-   "odds": 110,
-   "p_fail": 0.300569,
-   "p_finish": 0.563902,
-   "p_finish_raw": 0.70186,
-   "parlay_tier": null,
-   "pick": "Cam Rowston",
-   "recommendation": "RISKY",
-   "red": "Abus Magomedov",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "S1",
-      "date": "2026-06-27",
-      "event": "UFC Fight Night 280 - Fiziev vs. Torres",
-      "method": "Submission (Guillotine Choke)",
-      "opponent": "Michal Oleksiejczuk",
-      "result": "W"
-     },
-     {
-      "code": "S2",
-      "date": "2025-10-04",
-      "event": "UFC 320 - Ankalaev vs. Pereira 2",
-      "method": "Submission (Face Crank)",
-      "opponent": "Joe Pyfer",
-      "result": "L"
-     },
-     {
-      "code": "DC",
-      "date": "2025-04-26",
-      "event": "UFC on ESPN 66 - Garry vs. Prates",
-      "method": "Decision (Unanimous)",
-      "opponent": "Michel Pereira",
-      "result": "W"
-     },
-     {
-      "code": "S3",
-      "date": "2024-10-26",
-      "event": "UFC 308 - Topuria vs. Holloway",
-      "method": "Submission (Arm-Triangle Choke)",
-      "opponent": "Brunno Ferreira",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-05-18",
-      "event": "UFC Fight Night 241 - Barboza vs. Murphy",
-      "method": "Decision (Unanimous)",
-      "opponent": "Warlley Alves",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 1,
-     "losses": 7,
-     "nc": 0,
-     "wins": 29
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.55965,
-    "decision": 0.42745,
-    "decision_share": 0.45885,
-    "draw": 0.0314,
-    "finish_by_round": [
-     0.22815,
-     0.17655,
-     0.13645
-    ],
-    "ko": 0.31845,
-    "mean_seconds": 627.935974,
-    "median_seconds": 800.0,
-    "red_win": 0.40895,
-    "simulations": 20000,
-    "standard_error": 0.003476,
-    "sub": 0.2227
-   },
-   "title_fight": false,
-   "win_prob": 0.503186,
-   "win_prob_model": 0.628127
-  },
-  {
-   "blue": "Nurullo Aliev",
-   "blue_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2026-07-25",
-      "event": "UFC Fight Night 282 - Ankalaev vs. Guskov",
-      "method": "Decision (Unanimous)",
-      "opponent": "Mike Davis",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-11-22",
-      "event": "UFC Fight Night 265 - Tsarukyan vs. Hooker",
-      "method": "Decision (Unanimous)",
-      "opponent": "Shaqueme Rock",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-01-11",
-      "event": "UFC Fight Night 249 - Dern vs. Ribas 2",
-      "method": "Decision (Unanimous)",
-      "opponent": "Joe Solecki",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2023-02-25",
-      "event": "UFC Fight Night 220 - Muniz vs. Allen",
-      "method": "Decision (Majority)",
-      "opponent": "Rafael Alves",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2022-09-20",
-      "event": "Dana White's Contender Series - Contender Series 2022: Week 9",
-      "method": "TKO (Punches)",
-      "opponent": "Josh Wick",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 0,
-     "nc": 0,
-     "wins": 12
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.542308,
-   "edge": 0.062283,
-   "intel": [],
-   "market_prob": 0.517796,
-   "method": "Decision",
-   "method_prob": 0.599834,
-   "method_probs": {
-    "Decision": 0.599834,
-    "KO/TKO": 0.175488,
-    "Submission": 0.224678
-   },
-   "number": 9,
-   "odds": -110,
-   "p_fail": 0.309058,
-   "p_finish": 0.400166,
-   "p_finish_raw": 0.519646,
-   "parlay_tier": null,
-   "pick": "Grant Dawson",
-   "recommendation": "LEAN",
-   "red": "Grant Dawson",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "S3",
-      "date": "2026-05-09",
-      "event": "UFC 328 - Chimaev vs. Strickland",
-      "method": "Submission (Rear-Naked Choke)",
-      "opponent": "Mateusz Rebecki",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2025-12-06",
-      "event": "UFC 323 - Dvalishvili vs. Yan 2",
-      "method": "TKO (Punches)",
-      "opponent": "Manuel Torres",
-      "result": "L"
-     },
-     {
-      "code": "DC",
-      "date": "2025-01-18",
-      "event": "UFC 311 - Makhachev vs. Moicano",
-      "method": "Decision (Unanimous)",
-      "opponent": "Diego Ferreira",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2024-10-12",
-      "event": "UFC Fight Night 244 - Royval vs. Taira",
-      "method": "TKO (Elbows and Punches)",
-      "opponent": "Rafa Garcia",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-06-01",
-      "event": "UFC 302 - Makhachev vs. Poirier",
-      "method": "Decision (Unanimous)",
-      "opponent": "Joe Solecki",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 1,
-     "losses": 3,
-     "nc": 0,
-     "wins": 24
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.4207,
-    "decision": 0.5562,
-    "decision_share": 0.59985,
-    "draw": 0.04365,
-    "finish_by_round": [
-     0.16105,
-     0.1328,
-     0.1063
-    ],
-    "ko": 0.2286,
-    "mean_seconds": 704.103516,
-    "median_seconds": 900.0,
-    "red_win": 0.53565,
-    "simulations": 20000,
-    "standard_error": 0.003527,
-    "sub": 0.17155
-   },
-   "title_fight": false,
-   "win_prob": 0.53487,
-   "win_prob_model": 0.586093
-  },
-  {
-   "blue": "Jacob Malkoun",
-   "blue_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2026-05-02",
-      "event": "UFC Fight Night 275 - Della Maddalena vs. Prates",
-      "method": "Decision (Unanimous)",
-      "opponent": "Gerald Meerschaert",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2026-01-31",
-      "event": "UFC 325 - Volkanovski vs. Lopes 2",
-      "method": "Decision (Unanimous)",
-      "opponent": "Torrez Finney",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2024-03-30",
-      "event": "UFC on ESPN 54 - Blanchfield vs. Fiorot",
-      "method": "TKO (Soccer Kick to the Body)",
-      "opponent": "Andre Petroski",
-      "result": "W"
-     },
-     {
-      "code": "DQ",
-      "date": "2023-09-23",
-      "event": "UFC Fight Night 228 - Fiziev vs. Gamrot",
-      "method": "Disqualification (Illegal Elbow)",
-      "opponent": "Cody Brundage",
-      "result": "L"
-     },
-     {
-      "code": "DC",
-      "date": "2022-10-15",
-      "event": "UFC Fight Night 212 - Grasso vs. Araujo",
-      "method": "Decision (Unanimous)",
-      "opponent": "Nick Maximov",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 3,
-     "nc": 0,
-     "wins": 10
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.542308,
-   "edge": -0.334672,
-   "intel": [],
-   "market_prob": 0.583446,
-   "method": "Decision",
-   "method_prob": 0.576949,
-   "method_probs": {
-    "Decision": 0.576949,
-    "KO/TKO": 0.259899,
-    "Submission": 0.163152
-   },
-   "number": 11,
-   "odds": -146,
-   "p_fail": 0.232819,
-   "p_finish": 0.423051,
-   "p_finish_raw": 0.496166,
-   "parlay_tier": null,
-   "pick": "Abubakar Vagaev",
-   "recommendation": "RISKY",
-   "red": "Abubakar Vagaev",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2026-07-25",
-      "event": "UFC Fight Night 282 - Ankalaev vs. Guskov",
-      "method": "Decision (Unanimous)",
-      "opponent": "Saygid Izagakhmaev",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-02-08",
-      "event": "ACA 183 - Tumenov vs. Vagaev",
-      "method": "Decision (Unanimous)",
-      "opponent": "Albert Tumenov",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-03-09",
-      "event": "ACA 172 - Esengulov vs. Vagaev",
-      "method": "Decision (Unanimous)",
-      "opponent": "Edil Esengulov",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2023-09-02",
-      "event": "ACA 162 - Tumenov vs. Palmer",
-      "method": "Decision (Unanimous)",
-      "opponent": "Michel Prazeres",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2022-12-16",
-      "event": "ACA 149 - Vagaev vs. Slipenko",
-      "method": "KO (Elbow)",
-      "opponent": "Vitaliy Slipenko",
-      "result": "L"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 4,
-     "nc": 0,
-     "wins": 25
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.61995,
-    "decision": 0.58475,
-    "decision_share": 0.6197,
-    "draw": 0.03495,
-    "finish_by_round": [
-     0.15005,
-     0.12145,
-     0.1088
-    ],
-    "ko": 0.2759,
-    "mean_seconds": 715.619507,
-    "median_seconds": 900.0,
-    "red_win": 0.3451,
-    "simulations": 20000,
-    "standard_error": 0.003362,
-    "sub": 0.1044
-   },
-   "title_fight": false,
-   "win_prob": 0.502291,
-   "win_prob_model": 0.258824
-  },
-  {
-   "blue": "Daniel Santos",
-   "blue_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "K2",
-      "date": "2026-05-16",
-      "event": "UFC Fight Night 276 - Allen vs. Costa",
-      "method": "TKO (Punches)",
-      "opponent": "Doo Ho Choi",
-      "result": "L"
-     },
-     {
-      "code": "K2",
-      "date": "2025-10-04",
-      "event": "UFC 320 - Ankalaev vs. Pereira 2",
-      "method": "TKO (Punches)",
-      "opponent": "Joo Sang Yoo",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-05-10",
-      "event": "UFC 315 - Muhammad vs. Della Maddalena",
-      "method": "Decision (Unanimous)",
-      "opponent": "Jeong Yeong Lee",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2023-06-03",
-      "event": "UFC on ESPN 46 - Kara-France vs. Albazi",
-      "method": "Decision (Unanimous)",
-      "opponent": "Johnny Munoz Jr.",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2022-10-01",
-      "event": "UFC Fight Night 211 - Dern vs. Yan",
-      "method": "KO (Punches and Knee)",
-      "opponent": "John Castaneda",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 3,
-     "nc": 0,
-     "wins": 14
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.542308,
-   "edge": 0.025549,
-   "intel": [],
-   "market_prob": 0.527897,
-   "method": "Decision",
-   "method_prob": 0.478622,
-   "method_probs": {
-    "Decision": 0.478622,
-    "KO/TKO": 0.284911,
-    "Submission": 0.236466
-   },
-   "number": 12,
-   "odds": -120,
-   "p_fail": 0.30044,
-   "p_finish": 0.521378,
-   "p_finish_raw": 0.544289,
-   "parlay_tier": null,
-   "pick": "Daniel Santos",
-   "recommendation": "LEAN",
-   "red": "Bolaji Oki",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "K3",
-      "date": "2026-03-14",
-      "event": "UFC Fight Night 269 - Emmett vs. Vallejos",
-      "method": "KO (Punch)",
-      "opponent": "Manoel Sousa",
-      "result": "L"
-     },
-     {
-      "code": "K2",
-      "date": "2025-09-06",
-      "event": "UFC Fight Night 258 - Imavov vs. Borralho",
-      "method": "TKO (Elbows)",
-      "opponent": "Mason Jones",
-      "result": "L"
-     },
-     {
-      "code": "DC",
-      "date": "2025-05-31",
-      "event": "UFC on ESPN 68 - Blanchfield vs. Barber",
-      "method": "Decision (Unanimous)",
-      "opponent": "Michael Aswell",
-      "result": "W"
-     },
-     {
-      "code": "S1",
-      "date": "2024-09-28",
-      "event": "UFC Fight Night 243 - Moicano vs. St. Denis",
-      "method": "Technical Submission (Guillotine Choke)",
-      "opponent": "Chris Duncan",
-      "result": "L"
-     },
-     {
-      "code": "DC",
-      "date": "2024-02-10",
-      "event": "UFC Fight Night 236 - Hermansson vs. Pyfer",
-      "method": "Decision (Split)",
-      "opponent": "Timothy Cuamba",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 4,
-     "nc": 0,
-     "wins": 10
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "round": "R3",
-   "rounds_scheduled": 3,
-   "simulation": {
-    "assumed": [],
-    "blue_win": 0.485,
-    "decision": 0.4032,
-    "decision_share": 0.4297,
-    "draw": 0.0265,
-    "finish_by_round": [
-     0.24765,
-     0.18315,
-     0.1395
-    ],
-    "ko": 0.46335,
-    "mean_seconds": 606.797729,
-    "median_seconds": 735.0,
-    "red_win": 0.4885,
-    "simulations": 20000,
-    "standard_error": 0.003535,
-    "sub": 0.10695
-   },
-   "title_fight": false,
-   "win_prob": 0.538674,
-   "win_prob_model": 0.571003
-  },
-  {
-   "blue": "Noah Gugnon",
-   "blue_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "S1",
-      "date": "2026-08-01",
-      "event": "UFC Fight Night 283 - Medic vs. Rodriguez",
-      "method": "Submission (Rear-Naked Choke)",
-      "opponent": "Milos Janicic",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2026-04-03",
-      "event": "Ares 39 - Jbalia vs. Diatta",
-      "method": "TKO (Elbows and Punches)",
-      "opponent": "Bruno Matos de Sousa",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2025-10-18",
-      "event": "Ares 35 - Baki vs. Zebo",
-      "method": "TKO (Punches)",
-      "opponent": "Adrian Prisceanu",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2025-06-14",
-      "event": "Ares 31 - Sola vs. Oudelha",
-      "method": "KO (Punch and Elbows)",
-      "opponent": "Ioan Harris",
-      "result": "W"
-     },
-     {
-      "code": "K2",
-      "date": "2024-12-07",
-      "event": "The King of Fighters 11 - KOF 11",
-      "method": "TKO (Elbows)",
-      "opponent": "Nicolas Di Franco",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 2,
-     "nc": 0,
-     "wins": 10
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.542308,
-   "edge": -0.184352,
-   "intel": [],
-   "market_prob": 0.590164,
-   "method": "Decision",
-   "method_prob": 0.417323,
-   "method_probs": {
-    "Decision": 0.417323,
-    "KO/TKO": 0.285158,
-    "Submission": 0.297519
-   },
-   "number": 13,
-   "odds": -150,
-   "p_fail": 0.244246,
-   "p_finish": 0.582677,
-   "p_finish_raw": 0.676097,
-   "parlay_tier": null,
-   "pick": "Kody Steele",
-   "recommendation": "RISKY",
-   "red": "Kody Steele",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "S1",
-      "date": "2026-05-02",
-      "event": "UFC Fight Night 275 - Della Maddalena vs. Prates",
-      "method": "Submission (Inverted Heel Hook)",
-      "opponent": "Dom Mar Fan",
+      "opponent": "Charlie Campbell",
       "result": "W"
      },
      {
@@ -1933,37 +38,1410 @@
       "date": "2025-02-08",
       "event": "UFC 312 - Du Plessis vs. Strickland 2",
       "method": "Decision (Unanimous)",
-      "opponent": "Zhu Rong",
-      "result": "L"
-     },
-     {
-      "code": "K2",
-      "date": "2024-10-08",
-      "event": "Dana White's Contender Series - Contender Series 2024: Week 9",
-      "method": "TKO (Punches)",
-      "opponent": "Chasen Blair",
+      "opponent": "Viacheslav Borshchev",
       "result": "W"
      },
      {
-      "code": "K3",
-      "date": "2024-04-21",
-      "event": "Fury FC 89 - Fury Fighting Championship 89: Richardson vs. Aswell",
-      "method": "TKO (Punches)",
-      "opponent": "Alejandro Martinez",
+      "code": "DC",
+      "date": "2024-08-17",
+      "event": "UFC 305 - Du Plessis vs. Adesanya",
+      "method": "Decision (Unanimous)",
+      "opponent": "Alex Reyes",
       "result": "W"
      },
      {
-      "code": "K2",
-      "date": "2023-09-24",
-      "event": "Fury FC - Challenger Series 7",
-      "method": "KO (Knee and Punches)",
-      "opponent": "Nico Echeverry",
+      "code": "K1",
+      "date": "2024-05-18",
+      "event": "UFC Fight Night 241 - Barboza vs. Murphy",
+      "method": "TKO (Knee to the Body and Punches)",
+      "opponent": "Victor Martinez",
       "result": "W"
      }
     ],
     "record": {
      "draws": 0,
      "losses": 1,
+     "nc": 0,
+     "wins": 11
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "confidence": 0.520599,
+   "edge": 0.025652,
+   "intel": [
+    {
+     "applies": false,
+     "confidence": "reported",
+     "fighter": "Tom Nolan",
+     "gathered": "2026-10-26T12:58:19Z",
+     "kind": "stepped_in",
+     "note": "Cageside Press (Sep 14): replaced Brian Ortega against Renato Moicano in the main event.",
+     "source": "https://cagesidepress.com/2026/09/14/brian-ortega-out-renato-moicano-gets-tom-nolan-in-ufc-vegas-123/"
+    },
+    {
+     "applies": false,
+     "confidence": "reported",
+     "fighter": "Renato Moicano",
+     "gathered": "2026-10-26T12:58:19Z",
+     "kind": "opponent_switch",
+     "note": "Cageside Press (Sep 14): Ortega out; Moicano now meets Tom Nolan.",
+     "replaced_opponent": "Brian Ortega",
+     "source": "https://cagesidepress.com/2026/09/14/brian-ortega-out-renato-moicano-gets-tom-nolan-in-ufc-vegas-123/"
+    }
+   ],
+   "market_prob": 0.50458,
+   "method": "KO/TKO",
+   "method_prob": 0.35017,
+   "method_probs": {
+    "Decision": 0.312767,
+    "KO/TKO": 0.35017,
+    "Submission": 0.337063
+   },
+   "number": 1,
+   "odds": -108,
+   "p_fail": 0.322102,
+   "p_finish": 0.687233,
+   "p_finish_raw": 0.726415,
+   "parlay_tier": null,
+   "pick": "Tom Nolan",
+   "recommendation": "LEAN",
+   "red": "Renato Moicano",
+   "red_form": {
+    "as_of": null,
+    "last5": [
+     {
+      "code": "S2",
+      "date": "2026-04-04",
+      "event": "UFC Fight Night: Moicano vs. Duncan",
+      "method": "Submission",
+      "opponent": "Chris Duncan",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2025-06-28",
+      "event": "UFC 317: Topuria vs. Oliveira",
+      "method": "Decision - Unanimous",
+      "opponent": "Beneil Dariush",
+      "result": "L"
+     },
+     {
+      "code": "S1",
+      "date": "2025-01-18",
+      "event": "UFC 311: Makhachev vs. Moicano",
+      "method": "Submission",
+      "opponent": "Islam Makhachev",
+      "result": "L"
+     },
+     {
+      "code": "K2",
+      "date": "2024-09-28",
+      "event": "UFC Fight Night: Moicano vs. Saint Denis",
+      "method": "TKO - Doctor's Stoppage",
+      "opponent": "Benoit Saint Denis",
+      "result": "W"
+     },
+     {
+      "code": "K2",
+      "date": "2024-04-13",
+      "event": "UFC 300: Pereira vs. Hill",
+      "method": "KO/TKO",
+      "opponent": "Jalin Turner",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 7,
+     "nc": 0,
+     "wins": 13
+    },
+    "source": "ufc",
+    "verified": true
+   },
+   "round": "R5",
+   "rounds_scheduled": 5,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.4518,
+    "decision": 0.1736,
+    "decision_share": 0.1883,
+    "draw": 0.0147,
+    "finish_by_round": [
+     0.28585,
+     0.2011,
+     0.1445,
+     0.10385,
+     0.0764
+    ],
+    "ko": 0.38595,
+    "mean_seconds": 736.894226,
+    "median_seconds": 630.0,
+    "red_win": 0.5335,
+    "simulations": 20000,
+    "standard_error": 0.003528,
+    "sub": 0.42575
+   },
+   "title_fight": false,
+   "win_prob": 0.514656,
+   "win_prob_model": 0.544883
+  },
+  {
+   "blue": "Jacobe Smith",
+   "blue_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "K1",
+      "date": "2026-10-03",
+      "event": "UFC 332 - Silva vs. Wang",
+      "method": "KO (Punches)",
+      "opponent": "Bruce Whitehead",
+      "result": "W"
+     },
+     {
+      "code": "K1",
+      "date": "2026-02-21",
+      "event": "UFC Fight Night 267 - Strickland vs. Hernandez",
+      "method": "KO (Punches)",
+      "opponent": "Josiah Harrell",
+      "result": "W"
+     },
+     {
+      "code": "S2",
+      "date": "2025-06-28",
+      "event": "UFC 317 - Topuria vs. Oliveira",
+      "method": "Submission (Rear-Naked Choke)",
+      "opponent": "Niko Price",
+      "result": "W"
+     },
+     {
+      "code": "K1",
+      "date": "2025-01-11",
+      "event": "UFC Fight Night 249 - Dern vs. Ribas 2",
+      "method": "KO (Punches)",
+      "opponent": "Preston Parsons",
+      "result": "W"
+     },
+     {
+      "code": "K2",
+      "date": "2024-10-01",
+      "event": "Dana White's Contender Series - Contender Series 2024: Week 8",
+      "method": "TKO (Elbows)",
+      "opponent": "Christien Savoie",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 0,
+     "nc": 0,
+     "wins": 13
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "confidence": 0.684211,
+   "edge": -0.016565,
+   "intel": [
+    {
+     "applies": false,
+     "confidence": "reported",
+     "fighter": "Jacobe Smith",
+     "gathered": "2026-10-26T12:58:19Z",
+     "kind": "stepped_in",
+     "note": "Heavy: accepted the co-main against Randy Brown on 12 days' notice, replacing Carlos Leal; fought on Oct 3.",
+     "source": "https://heavy.com/sports/ufc/jacobe-smith-accepts-ufc-vegas-123/"
+    },
+    {
+     "applies": false,
+     "confidence": "reported",
+     "fighter": "Randy Brown",
+     "gathered": "2026-10-26T12:58:19Z",
+     "kind": "opponent_switch",
+     "note": "MMA Sucka: Leal out; Jacobe Smith steps in.",
+     "replaced_opponent": "Carlos Leal",
+     "source": "https://mmasucka.com/news/jacobe-smith-reportedly-steps-in-to-face-randy-brown-at-ufc-vegas-123/"
+    }
+   ],
+   "market_prob": 0.682152,
+   "method": "KO/TKO",
+   "method_prob": 0.494069,
+   "method_probs": {
+    "Decision": 0.279198,
+    "KO/TKO": 0.494069,
+    "Submission": 0.226733
+   },
+   "number": 2,
+   "odds": -225,
+   "p_fail": 0.175463,
+   "p_finish": 0.720802,
+   "p_finish_raw": 0.561861,
+   "parlay_tier": "VALUE",
+   "pick": "Jacobe Smith",
+   "recommendation": "LEAN",
+   "red": "Randy Brown",
+   "red_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "DC",
+      "date": "2026-04-11",
+      "event": "UFC 327 - Prochazka vs. Ulberg",
+      "method": "Decision (Unanimous)",
+      "opponent": "Kevin Holland",
+      "result": "L"
+     },
+     {
+      "code": "K2",
+      "date": "2025-11-08",
+      "event": "UFC Fight Night 264 - Bonfim vs. Brown",
+      "method": "TKO (Knee)",
+      "opponent": "Gabriel Bonfim",
+      "result": "L"
+     },
+     {
+      "code": "K2",
+      "date": "2025-04-26",
+      "event": "UFC on ESPN 66 - Garry vs. Prates",
+      "method": "KO (Punch)",
+      "opponent": "Nicolas Dalby",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2024-12-07",
+      "event": "UFC 310 - Pantoja vs. Asakura",
+      "method": "Decision (Split)",
+      "opponent": "Bryan Battle",
+      "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2024-06-01",
+      "event": "UFC 302 - Makhachev vs. Poirier",
+      "method": "Decision (Unanimous)",
+      "opponent": "Elizeu Zaleski dos Santos",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 8,
+     "nc": 0,
+     "wins": 20
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.55185,
+    "decision": 0.37745,
+    "decision_share": 0.40425,
+    "draw": 0.0268,
+    "finish_by_round": [
+     0.26015,
+     0.19545,
+     0.14015
+    ],
+    "ko": 0.36865,
+    "mean_seconds": 594.703247,
+    "median_seconds": 695.0,
+    "red_win": 0.42135,
+    "simulations": 20000,
+    "standard_error": 0.003492,
+    "sub": 0.2271
+   },
+   "title_fight": false,
+   "win_prob": 0.680549,
+   "win_prob_model": 0.675742
+  },
+  {
+   "blue": "Luana Santos",
+   "blue_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "DC",
+      "date": "2026-06-20",
+      "event": "UFC Fight Night 279 - Kape vs. Horiguchi 2",
+      "method": "Decision (Unanimous)",
+      "opponent": "Karol Rosa",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2025-12-13",
+      "event": "UFC on ESPN 73 - Royval vs. Kape",
+      "method": "Decision (Unanimous)",
+      "opponent": "Melissa Croden",
+      "result": "W"
+     },
+     {
+      "code": "S2",
+      "date": "2025-05-17",
+      "event": "UFC Fight Night 256 - Burns vs. Morales",
+      "method": "Submission (Keylock)",
+      "opponent": "Tainara Lisboa",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2024-08-17",
+      "event": "UFC 305 - Du Plessis vs. Adesanya",
+      "method": "Decision (Unanimous)",
+      "opponent": "Casey O'Neill",
+      "result": "L"
+     },
+     {
+      "code": "S1",
+      "date": "2024-07-13",
+      "event": "UFC on ESPN 59 - Namajunas vs. Cortez",
+      "method": "Submission (Rear-Naked Choke)",
+      "opponent": "Mariya Agapova",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 2,
+     "nc": 0,
+     "wins": 11
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "confidence": 0.791139,
+   "edge": 0.069768,
+   "intel": [],
+   "market_prob": 0.695652,
+   "method": "Decision",
+   "method_prob": 0.605613,
+   "method_probs": {
+    "Decision": 0.605613,
+    "KO/TKO": 0.200102,
+    "Submission": 0.194286
+   },
+   "number": 3,
+   "odds": -250,
+   "p_fail": 0.15062,
+   "p_finish": 0.394387,
+   "p_finish_raw": 0.374312,
+   "parlay_tier": "VALUE",
+   "pick": "Luana Santos",
+   "recommendation": "GOOD BET",
+   "red": "Yana Santos",
+   "red_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "DC",
+      "date": "2025-10-04",
+      "event": "UFC 320 - Ankalaev vs. Pereira 2",
+      "method": "Decision (Unanimous)",
+      "opponent": "Macy Chiasson",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2025-05-03",
+      "event": "UFC on ESPN 67 - Sandhagen vs. Figueiredo",
+      "method": "Decision (Unanimous)",
+      "opponent": "Miesha Tate",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2024-08-10",
+      "event": "UFC on ESPN 61 - Tybura vs. Spivac 2",
+      "method": "Decision (Unanimous)",
+      "opponent": "Chelsea Chandler",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2023-07-01",
+      "event": "UFC on ESPN 48 - Strickland vs. Magomedov",
+      "method": "Decision (Split)",
+      "opponent": "Karol Rosa",
+      "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2023-03-25",
+      "event": "UFC on ESPN 43 - Vera vs. Sandhagen",
+      "method": "Decision (Unanimous)",
+      "opponent": "Holly Holm",
+      "result": "L"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 8,
+     "nc": 1,
+     "wins": 17
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.46495,
+    "decision": 0.5791,
+    "decision_share": 0.6216,
+    "draw": 0.0425,
+    "finish_by_round": [
+     0.14615,
+     0.12515,
+     0.1071
+    ],
+    "ko": 0.23575,
+    "mean_seconds": 718.757751,
+    "median_seconds": 900.0,
+    "red_win": 0.49255,
+    "simulations": 20000,
+    "standard_error": 0.003535,
+    "sub": 0.14265
+   },
+   "title_fight": false,
+   "win_prob": 0.717753,
+   "win_prob_model": 0.784054
+  },
+  {
+   "blue": "Cody Durden",
+   "blue_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "S2",
+      "date": "2026-07-11",
+      "event": "UFC 329 - McGregor vs. Holloway 2",
+      "method": "Submission (Rear-Naked Choke)",
+      "opponent": "Alessandro Costa",
+      "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2026-04-25",
+      "event": "UFC Fight Night 274 - Sterling vs. Zalal",
+      "method": "Decision (Unanimous)",
+      "opponent": "Jafel Filho",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2026-03-07",
+      "event": "UFC 326 - Holloway vs. Oliveira 2",
+      "method": "Decision (Unanimous)",
+      "opponent": "Nyamjargal Tumendemberel",
+      "result": "L"
+     },
+     {
+      "code": "S2",
+      "date": "2025-11-01",
+      "event": "UFC Fight Night 263 - Garcia vs. Onama",
+      "method": "Submission (Anaconda Choke)",
+      "opponent": "Allan Nascimento",
+      "result": "L"
+     },
+     {
+      "code": "K2",
+      "date": "2025-06-14",
+      "event": "UFC on ESPN 69 - Usman vs. Buckley",
+      "method": "KO (Punches)",
+      "opponent": "Jose Ochoa",
+      "result": "L"
+     }
+    ],
+    "record": {
+     "draws": 1,
+     "losses": 11,
+     "nc": 0,
+     "wins": 18
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "confidence": 0.520599,
+   "edge": 0.047782,
+   "intel": [
+    {
+     "applies": false,
+     "confidence": "reported",
+     "fighter": "Ode Osbourne",
+     "gathered": "2026-10-26T12:58:19Z",
+     "kind": "injury",
+     "note": "Yardbarker: withdrew from the original Durden booking at UFC 329 (July) with an undisclosed injury; rebooked for Oct 31.",
+     "source": "https://www.yardbarker.com/mma/articles/alessandro_costa_replaces_injured_ode_osbourne_at_ufc_329/s1_17349_44018882"
+    }
+   ],
+   "market_prob": 0.503728,
+   "method": "Decision",
+   "method_prob": 0.451217,
+   "method_probs": {
+    "Decision": 0.451217,
+    "KO/TKO": 0.26679,
+    "Submission": 0.281992
+   },
+   "number": 4,
+   "odds": -101,
+   "p_fail": 0.323336,
+   "p_finish": 0.548783,
+   "p_finish_raw": 0.649286,
+   "parlay_tier": null,
+   "pick": "Ode Osbourne",
+   "recommendation": "LEAN",
+   "red": "Ode Osbourne",
+   "red_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "NC",
+      "date": "2026-02-21",
+      "event": "UFC Fight Night 267 - Strickland vs. Hernandez",
+      "method": "No Contest (Overturned)",
+      "opponent": "Alibi Idiris",
+      "result": "NC"
+     },
+     {
+      "code": "DC",
+      "date": "2025-08-09",
+      "event": "UFC on ESPN 72 - Dolidze vs. Hernandez",
+      "method": "Decision (Unanimous)",
+      "opponent": "Steve Erceg",
+      "result": "L"
+     },
+     {
+      "code": "K2",
+      "date": "2025-04-05",
+      "event": "UFC on ESPN 65 - Emmett vs. Murphy",
+      "method": "TKO (Punches)",
+      "opponent": "Luis Gurule",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2024-09-14",
+      "event": "UFC 306 - Noche UFC: O'Malley vs. Dvalishvili",
+      "method": "Decision (Unanimous)",
+      "opponent": "Ronaldo Rodriguez",
+      "result": "L"
+     },
+     {
+      "code": "S1",
+      "date": "2024-03-16",
+      "event": "UFC Fight Night 239 - Tuivasa vs. Tybura",
+      "method": "Submission (Rear-Naked Choke)",
+      "opponent": "Jafel Filho",
+      "result": "L"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 9,
+     "nc": 2,
+     "wins": 13
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.5607,
+    "decision": 0.436,
+    "decision_share": 0.4704,
+    "draw": 0.0344,
+    "finish_by_round": [
+     0.22445,
+     0.1691,
+     0.13605
+    ],
+    "ko": 0.33165,
+    "mean_seconds": 634.40625,
+    "median_seconds": 830.0,
+    "red_win": 0.4049,
+    "simulations": 20000,
+    "standard_error": 0.003471,
+    "sub": 0.19795
+   },
+   "title_fight": false,
+   "win_prob": 0.515363,
+   "win_prob_model": 0.550269
+  },
+  {
+   "blue": "Mickey Gall",
+   "blue_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "K1",
+      "date": "2024-11-16",
+      "event": "UFC 309 - Jones vs. Miocic",
+      "method": "KO (Punches)",
+      "opponent": "Ramiz Brahimaj",
+      "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2024-06-01",
+      "event": "UFC 302 - Makhachev vs. Poirier",
+      "method": "Decision (Unanimous)",
+      "opponent": "Bassil Hafez",
+      "result": "L"
+     },
+     {
+      "code": "K1",
+      "date": "2022-04-09",
+      "event": "UFC 273 - Volkanovski vs. Korean Zombie",
+      "method": "TKO (Punches)",
+      "opponent": "Mike Malott",
+      "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2021-12-04",
+      "event": "UFC on ESPN 31 - Font vs. Aldo",
+      "method": "Decision (Unanimous)",
+      "opponent": "Alex Morono",
+      "result": "L"
+     },
+     {
+      "code": "S1",
+      "date": "2021-07-24",
+      "event": "UFC on ESPN 27 - Sandhagen vs. Dillashaw",
+      "method": "Submission (Rear-Naked Choke)",
+      "opponent": "Jordan Williams",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 7,
+     "nc": 0,
+     "wins": 7
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "confidence": 0.791139,
+   "edge": -0.010141,
+   "intel": [
+    {
+     "applies": false,
+     "confidence": "reported",
+     "fighter": "Mickey Gall",
+     "gathered": "2026-10-26T12:58:19Z",
+     "kind": "layoff_return",
+     "note": "Heavy: medically cleared; returns from a layoff since Nov 2024 for his middleweight debut.",
+     "source": "https://heavy.com/sports/ufc/medically-cleared-mickey-gall-ufc-halloween/"
+    }
+   ],
+   "market_prob": 0.706343,
+   "method": "Decision",
+   "method_prob": 0.421824,
+   "method_probs": {
+    "Decision": 0.421824,
+    "KO/TKO": 0.282735,
+    "Submission": 0.295441
+   },
+   "number": 5,
+   "odds": -275,
+   "p_fail": 0.142217,
+   "p_finish": 0.578176,
+   "p_finish_raw": 0.737164,
+   "parlay_tier": "VALUE",
+   "pick": "Zachary Reese",
+   "recommendation": "GOOD BET",
+   "red": "Zachary Reese",
+   "red_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "K1",
+      "date": "2026-07-11",
+      "event": "UFC 329 - McGregor vs. Holloway 2",
+      "method": "TKO (Punches)",
+      "opponent": "Ryan Gandra",
+      "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2026-02-21",
+      "event": "UFC Fight Night 267 - Strickland vs. Hernandez",
+      "method": "Decision (Split)",
+      "opponent": "Michel Pereira",
+      "result": "L"
+     },
+     {
+      "code": "S2",
+      "date": "2025-11-08",
+      "event": "UFC Fight Night 264 - Bonfim vs. Brown",
+      "method": "Submission (Rear-Naked Choke)",
+      "opponent": "Jackson McVey",
+      "result": "W"
+     },
+     {
+      "code": "NC",
+      "date": "2025-09-13",
+      "event": "UFC Fight Night 259 - Noche UFC: Lopes vs. Silva",
+      "method": "No Contest (Accidental Groin Kick)",
+      "opponent": "Sedriques Dumas",
+      "result": "NC"
+     },
+     {
+      "code": "DC",
+      "date": "2025-05-31",
+      "event": "UFC on ESPN 68 - Blanchfield vs. Barber",
+      "method": "Decision (Unanimous)",
+      "opponent": "Dusko Todorovic",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 4,
+     "nc": 1,
+     "wins": 10
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.50775,
+    "decision": 0.2584,
+    "decision_share": 0.27575,
+    "draw": 0.01735,
+    "finish_by_round": [
+     0.35135,
+     0.22615,
+     0.14675
+    ],
+    "ko": 0.50745,
+    "mean_seconds": 506.338257,
+    "median_seconds": 480.0,
+    "red_win": 0.4749,
+    "simulations": 20000,
+    "standard_error": 0.003531,
+    "sub": 0.2168
+   },
+   "title_fight": false,
+   "win_prob": 0.710555,
+   "win_prob_model": 0.723193
+  },
+  {
+   "blue": "Farman Hasanov",
+   "blue_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "DC",
+      "date": "2026-06-27",
+      "event": "UFC Fight Night 280 - Fiziev vs. Torres",
+      "method": "Decision (Unanimous)",
+      "opponent": "Eric Nolan",
+      "result": "W"
+     },
+     {
+      "code": "K1",
+      "date": "2025-11-21",
+      "event": "LFA 223 - Francischinelli vs. Piersma",
+      "method": "TKO (Doctor Stoppage)",
+      "opponent": "Abdurakhmon Fazilov",
+      "result": "W"
+     },
+     {
+      "code": "K2",
+      "date": "2025-06-20",
+      "event": "LFA 211 - Mesquita vs. Dinwoodie",
+      "method": "TKO (Punches)",
+      "opponent": "Marc-Ari William Lewis",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2024-02-23",
+      "event": "LFA 177 - Smyth vs. Magomedov",
+      "method": "Decision (Unanimous)",
+      "opponent": "Luke Roberts",
+      "result": "W"
+     },
+     {
+      "code": "K2",
+      "date": "2022-07-31",
+      "event": "IFFC vs. OFL - Iron Fist Fighting Championship vs. Olimpia Fighting League",
+      "method": "TKO (Punches)",
+      "opponent": "Ibragim Sariev",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 0,
+     "nc": 0,
+     "wins": 6
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "confidence": 0.610039,
+   "edge": -0.257315,
+   "intel": [],
+   "market_prob": 0.705263,
+   "method": "Decision",
+   "method_prob": 0.561274,
+   "method_probs": {
+    "Decision": 0.561274,
+    "KO/TKO": 0.2257,
+    "Submission": 0.213025
+   },
+   "number": 6,
+   "odds": -250,
+   "p_fail": 0.167567,
+   "p_finish": 0.438726,
+   "p_finish_raw": 0.543667,
+   "parlay_tier": null,
+   "pick": "Jean-Paul Lebosnoyani",
+   "recommendation": "LEAN",
+   "red": "Jean-Paul Lebosnoyani",
+   "red_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "DC",
+      "date": "2026-07-18",
+      "event": "UFC Fight Night 281 - Du Plessis vs. Usman",
+      "method": "Decision (Unanimous)",
+      "opponent": "Seok Hyeon Ko",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2026-02-21",
+      "event": "UFC Fight Night 267 - Strickland vs. Hernandez",
+      "method": "Decision (Split)",
+      "opponent": "Philip Rowe",
+      "result": "W"
+     },
+     {
+      "code": "K1",
+      "date": "2025-09-02",
+      "event": "Dana White's Contender Series  - Contender Series 2025: Week 4",
+      "method": "KO (Head Kick and Punch)",
+      "opponent": "Jack Congdon",
+      "result": "W"
+     },
+     {
+      "code": "S1",
+      "date": "2025-04-11",
+      "event": "LFA 206 - Gennrich vs. Lebosnoyani",
+      "method": "Submission (Triangle Choke)",
+      "opponent": "Kegan Gennrich",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2024-05-17",
+      "event": "LFA 184 - Diaz vs. Lewis",
+      "method": "Decision (Unanimous)",
+      "opponent": "Victor Kuiks",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 2,
+     "nc": 0,
+     "wins": 11
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [
+     "td_def"
+    ],
+    "blue_win": 0.4895,
+    "decision": 0.53345,
+    "decision_share": 0.57295,
+    "draw": 0.0395,
+    "finish_by_round": [
+     0.16765,
+     0.14145,
+     0.11795
+    ],
+    "ko": 0.24365,
+    "mean_seconds": 692.530518,
+    "median_seconds": 900.0,
+    "red_win": 0.471,
+    "simulations": 20000,
+    "standard_error": 0.00353,
+    "sub": 0.1834
+   },
+   "title_fight": false,
+   "win_prob": 0.64319,
+   "win_prob_model": 0.456971
+  },
+  {
+   "blue": "Dakota Hope",
+   "blue_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "DC",
+      "date": "2026-04-04",
+      "event": "UFC Fight Night 272 - Moicano vs. Duncan",
+      "method": "Decision (Split)",
+      "opponent": "Kai Kamaka III",
+      "result": "L"
+     },
+     {
+      "code": "K1",
+      "date": "2026-02-20",
+      "event": "Fury FC 116 - Fury Fighting Championship 116: Saenz vs. Riles",
+      "method": "KO (Punches)",
+      "opponent": "Mauricio Gomez",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2025-11-21",
+      "event": "Fury FC - Challenger Series 15",
+      "method": "Decision (Unanimous)",
+      "opponent": "Damion Nelson",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2025-06-13",
+      "event": "LFA 210 - Lawrence vs. Reyes",
+      "method": "Decision (Unanimous)",
+      "opponent": "Jeremy Henry",
+      "result": "W"
+     },
+     {
+      "code": "K1",
+      "date": "2024-11-02",
+      "event": "Jue Cheng King - JCK Fight Night 94",
+      "method": "TKO (Elbows)",
+      "opponent": "Yongqiang Liu",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 2,
+     "nc": 0,
+     "wins": 11
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "confidence": 0.684211,
+   "edge": -0.043493,
+   "intel": [
+    {
+     "applies": false,
+     "confidence": "reported",
+     "fighter": "Dakota Hope",
+     "gathered": "2026-10-26T12:58:19Z",
+     "kind": "stepped_in",
+     "note": "Heavy: replaced Gaston Bolanos (cut in training) against Francis Marshall.",
+     "source": "https://heavy.com/sports/ufc/francis-marshall-new-opponent-ufc-halloween/"
+    },
+    {
+     "applies": false,
+     "confidence": "reported",
+     "fighter": "Francis Marshall",
+     "gathered": "2026-10-26T12:58:19Z",
+     "kind": "opponent_switch",
+     "note": "Heavy: Bolanos withdrew with a cut from training; Dakota Hope steps in.",
+     "replaced_opponent": "Gaston Bolanos",
+     "source": "https://heavy.com/sports/ufc/francis-marshall-new-opponent-ufc-halloween/"
+    }
+   ],
+   "market_prob": 0.688445,
+   "method": "Decision",
+   "method_prob": 0.549225,
+   "method_probs": {
+    "Decision": 0.549225,
+    "KO/TKO": 0.265798,
+    "Submission": 0.184977
+   },
+   "number": 7,
+   "odds": -235,
+   "p_fail": 0.171188,
+   "p_finish": 0.450775,
+   "p_finish_raw": 0.516059,
+   "parlay_tier": "VALUE",
+   "pick": "Francis Marshall",
+   "recommendation": "LEAN",
+   "red": "Francis Marshall",
+   "red_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "DC",
+      "date": "2026-04-25",
+      "event": "UFC Fight Night 274 - Sterling vs. Zalal",
+      "method": "Decision (Unanimous)",
+      "opponent": "Lucas Brennan",
+      "result": "W"
+     },
+     {
+      "code": "S1",
+      "date": "2026-02-28",
+      "event": "UFC Fight Night 268 - Moreno vs. Kavanagh",
+      "method": "Submission (Rear-Naked Choke)",
+      "opponent": "Erik Silva",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2025-03-08",
+      "event": "UFC 313 - Pereira vs. Ankalaev",
+      "method": "Decision (Split)",
+      "opponent": "Mairon Santos",
+      "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2024-08-24",
+      "event": "UFC on ESPN 62 - Cannonier vs. Borralho",
+      "method": "Decision (Split)",
+      "opponent": "Dennis Buzukja",
+      "result": "W"
+     },
+     {
+      "code": "K1",
+      "date": "2023-08-12",
+      "event": "UFC on ESPN 51 - Luque vs. dos Anjos",
+      "method": "TKO (Punches and Elbows)",
+      "opponent": "Isaac Dulgarian",
+      "result": "L"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 3,
+     "nc": 0,
+     "wins": 10
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.5944,
+    "decision": 0.49315,
+    "decision_share": 0.52375,
+    "draw": 0.0306,
+    "finish_by_round": [
+     0.19695,
+     0.15415,
+     0.12515
+    ],
+    "ko": 0.3103,
+    "mean_seconds": 663.374756,
+    "median_seconds": 900.0,
+    "red_win": 0.375,
+    "simulations": 20000,
+    "standard_error": 0.003423,
+    "sub": 0.16595
+   },
+   "title_fight": false,
+   "win_prob": 0.680833,
+   "win_prob_model": 0.657999
+  },
+  {
+   "blue": "Andre Petroski",
+   "blue_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "K2",
+      "date": "2026-05-16",
+      "event": "UFC Fight Night 276 - Allen vs. Costa",
+      "method": "TKO (Punches)",
+      "opponent": "Cody Brundage",
+      "result": "L"
+     },
+     {
+      "code": "K1",
+      "date": "2025-09-27",
+      "event": "UFC Fight Night 260 - Ulberg vs. Reyes",
+      "method": "TKO (Punches)",
+      "opponent": "Cameron Rowston",
+      "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2025-06-14",
+      "event": "UFC on ESPN 69 - Usman vs. Buckley",
+      "method": "Decision (Unanimous)",
+      "opponent": "Edmen Shahbazyan",
+      "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2025-02-15",
+      "event": "UFC Fight Night 251 - Cannonier vs. Rodrigues",
+      "method": "Decision (Unanimous)",
+      "opponent": "Rodolfo Vieira",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2024-09-07",
+      "event": "UFC Fight Night 242 - Burns vs. Brady",
+      "method": "Decision (Unanimous)",
+      "opponent": "Dylan Budka",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 7,
+     "nc": 0,
+     "wins": 14
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "confidence": 0.520599,
+   "edge": null,
+   "intel": [],
+   "market_prob": null,
+   "method": "KO/TKO",
+   "method_prob": 0.414162,
+   "method_probs": {
+    "Decision": 0.297733,
+    "KO/TKO": 0.414162,
+    "Submission": 0.288106
+   },
+   "number": 8,
+   "odds": null,
+   "p_fail": null,
+   "p_finish": 0.702267,
+   "p_finish_raw": 0.449664,
+   "parlay_tier": null,
+   "pick": "Andre Petroski",
+   "recommendation": "LEAN",
+   "red": "Azamat Bekoev",
+   "red_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "S3",
+      "date": "2026-04-04",
+      "event": "UFC Fight Night 272 - Moicano vs. Duncan",
+      "method": "Technical Submission (Guillotine Choke)",
+      "opponent": "Tresean Gore",
+      "result": "L"
+     },
+     {
+      "code": "K3",
+      "date": "2025-10-18",
+      "event": "UFC Fight Night 262 - De Ridder vs. Allen",
+      "method": "TKO (Punches)",
+      "opponent": "Yousri Belgaroui",
+      "result": "L"
+     },
+     {
+      "code": "K1",
+      "date": "2025-05-03",
+      "event": "UFC on ESPN 67 - Sandhagen vs. Figueiredo",
+      "method": "TKO (Punches)",
+      "opponent": "Ryan Loder",
+      "result": "W"
+     },
+     {
+      "code": "K1",
+      "date": "2025-01-18",
+      "event": "UFC 311 - Makhachev vs. Moicano",
+      "method": "KO (Punches)",
+      "opponent": "Zachary Reese",
+      "result": "W"
+     },
+     {
+      "code": "K2",
+      "date": "2024-06-22",
+      "event": "LFA 186 - Bekoev vs. Foxworth",
+      "method": "KO (Punch)",
+      "opponent": "Chauncey Foxworth",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 5,
+     "nc": 0,
+     "wins": 20
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.38265,
+    "decision": 0.2673,
+    "decision_share": 0.28635,
+    "draw": 0.01905,
+    "finish_by_round": [
+     0.3349,
+     0.22825,
+     0.1505
+    ],
+    "ko": 0.5024,
+    "mean_seconds": 517.721252,
+    "median_seconds": 505.0,
+    "red_win": 0.5983,
+    "simulations": 20000,
+    "standard_error": 0.003467,
+    "sub": 0.21125
+   },
+   "title_fight": false,
+   "win_prob": 0.528287,
+   "win_prob_model": 0.528287
+  },
+  {
+   "blue": "Theodor Berggren",
+   "blue_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "K2",
+      "date": "2026-06-27",
+      "event": "UFC Fight Night 280 - Fiziev vs. Torres",
+      "method": "TKO (Head Kick and Punches)",
+      "opponent": "Daniil Donchenko",
+      "result": "L"
+     },
+     {
+      "code": "K3",
+      "date": "2026-02-07",
+      "event": "FCR 27 - Fight Club Rush 27",
+      "method": "TKO (Punches)",
+      "opponent": "Abdulatip Samedov",
+      "result": "W"
+     },
+     {
+      "code": "K2",
+      "date": "2025-10-04",
+      "event": "CW 195 - Cage Warriors 195: Rome",
+      "method": "TKO (Punches)",
+      "opponent": "Daniele Battaglia",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2025-03-29",
+      "event": "FCR 23 - Fight Club Rush 23",
+      "method": "Decision (Unanimous)",
+      "opponent": "Leonardo Damiani",
+      "result": "L"
+     },
+     {
+      "code": "S3",
+      "date": "2024-11-23",
+      "event": "CW 181 - Cage Warriors 181: Newcastle",
+      "method": "Submission (Arm-Triangle Choke)",
+      "opponent": "Justin Burlinson",
+      "result": "L"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 4,
+     "nc": 0,
+     "wins": 8
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "confidence": 0.684211,
+   "edge": 0.156323,
+   "intel": [],
+   "market_prob": 0.610991,
+   "method": "Decision",
+   "method_prob": 0.415205,
+   "method_probs": {
+    "Decision": 0.415205,
+    "KO/TKO": 0.280204,
+    "Submission": 0.304591
+   },
+   "number": 9,
+   "odds": -169,
+   "p_fail": 0.221062,
+   "p_finish": 0.584795,
+   "p_finish_raw": 0.625005,
+   "parlay_tier": null,
+   "pick": "Rodrigo Sezinando",
+   "recommendation": "LEAN",
+   "red": "Rodrigo Sezinando",
+   "red_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "K1",
+      "date": "2025-09-13",
+      "event": "UFC Fight Night 259 - Noche UFC: Lopes vs. Silva",
+      "method": "TKO (Punches)",
+      "opponent": "Daniil Donchenko",
+      "result": "L"
+     },
+     {
+      "code": "K1",
+      "date": "2024-11-15",
+      "event": "SMMA - Samourai MMA 12",
+      "method": "TKO (Punches)",
+      "opponent": "Jonathan Ramsay",
+      "result": "W"
+     },
+     {
+      "code": "K2",
+      "date": "2024-05-09",
+      "event": "BFL 80 - Battlefield Fight League: World War",
+      "method": "TKO (Punches)",
+      "opponent": "Dario Sinagoga",
+      "result": "W"
+     },
+     {
+      "code": "S1",
+      "date": "2024-02-08",
+      "event": "BFL 79 - Battlefield Fight League",
+      "method": "Submission (Rear-Naked Choke)",
+      "opponent": "Scottie Stockman",
+      "result": "W"
+     },
+     {
+      "code": "K2",
+      "date": "2023-03-30",
+      "event": "BFL 76 - The Rebel vs. JT Money",
+      "method": "KO (Punches and Knee)",
+      "opponent": "Saeid Mirzaei",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 2,
      "nc": 0,
      "wins": 8
     },
@@ -1978,151 +1456,143 @@
      "td_att_per15",
      "td_def"
     ],
-    "blue_win": 0.51595,
-    "decision": 0.3863,
-    "decision_share": 0.41695,
-    "draw": 0.03065,
+    "blue_win": 0.46635,
+    "decision": 0.30985,
+    "decision_share": 0.33615,
+    "draw": 0.0263,
     "finish_by_round": [
-     0.2555,
-     0.18895,
-     0.1386
+     0.30215,
+     0.21635,
+     0.14535
     ],
-    "ko": 0.29105,
-    "mean_seconds": 602.883972,
-    "median_seconds": 715.0,
-    "red_win": 0.4534,
+    "ko": 0.5184,
+    "mean_seconds": 547.846741,
+    "median_seconds": 570.0,
+    "red_win": 0.50735,
     "simulations": 20000,
-    "standard_error": 0.00352,
-    "sub": 0.292
+    "standard_error": 0.003535,
+    "sub": 0.14545
    },
    "title_fight": false,
-   "win_prob": 0.546535,
-   "win_prob_model": 0.415648
+   "win_prob": 0.654387,
+   "win_prob_model": 0.784575
   },
   {
-   "blue": "Nicolle Caliari",
+   "blue": "JeongYeong Lee",
    "blue_form": {
-    "as_of": "2026-10-22",
+    "as_of": null,
     "last5": [
      {
-      "code": "S3",
-      "date": "2026-05-16",
-      "event": "UFC Fight Night 276 - Allen vs. Costa",
-      "method": "Submission (Arm-Triangle Choke)",
-      "opponent": "Shauna Bannon",
-      "result": "W"
+      "code": "DC",
+      "date": "2025-05-10",
+      "event": "UFC 315: Muhammad vs. Della Maddalena",
+      "method": "Decision - Unanimous",
+      "opponent": "Daniel Santos",
+      "result": "L"
      },
      {
-      "code": "K3",
-      "date": "2025-07-19",
-      "event": "UFC 318 - Holloway vs. Poirier 3",
-      "method": "TKO (Knee to the Body and Punches)",
-      "opponent": "Carli Judice",
+      "code": "K1",
+      "date": "2024-07-20",
+      "event": "UFC Fight Night: Lemos vs. Jandiroba",
+      "method": "KO/TKO",
+      "opponent": "Hyder Amil",
       "result": "L"
      },
      {
       "code": "DC",
-      "date": "2025-01-11",
-      "event": "UFC Fight Night 249 - Dern vs. Ribas 2",
-      "method": "Decision (Split)",
-      "opponent": "Ernesta Kareckaite",
+      "date": "2024-02-03",
+      "event": "UFC Fight Night: Dolidze vs. Imavov",
+      "method": "Decision - Unanimous",
+      "opponent": "Blake Bilder",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2023-02-04",
+      "event": "UFC Fight Night: Lewis vs. Spivac",
+      "method": "Decision - Split",
+      "opponent": "Yizha",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 2,
+     "nc": 0,
+     "wins": 2
+    },
+    "source": "ufc",
+    "verified": true
+   },
+   "confidence": 0.557769,
+   "edge": -0.179691,
+   "intel": [],
+   "market_prob": 0.623858,
+   "method": "Decision",
+   "method_prob": 0.419357,
+   "method_probs": {
+    "Decision": 0.419357,
+    "KO/TKO": 0.323473,
+    "Submission": 0.25717
+   },
+   "number": 10,
+   "odds": -180,
+   "p_fail": 0.224266,
+   "p_finish": 0.580643,
+   "p_finish_raw": 0.632094,
+   "parlay_tier": null,
+   "pick": "JeongYeong Lee",
+   "recommendation": "LEAN",
+   "red": "Julian Erosa",
+   "red_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "K1",
+      "date": "2026-03-28",
+      "event": "UFC Fight Night 271 - Adesanya vs. Pyfer",
+      "method": "KO (Punches)",
+      "opponent": "Lerryan Douglas",
       "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2025-05-17",
+      "event": "UFC Fight Night 256 - Burns vs. Morales",
+      "method": "Decision (Unanimous)",
+      "opponent": "Melquizael Costa",
+      "result": "L"
+     },
+     {
+      "code": "K1",
+      "date": "2025-04-12",
+      "event": "UFC 314 - Volkanovski vs. Lopes",
+      "method": "TKO (Elbow and Punches)",
+      "opponent": "Darren Elkins",
+      "result": "W"
      },
      {
       "code": "S1",
-      "date": "2024-09-10",
-      "event": "Dana White's Contender Series - Contender Series 2024: Week 5",
-      "method": "Submission (Armbar)",
-      "opponent": "Corinne Laframboise",
+      "date": "2024-07-13",
+      "event": "UFC on ESPN 59 - Namajunas vs. Cortez",
+      "method": "Submission (Guillotine Choke)",
+      "opponent": "Christian Rodriguez",
       "result": "W"
      },
      {
-      "code": "S2",
-      "date": "2023-10-29",
-      "event": "FMS - Fight Music Show: Fight Night 2",
-      "method": "Submission (Rear-Naked Choke)",
-      "opponent": "Daniella Antonelli",
+      "code": "S1",
+      "date": "2024-03-23",
+      "event": "UFC on ESPN 53 - Ribas vs. Namajunas",
+      "method": "Submission (Guillotine Choke)",
+      "opponent": "Ricardo Ramos",
       "result": "W"
      }
     ],
     "record": {
      "draws": 0,
-     "losses": 4,
+     "losses": 14,
      "nc": 0,
-     "wins": 9
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "confidence": 0.742857,
-   "edge": 0.01666,
-   "intel": [],
-   "market_prob": 0.762397,
-   "method": "Decision",
-   "method_prob": 0.609852,
-   "method_probs": {
-    "Decision": 0.609852,
-    "KO/TKO": 0.186103,
-    "Submission": 0.204045
-   },
-   "number": 14,
-   "odds": -360,
-   "p_fail": 0.136171,
-   "p_finish": 0.390148,
-   "p_finish_raw": 0.406589,
-   "parlay_tier": "STRONG",
-   "pick": "Iasmin Lucindo",
-   "recommendation": "GOOD BET",
-   "red": "Iasmin Lucindo",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2025-08-09",
-      "event": "UFC on ESPN 72 - Dolidze vs. Hernandez",
-      "method": "Decision (Unanimous)",
-      "opponent": "Angela Hill",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-03-08",
-      "event": "UFC 313 - Pereira vs. Ankalaev",
-      "method": "Decision (Unanimous)",
-      "opponent": "Amanda Lemos",
-      "result": "L"
-     },
-     {
-      "code": "DC",
-      "date": "2024-10-05",
-      "event": "UFC 307 - Pereira vs. Rountree",
-      "method": "Decision (Split)",
-      "opponent": "Marina Rodriguez",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2024-05-04",
-      "event": "UFC 301 - Pantoja vs. Erceg",
-      "method": "Decision (Unanimous)",
-      "opponent": "Karolina Kowalkiewicz",
-      "result": "W"
-     },
-     {
-      "code": "S2",
-      "date": "2023-08-12",
-      "event": "UFC on ESPN 51 - Luque vs. dos Anjos",
-      "method": "Submission (Arm-Triangle Choke)",
-      "opponent": "Polyana Viana",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 6,
-     "nc": 0,
-     "wins": 18
+     "wins": 34
     },
     "source": "sherdog",
     "verified": true
@@ -2131,45 +1601,252 @@
    "rounds_scheduled": 3,
    "simulation": {
     "assumed": [],
-    "blue_win": 0.40885,
-    "decision": 0.5484,
-    "decision_share": 0.5918,
-    "draw": 0.0434,
+    "blue_win": 0.40825,
+    "decision": 0.32495,
+    "decision_share": 0.33775,
+    "draw": 0.0128,
     "finish_by_round": [
-     0.16275,
-     0.1345,
-     0.11095
+     0.29845,
+     0.2155,
+     0.1483
     ],
-    "ko": 0.20585,
-    "mean_seconds": 702.02478,
-    "median_seconds": 900.0,
-    "red_win": 0.54775,
+    "ko": 0.4922,
+    "mean_seconds": 550.998779,
+    "median_seconds": 580.0,
+    "red_win": 0.57895,
     "simulations": 20000,
-    "standard_error": 0.003519,
-    "sub": 0.20235
+    "standard_error": 0.003491,
+    "sub": 0.17005
    },
    "title_fight": false,
-   "win_prob": 0.771615,
-   "win_prob_model": 0.799269
+   "win_prob": 0.583685,
+   "win_prob_model": 0.463166
+  },
+  {
+   "blue": "Piera Rodriguez",
+   "blue_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "DC",
+      "date": "2026-03-14",
+      "event": "UFC Fight Night 269 - Emmett vs. Vallejos",
+      "method": "Decision (Unanimous)",
+      "opponent": "Sam Hughes",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2025-08-02",
+      "event": "UFC on ESPN 71 - Taira vs. Park",
+      "method": "Decision (Split)",
+      "opponent": "Ketlen Souza",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2024-12-14",
+      "event": "UFC on ESPN 63 - Covington vs. Buckley",
+      "method": "Decision (Unanimous)",
+      "opponent": "Josefine Lindgren Knutsson",
+      "result": "W"
+     },
+     {
+      "code": "DQ",
+      "date": "2024-05-18",
+      "event": "UFC Fight Night 241 - Barboza vs. Murphy",
+      "method": "Disqualification (Headbutts)",
+      "opponent": "Ariane Carnelossi",
+      "result": "L"
+     },
+     {
+      "code": "S2",
+      "date": "2023-04-15",
+      "event": "UFC on ESPN 44 - Holloway vs. Allen",
+      "method": "Submission (Armbar)",
+      "opponent": "Gillian Robertson",
+      "result": "L"
+     }
+    ],
+    "record": {
+     "draws": 0,
+     "losses": 2,
+     "nc": 0,
+     "wins": 12
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "confidence": 0.684211,
+   "edge": -0.157642,
+   "intel": [],
+   "market_prob": 0.705526,
+   "method": "Decision",
+   "method_prob": 0.871244,
+   "method_probs": {
+    "Decision": 0.871244,
+    "KO/TKO": 0.046899,
+    "Submission": 0.081857
+   },
+   "number": 12,
+   "odds": -265,
+   "p_fail": 0.157019,
+   "p_finish": 0.128756,
+   "p_finish_raw": 0.316035,
+   "parlay_tier": null,
+   "pick": "Piera Rodriguez",
+   "recommendation": "LEAN",
+   "red": "Talita Alencar",
+   "red_form": {
+    "as_of": "2026-10-26",
+    "last5": [
+     {
+      "code": "DC",
+      "date": "2026-04-25",
+      "event": "UFC Fight Night 274 - Sterling vs. Zalal",
+      "method": "Decision (Unanimous)",
+      "opponent": "Julia Polastri",
+      "result": "W"
+     },
+     {
+      "code": "S3",
+      "date": "2025-11-01",
+      "event": "UFC Fight Night 263 - Garcia vs. Onama",
+      "method": "Submission (Rear-Naked Choke)",
+      "opponent": "Ariane Carnelossi",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2025-04-05",
+      "event": "UFC on ESPN 65 - Emmett vs. Murphy",
+      "method": "Decision (Unanimous)",
+      "opponent": "Vanessa Demopoulos",
+      "result": "W"
+     },
+     {
+      "code": "DC",
+      "date": "2024-08-10",
+      "event": "UFC on ESPN 61 - Tybura vs. Spivac 2",
+      "method": "Decision (Unanimous)",
+      "opponent": "Stephanie Luciano",
+      "result": "L"
+     },
+     {
+      "code": "DC",
+      "date": "2023-12-09",
+      "event": "UFC Fight Night 233 - Song vs. Gutierrez",
+      "method": "Decision (Split)",
+      "opponent": "Rayanne dos Santos",
+      "result": "W"
+     }
+    ],
+    "record": {
+     "draws": 1,
+     "losses": 1,
+     "nc": 0,
+     "wins": 8
+    },
+    "source": "sherdog",
+    "verified": true
+   },
+   "round": "R3",
+   "rounds_scheduled": 3,
+   "simulation": {
+    "assumed": [],
+    "blue_win": 0.54695,
+    "decision": 0.56725,
+    "decision_share": 0.60535,
+    "draw": 0.0381,
+    "finish_by_round": [
+     0.1534,
+     0.12875,
+     0.1125
+    ],
+    "ko": 0.169,
+    "mean_seconds": 711.991272,
+    "median_seconds": 900.0,
+    "red_win": 0.41495,
+    "simulations": 20000,
+    "standard_error": 0.003484,
+    "sub": 0.22565
+   },
+   "title_fight": false,
+   "win_prob": 0.671241,
+   "win_prob_model": 0.568385
   }
  ],
- "generated": "2026-10-22T18:17:53Z",
+ "generated": "2026-10-26T13:23:14Z",
  "parlays": [
   {
-   "combined_prob": 0.584576,
-   "fair_odds": -141,
+   "combined_prob": 0.510003,
+   "fair_odds": -104,
    "legs": [
     {
-     "fight": "Lucindo vs Caliari",
-     "pick": "Lucindo",
-     "prob": 0.771615,
-     "tier": "STRONG"
+     "fight": "Reese vs Gall",
+     "pick": "Reese",
+     "prob": 0.710555,
+     "tier": "VALUE"
     },
     {
-     "fight": "Krylov vs Yakhyaev",
-     "pick": "Yakhyaev",
-     "prob": 0.7576,
-     "tier": "STRONG"
+     "fight": "Santos vs Santos",
+     "pick": "Santos",
+     "prob": 0.717753,
+     "tier": "VALUE"
+    }
+   ]
+  },
+  {
+   "combined_prob": 0.347082,
+   "fair_odds": 188,
+   "legs": [
+    {
+     "fight": "Reese vs Gall",
+     "pick": "Reese",
+     "prob": 0.710555,
+     "tier": "VALUE"
+    },
+    {
+     "fight": "Santos vs Santos",
+     "pick": "Santos",
+     "prob": 0.717753,
+     "tier": "VALUE"
+    },
+    {
+     "fight": "Brown vs Smith",
+     "pick": "Smith",
+     "prob": 0.680549,
+     "tier": "VALUE"
+    }
+   ]
+  },
+  {
+   "combined_prob": 0.236305,
+   "fair_odds": 323,
+   "legs": [
+    {
+     "fight": "Reese vs Gall",
+     "pick": "Reese",
+     "prob": 0.710555,
+     "tier": "VALUE"
+    },
+    {
+     "fight": "Santos vs Santos",
+     "pick": "Santos",
+     "prob": 0.717753,
+     "tier": "VALUE"
+    },
+    {
+     "fight": "Brown vs Smith",
+     "pick": "Smith",
+     "prob": 0.680549,
+     "tier": "VALUE"
+    },
+    {
+     "fight": "Marshall vs Hope",
+     "pick": "Marshall",
+     "prob": 0.680833,
+     "tier": "VALUE"
     }
    ]
   }
@@ -2177,117 +1854,65 @@
  "schema": 3,
  "skipped": [
   {
-   "blue": "Asaf Chopurov",
-   "blue_form": {
-    "as_of": "2026-10-22",
+   "blue": "Joe Kropschot",
+   "blue_form": null,
+   "fight": "Nick Klein vs Joe Kropschot",
+   "reason": "NO DATA: No data for 'Joe Kropschot'.  Did you mean: Jake Rosholt (72%), Jose Ochoa (70%), Jared Rosholt (69%), Joe Proctor (67%), Joe Soto (67%)?",
+   "red": "Nick Klein",
+   "red_form": {
+    "as_of": "2026-10-26",
     "last5": [
      {
-      "code": "K1",
-      "date": "2026-07-23",
-      "event": "UAE Warriors 72 - Chopurov vs. McLaren",
-      "method": "KO (Punch)",
-      "opponent": "Reece McLaren",
+      "code": "K2",
+      "date": "2025-08-02",
+      "event": "UFC on ESPN 71 - Taira vs. Park",
+      "method": "TKO (Body Kick and Punches)",
+      "opponent": "Andrey Pulyaev",
+      "result": "L"
+     },
+     {
+      "code": "K2",
+      "date": "2025-02-22",
+      "event": "UFC Fight Night 252 - Cejudo vs. Song",
+      "method": "TKO (Knee and Punches)",
+      "opponent": "Mansur Abdul-Malik",
+      "result": "L"
+     },
+     {
+      "code": "S1",
+      "date": "2024-10-15",
+      "event": "Dana White's Contender Series - Contender Series 2024: Week 10",
+      "method": "Submission (Rear-Naked Choke)",
+      "opponent": "Heraldo Souza",
       "result": "W"
      },
      {
       "code": "S1",
-      "date": "2026-03-28",
-      "event": "UAE Warriors 69 - Chopurov vs. Ramos",
+      "date": "2023-11-22",
+      "event": "MCC 69 - Thanksgiving Throwdown 2023",
       "method": "Submission (Rear-Naked Choke)",
-      "opponent": "Adriano Ramos",
-      "result": "W"
-     },
-     {
-      "code": "K3",
-      "date": "2025-10-22",
-      "event": "UAE Warriors 64 - Ribeiro vs. Abubakar",
-      "method": "TKO (Retirement)",
-      "opponent": "Demarte Pena",
-      "result": "W"
-     },
-     {
-      "code": "K1",
-      "date": "2025-07-23",
-      "event": "UAE Warriors 61 - AlQaisi vs. Chipfumbu",
-      "method": "TKO (Submission to Punches)",
-      "opponent": "Joao Pedro Saldanha",
+      "opponent": "Cory Simpson",
       "result": "W"
      },
      {
       "code": "S3",
-      "date": "2025-01-17",
-      "event": "UAE Warriors 57 - AlQaisi vs. Vargas",
+      "date": "2023-05-20",
+      "event": "Ignite Fights - No Mercy 11",
       "method": "Submission (Rear-Naked Choke)",
-      "opponent": "Wanderley Rosa Ferreira Levandovski",
+      "opponent": "Collin Huckbody",
       "result": "W"
      }
     ],
     "record": {
      "draws": 0,
-     "losses": 0,
+     "losses": 3,
      "nc": 0,
-     "wins": 11
-    },
-    "source": "sherdog",
-    "verified": true
-   },
-   "fight": "Colby Thicknesse vs Asaf Chopurov",
-   "reason": "NO DATA: No data for 'Asaf Chopurov'.",
-   "red": "Colby Thicknesse",
-   "red_form": {
-    "as_of": "2026-10-22",
-    "last5": [
-     {
-      "code": "DC",
-      "date": "2026-05-02",
-      "event": "UFC Fight Night 275 - Della Maddalena vs. Prates",
-      "method": "Decision (Unanimous)",
-      "opponent": "Vince Morales",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-09-27",
-      "event": "UFC Fight Night 260 - Ulberg vs. Reyes",
-      "method": "Decision (Unanimous)",
-      "opponent": "Josias Musasa",
-      "result": "W"
-     },
-     {
-      "code": "DC",
-      "date": "2025-02-08",
-      "event": "UFC 312 - Du Plessis vs. Strickland 2",
-      "method": "Decision (Unanimous)",
-      "opponent": "Aleksandre Topuria",
-      "result": "L"
-     },
-     {
-      "code": "K1",
-      "date": "2024-11-23",
-      "event": "HFS - Hex Fight Series 33",
-      "method": "KO (Elbows)",
-      "opponent": "Marvin Malunes",
-      "result": "W"
-     },
-     {
-      "code": "S1",
-      "date": "2024-10-27",
-      "event": "Bali MMA - Canggu Fight Night 32",
-      "method": "Submission (Rear-Naked Choke)",
-      "opponent": "Norman Agcopra",
-      "result": "W"
-     }
-    ],
-    "record": {
-     "draws": 0,
-     "losses": 1,
-     "nc": 0,
-     "wins": 9
+     "wins": 6
     },
     "source": "sherdog",
     "verified": true
    }
   }
  ],
- "trained_on": 7695
+ "trained_on": 7707
 }
