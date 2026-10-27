@@ -582,6 +582,94 @@ function resultTag(m) {
 const pickName = (m, k) => k === "H" ? m.home.name : k === "A" ? m.away.name : "Draw";
 const priceOf = (m, k, set = "avg") => ((m.prices || {})[set] || {})[{ H: "h", D: "d", A: "a" }[k]];
 
+// ---------------------------------------------------------------- goals and scores
+
+// The numbers beside the pick (engine: soccer_scores): both teams to score,
+// over 1.5 and 3.5 goals and the likeliest scores, read off one score matrix -
+// the market's where the home/draw/away and the over/under are both priced,
+// the model's own where not, said so - and how sure the pick is (its band),
+// with the hit rate measured for that band. Every rate is read from
+// matches.json's scores_measured, never typed in here.
+const BAND_WORD = { STRONG: "Strong", SOLID: "Solid", LEAN: "Lean", "TOSS-UP": "Toss-up" };
+// The measured table's periods: the first chose, the last confirmed.
+function measured(d) {
+  const sm = d && d.scores_measured;
+  const keys = Object.keys((sm && sm.periods) || {}).sort();
+  return keys.length ? { sm, dev: keys[0], conf: keys[keys.length - 1] } : null;
+}
+// "2016-2025" -> "2016-25", for a narrow table head.
+const shortPeriod = (key) => String(key || "").replace(/^(\d{4})-\d{2}(\d{2})$/, "$1-$2");
+// A band's range of the pick's chance, from the floors the engine wrote.
+function bandRange(ms, band) {
+  const t = ms && (ms.sm.bands.pick || {})[ms.conf];
+  if (!t || !t[band]) return "";
+  const floors = Object.entries(t).filter(([k, v]) => k !== "all" && v && v.floor != null).map(([, v]) => v.floor).sort((a, b) => a - b);
+  const f = t[band].floor, next = floors.find((x) => x > f);
+  return f === 0 ? `under ${pct(next)}` : next == null ? `${pct(f)} or more` : `${Math.round(f * 100)}-${pct(next)}`;
+}
+function bandRate(ms, basis, band, key) {
+  const b = ms && (((ms.sm.bands[basis] || {})[key || ms.conf]) || {})[band];
+  return b && b.hit_rate != null ? b.hit_rate : null;
+}
+function bandText(m, d) {
+  if (!m.band) return "—";
+  const ms = measured(d);
+  const basis = m.band_basis === "model" ? "model" : "pick";
+  return `<b>${esc(BAND_WORD[m.band] || m.band)}</b> <span class="mini">${basis === "model" ? "the model's own picks" : "picks"} this sure${
+    ms ? ` (${esc(bandRange(ms, m.band))}) won ${pct(bandRate(ms, basis, m.band), 1)} of ${esc(ms.conf)} matches` : " - hit rate not loaded"}</span>`;
+}
+// How far below what happened both teams to score has run, in points.
+function bttsShort(d) {
+  const ms = measured(d);
+  const b = ms && (ms.sm.periods[ms.conf] || {}).btts;
+  return b && b.rate != null && b.shown ? Math.round((b.rate - b.shown.mean_p) * 100) : null;
+}
+const REASON = {
+  no_over_under: "only the home/draw/away price is posted; the market's score chances need the over/under price too",
+  fit: "the prices fit no score matrix closely enough",
+  no_model: "no numbers for this match",
+};
+function scoreSource(m, d) {
+  const s = m.scores || {};
+  const ms = measured(d);
+  if (m.score_source === "market") return `the market <span class="mini">- the score chances that best reproduce the pick and the over/under price${
+    s.miss != null ? `, within ${esc((s.miss * 100).toFixed(1))} points (on the ${esc(s.miss_on || "")})` : ""}</span>`;
+  const why = s.reason === "no_price" ? (m.price_status === "not_yet" ? "no price yet" : "no price was posted")
+    : s.reason === "fit" ? `the prices fit no score matrix within ${esc(ms ? Math.round(ms.sm.fit_max_miss * 100) : "—")} points (the closest missed the ${
+      esc(s.miss_on || "")} by ${esc(s.miss != null ? (s.miss * 100).toFixed(1) : "—")})`
+    : REASON[s.reason] || "";
+  return `the model alone <span class="mini">- ${why}. Measured too, a little less accurate than the market's (Method)</span>`;
+}
+function goalsPanel(m, d) {
+  const ms = measured(d);
+  const s = m.scores;
+  const rows = [["Over 2.5", m.p_o25 == null ? "—" : `<span class="num">${pct(m.p_o25, 1)}</span> <span class="mini">${
+    m.market_o25 != null ? "the over/under market" : "model alone - no over/under price"}${
+    m.market_o25 != null && m.model_o25 != null ? ` · model ${pct(m.model_o25, 1)}` : ""}</span>`]];
+  if (s) {
+    const low = bttsShort(d);
+    const both = m.score && m.score.home != null ? m.score.home > 0 && m.score.away > 0 : null;
+    rows.push(["Over 1.5", `<span class="num">${pct(m.p_o15, 1)}</span>`]);
+    rows.push(["Over 3.5", `<span class="num">${pct(m.p_o35, 1)}</span>`]);
+    rows.push(["Both score", `<span class="num">${pct(m.p_btts, 1)}</span> <span class="mini">${
+      low != null && low > 0 ? `runs about ${low} ${low === 1 ? "point" : "points"} low` : ""}${
+      m.btts_correct != null ? `${low > 0 ? " · " : ""}${both ? "both scored" : "not both"} - ${m.btts_correct ? "right" : "wrong"}` : ""}</span>`]);
+    const top1 = ms && ((ms.sm.periods[ms.conf] || {}).exact || {}).shown;
+    rows.push(["Likeliest", `${(s.top || []).map((x) => `<span class="nowrap">${esc(x.score)} <span class="num">${pct(x.p)}</span></span>`).join(" · ")}
+      <span class="mini"><br>home-away${top1 && top1.top1_hit ? ` · long shots: the likeliest happened about 1 match in ${Math.round(1 / top1.top1_hit)} (${pct(top1.top1_hit, 1)}, ${esc(ms.conf)})` : ""}</span>`]);
+    // The scores' own home/draw/away, beside the pick's - never in its place.
+    // The model's alone, with no price, is the pick itself.
+    if (s.matrix && !(m.score_source === "model" && !m.market)) rows.push(["Results",
+      `<span class="nowrap">${esc(m.home.code)} ${pct(s.matrix.p_h, 1)}</span> · <span class="nowrap">draw ${pct(s.matrix.p_d, 1)}</span> · <span class="nowrap">${
+        esc(m.away.code)} ${pct(s.matrix.p_a, 1)}</span> <span class="mini">home/draw/away by ${m.score_source === "model" ? "the model's own score chances" : "these score chances"}; the pick's stays as above</span>`]);
+    rows.push(["From", scoreSource(m, d)]);
+  } else if (m.pick) {
+    rows.push(["Both score", `— <span class="mini">${m.status === "upcoming" || !m.logged_at ? "no score numbers for this match"
+      : "not logged with this pick - it was logged before these numbers were"}</span>`]);
+  }
+  return `<div class="panel"><div class="eyebrow">Goals and scores</div><dl class="kv">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl></div>`;
+}
+
 function matchRow(m, d) {
   const ph = phase(m);
   const bar = m.p_h == null
@@ -616,11 +704,9 @@ function matchRow(m, d) {
     ["Pick", m.pick ? `<b>${esc(pickName(m, m.pick))}${m.pick === "D" ? "" : " to win"}</b> <span class="num">${pct(m.pick_prob, 1)}</span>
       <span class="mini">${!m.market ? (notYet ? "No price yet - the model alone" : "model alone - no market price")
         : d.basis === "market" ? "the market's chances, recalibrated" : "model and market blended"}</span>` : "—"],
+    ["Band", bandText(m, d)],
     ["Price", price == null ? "—" : `<span class="num">${odds(price)}</span> <span class="mini">average${
       priceOf(m, m.pick, "best") != null ? ` · best ${odds(priceOf(m, m.pick, "best"))}` : ""}</span>`],
-    ["Goals", m.p_o25 == null ? "—" : `Over 2.5 <span class="num">${pct(m.p_o25, 1)}</span> <span class="mini">${
-      m.market_o25 != null ? "the over/under market" : "model alone - no over/under price"}${
-      m.market_o25 != null && m.model_o25 != null ? ` · model ${pct(m.model_o25, 1)}` : ""}</span>`],
   ];
   const built = [
     ["Model alone", three(m.model)],
@@ -642,6 +728,12 @@ function matchRow(m, d) {
     esc(m.result_source || "the free feeds")}; football-data.co.uk's own result confirms or corrects it</span>`]);
   (m.corrections || []).forEach((c) => lead.push(["Corrected", `<span class="mini">${c.was && c.was.home != null ? `was ${esc(c.was.home)}-${esc(c.was.away)}` : "was pending"}${
     c.now ? `, now ${esc(c.now.home)}-${esc(c.now.away)}` : ", now pending - the feeds disagreed"} (${esc(c.by || "")})</span>`]));
+  // A pick logged before the feeds said the match was off or undated: kept,
+  // not graded, and what becomes of it.
+  if (m.held && m.pick) lead.push(["Held", `<span class="mini">${ph === "tbc"
+    ? `logged for ${esc(localStamp(m.logged_for || m.kickoff))}; the feeds no longer give a date`
+    : `${esc((STATUS_WORD[ph] || ph).toLowerCase())} after it was logged${m.moved_to ? ` - now listed for ${esc(localStamp(m.moved_to))}` : ""}`}.
+    Kept in the log, not graded: a pick on the new date replaces it, and with no result within three weeks it is void.</span>`]);
   if (m.fixture_source && m.fixture_source !== "football-data.co.uk") built.push(["Fixture from",
     `${esc(m.fixture_source)} <span class="mini">free feeds; football-data.co.uk had not posted it</span>`]);
   const rows = (l) => l.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join("");
@@ -661,6 +753,7 @@ function matchRow(m, d) {
         <details class="fold"><summary><span class="clip">How the number is built: model alone, market, prices, when priced</span><span class="more">Show</span></summary>
           <div class="fold-body" style="padding-left:14px"><dl class="kv">${rows(built)}</dl></div></details>
       </div>
+      ${m.pick || m.p_o25 != null || m.scores ? goalsPanel(m, d) : ""}
       ${DESK.sub("Last 5 matches", forms && `<div class="two">${forms}</div>`)}
       ${DESK.closer(`${m.home.name} v ${m.away.name}`)}
     </div>
@@ -675,6 +768,10 @@ const LEGEND = `<dl class="gloss">
   <dt><span class="pickline"><span class="pick">${icon("check")}Arsenal<span class="odds num">−150</span></span></span></dt>
     <dd>The pick, the likeliest of the three results, and its price. −150 means stake 150 to win 100; +240 means stake 100 to win 240.</dd>
   <dt><span class="factline">Over 2.5 goals 58%</span></dt><dd>The chance of three or more goals in the match.</dd>
+  <dt><b>Band</b></dt><dd>How sure the pick is, by its chance: <b>Strong</b> 60% or more, <b>Solid</b> 50-60%, <b>Lean</b>
+    40-50%, <b>Toss-up</b> under 40%. Each is shown with how often picks that sure won when they were tested (Method).</dd>
+  <dt><b>Both score</b></dt><dd>The chance both clubs score. It, over 1.5 and 3.5 goals and the likeliest scores come from one set
+    of score chances: the one that fits the pick and the over/under price, or the model's own where those are not both posted.</dd>
   <dt><span class="tag warn">Model only</span></dt><dd>No price was posted, so the chances are the model's alone.</dd>
   <dt><span class="tag warn">No price yet</span></dt><dd>A match from the free fixture feeds that football-data.co.uk has not posted
     with its prices yet (it does on Tuesday and Friday afternoons): the model's chances alone until then.</dd>
@@ -682,7 +779,8 @@ const LEGEND = `<dl class="gloss">
     A pick graded on it is graded again on football-data.co.uk's result; a dashed edge marks it in a club's last five.</dd>
   <dt><b>Time to be confirmed</b></dt><dd>The feeds do not agree on the kickoff time, or only one lists it: the pick closes at
     midnight UK time on match day.</dd>
-  <dt><span class="badge gold">Postponed</span></dt><dd>As the feeds report it. Not picked.</dd>
+  <dt><span class="badge gold">Postponed</span></dt><dd>As the feeds report it. Not picked; a pick logged before it was
+    postponed is kept, not graded, until a pick on the new date replaces it.</dd>
   <dt><span class="last5 score5"><span class="res w">2-1</span><span class="res l">0-1</span></span></dt><dd>The last five league matches, newest first, with the score from the club's side.</dd>
   <dt><b>Market</b></dt><dd>The bookmakers' prices turned into chances, with their cut removed.</dd>
   <dt><b>Walk-forward</b></dt><dd>Judged only on matches after the ones the model learned from.</dd>
@@ -835,8 +933,15 @@ const BOOT = {
     el.innerHTML = renderRecord(d);
   },
 
-  method() {
-    $("view-method").innerHTML = methodHtml();
+  async method() {
+    const el = $("view-method");
+    el.innerHTML = methodHtml(MATCHES);
+    // The measured table comes with the matches; the tab can open first.
+    if (!MATCHES) {
+      let d = null;
+      try { d = await load("matches"); } catch (e) { d = null; }
+      el.innerHTML = methodHtml(d, !d);
+    }
   },
 };
 
@@ -864,10 +969,12 @@ function renderRecord(d) {
       <div class="tile hero-tile">${ring(bl.accuracy)}
         <div><div class="k">Picks right, ${esc(conf)}</div><div class="v">${pct(bl.accuracy, 1)}</div>
         <div class="s">of ${bl.matches == null ? "—" : bl.matches.toLocaleString()} matches, each picked only from the ones before · betting favourite ${pct(bl.market_accuracy, 1)}</div></div></div>
-      <div class="tile"><div class="k">Live so far</div><div class="v">${t.settled ? `${esc(t.correct)}-${esc(t.settled - t.correct)}` : "—"}</div>
+      <div class="tile wide"><div class="k">Live so far</div><div class="v">${t.settled ? `${esc(t.correct)}-${esc(t.settled - t.correct)}` : "—"}</div>
         <div class="s">${t.settled ? `${pct(t.correct / t.settled, 1)}${t.provisional ? ` · <span title="${esc(PROV_TIP)}">${esc(t.provisional)} provisional</span>` : ""} · ${esc(t.pending ?? 0)} still to play · logged before kickoff` : `no settled picks yet · ${esc(t.pending ?? 0)} logged`}</div></div>
       <div class="tile"><div class="k">Over / under 2.5</div><div class="v">${t.ou_settled ? `${esc(t.ou_correct)}-${esc(t.ou_settled - t.ou_correct)}` : "—"}</div>
         <div class="s">live, the side the chance favoured</div></div>
+      <div class="tile"><div class="k">Both score</div><div class="v">${t.btts_settled ? `${esc(t.btts_correct)}-${esc(t.btts_settled - t.btts_correct)}` : "—"}</div>
+        <div class="s">${t.btts_settled ? "live, the side the chance favoured" : "logged with each pick; none settled yet"}</div></div>
     </div>`;
   const wrow = (key, label) => {
     const r = W[key] || {};
@@ -931,10 +1038,58 @@ function renderRecord(d) {
 
 // ---------------------------------------------------------------- method
 
-function methodHtml() {
+// The goals and scores numbers and the bands, as this run's walk-forward
+// measured them: log loss against each league's own earlier rates and the
+// model's own score chances, how often the likeliest score happened, and the
+// bands' hit rates - the market's picks and the model's own, same edges.
+function scoresCard(d, failed) {
+  const ms = measured(d);
+  if (!ms) return `<div class="card"><h2>Goals and scores, measured</h2><div class="mini">${failed
+    ? "Could not load the measured table - open Matches, then come back." : "Loading the measured table…"}</div></div>`;
+  const P = ms.sm.periods, c = P[ms.conf] || {}, v = P[ms.dev] || {};
+  const cell = (a, b, d0 = 4) => `<td class="n">${num(a, d0)}<span class="mini">${num(b, d0)}</span></td>`;
+  const ll = (t, label, d0 = 4) => {
+    const x = (r, k) => (((r || {})[t] || {})[k] || {}).log_loss;
+    return `<tr><td>${esc(label)}</td>${cell(x(c, "shown"), x(v, "shown"), d0)}${cell(x(c, "model"), x(v, "model"), d0)}${cell(x(c, "base"), x(v, "base"), d0)}</tr>`;
+  };
+  const ex = (r, k) => ((r.exact || {})[k] || {});
+  const hit = (k, label) => `<tr><td>${esc(label)}</td>${["shown", "model", "base"].map((s) =>
+    `<td class="n">${pct(ex(c, s)[k], 1)}<span class="mini">${pct(ex(v, s)[k], 1)}</span></td>`).join("")}</tr>`;
+  const bands = Object.keys(BAND_WORD).map((b) => `<tr><td>${esc(BAND_WORD[b])}<span class="mini" style="display:block">${esc(bandRange(ms, b))}</span></td>${
+    ["pick", "model"].map((basis) => `<td class="n">${pct(bandRate(ms, basis, b), 1)}<span class="mini">${pct(bandRate(ms, basis, b, ms.dev), 1)}</span></td>`).join("")}</tr>`).join("");
+  const head = (cols) => `<thead><tr><th></th>${cols.map((h) => `<th class="n">${h}</th>`).join("")}</tr></thead>`;
+  const m = c.model || {};
+  const fb = [m.no_price ? plural(m.no_price, "match with no price", "matches with no price") : "",
+    m.no_over_under ? plural(m.no_over_under, "with only the home/draw/away price", "with only the home/draw/away price") : "",
+    m.fit ? `${m.fit} whose prices fit no score matrix within ${Math.round(ms.sm.fit_max_miss * 100)} points` : ""].filter(Boolean);
+  const btts = c.btts || {};
+  return `<div class="card"><h2>Goals and scores, measured</h2>
+    <div class="mini">Every top-league match ${esc(ms.dev)} and ${esc(ms.conf)}, each from matches before it. Top number
+      ${esc(ms.conf)}, the one under it ${esc(ms.dev)}. <b>Shown</b>: the numbers on the cards; <b>Model</b>: the model's own score
+      chances; <b>Leagues</b>: each league's own rates from earlier seasons.</div>
+    <div class="eyebrow" style="margin:12px 0 4px">Log loss - lower is better</div>
+    <div class="scroll"><table>${head(["Shown", "Model", "Leagues"])}<tbody>
+      ${ll("btts", "Both score")}${ll("o15", "Over 1.5")}${ll("o35", "Over 3.5")}${ll("exact", "Exact score", 3)}</tbody></table></div>
+    <div class="eyebrow" style="margin:12px 0 4px">How often it happened</div>
+    <div class="scroll"><table>${head(["Shown", "Model", "Leagues"])}<tbody>
+      ${hit("top1_hit", "The likeliest score")}${hit("top3_hit", "One of the three likeliest")}</tbody></table></div>
+    <div class="eyebrow" style="margin:12px 0 4px">How sure the pick is</div>
+    <div class="scroll"><table>${head(["Picks won", "Model's own"])}<tbody>${bands}</tbody></table></div>
+    <div class="mini">The band is set by the pick's chance; the edges were the quartiles of ${esc(ms.dev)}, rounded. "Picks won": the
+      pick as shown, the market's where priced. "Model's own": the model's own picks at the same edges - the rate a pick made by the
+      model alone (no price yet) is shown with.</div>
+    ${fold(`Caveats: both teams to score runs low (${ms.conf}: ${pct((btts.shown || {}).mean_p, 1)} said, ${pct(btts.rate, 1)} happened,
+      low in ${btts.deciles_low ?? "—"} of ${btts.deciles ?? "—"} deciles); exact scores are long shots; with no price the numbers are the model's own.`,
+      `${d && d.caveats && d.caveats.scores ? `<p style="margin:0">${esc(d.caveats.scores)}</p>` : ""}
+      <p style="margin:8px 0 0">In ${esc(ms.conf)} the cards' numbers would have been the market's for ${(c.market ?? 0).toLocaleString()} of
+      ${(c.matches ?? 0).toLocaleString()} matches${fb.length ? `, the model's own for ${esc(fb.join(", "))}` : ""}.</p>`)}
+  </div>`;
+}
+
+function methodHtml(d = MATCHES, failed = false) {
   // The pick is the market, recalibrated, unless the data says otherwise -
   // the Method tab can open before Matches has loaded.
-  const market = !(MATCHES && MATCHES.basis === "blend");
+  const market = !(d && d.basis === "blend");
   return `
   <div class="hero"><div class="eyebrow">What this is</div><h1>How it works</h1></div>
   <div class="card"><h2>Reading a pick</h2>${LEGEND}</div>
@@ -953,7 +1108,14 @@ function methodHtml() {
           on earlier seasons. The market is very good at soccer, so the pick leans on it heavily.`}</li>
       <li><b>Goals</b> - the chance of three or more goals: the over/under market's, with the bookmakers'
         cut removed; the model's own chance is beside it.</li>
+      <li><b>Goals and scores</b> - both teams to score, over 1.5 and 3.5 goals and the three likeliest scores are read off
+        one set of chances for every score: the set that best reproduces the pick's home/draw/away chances and the
+        over/under price. Where those two are not both posted - or no set of score chances fits them closely - they are the
+        model's own, and the match says so. The pick's own chances stay as shown; the scores' own are beside them.</li>
+      <li><b>The band</b> - Strong, Solid, Lean or Toss-up, by the pick's chance, shown with how often picks that sure won.
+        A pick made by the model alone is shown with the rate of the model's own picks.</li>
     </ul></div>
+  ${scoresCard(d, failed)}
   <div class="card"><h2>Every number is point-in-time</h2>
     <ul class="plain">
       <li>A match is predicted only from matches played on earlier days - the same rule for the backtest and for this weekend.</li>

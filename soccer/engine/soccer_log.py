@@ -8,13 +8,23 @@ logged it shows its result with no pick rather than a pick made afterwards.
 
 A soccer pick is one of three results - home win, draw, away win - so a
 graded pick is simply right or wrong; there is no push. The over/under 2.5
-goals call is graded beside it.
+goals call is graded beside it, and so is both teams to score (the side its
+chance favoured, from the score matrix soccer_scores builds) - logged with
+over 1.5 / 3.5, the three likeliest scores, where those numbers came from
+and the pick's band, so their live record starts with the first pick.
 
 WHEN A PICK FREEZES. At `freeze_at` when the entry has one, else at
 kickoff. soccer_schedule sets it: the kickoff where the time is confirmed,
 00:00 UK time on the match's UK date where it is not (a feed's time that the
 two feeds do not agree on), so a pick is never logged after an earlier
-kickoff than the one listed.
+kickoff than the one listed. Once a logged pick's own freeze time has
+passed it never changes, whatever the match's time becomes later.
+
+NEVER GRADED IF LOGGED AFTER KICKOFF. A result row that carries its kickoff
+(football-data.co.uk's, or the feeds') is checked against the pick's last
+log: a pick written at or after the match's real kickoff (a match brought
+forward that no source had moved yet) is void, "logged after kickoff" -
+point in time, whatever the reason.
 
 A MOVED MATCH. A match id carries its date, so a postponed match comes back
 under a new one. A pick is graded against its own match found by id or,
@@ -53,7 +63,12 @@ STALE_DAYS = 21
 FIELDS = ("match_id", "league", "season", "kickoff", "home", "away",
           "pick", "pick_prob", "p_h", "p_d", "p_a", "model", "market", "prices",
           "p_o25", "model_o25", "market_o25", "tier", "price_source", "prices_at",
-          "freeze_at", "time_confirmed", "fixture_source")
+          "freeze_at", "time_confirmed", "fixture_source",
+          # the numbers beside the pick (soccer_scores): both teams to score,
+          # over 1.5 / 3.5, the three likeliest scores with the matrix's own
+          # 1X2 and why it is the model's where it is, its source, the band
+          "p_btts", "p_o15", "p_o35", "scores", "score_source", "band", "band_basis")
+GRADES = ("final", "correct", "o25_correct", "btts_correct")
 
 
 def naive_utc(t):
@@ -105,16 +120,21 @@ def frozen(p, now):
 
 def log_pick(log, match, now):
     """Upsert one pick while it has not frozen. Returns True if written. A
-    pending pick for the same pairing under another id: moved to this id if
-    it has not frozen either (the same match, its id since changed), voided
-    if it has (the match was moved)."""
+    pick on file whose own freeze time has passed stays as it is, even if the
+    match's time has since moved later (an unconfirmed time that froze it at
+    midnight, then confirmed for the afternoon): frozen is frozen. A pending
+    pick for the same pairing under another id: moved to this id if it has
+    not frozen either (the same match, its id since changed), voided if it
+    has (the match was moved)."""
     if match.get("kickoff") is None or frozen(match, now):
         return False
     mid = match["match_id"]
+    entry = log["picks"].get(mid, {})
+    if entry and frozen(entry, now):
+        return False
     same = [k for k, p in log["picks"].items() if k != mid and not p.get("final") and not p.get("void")
             and pairing(p) == pairing(match)]
     moved = [k for k in same if not frozen(log["picks"][k], now)]
-    entry = log["picks"].get(mid, {})
     keep = {"first_logged": entry.get("first_logged")}
     for k in moved:
         old = log["picks"].pop(k)
@@ -159,12 +179,36 @@ def _settle(p, final):
         p["o25_correct"] = (p["p_o25"] >= 0.5) == (final["home"] + final["away"] > 2.5)
     else:
         p.pop("o25_correct", None)
+    if p.get("p_btts") is not None:
+        p["btts_correct"] = (p["p_btts"] >= 0.5) == (final["home"] > 0 and final["away"] > 0)
+    else:
+        p.pop("btts_correct", None)
 
 
 def _was(p):
     f = p.get("final") or {}
     return {"home": f.get("home"), "away": f.get("away"), "result": f.get("result"), "correct": p.get("correct"),
             "provisional": bool(f.get("provisional"))}
+
+
+def _logged_late(p, r):
+    """Whether the pick's last log is at or after the match's real kickoff,
+    where the result row says when that was."""
+    kick, last = getattr(r, "kickoff", None), p.get("last_logged")
+    if kick is None or last is None or (not isinstance(kick, str) and pd.isna(kick)):
+        return False
+    return naive_utc(last) >= naive_utc(kick)
+
+
+def _void_late(p, at, by):
+    """Void a pick logged after its match kicked off; a grade it had (a
+    provisional one) is written down as withdrawn."""
+    if p.get("final"):
+        before = _was(p)
+        for k in GRADES:
+            p.pop(k, None)
+        p.setdefault("corrections", []).append({"at": at, "by": by, "was": before, "now": None})
+    p["void"] = "logged after kickoff"
 
 
 def grade(log, matches, now=None, provisional=None, disputed=(), stats=None):
@@ -177,11 +221,12 @@ def grade(log, matches, now=None, provisional=None, disputed=(), stats=None):
     grade a pick provisionally until it does; `disputed` the pairings whose
     feed scores now contradict each other. Returns how many picks were
     graded for the first time; `stats`, if given, also counts the provisional
-    grades confirmed, corrected and withdrawn."""
+    grades confirmed, corrected and withdrawn, and the picks voided as logged
+    after kickoff ("late")."""
     by_id, by_pair = _index(matches)
     pv_id, pv_pair = _index(provisional)
     at = stamp(now) if now is not None else None
-    count = {"graded": 0, "provisional": 0, "confirmed": 0, "corrected": 0, "withdrawn": 0}
+    count = {"graded": 0, "provisional": 0, "confirmed": 0, "corrected": 0, "withdrawn": 0, "late": 0}
     for mid, p in log["picks"].items():
         fin = p.get("final")
         if p.get("void") or (fin and not fin.get("provisional")):
@@ -189,6 +234,10 @@ def grade(log, matches, now=None, provisional=None, disputed=(), stats=None):
         r = by_id.get(mid)
         if r is None:
             r = by_pair.get(pairing(p))
+        if r is not None and _logged_late(p, r):
+            _void_late(p, at, "football-data.co.uk")
+            count["late"] += 1
+            continue
         if r is not None:                                   # football-data.co.uk: the record
             new = _final(r, p)
             if fin:
@@ -211,6 +260,10 @@ def grade(log, matches, now=None, provisional=None, disputed=(), stats=None):
         r = pv_id.get(mid)
         if r is None:
             r = pv_pair.get(pairing(p))
+        if r is not None and _logged_late(p, r):
+            _void_late(p, at, getattr(r, "source", None) or "the feeds")
+            count["late"] += 1
+            continue
         if r is not None:                                   # the feeds: provisional
             new = dict(_final(r, p), provisional=True, source=getattr(r, "source", None),
                        seen_at=getattr(r, "seen_at", None), graded_at=at)
@@ -226,7 +279,7 @@ def grade(log, matches, now=None, provisional=None, disputed=(), stats=None):
             continue
         if fin and pairing(p) in disputed:                  # the feeds now contradict each other
             before = _was(p)
-            for k in ("final", "correct", "o25_correct"):
+            for k in GRADES:
                 p.pop(k, None)
             p.setdefault("corrections", []).append({"at": at, "by": "the feeds disagree", "was": before,
                                                     "now": None})
@@ -241,14 +294,17 @@ def grade(log, matches, now=None, provisional=None, disputed=(), stats=None):
 
 
 def record(log):
-    """Live record: settled picks and how many were right, plus over/under.
-    Void picks are neither settled nor pending. A provisional grade counts as
-    settled, and how many settled picks are provisional is said beside it."""
+    """Live record: settled picks and how many were right, plus over/under
+    2.5 and both teams to score (the side each chance favoured). Void picks
+    are neither settled nor pending. A provisional grade counts as settled,
+    and how many settled picks are provisional is said beside it."""
     live = [p for p in log["picks"].values() if not p.get("void")]
     settled = [p for p in live if p.get("final") and p.get("correct") is not None]
     ou = [p for p in live if p.get("final") and p.get("o25_correct") is not None]
+    bt = [p for p in live if p.get("final") and p.get("btts_correct") is not None]
     return {"settled": len(settled), "correct": sum(1 for p in settled if p["correct"]),
             "ou_settled": len(ou), "ou_correct": sum(1 for p in ou if p["o25_correct"]),
+            "btts_settled": len(bt), "btts_correct": sum(1 for p in bt if p["btts_correct"]),
             "pending": sum(1 for p in live if not p.get("final")),
             # graded on the feeds' result, football-data.co.uk's not yet in
             "provisional": sum(1 for p in settled if p["final"].get("provisional")),

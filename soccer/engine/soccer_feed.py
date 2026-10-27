@@ -116,10 +116,13 @@ MEASURED (tests/test_soccer_feed.py, on the probe of 2026-10-26):
 THE SNAPSHOT. sync() fetches and writes soccer/data/feed.json: the source
 rows (normalised, sorted, one per line, no NaN) and when each request last
 succeeded. A request that fails, or returns something that is not the feed,
-keeps its rows as they are on file; a re-fetch that drops a final result
-keeps it too (a played match does not leave the scoreboard). Rows more than
-KEEP_BEHIND days old or KEEP_AHEAD days ahead are pruned. load() reads it,
-so a run without the network - and every test - works from the file.
+keeps its rows as they are on file (and an outage is cut short: a league's
+other requests to a feed are skipped after STRAIGHT_FAILS failures in a
+row, and none starts after FETCH_BUDGET seconds); a re-fetch that drops a
+final result keeps it too (a played match does not leave the scoreboard).
+Rows more than KEEP_BEHIND days old or KEEP_AHEAD days ahead are pruned.
+load() reads it, so a run without the network - and every test - works
+from the file.
 
     python soccer/engine/soccer_feed.py            # fetch, write, summarise
     python soccer/engine/soccer_feed.py --offline  # summarise the snapshot
@@ -128,6 +131,7 @@ so a run without the network - and every test - works from the file.
 import json
 import math
 import sys
+import time
 import unicodedata
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
@@ -144,6 +148,13 @@ SCHEMA = 1
 # run whose fetch fails).
 KEEP_BEHIND = 21
 KEEP_AHEAD = 28
+# An outage must not hold the run up: after this many failures in a row from
+# one feed for one league, that league's other requests to it are skipped
+# (each up to a 30-second timeout - 80 of them would be 40 minutes), and no
+# request starts once the fetch has run this many seconds. Skipped requests
+# are failed requests: what is on file for them is kept.
+STRAIGHT_FAILS = 3
+FETCH_BUDGET = 600
 
 ESPN_SLUGS = {"E0": "eng.1", "SP1": "esp.1", "I1": "ita.1", "D1": "ger.1", "F1": "fra.1"}
 ESPN_BOARD = "https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}/scoreboard?dates={day}"
@@ -550,7 +561,8 @@ def requests_for(now, days_back=4, days_ahead=10, leagues=tuple(ESPN_SLUGS)):
     return out
 
 
-def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=tuple(ESPN_SLUGS), log=print):
+def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=tuple(ESPN_SLUGS), log=print,
+          clock=time.monotonic, budget=FETCH_BUDGET):
     """ESPN's scoreboard one league and UTC day at a time from days_back
     before now to days_ahead after (the scoreboard's calendar starts its days
     at 07:00 or 08:00 UTC - midnight US Pacific - before any European
@@ -558,10 +570,26 @@ def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=tuple(ESPN_SLU
     fixturedownload's current season per league.
 
     Returns {"at", "rows", "ok": {request: rows}, "failed": {request: why}}.
-    A request that fails is only reported: merge() keeps its rows on file."""
+    A request that fails is only reported: merge() keeps its rows on file.
+    STRAIGHT_FAILS and `budget` (seconds) bound how long an outage can take;
+    the requests they skip are reported as failed."""
     at = stamp(_aware(now))
     rows, ok, failed = [], {}, {}
+    start, streak, skipping = clock(), defaultdict(int), set()
     for key, url, league, kind, season in requests_for(now, days_back, days_ahead, leagues):
+        if streak[(kind, league)] >= STRAIGHT_FAILS:
+            failed[key] = f"skipped: {STRAIGHT_FAILS} {kind} requests for {league} failed in a row"
+            if (kind, league) not in skipping:
+                skipping.add((kind, league))
+                log(f"   {kind} {league}: {STRAIGHT_FAILS} failures in a row; its other requests skipped, "
+                    f"kept what is on file")
+            continue
+        if clock() - start > budget:
+            failed[key] = f"skipped: the fetch ran past {budget} s"
+            if "budget" not in skipping:
+                skipping.add("budget")
+                log(f"   feeds: past {budget} s; the requests left are skipped, kept what is on file")
+            continue
         try:
             payload = _decode(get(url))
             if kind == "espn":
@@ -573,7 +601,9 @@ def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=tuple(ESPN_SLU
         except Exception as err:                       # noqa: BLE001 - reported, kept on file, run continues
             failed[key] = f"{err.__class__.__name__}: {str(err)[:120]}"
             log(f"   {key}: FAILED ({failed[key]}); kept what is on file")
+            streak[(kind, league)] += 1
             continue
+        streak[(kind, league)] = 0
         ok[key] = len(got)
         rows.extend(got)
     log(f"   feeds: {len(ok)} requests answered, {len(failed)} failed, {len(rows)} rows")

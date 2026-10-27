@@ -22,8 +22,13 @@ So, one rule each:
       match's UK date, so no pick is ever logged after an earlier kickoff than
       the one listed.
   POSTPONED or CANCELLED (per ESPN) on football-data.co.uk's date for it: not
-      picked, shown as such. A feed match ESPN says has started, finished or
-      was abandoned is never picked, whatever its listed time.
+      picked, shown as such (with the pick, where one was logged before -
+      soccer_predict). A feed match ESPN says has started, finished or was
+      abandoned is never picked, whatever its listed time.
+  MOVED. A football-data.co.uk fixture whose time has passed with no result
+      while the feeds list the match more than MOVED later was rescheduled
+      and its fixtures file has not caught up: the feeds' date stands, with
+      no price, until football-data.co.uk posts the new one.
   PROVISIONAL RESULTS. A feed result (soccer_feed's accepted "final": ESPN
       final and fixturedownload not contradicting it) for a match
       football-data.co.uk has not posted. It grades a pick provisionally
@@ -44,6 +49,9 @@ import soccer_data as sd
 import soccer_feed as sfeed
 
 OFF = ("postponed", "cancelled")
+# A feed kickoff this long after a passed one, for a match with no result:
+# the match was moved, not merely listed at another time.
+MOVED = pd.Timedelta(hours=3)
 # A feed status that means the match is under way or over: never picked.
 STARTED = ("live", "final", "abandoned", "disputed", "unconfirmed")
 FEED_SOURCE = "ESPN + fixturedownload.com"
@@ -96,6 +104,7 @@ class Schedule:
     provisional: pd.DataFrame = None            # feed results football-data.co.uk has not posted
     disputed: set = field(default_factory=set)  # pairings whose feed scores contradict
     status: dict = field(default_factory=dict)  # pairing -> the feeds' status
+    feed_kickoff: dict = field(default_factory=dict)  # pairing -> the feeds' kickoff (naive UTC), where they have one
     blocked: list = field(default_factory=list)  # football-data fixtures the feeds say are off or under way
 
 
@@ -118,6 +127,7 @@ def schedule(matches, fixtures, feed, now, ahead=pd.Timedelta(days=10), behind=p
     by_pair = {pairing(m["league"], m["season"], m["home"], m["away"]): m for m in feed}
     out = Schedule(frame=None)
     out.status = {k: m["status"] for k, m in by_pair.items()}
+    out.feed_kickoff = {k: naive(m["kickoff_utc"]) for k, m in by_pair.items() if m.get("kickoff_utc")}
     out.disputed = {k for k, m in by_pair.items() if m["status"] == "disputed"}
 
     # football-data.co.uk's fixtures: its row is the match.
@@ -154,6 +164,12 @@ def schedule(matches, fixtures, feed, now, ahead=pd.Timedelta(days=10), behind=p
             out.blocked.append(r["match_id"])
             log(f"   {r['league']} {r['home']} v {r['away']}: football-data.co.uk lists it for "
                 f"{kickoff:%Y-%m-%d %H:%M} UTC, the feeds say {f['status']}; not picked")
+            continue
+        if (kick_fd is not None and kick_fd <= now and f and f["status"] == "scheduled"
+                and kick_feed is not None and kick_feed > kick_fd + MOVED):
+            fd_pairs.discard(key)
+            log(f"   {r['league']} {r['home']} v {r['away']}: football-data.co.uk's {kick_fd:%Y-%m-%d %H:%M} UTC has "
+                f"passed with no result, the feeds list it for {kick_feed:%Y-%m-%d %H:%M}; moved - their date stands")
             continue
         if kickoff is None or kickoff <= now:
             continue

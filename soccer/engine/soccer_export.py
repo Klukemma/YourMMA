@@ -66,14 +66,15 @@ def pct(x, d=1):
     return "—" if x is None or x != x else f"{x * 100:.{d}f}%"
 
 
-def caveats(bt, basis="blend", model_through=None):
+def caveats(bt, basis="blend", model_through=None, scores=None):
     """What the reader is told, with every number read from the backtest.
 
     basis "market": the pooling gave the model no weight, so the pick is
     the market's chances recalibrated on earlier seasons, and is called
     that - the model's own chances are shown beside it, labelled.
     model_through: the date of football-data.co.uk's latest top-league
-    result, the last the model's ratings include."""
+    result, the last the model's ratings include. scores: the goals and
+    scores numbers' measured table (soccer_scores.measure)."""
     res = (bt or {}).get("result", {})
     conf = (bt or {}).get("periods", {}).get("confirm", [2016, 2025])
     key = f"{conf[0]}-{conf[1]}"
@@ -111,6 +112,9 @@ def caveats(bt, basis="blend", model_through=None):
         "disagrees with is corrected. Where the feeds have not confirmed a kickoff time, the pick closes at "
         "midnight UK time on match day. The model's ratings use only football-data.co.uk's results, with "
         f"their shots{through}.")
+    sc = scores_caveat(scores)
+    if sc:
+        out["scores"] = sc
     out["rating_short"] = ("The goal difference a match each club would expect against an average club "
                            "of its league on a neutral pitch, by the model's ratings, strongest first.")
     out["rating"] = ("The model rates each club's attack and defence from its goals, shots on target and "
@@ -118,6 +122,40 @@ def caveats(bt, basis="blend", model_through=None):
                      "measured step. The rating is the model's own view - the pick on each match is the "
                      "market's chances, recalibrated, because the market forecasts better.")
     return out
+
+
+def scores_caveat(measured):
+    """What the reader is told about both teams to score, over 1.5 / 3.5 and
+    the likeliest scores: every number read from soccer_scores.measure.
+    None without a measurement."""
+    periods = (measured or {}).get("periods") or {}
+    if not periods:
+        return None
+    key = max(periods)                                     # the confirming period
+    r = periods[key]
+    if not r.get("matches"):
+        return None
+    beat = all(p.get(t, {}).get("shown", {}).get("log_loss", 9) < p.get(t, {}).get("base", {}).get("log_loss", 0)
+               for p in periods.values() if p.get("matches") for t in ("btts", "o15", "o35", "exact"))
+    b, ex = r["btts"], r["exact"]["shown"]
+    top1 = ex.get("top1_hit")
+    short = (b["rate"] - b["shown"]["mean_p"]) * 100
+    one_in = f", about 1 in {round(1 / top1)}" if top1 else ""
+    names = " and ".join(sorted(periods))
+    return (
+        "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per "
+        "match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under "
+        "2.5 price. "
+        + (f"Measured on {names}, each beat the leagues' own rates from earlier seasons. " if beat else
+           f"Measured on {names}; not every one beat the leagues' own rates from earlier seasons (Method). ")
+        + f"Both teams to score runs low: across {key} its chance averaged {pct(b['shown']['mean_p'])} where both "
+        f"teams scored in {pct(b['rate'])} of matches, low in {b.get('deciles_low', '—')} of "
+        f"{b.get('deciles', '—')} deciles - read it as about {short:.0f} points short. Exact scores are long shots: "
+        f"the likeliest score happened in {pct(top1)} of matches{one_in}. Where no price is posted, or only the "
+        f"home/draw/away price, or the prices fit no score matrix within {measured.get('fit_max_miss', 0) * 100:.0f} "
+        f"points, these numbers are the model's own, and say so - measured too, a little less accurate (both teams "
+        f"to score log loss {b['model']['log_loss']:.4f} against {b['shown']['log_loss']:.4f}, the leagues' own "
+        f"rates {b['base']['log_loss']:.4f}).")
 
 
 def _day(iso):

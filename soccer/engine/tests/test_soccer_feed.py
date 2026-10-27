@@ -498,6 +498,33 @@ def test_a_failed_request_keeps_what_is_on_file(tmp_path):
     assert sf.load(path) == second
 
 
+def test_an_outage_is_cut_short_and_wipes_nothing(tmp_path):
+    """Every request timing out: three tries per league and feed, not 80
+    thirty-second timeouts; nothing on file is lost. A slow fetch stops
+    starting requests once past its budget."""
+    path = tmp_path / "feed.json"
+    first = sf.sync(NOW, path=path, get=sample_getter(), log=lambda *_: None)
+    calls = []
+
+    def down(url):
+        calls.append(url)
+        raise ConnectionError("timed out")
+
+    later = datetime(2026, 10, 26, 18, 0, tzinfo=timezone.utc)
+    lines = []
+    second = sf.sync(later, path=path, get=down, log=lines.append)
+    assert len(calls) == 5 * (sf.STRAIGHT_FAILS + 1)            # 3 scoreboard days and the season file, per league
+    assert set(second["last_run"]["failed"]) == {k for k, *_ in sf.requests_for(later)}
+    assert second["last_run"]["answered"] == 0
+    assert second["rows"] == first["rows"] and second["requests"] == first["requests"]
+    assert sum("failures in a row" in line for line in lines) == 5
+
+    tick = iter(range(0, 10_000, 100))                          # 0 at the start, then 100 s a request
+    got = sf.fetch(later, get=sample_getter(), log=lambda *_: None, clock=lambda: next(tick), budget=250)
+    assert len(got["ok"]) == 2 and len(got["failed"]) == 78
+    assert all(why.startswith("skipped: the fetch ran past") for why in got["failed"].values())
+
+
 def test_a_refetch_moves_a_moved_match_and_never_drops_a_result():
     played = one_espn(event(eid="1", kind=FULL_TIME, scores=("1", "0"), when="2026-10-25T14:00Z"))
     upcoming = one_espn(event(eid="2", home="370", away="364", when="2026-10-31T15:00Z"))

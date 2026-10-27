@@ -43,6 +43,10 @@ THE PROTOCOL. Chosen on DEV 2006-2015 only; CONFIRM 2016-2025 reported once.
           the draw is hit exactly too (K3) 2.82798 (per-match rho -0.5 to
           +0.28). KM had the best DEV BTTS (0.68932 vs K 0.68972) but loses
           the exact score.
+  reported once - in substance: CONFIRM was computed and printed twice,
+          because the rounding fix below (point in time) needed a second full
+          run; no choice, constant or metric changed between the two (every
+          metric identical to 5 decimals).
 
 MEASURED (walk-forward ~24 s; ~115 s with the point-in-time checks). Log
 loss, every source on the same matches: DEV 18,260, CONFIRM 17,937.
@@ -87,6 +91,16 @@ CAVEATS.
     matrix allows. The worst miss, 0.21, is an end-of-season match with the
     draw priced at 71%. The card should show the pick's own 1X2 with the
     matrix's numbers beside it; info["rmse"] says how far apart they are.
+    Those counts are of the RMSE over the four targets (home, draw, away,
+    over 2.5). Per target the misses are larger (an independent check): the
+    largest absolute miss of any one target is 0.29 (a draw) and 0.42 (an
+    over 2.5) on DEV, 0.138 and 0.078 on CONFIRM; 1,649 DEV and 149 CONFIRM
+    matches miss some target by more than 0.02, 42 and 2 by more than 0.10.
+    The worst (Bologna-Catania 2010) reproduces a 71% draw with lam 0.33,
+    nu 0.10 - over 2.5 at 0.9% against a 43% price, 0-0 at about 70%. The
+    app's rule (soccer_scores.shown_matrices) falls back to the model's own
+    matrix when any target misses by more than 0.04, the DEV 99th percentile
+    of that largest miss rounded up; soccer_scores says what it costs.
   - Exact scores are long shots: the likeliest one happens about one match
     in eight.
   - Calibration on CONFIRM by decile, K: over 1.5 within 0.013 of the
@@ -107,7 +121,10 @@ batch's size, and an ill-posed fit magnified it. Every sum is now row-local
 (markets, _normal_step), and a test holds every row to what it gets when
 solved alone, bit for bit.
 
-THE PRODUCTION CALLS (for soccer_model.py when this is integrated):
+THE PRODUCTION CALLS - integrated: they live in soccer_scores.py, which the
+app runs and this experiment imports (bit for bit the matrices measured here;
+soccer_scores.shown_matrices adds the app's rule - the over/under price is
+required, and a fit missing a target by more than 0.04 is the model's own):
   score_matrix(p_h, p_d, p_a, p_o25, rho, lam, nu) -> (mats, info)
       the pick's 1X2 and the no-vig over 2.5 where priced (NaN / None
       where not), the model's lam, nu, rho (shots_ratings with
@@ -130,241 +147,46 @@ ENGINE = Path(__file__).resolve().parents[1]
 if str(ENGINE) not in sys.path:
     sys.path.insert(0, str(ENGINE))
 
+# The matrix, the market-implied fit, what is read off it, the bands and the
+# league baseline are production code since the app shows them: they live in
+# soccer_scores.py, and this experiment imports them, so the numbers below are
+# what the app's code produces (the tests hold the two to the same matrices).
 import soccer_backtest as bt  # noqa: E402
 import soccer_data as sd  # noqa: E402
 import soccer_model as smod  # noqa: E402
 from experiments import shots_ratings as sr  # noqa: E402
-
-MAX_GOALS = sr.MAX_GOALS          # the matrix runs 0-10 each way, as the model's does
-GRID = 5                          # exact scores 0-0 .. 5-5, then one "other" bucket
-N_CELLS = (GRID + 1) ** 2 + 1     # 37 categories
-LAM_RANGE = (0.05, 8.0)           # as the model clips its own expected goals
+from soccer_scores import (  # noqa: E402,F401 - re-exported: the experiment's own API
+    BANDS,
+    GRID,
+    LAM_RANGE,
+    MAX_GOALS,
+    N_CELLS,
+    _gauss_newton,
+    _masks,
+    _normal_step,
+    _targets,
+    band_of,
+    baseline,
+    dc_matrix,
+    implied_rates,
+    markets,
+    score_index,
+    score_label,
+    score_matrix,
+    summary,
+)
 
 # The source of the score matrix, chosen on DEV (2006-2015) exact-score log
 # loss: K, the market-implied matrix (the notes above have the numbers).
 CHOSEN = "K"
 SOURCES = ("M", "K", "KM", "B")
 TARGETS = ("btts", "o15", "o35")
-# How sure the pick is, by its top probability. The edges are the DEV
-# quartiles of that probability (0.423, 0.497, 0.616) rounded to the nearest
-# 0.05 - band_edges() re-derives them from DEV on every run. Each band's hit
-# rate is MEASURED and shown beside the label: "STRONG" means "picks like
-# this won N% of 2016-2025 matches", never "bet this".
-BANDS = (("STRONG", 0.60), ("SOLID", 0.50), ("LEAN", 0.40), ("TOSS-UP", 0.0))
+# How sure the pick is, by its top probability: BANDS (soccer_scores). The
+# edges are the DEV quartiles of that probability (0.423, 0.497, 0.616)
+# rounded to the nearest 0.05 - band_edges() re-derives them from DEV on
+# every run. Each band's hit rate is MEASURED and shown beside the label:
+# "STRONG" means "picks like this won N% of 2016-2025 matches", never "bet this".
 OUT = Path("/tmp/claude-0/-home-user-YourMMA/1c56e1e4-4b1a-5ef7-aa98-0e6e32f58cbb/scratchpad/score_markets.json")
-
-
-# ----------------------------------------------------------- the matrix
-
-def dc_matrix(lam, nu, rho, max_goals=MAX_GOALS):
-    """The Dixon-Coles score matrix, (n, G+1, G+1), [x, y] = P(home x, away
-    y): independent Poissons with the low-score correction tau_rho, truncated
-    at `max_goals` each way and renormalised - the matrix behind
-    shots_ratings.score_probs. lam, nu, rho: scalars or arrays of length n;
-    a NaN anywhere in a row gives a NaN matrix for that row."""
-    lam = np.atleast_1d(np.asarray(lam, float))
-    nu = np.atleast_1d(np.asarray(nu, float))
-    rho = np.broadcast_to(np.asarray(rho, float), lam.shape)
-    g = np.arange(max_goals + 1)
-    fact = np.array([math.factorial(k) for k in g], float)
-    ph = np.exp(-lam)[:, None] * lam[:, None] ** g / fact
-    pa = np.exp(-nu)[:, None] * nu[:, None] ** g / fact
-    mat = ph[:, :, None] * pa[:, None, :]
-    mat[:, 0, 0] *= 1 - lam * nu * rho
-    mat[:, 0, 1] *= 1 + lam * rho
-    mat[:, 1, 0] *= 1 + nu * rho
-    mat[:, 1, 1] *= 1 - rho
-    return mat / mat.sum(axis=(1, 2), keepdims=True)
-
-
-def _masks(size):
-    x = np.arange(size)[:, None]
-    y = np.arange(size)[None, :]
-    return x > y, x == y, x < y, x + y
-
-
-def markets(mats):
-    """Everything the app could show from score matrices (n, G+1, G+1), as
-    arrays of length n: p_h, p_d, p_a, btts, o15, o25, o35, and `cells`
-    (n, 37): the chance of each score 0-0 .. 5-5 (index 6 * home + away)
-    then of any other score."""
-    mats = np.ascontiguousarray(mats, float)
-    if mats.ndim == 2:
-        mats = mats[None]
-    home, draw, away, tot = _masks(mats.shape[1])
-    both = np.zeros_like(home)
-    both[1:, 1:] = True
-
-    def total(mask):
-        # every row summed over its own whole contiguous matrix: the rounding
-        # never depends on how many rows are in the batch (fancy-indexed sums do)
-        return (mats * mask).sum(axis=(1, 2))
-    cells = np.ascontiguousarray(mats[:, :GRID + 1, :GRID + 1]).reshape(len(mats), -1)
-    other = np.clip(1.0 - total(np.pad(np.ones((GRID + 1, GRID + 1), bool), (0, mats.shape[1] - GRID - 1))), 0.0, 1.0)
-    return {
-        "p_h": total(home), "p_d": total(draw), "p_a": total(away), "btts": total(both),
-        "o15": total(tot >= 2), "o25": total(tot >= 3), "o35": total(tot >= 4),
-        "cells": np.column_stack([cells, other]),
-    }
-
-
-def score_label(k):
-    """Category index -> '2-1' (home-away), or 'other'."""
-    return "other" if k == N_CELLS - 1 else f"{k // (GRID + 1)}-{k % (GRID + 1)}"
-
-
-def score_index(hg, ag):
-    """The category of each final score: 6 * home + away, or 36 (other)."""
-    hg, ag = np.asarray(hg, float), np.asarray(ag, float)
-    inside = (hg <= GRID) & (ag <= GRID)
-    return np.where(inside, hg * (GRID + 1) + ag, N_CELLS - 1).astype(int)
-
-
-def summary(mat, top=3):
-    """One match's score matrix (G+1, G+1) -> the numbers a match card can
-    show: both teams to score, over 1.5 / 2.5 / 3.5, the `top` most likely
-    exact scores with their chances, and the chance of a score beyond 5-5.
-    None for a missing (NaN) matrix."""
-    mat = np.asarray(mat, float)
-    if not np.isfinite(mat).all():
-        return None
-    mk = markets(mat[None])
-    cells = mk["cells"][0]
-    order = np.argsort(-cells[:-1], kind="stable")[:top]
-    return {
-        "btts": float(mk["btts"][0]), "o15": float(mk["o15"][0]), "o25": float(mk["o25"][0]),
-        "o35": float(mk["o35"][0]),
-        "scores": [{"score": score_label(k), "p": float(cells[k])} for k in order],
-        "other": float(cells[-1]),
-    }
-
-
-def band_of(p_top, bands=BANDS):
-    """The confidence band of a pick from its top probability (None if missing)."""
-    if p_top is None or p_top != p_top:
-        return None
-    for name, floor in bands:
-        if p_top >= floor:
-            return name
-    return bands[-1][0]
-
-
-# ----------------------------------------------------------- market-implied rates
-
-def _targets(mats):
-    mk = markets(mats)
-    return np.column_stack([mk["p_h"], mk["p_d"], mk["p_a"], mk["o25"]])
-
-
-def _normal_step(J, r):
-    """The Gauss-Newton step -(J'J)^-1 J'r for every row, J (n, m, k), r (n, m),
-    in elementwise arithmetic only: a row's step never depends on which other
-    rows share the batch. (A batched einsum or solve rounds differently with
-    the batch's size; on an ill-posed fit that moved a number in the tenth
-    decimal when prices AFTER the match changed - the point-in-time check
-    caught it.)"""
-    m, k = J.shape[1], J.shape[2]
-    A = [[sum(J[:, i, a] * J[:, i, b] for i in range(m)) for b in range(k)] for a in range(k)]
-    g = [sum(J[:, i, a] * r[:, i] for i in range(m)) for a in range(k)]
-    if k == 2:
-        a, b, c, d = A[0][0] + 1e-12, A[0][1], A[1][0], A[1][1] + 1e-12
-        det = a * d - b * c
-        return np.column_stack([-(d * g[0] - b * g[1]) / det, -(a * g[1] - c * g[0]) / det])
-    M = np.stack([np.stack(row, axis=-1) for row in A], axis=1) + 1e-12 * np.eye(k)
-    return -np.linalg.solve(M, np.stack(g, axis=1)[:, :, None])[:, :, 0]     # variants only
-
-
-def _gauss_newton(th, model, target, w, project, iters, tol, max_step):
-    """Vectorised Gauss-Newton: each row's parameters th[i] moved to minimise
-    sum_k (w_ik (model(th)_ik - target_ik))^2, forward-difference Jacobian.
-    model(th_rows, row_index) -> (rows, 4); project(th_rows) keeps them legal.
-    Rows stop once their step is below tol."""
-    eps = 1e-6
-    live = np.ones(len(th), dtype=bool)
-    k_par = th.shape[1]
-    for _ in range(iters):
-        if not live.any():
-            break
-        idx = np.flatnonzero(live)
-        t = th[idx]
-        f = model(t, idx)
-        r = (f - target[idx]) * w[idx]
-        J = np.empty((len(idx), target.shape[1], k_par))
-        for k in range(k_par):
-            tk = t.copy()
-            tk[:, k] += eps
-            J[:, :, k] = (model(tk, idx) - f) / eps * w[idx]
-        step = np.clip(_normal_step(J, r), -max_step, max_step)
-        th[idx] = project(t + step)
-        live[idx] = np.abs(step).max(axis=1) > tol
-    return th
-
-
-def implied_rates(p3, p_o25, rho, lam0=None, nu0=None, iters=60, tol=1e-10):
-    """(lam, nu) whose Dixon-Coles matrix (with the given rho) comes closest,
-    in least squares, to the home/draw/away chances p3 (n, 3) and the
-    over-2.5 chance p_o25 (n,; NaN where no over/under price was posted: then
-    the 1X2 alone). Gauss-Newton on (log lam, log nu), started from (lam0,
-    nu0) where given. Returns (lam, nu, rmse): rmse is the root mean squared
-    miss over the targets used, in probability. Rows with a NaN in p3 or rho
-    come back NaN."""
-    p3 = np.asarray(p3, float).reshape(-1, 3)
-    n = len(p3)
-    po = np.broadcast_to(np.asarray(np.nan if p_o25 is None else p_o25, float), (n,))
-    rho = np.broadcast_to(np.asarray(rho, float), (n,))
-    lam = np.full(n, np.nan)
-    nu = np.full(n, np.nan)
-    rmse = np.full(n, np.nan)
-    ok = np.isfinite(p3).all(axis=1) & np.isfinite(rho)
-    if not ok.any():
-        return lam, nu, rmse
-    p3, po, rho_ok = p3[ok], po[ok], rho[ok]
-    has_o = np.isfinite(po)
-    target = np.column_stack([p3, np.where(has_o, po, 0.0)])
-    w = np.column_stack([np.ones((len(p3), 3)), has_o.astype(float)])
-    lo, hi = np.log(LAM_RANGE[0]), np.log(LAM_RANGE[1])
-
-    def start(x, default):
-        if x is None:
-            return np.full(len(p3), default)
-        x = np.broadcast_to(np.asarray(x, float), (n,))[ok]
-        return np.where(np.isfinite(x), x, default)
-    th = np.clip(np.log(np.column_stack([start(lam0, 1.45), start(nu0, 1.15)])), lo, hi)
-
-    def model(t, idx):
-        return _targets(dc_matrix(np.exp(t[:, 0]), np.exp(t[:, 1]), rho_ok[idx]))
-    th = _gauss_newton(th, model, target, w, lambda t: np.clip(t, lo, hi), iters, tol, 0.5)
-    f = model(th, np.arange(len(th)))
-    lam[ok], nu[ok] = np.exp(th[:, 0]), np.exp(th[:, 1])
-    rmse[ok] = np.sqrt((((f - target) * w) ** 2).sum(axis=1) / w.sum(axis=1))
-    return lam, nu, rmse
-
-
-def score_matrix(p_h, p_d, p_a, p_o25=None, rho=None, lam=None, nu=None):
-    """THE PRODUCTION CALL. Score matrices (n, 11, 11) for n matches:
-
-      priced      (p_h, p_d, p_a finite) the market-implied matrix - the
-                  (lam, nu) that best reproduce the recalibrated market 1X2
-                  (soccer_model.pick) and the no-vig over 2.5 (where posted;
-                  pass NaN or None where not), with the model's Dixon-Coles
-                  rho for that match (shots_ratings, score_params=True)
-      not priced  (p_h NaN) the model's own matrix from its lam, nu, rho
-
-    Returns (mats, info): info["from_market"] (bool), info["lam"], info["nu"]
-    (the rates behind each matrix), info["rmse"] (how closely the market was
-    reproduced; NaN for the model's own). A row with neither a price nor the
-    model's rates is NaN - shown as missing."""
-    p3 = np.column_stack([np.atleast_1d(np.asarray(v, float)) for v in (p_h, p_d, p_a)])
-    n = len(p3)
-    rho = np.broadcast_to(np.asarray(np.nan if rho is None else rho, float), (n,))
-    lam_m = np.broadcast_to(np.asarray(np.nan if lam is None else lam, float), (n,))
-    nu_m = np.broadcast_to(np.asarray(np.nan if nu is None else nu, float), (n,))
-    priced = np.isfinite(p3).all(axis=1)
-    lam_k, nu_k, rmse = implied_rates(np.where(priced[:, None], p3, np.nan), p_o25, rho, lam_m, nu_m)
-    lam_out = np.where(priced, lam_k, lam_m)
-    nu_out = np.where(priced, nu_k, nu_m)
-    mats = dc_matrix(lam_out, nu_out, rho)
-    return mats, {"from_market": priced & np.isfinite(lam_k), "lam": lam_out, "nu": nu_out, "rmse": rmse}
 
 
 def total_rate(p_o25):
@@ -380,33 +202,6 @@ def total_rate(p_o25):
 
 
 # ----------------------------------------------------------- the walk-forward
-
-def baseline(matches):
-    """B: each top league's rates from EARLIER SEASONS only (every finished
-    match back to 2005-06) - BTTS, over 1.5 / 2.5 / 3.5, and the empirical
-    frequency of each of the 37 score categories (plus half a match in each,
-    so no score is impossible). Rows of a league's first season are NaN."""
-    m = matches
-    hg = pd.to_numeric(m["hg"], errors="coerce").to_numpy(float)
-    ag = pd.to_numeric(m["ag"], errors="coerce").to_numpy(float)
-    done = m["league"].isin(sd.TOP).to_numpy() & np.isfinite(hg) & np.isfinite(ag)
-    cat = score_index(np.nan_to_num(hg), np.nan_to_num(ag))
-    ys = {"btts": (hg > 0) & (ag > 0), "o15": hg + ag > 1.5, "o25": hg + ag > 2.5, "o35": hg + ag > 3.5}
-    out = pd.DataFrame(np.nan, index=m.index, columns=list(ys) + [f"c{k}" for k in range(N_CELLS)])
-    seasons = m["season"].to_numpy(float)
-    league = m["league"].to_numpy()
-    for lg in sd.TOP:
-        in_lg = league == lg
-        for s in np.unique(seasons[in_lg & np.isfinite(seasons)]):
-            train = done & in_lg & (seasons < s)
-            rows = in_lg & (seasons == s)
-            if not train.any():
-                continue
-            rates = [float(ys[k][train].mean()) for k in ys]
-            cnt = np.bincount(cat[train], minlength=N_CELLS) + 0.5
-            out.loc[rows, :] = np.r_[rates, cnt / cnt.sum()]
-    return out
-
 
 def _frame(mk, index):
     data = {k: mk[k] for k in ("p_h", "p_d", "p_a", "btts", "o15", "o25", "o35")}
