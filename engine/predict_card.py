@@ -65,6 +65,9 @@ EVENT_DATE = "2026-10-31"  # Format: YYYY-MM-DD
 # bout on two sources or more. Osbourne vs. Durden (moved from UFC 329) is on
 # Wikipedia and AgentMMA, the latter still calling it "targeted". No source
 # states corners: the first-billed fighter is listed first.
+# 2026-10-27: Bekoev vs. Petroski is off - Bekoev withdrew after an
+# anaphylactic reaction and Petroski declined a replacement (Bloody Elbow,
+# MMA Sucka, Middle Easy, Yardbarker, EssentiallySports).
 
 FIGHT_CARD = [
     # Main Card
@@ -77,11 +80,10 @@ FIGHT_CARD = [
 
     # Preliminary Card
     ("Francis Marshall", "Dakota Hope"),                       # 6 - Featherweight (Hope replaced Gaston Bolanos; down from lightweight)
-    ("Azamat Bekoev", "Andre Petroski"),                       # 7 - Middleweight
-    ("Rodrigo Sezinando", "Theodor Berggren"),                 # 8 - Welterweight
-    ("Julian Erosa", "JeongYeong Lee"),                        # 9 - Featherweight
-    ("Nick Klein", "Joe Kropschot"),                           # 10 - Middleweight (Kropschot: UFC debut, 9-3)
-    ("Talita Alencar", "Piera Rodriguez"),                     # 11 - Women's Strawweight
+    ("Rodrigo Sezinando", "Theodor Berggren"),                 # 7 - Welterweight
+    ("Julian Erosa", "JeongYeong Lee"),                        # 8 - Featherweight
+    ("Nick Klein", "Joe Kropschot"),                           # 9 - Middleweight (Kropschot: UFC debut, 9-3)
+    ("Talita Alencar", "Piera Rodriguez"),                     # 10 - Women's Strawweight
 ]
 
 # ==============================================================================
@@ -110,11 +112,10 @@ FIGHT_CONTEXTS = {
     4: {"division": "middleweight", 'cage_size': 'small'},
     5: {"division": "welterweight", 'cage_size': 'small'},
     6: {"division": "featherweight", 'cage_size': 'small'},
-    7: {"division": "middleweight", 'cage_size': 'small'},
-    8: {"division": "welterweight", 'cage_size': 'small'},
-    9: {"division": "featherweight", 'cage_size': 'small'},
-    10: {"division": "middleweight", 'cage_size': 'small'},
-    11: {"division": "women's strawweight", 'cage_size': 'small'},
+    7: {"division": "welterweight", 'cage_size': 'small'},
+    8: {"division": "featherweight", 'cage_size': 'small'},
+    9: {"division": "middleweight", 'cage_size': 'small'},
+    10: {"division": "women's strawweight", 'cage_size': 'small'},
 }
 
 # ==============================================================================
