@@ -4,30 +4,39 @@ name: Soccer predictions
 # the open internet (football-data.co.uk) that the development sandbox
 # does not.
 #
-#   predict   sync this season's results and the fixtures still to play,
-#             run the model over every match since 2005-06, blend it with the
-#             market, log the picks before kickoff, grade the finished ones,
-#             rebuild soccer/app/data and the standalone page, commit
+#   predict   sync this season's results and the fixtures still to play
+#             from football-data.co.uk, and the free fixture feeds (ESPN's
+#             scoreboard, fixturedownload.com) into soccer/data/feed.json;
+#             run the model over every match since 2005-06, log the picks
+#             before they freeze, grade the finished ones (provisionally on
+#             the feeds' scores until football-data.co.uk posts its own),
+#             rebuild soccer/app/data and the standalone page, commit. A feed
+#             that fails keeps what is on file and never fails the run.
 #   sync      football-data.co.uk snapshot only (every season with full=true)
+#   probe     save what the free fixture feeds return (probe_feeds.py) as
+#             test fixtures - the sandbox cannot reach them
 #
 # On a schedule it runs predict through the season (August to May).
 # football-data.co.uk posts the weekend's fixtures with prices on Friday
-# afternoon and the midweek's on Tuesday afternoon, and its results after
-# each round; so: twice on Friday and Tuesday afternoons for the new picks
-# (the early run beats a 16:30 UTC Friday kickoff in Serie A; the later one
-# catches prices posted after it), Saturday and Sunday mornings to refresh
-# before the day's games and grade the day before, Monday and Thursday to
-# grade the round just played, and every morning over the Christmas and New
-# Year fixtures. GitHub starts scheduled runs late under load, and a match
-# that kicks off before any run has posted its price gets no pick - it is
-# never picked afterwards.
+# afternoon and the midweek's on Tuesday afternoon, and its results days
+# after each round; the free feeds have the next rounds all week and each
+# score the evening it is played. So: twice on Friday and Tuesday
+# afternoons for the priced picks (the early run beats a 16:30 UTC Friday
+# kickoff in Serie A; the later one catches prices posted after it),
+# Saturday and Sunday mornings to refresh before the day's games, Saturday
+# and Sunday evenings for the day's results (provisional) and the next
+# round, Monday, Wednesday and Thursday mornings for the round just played
+# and the next one (model-alone picks until its prices land), and every
+# morning over the Christmas and New Year fixtures. GitHub starts scheduled
+# runs late under load, and a match that kicks off before any run has
+# logged it gets no pick - it is never picked afterwards.
 on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "predict = this week's picks; sync = data only"
+        description: "predict = this week's picks; sync = data only; probe = save the fixture feeds as test fixtures"
         type: choice
-        options: [predict, sync]
+        options: [predict, sync, probe]
         default: predict
       full:
         description: "sync only: rebuild every season since 2005-06, not just this one"
@@ -38,9 +47,12 @@ on:
     - cron: "47 16 * 8-12,1-5 FRI"   # ...and prices posted later in the afternoon
     - cron: "17 7 * 8-12,1-5 SAT"    # before Saturday's early games
     - cron: "17 7 * 8-12,1-5 SUN"    # before Sunday's; grade Saturday
+    - cron: "47 21 * 8-12,1-5 SAT"   # Saturday's results the evening they happen; the next round
+    - cron: "47 21 * 8-12,1-5 SUN"   # Sunday's results; the next round
     - cron: "17 9 * 8-12,1-5 MON"    # grade the weekend
     - cron: "47 13 * 8-12,1-5 TUE"   # the midweek fixtures and prices
     - cron: "47 16 * 8-12,1-5 TUE"   # ...and prices posted later in the afternoon
+    - cron: "17 7 * 8-12,1-5 WED"    # Tuesday's results; the weekend's round early
     - cron: "17 9 * 8-12,1-5 THU"    # grade the midweek round
     - cron: "17 8 20-31 12 *"        # the Christmas fixtures
     - cron: "17 8 1-3 1 *"           # ...and New Year's
@@ -84,6 +96,8 @@ jobs:
           MODE="${{ inputs.mode || 'predict' }}"
           if [ "$MODE" = "sync" ]; then
             python soccer/engine/soccer_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee soccer.log
+          elif [ "$MODE" = "probe" ]; then
+            python soccer/engine/probe_feeds.py 2>&1 | tee soccer.log
           else
             python soccer/engine/soccer_predict.py 2>&1 | tee soccer.log
           fi
@@ -95,9 +109,11 @@ jobs:
         continue-on-error: true
         run: python -m pytest soccer/engine/tests -q -m snapshot
 
+      # soccer/data/ holds the football-data.co.uk snapshot, the feeds'
+      # snapshot (feed.json) and the prediction log.
       - name: Commit
         run: |
-          PATHS="soccer/data/ soccer/app/data/ soccer/app/yoursoccer.html"
+          PATHS="soccer/data/ soccer/app/data/ soccer/app/yoursoccer.html soccer/engine/tests/fixtures/feeds/"
           if [ -z "$(git status --porcelain -- $PATHS)" ]; then
             echo "Nothing changed."
             exit 0

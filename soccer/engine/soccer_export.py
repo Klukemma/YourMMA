@@ -15,6 +15,8 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 
+import pandas as pd
+
 import soccer_data as sd
 import soccer_form as sf
 import soccer_teams as st
@@ -64,12 +66,15 @@ def pct(x, d=1):
     return "—" if x is None or x != x else f"{x * 100:.{d}f}%"
 
 
-def caveats(bt, basis="blend"):
+def caveats(bt, basis="blend", model_through=None, scores=None):
     """What the reader is told, with every number read from the backtest.
 
     basis "market": the pooling gave the model no weight, so the pick is
     the market's chances recalibrated on earlier seasons, and is called
-    that - the model's own chances are shown beside it, labelled."""
+    that - the model's own chances are shown beside it, labelled.
+    model_through: the date of football-data.co.uk's latest top-league
+    result, the last the model's ratings include. scores: the goals and
+    scores numbers' measured table (soccer_scores.measure)."""
     res = (bt or {}).get("result", {})
     conf = (bt or {}).get("periods", {}).get("confirm", [2016, 2025])
     key = f"{conf[0]}-{conf[1]}"
@@ -97,6 +102,19 @@ def caveats(bt, basis="blend"):
             "The model does not read team news - injuries, suspensions, rotation. The betting market "
             "does, which is part of why the pick leans on it."),
     }
+    through = f", through {_day(model_through)}" if model_through else ""
+    out["feeds"] = (
+        "Fixtures football-data.co.uk has not posted yet, and results it has not posted yet, come from two "
+        "free, unofficial feeds - ESPN's public scoreboard and fixturedownload.com - which give dates, kickoff "
+        "times and scores, never a price. Until football-data.co.uk posts a match with its prices (Tuesday and "
+        "Friday afternoons) its chances are the model's alone, and say so. A result from the feeds is "
+        "provisional, and marked so, until football-data.co.uk posts its own; a provisional grade it "
+        "disagrees with is corrected. Where the feeds have not confirmed a kickoff time, the pick closes at "
+        "midnight UK time on match day. The model's ratings use only football-data.co.uk's results, with "
+        f"their shots{through}.")
+    sc = scores_caveat(scores)
+    if sc:
+        out["scores"] = sc
     out["rating_short"] = ("The goal difference a match each club would expect against an average club "
                            "of its league on a neutral pitch, by the model's ratings, strongest first.")
     out["rating"] = ("The model rates each club's attack and defence from its goals, shots on target and "
@@ -104,6 +122,49 @@ def caveats(bt, basis="blend"):
                      "measured step. The rating is the model's own view - the pick on each match is the "
                      "market's chances, recalibrated, because the market forecasts better.")
     return out
+
+
+def scores_caveat(measured):
+    """What the reader is told about both teams to score, over 1.5 / 3.5 and
+    the likeliest scores: every number read from soccer_scores.measure.
+    None without a measurement."""
+    periods = (measured or {}).get("periods") or {}
+    if not periods:
+        return None
+    key = max(periods)                                     # the confirming period
+    r = periods[key]
+    if not r.get("matches"):
+        return None
+    beat = all(p.get(t, {}).get("shown", {}).get("log_loss", 9) < p.get(t, {}).get("base", {}).get("log_loss", 0)
+               for p in periods.values() if p.get("matches") for t in ("btts", "o15", "o35", "exact"))
+    b, ex = r["btts"], r["exact"]["shown"]
+    top1 = ex.get("top1_hit")
+    short = (b["rate"] - b["shown"]["mean_p"]) * 100
+    one_in = f", about 1 in {round(1 / top1)}" if top1 else ""
+    names = " and ".join(sorted(periods))
+    return (
+        "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per "
+        "match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under "
+        "2.5 price. "
+        + (f"Measured on {names}, each beat the leagues' own rates from earlier seasons. " if beat else
+           f"Measured on {names}; not every one beat the leagues' own rates from earlier seasons (Method). ")
+        + f"Both teams to score runs low: across {key} its chance averaged {pct(b['shown']['mean_p'])} where both "
+        f"teams scored in {pct(b['rate'])} of matches, low in {b.get('deciles_low', '—')} of "
+        f"{b.get('deciles', '—')} deciles - read it as about {short:.0f} points short. Exact scores are long shots: "
+        f"the likeliest score happened in {pct(top1)} of matches{one_in}. Where no price is posted, or only the "
+        f"home/draw/away price, or the prices fit no score matrix within {measured.get('fit_max_miss', 0) * 100:.0f} "
+        f"points, these numbers are the model's own, and say so - measured too, a little less accurate (both teams "
+        f"to score log loss {b['model']['log_loss']:.4f} against {b['shown']['log_loss']:.4f}, the leagues' own "
+        f"rates {b['base']['log_loss']:.4f}).")
+
+
+def _day(iso):
+    """'2026-10-21' -> 'Oct 21' (the app's own dates are the phone's)."""
+    try:
+        d = datetime.strptime(str(iso)[:10], "%Y-%m-%d")
+    except ValueError:
+        return str(iso)
+    return f"{d:%b} {d.day}"
 
 
 def club(key):
@@ -125,7 +186,10 @@ def positions(matches, league, season, before):
 
 def tables_payload(matches, season, ratings=None, generated=None, caveat=None, season_label=None):
     """Each top league's table as it stands, with each club's last five and
-    the model's rating where it has one."""
+    the model's rating where it has one. `matches` may carry provisional
+    results (soccer_schedule.shown): each row counts its own, each league says
+    how many it has and the date of its latest football-data.co.uk result -
+    the last its ratings include."""
     out = []
     for code in sd.TOP:
         rows = sf.table(matches, code, season)
@@ -135,6 +199,13 @@ def tables_payload(matches, season, ratings=None, generated=None, caveat=None, s
             r["club"] = club(r["team"])
             r["form"] = sf.form(matches, r["team"], "9999-12-31")
             r["rating"] = (ratings or {}).get(r["team"])
-        out.append({"code": code, "name": sd.LEAGUES[code][0], "short": LEAGUE_SHORT[code], "rows": rows})
+        done = matches[(matches["league"] == code) & (matches["season"] == season) & matches["result"].notna()]
+        prov = done["provisional"].fillna(False).astype(bool) if "provisional" in done else \
+            pd.Series(False, index=done.index)
+        official = done.loc[~prov, "date"]
+        out.append({"code": code, "name": sd.LEAGUES[code][0], "short": LEAGUE_SHORT[code], "rows": rows,
+                    "provisional": int(prov.sum()),
+                    "model_through": official.max() if len(official) else None,
+                    "results_through": done["date"].max() if len(done) else None})
     return {"season": season, "season_label": season_label, "leagues": out, "generated": generated,
             "caveats": caveat or {}}

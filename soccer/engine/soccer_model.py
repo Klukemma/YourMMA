@@ -14,6 +14,10 @@ itself on the choosing period. So:
              little short; this is the correction, measured out of sample.
   goals      the over/under 2.5 market with the cut removed. Recalibrating
              it the same way did not improve it over the choosing period.
+  scores     both teams to score, over 1.5 / 3.5 and the likeliest exact
+             scores, from one score matrix per match (soccer_scores): the
+             one that best reproduces the pick and the over/under price,
+             the model's own where those are not both priced.
   the model  the best of the three, on both periods: shots-based ratings
              (experiments/shots_ratings.py) - each club's attack and defence
              from goals, shots on target and shots, turned into the chance of
@@ -40,8 +44,11 @@ MIN_TRAIN = 1000
 def predict(frame):
     """The model's own p_h, p_d, p_a, p_o25 for every top-league row of
     `frame` (finished matches and fixtures still to play), each from matches
-    on earlier days; club ratings in .attrs["ratings"]."""
-    return shots_ratings.predict_walk_forward(frame)
+    on earlier days; club ratings in .attrs["ratings"]. Also each match's
+    expected goals lam, nu and the Dixon-Coles rho (score_params; p_h..p_o25
+    are bit for bit the same with them or without) - the whole score matrix,
+    which soccer_scores reads the goals and scores numbers from."""
+    return shots_ratings.predict_walk_forward(frame, score_params=True)
 
 
 # ------------------------------------------------------------- the pick

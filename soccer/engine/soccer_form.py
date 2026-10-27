@@ -4,11 +4,21 @@ Shown, never a model input: the model reads every match through its own
 ratings. "Form" is the last five league matches played on days BEFORE the
 one asked about - in either tier, so a promoted team's run-in to promotion
 shows in August - newest first.
+
+A frame with a `provisional` column (soccer_schedule.shown: the free feeds'
+results football-data.co.uk has not posted yet) marks those results: a form
+entry says "provisional": true, and a table row counts them.
 """
 
+import numpy as np
 import pandas as pd
 
 LAST = 5
+
+
+def _flag(value):
+    """A provisional flag: True only for a real true (NaN, None and NA are not)."""
+    return isinstance(value, (bool, np.bool_)) and bool(value)
 
 
 def form(matches, team, before, n=LAST):
@@ -21,9 +31,11 @@ def form(matches, team, before, n=LAST):
     for _, m in mine.sort_values(["date", "kickoff"], na_position="first").tail(n).iloc[::-1].iterrows():
         home = m["home"] == team
         gf, ga = (int(m["hg"]), int(m["ag"])) if home else (int(m["ag"]), int(m["hg"]))
-        out.append({"date": m["date"], "opponent": m["away"] if home else m["home"], "home": bool(home),
-                    "gf": gf, "ga": ga, "league": m["league"],
-                    "result": "W" if gf > ga else "L" if gf < ga else "D"})
+        item = {"date": m["date"], "opponent": m["away"] if home else m["home"], "home": bool(home),
+                "gf": gf, "ga": ga, "league": m["league"], "result": "W" if gf > ga else "L" if gf < ga else "D"}
+        if _flag(m.get("provisional")):
+            item["provisional"] = True
+        out.append(item)
     return out
 
 
@@ -38,13 +50,15 @@ def table(matches, league, season, before=None):
         m = m[m["date"] < day]
     teams = sorted(set(matches[(matches["league"] == league) & (matches["season"] == season)]["home"])
                    | set(matches[(matches["league"] == league) & (matches["season"] == season)]["away"]))
-    rows = {t: {"team": t, "played": 0, "won": 0, "drawn": 0, "lost": 0, "gf": 0, "ga": 0, "points": 0}
-            for t in teams}
-    for h, a, hg, ag in zip(m["home"], m["away"], m["hg"], m["ag"]):
+    rows = {t: {"team": t, "played": 0, "won": 0, "drawn": 0, "lost": 0, "gf": 0, "ga": 0, "points": 0,
+                "provisional": 0} for t in teams}
+    flags = m["provisional"] if "provisional" in m else [False] * len(m)
+    for h, a, hg, ag, prov in zip(m["home"], m["away"], m["hg"], m["ag"], flags):
         hg, ag = int(hg), int(ag)
         for team, f, g in ((h, hg, ag), (a, ag, hg)):
             r = rows[team]
             r["played"] += 1
+            r["provisional"] += int(_flag(prov))
             r["gf"] += f
             r["ga"] += g
             if f > g:
