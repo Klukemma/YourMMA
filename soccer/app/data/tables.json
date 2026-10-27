@@ -8,7 +8,7 @@
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, each beat the leagues' own rates from earlier seasons. Both teams to score runs low: across 2016-2025 its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where no price is posted, or only the home/draw/away price, or the prices fit no score matrix within 4 points, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905)."
  },
- "generated": "2026-10-27T19:00:22Z",
+ "generated": "2026-10-27T21:01:10Z",
  "leagues": [
   {
    "code": "E0",
@@ -147,7 +147,7 @@
      "points": 21,
      "position": 2,
      "provisional": 0,
-     "rating": 0.5923083973792187,
+     "rating": 0.5923083973792185,
      "team": "Arsenal",
      "won": 7
     },
@@ -214,7 +214,7 @@
      "points": 16,
      "position": 3,
      "provisional": 0,
-     "rating": 0.3636059161990204,
+     "rating": 0.36360591619902016,
      "team": "Brighton",
      "won": 5
     },
@@ -415,7 +415,7 @@
      "points": 11,
      "position": 6,
      "provisional": 0,
-     "rating": -0.018647412000935226,
+     "rating": -0.018647412000935448,
      "team": "Brentford",
      "won": 2
     },
@@ -817,7 +817,7 @@
      "points": 10,
      "position": 12,
      "provisional": 0,
-     "rating": -0.3864325652574303,
+     "rating": -0.3864325652574301,
      "team": "Ipswich",
      "won": 3
     },
@@ -884,7 +884,7 @@
      "points": 9,
      "position": 13,
      "provisional": 0,
-     "rating": 0.14945279007798362,
+     "rating": 0.1494527900779834,
      "team": "Bournemouth",
      "won": 2
     },
@@ -1631,7 +1631,7 @@
      "points": 20,
      "position": 4,
      "provisional": 0,
-     "rating": 0.17051254810874572,
+     "rating": 0.17051254810874594,
      "team": "Betis",
      "won": 6
     },
@@ -2100,7 +2100,7 @@
      "points": 11,
      "position": 11,
      "provisional": 0,
-     "rating": -0.2826403469736313,
+     "rating": -0.28264034697363116,
      "team": "La Coruna",
      "won": 2
     },
@@ -2234,7 +2234,7 @@
      "points": 11,
      "position": 13,
      "provisional": 0,
-     "rating": -0.4816473109157844,
+     "rating": -0.4816473109157846,
      "team": "Santander",
      "won": 3
     },
@@ -2301,7 +2301,7 @@
      "points": 10,
      "position": 14,
      "provisional": 0,
-     "rating": -0.2632614521403711,
+     "rating": -0.26326145214037133,
      "team": "Levante",
      "won": 2
     },
@@ -2502,7 +2502,7 @@
      "points": 9,
      "position": 17,
      "provisional": 0,
-     "rating": -0.21081998625539344,
+     "rating": -0.21081998625539355,
      "team": "Getafe",
      "won": 2
     },
@@ -2703,7 +2703,7 @@
      "points": 5,
      "position": 20,
      "provisional": 0,
-     "rating": -0.5549904853959758,
+     "rating": -0.5549904853959756,
      "team": "Malaga",
      "won": 0
     }
@@ -2714,9 +2714,77 @@
    "code": "I1",
    "model_through": "2026-10-25",
    "name": "Serie A",
-   "provisional": 0,
-   "results_through": "2026-10-25",
+   "provisional": 1,
+   "results_through": "2026-10-27",
    "rows": [
+    {
+     "club": {
+      "bg": "#87D8F7",
+      "code": "LAZ",
+      "fg": "#15366F",
+      "name": "Lazio"
+     },
+     "drawn": 1,
+     "form": [
+      {
+       "date": "2026-10-27",
+       "ga": 2,
+       "gf": 6,
+       "home": false,
+       "league": "I1",
+       "opponent": "Sassuolo",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "I1",
+       "opponent": "Parma",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 0,
+       "gf": 3,
+       "home": false,
+       "league": "I1",
+       "opponent": "Juventus",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-11",
+       "ga": 1,
+       "gf": 3,
+       "home": true,
+       "league": "I1",
+       "opponent": "Monza",
+       "result": "W"
+      },
+      {
+       "date": "2026-09-19",
+       "ga": 0,
+       "gf": 2,
+       "home": false,
+       "league": "I1",
+       "opponent": "Venezia",
+       "result": "W"
+      }
+     ],
+     "ga": 7,
+     "gd": 15,
+     "gf": 22,
+     "lost": 0,
+     "played": 9,
+     "points": 25,
+     "position": 1,
+     "provisional": 1,
+     "rating": 0.15254361326971866,
+     "team": "Lazio",
+     "won": 8
+    },
     {
      "club": {
       "bg": "#0068A8",
@@ -2778,77 +2846,10 @@
      "lost": 0,
      "played": 8,
      "points": 22,
-     "position": 1,
-     "provisional": 0,
-     "rating": 0.9373145254755373,
-     "team": "Inter",
-     "won": 7
-    },
-    {
-     "club": {
-      "bg": "#87D8F7",
-      "code": "LAZ",
-      "fg": "#15366F",
-      "name": "Lazio"
-     },
-     "drawn": 1,
-     "form": [
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "I1",
-       "opponent": "Parma",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 0,
-       "gf": 3,
-       "home": false,
-       "league": "I1",
-       "opponent": "Juventus",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "I1",
-       "opponent": "Monza",
-       "result": "W"
-      },
-      {
-       "date": "2026-09-19",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "I1",
-       "opponent": "Venezia",
-       "result": "W"
-      },
-      {
-       "date": "2026-09-12",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "I1",
-       "opponent": "Milan",
-       "result": "D"
-      }
-     ],
-     "ga": 5,
-     "gd": 11,
-     "gf": 16,
-     "lost": 0,
-     "played": 8,
-     "points": 22,
      "position": 2,
      "provisional": 0,
-     "rating": 0.15254361326971888,
-     "team": "Lazio",
+     "rating": 0.9373145254755375,
+     "team": "Inter",
      "won": 7
     },
     {
@@ -2914,7 +2915,7 @@
      "points": 18,
      "position": 3,
      "provisional": 0,
-     "rating": 0.5357466270325689,
+     "rating": 0.5357466270325687,
      "team": "Roma",
      "won": 5
     },
@@ -3048,7 +3049,7 @@
      "points": 17,
      "position": 5,
      "provisional": 0,
-     "rating": 0.5347203654308147,
+     "rating": 0.5347203654308145,
      "team": "Como",
      "won": 5
     },
@@ -3249,7 +3250,7 @@
      "points": 13,
      "position": 8,
      "provisional": 0,
-     "rating": -0.19239549082679397,
+     "rating": -0.19239549082679375,
      "team": "Torino",
      "won": 4
     },
@@ -3316,7 +3317,7 @@
      "points": 13,
      "position": 9,
      "provisional": 0,
-     "rating": -0.2766593880754785,
+     "rating": -0.27665938807547863,
      "team": "Cagliari",
      "won": 4
     },
@@ -3517,7 +3518,7 @@
      "points": 9,
      "position": 12,
      "provisional": 0,
-     "rating": -0.3495948118768737,
+     "rating": -0.3495948118768738,
      "team": "Lecce",
      "won": 3
     },
@@ -3598,6 +3599,16 @@
      "drawn": 2,
      "form": [
       {
+       "date": "2026-10-27",
+       "ga": 6,
+       "gf": 2,
+       "home": true,
+       "league": "I1",
+       "opponent": "Lazio",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-10-24",
        "ga": 2,
        "gf": 0,
@@ -3632,25 +3643,16 @@
        "league": "I1",
        "opponent": "Monza",
        "result": "L"
-      },
-      {
-       "date": "2026-09-13",
-       "ga": 2,
-       "gf": 3,
-       "home": true,
-       "league": "I1",
-       "opponent": "Juventus",
-       "result": "W"
       }
      ],
-     "ga": 16,
-     "gd": -4,
-     "gf": 12,
-     "lost": 4,
-     "played": 8,
+     "ga": 22,
+     "gd": -8,
+     "gf": 14,
+     "lost": 5,
+     "played": 9,
      "points": 8,
      "position": 14,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.20926228967452487,
      "team": "Sassuolo",
      "won": 2
@@ -3718,7 +3720,7 @@
      "points": 7,
      "position": 15,
      "provisional": 0,
-     "rating": -0.28001479720961164,
+     "rating": -0.2800147972096114,
      "team": "Monza",
      "won": 2
     },
@@ -3986,7 +3988,7 @@
      "points": 4,
      "position": 19,
      "provisional": 0,
-     "rating": -0.3569424300655686,
+     "rating": -0.3569424300655685,
      "team": "Parma",
      "won": 1
     },
@@ -4130,7 +4132,7 @@
      "points": 17,
      "position": 1,
      "provisional": 0,
-     "rating": 1.6114548443287589,
+     "rating": 1.611454844328759,
      "team": "Bayern Munich",
      "won": 5
     },
@@ -4264,7 +4266,7 @@
      "points": 13,
      "position": 3,
      "provisional": 0,
-     "rating": 0.031026186151271506,
+     "rating": 0.03102618615127173,
      "team": "Freiburg",
      "won": 4
     },
@@ -4331,7 +4333,7 @@
      "points": 13,
      "position": 4,
      "provisional": 0,
-     "rating": 0.43523496332175715,
+     "rating": 0.4352349633217574,
      "team": "Leverkusen",
      "won": 4
     },
@@ -4398,7 +4400,7 @@
      "points": 12,
      "position": 5,
      "provisional": 0,
-     "rating": 0.41881851618179655,
+     "rating": 0.4188185161817968,
      "team": "RB Leipzig",
      "won": 4
     },
@@ -4465,7 +4467,7 @@
      "points": 12,
      "position": 6,
      "provisional": 0,
-     "rating": -0.13497261562312213,
+     "rating": -0.1349726156231219,
      "team": "Werder Bremen",
      "won": 3
     },
@@ -4532,7 +4534,7 @@
      "points": 10,
      "position": 7,
      "provisional": 0,
-     "rating": 0.02749151114830184,
+     "rating": 0.02749151114830206,
      "team": "Mainz",
      "won": 3
     },
@@ -4666,7 +4668,7 @@
      "points": 9,
      "position": 9,
      "provisional": 0,
-     "rating": -0.16326245423278385,
+     "rating": -0.16326245423278407,
      "team": "Augsburg",
      "won": 2
     },
@@ -4733,7 +4735,7 @@
      "points": 9,
      "position": 10,
      "provisional": 0,
-     "rating": 0.1298935770298848,
+     "rating": 0.12989357702988502,
      "team": "Hoffenheim",
      "won": 3
     },
@@ -5001,7 +5003,7 @@
      "points": 8,
      "position": 14,
      "provisional": 0,
-     "rating": -0.14364570840531377,
+     "rating": -0.14364570840531354,
      "team": "Ein Frankfurt",
      "won": 2
     },
@@ -5135,7 +5137,7 @@
      "points": 6,
      "position": 16,
      "provisional": 0,
-     "rating": -0.38917744895657735,
+     "rating": -0.38917744895657713,
      "team": "Schalke 04",
      "won": 1
     },
@@ -5269,7 +5271,7 @@
      "points": 3,
      "position": 18,
      "provisional": 0,
-     "rating": -0.4184146743396677,
+     "rating": -0.4184146743396673,
      "team": "M'gladbach",
      "won": 1
     }
@@ -5480,7 +5482,7 @@
      "points": 15,
      "position": 3,
      "provisional": 0,
-     "rating": 0.28617574156835035,
+     "rating": 0.2861757415683506,
      "team": "Lille",
      "won": 4
     },
@@ -5949,7 +5951,7 @@
      "points": 11,
      "position": 10,
      "provisional": 0,
-     "rating": -0.19680822689473798,
+     "rating": -0.19680822689473776,
      "team": "Nice",
      "won": 3
     },
