@@ -8,7 +8,7 @@
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, each beat the leagues' own rates from earlier seasons. Both teams to score runs low: across 2016-2025 its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where no price is posted, or only the home/draw/away price, or the prices fit no score matrix within 4 points, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905)."
  },
- "generated": "2026-10-27T21:01:10Z",
+ "generated": "2026-10-28T14:01:01Z",
  "leagues": [
   {
    "code": "E0",
@@ -2714,7 +2714,7 @@
    "code": "I1",
    "model_through": "2026-10-25",
    "name": "Serie A",
-   "provisional": 1,
+   "provisional": 3,
    "results_through": "2026-10-27",
    "rows": [
     {
@@ -2862,6 +2862,16 @@
      "drawn": 3,
      "form": [
       {
+       "date": "2026-10-27",
+       "ga": 2,
+       "gf": 4,
+       "home": true,
+       "league": "I1",
+       "opponent": "Cagliari",
+       "provisional": true,
+       "result": "W"
+      },
+      {
        "date": "2026-10-24",
        "ga": 3,
        "gf": 3,
@@ -2896,28 +2906,87 @@
        "league": "I1",
        "opponent": "Inter",
        "result": "D"
-      },
+      }
+     ],
+     "ga": 8,
+     "gd": 15,
+     "gf": 23,
+     "lost": 0,
+     "played": 9,
+     "points": 21,
+     "position": 3,
+     "provisional": 1,
+     "rating": 0.5357466270325687,
+     "team": "Roma",
+     "won": 6
+    },
+    {
+     "club": {
+      "bg": "#003DA5",
+      "code": "COM",
+      "fg": "#FFFFFF",
+      "name": "Como"
+     },
+     "drawn": 2,
+     "form": [
       {
-       "date": "2026-09-14",
-       "ga": 0,
-       "gf": 2,
+       "date": "2026-10-27",
+       "ga": 1,
+       "gf": 3,
        "home": false,
        "league": "I1",
        "opponent": "Torino",
+       "provisional": true,
        "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "I1",
+       "opponent": "Sassuolo",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 1,
+       "gf": 3,
+       "home": false,
+       "league": "I1",
+       "opponent": "Fiorentina",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-11",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "I1",
+       "opponent": "Roma",
+       "result": "D"
+      },
+      {
+       "date": "2026-09-20",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "I1",
+       "opponent": "Frosinone",
+       "result": "L"
       }
      ],
-     "ga": 6,
-     "gd": 13,
-     "gf": 19,
-     "lost": 0,
-     "played": 8,
-     "points": 18,
-     "position": 3,
-     "provisional": 0,
-     "rating": 0.5357466270325687,
-     "team": "Roma",
-     "won": 5
+     "ga": 8,
+     "gd": 9,
+     "gf": 17,
+     "lost": 1,
+     "played": 9,
+     "points": 20,
+     "position": 4,
+     "provisional": 1,
+     "rating": 0.5347203654308145,
+     "team": "Como",
+     "won": 6
     },
     {
      "club": {
@@ -2980,77 +3049,10 @@
      "lost": 0,
      "played": 8,
      "points": 18,
-     "position": 4,
+     "position": 5,
      "provisional": 0,
      "rating": 0.3140657042254592,
      "team": "Milan",
-     "won": 5
-    },
-    {
-     "club": {
-      "bg": "#003DA5",
-      "code": "COM",
-      "fg": "#FFFFFF",
-      "name": "Como"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-10-24",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "I1",
-       "opponent": "Sassuolo",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 1,
-       "gf": 3,
-       "home": false,
-       "league": "I1",
-       "opponent": "Fiorentina",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "I1",
-       "opponent": "Roma",
-       "result": "D"
-      },
-      {
-       "date": "2026-09-20",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "I1",
-       "opponent": "Frosinone",
-       "result": "L"
-      },
-      {
-       "date": "2026-09-14",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "I1",
-       "opponent": "Parma",
-       "result": "W"
-      }
-     ],
-     "ga": 7,
-     "gd": 7,
-     "gf": 14,
-     "lost": 1,
-     "played": 8,
-     "points": 17,
-     "position": 5,
-     "provisional": 0,
-     "rating": 0.5347203654308145,
-     "team": "Como",
      "won": 5
     },
     {
@@ -3197,6 +3199,16 @@
      "drawn": 1,
      "form": [
       {
+       "date": "2026-10-27",
+       "ga": 3,
+       "gf": 1,
+       "home": true,
+       "league": "I1",
+       "opponent": "Como",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-10-23",
        "ga": 2,
        "gf": 3,
@@ -3231,25 +3243,16 @@
        "league": "I1",
        "opponent": "Bologna",
        "result": "D"
-      },
-      {
-       "date": "2026-09-14",
-       "ga": 2,
-       "gf": 0,
-       "home": true,
-       "league": "I1",
-       "opponent": "Roma",
-       "result": "L"
       }
      ],
-     "ga": 11,
-     "gd": 2,
-     "gf": 13,
-     "lost": 3,
-     "played": 8,
+     "ga": 14,
+     "gd": 0,
+     "gf": 14,
+     "lost": 4,
+     "played": 9,
      "points": 13,
      "position": 8,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.19239549082679375,
      "team": "Torino",
      "won": 4
@@ -3263,6 +3266,16 @@
      },
      "drawn": 1,
      "form": [
+      {
+       "date": "2026-10-27",
+       "ga": 4,
+       "gf": 2,
+       "home": false,
+       "league": "I1",
+       "opponent": "Roma",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-10-24",
        "ga": 2,
@@ -3298,25 +3311,16 @@
        "league": "I1",
        "opponent": "Udinese",
        "result": "W"
-      },
-      {
-       "date": "2026-09-12",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "I1",
-       "opponent": "Atalanta",
-       "result": "W"
       }
      ],
-     "ga": 9,
-     "gd": -3,
-     "gf": 6,
-     "lost": 3,
-     "played": 8,
+     "ga": 13,
+     "gd": -5,
+     "gf": 8,
+     "lost": 4,
+     "played": 9,
      "points": 13,
      "position": 9,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.27665938807547863,
      "team": "Cagliari",
      "won": 4
