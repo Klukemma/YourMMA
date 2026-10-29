@@ -36,7 +36,7 @@ on:
       mode:
         description: "predict = this week's picks; sync = data only; probe = save the fixture feeds as test fixtures"
         type: choice
-        options: [predict, sync, probe]
+        options: [predict, sync, probe, probe-leagues]
         default: predict
       full:
         description: "sync only: rebuild every season since 2005-06, not just this one"
@@ -98,6 +98,10 @@ jobs:
             python soccer/engine/soccer_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee soccer.log
           elif [ "$MODE" = "probe" ]; then
             python soccer/engine/probe_feeds.py 2>&1 | tee soccer.log
+          elif [ "$MODE" = "probe-leagues" ]; then
+            # Every league the app could add, in each of its sources, saved
+            # under tests/fixtures/feeds/leagues/ (probe_leagues.py).
+            python soccer/engine/probe_leagues.py 2>&1 | tee soccer.log
           else
             python soccer/engine/soccer_predict.py 2>&1 | tee soccer.log
           fi
