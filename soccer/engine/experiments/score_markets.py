@@ -98,9 +98,11 @@ CAVEATS.
     matches miss some target by more than 0.02, 42 and 2 by more than 0.10.
     The worst (Bologna-Catania 2010) reproduces a 71% draw with lam 0.33,
     nu 0.10 - over 2.5 at 0.9% against a 43% price, 0-0 at about 70%. The
-    app's rule (soccer_scores.shown_matrices) falls back to the model's own
-    matrix when any target misses by more than 0.04, the DEV 99th percentile
-    of that largest miss rounded up; soccer_scores says what it costs.
+    app (soccer_scores.shown_matrices) shows K there too, flagged with its
+    miss when any target misses by more than 0.04 (the DEV 99th percentile
+    of that largest miss, rounded up): an earlier rule that swapped in the
+    model's own matrix was dropped, because on those matches M misses the
+    prices by more and scores worse (soccer_scores' notes).
   - Exact scores are long shots: the likeliest one happens about one match
     in eight.
   - Calibration on CONFIRM by decile, K: over 1.5 within 0.013 of the
@@ -124,7 +126,7 @@ solved alone, bit for bit.
 THE PRODUCTION CALLS - integrated: they live in soccer_scores.py, which the
 app runs and this experiment imports (bit for bit the matrices measured here;
 soccer_scores.shown_matrices adds the app's rule - the over/under price is
-required, and a fit missing a target by more than 0.04 is the model's own):
+required, and a fit missing a target by more than 0.04 is flagged):
   score_matrix(p_h, p_d, p_a, p_o25, rho, lam, nu) -> (mats, info)
       the pick's 1X2 and the no-vig over 2.5 where priced (NaN / None
       where not), the model's lam, nu, rho (shots_ratings with

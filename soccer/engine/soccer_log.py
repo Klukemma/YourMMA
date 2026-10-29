@@ -16,27 +16,44 @@ and the pick's band, so their live record starts with the first pick.
 WHEN A PICK FREEZES. At `freeze_at` when the entry has one, else at
 kickoff. soccer_schedule sets it: the kickoff where the time is confirmed,
 00:00 UK time on the match's UK date where it is not (a feed's time that the
-two feeds do not agree on), so a pick is never logged after an earlier
-kickoff than the one listed. Once a logged pick's own freeze time has
-passed it never changes, whatever the match's time becomes later.
+two feeds do not agree on) - or earlier, at any source's time before that -
+so a pick is never logged after an earlier kickoff than the one listed.
+Once a logged pick's own freeze time has passed its pick, chances and freeze
+time never change, whatever the match's time becomes later; only the
+match's id and time follow the match (a move, below).
+
+A PRICED PICK IS NEVER REPLACED BY AN UNPRICED ONE. If football-data.co.uk's
+fixtures file stops listing a match it had priced while the feeds still
+list it, the pick stays the market's: only its time is refreshed.
 
 NEVER GRADED IF LOGGED AFTER KICKOFF. A result row that carries its kickoff
-(football-data.co.uk's, or the feeds') is checked against the pick's last
+(football-data.co.uk's, or ESPN's for a provisional one - the final's own
+time, never fixturedownload's alone) is checked against the pick's last
 log: a pick written at or after the match's real kickoff (a match brought
 forward that no source had moved yet) is void, "logged after kickoff" -
-point in time, whatever the reason.
+point in time, whatever the reason. A void on the feeds' time ("void_by")
+is checked again when football-data.co.uk's result lands, which is the
+record: logged before its kickoff, the pick is restored and graded.
 
 A MOVED MATCH. A match id carries its date, so a postponed match comes back
 under a new one. A pick is graded against its own match found by id or,
 failing that, by its league, season and clubs (a pairing that is unique in a
-league season). When the moved match is picked again under its new id, the
-older pick is marked void - one match, one pick in the record - and a pick
-whose match never produced a result is voided once it is STALE days past
-kickoff. Void picks are neither settled nor pending. An older pick for the
-same pairing that has NOT frozen yet is the same pick under an id that has
-since changed (a feed's date before football-data.co.uk posted its own): it
-moves to the new id ("id_was"), keeping when it was first logged; it is
-not voided.
+league season). An older pending pick for the same pairing under another id
+is, when the match is logged under its new id:
+  - void, "rescheduled", if its match is known to be off: its kickoff has
+    passed with no result, or the feeds list it as postponed, cancelled or
+    abandoned (`off`) - and only once the new date is picked, so one match
+    has one pick in the record;
+  - otherwise the same match under an id that has since changed (a feed's
+    date before football-data.co.uk posted its own, or the feeds dating it
+    differently): it MOVES to the new id ("id_was"), keeping when it was
+    first logged. One that has not frozen is then logged afresh; one that
+    has frozen (an unconfirmed time closed it at midnight, or an earlier
+    source's time did) moves as it is - its pick, chances, freeze time and
+    last log unchanged ("kickoff_was" keeps the time it had) - and nothing
+    new is logged for the match.
+A pick whose match never produced a result is voided once it is STALE days
+past kickoff. Void picks are neither settled nor pending.
 
 PROVISIONAL RESULTS. A result from the free feeds (soccer_schedule) for a
 match football-data.co.uk has not posted grades its pick PROVISIONALLY:
@@ -44,8 +61,9 @@ final.provisional is true, with the feeds' names and when they showed it.
 When football-data.co.uk posts the result, it is the result: the same score
 confirms the grade (the provisional flag goes; final.provisional_was keeps
 the record of it), a different one regrades the pick and is written down in
-`corrections`. A provisional grade the feeds later contradict each other on
-is withdrawn - the pick is pending again - and that is written down too.
+`corrections`. A provisional grade is withdrawn - the pick is pending again,
+written down too - when the feeds later contradict each other on the score,
+or no longer call the match final (ESPN retracts it: abandoned, postponed).
 """
 
 import json
@@ -63,12 +81,16 @@ STALE_DAYS = 21
 FIELDS = ("match_id", "league", "season", "kickoff", "home", "away",
           "pick", "pick_prob", "p_h", "p_d", "p_a", "model", "market", "prices",
           "p_o25", "model_o25", "market_o25", "tier", "price_source", "prices_at",
-          "freeze_at", "time_confirmed", "fixture_source",
+          "freeze_at", "time_confirmed", "fixture_source", "kickoff_sources",
           # the numbers beside the pick (soccer_scores): both teams to score,
           # over 1.5 / 3.5, the three likeliest scores with the matrix's own
           # 1X2 and why it is the model's where it is, its source, the band
           "p_btts", "p_o15", "p_o35", "scores", "score_source", "band", "band_basis")
 GRADES = ("final", "correct", "o25_correct", "btts_correct")
+# What follows the match rather than the pick: refreshed on a move, and on a
+# priced pick the feeds re-time.
+TIME_FIELDS = ("kickoff", "freeze_at", "time_confirmed", "kickoff_sources")
+FD = "football-data.co.uk"
 
 
 def naive_utc(t):
@@ -118,36 +140,86 @@ def frozen(p, now):
     return t is None or naive_utc(t) <= naive_utc(now)
 
 
-def log_pick(log, match, now):
-    """Upsert one pick while it has not frozen. Returns True if written. A
-    pick on file whose own freeze time has passed stays as it is, even if the
-    match's time has since moved later (an unconfirmed time that froze it at
-    midnight, then confirmed for the afternoon): frozen is frozen. A pending
-    pick for the same pairing under another id: moved to this id if it has
-    not frozen either (the same match, its id since changed), voided if it
-    has (the match was moved)."""
-    if match.get("kickoff") is None or frozen(match, now):
+def _gone(p, now, off):
+    """Whether a pending pick's match is known to be off: the feeds list its id
+    as postponed/cancelled/abandoned, or EVERY time on file for it has passed
+    with no result - its kickoff and each source's (kickoff_sources). One
+    source's time passing is not enough: ESPN may have corrected a wrong date
+    that another source still has to come."""
+    if p.get("match_id") in off:
+        return True
+    times = [p.get("kickoff"), *((p.get("kickoff_sources") or {}).values())]
+    times = [t for t in times if t is not None]
+    return bool(times) and all(naive_utc(t) <= naive_utc(now) for t in times)
+
+
+def log_pick(log, match, now, off=()):
+    """Upsert one pick while it has not frozen. Returns True if a pick was
+    written. A pick on file whose own freeze time has passed stays as it is,
+    even if the match's time has since moved later (an unconfirmed time that
+    froze it at midnight, then confirmed for the afternoon): frozen is
+    frozen. A priced pick is never overwritten by an unpriced one: its time
+    is refreshed, nothing else. A pending pick for the same pairing under
+    another id is voided if its match is known to be off (`off`: ids the
+    feeds list as postponed, cancelled or abandoned; or its kickoff passed
+    with no result) once this one is written, and otherwise moved to this id
+    - logged afresh if it had not frozen, as it is if it had (the notes). A
+    void entry under this id that gives way is kept inside the new one
+    ("void_was")."""
+    if match.get("kickoff") is None:
         return False
     mid = match["match_id"]
-    entry = log["picks"].get(mid, {})
-    if entry and frozen(entry, now):
+    picks = log["picks"]
+    is_open = not frozen(match, now)
+    entry = picks.get(mid)
+    void_was = None
+    if entry and entry.get("void"):
+        void_was, entry = entry, None
+    off = set(off)
+    same = sorted((k for k, p in picks.items() if k != mid and not p.get("final") and not p.get("void")
+                   and pairing(p) == pairing(match)), key=lambda k: picks[k].get("last_logged") or "")
+    gone = [k for k in same if _gone(picks[k], now, off)]
+    alive = [k for k in same if k not in gone]
+    # One match, one pick: the one under this id stands, else the latest
+    # logged of the rest (only an old log can hold two: this code moves a
+    # pick before it writes one).
+    keep_old = None if entry else (alive[-1] if alive else None)
+    for k in alive:
+        if k != keep_old:
+            picks[k]["void"] = "duplicate"
+    if keep_old is not None:
+        old = picks.pop(keep_old)
+        moved = dict(old, match_id=mid, id_was=old.get("id_was") or keep_old)
+        if void_was:
+            moved["void_was"] = void_was
+        if frozen(old, now) or not is_open:
+            # Frozen is frozen: the pick moves as it is; its time follows the match.
+            if old.get("kickoff") != match.get("kickoff"):
+                moved["kickoff_was"] = old.get("kickoff")
+            moved.update(kickoff=match.get("kickoff"), time_confirmed=match.get("time_confirmed"),
+                         kickoff_sources=match.get("kickoff_sources"))
+            if not frozen(old, now):          # the match closed first: so is the pick, at that time
+                moved["freeze_at"] = min(old.get("freeze_at") or old["kickoff"], match.get("freeze_at") or match["kickoff"])
+            picks[mid] = moved
+            return False
+        entry, void_was = moved, None
+    if not is_open or (entry and frozen(entry, now)):
         return False
-    same = [k for k, p in log["picks"].items() if k != mid and not p.get("final") and not p.get("void")
-            and pairing(p) == pairing(match)]
-    moved = [k for k in same if not frozen(log["picks"][k], now)]
-    keep = {"first_logged": entry.get("first_logged")}
-    for k in moved:
-        old = log["picks"].pop(k)
-        firsts = [t for t in (keep["first_logged"], old.get("first_logged")) if t]
-        keep["first_logged"] = min(firsts) if firsts else None
-        keep["id_was"] = entry.get("id_was") or k
-    if entry.get("id_was") and "id_was" not in keep:
-        keep["id_was"] = entry["id_was"]
-    keep["first_logged"] = keep["first_logged"] or stamp(now)
-    log["picks"][mid] = dict({k: match.get(k) for k in FIELDS}, **keep, last_logged=stamp(now))
-    for k in same:
-        if k not in moved:
-            log["picks"][k]["void"] = "rescheduled"
+    if entry and entry.get("market") and not match.get("market"):
+        # Never a priced pick replaced by an unpriced one: refresh its time.
+        picks[mid] = dict(entry, match_id=mid, **{k: match.get(k) for k in TIME_FIELDS})
+        for k in gone:
+            picks[k]["void"] = "rescheduled"
+        return False
+    keep = {"first_logged": (entry or {}).get("first_logged") or stamp(now)}
+    for k in ("id_was", "void_was"):
+        if (entry or {}).get(k):
+            keep[k] = entry[k]
+    if void_was:
+        keep["void_was"] = void_was
+    picks[mid] = dict({k: match.get(k) for k in FIELDS}, **keep, last_logged=stamp(now))
+    for k in gone:
+        picks[k]["void"] = "rescheduled"
     return True
 
 
@@ -200,18 +272,27 @@ def _logged_late(p, r):
     return naive_utc(last) >= naive_utc(kick)
 
 
+LATE = "logged after kickoff"
+
+
+def _withdraw(p, at, by):
+    """Take back a (provisional) grade, written down in `corrections`."""
+    before = _was(p)
+    for k in GRADES:
+        p.pop(k, None)
+    p.setdefault("corrections", []).append({"at": at, "by": by, "was": before, "now": None})
+
+
 def _void_late(p, at, by):
-    """Void a pick logged after its match kicked off; a grade it had (a
-    provisional one) is written down as withdrawn."""
+    """Void a pick logged after its match kicked off, saying on whose time
+    (`void_by`); a grade it had (a provisional one) is written down as
+    withdrawn."""
     if p.get("final"):
-        before = _was(p)
-        for k in GRADES:
-            p.pop(k, None)
-        p.setdefault("corrections", []).append({"at": at, "by": by, "was": before, "now": None})
-    p["void"] = "logged after kickoff"
+        _withdraw(p, at, by)
+    p["void"], p["void_by"] = LATE, by
 
 
-def grade(log, matches, now=None, provisional=None, disputed=(), stats=None):
+def grade(log, matches, now=None, provisional=None, disputed=(), stats=None, feed_status=None):
     """Fill in the result of every logged pick whose match has one - found by
     id, or by pairing when the match was moved - and void a pick whose match
     has produced no result STALE_DAYS after its kickoff.
@@ -219,23 +300,35 @@ def grade(log, matches, now=None, provisional=None, disputed=(), stats=None):
     `matches` are football-data.co.uk's results, the record; `provisional`
     the feeds' results for matches it has not posted (soccer_schedule), which
     grade a pick provisionally until it does; `disputed` the pairings whose
-    feed scores now contradict each other. Returns how many picks were
+    feed scores now contradict each other; `feed_status` the feeds' status of
+    each pairing (soccer_schedule's), so a provisional grade is withdrawn
+    when they no longer call the match final. Returns how many picks were
     graded for the first time; `stats`, if given, also counts the provisional
-    grades confirmed, corrected and withdrawn, and the picks voided as logged
-    after kickoff ("late")."""
+    grades confirmed, corrected and withdrawn, the picks voided as logged
+    after kickoff ("late") and those restored when football-data.co.uk's
+    kickoff showed the feeds' was wrong ("restored")."""
     by_id, by_pair = _index(matches)
     pv_id, pv_pair = _index(provisional)
+    feed_status = feed_status or {}
     at = stamp(now) if now is not None else None
-    count = {"graded": 0, "provisional": 0, "confirmed": 0, "corrected": 0, "withdrawn": 0, "late": 0}
+    count = {"graded": 0, "provisional": 0, "confirmed": 0, "corrected": 0, "withdrawn": 0, "late": 0,
+             "restored": 0}
     for mid, p in log["picks"].items():
         fin = p.get("final")
-        if p.get("void") or (fin and not fin.get("provisional")):
-            continue
         r = by_id.get(mid)
         if r is None:
             r = by_pair.get(pairing(p))
+        if p.get("void") == LATE and p.get("void_by") not in (None, FD) and r is not None and not _logged_late(p, r):
+            # voided on the feeds' kickoff; football-data.co.uk's, the record, says it was logged in time
+            p.setdefault("corrections", []).append({"at": at, "by": FD, "was": {"void": LATE, "by": p["void_by"]},
+                                                    "now": "restored"})
+            p.pop("void"), p.pop("void_by")
+            fin = None
+            count["restored"] += 1
+        if p.get("void") or (fin and not fin.get("provisional")):
+            continue
         if r is not None and _logged_late(p, r):
-            _void_late(p, at, "football-data.co.uk")
+            _void_late(p, at, FD)
             count["late"] += 1
             continue
         if r is not None:                                   # football-data.co.uk: the record
@@ -278,11 +371,13 @@ def grade(log, matches, now=None, provisional=None, disputed=(), stats=None):
                 count["corrected"] += 1
             continue
         if fin and pairing(p) in disputed:                  # the feeds now contradict each other
-            before = _was(p)
-            for k in GRADES:
-                p.pop(k, None)
-            p.setdefault("corrections", []).append({"at": at, "by": "the feeds disagree", "was": before,
-                                                    "now": None})
+            _withdraw(p, at, "the feeds disagree")
+            count["withdrawn"] += 1
+            continue
+        status = feed_status.get(pairing(p))
+        if fin and status is not None and status != "final":
+            # the feeds no longer call it final (ESPN retracted it: abandoned, postponed, ...)
+            _withdraw(p, at, f"the feeds now say {status}")
             count["withdrawn"] += 1
             continue
         if not fin and now is not None and p.get("kickoff") is not None and \

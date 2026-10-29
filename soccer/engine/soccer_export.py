@@ -140,6 +140,7 @@ def scores_caveat(measured):
     b, ex = r["btts"], r["exact"]["shown"]
     top1 = ex.get("top1_hit")
     short = (b["rate"] - b["shown"]["mean_p"]) * 100
+    model_short = (b["rate"] - b["model"]["mean_p"]) * 100
     one_in = f", about 1 in {round(1 / top1)}" if top1 else ""
     names = " and ".join(sorted(periods))
     return (
@@ -151,11 +152,12 @@ def scores_caveat(measured):
         + f"Both teams to score runs low: across {key} its chance averaged {pct(b['shown']['mean_p'])} where both "
         f"teams scored in {pct(b['rate'])} of matches, low in {b.get('deciles_low', '—')} of "
         f"{b.get('deciles', '—')} deciles - read it as about {short:.0f} points short. Exact scores are long shots: "
-        f"the likeliest score happened in {pct(top1)} of matches{one_in}. Where no price is posted, or only the "
-        f"home/draw/away price, or the prices fit no score matrix within {measured.get('fit_max_miss', 0) * 100:.0f} "
-        f"points, these numbers are the model's own, and say so - measured too, a little less accurate (both teams "
-        f"to score log loss {b['model']['log_loss']:.4f} against {b['shown']['log_loss']:.4f}, the leagues' own "
-        f"rates {b['base']['log_loss']:.4f}).")
+        f"the likeliest score happened in {pct(top1)} of matches{one_in}. Where the prices fit no score matrix "
+        f"within {measured.get('fit_max_miss', 0) * 100:.0f} points the card says how far the closest misses, and "
+        f"on which price. Where no price is posted, or only the home/draw/away price, these numbers are the "
+        f"model's own, and say so - measured too, a little less accurate (both teams to score log loss "
+        f"{b['model']['log_loss']:.4f} against {b['shown']['log_loss']:.4f}, the leagues' own rates "
+        f"{b['base']['log_loss']:.4f}), and running {model_short:.0f} points low rather than {short:.0f}.")
 
 
 def _day(iso):

@@ -257,7 +257,7 @@ def test_latest_results_never_list_a_match_that_had_a_pick(run):
 
 SEEN = "2026-10-26T13:00:00Z"
 DETAIL = {"scheduled": "STATUS_SCHEDULED", "live": "STATUS_SECOND_HALF", "final": "STATUS_FULL_TIME",
-          "postponed": "STATUS_POSTPONED"}
+          "postponed": "STATUS_POSTPONED", "abandoned": "STATUS_ABANDONED"}
 MONDAY = "2026-10-26 23:00"        # football-data.co.uk has not posted the weekend yet
 FRIDAY = "2026-10-30 18:00"        # it has (the fixtures' fetched_at is 16:00)
 AC = sd.match_id("E0", pd.Timestamp("2026-10-31").date(), "Arsenal", "Chelsea")
@@ -382,7 +382,8 @@ def test_a_feed_date_football_data_posts_differently_moves_the_pick_and_voids_no
     assert p["id_was"] == monday_ls and p["first_logged"] == "2026-10-26T23:00:00Z" and not p.get("void")
     e = by_id(m)[LS]
     assert e["kickoff"] == e["freeze_at"] == "2026-11-01T16:30:00Z"
-    assert e["kickoff_sources"] == {"football-data.co.uk": "2026-11-01T16:30:00Z", "feeds": "2026-11-02T20:00:00Z"}
+    assert e["kickoff_sources"] == {"football-data.co.uk": "2026-11-01T16:30:00Z", "ESPN": "2026-11-02T20:00:00Z",
+                                    "fixturedownload.com": "2026-11-02T20:00:00Z"}
     assert perf["track_record"]["pending"] == 2
 
 
@@ -392,7 +393,8 @@ def test_when_the_sources_disagree_on_the_kickoff_the_pick_freezes_at_the_earlie
     m, _, _, friday = run(FRIDAY, feed=feed)
     e = by_id(m)[AC]
     assert e["kickoff"] == e["freeze_at"] == "2026-10-31T12:30:00Z" and e["time_confirmed"] is True
-    assert e["kickoff_sources"] == {"football-data.co.uk": "2026-10-31T15:00:00Z", "feeds": "2026-10-31T12:30:00Z"}
+    assert e["kickoff_sources"] == {"football-data.co.uk": "2026-10-31T15:00:00Z", "ESPN": "2026-10-31T12:30:00Z",
+                                    "fixturedownload.com": "2026-10-31T12:30:00Z"}
     assert e["market"] is not None and friday["picks"][AC]["freeze_at"] == "2026-10-31T12:30:00Z"
     assert by_id(m)[LS]["kickoff"] == by_id(m)[LS]["freeze_at"] == "2026-11-01T16:30:00Z"   # the earlier either way
     # 13:00: past the earlier kickoff, before football-data.co.uk's - frozen.
@@ -579,12 +581,15 @@ def test_a_feed_that_is_down_keeps_its_snapshot_and_never_stops_the_run(run, mon
     assert calls and snap["rows"] == rows                        # asked, failed, nothing lost
     assert snap["last_run"]["answered"] == 0 and len(snap["last_run"]["failed"]) == 80
     assert {AC, LS} <= set(by_id(m)) and set(log["picks"]) == {AC, LS}
-    # A snapshot that cannot be read: football-data.co.uk alone, and the file left as it is.
+    # A snapshot that cannot be read, and nothing answered to rebuild it
+    # from: football-data.co.uk alone, and the file left as it is (one that
+    # answers rebuilds it: test_soccer_feed).
     run.feed_path.write_text("{ not json")
     lines = []
     m, _, _, log = run("2026-10-27 10:00", sync=True, lines=lines)
     assert run.feed_path.read_text() == "{ not json"
-    assert any("sync failed" in line for line in lines) and any("unreadable" in line for line in lines)
+    assert any("unreadable" in line and "left as it is" in line for line in lines)
+    assert any("football-data.co.uk alone" in line for line in lines)
     assert set(log["picks"]) == {AC, LS} and not any(p.get("void") for p in log["picks"].values())
     # Feed rows the join cannot read: football-data.co.uk alone, said so.
     write_feed(run.feed_path, weekend())
@@ -593,3 +598,216 @@ def test_a_feed_that_is_down_keeps_its_snapshot_and_never_stops_the_run(run, mon
     m, _, _, _ = run(FRIDAY, fixtures=_fixtures(), lines=lines)
     assert any("could not be joined" in line for line in lines)
     assert by_id(m)[AC]["fixture_source"] == "football-data.co.uk" and by_id(m)[AC]["market"] is not None
+
+
+# ------------------------------------------------------------- the reviews' cases
+
+def fixtures_at(ls_kickoff=None, drop=()):
+    """football-data.co.uk's fixtures with Leeds v Stoke moved to `ls_kickoff`
+    (its id with it), and the ids in `drop` left out."""
+    fx = _fixtures()
+    if ls_kickoff is not None:
+        k = pd.Timestamp(ls_kickoff)
+        i = fx.index[fx["home"] == "Leeds"][0]
+        fx.loc[i, ["date", "time", "kickoff", "match_id"]] = [
+            f"{k:%Y-%m-%d}", f"{k:%H:%M}", k, sd.match_id("E0", k.date(), "Leeds", "Stoke")]
+    return fx[~fx["match_id"].isin(drop)].reset_index(drop=True)
+
+
+def test_a_frozen_pick_whose_id_changes_moves_as_it_is_and_nothing_new_is_logged(run):
+    """The feeds disagree on Leeds v Stoke (ESPN Sat 17:30, fixturedownload Sun
+    16:30): ESPN's date is the match's, not confirmed, so the pick closes at
+    midnight UK on Saturday. football-data.co.uk then posts it for Sunday -
+    after that midnight. The frozen pick moves to its id as it is; no pick is
+    written after it froze, and nothing is voided."""
+    sat_ls = sd.match_id("E0", pd.Timestamp("2026-10-31").date(), "Leeds", "Stoke")
+    feed = both("Arsenal", "Chelsea", "2026-10-31 15:00") + [espn("Leeds", "Stoke", "2026-10-31 17:30"),
+                                                             fdl("Leeds", "Stoke", "2026-11-01 16:30")]
+    _, _, _, monday = run(MONDAY, fixtures=none_posted(), feed=feed)
+    first = monday["picks"][sat_ls]
+    assert first["freeze_at"] == "2026-10-31T00:00:00Z" and first["kickoff"] == "2026-10-31T17:30:00Z"
+    m, _, perf, sat = run("2026-10-31 07:17", fixtures=_fixtures())
+    assert sat_ls not in sat["picks"] and set(sat["picks"]) == {AC, LS}
+    p = sat["picks"][LS]
+    assert p["id_was"] == sat_ls and not p.get("void")
+    assert {k: p[k] for k in sl.FIELDS if k not in sl.TIME_FIELDS + ("match_id",)} == \
+        {k: first[k] for k in sl.FIELDS if k not in sl.TIME_FIELDS + ("match_id",)}
+    assert (p["last_logged"], p["first_logged"], p["freeze_at"]) == \
+        (first["last_logged"], first["first_logged"], first["freeze_at"])
+    assert (p["kickoff"], p["kickoff_was"]) == ("2026-11-01T16:30:00Z", "2026-10-31T17:30:00Z")
+    e = by_id(m)[LS]
+    assert e["locked"] and e["pick"] == first["pick"] and e["kickoff"] == "2026-11-01T16:30:00Z"
+    assert e["freeze_at"] == "2026-10-31T00:00:00Z"
+    # Sunday's result lands: one pick, graded once.
+    row = fixtures_at().iloc[[1]].drop(columns=["fetched_at"]).assign(hg=1, ag=1, result="D")
+    _, _, perf, mon = run("2026-11-02 09:17", results=pd.concat([_league(), sd.frame(row.to_dict("records"))]))
+    assert mon["picks"][LS]["final"]["result"] == "D" and perf["track_record"]["settled"] == 1
+
+
+def test_a_lone_stale_fixturedownload_time_closes_the_pick_but_never_dates_the_match(run):
+    """football-data.co.uk and ESPN have Leeds v Stoke on Monday 20:00,
+    fixturedownload still on Saturday 19:45 (Ligue 1's Lorient v Brest, real).
+    The match is Monday's - its id, its day, a confirmed time - and the pick
+    closes at fixturedownload's earlier time. Past that, the card is locked,
+    never "kicked off", until Monday's kickoff."""
+    mon_ls = sd.match_id("E0", pd.Timestamp("2026-11-02").date(), "Leeds", "Stoke")
+    feed = both("Arsenal", "Chelsea", "2026-10-31 15:00") + [espn("Leeds", "Stoke", "2026-11-02 20:00"),
+                                                             fdl("Leeds", "Stoke", "2026-10-31 19:45")]
+    m, _, _, fri = run(FRIDAY, fixtures=fixtures_at("2026-11-02 20:00"), feed=feed)
+    e = by_id(m)[mon_ls]
+    assert (e["kickoff"], e["time_confirmed"], e["freeze_at"]) == ("2026-11-02T20:00:00Z", True, "2026-10-31T19:45:00Z")
+    assert e["kickoff_sources"] == {"football-data.co.uk": "2026-11-02T20:00:00Z", "ESPN": "2026-11-02T20:00:00Z",
+                                    "fixturedownload.com": "2026-10-31T19:45:00Z"}
+    p = fri["picks"][mon_ls]
+    assert (p["kickoff"], p["freeze_at"], p["kickoff_sources"]) == (e["kickoff"], e["freeze_at"],
+                                                                    e["kickoff_sources"])
+    m, _, _, sat = run("2026-10-31 21:47")
+    e = by_id(m)[mon_ls]
+    assert e["status"] == "upcoming" and e["locked"] and e["pick"] == p["pick"] and sat["picks"][mon_ls] == p
+    m, _, _, _ = run("2026-11-02 21:47")
+    assert by_id(m)[mon_ls]["status"] == "started" and by_id(m)[mon_ls]["kickoff"] == "2026-11-02T20:00:00Z"
+
+
+def test_a_feed_only_match_is_dated_by_espn_and_closes_at_the_earlier_listing(run):
+    feed = [espn("Leeds", "Stoke", "2026-11-02 20:00"), fdl("Leeds", "Stoke", "2026-10-31 19:45")]
+    m, _, _, log = run(MONDAY, fixtures=none_posted(), feed=feed)
+    mon_ls = sd.match_id("E0", pd.Timestamp("2026-11-02").date(), "Leeds", "Stoke")
+    e = by_id(m)[mon_ls]
+    assert (e["kickoff"], e["time_confirmed"], e["freeze_at"]) == ("2026-11-02T20:00:00Z", False, "2026-10-31T19:45:00Z")
+    assert e["kickoff_sources"] == {"ESPN": "2026-11-02T20:00:00Z", "fixturedownload.com": "2026-10-31T19:45:00Z"}
+    m, _, _, _ = run("2026-10-31 21:47")
+    e = by_id(m)[mon_ls]
+    assert e["status"] == "upcoming" and e["locked"] and e["pick"] == log["picks"][mon_ls]["pick"]
+
+
+def test_fixturedownload_alone_never_moves_a_football_data_fixture(run):
+    """football-data.co.uk has Arsenal v Chelsea Saturday 15:00; only
+    fixturedownload lists it, stale, for Sunday (no ESPN row). Its
+    "scheduled" means no score posted yet, not a move: the priced pick is
+    not voided, no pick is logged after the real kickoff, and the result
+    grades it."""
+    _, _, _, fri = run(FRIDAY, fixtures=_fixtures(), feed=[fdl("Arsenal", "Chelsea", "2026-11-01 13:00")])
+    first = fri["picks"][AC]
+    assert first["market"] is not None
+    lines = []
+    m, _, _, sat = run("2026-10-31 21:47", lines=lines)
+    assert not any("moved" in line for line in lines)
+    assert sat["picks"][AC] == first and len(sat["picks"]) == 2
+    assert by_id(m)[AC]["status"] == "started"
+    _, _, perf, mon = run("2026-11-02 09:17", results=posted_ac(0, 2))
+    assert mon["picks"][AC]["final"]["result"] == "A" and not mon["picks"][AC].get("void")
+    assert perf["track_record"]["settled"] == 1 and len(mon["picks"]) == 2
+
+
+def test_espn_moving_a_football_data_fixture_after_its_time_is_shown_on_espns_date(run):
+    """football-data.co.uk's file still has Saturday 15:00; ESPN lists the
+    match for Monday (fixturedownload agrees with the old slot). Past
+    Saturday 15:00 with no result, ESPN's date stands: the match is listed
+    again, on Monday, with every source's time - never dropped silently. The
+    Friday pick froze at Saturday 15:00, and ESPN's Monday is still to come,
+    so the match is not known to be off (it may have been played on Saturday
+    with its result not in yet): the pick moves to Monday's id as it is,
+    locked - one match, one pick, nothing logged after it froze."""
+    feed = [espn("Arsenal", "Chelsea", "2026-11-02 19:45"), fdl("Arsenal", "Chelsea", "2026-10-31 15:00")] + \
+        both("Leeds", "Stoke", "2026-11-01 16:30")
+    m, _, _, fri = run(FRIDAY, fixtures=_fixtures(), feed=feed)
+    e = by_id(m)[AC]
+    assert (e["kickoff"], e["freeze_at"]) == ("2026-10-31T15:00:00Z", "2026-10-31T15:00:00Z")
+    lines = []
+    m, _, _, sun = run("2026-11-01 09:00", lines=lines)
+    new = sd.match_id("E0", pd.Timestamp("2026-11-02").date(), "Arsenal", "Chelsea")
+    assert any("moved - its date stands" in line for line in lines)
+    e = by_id(m)[new]
+    assert e["status"] == "upcoming" and e["kickoff"] == "2026-11-02T19:45:00Z"
+    assert e["kickoff_sources"] == {"football-data.co.uk": "2026-10-31T15:00:00Z", "ESPN": "2026-11-02T19:45:00Z",
+                                    "fixturedownload.com": "2026-10-31T15:00:00Z"}
+    assert e["locked"] and e["freeze_at"] == "2026-10-31T15:00:00Z"
+    p = sun["picks"][new]
+    assert AC not in sun["picks"] and p["id_was"] == AC and not p.get("void")
+    assert p["last_logged"] == fri["picks"][AC]["last_logged"] and p["pick"] == fri["picks"][AC]["pick"]
+    assert sum(1 for p in sun["picks"].values() if p["home"] == "Arsenal" and not p.get("void")) == 1
+
+
+def test_a_provisional_grade_is_withdrawn_when_espn_no_longer_calls_it_final(run):
+    run(FRIDAY, feed=weekend())
+    _, _, _, sat = run("2026-10-31 21:47", feed=played_ac())
+    assert sat["picks"][AC]["final"]["provisional"]
+    abandoned = [espn("Arsenal", "Chelsea", "2026-10-31 15:00", status="abandoned"),
+                 fdl("Arsenal", "Chelsea", "2026-10-31 15:00", score=(0, 2))] + both("Leeds", "Stoke", "2026-11-01 16:30")
+    m, _, perf, sun = run("2026-11-01 09:00", feed=abandoned)
+    p = sun["picks"][AC]
+    assert "final" not in p and "correct" not in p and not p.get("void")
+    assert p["corrections"][-1]["by"] == "the feeds now say abandoned" and p["corrections"][-1]["now"] is None
+    assert perf["track_record"]["settled"] == 0 and perf["track_record"]["pending"] == 2
+    e = by_id(m)[AC]
+    assert e["status"] == "abandoned" and e["held"] and "score" not in e
+
+
+def test_a_wrong_early_fixturedownload_time_on_a_result_never_voids_a_pick(run):
+    """The pick is logged Saturday 07:17 for a 15:00 kickoff both
+    football-data.co.uk and ESPN give; the result rows carry ESPN's 15:00 and
+    a wrong fixturedownload 07:00. The provisional path checks ESPN's time,
+    the final's own: graded, not void."""
+    run("2026-10-31 07:17", fixtures=_fixtures(), feed=weekend())
+    result = [espn("Arsenal", "Chelsea", "2026-10-31 15:00", status="final", score=(0, 2)),
+              fdl("Arsenal", "Chelsea", "2026-10-31 07:00", score=(0, 2))] + both("Leeds", "Stoke", "2026-11-01 16:30")
+    _, _, perf, sat = run("2026-10-31 21:47", feed=result)
+    p = sat["picks"][AC]
+    assert not p.get("void") and p["final"]["provisional"] and p["last_logged"] == "2026-10-31T07:17:00Z"
+    _, _, perf, mon = run("2026-11-02 09:17", results=posted_ac(0, 2))
+    assert mon["picks"][AC]["final"]["provisional_was"]["confirmed"] and perf["track_record"]["settled"] == 1
+
+
+def test_a_priced_pick_is_never_replaced_by_an_unpriced_one(run):
+    """football-data.co.uk's fixtures file (replaced whole on every sync)
+    stops listing a match it had priced while the feeds still list it: the
+    pick stays the market's - only its time follows the feeds - and the card
+    shows the pick that counts."""
+    _, _, _, fri = run(FRIDAY, fixtures=_fixtures(), feed=weekend())
+    first = fri["picks"][AC]
+    assert first["market"] is not None and first["price_source"] == "football-data.co.uk"
+    m, _, _, sat = run("2026-10-31 07:17", fixtures=fixtures_at(drop=(AC,)))
+    p = sat["picks"][AC]
+    assert {k: p[k] for k in p if k not in sl.TIME_FIELDS} == {k: first[k] for k in first if k not in sl.TIME_FIELDS}
+    assert p["last_logged"] == first["last_logged"]
+    e = by_id(m)[AC]
+    assert e["fixture_source"] == ssch.FEED_SOURCE and e["market"] == first["market"] and e["pick"] == first["pick"]
+    assert e["price_status"] == "posted" and e["pick_prob"] == first["pick_prob"]
+
+
+def test_feeds_that_contradict_each_other_on_a_score_say_so_on_the_card(run):
+    run(FRIDAY, feed=weekend())
+    clash = [espn("Arsenal", "Chelsea", "2026-10-31 15:00", status="final", score=(1, 1)),
+             fdl("Arsenal", "Chelsea", "2026-10-31 15:00", score=(2, 1))] + both("Leeds", "Stoke", "2026-11-01 16:30")
+    m, _, perf, sat = run("2026-10-31 21:47", feed=clash)
+    e = by_id(m)[AC]
+    assert e["status"] == "started" and "score" not in e
+    assert e["disputed"] == {"ESPN": "1-1", "fixturedownload.com": "2-1"}
+    assert "final" not in sat["picks"][AC] and perf["track_record"]["settled"] == 0
+
+
+def test_a_real_run_logs_at_a_moment_no_earlier_than_the_data_it_read(run, monkeypatch):
+    """With no `now` (the runner), the feeds stamp each row as its request
+    answers and the clock is read again after the sync: a pick's log time
+    is never before the prices and kickoffs it was built from."""
+    run(MONDAY, fixtures=none_posted(), feed=weekend())
+    clock = iter([pd.Timestamp("2026-10-30 18:00"), pd.Timestamp("2026-10-30 18:11")])
+    monkeypatch.setattr(sp, "now_utc", lambda: next(clock))
+    seen = {}
+    monkeypatch.setattr(sd, "sync", lambda *a, **k: seen.setdefault("football-data", True))
+    monkeypatch.setattr(sfeed, "sync", lambda now=None, **k: seen.setdefault("feeds_now", now))
+    sp.run(sync=True, now=None, out_dir=run.dir, log_path=run.dir / "history.json", log=lambda *_: None,
+           feed_path=run.feed_path)
+    log = json.loads((run.dir / "history.json").read_text())
+    assert seen == {"football-data": True, "feeds_now": None}
+    assert log["picks"][AC]["last_logged"] == "2026-10-30T18:11:00Z"
+
+
+def test_a_feed_final_before_its_own_kickoff_is_no_result():
+    """A row ESPN calls final while its kickoff is still to come (a feed
+    glitch) grades nothing."""
+    early = sfeed.reconcile([espn("Arsenal", "Chelsea", "2026-10-31 15:00", status="final", score=(0, 2))],
+                            [fdl("Arsenal", "Chelsea", "2026-10-31 15:00")], log=lambda *_: None)
+    assert early[0]["status"] == "final"
+    assert ssch.provisional_results(early, set(), pd.Timestamp("2026-10-31 14:00")).empty
+    assert len(ssch.provisional_results(early, set(), pd.Timestamp("2026-10-31 17:00"))) == 1

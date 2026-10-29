@@ -26,9 +26,11 @@ One run:
      standalone page.
 
 A PICK IS LOGGED ONLY BEFORE IT FREEZES: at kickoff, or at 00:00 UK time on
-match day where the kickoff time is not confirmed (soccer_schedule).
-Re-running before then updates its entry; after, the entry is frozen, and a
-pick logged after the match's real kickoff is never graded (soccer_log).
+match day where the kickoff time is not confirmed - or earlier, at any
+source's earlier time (soccer_schedule). Re-running before then updates its
+entry (never a priced pick with an unpriced one); after, the entry is
+frozen - it follows its match to a new id unchanged - and a pick logged
+after the match's real kickoff is never graded (soccer_log).
 A pick logged for a match the feeds then postpone, or stop dating, is shown
 on that match's card as held: kept in the log, not graded, replaced if the
 match is picked on its new date, void after three weeks with no result.
@@ -195,7 +197,7 @@ def score_fields(card, pick_prob, model_only):
         out.update(p_btts=card["btts"], p_o15=card["o15"], p_o35=card["o35"], score_source=card["source"],
                    scores={"top": card["scores"], "other": card["other"], "matrix": card["matrix"],
                            "o25": card["o25"], "reason": card["reason"], "miss": card["miss"],
-                           "miss_on": card["miss_on"]})
+                           "miss_on": card["miss_on"], "flagged": card.get("flagged", False)})
     if pick_prob is not None:
         out.update(band=ssc.band_of(pick_prob), band_basis="model" if model_only else "pick")
     return out
@@ -241,7 +243,7 @@ def log_fields(e):
                 prices=e["prices"], p_o25=e["p_o25"], model_o25=e["model_o25"], market_o25=e["market_o25"],
                 prices_at=e["prices_at"], price_source="football-data.co.uk" if e["market"] else None,
                 freeze_at=e["freeze_at"], time_confirmed=e["time_confirmed"], fixture_source=e["fixture_source"],
-                **{k: e.get(k) for k in SCORE_KEYS})
+                kickoff_sources=e.get("kickoff_sources"), **{k: e.get(k) for k in SCORE_KEYS})
 
 
 # What a frozen pick shows on its card: the line that was logged.
@@ -263,19 +265,24 @@ def lock(e, p, now):
         e["price_status"] = ("posted" if p.get("market") else
                              "not_yet" if p.get("fixture_source") == ssch.FEED_SOURCE else "none")
         return e
+    midnight = e.get("freeze_at") and e.get("kickoff") and not e.get("time_confirmed") and \
+        sl.naive_utc(e["freeze_at"]) == ssch.midnight_uk(e["kickoff"])
     e.update(dict.fromkeys(PICK_KEYS[:-1]), no_pick_reason=(
         "No pick: the kickoff time is not confirmed, so picks closed at midnight UK time on match day, "
-        "before any run logged one."))
+        "before any run logged one." if midnight else
+        "No pick: a source lists an earlier kickoff, so picks closed then, before any run logged one."))
     return e
 
 
-def logged_entry(p, matches, feed_status=None, feed_kickoff=None):
+def logged_entry(p, matches, feed_status=None, feed_kickoff=None, disputes=None):
     """A logged pick whose match has kicked off, for the Matches tab: the
     pick as it was logged before kickoff, beside the result once it is in
     ("final", flagged provisional while only the feeds have it), until then
-    "started" - or postponed, cancelled or abandoned as the feeds say, or
-    postponed where the feeds now list the match on a later date
-    ("moved_to") - never dropped in between."""
+    "started" - with the feeds' two scores where they contradict each other
+    ("disputed": no result until football-data.co.uk's) - or postponed,
+    cancelled or abandoned as the feeds say, or postponed where ESPN now
+    lists the match on a later date ("moved_to") - never dropped in
+    between."""
     date = str(p["kickoff"])[:10]
     fin = p.get("final")
     off = (feed_status or {}).get(sl.pairing(p))
@@ -287,6 +294,7 @@ def logged_entry(p, matches, feed_status=None, feed_kickoff=None):
         "status": ("final" if fin else off if off in ssch.OFF + ("abandoned",) else "postponed" if moved
                    else "started"),
         "time_confirmed": p.get("time_confirmed", True), "fixture_source": p.get("fixture_source"),
+        "kickoff_sources": p.get("kickoff_sources"),
         "home": st.display(p["home"]), "away": st.display(p["away"]),
         "p_h": p.get("p_h"), "p_d": p.get("p_d"), "p_a": p.get("p_a"), "pick": p.get("pick"),
         "pick_prob": p.get("pick_prob"), "model": p.get("model"), "market": p.get("market"),
@@ -308,6 +316,8 @@ def logged_entry(p, matches, feed_status=None, feed_kickoff=None):
         out["result_source"] = fin.get("source") if fin.get("provisional") else "football-data.co.uk"
     if p.get("corrections"):
         out["corrections"] = p["corrections"]
+    if not fin and off == "disputed" and (disputes or {}).get(sl.pairing(p)):
+        out["disputed"] = disputes[sl.pairing(p)]
     if moved:
         out["moved_to"] = stamp(later)
     if not fin and out["status"] != "started":
@@ -373,9 +383,10 @@ def tbc_entry(t, matches, now):
 # ------------------------------------------------------------- the run
 
 def sync_all(now, feed_path, log=print):
-    """football-data.co.uk, then the feeds. A feed sync that fails outright
-    (it catches each request's failure itself) keeps the snapshot on file:
-    the run goes on."""
+    """football-data.co.uk, then the feeds (`now` None: a real run, each feed
+    row stamped when its own request answered). A feed sync that fails
+    outright (it catches each request's failure itself) keeps the snapshot
+    on file: the run goes on."""
     sd.sync(log=lambda m: log(m))
     try:
         sfeed.sync(now=now, path=feed_path, log=log)
@@ -384,11 +395,19 @@ def sync_all(now, feed_path, log=print):
 
 
 def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, feed_path=None):
+    """One run (the module's notes). `now` None is a real run: the feeds stamp
+    each row when its own request was answered, and the clock is read again
+    after the sync, so every pick is logged - and checked for freezing - at a
+    moment no earlier than the data it was built from. A `now` given (a
+    replay, a test) is used throughout."""
+    real = now is None
     now = pd.Timestamp(now) if now is not None else now_utc()
     feed_path = feed_path if feed_path is not None else sfeed.FEED
     if sync:
         log("1. sync")
-        sync_all(now, feed_path, log)
+        sync_all(None if real else now, feed_path, log)
+        if real:
+            now = now_utc()
     matches = sd.load_matches()
     fixtures = sd.load_fixtures()
     snap, feed = ssch.feed_matches(feed_path, log=log)
@@ -447,21 +466,37 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
         e["fixture_source"] = meta["source"]
         e["price_status"] = ("posted" if e["market"] else
                              "not_yet" if meta["source"] == ssch.FEED_SOURCE else "none")
-        kf, kd = meta.get("kickoff_feed"), meta.get("kickoff_fd")
-        if kf is not None and kd is not None and kf != kd:
-            e["kickoff_sources"] = {"football-data.co.uk": stamp(kd), "feeds": stamp(kf)}
+        # Each source's kickoff where they differ: the card lists them.
+        if meta.get("kickoff_sources"):
+            e["kickoff_sources"] = {k: stamp(v) for k, v in meta["kickoff_sources"].items()}
         entries.append(e)
 
     log("3. log and grade")
     history = sl.load(log_path)
-    logged = sum(sl.log_pick(history, log_fields(e), now) for e in entries if e["pick"])
+    off_ids = {o["match_id"] for o in sched.off}
+    logged = sum(sl.log_pick(history, log_fields(e), now, off=off_ids) for e in entries if e["pick"])
     stats = {}
-    graded = sl.grade(history, matches, now, provisional=sched.provisional, disputed=sched.disputed, stats=stats)
+    graded = sl.grade(history, matches, now, provisional=sched.provisional, disputed=sched.disputed, stats=stats,
+                      feed_status=sched.status)
     sl.save(history, log_path)
+    pending_of = {}
+    for p in history["picks"].values():
+        if not p.get("void") and not p.get("final"):
+            pending_of.setdefault(sl.pairing(p), []).append(p)
     for e in entries:
         p = history["picks"].get(e["match_id"])
+        if p is None or p.get("void"):
+            # A pick for the match under another id (one log_pick has not
+            # moved: its match closed after its old date passed) is the one shown.
+            mine = pending_of.get((e["league"], e["season"], e["home_key"], e["away_key"])) or []
+            p = max(mine, key=lambda x: x.get("last_logged") or "") if mine else p
         if sl.naive_utc(e["freeze_at"]) <= now or (p and not p.get("void") and sl.frozen(p, now)):
             lock(e, p, now)
+        elif p and not p.get("void") and p.get("market") and not e["market"]:
+            # The log never replaces a priced pick with an unpriced one
+            # (football-data.co.uk's file no longer lists the match): the
+            # card shows the pick that counts.
+            e.update({k: p.get(k) for k in PICK_KEYS}, price_status="posted", priced_kept=True)
         if p and not p.get("void"):
             e["logged_at"] = p.get("last_logged")
     # Top-league results only: a second-tier match must not set "results to".
@@ -483,7 +518,7 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
               and window <= sl.naive_utc(p["kickoff"])
               and (sl.naive_utc(p["kickoff"]) <= now
                    or (sl.naive_utc(p["kickoff"]) <= now + AHEAD and (p.get("final") or sl.pairing(p) in started)))]
-    shown_picks = [logged_entry(p, shown, sched.status, sched.feed_kickoff) for p in kicked]
+    shown_picks = [logged_entry(p, shown, sched.status, sched.feed_kickoff, sched.disputes) for p in kicked]
     # A postponed or undated match whose pick is on screen already is not
     # shown twice; one with a pick logged before the feeds said so shows it.
     shown_pairs = {sl.pairing(p) for p in kicked}
@@ -507,7 +542,7 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
         f"{sum(1 for e in entries if e['pick'] and not e['market'])} the model alone), {logged} logged, "
         f"{graded} graded ({stats.get('provisional', 0)} provisionally), {stats.get('confirmed', 0)} provisional "
         f"confirmed, {stats.get('corrected', 0)} corrected, {stats.get('withdrawn', 0)} withdrawn, "
-        f"{stats.get('late', 0)} void as logged after kickoff, "
+        f"{stats.get('late', 0)} void as logged after kickoff ({stats.get('restored', 0)} restored), "
         f"{len(shown_picks)} kicked off or over, {len(off)} postponed/cancelled/abandoned, {len(tbc)} date to come")
 
     log("4. write the app data")

@@ -156,3 +156,107 @@ def test_a_pick_logged_after_the_real_kickoff_is_never_graded():
     log = {"schema": sl.SCHEMA, "picks": {}}
     sl.log_pick(log, _match(), pd.Timestamp("2026-10-30 16:00"))
     assert sl.grade(log, friday(1, 0, "H")) == 1 and log["picks"]["E0-20261031-arsenal-chelsea"]["correct"] is True
+
+
+def _feed_result(kickoff, **kw):
+    row = {"match_id": "E0-20261031-arsenal-chelsea", "league": "E0", "season": 2026, "date": "2026-10-31",
+           "kickoff": pd.Timestamp(kickoff), "home": "Arsenal", "away": "Chelsea", "hg": 0, "ag": 2, "result": "A",
+           "provisional": True, "source": "ESPN"}
+    row.update(kw)
+    return pd.DataFrame([row])
+
+
+def test_a_void_on_the_feeds_kickoff_is_restored_when_football_data_shows_it_was_in_time():
+    log = {"schema": sl.SCHEMA, "picks": {}}
+    sl.log_pick(log, _match(), pd.Timestamp("2026-10-31 07:17"))
+    stats = {}
+    sl.grade(log, _feed_result("2026-10-31 15:00").iloc[:0], provisional=_feed_result("2026-10-31 07:00"),
+             now=pd.Timestamp("2026-10-31 21:47"), stats=stats)
+    p = log["picks"]["E0-20261031-arsenal-chelsea"]
+    assert (p["void"], p["void_by"], stats["late"]) == ("logged after kickoff", "ESPN", 1)
+    fd = _feed_result("2026-10-31 15:00").drop(columns=["provisional", "source"])
+    stats = {}
+    assert sl.grade(log, fd, now=pd.Timestamp("2026-11-02 09:17"), stats=stats) == 1
+    assert not p.get("void") and p["final"]["result"] == "A" and stats["restored"] == 1
+    assert p["corrections"][-1]["now"] == "restored" and p["corrections"][-1]["by"] == "football-data.co.uk"
+    assert sl.record(log)["settled"] == 1
+    # football-data.co.uk's own kickoff saying late is final: never restored.
+    log = {"schema": sl.SCHEMA, "picks": {}}
+    sl.log_pick(log, _match(), pd.Timestamp("2026-10-31 07:17"))
+    sl.grade(log, fd.assign(kickoff=pd.Timestamp("2026-10-31 07:00")), now=pd.Timestamp("2026-11-02 09:17"))
+    sl.grade(log, fd, now=pd.Timestamp("2026-11-03 09:17"))
+    assert log["picks"]["E0-20261031-arsenal-chelsea"]["void_by"] == "football-data.co.uk"
+
+
+def test_a_frozen_pick_follows_its_match_to_a_new_id_unchanged():
+    now = pd.Timestamp("2026-10-30 18:00")
+    log = {"schema": sl.SCHEMA, "picks": {}}
+    sl.log_pick(log, _match(freeze_at="2026-10-31T00:00:00Z", time_confirmed=False), now)
+    first = dict(log["picks"]["E0-20261031-arsenal-chelsea"])
+    # Saturday 07:17, after it froze and before its kickoff: posted for Sunday.
+    sunday = _match(match_id="E0-20261101-arsenal-chelsea", kickoff="2026-11-01T14:00:00Z", pick="A",
+                    p_h=0.2, freeze_at="2026-11-01T14:00:00Z", time_confirmed=True)
+    assert not sl.log_pick(log, sunday, pd.Timestamp("2026-10-31 07:17"))
+    assert list(log["picks"]) == ["E0-20261101-arsenal-chelsea"]
+    p = log["picks"]["E0-20261101-arsenal-chelsea"]
+    assert (p["pick"], p["p_h"], p["freeze_at"], p["last_logged"]) == ("H", 0.52, first["freeze_at"], first["last_logged"])
+    assert (p["kickoff"], p["kickoff_was"], p["id_was"]) == ("2026-11-01T14:00:00Z", "2026-10-31T15:00:00Z",
+                                                            "E0-20261031-arsenal-chelsea")
+    # Past its own kickoff with no result, or listed as postponed: it is off,
+    # and a pick on the new date replaces it.
+    for when, off in (("2026-10-31 16:00", ()), ("2026-10-31 09:00", ("E0-20261031-arsenal-chelsea",))):
+        log = {"schema": sl.SCHEMA, "picks": {}}
+        sl.log_pick(log, _match(), now)
+        assert sl.log_pick(log, dict(sunday, freeze_at=None), pd.Timestamp(when), off=off)
+        assert log["picks"]["E0-20261031-arsenal-chelsea"]["void"] == "rescheduled"
+        assert log["picks"]["E0-20261101-arsenal-chelsea"]["pick"] == "A"
+
+
+def test_a_priced_pick_is_never_overwritten_by_an_unpriced_one():
+    log = {"schema": sl.SCHEMA, "picks": {}}
+    priced = _match(market={"p_h": 0.5, "p_d": 0.27, "p_a": 0.23}, price_source="football-data.co.uk",
+                    freeze_at="2026-10-31T15:00:00Z", time_confirmed=True)
+    sl.log_pick(log, priced, pd.Timestamp("2026-10-30 18:00"))
+    before = dict(log["picks"]["E0-20261031-arsenal-chelsea"])
+    bare = _match(pick="A", market=None, price_source=None, freeze_at="2026-10-31T00:00:00Z", time_confirmed=False)
+    assert not sl.log_pick(log, bare, pd.Timestamp("2026-10-30 20:00"))
+    p = log["picks"]["E0-20261031-arsenal-chelsea"]
+    assert p["pick"] == "H" and p["market"] == before["market"] and p["last_logged"] == before["last_logged"]
+    assert (p["freeze_at"], p["time_confirmed"]) == ("2026-10-31T00:00:00Z", False)       # its time follows the match
+    # A new price replaces it as ever.
+    assert sl.log_pick(log, dict(priced, pick_prob=0.55), pd.Timestamp("2026-10-30 22:00"))
+    assert log["picks"]["E0-20261031-arsenal-chelsea"]["pick_prob"] == 0.55
+
+
+def test_one_match_one_pick_even_from_an_old_log():
+    log = {"schema": sl.SCHEMA, "picks": {}}
+    now = pd.Timestamp("2026-10-29 09:00")
+    sl.log_pick(log, _match(), now)
+    log["picks"]["E0-20261101-arsenal-chelsea"] = dict(log["picks"]["E0-20261031-arsenal-chelsea"],
+                                                         match_id="E0-20261101-arsenal-chelsea")
+    assert sl.log_pick(log, _match(), pd.Timestamp("2026-10-29 10:00"))
+    assert log["picks"]["E0-20261101-arsenal-chelsea"]["void"] == "duplicate"
+    assert sl.record(log)["pending"] == 1
+    # A void entry under the id a pick moves to is kept inside it.
+    log["picks"]["E0-20261101-arsenal-chelsea"]["void"] = "rescheduled"
+    assert sl.log_pick(log, _match(match_id="E0-20261101-arsenal-chelsea", kickoff="2026-11-01T14:00:00Z"),
+                       pd.Timestamp("2026-10-29 11:00"))
+    p = log["picks"]["E0-20261101-arsenal-chelsea"]
+    assert p["void_was"]["void"] == "rescheduled" and p["id_was"] == "E0-20261031-arsenal-chelsea" and not p.get("void")
+
+
+def test_a_frozen_pick_is_not_voided_while_another_sources_time_is_still_to_come():
+    """The pick's id came from ESPN's date, which ESPN later corrects; no run
+    saw the correction before ESPN's wrong time passed. fixturedownload's time
+    is still to come, so the match is not known to be off: the pick moves to
+    the new id as it is, nothing is logged after it froze, nothing is void."""
+    log = {"schema": sl.SCHEMA, "picks": {}}
+    first = _match(kickoff="2026-10-31T15:00:00Z",
+                   kickoff_sources={"ESPN": "2026-10-31T15:00:00Z", "fixturedownload": "2026-11-01T16:15:00Z"})
+    sl.log_pick(log, first, pd.Timestamp("2026-10-30 18:00"))
+    moved = _match(match_id="E0-20261101-arsenal-chelsea", kickoff="2026-11-01T16:15:00Z")
+    sl.log_pick(log, moved, pd.Timestamp("2026-10-31 16:00"))
+    assert not any(p.get("void") for p in log["picks"].values())
+    assert list(log["picks"]) == ["E0-20261101-arsenal-chelsea"]
+    p = log["picks"]["E0-20261101-arsenal-chelsea"]
+    assert p["id_was"] == "E0-20261031-arsenal-chelsea" and p["last_logged"] == "2026-10-30T18:00:00Z"
