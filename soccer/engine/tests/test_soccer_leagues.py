@@ -103,27 +103,28 @@ def test_the_espn_codes_are_the_ones_espn_answered_in_the_probe():
     assert sorted(c for c, n in events.items() if n == 0) == ["FIN", "IRL", "ROU", "SC2", "SC3", "SWZ"]
 
 
-def test_every_league_value_in_the_files_is_placed_or_left_out_on_purpose():
+def test_every_league_value_in_the_files_is_placed():
     seen = collections.Counter()
     for code in sd.EXTRA:
         for row in sd._rows(sd._text(raw(f"fd_new_{code}.csv"))):
             seen[(row["Country"], " ".join(row["League"].split()))] += 1
     unplaced = {k: n for k, n in seen.items() if k not in sd.EXTRA_BY_NAME}
     assert unplaced == {("Switzerland", "Challenge League"): 2}
+    assert set(unplaced) == set(sd.PLAY_OFF_ONLY) and sd.PLAY_OFF_ONLY[("Switzerland", "Challenge League")][0] == "SWZ"
 
 
 # ------------------------------------------------------------- the extra leagues' files
 
 EXTRA_ROWS = {"ARG": 6444, "AUT": 2698, "BRA": 5639, "CHN": 3040, "DNK": 3024, "FIN": 2714, "IRL": 2738,
               "JPN": 4643, "MEX": 4779, "NOR": 3574, "POL": 4188, "ROU": 4286, "RUS": 3416, "SWE": 3584,
-              "SWZ": 2739, "USA": 6282}
+              "SWZ": 2741, "USA": 6282}
 
 
 @pytest.mark.parametrize("code", sorted(EXTRA_ROWS))
 def test_an_extra_leagues_file_parses_every_season_into_the_snapshots_columns(code):
     df, skipped = extra(code)
     assert list(df.columns) == sd.COLUMNS and len(df) == EXTRA_ROWS[code]
-    assert skipped == ({"Switzerland Challenge League": 2} if code == "SWZ" else {})
+    assert skipped == {}
     first = 2014 if code == "CHN" else 2012
     assert sorted(set(df["season"])) == list(range(first, 2027))
     assert (df["league"] == code).all() and df["match_id"].is_unique
@@ -179,7 +180,7 @@ def test_one_match_is_played_after_the_next_season_started():
     assert late == ["ARG-20150129-bocajuniors-velezsarsfield"]
 
 
-def test_argentinas_league_cup_is_part_of_its_season_and_switzerlands_play_off_is_not():
+def test_argentinas_league_cup_is_part_of_its_season_and_switzerlands_play_off_is_with_its_others():
     rows = list(sd._rows(sd._text(raw("fd_new_ARG.csv"))))
     copa = [r for r in rows if r["League"].strip() == "Copa De La Liga Profesional"]
     assert len(copa) == 920
@@ -192,11 +193,14 @@ def test_argentinas_league_cup_is_part_of_its_season_and_switzerlands_play_off_i
                               and r["League"].strip() == name for side in ("Home", "Away")}
         assert clubs("Copa De La Liga Profesional") <= clubs("Liga Profesional"), year
     swz = [r for r in sd._rows(sd._text(raw("fd_new_SWZ.csv"))) if r["League"] == "Challenge League"]
-    assert [(r["Date"], r["Home"], r["Away"]) for r in swz] == [("27/05/2021", "Thun", "Sion"),
-                                                                ("30/05/2021", "Sion", "Thun")]
+    assert [(r["Season"], r["Date"], r["Home"], r["Away"]) for r in swz] == [
+        ("2020/2021", "27/05/2021", "Thun", "Sion"), ("2020/2021", "30/05/2021", "Sion", "Thun")]
     df, _ = extra("SWZ")
-    assert not df["match_id"].isin([sd.match_id("SWZ", sd.parse_date(r["Date"]), r["Home"], r["Away"])
-                                    for r in swz]).any()
+    ids = [sd.match_id("SWZ", sd.parse_date(r["Date"]), r["Home"], r["Away"]) for r in swz]
+    assert df.loc[df["match_id"].isin(ids), "season"].tolist() == [2020, 2020]
+    # 2020-21 then has its play-off, as SWZ's 2018-19, 2019-20 and 2022-23
+    # have theirs under "Super League": 180 matches and one tie.
+    assert df.groupby("season").size()[[2018, 2019, 2020, 2022]].tolist() == [182, 182, 182, 182]
 
 
 def test_the_two_clubs_spelled_two_ways_share_their_ids():
@@ -211,6 +215,52 @@ def test_the_two_clubs_spelled_two_ways_share_their_ids():
 def test_russias_file_stopped_in_august():
     df, _ = extra("RUS")
     assert df["date"].max() == "2026-08-02" and (df["season"] == 2026).sum() == 16
+
+
+def _play_off_seasons(df):
+    """The seasons where a club has one to four matches while the rest have
+    a season's worth: a play-off with a club from outside the league."""
+    slug = lambda name: "".join(ch for ch in name.lower() if ch.isalnum())
+    out = []
+    for season, g in df.groupby("season"):
+        n = pd.concat([g["home"], g["away"]]).map(slug).value_counts()
+        if n.median() >= 10 and (n <= 4).any():
+            out.append(int(season))
+    return out
+
+
+# (league-seasons with a play-off against outside clubs, filed under the top flight's label)
+PLAY_OFF_SEASONS = {"AUT": 2, "CHN": 2, "DNK": 3, "FIN": 10, "IRL": 12, "JPN": 3, "NOR": 12, "ROU": 10,
+                    "RUS": 10, "SWE": 12, "SWZ": 6}
+
+
+def test_the_extra_files_keep_their_promotion_play_offs_and_the_main_ones_leave_them_out():
+    found = {code: _play_off_seasons(extra(code)[0]) for code in sd.EXTRA}
+    assert {code: len(s) for code, s in found.items() if s} == PLAY_OFF_SEASONS
+    assert found["SWZ"] == [2018, 2019, 2020, 2021, 2022, 2023]          # 2020: "Challenge League"
+    # JPN and IRL hold the earlier rounds too: two second-tier clubs.
+    jpn, irl = extra("JPN")[0], extra("IRL")[0]
+    assert len(jpn.query("date == '2018-11-25' and home == 'Omiya Ardija' and away == 'Verdy'")) == 1
+    assert len(irl.query("date == '2020-10-31' and home == 'Bray' and away == 'Galway'")) == 1
+    for div in NEW_MAIN:
+        for code in ("2526", "2627"):
+            assert _play_off_seasons(main(div, code)) == [], (div, code)
+
+
+@pytest.mark.snapshot
+def test_the_main_divisions_snapshot_holds_no_play_off():
+    m = sd.load_matches(leagues=sd.MAIN)
+    assert all(_play_off_seasons(g) == [] for _, g in m.groupby("league"))
+
+
+def test_a_challenge_league_season_would_be_left_out_not_filed_under_switzerland():
+    text = sd._text(raw("fd_new_SWZ.csv"))
+    relabelled = "".join(line.replace(",Super League,", ",Challenge League,") if ",2025/2026," in line else line
+                         for line in text.splitlines(keepends=True))
+    skipped = collections.Counter()
+    df = sd.frame(sd.parse_extra(relabelled.encode(), league="SWZ", skipped=skipped))
+    assert 2025 not in set(df["season"]) and (df["season"] == 2020).sum() == 182
+    assert skipped == {"Switzerland Challenge League 2025 (228 rows: a season, not a play-off)": 228}
 
 
 # ------------------------------------------------------------- the new divisions' season files
@@ -388,6 +438,81 @@ def test_over_a_whole_history_the_uk_clock_gives_local_kickoff_times(code):
     assert uk > utc, (code, round(uk, 2), round(utc, 2))
 
 
+def _uk_clock_changes():
+    """01:00 UTC on the last Sunday of March and of October, 2012-2026."""
+    out = []
+    for year in range(2012, 2027):
+        for month in (3, 10):
+            day = datetime(year, month, 31, 1, tzinfo=timezone.utc)
+            while day.weekday() != 6:
+                day -= timedelta(days=1)
+            out.append(day)
+    return out
+
+
+def _clock_change_windows(df, zone):
+    """A league keeps its kickoff times on its own clock. Across each UK
+    clock change (21 days either side, where the league's own clock holds
+    still or changes at that same moment) the file's times then move by the
+    UK's change less the league's on the UK clock, by minus the league's as
+    UTC, and not at all as the league's own clock. -> per window (the UK's
+    change, the league's, how well each reading's move fits: the overlap of
+    the times before, moved, with the times after)."""
+    zone, span, minute = ZoneInfo(zone), timedelta(days=21), timedelta(minutes=1)
+    offset = lambda z, t: t.astimezone(z).utcoffset()
+    hours = lambda td: int(td.total_seconds() // 3600)
+    days = pd.to_datetime(df["date"])
+    out = []
+    for flip in _uk_clock_changes():
+        if offset(zone, flip - span) != offset(zone, flip - minute) or \
+                offset(zone, flip + minute) != offset(zone, flip + span):
+            continue                                # its own clock changes on another day
+        uk = hours(offset(sd.UK, flip + minute) - offset(sd.UK, flip - minute))
+        own = hours(offset(zone, flip + minute) - offset(zone, flip - minute))
+        day = pd.Timestamp(flip.date())
+        before = df.loc[(days >= day - span) & (days < day), "time"].tolist()
+        after = collections.Counter(t[:5] for t in df.loc[(days >= day) & (days < day + span), "time"])
+        if len(before) < 5 or sum(after.values()) < 5:
+            continue
+        fit = lambda h: _overlap(collections.Counter(f"{(int(t[:2]) + h) % 24:02d}{t[2:5]}" for t in before), after)
+        out.append((uk, own, {"uk": fit(uk - own), "utc": fit(-own), "own": fit(0)}))
+    return out
+
+
+# (windows; the UK clock fits better than UTC, UTC better; where the league's
+# own clock does not change with the UK's: the UK clock better than it, it better)
+CLOCK_CHANGES = {
+    "ARG": (26, 24, 2, 24, 2), "AUT": (27, 27, 0, 0, 0), "BRA": (9, 9, 0, 9, 0), "CHN": (20, 18, 0, 18, 0),
+    "DNK": (28, 28, 0, 0, 0), "FIN": (4, 3, 1, 0, 0), "IRL": (21, 21, 0, 0, 0), "JPN": (28, 23, 2, 23, 2),
+    "MEX": (8, 8, 0, 8, 0), "NOR": (19, 19, 0, 0, 0), "POL": (27, 27, 0, 0, 0), "ROU": (27, 27, 0, 0, 0),
+    "RUS": (26, 26, 0, 26, 0), "SWE": (14, 14, 0, 0, 0), "SWZ": (27, 27, 0, 0, 0),
+    "E2": (3, 3, 0, 0, 0), "E3": (2, 2, 0, 0, 0), "EC": (3, 3, 0, 0, 0), "SC0": (3, 3, 0, 0, 0),
+    "SC1": (2, 2, 0, 0, 0), "SC2": (2, 2, 0, 0, 0), "SC3": (2, 2, 0, 0, 0), "N1": (3, 3, 0, 0, 0),
+    "B1": (2, 2, 0, 0, 0), "P1": (3, 3, 0, 0, 0), "T1": (3, 3, 0, 3, 0), "G1": (2, 2, 0, 0, 0)}
+
+
+def test_across_the_uk_clock_changes_the_times_move_as_the_uk_clock_does():
+    """What tells the UK clock from UTC where no UTC source overlaps (ESPN's
+    window is after 25/10/2026, when the two agree), and from the league's
+    own clock outside Europe. USA's clock changes on other days: no window
+    (fixturedownload settles it)."""
+    got = {}
+    for code in [*sd.EXTRA, *NEW_MAIN]:
+        df = extra(code)[0] if code in sd.EXTRA else pd.concat([main(code, "2526"), main(code, "2627")])
+        windows = _clock_change_windows(df, ZONES[code])
+        if not windows:
+            continue
+        apart = [f for uk, own, f in windows if uk != own]
+        got[code] = (len(windows), sum(f["uk"] > f["utc"] for _, _, f in windows),
+                     sum(f["utc"] > f["uk"] for _, _, f in windows),
+                     sum(f["uk"] > f["own"] for f in apart), sum(f["own"] > f["uk"] for f in apart))
+    assert got == CLOCK_CHANGES
+    no_utc_source = {"AUT", "CHN", "FIN", "IRL", "JPN", "NOR", "POL", "ROU", "RUS", "SWZ", "B1", "G1", "SC2", "SC3"}
+    assert no_utc_source <= set(got) and "USA" not in got
+    for code, (n, uk, utc, uk_own, own) in got.items():
+        assert uk >= 0.75 * n and uk >= 3 * utc and uk_own >= 3 * own, code
+
+
 # ------------------------------------------------------------- fixtures
 
 def test_the_main_fixtures_keep_to_the_ten_unless_asked():
@@ -481,7 +606,7 @@ def test_a_sync_from_the_probe_fills_every_league_and_both_fixtures(tmp_path):
     assert (every.loc[every["league"].isin(NEW_MAIN), "season"] == 2026).all()
     assert sorted(set(every.loc[every["league"] == "CHN", "season"])) == list(range(2014, 2027))
     assert sd.load_matches(matches).empty                                # the ten: none on file here
-    assert any("SWZ: 2 rows of Switzerland Challenge League left out" in line for line in lines)
+    assert not any("left out" in line for line in lines)
     assert not any("KEPT ON FILE" in line for line in lines)
     fx = sd.load_fixtures(fixtures, leagues="all")
     assert fx.groupby("league").size().to_dict() == {"ARG": 1, "BRA": 10, "E2": 5, "E3": 1, "EC": 12, "FIN": 3,
@@ -513,6 +638,57 @@ def test_a_second_sync_rewrites_only_the_seasons_that_changed(tmp_path):
     sd.sync(full=True, fetch=files.get, log=lambda *_: None, matches_path=matches,
             fixtures_path=tmp_path / "f.csv", leagues=["AUT"])
     assert "Rapid Wien" in set(sd.load_matches(matches, leagues="AUT").query("season == 2013")["home"])
+
+
+def test_a_default_sync_takes_a_late_match_and_a_correction_of_the_season_just_finished(tmp_path):
+    # BRA's 2026 is on file, so 2025 is finished; a match of it played late
+    # (as ARG's of 29/01/2015) and a corrected score must still land.
+    matches, q, url = tmp_path / "matches", lambda *_: None, sd.EXTRA_URL.format(code="BRA")
+    text = sd._text(raw("fd_new_BRA.csv"))
+    sd.sync_matches(["BRA"], today="2026-10-29", fetch={url: text.encode()}.get, log=q, root=matches)
+    before = sd.load_matches(matches, leagues="BRA")
+    stamps = {p.name: p.stat().st_mtime_ns for p in (matches / "BRA").iterdir()}
+    lines = text.splitlines(keepends=True)
+    i = next(k for k, line in enumerate(lines) if line.startswith("Brazil,Serie A,2025,"))
+    cells = lines[i].split(",")
+    fixed = cells[:7] + [str(int(cells[7]) + 3)] + cells[8:]                 # HG
+    late = cells[:3] + ["28/01/2026"] + cells[4:]
+    served = "".join(lines[:i] + [",".join(fixed)] + lines[i + 1:] + [",".join(late)])
+    sd.sync_matches(["BRA"], today="2026-10-29", fetch={url: served.encode()}.get, log=q, root=matches)
+    after = sd.load_matches(matches, leagues="BRA")
+    now = {p.name: p.stat().st_mtime_ns for p in (matches / "BRA").iterdir()}
+    assert [n for n in sorted(now) if now[n] != stamps[n]] == ["2025.csv.gz"]
+    day = sd.parse_date(cells[3])
+    fixed_id = sd.match_id("BRA", day, cells[5], cells[6])
+    late_id = sd.match_id("BRA", sd.parse_date("28/01/2026"), cells[5], cells[6])
+    assert after.set_index("match_id").loc[fixed_id, "hg"] == int(cells[7]) + 3
+    assert after.set_index("match_id").loc[late_id, "season"] == 2025
+    assert len(after) == len(before) + 1
+
+
+def test_a_body_cut_off_part_way_through_a_row_keeps_what_is_on_file(tmp_path):
+    matches, fixtures, q = tmp_path / "matches", tmp_path / "f.csv", lambda *_: None
+    usa, fx = sd._text(raw("fd_new_USA.csv")), sd._text(raw("fd_new_league_fixtures.csv"))
+    good = {sd.EXTRA_URL.format(code="USA"): usa.encode(), sd.EXTRA_FIXTURES_URL: fx.encode()}
+    sd.sync(today="2026-10-29", fetch=good.get, log=q, matches_path=matches, fixtures_path=fixtures, leagues=["USA"])
+    before_m, before_f = sd.load_matches(matches, leagues="all"), sd.load_fixtures(fixtures, leagues="all")
+    # The last row loses its last 17 cells (LAFC v LA Galaxy's closing
+    # prices); the fixtures file its last three prices. Same match counts.
+    cut = {sd.EXTRA_URL.format(code="USA"): usa.rstrip().rsplit(",", 17)[0].encode(),
+           sd.EXTRA_FIXTURES_URL: fx.rstrip()[:-10].encode()}
+    assert all(sd.cut_off(body) for body in cut.values())
+    lines = []
+    sd.sync(today="2026-10-29", fetch=cut.get, log=lines.append, matches_path=matches, fixtures_path=fixtures,
+            leagues=["USA"])
+    pd.testing.assert_frame_equal(sd.load_matches(matches, leagues="all"), before_m)
+    pd.testing.assert_frame_equal(sd.load_fixtures(fixtures, leagues="all"), before_f)
+    kept = [line for line in lines if "KEPT ON FILE" in line]
+    assert kept == ["   KEPT ON FILE after a failed or unreadable download: USA, extra-league fixtures"]
+    # Every file of the probe ends its last row whole; a header alone, or a
+    # body without its last line break but with its last row whole, is no cut.
+    for path in PROBE.glob("fd_*.csv.gz"):
+        assert not sd.cut_off(gzip.decompress(path.read_bytes())), path.name
+    assert not sd.cut_off(b"Div,Date,HomeTeam") and not sd.cut_off(usa.rstrip().encode())
 
 
 def test_a_full_sync_survives_404s_empty_files_and_failures_and_keeps_the_snapshot(tmp_path):
@@ -567,10 +743,32 @@ def test_one_fixtures_file_failing_keeps_its_leagues_rows_and_the_others_refresh
     assert "EC" not in set(after["league"]) and len(after) == 83 - 12
     same = first[first["league"] != "EC"].reset_index(drop=True)
     pd.testing.assert_frame_equal(after, same)                           # same rows, same first-seen times
-    # The ten alone (the pipeline's own call) leave the other leagues' rows be.
+    # The ten alone leave every other league's rows as they were.
     sd.sync_fixtures(leagues=None, fetch=files.get, log=lambda *_: None, path=fixtures)
-    assert set(sd.load_fixtures(fixtures, leagues="all")["league"]) == {"I1", "I2"} | set(
-        after.loc[after["league"].isin(sd.EXTRA), "league"])
+    again = sd.load_fixtures(fixtures, leagues="all")
+    others = lambda df: df[~df["league"].isin(sd.LEAGUES)].reset_index(drop=True)
+    pd.testing.assert_frame_equal(others(again), others(after))
+    assert set(again["league"]) & set(sd.LEAGUES) == {"I1", "I2"}
+
+
+def test_a_sync_of_some_leagues_replaces_their_fixtures_and_no_other_leagues(tmp_path):
+    matches, fixtures, q = tmp_path / "matches", tmp_path / "f.csv", lambda *_: None
+    files = {sd.FIXTURES_URL: raw("fd_fixtures.csv"), sd.EXTRA_FIXTURES_URL: raw("fd_new_league_fixtures.csv")}
+    sd.sync_fixtures(fetch=files.get, log=q, path=fixtures)
+    first = sd.load_fixtures(fixtures, leagues="all")
+    # E2's and USA's rounds are played: the next files no longer list them.
+    files = {sd.FIXTURES_URL: sd._text(raw("fd_fixtures.csv")).replace("\nE2,", "\nXX,").encode(),
+             sd.EXTRA_FIXTURES_URL: sd._text(raw("fd_new_league_fixtures.csv")).replace("\nUSA,", "\nXXX,").encode()}
+    sd.sync_fixtures(["E2", "USA"], fetch=files.get, log=q, path=fixtures)
+    after = sd.load_fixtures(fixtures, leagues="all")
+    rest = first[~first["league"].isin(["E2", "USA"])].reset_index(drop=True)
+    pd.testing.assert_frame_equal(after, rest)
+    # sync() of one league does the same (and fetches that league's season).
+    files[sd.SEASON_URL.format(code="2627", league="EC")] = raw("fd_EC_2627.csv")
+    files[sd.FIXTURES_URL] = sd._text(raw("fd_fixtures.csv")).replace("\nEC,", "\nXX,").encode()
+    sd.sync(leagues=["EC"], today="2026-10-29", fetch=files.get, log=q, matches_path=matches, fixtures_path=fixtures)
+    pd.testing.assert_frame_equal(sd.load_fixtures(fixtures, leagues="all"),
+                                  rest[rest["league"] != "EC"].reset_index(drop=True))
 
 
 def test_the_hour_the_uk_clock_repeats_reads_as_its_first_pass():

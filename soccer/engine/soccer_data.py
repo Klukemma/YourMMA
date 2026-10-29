@@ -30,9 +30,16 @@ in its 22 European divisions:
 The model is measured and blended against the PRE-MATCH price, because that
 is the price it will actually have when it picks. Closing is kept to show
 how much the market still moved after the pick was made.
-football-data.co.uk (data.php, 2026-10-29): since 23/07/2025 Pinnacle's feed
-has been unreliable and is left out of its averages and maxima - ps_* and
-psc_* are patchy in 2025-26 and empty in 2026-27, in every league.
+PINNACLE, STALE SINCE 23/07/2025. football-data.co.uk (data.php, read
+2026-10-29): since that day Pinnacle's odds are "systematically out of date
+relative to odds for other bookmakers, including both the pre-closing and
+closing odds", "should be used with caution", and are no longer in its
+averages and maxima. So ps_* and psc_* after PINNACLE_STALE_FROM are
+present but stale, not merely incomplete (2025-26 has them for 23-55% of a
+main division's matches, 2025 for 26-97% of an extra league's; 2026-27 for
+none), and must not be used for measurement after that date. They are
+kept as football-data has them; the avg_*/avgc_* market prices are not
+affected.
 
 THE REGISTRY. ALL_LEAGUES[code] = League(name, country, tier, odds_key,
 kind, fd_code, fd_leagues, calendar, espn); the first four fields are
@@ -90,7 +97,8 @@ LEAGUES' own, so code written against LEAGUES reads ALL_LEAGUES unchanged.
 
 TWO SHAPES OF FILE.
   main   results, half-time score, shots, shots on target, corners, cards
-         (all 22 divisions since 2017-18; EC has no statistics in 2025-26),
+         (all 22 divisions since 2017-18; EC 2025-26 has no shots or
+         corners - its half-time score and cards are there),
          pre-match AND closing prices, over/under 2.5. Read by parse().
   extra  Country, League, Season, Date, Time, Home, Away, HG, AG, Res, then
          CLOSING prices only: PSC*, MaxC*, AvgC*, BFEC*, B365C* (RUS has no
@@ -131,43 +139,84 @@ THE TWO OTHER LEAGUE VALUES.
        Profesional"). Its knockout rounds are in it (2022: 14-17 matches a
        club); a semi-final or final may be at a neutral ground, which the
        file does not mark.
-  SWZ "Challenge League" is not a second tier: two rows, Thun v Sion
-       27/05/2021 and Sion v Thun 30/05/2021, the 2020-21 promotion /
-       relegation play-off. football-data carries no Challenge League
-       season. Left out, as the main divisions' files leave out play-offs;
-       parse_extra counts what it skips and sync logs it.
-  Play-offs that ARE in a league's file: MLS Cup, Liga MX's liguilla,
-  ARG's knockout rounds, and the split-season phases of B1, G1 and SC0.
+  SWZ "Challenge League" is not a second tier's season: two rows, Thun v
+       Sion 27/05/2021 and Sion v Thun 30/05/2021, the 2020-21 promotion /
+       relegation play-off. SWZ's play-offs of 2018-19, 2019-20 and
+       2021-22 to 2023-24 are filed as "Super League", so this one is
+       filed under SWZ with them (PLAY_OFF_ONLY): at most four rows of that
+       label a season; more would be a Challenge League season, which is
+       left out, counted in parse_extra's `skipped` and logged by sync.
+PLAY-OFFS. The main divisions' files leave play-offs out (no club in the
+22 divisions' snapshot has fewer than five matches in a season). The extra
+files keep them, under the top flight's label:
+  promotion / relegation play-offs against second-tier clubs - AUT 2, CHN
+    2, DNK 3, FIN 10, IRL 12, JPN 3, NOR 12, ROU 10, RUS 10, SWE 12 and SWZ
+    6 seasons (league-seasons in the probe with a club of 1-4 matches).
+    The lower club plays one to four matches of that league-season and
+    usually has no history in it (none at all if it was never promoted
+    before). In JPN (2018, 2019, 2022), IRL (2012-2016, 2018-2021), FIN
+    2022 and ROU 2015-16 the file also holds the earlier play-off rounds,
+    where two second-tier clubs meet (Omiya Ardija v Verdy 25/11/2018;
+    Bray v Galway 31/10/2020).
+  inside a season's own format: MLS Cup, Liga MX's liguilla, ARG's
+    knockout rounds, and the split-season phases of B1, G1 and SC0.
+None of them is marked as a play-off in the file; a later step that wants
+them apart can tell them by date (after the season's last regular round)
+or by a club's match count.
 
 POINT IN TIME, THE CLOCK. A kickoff is a moment: football-data.co.uk gives
 the date and the UK clock time (Europe/London) for EVERY league, the extra
 ones included - not the league's local clock, not UTC. It is converted to
 UTC once, here (kickoff_utc). Main seasons before 2019-20 carry no time;
-those matches sort by date. What the league probe of 2026-10-29 shows
+those matches sort by date. Three readings are possible - the UK clock,
+UTC, the league's own clock - and what the league probe of 2026-10-29 shows
 (tests/test_soccer_leagues.py; every match it holds of a league in the
-other source's span, paired by club names, score and day):
+other source's span, paired by club names, score and day) rules out the
+other two as follows:
   ESPN's UTC kickoffs, Oct 26 - Nov 8 (this season's results and the
   fixtures; 69 matches): ARG 3/3, BRA 12/12, DNK 1/1, MEX 1/1, SWE 8/8,
     USA 14/14, E2 5/5, E3 2/2, EC 12/12, SC0 6/6, SC1 1/1, P1 1/1, T1 3/3
-    to the minute on the UK clock; the local clock gets none of them right
-    outside the UK's zone (Portugal shares it).
+    to the minute on the UK clock; the league's own clock gets none of
+    them right outside the UK's zone (Portugal shares it). The window is
+    after the UK's clocks went back on 25/10/2026, when the UK clock IS
+    UTC: ESPN rules out the league's own clock, not UTC.
   fixturedownload.com's UTC kickoffs, the finished matches of 2025 and
   2026, most of them in British Summer Time: USA 890/906, N1 347/350, P1
     303/304, T1 380/385, SC0 60/60 to the minute on the UK clock. Read as
     UTC, 2 of USA's 756 summer kickoffs agree and 2 of T1's 223 (the two
     T1 matches of 14/09/2025 football-data has an hour early); read as the
     local clock, none outside the UK's zone. The rest are minutes - late
-    starts - and the repeated hour below.
+    starts - and the repeated hour below. This rules out UTC for USA, N1,
+    P1, T1 and SC0.
+  the UK's clock changes, 2012-2026: a league keeps its kickoff times on
+    its own clock, so across each change (21 days either side, where the
+    league's own clock holds still or changes at the same moment) the
+    file's times move as the reading predicts - on the UK clock by the
+    UK's hour where the league's clock holds still (ARG, BRA, CHN, JPN,
+    MEX, RUS, T1) and not at all where it changes with the UK's (Europe);
+    as UTC they would move the other way. The UK clock fits better than
+    UTC in 331 of 341 windows, UTC better in 5 (ARG 2, FIN 1, JPN 2), and
+    every league but USA, whose clock changes on other days, has windows
+    (those no UTC source overlaps: AUT 27/27, CHN 18/20, FIN 3/4, IRL
+    21/21, JPN 23/28, NOR 19/19, POL 27/27, ROU 27/27, RUS 26/26, SWZ
+    27/27, B1 2/2, G1 2/2, SC2 2/2, SC3 2/2). Outside Europe it also fits
+    better than the league's own clock in 111 of 120 windows, worse in 4
+    (ARG 24/26, BRA 9/9, CHN 18/20, JPN 23/28, MEX 8/8, RUS 26/26, T1
+    3/3); the rest are ties. This rules out UTC for every league in the
+    probe but USA (fixturedownload does it there).
   each extra league's whole history: on the UK clock 98.5-100% of
     kickoffs fall at 11:00-22:59 local time (read as the local clock: MEX
     9%, USA 19%, JPN 35%, ARG and BRA 57%, CHN 78%, RUS 93%), and the local
     kickoff times are more alike between summer and winter on the UK clock
     than read as UTC, in all 16 (overlap UK/UTC: POL .94/.10, IRL .94/.07,
     MEX .93/.23, AUT .92/.12 ... JPN .54/.43, BRA .64/.58, ARG .58/.54).
-  No UTC source overlapped AUT, CHN, FIN, IRL, JPN, NOR, POL, ROU, RUS,
-  SWZ, B1, G1, SC2 or SC3 in the probe. They are read on the same clock -
-  one pipeline, one format - and the history checks hold for each extra
-  league (for CHN, JPN and RUS they rule out the local clock too).
+  NOT SETTLED BY A SOURCE: for AUT, FIN, NOR, POL, ROU and SWZ (no UTC
+  source in the probe; their clocks change with the UK's, so the clock
+  changes cannot tell the two apart) the UK clock is told from UTC but not
+  from the league's own clock, one or two hours ahead all year. They are
+  read as the UK clock because they are the same file as DNK and SWE (and
+  every other extra league), where ESPN does tell them apart. B1 and G1
+  are the main divisions' file, settled by N1, P1 and T1.
   THE REPEATED HOUR. 01:00-01:59 on the last Sunday of October happens
   twice on the UK clock and football-data writes both as 01:xx: 52 extra
   league matches (ARG 4, BRA 9, MEX 27, USA 12), none in the main
@@ -204,13 +253,18 @@ SYNC. Every league in ALL_LEAGUES unless told otherwise:
   main   this season (and last season in July and August, so late
          corrections land), or every season since 2005-06 with full=True.
          A 404 or an empty body is "not published": skipped, never blanked.
-  extra  the league's one file, every run: the seasons from the latest one
-         on file onwards (every season when none is on file, or full=True).
-  fixtures.csv and new_league_fixtures.csv: each replaces its own leagues'
-         rows; one that fails keeps its leagues' rows as they are on file.
-A failed or unreadable download, a file with no rows, or a season that
-comes back with fewer matches than are on file keeps what is on file and
-is listed under KEPT ON FILE; it never costs the run the other files.
+  extra  the league's one file, every run: the latest two seasons on file
+         and any after them (so a postponed match or a correction of the
+         season just finished lands, as the ARG row of 29/01/2015 would
+         have), every season when none is on file, or with full=True. An
+         unchanged season is not rewritten.
+  fixtures.csv and new_league_fixtures.csv: each replaces the rows of the
+         leagues it was asked for; every other league's rows, and those of
+         a file that fails, stay as they are on file.
+A failed or unreadable download (an HTML page, a body cut off part-way
+through a row), a file with no rows, or a season that comes back with
+fewer matches than are on file keeps what is on file and is listed under
+KEPT ON FILE; it never costs the run the other files.
 
 STALE OR THIN, AT THE PROBE. football-data's Russia file stops at
 2026-08-02 (round 2 of 2026-27) while ESPN lists rus.1 matches through
@@ -244,6 +298,7 @@ EXTRA_URL = SITE + "/new/{code}.csv"
 EXTRA_FIXTURES_URL = SITE + "/new_league_fixtures.csv"
 UK = ZoneInfo("Europe/London")
 FIRST_SEASON = 2005          # 2005-06: the first season with market averages
+PINNACLE_STALE_FROM = "2025-07-23"   # ps_*/psc_* stale from this date (module notes)
 
 # code: (name, country, tier, The Odds API sport key)
 LEAGUES = {
@@ -314,6 +369,11 @@ MAIN = [code for code, meta in ALL_LEAGUES.items() if meta.kind == "main"]
 EXTRA = [code for code, meta in ALL_LEAGUES.items() if meta.kind == "extra"]
 EXTRA_BY_NAME = {(meta.country, name): code for code, meta in ALL_LEAGUES.items()
                  if meta.kind == "extra" for name in meta.fd_leagues}
+# A League value that has only ever been a league's play-off: its rows go
+# into that league's season while there are at most `cap` of them in it (a
+# play-off is a tie or two); more would be a season of another division,
+# left out and counted (module notes, THE TWO OTHER LEAGUE VALUES).
+PLAY_OFF_ONLY = {("Switzerland", "Challenge League"): ("SWZ", 4)}
 
 
 def league_codes(leagues=None):
@@ -515,20 +575,24 @@ def parse_extra(body, league=None, skipped=None, seasons=None, since=None):
     pre-match prices) -> rows in the snapshot's columns, for one league or
     every one the file holds; only the given `seasons`, or the seasons from
     `since` on, when asked (a sync skips the rest before reading them). A
-    row whose Country/League is not a registered league (SWZ's "Challenge
-    League"), or whose date or season cannot be read, is counted in
-    `skipped` (a Counter) and left out."""
+    row whose Country/League is not a registered league, a PLAY_OFF_ONLY
+    label with more than its cap of rows in a season, or a row whose date
+    or season cannot be read, is counted in `skipped` (a Counter) and left
+    out."""
     skipped = Counter() if skipped is None else skipped
     wanted = None if seasons is None else set(seasons)
     header, rows = _table(_text(body))
     sources, labelled = _sources(header), "Season" in header
-    out = []
+    out, play_offs = [], defaultdict(list)
     for row in rows:
         country, name = row.get("Country", ""), " ".join(row.get("League", "").split())
         home, away = row.get("Home", ""), row.get("Away", "")
         if not (country or name or home or away):
             continue                                   # a blank line
         code = EXTRA_BY_NAME.get((country, name))
+        play_off = code is None and (country, name) in PLAY_OFF_ONLY
+        if play_off:
+            code = PLAY_OFF_ONLY[(country, name)][0]
         if code is None:
             skipped[f"{country} {name}"] += 1
             continue
@@ -546,7 +610,13 @@ def parse_extra(body, league=None, skipped=None, seasons=None, since=None):
         if not home or not away or day is None or season is None:
             skipped[f"{country} {name} (unreadable row)"] += 1
             continue
-        out.append(_record(code, season, day, row.get("Time", ""), home, away, row, sources))
+        rec = _record(code, season, day, row.get("Time", ""), home, away, row, sources)
+        (play_offs[(country, name, season)] if play_off else out).append(rec)
+    for (country, name, season), recs in play_offs.items():
+        if len(recs) <= PLAY_OFF_ONLY[(country, name)][1]:
+            out.extend(recs)
+        else:
+            skipped[f"{country} {name} {season} ({len(recs)} rows: a season, not a play-off)"] += len(recs)
     return out
 
 
@@ -668,10 +738,31 @@ def _fetch(url):
             raise
 
 
+def cut_off(body):
+    """Whether a body stops part-way through a row - no line break at its
+    end and a last row with fewer cells than its header: a transfer cut
+    short that the transport did not catch. Every file football-data.co.uk
+    served the league probe ends its last row with a line break, and each
+    row has its header's length. (Old main seasons may hold rows of other
+    lengths, so a short row elsewhere is not taken as a cut.) A cut inside
+    the last cell of a complete-length row cannot be seen this way; the
+    extra-league and fixtures files end every row with blank columns, so
+    there it loses nothing."""
+    text = _text(body)
+    if not text or text.endswith(("\n", "\r")):
+        return False
+    head, _, rest = text.partition("\n")
+    if not rest:
+        return False                         # a header and nothing else
+    last = text.rstrip("\r\n").rsplit("\n", 1)[-1]
+    width = lambda line: len(next(csv.reader([line.rstrip("\r")]), []))
+    return width(last) < width(head)
+
+
 def _download(fetch, url, what, required, log, problems):
     """One file, or None: a failure (a 503, a timeout, a page that is not
-    the CSV) is logged and listed and keeps what is on file; a 404 or an
-    empty body is "not published"."""
+    the CSV, a body cut off mid-row) is logged and listed and keeps what is
+    on file; a 404 or an empty body is "not published"."""
     try:
         body = fetch(url)
     except Exception as err:                  # noqa: BLE001 - logged, kept, run continues
@@ -684,6 +775,10 @@ def _download(fetch, url, what, required, log, problems):
     if not looks_right(body, required):
         problems.append(what)
         log(f"   {what}: NOT A football-data.co.uk CSV; kept what is on file")
+        return None
+    if cut_off(body):
+        problems.append(what)
+        log(f"   {what}: CUT OFF PART-WAY THROUGH ITS LAST ROW; kept what is on file")
         return None
     return body
 
@@ -728,9 +823,10 @@ def sync_matches(leagues="all", seasons=None, full=False, today=None, fetch=_fet
         if body is None:
             continue
         # Which seasons: every one with full=True or with none on file, the
-        # ones asked for, or else from the latest on file onwards.
+        # ones asked for, or else the latest two on file and any after them
+        # (a late match or a correction of the season just finished).
         on_file = seasons_on_file(root, code)
-        since = on_file[-1] if not full and seasons is None and on_file else None
+        since = on_file[-2:][0] if not full and seasons is None and on_file else None
         skipped = Counter()
         rows = parse_extra(body, league=code, skipped=skipped, since=since,
                            seasons=None if full or seasons is None else seasons)
@@ -754,9 +850,10 @@ def sync_matches(leagues="all", seasons=None, full=False, today=None, fetch=_fet
 
 def sync_fixtures(leagues="all", fetch=_fetch, log=print, path=FIXTURES, problems=None):
     """The fixtures half of sync(): fixtures.csv (main divisions) and
-    new_league_fixtures.csv (extra leagues) into one file. Each source that
-    was fetched replaces its own leagues' rows; one that was not (failed,
-    unreadable, not published, not asked for) keeps its rows on file.
+    new_league_fixtures.csv (extra leagues) into one file. A source that
+    was fetched replaces the rows of the leagues asked for; every other
+    league's rows, and those of a source that was not fetched (failed,
+    unreadable, not published), stay as they are on file.
     -> the fixtures written, or None when nothing was fetched."""
     problems = [] if problems is None else problems
     codes = league_codes(leagues)
@@ -774,12 +871,11 @@ def sync_fixtures(leagues="all", fetch=_fetch, log=print, path=FIXTURES, problem
         rows = parse(body, leagues=own) if kind == "main" else \
             [r for r in parse_extra(body) if r["league"] in own]
         fresh.append(frame(rows))
-        refreshed.add(kind)
+        refreshed.update(own)
     if not refreshed:
         return None
     stamp = pd.Timestamp(datetime.now(timezone.utc).replace(tzinfo=None)).floor("s")
-    kind_of = old["league"].map(lambda c: ALL_LEAGUES[c].kind if c in ALL_LEAGUES else None)
-    kept = old[~kind_of.isin(refreshed)].drop(columns="fetched_at")
+    kept = old[~old["league"].isin(refreshed)].drop(columns="fetched_at")
     parts = [p for p in [kept] + fresh if len(p)]
     fx = order(pd.concat(parts, ignore_index=True)) if parts else frame([])
     fx["fetched_at"] = first_seen(fx, old, stamp)

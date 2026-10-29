@@ -150,6 +150,21 @@ def test_a_failed_or_wrong_download_keeps_what_is_on_file(tmp_path):
     assert any("KEPT ON FILE" in line for line in lines)
 
 
+def test_a_season_cut_off_part_way_through_a_row_keeps_what_is_on_file(tmp_path):
+    matches, fixtures, url = tmp_path / "matches", tmp_path / "f.csv", sd.SEASON_URL.format(code="2526", league="SP1")
+    sd.sync(seasons=[2025], fetch={url: NEW.encode()}.get, log=lambda *_: None,
+            matches_path=matches, fixtures_path=fixtures)
+    before = sd.load_matches(matches)
+    cut = NEW.rstrip("\n").rsplit(",", 8)[0]          # the closing prices gone, the match count the same
+    lines = []
+    sd.sync(seasons=[2025], fetch={url: cut.encode()}.get, log=lines.append,
+            matches_path=matches, fixtures_path=fixtures)
+    pd.testing.assert_frame_equal(sd.load_matches(matches), before)
+    assert before["avgc_h"].iloc[0] == 2.2
+    assert any("SP1 2025: CUT OFF" in line for line in lines)
+    assert any("KEPT ON FILE" in line and "SP1 2025" in line for line in lines)
+
+
 def test_a_price_is_dated_when_it_was_first_seen(tmp_path):
     fixtures = tmp_path / "f.csv"
     fx = sd.frame(sd.parse(NEW.replace(",2,1,H,2,1,H,14,12,6,4,5,7,2,3,0,1,", ",,,,,,,,,,,,,,,,,").encode()))
