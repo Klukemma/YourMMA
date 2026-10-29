@@ -45,10 +45,14 @@ def test_the_feeds_bring_results_the_evening_they_happen_and_the_next_round_earl
     """The free feeds have each score that evening and the next rounds all
     week: a run on Saturday and Sunday evenings, and one on Wednesday
     morning after Tuesday's games - in season months only, and every run
-    there was before is still there."""
+    there was before is still there. The evening runs start at 22:17 UTC:
+    a 21:00 CET kickoff (20:00 UTC all winter) ends about 21:55."""
     crons = _crons((WF / "soccer.yml").read_text())
-    for cron in ("47 21 * 8-12,1-5 SAT", "47 21 * 8-12,1-5 SUN", "17 7 * 8-12,1-5 WED"):
+    for cron in ("17 22 * 8-12,1-5 SAT", "17 22 * 8-12,1-5 SUN", "17 7 * 8-12,1-5 WED"):
         assert cron in crons, cron
+    for cron in crons:
+        minute, hour, *_ = cron.split()
+        assert not (int(hour) == 21 or (int(hour) == 22 and int(minute) < 10)), cron   # never before full time
     before = ["47 13 * 8-12,1-5 FRI", "47 16 * 8-12,1-5 FRI", "17 7 * 8-12,1-5 SAT", "17 7 * 8-12,1-5 SUN",
               "17 9 * 8-12,1-5 MON", "47 13 * 8-12,1-5 TUE", "47 16 * 8-12,1-5 TUE", "17 9 * 8-12,1-5 THU",
               "17 8 20-31 12 *", "17 8 1-3 1 *"]

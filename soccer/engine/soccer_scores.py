@@ -21,26 +21,30 @@ THE MATRIX. A Dixon-Coles matrix tau_rho(x, y) Pois(x; lam) Pois(y; nu),
           match. Measured too; a little worse than K in both periods.
 
 WHAT THE APP SHOWS (shown_matrices), for every match:
-  K       where the home/draw/away AND the over/under 2.5 are priced, and
-          the fit misses none of its four targets by more than FIT_MAX_MISS;
+  K       where the home/draw/away AND the over/under 2.5 are priced - with
+          the fit's largest miss against its four targets on the card, and
+          FLAGGED where that is more than FIT_MAX_MISS;
   M       where only the home/draw/away is priced (K's 1X2-only path was
-          measured on 2 matches a period - effectively unmeasured), where
-          nothing is priced, or where K's fit misses a target by more than
-          FIT_MAX_MISS - each said on the card;
+          measured on 1 match a period - effectively unmeasured) or where
+          nothing is priced - each said on the card;
   nothing where the model has no rates for the match (missing, said so).
 
-FIT_MAX_MISS = 0.04, chosen on 2006-2015 from the fit alone (no result
-read): the per-match largest miss of K against its four targets has a body
-- median 0.006, 99th percentile 0.0387 - and a long tail (0.056 at the
-99.5th, 0.17 at the 99.9th) of matches whose prices contradict any Poisson
-matrix, mostly Serie A 2006-2010 run-ins. The rule: the 99th percentile,
+FIT_MAX_MISS = 0.04 flags a fit; it never swaps the matrix. It was set on
+2006-2015 from the distribution of K's per-match largest miss against its
+four targets - a body (median 0.006, 99th percentile 0.0387) and a long tail
+(0.056 at the 99.5th, 0.17 at the 99.9th) of matches whose prices contradict
+any Poisson matrix, mostly Serie A 2006-2010 run-ins: the 99th percentile,
 rounded up to the next 0.01. It catches 168 of 18,258 fits on 2006-2015 and 8
-of 17,935 on 2016-2025 (none of 2026-27's first 346 when it was set). On those 168 the model's
-matrix scored the exact score WORSE than K's (log loss 2.797 against 2.753):
-the fallback is there so a card never prints numbers that disagree with the
-prices beside them (worst: over 2.5 at 0.9% from a matrix that reproduced the
-draw, against a 43% over/under price), and it costs 0.0004 of exact-score
-log loss on 2006-2015. measure() reports the rule as shipped.
+of 17,935 on 2016-2025 (none of 2026-27's first 346). DEV outcomes per
+candidate threshold (0.03-0.10) were looked at too, and an earlier rule that
+showed M on those matches was dropped on them: there, M misses the card's
+prices by MORE than K (median largest miss 0.10 against 0.06; in 163 of the
+176 such matches over both periods) and scores worse (2006-2015 exact-score
+log loss 2.797 against K's 2.753; 2016-2025 2.858 against 2.857). So K is
+shown and the card says how far it misses and on which price - in 4 of those
+168 DEV matches K is near-degenerate (its likeliest score above 30%; worst:
+over 2.5 at 0.9% from a matrix that reproduced a 71% draw, against a 43%
+over/under price). measure() reports the rule as shipped.
 
 Over 2.5 on the card stays the over/under market's (K's over 2.5 scores as
 the market's does - 2016-2025 log loss 0.67067 against 0.67066: nothing to gain). The pick's own home/draw/away stays as shown;
@@ -75,11 +79,12 @@ LAM_RANGE = (0.05, 8.0)           # as the model clips its own expected goals
 # (score_markets.band_edges re-derives them from DEV on every run).
 BANDS = (("STRONG", 0.60), ("SOLID", 0.50), ("LEAN", 0.40), ("TOSS-UP", 0.0))
 # The largest miss of the market-implied matrix against any of its four
-# targets beyond which the card uses the model's own matrix (see the notes).
+# targets beyond which the card flags it (see the notes): a flag, never a swap.
 FIT_MAX_MISS = 0.04
 TARGET_NAMES = ("home win", "draw", "away win", "over 2.5")
 SOURCE_MARKET, SOURCE_MODEL = "market", "model"
-# Why a card's score numbers are the model's own.
+# Why a card's score numbers are the model's own (BAD_FIT: an earlier rule's,
+# kept so a pick logged under it still reads).
 NO_PRICE, NO_OVER_UNDER, BAD_FIT, NO_MODEL = "no_price", "no_over_under", "fit", "no_model"
 
 
@@ -321,10 +326,11 @@ def shown_matrices(p_h, p_d, p_a, p_o25, rho, lam, nu, max_miss=FIT_MAX_MISS, ne
     nu: the model's (shots_ratings, score_params=True; NaN where it has none).
 
     Returns (mats, info): info["source"] "market" / "model" / None (no
-    numbers), info["reason"] why the model's (no_price, no_over_under, fit,
+    numbers), info["reason"] why the model's (no_price, no_over_under,
     no_model), info["miss"] K's largest miss against its targets wherever K
-    was fitted (also where it was then refused), info["miss_on"] which target.
-    need_o25=False and max_miss=inf give score_markets' measured K exactly."""
+    is shown, info["miss_on"] which target, info["flagged"] where that miss
+    is above max_miss. need_o25=False gives score_markets' measured K
+    exactly."""
     p3 = np.column_stack([np.atleast_1d(np.asarray(v, float)) for v in (p_h, p_d, p_a)])
     n = len(p3)
     po = np.broadcast_to(np.asarray(np.nan if p_o25 is None else p_o25, float), (n,)).copy()
@@ -336,29 +342,27 @@ def shown_matrices(p_h, p_d, p_a, p_o25, rho, lam, nu, max_miss=FIT_MAX_MISS, ne
     use_k = priced & (has_o if need_o25 else True)
     k3 = np.where(use_k[:, None], p3, np.nan)
     mats, info = score_matrix(k3[:, 0], k3[:, 1], k3[:, 2], po, rho, lam, nu)
-    from_k = info["from_market"]
+    market = info["from_market"]
     miss, which = fit_miss(mats, k3[:, 0], k3[:, 1], k3[:, 2], po)
-    miss = np.where(from_k, miss, np.nan)
-    which = np.where(from_k, which, -1)
-    bad = from_k & (miss > max_miss)
-    if bad.any():
-        mats = mats.copy()
-        mats[bad] = dc_matrix(lam[bad], nu[bad], rho[bad])
+    miss = np.where(market, miss, np.nan)
+    which = np.where(market, which, -1)
     model_ok = np.isfinite(lam) & np.isfinite(nu) & np.isfinite(rho)
-    market = from_k & ~bad
     source = np.where(market, SOURCE_MARKET, np.where(model_ok, SOURCE_MODEL, None))
-    reason = np.where(market, None, np.where(
-        ~model_ok, NO_MODEL, np.where(bad, BAD_FIT, np.where(priced, NO_OVER_UNDER, NO_PRICE))))
+    reason = np.where(market, None, np.where(~model_ok, NO_MODEL, np.where(priced, NO_OVER_UNDER, NO_PRICE)))
+    mats = mats.copy()
     mats[~(market | model_ok)] = np.nan
     return mats, {"source": source, "reason": reason, "miss": miss, "miss_on": which,
+                  "flagged": market & (miss > max_miss),
                   "lam": np.where(market, info["lam"], lam), "nu": np.where(market, info["nu"], nu),
                   "rho": np.asarray(rho, float)}
 
 
-def card(mat, source, reason, miss=None, miss_on=-1):
+def card(mat, source, reason, miss=None, miss_on=-1, max_miss=FIT_MAX_MISS):
     """One match's numbers for the app and the log: the summary of its shown
     matrix, the matrix's own home/draw/away (shown beside the pick's, never
-    in its place) and where it came from. None where there is no matrix."""
+    in its place), where it came from and - for the market's - how far it
+    misses the prices it was fitted to ("flagged" above max_miss). None
+    where there is no matrix."""
     s = summary(mat)
     if s is None or source is None:
         return None
@@ -367,7 +371,8 @@ def card(mat, source, reason, miss=None, miss_on=-1):
     return dict(s, source=source, reason=reason,
                 matrix={k: float(mk[k][0]) for k in ("p_h", "p_d", "p_a")},
                 miss=float(miss) if fit else None,
-                miss_on=TARGET_NAMES[int(miss_on)] if fit and int(miss_on) >= 0 else None)
+                miss_on=TARGET_NAMES[int(miss_on)] if fit and int(miss_on) >= 0 else None,
+                flagged=bool(fit and miss > max_miss))
 
 
 # ----------------------------------------------------------- the league baseline
@@ -451,8 +456,11 @@ def measure(frame, preds, pick, walked=None, periods=(bt.DEV, bt.CONFIRM)):
     each period (top-league matches with a result where all three have a
     number): log loss of both teams to score, over 1.5, over 3.5 and the
     exact score (37-way), how often the likeliest score and one of the three
-    likeliest happened, the mean BTTS chance against the rate and by decile,
-    and the bands - the pick's and the model's own picks', same edges."""
+    likeliest happened, the mean BTTS chance against the rate and by decile
+    (the shown matrix's and the model's own), how often the side each BTTS
+    chance favoured happened (against always "yes"), the matrix's own
+    home/draw/away against the pick's where the matrix is the market's, and
+    the bands - the pick's and the model's own picks', same edges."""
     idx, mats, info = walked if walked is not None else walk(frame, preds, pick)
     if not len(idx):
         return None
@@ -490,7 +498,8 @@ def measure(frame, preds, pick, walked=None, periods=(bt.DEV, bt.CONFIRM)):
         reasons = info["reason"].to_numpy()[rows]
         rep = {"matches": int(rows.sum()),
                "market": int((info["source"].to_numpy()[rows] == SOURCE_MARKET).sum()),
-               "model": {r: int((reasons == r).sum()) for r in (NO_PRICE, NO_OVER_UNDER, BAD_FIT)}}
+               "model": {r: int((reasons == r).sum()) for r in (NO_PRICE, NO_OVER_UNDER)},
+               "flagged": int(info["flagged"].to_numpy()[rows].sum()) if "flagged" in info else 0}
         if rows.any():
             for t, yt in y.items():
                 rep[t] = {"rate": round(float(yt.mean()), 4)}
@@ -520,6 +529,29 @@ def measure(frame, preds, pick, walked=None, periods=(bt.DEV, bt.CONFIRM)):
                     if (which == b).any()]
             rep["btts"]["deciles"] = len(gaps)
             rep["btts"]["deciles_low"] = sum(g > 0 for g in gaps)
+            # the same for the model's own matrix: the caveat a card from it carries
+            pm = own["btts"][rows]
+            edges = np.unique(np.quantile(pm, np.linspace(0, 1, 11)))
+            which = np.clip(np.searchsorted(edges, pm, side="right") - 1, 0, len(edges) - 2)
+            gaps = [float(y["btts"][which == b].mean() - pm[which == b].mean()) for b in range(len(edges) - 1)
+                    if (which == b).any()]
+            rep["btts"]["model"].update(deciles=len(gaps), deciles_low=sum(g > 0 for g in gaps))
+            # the side each chance favoured (the Record tab's call) against
+            # always "yes" and the leagues' own rates
+            rep["btts"]["side"] = {name: round(float(((s["btts"][rows] >= 0.5) == (y["btts"] > 0)).mean()), 4)
+                                   for name, s in src.items()}
+            rep["btts"]["side"]["always_yes"] = round(float(y["btts"].mean()), 4)
+            # the matrix's own home/draw/away (the card's "Results" row, beside
+            # the pick on a market card) against the pick's, on those matches
+            mk = rows & (info["source"].to_numpy() == SOURCE_MARKET)
+            if mk.any():
+                lab = np.array([bt.RESULTS.index(r) for r in result[mk]])
+                q = np.column_stack([shown[k][mk] for k in ("p_h", "p_d", "p_a")])
+                pp = pick_p[mk]
+
+                def ll3(prob):
+                    return round(float(-np.log(np.clip(prob[np.arange(len(prob)), lab], 1e-12, 1)).mean()), 5)
+                rep["matrix_1x2"] = {"matches": int(mk.sum()), "log_loss": ll3(q), "pick_log_loss": ll3(pp)}
         out["periods"][key] = rep
         # the bands: the pick (market where priced) and the model's own picks
         ok = sel & np.isfinite(pick_p).all(axis=1)

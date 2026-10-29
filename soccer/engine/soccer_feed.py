@@ -90,10 +90,11 @@ pairing is played once per league season.
               ESPN's where ESPN has a valid one, fixturedownload's
               otherwise: ESPN is the feed that tracks a move (MEASURED
               below), and the one that reports status and score. The
-              earlier of the two still closes a pick (soccer_schedule).
-              time_confirmed only when ESPN says timeValid AND
-              fixturedownload has the same time. kickoff_utc is None for a
-              postponed or cancelled match.
+              earlier of the two (kickoff_first) still closes a pick
+              (soccer_schedule). time_confirmed only when ESPN says
+              timeValid AND fixturedownload has the same time. kickoff_utc
+              is None for a postponed or cancelled match; its id and date
+              are still the date it was postponed from.
   status      ESPN's, except that "final" needs the sources not to
               contradict: ESPN final with fixturedownload's same score, or
               with no score yet, is "final" with hg, ag and result - a
@@ -113,8 +114,8 @@ MEASURED (tests/test_soccer_feed.py, on the probe of 2026-10-26):
       every score equal (1751; one Ligue 1 score never posted), the match_id
       on 1751 (Mallorca v Valencia dated a day apart), the kickoff on 1743 -
       nine differ, by 10 minutes to 5 hours, either way. Hence a
-      fixturedownload time is never confirmed alone, and the earlier time
-      freezes a pick.
+      fixturedownload time is never confirmed alone, and an earlier time
+      from either feed closes a pick.
   ESPN v fixturedownload   the 130 matches ESPN listed for Oct 22 - Nov 7:
       every kickoff equal (all confirmed); 46 finals, every score equal.
   A day later (the runner's snapshot of 2026-10-27 12:48): of the 58 of
@@ -123,10 +124,12 @@ MEASURED (tests/test_soccer_feed.py, on the probe of 2026-10-26):
       18:00), Lyon v Angers 20h30m later, Lorient v Brest two days later -
       and fixturedownload none (its later Ligue 1 rounds look like a
       template: rounds 11-14 and 16-18 each read Fri 20:45 once, Sat 17:15
-      once, Sat 20:45 four times, ...). So two feeds agreeing is not a guarantee a week out, and
-      a time can move EARLIER after it; what guarantees the record is that
-      a pick logged at or after the real kickoff is void (soccer_log). And
-      where the two disagree, ESPN's time is the match's.
+      once, Sat 20:45 four times, ...). So two feeds agreeing ("confirmed")
+      is not a guarantee a week out, and a time can move EARLIER after it:
+      every run re-reads the feeds before it logs, ESPN's "live" stops a
+      pick, and what guarantees the record is that a pick logged at or
+      after the real kickoff is void (soccer_log). Where the two disagree,
+      ESPN's time is the match's.
   One fixturedownload error: 2026-27 Ligue 1 lists Rennes v Paris SG twice
       (round 1, played, and round 23) and Paris SG v Rennes never. Warned;
       reconcile uses the played one.
@@ -138,12 +141,14 @@ keeps its rows as they are on file (and an outage is cut short: a league's
 other requests to a feed are skipped after STRAIGHT_FAILS failures in a
 row, and none starts after FETCH_BUDGET seconds); so does an ESPN day that
 answers with no events while matches still to play are on file for it (one
-glitchy empty answer must not unconfirm a whole day); a re-fetch that drops
+glitchy empty answer must not unconfirm a whole day; a second in a row is
+believed); a re-fetch that drops
 a final result keeps it too (a played match does not leave the scoreboard).
 Rows more than KEEP_BEHIND days old or KEEP_AHEAD days ahead are pruned.
 Each row's seen_at is the moment its own request was answered. A snapshot
 on file that cannot be read is rebuilt from what this fetch brings (said
-in the log; every committed version is in git). last_run also lists the
+in the log; every committed version is in git), or left as it is when no
+request answered. last_run also lists the
 clubs a feed named that the tables below do not map. load() reads it, so a
 run without the network - and every test - works from the file.
 
@@ -606,11 +611,9 @@ def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=tuple(ESPN_SLU
     STRAIGHT_FAILS and `budget` (seconds) bound how long an outage can take;
     the requests they skip are reported as failed.
 
-    seen_at: with `now` None (a real run) each row is stamped with the moment
-    its own request was answered (`wall`, the clock), never earlier; with a
-    `now` given (a replay, a test) with that moment."""
-    live = now is None
-    wall = wall or (lambda: datetime.now(timezone.utc))
+    seen_at: with `wall` (a clock: a real run, sync) each row is stamped
+    with the moment its own request was answered, never earlier; without it
+    (a replay, a test) with `now`."""
     at = stamp(_aware(now))
     rows, ok, failed, missing = [], {}, {}, set()
     start, streak, skipping = clock(), defaultdict(int), set()
@@ -630,7 +633,7 @@ def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=tuple(ESPN_SLU
             continue
         try:
             payload = _decode(get(url))
-            seen = stamp(_aware(wall())) if live else at
+            seen = stamp(_aware(wall())) if wall is not None else at
             if kind == "espn":
                 got = parse_espn(payload, league, request=key, seen_at=seen, log=log, missing=missing)
             else:
@@ -754,24 +757,35 @@ def save(snap, path=FEED):
     return path
 
 
-def distrust_empty(old_rows, fetched, log=print):
+EMPTY_BOARD = "empty board"
+
+
+def distrust_empty(old_rows, fetched, log=print, previous=None):
     """An ESPN day answered with no events while matches still to play are on
     file for it, and no answered request lists them elsewhere (a moved match
-    moves with its id): a glitchy answer, not a day with no games - treated
-    as a failed request, so merge() keeps those rows. Returns `fetched`,
-    changed in place."""
+    moves with its id): one glitchy answer must not unconfirm a whole day, so
+    it is treated as a failed request and merge() keeps those rows - unless
+    the run before had the same empty answer for it (`previous`: that run's
+    last_run["failed"]), when the day really is empty and the rows go.
+    Returns `fetched`, changed in place."""
     listed = {row_key(r) for r in fetched.get("rows", [])}
+    previous = previous or {}
     for key, n in list(fetched.get("ok", {}).items()):
         if n or not key.startswith("espn:"):
             continue
         held = [r for r in old_rows if r.get("request") == key and r.get("status") not in ("final",)
                 and row_key(r) not in listed]
-        if held:
-            del fetched["ok"][key]
-            fetched.setdefault("failed", {})[key] = (f"empty board with {len(held)} matches on file still to "
-                                                     f"play; kept")
-            log(f"   {key}: answered with no events, but {len(held)} matches on file for it are still to play; "
-                f"treated as failed, kept what is on file")
+        if not held:
+            continue
+        if str(previous.get(key, "")).startswith(EMPTY_BOARD):
+            log(f"   {key}: answered with no events twice in a row; its {len(held)} matches still to play "
+                f"on file are dropped")
+            continue
+        del fetched["ok"][key]
+        fetched.setdefault("failed", {})[key] = (f"{EMPTY_BOARD} with {len(held)} matches on file still to "
+                                                 f"play; kept until a second empty answer")
+        log(f"   {key}: answered with no events, but {len(held)} matches on file for it are still to play; "
+            f"treated as failed, kept what is on file")
     return fetched
 
 
@@ -780,26 +794,36 @@ def sync(now=None, path=FEED, get=_get, days_back=4, days_ahead=10, leagues=tupl
     """Fetch both feeds, merge into the snapshot on file, write it. Returns
     the snapshot; its last_run says what answered and what failed, and which
     clubs a feed named that the tables do not map. `now` None is a real run:
-    each row is stamped when its own request was answered (fetch). A
-    snapshot on file that cannot be read is rebuilt from this fetch, said so
-    in the log (every committed version is in git)."""
-    live = now is None
+    each row is stamped when its own request was answered (fetch's `wall`).
+
+    A snapshot on file that cannot be read is rebuilt from what this fetch
+    brings, said so in the log (every committed version is in git) - and,
+    where nothing answered, left as it is: there is nothing to rebuild it
+    from, and the run goes on with football-data.co.uk alone."""
+    if now is None and wall is None:
+        wall = lambda: datetime.now(timezone.utc)          # noqa: E731 - a real run: each row its own moment
     now = _aware(now)
+    unreadable = None
     try:
         snap = load(path)
     except Exception as err:                       # noqa: BLE001 - logged; rebuilt from this fetch
-        log(f"   feeds: the snapshot on file is unreadable ({err.__class__.__name__}: {str(err)[:120]}); "
-            f"rebuilt from this fetch")
+        unreadable = f"{err.__class__.__name__}: {str(err)[:120]}"
         snap = empty()
-    got = fetch(None if live else now, days_back, days_ahead, get=get, leagues=leagues, log=log, wall=wall)
-    distrust_empty(snap.get("rows", []), got, log=log)
+    got = fetch(now, days_back, days_ahead, get=get, leagues=leagues, log=log, wall=wall)
+    if unreadable is not None:
+        if not got["ok"]:
+            log(f"   feeds: the snapshot on file is unreadable ({unreadable}) and no request answered; "
+                f"left as it is")
+            return snap
+        log(f"   feeds: the snapshot on file was unreadable ({unreadable}); rebuilt from this fetch")
+    distrust_empty(snap.get("rows", []), got, log=log, previous=(snap.get("last_run") or {}).get("failed"))
     rows = merge(snap.get("rows", []), got, now, log=log)
     requests = dict(snap.get("requests") or {})
     requests.update({k: got["at"] for k in got["ok"]})
-    live = {r["request"] for r in rows}
+    on_file = {r["request"] for r in rows}
     oldest = (now - timedelta(days=KEEP_BEHIND)).strftime("%Y%m%d")
     requests = {k: v for k, v in requests.items()
-                if k in live or k in got["ok"] or (k.startswith("espn:") and k.rsplit(":", 1)[1] >= oldest)}
+                if k in on_file or k in got["ok"] or (k.startswith("espn:") and k.rsplit(":", 1)[1] >= oldest)}
     snap = {"schema": SCHEMA, "requests": requests, "rows": rows,
             "last_run": {"at": got["at"], "answered": len(got["ok"]), "failed": dict(sorted(got["failed"].items())),
                          "unmapped": got.get("unmapped", [])}}
@@ -852,9 +876,11 @@ def reconcile(espn_rows, fd_rows, log=print):
     """One row per match (league, season, home, away) from both feeds' rows.
 
     Each row: match_id, league, season, home, away, uk_date, date_hint,
-    kickoff_utc (the EARLIER of the sources' times: the freeze time; None
-    without one, or for a postponed or cancelled match), kickoff_espn,
-    kickoff_fd, time_confirmed, status (MATCH_STATUSES), status_espn,
+    kickoff_utc (ESPN's valid time, else fixturedownload's: the match's
+    date, id and shown time; None without one, or for a postponed or
+    cancelled match), kickoff_first (the earlier of the two: no pick stays
+    open past it), kickoff_espn, kickoff_fd, time_confirmed, status
+    (MATCH_STATUSES), status_espn,
     status_fd, hg, ag, result (H/D/A, only for an accepted - provisional -
     final), provisional, result_sources, result_seen_at, score_espn,
     score_fd, espn_id, fd_id, round, sources, warnings."""
@@ -878,9 +904,15 @@ def _reconcile_one(key, espn_rows, fd_rows):
     e, f = _one_espn(espn_rows, notes), _one_fd(fd_rows, notes)
     ke, kf = (e or {}).get("kickoff_utc"), (f or {}).get("kickoff_utc")
     times = sorted(t for t in (ke, kf) if t)
-    when = times[0] if times else None
+    # The match's time - its date, its id, the time shown - is ESPN's valid
+    # one where there is one (ESPN tracks a move; fixturedownload's later
+    # rounds were measured stale), else fixturedownload's. The earlier of the
+    # two still closes a pick (kickoff_first; soccer_schedule).
+    when = ke or kf
+    first = times[0] if times else None
     if ke and kf and ke != kf:
-        notes.append(f"kickoff differs: ESPN {ke}, fixturedownload {kf}; the earlier is kept")
+        notes.append(f"kickoff differs: ESPN {ke}, fixturedownload {kf}; ESPN's is the match's, "
+                     f"the earlier closes a pick")
     confirmed = bool(e and e["time_confirmed"] and ke and kf and ke == kf)
 
     se, sfd = (e or {}).get("status"), (f or {}).get("status")
@@ -915,6 +947,7 @@ def _reconcile_one(key, espn_rows, fd_rows):
         "league": league, "season": season, "home": home, "away": away,
         "uk_date": day.isoformat() if day else None, "date_hint": hint,
         "kickoff_utc": None if status in ("postponed", "cancelled") else when,
+        "kickoff_first": None if status in ("postponed", "cancelled") else first,
         "kickoff_espn": ke, "kickoff_fd": kf, "time_confirmed": confirmed,
         "status": status, "status_espn": se, "status_fd": sfd,
         "hg": hg, "ag": ag,

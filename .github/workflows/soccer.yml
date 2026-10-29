@@ -47,8 +47,8 @@ on:
     - cron: "47 16 * 8-12,1-5 FRI"   # ...and prices posted later in the afternoon
     - cron: "17 7 * 8-12,1-5 SAT"    # before Saturday's early games
     - cron: "17 7 * 8-12,1-5 SUN"    # before Sunday's; grade Saturday
-    - cron: "47 21 * 8-12,1-5 SAT"   # Saturday's results the evening they happen; the next round
-    - cron: "47 21 * 8-12,1-5 SUN"   # Sunday's results; the next round
+    - cron: "17 22 * 8-12,1-5 SAT"   # Saturday's results the evening they happen (after a 21:00 CET full time); the next round
+    - cron: "17 22 * 8-12,1-5 SUN"   # Sunday's results; the next round
     - cron: "17 9 * 8-12,1-5 MON"    # grade the weekend
     - cron: "47 13 * 8-12,1-5 TUE"   # the midweek fixtures and prices
     - cron: "47 16 * 8-12,1-5 TUE"   # ...and prices posted later in the afternoon

@@ -64,6 +64,18 @@ def fd_rows(season, log=None):
 
 @pytest.fixture(scope="module")
 def football_data():
+    """football-data.co.uk's top-league results for 2025-26 and for 2026-27
+    to its last result at the probe (Oct 21), as they stood then - frozen
+    here (taken from soccer/data/matches.csv.gz on 2026-10-29), so a gate
+    test checks the code, never a correction football-data.co.uk posts
+    later. The snapshot-marked tests read the live snapshot instead."""
+    frozen = pd.read_csv(FIXTURES / "football_data_top5_2025_to_20261021.csv.gz")
+    frozen["kickoff"] = pd.to_datetime(frozen["kickoff"])
+    return frozen
+
+
+@pytest.fixture(scope="module")
+def football_data_live():
     m = sd.load_matches()
     return m[m["league"].isin(sd.TOP) & m["season"].isin([2025, 2026])]
 
@@ -219,13 +231,13 @@ def test_fixturedownload_agrees_with_football_data_on_every_match_already_played
 
 
 @pytest.mark.snapshot
-def test_the_provisional_results_are_football_datas_once_it_posts_them(espn, football_data):
+def test_the_provisional_results_are_football_datas_once_it_posts_them(espn, football_data_live):
     """The round the feeds had first (Oct 23-26): once football-data.co.uk
     posts it, every provisional result must be its result, under its id.
     Depends on its publishing clock, so reported, never a gate."""
     rows, _ = espn
     matches = sf.reconcile(rows, fd_rows(2026), log=lambda *_: None)
-    theirs = by_pairing(football_data[football_data["result"].notna()])
+    theirs = by_pairing(football_data_live[football_data_live["result"].notna()])
     landed = [(m, theirs[k]) for m in matches if m["status"] == "final"
               and (k := (m["league"], m["season"], m["home"], m["away"])) in theirs]
     for m, g in landed:
@@ -250,7 +262,6 @@ def test_both_feeds_agree_on_every_match_espn_was_asked_about(espn):
 
 
 def test_every_club_in_the_samples_maps_one_to_one_to_football_datas(football_data):
-    fixtures = sd.load_fixtures()
     for league in sd.TOP:
         espn_table = sf.ESPN_CLUBS[league]
         assert len({club for _, club in espn_table.values()}) == len(espn_table), league
@@ -263,8 +274,7 @@ def test_every_club_in_the_samples_maps_one_to_one_to_football_datas(football_da
         for tid, name in {**listed, **on_boards}.items():
             assert tid in espn_table and espn_table[tid][0] == name, (league, tid, name)
         theirs = football_data[(football_data["league"] == league) & (football_data["season"] == season)]
-        clubs = set(theirs["home"]) | set(theirs["away"])
-        clubs |= set(fixtures.loc[(fixtures["league"] == league) & (fixtures["season"] == season), "home"])
+        clubs = set(theirs["home"]) | set(theirs["away"])            # every 2026-27 club had played by Oct 21
         assert {espn_table[t][1] for t in listed} == clubs, league
 
         for year in (2025, 2026):
@@ -398,19 +408,44 @@ def test_a_missing_time_is_missing():
         (None, None, "scheduled", "2026-10-31")
 
 
-def test_differing_kickoffs_keep_both_and_freeze_at_the_earlier():
+def test_differing_kickoffs_keep_both_espns_is_the_matchs_and_the_earlier_closes():
     warnings = []
     m = only(sf.reconcile(one_espn(event(when="2026-10-31T15:00Z")), one_fd(fd(when="2026-10-31 12:30:00Z")),
                           log=warnings.append))
-    assert (m["kickoff_utc"], m["kickoff_espn"], m["kickoff_fd"], m["time_confirmed"]) == \
-        ("2026-10-31T12:30:00Z", "2026-10-31T15:00:00Z", "2026-10-31T12:30:00Z", False)
-    assert warnings and "earlier" in m["warnings"][0]
+    assert (m["kickoff_utc"], m["kickoff_first"], m["kickoff_espn"], m["kickoff_fd"], m["time_confirmed"]) == \
+        ("2026-10-31T15:00:00Z", "2026-10-31T12:30:00Z", "2026-10-31T15:00:00Z", "2026-10-31T12:30:00Z", False)
+    assert warnings and "ESPN's is the match's" in m["warnings"][0] and "earlier closes" in m["warnings"][0]
     # Agreeing times are confirmed only with ESPN's timeValid.
     same = only(sf.reconcile(one_espn(event()), one_fd(fd()), log=lambda *_: None))
-    assert same["time_confirmed"] and same["kickoff_utc"] == "2026-10-31T15:00:00Z"
+    assert same["time_confirmed"] and same["kickoff_utc"] == same["kickoff_first"] == "2026-10-31T15:00:00Z"
     # ESPN's valid time against a fixturedownload placeholder: kept, not confirmed.
     unset = only(sf.reconcile(one_espn(event()), one_fd(fd(when="2026-10-31 00:00:00Z")), log=lambda *_: None))
-    assert unset["kickoff_utc"] == "2026-10-31T15:00:00Z" and not unset["time_confirmed"]
+    assert unset["kickoff_utc"] == unset["kickoff_first"] == "2026-10-31T15:00:00Z" and not unset["time_confirmed"]
+
+
+def test_espn_moved_the_match_and_fixturedownload_did_not_espns_date_is_the_matchs():
+    """Real, from the runner's snapshot of 2026-10-27 12:48: Ligue 1's round
+    10, which both feeds had listed at Sat 20:45 Paris the day before. ESPN
+    then had Lorient v Brest on Monday, Lyon v Angers on Sunday and Nice v
+    Rennes on FRIDAY; fixturedownload still had all three on Saturday. Each
+    match's date, id and time are ESPN's; the earlier time is kept only to
+    close a pick (soccer_schedule); none is confirmed."""
+    cases = [("273", "6997", "FC Lorient", "Stade Brestois 29", "2026-11-02T19:45Z", "2026-10-31 19:45:00Z",
+              "F1-20261102-lorient-brest", "2026-10-31T19:45:00Z"),
+             ("167", "7868", "Olympique Lyonnais", "Angers SCO", "2026-11-01T16:15Z", "2026-10-31 19:45:00Z",
+              "F1-20261101-lyon-angers", "2026-10-31T19:45:00Z"),
+             ("2502", "169", "OGC Nice", "Stade Rennais FC", "2026-10-30T18:00Z", "2026-10-31 16:15:00Z",
+              "F1-20261030-nice-rennes", "2026-10-30T18:00:00Z")]
+    for home, away, fd_home, fd_away, espn_when, fd_when, mid, first in cases:
+        names = {home: sf.ESPN_CLUBS["F1"][home][0], away: sf.ESPN_CLUBS["F1"][away][0]}
+        e = sf.parse_espn(board(event(home=home, away=away, when=espn_when, names=names)), "F1",
+                          request="espn:F1:test", seen_at="2026-10-27T12:48:07Z", log=lambda *_: None)
+        f = one_fd(fd(fd_home, fd_away, fd_when), league="F1")
+        m = only(sf.reconcile(e, f, log=lambda *_: None))
+        assert (m["match_id"], m["kickoff_first"], m["time_confirmed"]) == (mid, first, False)
+        assert m["kickoff_utc"] == m["kickoff_espn"] == sf.stamp(sf.parse_utc(espn_when))
+        day = mid.split("-")[1]
+        assert m["uk_date"] == m["date_hint"] == f"{day[:4]}-{day[4:6]}-{day[6:]}"
 
 
 def test_an_unmapped_club_is_skipped_with_a_warning():
@@ -566,3 +601,95 @@ def test_the_snapshot_is_stable_sorted_and_has_no_nan(tmp_path):
     assert path.read_text(encoding="utf-8") == text
     assert sf.load(tmp_path / "missing.json") == sf.empty()
     assert json.loads(sf.dumps(sf.empty()))["rows"] == []
+
+
+def test_one_empty_scoreboard_is_not_believed_and_two_in_a_row_are(tmp_path):
+    """An ESPN day that answers {"events": []} while matches still to play
+    are on file for it: a glitch, kept as on file - one empty answer must not
+    unconfirm a whole day. The same answer on the next run is believed."""
+    path = tmp_path / "feed.json"
+    first = sf.sync(NOW, path=path, get=sample_getter(), log=lambda *_: None)
+    good = sample_getter()
+
+    def blank_31st(url):
+        return b'{"events": []}' if url.endswith("dates=20261031") else good(url)
+
+    def scheduled_31st(snap):
+        return {sf.row_key(r) for r in snap["rows"] if r["source"] == "espn" and r["request"].endswith(":20261031")
+                and r["status"] == "scheduled"}
+    held = scheduled_31st(first)
+    assert len(held) == 25
+    lines = []
+    later = datetime(2026, 10, 27, 9, 0, tzinfo=timezone.utc)
+    second = sf.sync(later, path=path, get=blank_31st, log=lines.append)
+    assert scheduled_31st(second) == held
+    failed = {k: v for k, v in second["last_run"]["failed"].items() if k.endswith(":20261031")}
+    assert len(failed) == 5 and all(v.startswith(sf.EMPTY_BOARD) for v in failed.values())
+    assert sum("treated as failed" in line for line in lines) == 5
+    matches = {(m["league"], m["home"], m["away"]): m for m in sf.reconciled(second)}
+    assert sum(m["time_confirmed"] for m in matches.values() if m["uk_date"] == "2026-10-31") == 25
+    # The next run's answer is empty too: the day really is empty.
+    third = sf.sync(datetime(2026, 10, 27, 13, 0, tzinfo=timezone.utc), path=path, get=blank_31st,
+                    log=lines.append)
+    assert not scheduled_31st(third)
+    assert not any(k.endswith(":20261031") for k in third["last_run"]["failed"])
+
+
+def test_an_unreadable_snapshot_is_rebuilt_from_a_fetch_that_answers(tmp_path):
+    path = tmp_path / "feed.json"
+    path.write_text('{"schema": 1, "rows": [{"source": "espn"')            # cut off mid-write
+    lines = []
+    snap = sf.sync(NOW, path=path, get=sample_getter(), log=lines.append)
+    assert any("unreadable" in line and "rebuilt" in line for line in lines)
+    assert sf.load(path) == snap and len(snap["rows"]) > 300 and snap["last_run"]["answered"] == 80
+    # ...and left as it is when nothing answers: there is nothing to rebuild it from.
+    path.write_text("{ not json")
+
+    def down(url):
+        raise ConnectionError("timed out")
+    lines = []
+    sf.sync(NOW, path=path, get=down, log=lines.append)
+    assert path.read_text() == "{ not json" and any("left as it is" in line for line in lines)
+
+
+def test_each_row_is_stamped_when_its_own_request_answered(tmp_path):
+    """A real run's rows carry the moment their own request was answered,
+    never the run's start (fetch's `wall`); a replay's carry its `now`."""
+    clock = iter(pd.date_range("2026-10-26 13:20", periods=200, freq="10s", tz="UTC"))
+    snap = sf.sync(NOW, path=tmp_path / "feed.json", get=sample_getter(), log=lambda *_: None,
+                   wall=lambda: next(clock).to_pydatetime())
+    seen = {r["request"]: r["seen_at"] for r in snap["rows"]}
+    assert len(seen) > 40 and len(set(seen.values())) == len(seen)              # one moment per request
+    assert all("2026-10-26T13:20:00Z" <= v < "2026-10-26T13:35:00Z" for v in seen.values())
+    assert all(v > snap["last_run"]["at"] for v in seen.values())
+    replay = sf.sync(NOW, path=tmp_path / "other.json", get=sample_getter(), log=lambda *_: None)
+    assert {r["seen_at"] for r in replay["rows"]} == {"2026-10-26T13:13:23Z"}
+
+
+def test_a_club_neither_table_maps_is_counted_in_the_snapshot(tmp_path):
+    good = sample_getter()
+
+    def promoted(url):
+        if url.endswith("dates=20261031") and "/eng.1/" in url:
+            return json.dumps(board(event(home="99999", names={"99999": "Promoted FC"}))).encode()
+        return good(url)
+    lines = []
+    snap = sf.sync(NOW, path=tmp_path / "feed.json", get=promoted, log=lines.append)
+    assert snap["last_run"]["unmapped"] == ["espn:E0:99999 Promoted FC"]
+    assert any("1 clubs with no mapping" in line for line in lines)
+
+
+@pytest.mark.snapshot
+def test_every_club_football_data_has_this_season_maps_from_both_feeds():
+    """The club tables hold one season's clubs: every summer the promoted
+    ones must be added (the module's notes). Checked against
+    football-data.co.uk's snapshot of the current season, so reported,
+    never a gate."""
+    m, fx = sd.load_matches(), sd.load_fixtures()
+    season = int(m.loc[m["league"].isin(sd.TOP), "season"].max())
+    for league in sd.TOP:
+        rows = pd.concat([m[(m["league"] == league) & (m["season"] == season)],
+                          fx[(fx["league"] == league) & (fx["season"] == season)]])
+        clubs = set(rows["home"]) | set(rows["away"])
+        assert clubs <= {c for _, c in sf.ESPN_CLUBS[league].values()}, (league, "ESPN", clubs)
+        assert clubs <= set(sf.FD_CLUBS[league].values()), (league, "fixturedownload", clubs)

@@ -72,16 +72,20 @@ def test_the_rule_market_where_both_are_priced_the_model_where_not():
         assert np.array_equal(mats[i], own[i]) and math.isnan(info["miss"][i]) and info["miss_on"][i] == -1
 
 
-def test_a_fit_that_misses_a_target_badly_falls_back_to_the_model_and_says_how_badly():
+def test_a_fit_that_misses_a_target_badly_is_kept_and_flagged_with_how_badly():
     # A 70% draw beside a 42% over 2.5 (an end-of-season Serie A price): no
-    # matrix reaches both, the closest misses by far more than the rule allows.
+    # matrix reaches both, the closest misses by far more than FIT_MAX_MISS.
+    # Measured, the model's own matrix misses those prices by more still and
+    # scores worse (the notes): the market's is shown, flagged.
     mats, info = ssc.shown_matrices([0.2, 0.5], [0.7, 0.27], [0.1, 0.23], [0.42, 0.52], -0.06, [1.3, 1.5], [0.9, 1.1])
-    assert list(info["source"]) == ["model", "market"] and list(info["reason"]) == [ssc.BAD_FIT, None]
+    assert list(info["source"]) == ["market", "market"] and list(info["reason"]) == [None, None]
+    assert list(info["flagged"]) == [True, False]
     assert info["miss"][0] > ssc.FIT_MAX_MISS and ssc.TARGET_NAMES[info["miss_on"][0]] in ssc.TARGET_NAMES
-    assert np.array_equal(mats[0], ssc.dc_matrix(1.3, 0.9, -0.06)[0])
-    # the same fit with the threshold above its miss keeps the market's matrix
-    k, info_k = ssc.shown_matrices(0.2, 0.7, 0.1, 0.42, -0.06, 1.3, 0.9, max_miss=info["miss"][0])
-    assert info_k["source"][0] == "market" and not np.array_equal(k[0], mats[0])
+    k, _ = ssc.score_matrix(0.2, 0.7, 0.1, 0.42, -0.06, 1.3, 0.9)
+    assert np.array_equal(mats[0], k[0])
+    c = ssc.card(mats[0], info["source"][0], info["reason"][0], info["miss"][0], info["miss_on"][0])
+    assert c["flagged"] and c["miss"] == info["miss"][0]
+    assert not ssc.card(mats[1], "market", None, info["miss"][1], info["miss_on"][1])["flagged"]
 
 
 def test_no_model_rates_means_no_numbers_shown_as_missing():
@@ -97,7 +101,7 @@ def test_the_experiments_rule_is_the_measured_matrix_bit_for_bit():
     po = po.copy()
     po[2] = np.nan
     want, _ = ssc.score_matrix(ph, pd_, pa, po, rho, lam, nu)
-    got, info = ssc.shown_matrices(ph, pd_, pa, po, rho, lam, nu, need_o25=False, max_miss=np.inf)
+    got, info = ssc.shown_matrices(ph, pd_, pa, po, rho, lam, nu, need_o25=False)
     assert np.array_equal(got, want) and (info["source"] == "market").all()
 
 
@@ -152,7 +156,7 @@ def league():
 def test_the_measured_table_is_the_experiments_measurement_by_its_rule(league):
     m, wf, pick = league
     periods = ((2007, 2008), (2009, 2010))
-    walked = ssc.walk(m, wf["preds"], pick, need_o25=False, max_miss=np.inf)
+    walked = ssc.walk(m, wf["preds"], pick, need_o25=False)
     got = ssc.measure(m, wf["preds"], pick, walked, periods=periods)
     for lo, hi in periods:
         rep = sm.evaluate(m, wf, (lo, hi))

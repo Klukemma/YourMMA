@@ -65,7 +65,7 @@ def test_seasons_are_named_by_the_year_they_start():
 
 
 def test_a_sync_replaces_only_the_seasons_it_fetched(tmp_path):
-    matches, fixtures = tmp_path / "m.csv.gz", tmp_path / "f.csv"
+    matches, fixtures = tmp_path / "matches", tmp_path / "f.csv"
     files = {sd.SEASON_URL.format(code="0607", league="E0"): OLD.encode()}
     sd.sync(seasons=[2006], fetch=files.get, log=lambda *_: None,
             matches_path=matches, fixtures_path=fixtures)
@@ -133,7 +133,7 @@ def test_every_club_badge_is_readable():
 
 
 def test_a_failed_or_wrong_download_keeps_what_is_on_file(tmp_path):
-    matches, fixtures = tmp_path / "m.csv.gz", tmp_path / "f.csv"
+    matches, fixtures = tmp_path / "matches", tmp_path / "f.csv"
     good = {sd.SEASON_URL.format(code="2526", league="SP1"): NEW.encode(), sd.FIXTURES_URL: NEW.encode()}
     sd.sync(seasons=[2025], fetch=good.get, log=lambda *_: None, matches_path=matches, fixtures_path=fixtures)
     assert len(sd.load_matches(matches)) == 1 and len(sd.load_fixtures(fixtures)) == 1
@@ -166,3 +166,51 @@ def test_the_result_is_read_from_the_goals():
     assert rows[0]["result"] == "H"
     rows = sd.parse(OLD.replace("1,1,D,0,0,D", ",1,H,0,0,D").encode(), 2006)
     assert rows[0]["result"] is None
+
+
+# ------------------------------------------------------------- the season files
+
+def test_the_season_files_load_exactly_what_the_single_file_did():
+    """The migration of 2026-10-29: run while soccer/data/matches.csv.gz was
+    still there (it passed, and the file was then removed - git history has
+    it); skipped since. test_migrate_* and the fingerprint below carry on."""
+    if not sd.LEGACY_MATCHES.exists():
+        pytest.skip("the single matches.csv.gz is gone: migrated on 2026-10-29")
+    old = sd.load_matches(sd.LEGACY_MATCHES)
+    pd.testing.assert_frame_equal(old, sd.load_matches())
+    pd.testing.assert_frame_equal(old, sd.load_matches(leagues=list(sd.LEAGUES)))
+
+
+@pytest.mark.snapshot
+def test_the_finished_seasons_are_the_single_files_to_the_byte():
+    # A snapshot check, not a gate: a full sync may take a correction from
+    # football-data.co.uk. Seasons 2005-2025 of the ten as the single file
+    # held them on 2026-10-29 (82,482 matches).
+    import hashlib
+    m = sd.load_matches()
+    done = m[m["season"] <= 2025].reset_index(drop=True)
+    assert len(done) == 82482
+    assert hashlib.sha256(done.to_csv(index=False).encode()).hexdigest() == \
+        "311bff21af9c0a2e3f11d4a63a4c5d83e078046d801c0b2f31bc1343358ab9a4"
+
+
+def test_migrate_splits_a_single_file_into_season_files_that_load_the_same(tmp_path):
+    rows = sd.parse(OLD.encode(), 2006) + sd.parse(NEW.encode(), 2025)
+    legacy = tmp_path / "matches.csv.gz"
+    sd._write(sd.order(sd.frame(rows)), legacy)
+    old = sd.load_matches(legacy)
+    sd.migrate(legacy, tmp_path / "matches", log=lambda *_: None)
+    assert sorted(p.relative_to(tmp_path).as_posix() for p in (tmp_path / "matches").rglob("*.gz")) == \
+        ["matches/E0/2006.csv.gz", "matches/SP1/2025.csv.gz"]
+    pd.testing.assert_frame_equal(old, sd.load_matches(tmp_path / "matches"))
+
+
+def test_the_repo_snapshot_is_one_file_per_league_and_season_and_defaults_to_the_ten():
+    folders = sorted(p.name for p in sd.MATCHES.iterdir() if p.is_dir())
+    assert set(sd.LEAGUES) <= set(folders) <= set(sd.ALL_LEAGUES)
+    for code in folders:
+        names = sorted(p.name for p in (sd.MATCHES / code).iterdir())
+        assert names and all(n.endswith(".csv.gz") and n.split(".")[0].isdigit() for n in names), code
+    assert not sd.LEGACY_MATCHES.exists() or sd.LEGACY_MATCHES.is_file()
+    m = sd.load_matches()
+    assert set(m["league"]) == set(sd.LEAGUES) and m["match_id"].is_unique
