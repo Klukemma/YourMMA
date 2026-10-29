@@ -243,3 +243,20 @@ def test_one_match_one_pick_even_from_an_old_log():
                        pd.Timestamp("2026-10-29 11:00"))
     p = log["picks"]["E0-20261101-arsenal-chelsea"]
     assert p["void_was"]["void"] == "rescheduled" and p["id_was"] == "E0-20261031-arsenal-chelsea" and not p.get("void")
+
+
+def test_a_frozen_pick_is_not_voided_while_another_sources_time_is_still_to_come():
+    """The pick's id came from ESPN's date, which ESPN later corrects; no run
+    saw the correction before ESPN's wrong time passed. fixturedownload's time
+    is still to come, so the match is not known to be off: the pick moves to
+    the new id as it is, nothing is logged after it froze, nothing is void."""
+    log = {"schema": sl.SCHEMA, "picks": {}}
+    first = _match(kickoff="2026-10-31T15:00:00Z",
+                   kickoff_sources={"ESPN": "2026-10-31T15:00:00Z", "fixturedownload": "2026-11-01T16:15:00Z"})
+    sl.log_pick(log, first, pd.Timestamp("2026-10-30 18:00"))
+    moved = _match(match_id="E0-20261101-arsenal-chelsea", kickoff="2026-11-01T16:15:00Z")
+    sl.log_pick(log, moved, pd.Timestamp("2026-10-31 16:00"))
+    assert not any(p.get("void") for p in log["picks"].values())
+    assert list(log["picks"]) == ["E0-20261101-arsenal-chelsea"]
+    p = log["picks"]["E0-20261101-arsenal-chelsea"]
+    assert p["id_was"] == "E0-20261031-arsenal-chelsea" and p["last_logged"] == "2026-10-30T18:00:00Z"

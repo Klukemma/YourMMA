@@ -703,8 +703,11 @@ def test_espn_moving_a_football_data_fixture_after_its_time_is_shown_on_espns_da
     """football-data.co.uk's file still has Saturday 15:00; ESPN lists the
     match for Monday (fixturedownload agrees with the old slot). Past
     Saturday 15:00 with no result, ESPN's date stands: the match is listed
-    again, on Monday, with every source's time - never dropped silently - and
-    picked there, the old pick void as rescheduled (one match, one pick)."""
+    again, on Monday, with every source's time - never dropped silently. The
+    Friday pick froze at Saturday 15:00, and ESPN's Monday is still to come,
+    so the match is not known to be off (it may have been played on Saturday
+    with its result not in yet): the pick moves to Monday's id as it is,
+    locked - one match, one pick, nothing logged after it froze."""
     feed = [espn("Arsenal", "Chelsea", "2026-11-02 19:45"), fdl("Arsenal", "Chelsea", "2026-10-31 15:00")] + \
         both("Leeds", "Stoke", "2026-11-01 16:30")
     m, _, _, fri = run(FRIDAY, fixtures=_fixtures(), feed=feed)
@@ -715,11 +718,13 @@ def test_espn_moving_a_football_data_fixture_after_its_time_is_shown_on_espns_da
     new = sd.match_id("E0", pd.Timestamp("2026-11-02").date(), "Arsenal", "Chelsea")
     assert any("moved - its date stands" in line for line in lines)
     e = by_id(m)[new]
-    assert e["status"] == "upcoming" and e["kickoff"] == "2026-11-02T19:45:00Z" and e["price_status"] == "not_yet"
+    assert e["status"] == "upcoming" and e["kickoff"] == "2026-11-02T19:45:00Z"
     assert e["kickoff_sources"] == {"football-data.co.uk": "2026-10-31T15:00:00Z", "ESPN": "2026-11-02T19:45:00Z",
                                     "fixturedownload.com": "2026-10-31T15:00:00Z"}
-    assert e["freeze_at"] == "2026-11-02T00:00:00Z" and not e.get("locked")
-    assert sun["picks"][AC]["void"] == "rescheduled" and sun["picks"][new]["last_logged"] == "2026-11-01T09:00:00Z"
+    assert e["locked"] and e["freeze_at"] == "2026-10-31T15:00:00Z"
+    p = sun["picks"][new]
+    assert AC not in sun["picks"] and p["id_was"] == AC and not p.get("void")
+    assert p["last_logged"] == fri["picks"][AC]["last_logged"] and p["pick"] == fri["picks"][AC]["pick"]
     assert sum(1 for p in sun["picks"].values() if p["home"] == "Arsenal" and not p.get("void")) == 1
 
 

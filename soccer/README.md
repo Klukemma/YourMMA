@@ -209,8 +209,9 @@ was answered.
   another (football-data.co.uk's, or ESPN's new day) is the same match: it moves to the new id. One
   that had not frozen is logged afresh; one that had moves as it is - nothing new is logged after a
   pick froze - with its time following the match. A pick is voided as "rescheduled" only when its
-  match is known to be off - its kickoff passed with no result, or the feeds list it postponed,
-  cancelled or abandoned - and a pick on the new date replaces it.
+  match is known to be off - every time on file for it (its kickoff and each source's) passed with
+  no result, or the feeds list it postponed, cancelled or abandoned - and a pick on the new date
+  replaces it.
 - **Never graded if logged after kickoff.** A result that carries its kickoff is checked against
   the pick's last log; a pick written at or after the real kickoff (a match brought forward that
   no source had moved yet) is void. A provisional result is checked against ESPN's kickoff - the

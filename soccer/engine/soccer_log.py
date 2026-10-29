@@ -141,9 +141,16 @@ def frozen(p, now):
 
 
 def _gone(p, now, off):
-    """Whether a pending pick's match is known to be off: its kickoff passed
-    with no result, or the feeds list its id as postponed/cancelled/abandoned."""
-    return p.get("match_id") in off or (p.get("kickoff") is not None and naive_utc(p["kickoff"]) <= naive_utc(now))
+    """Whether a pending pick's match is known to be off: the feeds list its id
+    as postponed/cancelled/abandoned, or EVERY time on file for it has passed
+    with no result - its kickoff and each source's (kickoff_sources). One
+    source's time passing is not enough: ESPN may have corrected a wrong date
+    that another source still has to come."""
+    if p.get("match_id") in off:
+        return True
+    times = [p.get("kickoff"), *((p.get("kickoff_sources") or {}).values())]
+    times = [t for t in times if t is not None]
+    return bool(times) and all(naive_utc(t) <= naive_utc(now) for t in times)
 
 
 def log_pick(log, match, now, off=()):
