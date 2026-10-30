@@ -45,7 +45,7 @@
     "accuracy": 0.5231521426517113,
     "brier": 0.5853731410872365,
     "code": "F1",
-    "log_loss": 0.9822978930385612,
+    "log_loss": 0.9822978930385611,
     "market_accuracy": 0.5243025596778832,
     "market_log_loss": 0.9827597939815056,
     "matches": 3477,
@@ -93,7 +93,7 @@
     "lo": 0.6,
     "observed": 0.6009389671361502,
     "picks": 1491,
-    "predicted": 0.6234524896419618
+    "predicted": 0.6234524896419616
    },
    {
     "hi": 0.7,
@@ -162,16 +162,16 @@
    "model": {
     "2006-2015": {
      "accuracy": 0.5205652007229311,
-     "brier": 0.5897579969695496,
-     "log_loss": 0.9878265555926677,
+     "brier": 0.5897579969695463,
+     "log_loss": 0.9878265555926603,
      "market_accuracy": 0.5262610219617723,
      "market_log_loss": 0.9816301022089897,
      "matches": 18259
     },
     "2016-2025": {
      "accuracy": 0.5334522747546833,
-     "brier": 0.5800638617302333,
-     "log_loss": 0.9753568321809263,
+     "brier": 0.5800638617302322,
+     "log_loss": 0.9753568321809251,
      "market_accuracy": 0.5408675289919714,
      "market_log_loss": 0.9651619270661266,
      "matches": 17936
@@ -217,32 +217,32 @@
    "season": 2026,
    "w": [
     1.1101909011803373,
-    0.03906617098046607,
-    0.002790309816008452
+    0.03906617098046598,
+    0.002790309816008461
    ]
   }
  },
  "basis": "market",
- "generated": "2026-10-29T16:15:29Z",
- "model_through": "2026-10-28",
+ "generated": "2026-10-30T18:54:33Z",
+ "model_through": "2026-10-29",
  "schema": 1,
  "track_record": {
-  "btts_correct": 5,
-  "btts_settled": 8,
+  "btts_correct": 7,
+  "btts_settled": 10,
   "by_week": [
    {
-    "correct": 7,
+    "correct": 8,
     "label": "Week of Oct 26",
     "provisional": 0,
-    "settled": 10
+    "settled": 12
    }
   ],
-  "correct": 7,
+  "correct": 8,
   "corrected": 0,
-  "ou_correct": 8,
-  "ou_settled": 10,
-  "pending": 89,
+  "ou_correct": 10,
+  "ou_settled": 12,
+  "pending": 96,
   "provisional": 0,
-  "settled": 10
+  "settled": 12
  }
 }
