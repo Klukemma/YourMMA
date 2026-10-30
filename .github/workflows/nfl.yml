@@ -20,9 +20,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "predict = this week's picks; sync = data only; backtest = report"
+        description: "predict = this week's picks; sync = data only; backtest = report; probe-ncaa = save the college football sources' answers"
         type: choice
-        options: [predict, sync, backtest]
+        options: [predict, sync, backtest, probe-ncaa]
         default: predict
       refresh_odds:
         description: "predict only: buy today's prices even if every game has one on file (3 credits)"
@@ -94,6 +94,11 @@ jobs:
           elif [ "$MODE" = "backtest" ]; then
             python nfl/engine/nfl_data.py 2>&1 | tee nfl.log
             python nfl/engine/nfl_backtest.py 2>&1 | tee -a nfl.log
+          elif [ "$MODE" = "probe-ncaa" ]; then
+            # College football's possible sources, saved under
+            # nfl/data/ncaa_probe/ (probe_ncaa.py). The token only lifts
+            # GitHub's API rate limit for reading public releases.
+            GITHUB_TOKEN="${{ github.token }}" python nfl/engine/probe_ncaa.py 2>&1 | tee nfl.log
           else
             # Scheduled Thursday and Sunday runs, and a dispatch that asks,
             # buy today's lines; Tuesday's run reuses what is on file unless
