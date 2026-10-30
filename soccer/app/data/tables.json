@@ -8,7 +8,7 @@
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, each beat the leagues' own rates from earlier seasons. Both teams to score runs low: across 2016-2025 its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-10-30T18:54:33Z",
+ "generated": "2026-10-30T21:10:52Z",
  "leagues": [
   {
    "code": "E0",
@@ -5280,8 +5280,8 @@
    "code": "F1",
    "model_through": "2026-10-26",
    "name": "Ligue 1",
-   "provisional": 0,
-   "results_through": "2026-10-26",
+   "provisional": 2,
+   "results_through": "2026-10-30",
    "rows": [
     {
      "club": {
@@ -5292,6 +5292,16 @@
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-10-30",
+       "ga": 1,
+       "gf": 5,
+       "home": false,
+       "league": "F1",
+       "opponent": "Le Havre",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-10-26",
        "ga": 0,
@@ -5327,28 +5337,19 @@
        "league": "F1",
        "opponent": "Marseille",
        "result": "W"
-      },
-      {
-       "date": "2026-09-13",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "F1",
-       "opponent": "Brest",
-       "result": "W"
       }
      ],
-     "ga": 9,
-     "gd": 7,
-     "gf": 16,
+     "ga": 10,
+     "gd": 11,
+     "gf": 21,
      "lost": 1,
-     "played": 8,
-     "points": 17,
+     "played": 9,
+     "points": 20,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.8654678972341119,
      "team": "Paris SG",
-     "won": 5
+     "won": 6
     },
     {
      "club": {
@@ -5359,6 +5360,16 @@
      },
      "drawn": 1,
      "form": [
+      {
+       "date": "2026-10-30",
+       "ga": 5,
+       "gf": 2,
+       "home": false,
+       "league": "F1",
+       "opponent": "Nice",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-10-25",
        "ga": 0,
@@ -5394,25 +5405,16 @@
        "league": "F1",
        "opponent": "Lyon",
        "result": "L"
-      },
-      {
-       "date": "2026-09-11",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "F1",
-       "opponent": "Marseille",
-       "result": "W"
       }
      ],
-     "ga": 14,
-     "gd": 4,
-     "gf": 18,
-     "lost": 2,
-     "played": 8,
+     "ga": 19,
+     "gd": 1,
+     "gf": 20,
+     "lost": 3,
+     "played": 9,
      "points": 16,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.1949926566874287,
      "team": "Rennes",
      "won": 5
@@ -5687,6 +5689,74 @@
     },
     {
      "club": {
+      "bg": "#C8102E",
+      "code": "NIC",
+      "fg": "#000000",
+      "name": "Nice"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-10-30",
+       "ga": 2,
+       "gf": 5,
+       "home": true,
+       "league": "F1",
+       "opponent": "Rennes",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-10-23",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "F1",
+       "opponent": "Brest",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "F1",
+       "opponent": "Lyon",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-11",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "F1",
+       "opponent": "Strasbourg",
+       "result": "W"
+      },
+      {
+       "date": "2026-09-20",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "F1",
+       "opponent": "Lille",
+       "result": "W"
+      }
+     ],
+     "ga": 12,
+     "gd": 1,
+     "gf": 13,
+     "lost": 3,
+     "played": 9,
+     "points": 14,
+     "position": 7,
+     "provisional": 1,
+     "rating": -0.19680822689473798,
+     "team": "Nice",
+     "won": 4
+    },
+    {
+     "club": {
       "bg": "#FFDD00",
       "code": "RCL",
       "fg": "#E2001A",
@@ -5746,7 +5816,7 @@
      "lost": 3,
      "played": 8,
      "points": 13,
-     "position": 7,
+     "position": 8,
      "provisional": 0,
      "rating": 0.41230987369007743,
      "team": "Lens",
@@ -5813,7 +5883,7 @@
      "lost": 4,
      "played": 8,
      "points": 12,
-     "position": 8,
+     "position": 9,
      "provisional": 0,
      "rating": 0.2948612362647105,
      "team": "Marseille",
@@ -5880,77 +5950,10 @@
      "lost": 2,
      "played": 8,
      "points": 12,
-     "position": 9,
+     "position": 10,
      "provisional": 0,
      "rating": -0.11322552370925565,
      "team": "Lorient",
-     "won": 3
-    },
-    {
-     "club": {
-      "bg": "#C8102E",
-      "code": "NIC",
-      "fg": "#000000",
-      "name": "Nice"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-10-23",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "F1",
-       "opponent": "Brest",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "F1",
-       "opponent": "Lyon",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "F1",
-       "opponent": "Strasbourg",
-       "result": "W"
-      },
-      {
-       "date": "2026-09-20",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "F1",
-       "opponent": "Lille",
-       "result": "W"
-      },
-      {
-       "date": "2026-09-12",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "F1",
-       "opponent": "Auxerre",
-       "result": "L"
-      }
-     ],
-     "ga": 10,
-     "gd": -2,
-     "gf": 8,
-     "lost": 3,
-     "played": 8,
-     "points": 11,
-     "position": 10,
-     "provisional": 0,
-     "rating": -0.19680822689473798,
-     "team": "Nice",
      "won": 3
     },
     {
@@ -6432,6 +6435,16 @@
      "drawn": 2,
      "form": [
       {
+       "date": "2026-10-30",
+       "ga": 5,
+       "gf": 1,
+       "home": true,
+       "league": "F1",
+       "opponent": "Paris SG",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-10-25",
        "ga": 4,
        "gf": 3,
@@ -6466,25 +6479,16 @@
        "league": "F1",
        "opponent": "Toulouse",
        "result": "L"
-      },
-      {
-       "date": "2026-09-12",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "F1",
-       "opponent": "Angers",
-       "result": "D"
       }
      ],
-     "ga": 15,
-     "gd": -7,
-     "gf": 8,
-     "lost": 6,
-     "played": 8,
+     "ga": 20,
+     "gd": -11,
+     "gf": 9,
+     "lost": 7,
+     "played": 9,
      "points": 2,
      "position": 18,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.2533711901691549,
      "team": "Le Havre",
      "won": 0
