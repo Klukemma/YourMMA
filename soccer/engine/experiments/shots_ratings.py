@@ -108,11 +108,18 @@ import soccer_data as sd  # noqa: E402
 
 MAX_GOALS = 10
 MU = math.log(1.3)
-LEAGUES = list(sd.LEAGUES)
+# Every league soccer_data knows (the ten were all there was until the league
+# probe); a frame holds whichever of them it holds.
+LEAGUES = list(sd.ALL_LEAGUES)
 L_IDX = {code: i for i, code in enumerate(LEAGUES)}
-L_TIER = np.array([sd.LEAGUES[c][2] for c in LEAGUES])
-COUNTRIES = sorted({meta[1] for meta in sd.LEAGUES.values()})
-L_COUNTRY = np.array([COUNTRIES.index(sd.LEAGUES[c][1]) for c in LEAGUES])
+L_TIER = np.array([sd.ALL_LEAGUES[c].tier for c in LEAGUES])
+# The rating pools: one per country, its top flight and every division below
+# it on file in one pool (England E0-EC, Scotland SC0-SC3, Spain SP1-SP2, ...;
+# every one-league country its own). rate(pools=...) takes another mapping
+# (experiments/leagues.py measures England's with E0-E1 only).
+POOLS = {code: meta.country for code, meta in sd.ALL_LEAGUES.items()}
+COUNTRIES = sorted(set(POOLS.values()))
+L_COUNTRY = np.array([COUNTRIES.index(POOLS[c]) for c in LEAGUES])
 
 # Chosen on DEV (2006-2015) only; the grids are listed in the module notes.
 DEFAULTS = dict(
@@ -130,6 +137,8 @@ DEFAULTS = dict(
     # the table: what is still at stake late in the season
     stakes=True, n_rel=3, cl_place=4, eur_place=6, late_rounds=8,
     first_season=2006,
+    # league -> rating pool (None: POOLS, one per country)
+    pools=None,
 )
 
 
@@ -182,7 +191,10 @@ def rate(matches, **params):
     lg = m["league"].map(L_IDX).to_numpy()[order]
     season = m["season"].to_numpy(dtype=float).astype(int)[order]
     dates = m["date"].to_numpy()[order]
-    country = L_COUNTRY[lg]
+    pools = {**POOLS, **(P["pools"] or {})}
+    pool_names = sorted(set(pools.values()))
+    l_pool = np.array([pool_names.index(pools[c]) for c in LEAGUES])
+    country = l_pool[lg]
     keys = pd.Series(list(zip(country, m["home"].to_numpy()[order])) + list(zip(country, m["away"].to_numpy()[order])))
     codes, uniq = pd.factorize(keys)
     N = len(m)
@@ -223,15 +235,14 @@ def rate(matches, **params):
     # the division), points and goal difference come from earlier days only
     roster = {}
     for key, grp in pd.DataFrame({"l": lg, "s": season, "h": hi, "a": ai}).groupby(["l", "s"]):
-        if L_TIER[key[0]] == 1:
-            roster[key] = np.unique(np.r_[grp["h"].to_numpy(), grp["a"].to_numpy()])
+        roster[key] = np.unique(np.r_[grp["h"].to_numpy(), grp["a"].to_numpy()])
     pts = np.zeros(T)
     gdf = np.zeros(T)
     gp = np.zeros(T)
     ref_att = np.zeros((L, C))
     ref_def = np.zeros((L, C))
     has_ref = np.zeros(L, dtype=bool)
-    country_season = np.full(len(COUNTRIES), -1)
+    country_season = np.full(len(pool_names), -1)
     global_season = -1
     pending = {}                       # team -> measurement in progress
     pairs = {"up": [], "down": [], "new": []}
@@ -313,7 +324,7 @@ def rate(matches, **params):
                 step_log[int(s)]["n_pairs"] = {d: len(pairs[d]) for d in pairs}
                 global_season = s
             if s > country_season[c]:
-                for ll in np.flatnonzero(L_COUNTRY == c):
+                for ll in np.flatnonzero(l_pool == c):
                     mem = members.get((ll, s - 1))
                     if mem:
                         ref_att[ll] = att[mem].mean(axis=0)
@@ -321,11 +332,15 @@ def rate(matches, **params):
                         has_ref[ll] = True
                 country_season[c] = s
             for t in (hi[i], ai[i]):
-                if t_season[t] != s:
+                # A match filed under an EARLIER season than the club's current
+                # one (ARG 2013/14's Boca v Velez, played 29/01/2015 after
+                # season 2014's matches) is played in the season the club is
+                # in: it never restarts the club as new.
+                if t_season[t] < s:
                     start_season(t, l, s)
-        # -- the table before today, for the top leagues playing today
+        # -- the table before today, for every league playing today
         stake = {}
-        for key in {(lg[i], season[i]) for i in range(d0, d1) if L_TIER[lg[i]] == 1}:
+        for key in {(lg[i], season[i]) for i in range(d0, d1)}:
             teams = roster[key]
             n = len(teams)
             # A league whose roster is not yet whole - the new season's file
@@ -354,8 +369,12 @@ def rate(matches, **params):
             c_up = live[:, :3].max(axis=1) * late
             c_rel = live[:, 3] * late
             dead = ((live.max(axis=1) == 0) * late).astype(float)
-            for t, a1, a2, a3, r_ in zip(teams, c_up, c_rel, dead, rem):
-                stake[t] = (a1, a2, a3, float(r_))
+            # A club that has played a double round robin already is in a
+            # format the table cannot read (a split season, a play-off): nothing
+            # at stake is read for it (never true of the five top leagues).
+            beyond = gp[teams] >= total
+            for t, a1, a2, a3, r_, b_ in zip(teams, c_up, c_rel, dead, rem, beyond):
+                stake[t] = (0.0, 0.0, 0.0, float("nan")) if b_ else (a1, a2, a3, float(r_))
         # -- features, before any of today's results
         for i in range(d0, d1):
             h, a, l = hi[i], ai[i], lg[i]
@@ -366,9 +385,8 @@ def rate(matches, **params):
             f_pa[i] = float(promoted_season[a] == season[i])
             f_play_h[i], f_play_a[i] = played[h], played[a]
             f_gp_h[i], f_gp_a[i] = gp[h], gp[a]
-            if L_TIER[l] == 1:
-                f_up_h[i], f_rel_h[i], f_dead_h[i], f_rem_h[i] = stake[h]
-                f_up_a[i], f_rel_a[i], f_dead_a[i], f_rem_a[i] = stake[a]
+            f_up_h[i], f_rel_h[i], f_dead_h[i], f_rem_h[i] = stake[h]
+            f_up_a[i], f_rel_a[i], f_dead_a[i], f_rem_a[i] = stake[a]
         # -- today's results into the ratings
         for i in range(d0, d1):
             if hg[i] != hg[i] or ag[i] != ag[i]:
@@ -455,11 +473,16 @@ def rate(matches, **params):
 
 # ----------------------------------------------------------- the goals
 
-def _glm(X, y, w, ridge, iters=30):
+def _glm(X, y, w, ridge, iters=30, beta0=None):
     """Weighted Poisson regression (log link) by Newton's method; no penalty
-    on the first column (the intercept)."""
-    beta = np.zeros(X.shape[1])
-    beta[0] = math.log(max(np.average(y, weights=w), 1e-3))
+    on the first column (the intercept). beta0: a start (the previous
+    block's fit) - the same optimum, to the 1e-9 the iterations stop at, in
+    a few steps instead of many."""
+    if beta0 is not None:
+        beta = np.array(beta0, float)
+    else:
+        beta = np.zeros(X.shape[1])
+        beta[0] = math.log(max(np.average(y, weights=w), 1e-3))
     pen = np.full(X.shape[1], ridge)
     pen[0] = 0.0
     for _ in range(iters):
@@ -473,13 +496,14 @@ def _glm(X, y, w, ridge, iters=30):
     return beta
 
 
-def _design(feats, league, home, promo=False, stakes=True):
-    """Columns: 1, top-league dummies (E0 is the base), own eta and opposing
-    eta per rating channel [, promoted flags fading over 19 matches]
-    [, the stakes: dead / chasing a place up the table / near the drop, own and opposing]."""
+def _design(feats, league, home, promo=False, stakes=True, leagues=None):
+    """Columns: 1, league dummies (the first of `leagues` is the base; default
+    the top five, E0 the base), own eta and opposing eta per rating channel
+    [, promoted flags fading over 19 matches] [, the stakes: dead / chasing a
+    place up the table / near the drop, own and opposing]."""
     n = len(feats)
     cols = [np.ones(n)]
-    for code in sd.TOP[1:]:
+    for code in (sd.TOP if leagues is None else leagues)[1:]:
         cols.append((league == code).astype(float))
     own, opp = ("eta_h", "eta_a") if home else ("eta_a", "eta_h")
     for c in range(feats.attrs.get("channels", 1)):
@@ -557,9 +581,12 @@ def _fit_delta(p, res, w):
 SCORE_PARAMS = ["lam", "nu", "rho", "delta"]
 
 
-def calibrate(matches, feats, *, score_params=False, **params):
+def calibrate(matches, feats, *, score_params=False, leagues=None, warm_start=False, **params):
     """Walk-forward: Poisson regressions + draw terms refitted every
-    refit_days on earlier top-tier matches; probabilities for the top tiers.
+    refit_days on earlier matches of `leagues` (default the top five, as
+    measured and shipped), with a dummy per league; probabilities for those
+    leagues' rows. warm_start=True starts each block's regression from the
+    previous block's (the same fit to 1e-9, much faster on a large group).
 
     With score_params=True the frame also carries each match's lam and nu
     (expected home and away goals, as clipped and used), the block's
@@ -568,7 +595,8 @@ def calibrate(matches, feats, *, score_params=False, **params):
     either way."""
     P = {**DEFAULTS, **params}
     m = matches
-    top = m["league"].isin(sd.TOP).to_numpy()
+    leagues = list(sd.TOP) if leagues is None else list(leagues)
+    top = m["league"].isin(leagues).to_numpy()
     seas = m["season"].to_numpy(dtype=float)
     day = (pd.to_datetime(m["date"]) - pd.Timestamp("2000-01-01")).dt.days.to_numpy()
     hg = pd.to_numeric(m["hg"], errors="coerce").to_numpy(dtype=float)
@@ -577,8 +605,8 @@ def calibrate(matches, feats, *, score_params=False, **params):
     warm = (feats["played_h"].to_numpy() >= P["min_played"]) & (feats["played_a"].to_numpy() >= P["min_played"])
     league = m["league"].to_numpy()
     promo = P["promo_feature"] > 0
-    Xh = _design(feats, league, True, promo, P["stakes"])
-    Xa = _design(feats, league, False, promo, P["stakes"])
+    Xh = _design(feats, league, True, promo, P["stakes"], leagues)
+    Xa = _design(feats, league, False, promo, P["stakes"], leagues)
     res = np.where(hg > ag, 0, np.where(hg == ag, 1, 2))
 
     # the first season on file only warms up, whatever slice of history is passed
@@ -598,6 +626,7 @@ def calibrate(matches, feats, *, score_params=False, **params):
     if len(tdays) == 0:
         return frame()
     start = tdays[0]
+    last_bh = last_ba = None
     while start <= tdays[-1]:
         end = start + P["refit_days"]
         block = target & (day >= start) & (day < end)
@@ -610,8 +639,9 @@ def calibrate(matches, feats, *, score_params=False, **params):
                 start = nxt[0]
                 continue
             w = 0.5 ** ((start - day[train]) / P["reg_half_life"])
-            bh = _glm(Xh[train], hg[train], w, P["ridge"])
-            ba = _glm(Xa[train], ag[train], w, P["ridge"])
+            bh = _glm(Xh[train], hg[train], w, P["ridge"], beta0=last_bh if warm_start else None)
+            ba = _glm(Xa[train], ag[train], w, P["ridge"], beta0=last_ba if warm_start else None)
+            last_bh, last_ba = bh, ba
             lam_t, nu_t = np.exp(Xh[train] @ bh), np.exp(Xa[train] @ ba)
             rho = _fit_rho(lam_t, nu_t, hg[train], ag[train], w) if P["rho"] else 0.0
             delta = 0.0
@@ -641,6 +671,75 @@ def predict_walk_forward(matches, *, score_params=False, **params):
     preds.attrs["steps"] = feats.attrs.get("steps")
     preds.attrs["ratings"] = feats.attrs.get("ratings")
     return preds
+
+
+# ----------------------------------------------------------- every league
+
+# Rating passes. rate() turns its tier-step measurement over at the first new
+# season of the pass, so a pass holds pools on ONE calendar: the five top
+# leagues' countries (exactly as measured and shipped), every other league
+# whose seasons run August to May, and the leagues whose seasons are (or
+# were, through 2025) calendar years. Pools never cross passes.
+TOP_COUNTRIES = sorted({sd.ALL_LEAGUES[c].country for c in sd.TOP})
+CALENDAR_PASS = ("ARG", "BRA", "CHN", "FIN", "IRL", "JPN", "NOR", "SWE", "USA")
+# Calibration groups: one Poisson regression each (a dummy per league, the
+# slopes and stakes terms shared). The top five's is the one measured and
+# shipped, cold-started as before; the other European divisions and the
+# extra leagues (no shots, other calendars) get their own.
+EUROPE_OTHER = [c for c in sd.MAIN if c not in sd.TOP]
+CAL_GROUPS = {"top": list(sd.TOP), "europe": EUROPE_OTHER, "extra": list(sd.EXTRA)}
+# England's pool: "all" (E0-EC, the default) or "top-two" (E0-E1 as before;
+# E2, E3, EC then a pool of their own among the other European divisions).
+ENGLAND_LOWER = ("E2", "E3", "EC")
+
+
+def passes(leagues, england="all"):
+    """The rating passes for a set of leagues: [(leagues of the pass, pools)]."""
+    leagues = set(leagues)
+    top = [c for c in LEAGUES if sd.ALL_LEAGUES[c].country in TOP_COUNTRIES
+           and (england == "all" or c not in ENGLAND_LOWER)]
+    cal = [c for c in LEAGUES if c in CALENDAR_PASS]
+    aug = [c for c in LEAGUES if c not in top and c not in cal]
+    pools = {} if england == "all" else {c: "England (lower)" for c in ENGLAND_LOWER}
+    return [([c for c in group if c in leagues], pools) for group in (top, aug, cal)
+            if any(c in leagues for c in group)]
+
+
+def predict_leagues(matches, leagues=None, *, score_params=False, england="all", **params):
+    """The model over every league in `matches`: each rating pass run on its
+    own leagues' rows (passes), then each calibration group's regression
+    (CAL_GROUPS) on its predicted leagues. `leagues`: which get numbers
+    (default every league in the frame); every league in the frame is rated.
+    On a frame of the ten with leagues=TOP this is predict_walk_forward bit
+    for bit. Returns the frame of predict_walk_forward, indexed like
+    `matches`; attrs: ratings (every rated club), steps and fits per pass and
+    group."""
+    present = list(dict.fromkeys(matches["league"]))
+    leagues = [c for c in LEAGUES if c in set(present if leagues is None else leagues)]
+    cols = ["p_h", "p_d", "p_a", "p_o25"] + (SCORE_PARAMS if score_params else [])
+    out = pd.DataFrame(np.nan, index=matches.index, columns=cols)
+    feats_all, ratings, steps, fits = [], {}, {}, {}
+    for k, (group, pools) in enumerate(passes(present, england)):
+        sub = matches[matches["league"].isin(group)]
+        feats = rate(sub, **{**params, "pools": pools or None})
+        feats_all.append(feats)
+        ratings.update(feats.attrs.get("ratings") or {})
+        steps[k] = feats.attrs.get("steps")
+    feats = pd.concat(feats_all).loc[matches.index]
+    feats.attrs["channels"] = feats_all[0].attrs["channels"] if feats_all else 1
+    for name, group in CAL_GROUPS.items():
+        own = [c for c in group if c in leagues]
+        if not own:
+            continue
+        rows = matches["league"].isin(own)
+        sub_f = feats.loc[rows]
+        sub_f.attrs["channels"] = feats.attrs["channels"]
+        p = calibrate(matches[rows], sub_f, score_params=score_params, leagues=own,
+                      warm_start=name != "top", **params)
+        out.loc[rows, cols] = p[cols].to_numpy()
+        fits[name] = p.attrs.get("fits")
+    out.attrs.update(ratings=ratings, steps=steps, fits=fits)
+    return out
 
 
 # ----------------------------------------------------------- the run
