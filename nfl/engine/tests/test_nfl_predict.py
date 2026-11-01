@@ -48,6 +48,39 @@ def test_a_quarterback_off_the_active_roster_cannot_start_or_stand_in():
     assert npd.stand_in(state, "NYG", 2026, {("winston", "Jameis Winston"), ("dart", None)}, set(), {}) is None
 
 
+def test_the_roster_keeps_last_weeks_inactives_and_drops_who_left():
+    """Who may play for SF in week 9, its latest roster being week 7 (a bye
+    in 8): the active, and week 7's game-day inactives - that says nothing
+    about week 9 - but not the reserve list, nor a player on another team's
+    roster since. A week-9 inactive is out of week 9."""
+    from types import SimpleNamespace
+
+    def row(week, team, gsis, status, position="WR"):
+        return {"season": 2026, "week": week, "team": team, "gsis_id": gsis, "full_name": gsis.title(),
+                "position": position, "status": status}
+    rosters = pd.DataFrame([
+        row(7, "SF", "purdy", "ACT", "QB"), row(7, "SF", "evans", "INA"), row(7, "SF", "samuel", "INA"),
+        row(7, "SF", "guard", "ACT", "G"), row(7, "SF", "ir", "RES", "RB"),
+        row(7, "SF", "traded", "ACT", "TE"), row(8, "KC", "traded", "ACT", "TE"),
+        row(9, "KC", "kelce", "ACT", "TE"), row(9, "KC", "scratch", "INA"),
+        row(8, "KC", "moved", "ACT"), row(9, "KC", "moved", "TRD"), row(9, "DEN", "moved", "ACT"),
+        row(6, "SF", "old", "ACT"), row(5, "LV", "x", "ACT"),
+    ])
+    players = SimpleNamespace(rosters=rosters)
+    sf, kc = {"home": "SF"}, {"home": "KC"}
+    assert npd._bettable(players, sf, "home", 2026, 9) == [("purdy", "Purdy", "QB"), ("evans", "Evans", "WR"),
+                                                           ("samuel", "Samuel", "WR")]
+    _, exclude, roster = npd._who_plays(players, sf, "home", [], npd.off_roster(rosters, 2026, 9), 2026, 9)
+    assert roster == ["purdy", "evans", "samuel", "guard"] and not exclude & {"evans", "samuel"}
+    # This week's roster is out: its inactive is inactive for this game; a
+    # player traded this week is the new team's only.
+    assert [g for g, _, _ in npd._bettable(players, kc, "home", 2026, 9)] == ["kelce"]
+    assert npd.off_roster(rosters, 2026, 9) >= {"scratch", "ir"}
+    # Earlier in the season, before week 9's roster: KC's week 8.
+    assert [g for g, _, _ in npd._bettable(players, kc, "home", 2026, 8)] == ["traded", "moved"]
+    assert npd._bettable(players, {"home": "NYJ"}, "home", 2026, 9) is None
+
+
 def _game(kickoff="2026-10-25T17:00:00Z", **kw):
     g = {"game_id": "2026_07_LV_KC", "season": 2026, "week": 7, "game_type": "REG",
          "kickoff": kickoff, "home": "KC", "away": "LV", "pick": "KC", "pick_prob": 0.8,
@@ -172,6 +205,37 @@ def test_upcoming_games_carry_the_likeliest_scorers(run_output):
             assert all(p["status"] != "out" for p in picks)
     perf = json.loads((out / "performance.json").read_text())
     assert perf["td"]["model"] and "td" in week["caveats"]
+
+
+def test_every_bettable_player_is_listed_logged_and_metered(run_output):
+    out, log, _ = run_output
+    week = json.loads((out / "week.json").read_text())
+    picks = json.loads(log.read_text())["picks"]
+    upcoming = [g for g in week["games"] if g["status"] == "upcoming"]
+    for g in upcoming:
+        for side in ("home", "away"):
+            top, full = g[f"{side}_td"], g[f"{side}_td_all"]
+            # The whole list starts with the top three, ranked, nobody ruled out.
+            assert [p["gsis_id"] for p in full[:len(top)]] == [p["gsis_id"] for p in top]
+            assert len(full) > len(top) and [p["rank"] for p in full] == list(range(1, len(full) + 1))
+            assert len({p["gsis_id"] for p in full}) == len(full)
+            assert all(p["status"] != "out" for p in full)
+            assert all(p["prob"] is None or 0 < p["prob"] < 1 for p in full)
+            assert all(p["prob"] is not None for p in top)
+            for p in full:
+                assert set(p["meters"]) == {"top3", "rest"}
+                assert p["meters"]["top3"]["n"] == 0 or 0 <= p["meters"]["top3"]["rate"] <= 1
+            # Logged before kickoff as shown, without the meters.
+            logged = picks[g["game_id"]][f"{side}_td_all"]
+            assert [p["gsis_id"] for p in logged] == [p["gsis_id"] for p in full]
+            assert all("meters" not in p for p in logged)
+        assert set(g["td_meters"]) == {"home", "away"}
+    perf = json.loads((out / "performance.json").read_text())
+    assert {"overall", "by_week", "teams", "players", "definition"} <= set(perf["td_meters"])
+    assert perf["td"]["by_usage"]["ships"]["3+"] is True
+    teams = json.loads((out / "teams.json").read_text())
+    assert all(set(t["td_meters"]) == {"top3", "rest"} for t in teams["teams"])
+    assert "td_meters" in week["caveats"]
 
 
 def test_touchdown_picks_are_graded_from_the_box_score():

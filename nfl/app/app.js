@@ -665,17 +665,70 @@ function keyPlayers(code, kp) {
   return `<div class="panel"><div class="eyebrow">${esc(code)} · most valuable</div><ul class="list">${off}${dfn}</ul></div>`;
 }
 
-function tdList(code, list) {
-  if (!list || !list.length) return "";
-  const items = list.map((p) => {
-    const result = p.played === false ? ` <span class="st questionable">Did not play</span>`
-      : p.scored === true ? ` <span class="st scored">Scored</span>`
-      : p.scored === false ? ` <span class="st questionable">No TD</span>` : "";
-    const season = p.games_season ? `<div class="mini">${esc(p.tds_season)} TD in ${esc(p.games_season)} games this season</div>` : "";
-    return `<li><span class="num lead">${pct(p.prob)}</span>
-    <span><b>${esc(p.name)}</b> <span class="mini">${esc(p.position)}</span>${statusBadge(p)}${result}${season}</span></li>`;
-  }).join("");
-  return `<div class="panel"><div class="eyebrow">${esc(code)} · touchdown</div><ul class="list">${items}</ul></div>`;
+// ---------------------------------------------------------------- touchdown meters
+
+// Two meters from the live record, for a player or a team: of the times he
+// was in our top 3 (and played), how often he scored; of the times he played
+// outside it, how often he did not. A meter with no games is a dash, never 0%.
+const TD_METER = {
+  top3: { label: "Top 3 → scored", key: "scored" },
+  rest: { label: "Not top 3 → no TD", key: "no_td" },
+};
+function meterCell(m, kind) {
+  const k = TD_METER[kind];
+  const n = m && m.n ? m.n : 0;
+  const rate = n ? (m.rate != null ? m.rate : m[k.key] / n) : null;
+  const value = n ? `<span class="x">${esc(m[k.key])} of ${esc(n)}</span><span class="sep"> · </span><b>${pct(rate)}</b>` : "—";
+  return `<div class="m"><span class="l">${k.label}</span>
+    <span class="bar${n ? "" : " none"}" aria-hidden="true"><i style="width:${n ? Math.round(rate * 100) : 0}%"></i></span>
+    <span class="v num">${value}</span></div>`;
+}
+const tdMeters = (ms, cls = "") => !ms ? ""
+  : `<div class="tdm${cls ? ` ${cls}` : ""}">${meterCell(ms.top3, "top3")}${meterCell(ms.rest, "rest")}</div>`;
+
+// Why a listed player has no chance beside him: his group was measured and
+// the model's number for it was off (Record has the figures).
+const UNPRICED = { "no history": "no NFL game yet, not priced" };
+const unpricedWhy = (p) => UNPRICED[p.group] || "too little used to price";
+
+function tdItem(p) {
+  const result = p.played === false ? ` <span class="st questionable">Did not play</span>`
+    : p.scored === true ? ` <span class="st scored">Scored</span>`
+    : p.scored === false ? ` <span class="st questionable">No TD</span>` : "";
+  const season = p.games_season ? `${esc(p.tds_season)} TD in ${esc(p.games_season)} games this season` : "";
+  const why = p.prob == null ? unpricedWhy(p) : "";
+  const note = [season, why].filter(Boolean).join(" · ");
+  const chance = p.prob == null ? `<span class="num lead dim" title="${esc(unpricedWhy(p))}">—</span>`
+    : `<span class="num lead">${pct(p.prob)}</span>`;
+  return `<li class="tdp">${chance}
+    <span class="who"><b>${esc(p.name)}</b> <span class="mini">${esc(p.position)}</span>${statusBadge(p)}${result}${note ? `<div class="mini">${note}</div>` : ""}</span>
+    ${tdMeters(p.meters)}</li>`;
+}
+
+const tdCount = (g) => ["away", "home"].reduce((n, s) => n + (g[`${s}_td_all`] || g[`${s}_td`] || []).length, 0);
+
+const TD_LEGEND = `Top 3 → scored: of the games a player was in our top 3 and played, how many he scored in.
+  Not top 3 → no TD: of the games he played outside it, how many he did not score in. From the live record,
+  picks logged before kickoff; a dash means no such game yet.`;
+function tdLegend(c) {
+  c = c || {};
+  const body = [c.td, c.td_meters].filter(Boolean).map((t) => `<p style="margin:0">${esc(t)}</p>`).join("");
+  return `<div class="mini tdlegend">${esc(TD_LEGEND)}</div>${fold(c.td_list || c.td, body)}`;
+}
+
+// One team's touchdown list: our top 3 first, then - folded, so the card
+// stays short - everyone else a bettor can back to score.
+function tdList(code, top, all, team) {
+  if (!top || !top.length) return "";
+  const ids = new Set(top.map((p) => p.gsis_id));
+  const rest = (all || []).filter((p) => !ids.has(p.gsis_id));
+  const more = rest.length
+    ? `<details class="tdmore"><summary><span>${rest.length} more you can bet on</span><span class="more">Show</span></summary>
+        <ul class="list">${rest.map(tdItem).join("")}</ul></details>`
+    : all ? "" : `<div class="mini">Only our top 3 were logged for this game.</div>`;
+  const teamLine = team ? `<div class="tdteam"><span class="mini">${esc(code)}, every game so far</span>${tdMeters(team)}</div>` : "";
+  return `<div class="panel"><div class="eyebrow">${esc(code)} · touchdown</div>${teamLine}
+    <div class="tdhead mini">Our top 3</div><ul class="list">${top.map(tdItem).join("")}</ul>${more}</div>`;
 }
 
 function newsList(items) {
@@ -786,8 +839,9 @@ function gameRow(g, d) {
         `<div class="two">${injuryList(g.away, g.away_injuries, g.away_injuries_total)}${injuryList(g.home, g.home_injuries, g.home_injuries_total)}</div>`)}
       ${DESK.sub(`Player news · ${(g.news || []).length} · shown, not applied`, newsList(g.news))}
       ${DESK.sub("Most valuable players", kp && `<div class="two">${kp}</div>`)}
-      ${DESK.sub("Touchdown chances", (g.away_td || g.home_td) && `<div class="two">${tdList(g.away, g.away_td)}${tdList(g.home, g.home_td)}</div>
-        <div class="mini">${esc((d.caveats && d.caveats.td) || "")}</div>`)}
+      ${DESK.sub(`Touchdown chances${tdCount(g) ? ` · ${tdCount(g)} players` : ""}`, (g.away_td || g.home_td) && `<div class="two">${
+        tdList(g.away, g.away_td, g.away_td_all, (g.td_meters || {}).away)}${tdList(g.home, g.home_td, g.home_td_all, (g.td_meters || {}).home)}</div>
+        ${tdLegend(d.caveats)}`)}
       ${DESK.sub("Projected yards", (g.away_leaders || g.home_leaders) && `<div class="two">${leadersList(g.away, g.away_leaders)}${leadersList(g.home, g.home_leaders)}</div>
         <div class="mini">${esc((d.caveats && d.caveats.props) || "")}</div>`)}
       ${DESK.sub("Last 5 games", forms && `<div class="two">${forms}</div>`)}
@@ -890,7 +944,7 @@ const BOOT = {
       const r = t.record || {};
       const mvp = ((t.key_players || {}).offense || [])[0];
       return `<tr><td class="n">${esc(t.rank)}</td>
-        <td><span style="display:inline-flex;align-items:center;gap:7px">${teamChip(t.team)}<span class="mini num nowrap">${esc(r.wins ?? 0)}-${esc(r.losses ?? 0)}${r.ties ? `-${esc(r.ties)}` : ""}</span></span>
+        <td><span style="display:inline-flex;align-items:center;gap:7px"><button class="teambtn" type="button" data-td-team="${esc(t.team)}" aria-label="${esc(t.name || t.team)}: touchdown picks">${teamChip(t.team)}</button><span class="mini num nowrap">${esc(r.wins ?? 0)}-${esc(r.losses ?? 0)}${r.ties ? `-${esc(r.ties)}` : ""}</span></span>
           <div class="mini mvp">${mvp ? `${esc(mvp.name)} ${esc(mvp.position)}` : "—"}</div></td>
         <td class="n">${num(t.elo, 0)}</td><td class="n">${signed(t.net_epa, 2)}</td></tr>`;
     }).join("");
@@ -916,8 +970,16 @@ const BOOT = {
         <div class="scroll"><table>
           <thead><tr><th class="n">#</th><th>Team · most valuable</th><th class="n">Elo</th><th class="n">Net EPA</th></tr></thead>
           <tbody>${rows}</tbody></table></div>
-        ${fold("Net EPA is expected points added per play on offence minus the same allowed on defence, weighted toward recent games. The name under each team is its most valuable player: the one whose plays added the most expected points this season.")}
+        ${fold("Net EPA is expected points added per play on offence minus the same allowed on defence, weighted toward recent games. The name under each team is its most valuable player: the one whose plays added the most expected points this season. Tap a team for its touchdown picks' live record.")}
       </div>`;
+    // A team's sheet reads the record's file, fetched the first time one opens.
+    let perf = null;
+    el.addEventListener("click", async (e) => {
+      const btn = e.target.closest("[data-td-team]");
+      if (!btn) return;
+      try { perf = perf || await load("performance"); } catch (err) { DESK.toast("Could not load the record."); return; }
+      if (perf.td_meters) tdTeamSheet(perf.td_meters, btn.getAttribute("data-td-team"));
+    });
     const a = $("cmp-a"), b = $("cmp-b");
     if (teams.length > 1) { a.value = teams[0].team; b.value = teams[1].team; }
     const render = () => renderCompare(teams, a.value, b.value, d.elo_scale || {});
@@ -932,6 +994,7 @@ const BOOT = {
     let d;
     try { d = await load("performance"); } catch (e) { return fail(el, e, "the record", () => BOOT.record()); }
     el.innerHTML = renderRecord(d);
+    wireTdRecord(el, d.td_meters);
   },
 
   method() {
@@ -998,7 +1061,10 @@ function renderCompare(teams, codeA, codeB, scale) {
       Home field is worth about ${num((scale.hfa || 0) * (scale.points_per_elo || 0.04), 1)} points more.
       This is the Elo rating only - not the model's pick, which also reads quarterbacks, efficiency, rest and the market.</div>
     ${DESK.sub("Most valuable players", (keyPlayers(A.team, A.key_players) + keyPlayers(B.team, B.key_players))
-      && `<div class="two">${keyPlayers(A.team, A.key_players)}${keyPlayers(B.team, B.key_players)}</div>`)}`;
+      && `<div class="two">${keyPlayers(A.team, A.key_players)}${keyPlayers(B.team, B.key_players)}</div>`)}
+    ${A.td_meters || B.td_meters ? `<div class="two" style="margin-top:10px">${[A, B].map((t) =>
+      `<div class="panel"><div class="eyebrow">${esc(t.team)} · touchdown picks, live</div>${tdMeters(t.td_meters)}</div>`).join("")}</div>
+      <div class="mini">${esc(TD_LEGEND)} Record has every team and its players.</div>` : ""}`;
 }
 
 // ---------------------------------------------------------------- record
@@ -1144,6 +1210,7 @@ function renderRecord(d) {
     <div class="mini">"Top pick" is each team's most likely scorer in each game; "any of top 3" is how often at least one of
       the three shown scored. Lower log loss is better; "base" is guessing each position's average rate.</div>
     ${tdCal ? `<div class="scroll"><table><thead><tr><th class="n">Said</th><th class="n">Players</th><th class="n">Avg said</th><th class="n">Scored</th></tr></thead><tbody>${tdCal}</tbody></table></div>` : ""}
+    ${tdGroups(td, lp)}
     ${(t.td || {}).picks ? `<div class="mini">Live: ${esc(t.td.scored)} of ${esc(t.td.picks)} touchdown picks scored.</div>` : ""}`) : "";
   const props = d.props || {};
   const propPeriods = Object.keys(props).filter((k) => /^20/.test(k));
@@ -1167,6 +1234,7 @@ function renderRecord(d) {
     `<div class="scroll"><table><thead><tr><th class="n">Home win %</th><th class="n">Games</th><th class="n">Said</th><th class="n">Happened</th></tr></thead>
     <tbody>${cal}</tbody></table></div>`) : "";
 
+  const tdLive = tdRecordCard(d.td_meters, (d.caveats || {}).td_meters);
   const weeks = (t.by_week || []).slice(-8).reverse().map((w) =>
     `<li><span><b>${esc(w.season)} week ${esc(w.week)}</b></span>
       <span class="num ${w.correct / w.picks >= 0.5 ? "good" : "warn"}">${esc(w.correct)}-${esc(w.picks - w.correct)}</span></li>`).join("");
@@ -1175,7 +1243,111 @@ function renderRecord(d) {
 
   return `<div class="hero"><div class="eyebrow">Measured, not claimed</div><h1>Track record</h1>
       <p class="lede">Live picks are graded against final scores; the backtest replays every season since ${esc(per.dev[0])}.</p></div>
-    ${tiles}${liveNote}${winners}${tierCard}${weekCard}${valueCard}${linesCard}${tdCard}${propCard}${calCard}`;
+    ${tiles}${liveNote}${winners}${tierCard}${weekCard}${tdLive}${valueCard}${linesCard}${tdCard}${propCard}${calCard}`;
+}
+
+// Which players carry a chance: each usage group, what the model said and
+// what happened in the later period, and whether that earns it a number.
+const GROUP_WORD = { "no history": "No NFL game", "under 0.5": "Under 0.5", "0.5-1": "0.5 to 1", "1-3": "1 to 3", "3+": "3 or more" };
+function tdGroups(td, period) {
+  const g = td.by_usage || {}, rows = g[period] || {};
+  const before = Object.keys(g).find((k) => /^20/.test(k) && k !== period);
+  const early = (before && g[before]) || {};
+  const then = (k, key) => early[k] && early[k][key] != null ? `<span class="mini">${pct(early[k][key], 1)}</span>` : "";
+  const names = Object.keys(GROUP_WORD).filter((k) => rows[k]);
+  if (!names.length) return "";
+  const tr = names.map((k) => {
+    const r = rows[k], ok = (g.ships || {})[k];
+    return `<tr><td>${esc(GROUP_WORD[k])}<span class="mini" style="display:block">${esc((r.rows || 0).toLocaleString())} player-games</span></td>
+      <td class="n">${pct(r.predicted, 1)}${then(k, "predicted")}</td><td class="n">${pct(r.observed, 1)}${then(k, "observed")}</td>
+      <td class="n">${ok ? `<span class="tag good">Shown</span>` : `<span class="tag flat">Dash</span>`}</td></tr>`;
+  }).join("");
+  return `<div class="eyebrow" style="margin-top:6px">Which players get a chance</div>
+    <div class="scroll"><table class="tight"><thead><tr><th>Carries + targets</th><th class="n">Said</th><th class="n">Scored</th><th class="n">Chance</th></tr></thead><tbody>${tr}</tbody></table></div>
+    <div class="mini">Weighted carries plus targets a game before kickoff, ${esc(period)}${before ? ` (small figures: ${esc(before)})` : ""}. A group's chance is shown only when measured as good enough: ${esc(g.rule || "well calibrated in both periods")}.
+      The rest are listed with a dash: you can still back them, but the model's number for them is not good enough to print.</div>`;
+}
+
+// The touchdown picks' live record: both meters overall, week by week, and
+// for every team - a team opens to its players.
+const TD_SORTS = [["sample", "Games"], ["top3", "Top 3"], ["rest", "Not top 3"], ["team", "A-Z"]];
+function tdTeamRows(teams, by) {
+  const rate = (m) => (m && m.n ? m.rate : -1);
+  const sorted = [...(teams || [])].sort((a, b) =>
+    by === "team" ? a.team.localeCompare(b.team)
+      : by === "top3" ? rate(b.top3) - rate(a.top3) || b.top3.n - a.top3.n
+      : by === "rest" ? rate(b.rest) - rate(a.rest) || b.rest.n - a.rest.n
+      : (b.top3.n + b.rest.n) - (a.top3.n + a.rest.n) || a.team.localeCompare(b.team));
+  const cell = (m, key) => !m || !m.n ? `<td class="n">—</td>`
+    : `<td class="n"><b>${pct(m.rate)}</b><span class="mini">${esc(m[key])} of ${esc(m.n)}</span>
+        <span class="bar" aria-hidden="true"><i style="width:${Math.round(m.rate * 100)}%"></i></span></td>`;
+  return sorted.map((t) => `<tr><td><button class="teambtn" type="button" data-td-team="${esc(t.team)}" aria-label="${esc(t.name || t.team)}: players">${teamChip(t.team)}</button></td>
+    ${cell(t.top3, "scored")}${cell(t.rest, "no_td")}</tr>`).join("");
+}
+
+function tdRecordCard(m, definition) {
+  if (!m || !m.overall) return "";
+  const o = m.overall;
+  if (!o.top3.n && !o.rest.n) return `<div class="card"><h2>Touchdown picks, live</h2>
+    <div class="mini">No graded touchdown picks yet.</div></div>`;
+  const snapsWeeks = (m.by_week || []).filter((w) => (w.rest_from || []).includes("snaps"));
+  // A week can mix games logged with the whole list and games logged with
+  // only the top 3 (re-logged before kickoff once the list was): say which.
+  const wk = (m.by_week || []).slice().reverse().map((w) => {
+    const from = w.rest_from || [];
+    const rebuilt = !from.includes("snaps") ? ""
+      : ` <span class="mini">· not top 3 ${from.includes("list") ? "rebuilt from snaps in some games" : "rebuilt from snaps"}<sup>*</sup></span>`;
+    return `<li class="tdp"><span class="who"><b>${esc(w.season)} week ${esc(w.week)}</b>${rebuilt}</span>${tdMeters(w)}</li>`;
+  }).join("");
+  const sorts = `<div class="seg" role="group" aria-label="Order teams by">${TD_SORTS.map(([k, label]) =>
+    `<button type="button" data-td-sort="${k}" aria-pressed="${k === "sample"}">${label}</button>`).join("")}</div>`;
+  return `<div class="card" id="td-live"><h2>Touchdown picks, live</h2>
+    ${tdMeters(o, "big")}
+    <div class="mini">${esc(TD_LEGEND)}</div>
+    <div class="eyebrow" style="margin-top:6px">Every team</div>
+    ${sorts}
+    <div class="scroll"><table class="tdteams"><thead><tr><th>Team</th><th class="n">Top 3 → scored</th><th class="n">Not top 3 → no TD</th></tr></thead>
+      <tbody data-td-rows>${tdTeamRows(m.teams, "sample")}</tbody></table></div>
+    <div class="mini">Tap a team for its players.</div>
+    ${DESK.sub("Week by week", `<ul class="list">${wk}</ul>
+      ${snapsWeeks.length ? `<div class="mini"><sup>*</sup> Games logged with only our top 3, before the whole list was: "not top 3" is rebuilt from the snap counts - every other player of the team who took an offensive snap at QB, RB, FB, WR or TE, his touchdowns from the box score.</div>` : ""}`)}
+    ${fold(definition)}
+    ${m.pending ? `<div class="mini">${esc(m.pending)} team-games wait for their snap counts before "not top 3" counts them.</div>` : ""}
+  </div>`;
+}
+
+// A team's sheet: its two meters, then every player we have a record for -
+// his games for this team only, so the players add up to the team (a player
+// who moved teams carries by_team; one who did not, just his team).
+function tdTeamSheet(m, code) {
+  const t = (m.teams || []).find((x) => x.team === code);
+  const players = (m.players || [])
+    .map((p) => (p.by_team ? (p.by_team[code] ? { ...p, ...p.by_team[code], moved: true } : null) : p.team === code ? p : null))
+    .filter(Boolean)
+    .sort((a, b) => b.top3.n - a.top3.n || b.rest.n - a.rest.n || String(a.name).localeCompare(String(b.name)));
+  const items = players.map((p) => {
+    const other = p.moved ? Object.keys(p.by_team).filter((k) => k !== code) : [];
+    const note = other.length ? `<div class="mini">His games for ${esc(code)}; also counted for ${other.map(esc).join(", ")}</div>` : "";
+    return `<li class="tdp"><span class="who"><b>${esc(p.name)}</b> <span class="mini">${esc(p.position || "")}</span>${note}</span>${tdMeters(p)}</li>`;
+  }).join("");
+  DESK.sheet(`<h2>${teamChip(code)} ${esc((t && t.name) || code)}</h2>
+    <div class="eyebrow" style="margin:12px 0 6px">Touchdown picks, live</div>
+    ${tdMeters(t || null, "big")}
+    <div class="eyebrow" style="margin:14px 0 2px">Players · ${players.length}</div>
+    ${items ? `<ul class="list">${items}</ul>` : `<div class="mini">No graded games yet.</div>`}
+    <p class="mini">${esc(TD_LEGEND)}</p>`);
+}
+
+function wireTdRecord(el, m) {
+  if (!m) return;
+  el.querySelectorAll("[data-td-sort]").forEach((b) => b.addEventListener("click", () => {
+    el.querySelectorAll("[data-td-sort]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    el.querySelector("[data-td-rows]").innerHTML = tdTeamRows(m.teams, b.getAttribute("data-td-sort"));
+  }));
+  el.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-td-team]");
+    if (b) tdTeamSheet(m, b.getAttribute("data-td-team"));
+  });
 }
 
 // ---------------------------------------------------------------- method
@@ -1199,6 +1371,8 @@ function legend(tiers) {
     <dt><b>EPA</b></dt><dd>Expected points added per play: what a play was worth above an average one.</dd>
     <dt><b>Against the spread</b></dt><dd>Whether the side covered the bookmaker's handicap.</dd>
     <dt><b>Log loss</b></dt><dd>How far the chances were from what happened; lower is better, 0.693 is a coin toss.</dd>
+    <dt><b>Top 3 → scored</b></dt><dd>Of the games a player was in our three most likely touchdown scorers and played, how many he scored in.</dd>
+    <dt><b>Not top 3 → no TD</b></dt><dd>Of the games he played outside that top 3, how many he did not score in. Both from the live record; a dash means no such game yet.</dd>
   </dl>`;
 }
 
@@ -1222,7 +1396,10 @@ const METHOD_HTML = `
       <li><b>Most valuable</b> - expected points added this season on offence; sacks, takeaways and passes
         defended on defence. A key player out or doubtful is flagged at the top of the game.</li>
       <li><b>Touchdowns</b> - each player's chance of a rushing or receiving touchdown if he plays, from his
-        recent carries, targets and snaps and his team's expected points.</li>
+        recent carries, targets and snaps and his team's expected points. Every active QB, RB, FB, WR and TE is
+        listed, our top 3 first; a player the model cannot price well - little used, or with no NFL game - has a
+        dash instead of a chance. Beside each player and team, two meters: how often our top 3 scored, and how
+        often everyone outside it did not.</li>
       <li><b>Yards</b> - the middle of what his recent usage and the game point to, if he plays.</li>
       <li>Touchdowns and yards are measured on past seasons - see Record - and logged before kickoff,
         then graded; a player who did not play is left out, since both were "if he plays". The

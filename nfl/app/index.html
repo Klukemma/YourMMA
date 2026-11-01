@@ -579,6 +579,51 @@ svg.inl{display:inline-block;width:1.25em;height:1.25em;vertical-align:-.28em;co
 .day .matches{margin-top:4px}
 .nowrap{white-space:nowrap}
 /* desk.css:end */
+/* YourNFL only - kept out of shared/desk.css: the touchdown record meters.
+   Two meters side by side, each a label, a bar and "X of Y · Z%"; one hue
+   (the app's blue) on the sunk track, text in ink. A meter with no games
+   shows an empty track and a dash. */
+.tdm{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:6px}
+.tdm .m{min-width:0;display:flex;flex-direction:column;gap:3px}
+.tdm .l{font-size:11px;line-height:1.25;color:var(--ink-3)}
+.tdm .bar,table.tdteams .bar{display:block;height:5px;border-radius:9px;background:var(--sunk);overflow:hidden;
+  box-shadow:inset 0 0 0 1px var(--line-soft)}
+.tdm .bar i,table.tdteams .bar i{display:block;height:100%;background:var(--blue);border-radius:9px}
+.tdm .bar.none{background:repeating-linear-gradient(90deg,var(--line-soft) 0 3px,transparent 3px 6px)}
+/* "X of Y" at the left, the share at the right under the bar's end; the two
+   never split, and if a column is ever too narrow the share moves whole to
+   the next line. */
+.tdm .v{font-size:12px;color:var(--ink-2);display:flex;flex-wrap:wrap;justify-content:space-between;column-gap:6px}
+.tdm .v .x,.tdm .v b{white-space:nowrap}
+.tdm .v .sep{display:none}
+.tdm .v b{color:var(--ink);font-weight:600}
+/* The overall and team meters read as a stat: the share large, the count under it. */
+.tdm.big{gap:6px 16px;margin:4px 0 6px}
+.tdm.big .l{font-size:12.5px;color:var(--ink-2)} .tdm.big .bar{height:8px}
+.tdm.big .v{flex-direction:column;flex-wrap:nowrap;justify-content:flex-start;gap:1px}
+.tdm.big .v b{order:-1;font-size:22px;line-height:1.15}
+.tdm.big .v .x{font-size:12.5px;color:var(--ink-3)}
+ul.list li.tdp{flex-wrap:wrap}
+ul.list li.tdp .who{flex:1 1 0;min-width:0}
+ul.list li.tdp .tdm{flex:1 0 100%;margin-top:2px}
+ul.list .lead.dim{color:var(--ink-3);font-weight:500}
+.tdhead{font-weight:600;color:var(--ink-2);margin-top:2px}
+.tdteam{border-bottom:1px solid var(--line-soft);padding-bottom:8px}
+.tdteam .tdm{margin-top:3px}
+details.tdmore{border-top:1px solid var(--line-soft)}
+details.tdmore>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;min-height:44px;
+  font-size:13.5px;font-weight:600;color:var(--ink)}
+details.tdmore>summary::-webkit-details-marker{display:none}
+details.tdmore>summary .more{margin-left:auto;color:var(--blue-ink);font-size:12.5px}
+details.tdmore[open]>summary .more{visibility:hidden}
+.tdlegend{margin:8px 0}
+table.tdteams td{vertical-align:middle}
+table.tdteams td.n .bar{margin:4px 0 0 auto;width:72px}
+.teambtn{border:0;background:none;padding:0;margin:0;cursor:pointer;display:inline-flex;min-height:32px;align-items:center;
+  border-radius:8px}
+#td-live .seg{margin:6px 0 4px}
+/* Each label on one line: the longer one takes the room it needs. */
+#td-live .seg button{flex:1 1 auto;white-space:nowrap;padding:0 5px}
 </style>
 </head>
 <body>

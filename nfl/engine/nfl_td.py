@@ -81,6 +81,27 @@ fitted only on players who took an offensive snap, so a player who is
 inactive is outside it: exclude him, and read a questionable player's
 number as "if he plays". Nor does it know who else is out - a back whose
 starter is ruled out is priced on his own usage so far.
+
+THE WHOLE BETTABLE LIST. predict_roster() lists every player a bettor can
+back to score - each active QB, RB, FB, WR and TE - not only the
+candidates above. Its first three are predict_team()'s first three: the
+candidates keep their chance exactly as before - save the team's last
+starting quarterback, a candidate at any usage, whose chance under
+MIN_USAGE follows his group as everyone else's does. Everyone else is a
+player under MIN_USAGE or one with no NFL game on record, and his chance is
+shown only where his group is measured to deserve it: report()["by_usage"]
+splits every walk-forward row by the same groups (USAGE_GROUPS, read from
+the state before kickoff) and a group ships when, in DEV and in CONFIRM
+alike, its mean chance is within SHIP_TOLERANCE of how often it scored and
+its log loss beats the position base rate (shipped_groups()). The rule is
+the standard the candidates already meet: 1-3 is 6% and 15% high, 3+ 2% and
+4% low. Measured on the 2026 snapshot, no other group meets it - under 0.5
+said 4.2% and 3.7% where 3.1% and 2.7% scored, 0.5-1 said 6.2% where 4.9%
+scored in DEV, and players with no game said 3% where 8% scored - so they
+are listed with no chance (None), never a guessed one. The walk-forward
+ranks every player who took a snap, low usage and debuts included, and its
+top three were the candidates' top three in every team-game of 2014-2025:
+no player under 1, and none with no game, ranked in a top three.
 """
 
 import json
@@ -107,6 +128,13 @@ TRAIN_FROM = nd.FIRST_SNAP_SEASON   # 2013: trains, never scored
 DEFAULT_IMPLIED = 22.0              # a team's points when the market posted no line
 MIN_USAGE = 1.0                     # weighted carries + targets a live candidate needs
 POSITIONS = nd.OFFENSE_POSITIONS
+# The groups a player's chance is measured and shown by: no NFL game on
+# record, else his weighted carries + targets before kickoff, by lower edge.
+NO_HISTORY = "no history"
+USAGE_GROUPS = (("under 0.5", 0.0), ("0.5-1", 0.5), ("1-3", 1.0), ("3+", 3.0))
+GROUPS = (NO_HISTORY,) + tuple(name for name, _ in USAGE_GROUPS)
+SHIP_TOLERANCE = 0.20               # a group's mean chance within this share of what scored
+SHIP_MIN_ROWS = 200                 # in each period
 
 MODEL = "logistic"                  # chosen on DEV log loss; see report()["dev_choice"]
 LEARNERS = ("logistic", "hgb")
@@ -481,6 +509,65 @@ def top_picks(rows, p, n=1):
             "any_hit_rate": float(by_team["scored"].max().mean())}
 
 
+def usage_group(usage, has_history=True):
+    """The USAGE_GROUPS name of weighted carries + targets `usage`, or
+    NO_HISTORY for a player with no NFL game on record."""
+    if not has_history:
+        return NO_HISTORY
+    name = USAGE_GROUPS[0][0]
+    for label, lo in USAGE_GROUPS:
+        if usage >= lo:
+            name = label
+    return name
+
+
+def frame_groups(frame):
+    """usage_group() of every row, from the state it carried into its game."""
+    usage = (frame["ew_carries"] + frame["ew_targets"]).to_numpy(float)
+    history = (frame["games"] > 0).to_numpy()
+    return pd.Series([usage_group(u, h) for u, h in zip(usage, history)], index=frame.index)
+
+
+def by_usage(frame, preds):
+    """Calibration of each USAGE_GROUPS group, per period: rows, mean chance,
+    scoring rate, their ratio, and log loss against the position base rate -
+    what shipped_groups() reads."""
+    groups = frame_groups(frame)
+    out = {}
+    for lo, hi in (DEV, CONFIRM):
+        sel = labelled(frame) & frame["season"].between(lo, hi) & preds[[MODEL, "base"]].notna().all(axis=1)
+        period = {}
+        for name in GROUPS:
+            m = sel & (groups == name)
+            if not m.any():
+                continue
+            y = frame.loc[m, "scored"].to_numpy(float)
+            p, base = preds.loc[m, MODEL].to_numpy(float), preds.loc[m, "base"].to_numpy(float)
+            observed = float(y.mean())
+            period[name] = {"rows": int(m.sum()), "predicted": float(p.mean()), "observed": observed,
+                            "ratio": float(p.mean()) / observed if observed > 0 else None,
+                            "log_loss": bt.log_loss(p, y), "base_log_loss": bt.log_loss(base, y)}
+        out[f"{lo}-{hi}"] = period
+    out["ships"] = {name: _ships([out[k].get(name) for k in out]) for name in GROUPS}
+    out["tolerance"] = SHIP_TOLERANCE
+    out["rule"] = (f"mean chance within {SHIP_TOLERANCE:.0%} of the scoring rate and log loss under "
+                   f"the position base rate, in {DEV[0]}-{DEV[1]} and in {CONFIRM[0]}-{CONFIRM[1]}, "
+                   f"on at least {SHIP_MIN_ROWS} rows each")
+    return out
+
+
+def _ships(periods):
+    return all(r is not None and r["rows"] >= SHIP_MIN_ROWS and r["ratio"] is not None
+               and abs(r["ratio"] - 1) <= SHIP_TOLERANCE and r["log_loss"] < r["base_log_loss"]
+               for r in periods)
+
+
+def shipped_groups(rep):
+    """The groups whose chance predict_roster() may show, from report():
+    the ones by_usage() measured as well calibrated in both periods."""
+    return {name for name, ok in ((rep or {}).get("by_usage") or {}).get("ships", {}).items() if ok}
+
+
 def report(frame, preds):
     """Everything measured about the anytime-TD model, JSON-able. `preds` is
     walk_forward(frame)."""
@@ -504,6 +591,8 @@ def report(frame, preds):
     dev = out[f"{DEV[0]}-{DEV[1]}"]["log_loss"]
     learners = {k: dev[k] for k in LEARNERS if k in dev}
     out["dev_choice"] = dict(learners, prefers=min(learners, key=learners.get) if learners else None)
+    if MODEL in preds and "base" in preds:
+        out["by_usage"] = by_usage(frame, preds)
     return out
 
 
@@ -526,6 +615,16 @@ def summary(rep):
         t = r["top3"]
         lines.append(f"    top 3 ({rep['model']}): each scored {t['hit_rate']:.1%} (mean prob "
                      f"{t['mean_prob']:.1%}); one or more scored in {t['any_hit_rate']:.1%}")
+        groups = (rep.get("by_usage") or {}).get(key) or {}
+        if groups:
+            lines.append("    by usage group (said -> scored, log loss v base):")
+            for name, g in groups.items():
+                lines.append(f"      {name:10s} {g['predicted']:6.3f} -> {g['observed']:6.3f}  "
+                             f"{g['log_loss']:.4f} v {g['base_log_loss']:.4f}  ({g['rows']:,})")
+    ships = (rep.get("by_usage") or {}).get("ships")
+    if ships:
+        lines.append("\n  chance shown for: " + ", ".join(k for k, ok in ships.items() if ok)
+                     + "; listed without one: " + (", ".join(k for k, ok in ships.items() if not ok) or "none"))
     return "\n".join(lines)
 
 
@@ -600,6 +699,83 @@ def predict_team(live, team, implied, home, exclude=(), roster=None, playoff=Fal
             "last_team": pl.team,
         })
     out.sort(key=lambda c: -c["prob"])
+    return out
+
+
+def predict_roster(live, team, implied, home, exclude=(), roster=None, bettable=None, playoff=False,
+                   ships=(), min_usage=MIN_USAGE):
+    """Every player a bettor can back to score for `team`, ranked: the
+    candidates of predict_team() with their chance exactly as it gives it,
+    and every other player at QB, RB, FB, WR or TE - under MIN_USAGE, or
+    with no NFL game on record - with a chance only if his group is in
+    `ships` (shipped_groups() of the report), else prob None. The team's
+    last starting quarterback is a candidate whatever his usage, as before,
+    but under `min_usage` his chance is shown only if his group ships too:
+    the candidates' chance was measured at MIN_USAGE and up. Such a
+    quarterback never ranked in a team's top three in the walk-forward
+    (no player under 1 did, in 6,806 team-games of 2014-2026), so the top
+    three stay predict_team()'s.
+
+    bettable: [(gsis_id, name, position)] - the active roster at those
+    positions; None lists everyone predict_team()'s rule draws from, at any
+    usage. exclude, roster, playoff, min_usage: as predict_team().
+
+    Each entry: predict_team()'s keys, plus group (usage_group()), candidate
+    (bool) and rank - chances first, highest first (so the first three are
+    predict_team()'s first three while `ships` adds no group above them),
+    then the players without one by weighted carries + targets.
+    """
+    exclude = set(exclude or ())
+    ships = set(ships or ())
+    listed = predict_team(live, team, implied, home, exclude=exclude, roster=roster, playoff=playoff,
+                          min_usage=min_usage)
+    players = live.state["players"]
+    for c in listed:
+        pl = players[c["gsis_id"]]
+        usage = pl.ew[0] + pl.ew[1]
+        c.update(group=usage_group(usage), candidate=True)
+        if usage < min_usage and c["group"] not in ships:
+            c["prob"] = None          # the last starter's exception, in a group not measured to ship
+    if bettable is None:
+        bettable = [(g, pl.name, pl.position) for g, pl in candidates(live, team, roster, min_usage=0.0)]
+    seen = {c["gsis_id"] for c in listed} | exclude
+    others = []
+    for gsis, name, position in bettable:
+        if gsis in seen or not isinstance(gsis, str):
+            continue
+        seen.add(gsis)
+        pl = players.get(gsis)
+        pos = pl.position if pl is not None and pl.position in POSITIONS else position
+        if pos not in POSITIONS:
+            continue
+        others.append((gsis, name, pos, pl))
+    if others:
+        p = live.state["params"]
+        implied = DEFAULT_IMPLIED if implied is None or implied != implied else float(implied)
+        rows = [[float(pos == q) for q in POSITIONS]
+                + (pl.read(live.season, team, pos, p) if pl is not None else _debut(pos))
+                + [implied, float(bool(home)), float(bool(playoff))] for _, _, pos, pl in others]
+        probs = live.model.predict(_derive(pd.DataFrame(rows, columns=RAW_FEATURES, dtype=float)))
+        for (gsis, name, pos, pl), prob in zip(others, probs):
+            group = usage_group(pl.ew[0] + pl.ew[1]) if pl is not None else NO_HISTORY
+            this_season = pl is not None and pl.season == live.season
+            listed.append({
+                "gsis_id": gsis, "name": (pl.name if pl is not None else None) or name, "position": pos,
+                "prob": float(prob) if group in ships else None,
+                "carries": float(pl.ew[0]) if pl is not None else 0.0,
+                "targets": float(pl.ew[1]) if pl is not None else 0.0,
+                "snap_pct": float(pl.snap) if pl is not None else 0.0,
+                "tds_season": int(pl.season_tds) if this_season else 0,
+                "games_season": int(pl.season_games) if this_season else 0,
+                "last_team": pl.team if pl is not None else None,
+                "group": group, "candidate": False,
+            })
+    priced = sorted((c for c in listed if c["prob"] is not None), key=lambda c: -c["prob"])
+    unpriced = sorted((c for c in listed if c["prob"] is None),
+                      key=lambda c: (-(c["carries"] + c["targets"]), -c["snap_pct"], c["name"] or ""))
+    out = priced + unpriced
+    for i, c in enumerate(out, 1):
+        c["rank"] = i
     return out
 
 
