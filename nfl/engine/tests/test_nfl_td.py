@@ -179,6 +179,82 @@ def test_the_live_list_is_sorted_and_leaves_out_the_excluded(td_built, live):
     assert richer[0]["prob"] > picks[0]["prob"]
 
 
+def test_the_whole_roster_keeps_the_top_three_and_prices_only_measured_groups(td_built, live):
+    team = _a_team_that_has_played(td_built[0], live.season)
+    picks = nt.predict_team(live, team, 24.0, home=True)
+    out = picks[1]["gsis_id"]
+    known = [(g, pl.name, pl.position) for g, pl in nt.candidates(live, team, min_usage=0.0)]
+    bettable = known + [("00-ROOKIE", "Rookie Nobody", "WR"), ("00-LINEMAN", "Big Guard", "G")]
+    full = nt.predict_roster(live, team, 24.0, home=True, exclude={out}, bettable=bettable,
+                             ships={"1-3", "3+"})
+    kept = [c for c in picks if c["gsis_id"] != out]
+    # The candidates first, with their chance exactly as predict_team gives it.
+    assert [c["gsis_id"] for c in full[:len(kept)]] == [c["gsis_id"] for c in kept]
+    assert [c["prob"] for c in full[:len(kept)]] == [c["prob"] for c in kept]
+    assert out not in {c["gsis_id"] for c in full} and "00-LINEMAN" not in {c["gsis_id"] for c in full}
+    assert [c["rank"] for c in full] == list(range(1, len(full) + 1))
+    rookie = next(c for c in full if c["gsis_id"] == "00-ROOKIE")
+    assert rookie["group"] == nt.NO_HISTORY and rookie["prob"] is None and not rookie["candidate"]
+    extra = [c for c in full if not c["candidate"]]
+    assert len(extra) > 1 and all(c["prob"] is None for c in extra)          # no group of theirs ships
+    assert all(c["group"] in ("under 0.5", "0.5-1", nt.NO_HISTORY) for c in extra)
+    # Were a group measured well enough, its players would carry a chance.
+    priced = nt.predict_roster(live, team, 24.0, home=True, exclude={out}, bettable=bettable,
+                               ships=set(nt.GROUPS))
+    assert all(0 < c["prob"] < 1 for c in priced)
+    assert [c["prob"] for c in priced] == sorted((c["prob"] for c in priced), reverse=True)
+
+
+def test_a_little_used_starting_quarterback_is_priced_only_if_his_group_ships(td_built, live):
+    """The last starter is a candidate at any usage; under MIN_USAGE his
+    chance comes from a group by_usage measured, so it prints only if that
+    group ships - never a number from a group measured as off."""
+    import copy
+    team = _a_team_that_has_played(td_built[0], live.season)
+    qb = live.state["teams"][team].qb
+    players = dict(live.state["players"])
+    low = copy.copy(players[qb])
+    low.ew = low.ew.copy()
+    low.ew[0], low.ew[1] = 0.3, 0.0                      # "under 0.5"
+    players[qb] = low
+    state = dict(live.state, players=players)
+    cut = nt.TdLive(live.season, live.model, state)
+    assert qb in {c["gsis_id"] for c in nt.predict_team(cut, team, 24.0, home=True)}   # still a candidate
+    full = nt.predict_roster(cut, team, 24.0, home=True, ships={"1-3", "3+"})
+    starter = next(c for c in full if c["gsis_id"] == qb)
+    assert starter["candidate"] and starter["group"] == "under 0.5" and starter["prob"] is None
+    priced = [c for c in full if c["prob"] is not None]
+    assert full[:len(priced)] == priced                   # chances first, then the dashes
+    shipped = nt.predict_roster(cut, team, 24.0, home=True, ships={"under 0.5", "1-3", "3+"})
+    assert 0 < next(c for c in shipped if c["gsis_id"] == qb)["prob"] < 1
+    # A starter at MIN_USAGE and up keeps predict_team()'s chance whatever ships.
+    normal = nt.predict_roster(live, team, 24.0, home=True, ships=())
+    top = nt.predict_team(live, team, 24.0, home=True)
+    used = lambda c: c["carries"] + c["targets"] >= nt.MIN_USAGE   # noqa: E731
+    assert [c["prob"] for c in normal if c["candidate"] and used(c)] == [c["prob"] for c in top if used(c)]
+
+
+def test_a_group_ships_only_when_calibrated_in_both_periods():
+    def period(ratio, ll=0.2, base=0.3, rows=1000):
+        return {"rows": rows, "predicted": 0.1 * ratio, "observed": 0.1, "ratio": ratio,
+                "log_loss": ll, "base_log_loss": base}
+    assert nt._ships([period(1.15), period(0.85)])
+    assert not nt._ships([period(1.27), period(1.06)])          # off by a quarter in one period
+    assert not nt._ships([period(1.0), period(1.0, ll=0.31)])   # no better than the position's rate
+    assert not nt._ships([period(1.0), period(1.0, rows=50)])   # too few to say
+    assert not nt._ships([period(1.0), None])                   # not measured
+    rep = {"by_usage": {"ships": {"3+": True, "no history": False}}}
+    assert nt.shipped_groups(rep) == {"3+"} and nt.shipped_groups({}) == set()
+
+
+def test_usage_groups_split_on_weighted_carries_and_targets():
+    assert nt.usage_group(0.0, has_history=False) == nt.NO_HISTORY
+    assert [nt.usage_group(u) for u in (0.0, 0.49, 0.5, 0.99, 1.0, 2.9, 3.0, 12.0)] == \
+        ["under 0.5", "under 0.5", "0.5-1", "0.5-1", "1-3", "1-3", "3+", "3+"]
+    # MIN_USAGE, the candidates' threshold, is a group edge.
+    assert nt.usage_group(nt.MIN_USAGE) == "1-3" and nt.usage_group(nt.MIN_USAGE - 1e-9) == "0.5-1"
+
+
 def test_a_team_yet_to_play_draws_on_last_season(games, td_built):
     frame = td_built[0]
     last = int(frame["season"].max())

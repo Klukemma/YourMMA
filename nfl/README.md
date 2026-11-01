@@ -41,6 +41,42 @@ Every game card also carries:
   usage alone (0.403), it scores 0.395 in 2020-2025. Each team's most likely scorer scored
   43.5% of the time against the 41.1% the model gave, and at least one of the top three scored
   74% of the time. These picks are logged before kickoff and graded from the box score.
+
+  Below the top three, folded, is everyone else a bettor can back to score: every QB, RB, FB, WR
+  and TE on the team's latest roster who is active on it - or was a game-day inactive in an
+  earlier week, which says nothing about this one (a team on a bye, or a run made before the
+  new week's roster is out, would otherwise drop a starter coming back) - less players ruled
+  out, off the active roster, or on another team's roster since (`nfl_predict._roster_now`,
+  `nfl_td.predict_roster`; the top three draw from the same roster). A chance is printed only for a group the walk-forward measured as
+  well calibrated - mean chance within 20% of the scoring rate and log loss under the position
+  base rate, in both 2014-2019 and 2020-2025 (`report()["by_usage"]`, re-measured every run).
+  The top three's candidates (weighted carries + targets of 1 or more) pass: 1-3 said 9.5% and
+  9.7% where 9.0% and 8.4% scored, 3+ said 24.6% and 25.0% where 25.2% and 26.0% did. The
+  others do not, so they are listed with a dash: under 0.5 said 4.2% and 3.7% where 3.1% and
+  2.7% scored, 0.5-1 said 6.2% where 4.9% scored in 2014-2019, and players with no NFL game said
+  3% where 8% scored. A team's last starting quarterback is a candidate at any usage, as
+  before; under 1 his chance follows his group like everyone else's (no player under 1 ranked
+  in a team's top three in the walk-forward, 6,806 team-games of 2014-2026, so the top three
+  are unchanged). The top three are players with a chance only. The whole list is logged
+  before kickoff (`home_td_all`, `away_td_all`) and graded as the top three are
+  (`grade_touchdown_lists`).
+- **Touchdown meters.** Beside every listed player, on each team (Teams, and Record's table) and
+  overall (Record), two meters from the live record, as "X of Y" and a percentage:
+  - **Top 3 → scored**: of the times he was in his team's logged top three and played, how often
+    he scored a rushing or receiving touchdown (a pick who did not play is left out);
+  - **Not top 3 → no TD**: of the times he played outside it, how often he did not score.
+
+  For games logged with the whole list, "not top 3" is the rest of that list who played. Games
+  whose pick was logged before the list was (the top three only: games of 2026 weeks 6 to 8;
+  a week-8 game still to kick off when the list arrived was re-logged with it) rebuild it from
+  the snap counts: every other player of the team who took an offensive snap at QB, RB, FB, WR
+  or TE, his touchdowns from the box score (none without a box-score line); the app marks each
+  week that has such games, and says "in some games" when a week mixes the two. A team's sheet
+  counts each player's games for that team only, so its players add up to the team's meters
+  (a player who moved teams carries `by_team`).
+  They are computed at every run from the log and the box scores (`nfl_export.td_meters`), so
+  a game whose snap counts land late counts as soon as they do. A meter with no games is a
+  dash, never 0%.
 - **Projected yards.** Passing, rushing and receiving yards for each key player, plus each
   team's projected leaders (`nfl_props.py`). Each projection is the middle of what his recent
   usage and his team's expected points point to. Measured 2020-2025:

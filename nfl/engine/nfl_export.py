@@ -121,6 +121,26 @@ def caveats(backtest, td=None, props=None):
             f"targets and snaps and his team's expected points from the betting line. In {period} "
             f"each team's most likely scorer scored {pct(top['hit_rate'])} of the time "
             f"(the model said {pct(top['mean_prob'])}). Measured, and shown, not applied.")
+        groups = td.get("by_usage") or {}
+        hidden = [k for k, ok in (groups.get("ships") or {}).items() if not ok]
+        dev = "-".join(str(y) for y in (td.get("periods") or {}).get("dev", ("", "")))
+        if hidden:
+            said = []
+            for name in hidden:
+                # The period where the group missed most is the one that keeps it off.
+                measured = [(k, r) for k, r in ((k, (groups.get(k) or {}).get(name)) for k in (dev, period))
+                            if r and r.get("ratio") is not None]
+                if measured:
+                    k, r = max(measured, key=lambda kr: abs(kr[1]["ratio"] - 1))
+                    word = "no NFL game" if name == "no history" else f"{name} weighted carries + targets a game"
+                    said.append(f"{word}: it said {pct(r['predicted'])} where {pct(r['observed'])} scored ({k})")
+            out["td_list"] = (
+                "Every active QB, RB, FB, WR and TE is listed - everyone you can back to score. A chance "
+                "is shown only where the model was measured as well calibrated: within "
+                f"{groups.get('tolerance', 0.2):.0%} of what happened in both {dev} and {period}. "
+                "Players with little use or no NFL game are listed with a dash instead"
+                + (". For players with " + "; ".join(said) if said else "") + ".")
+    out["td_meters"] = TD_METERS_DEFINITION
     if props:
         period = [k for k in props if k[:2] == "20"][-1]
         parts = []
@@ -194,3 +214,154 @@ def track_record(log):
         "by_week": sorted(weeks.values(), key=lambda r: (r["season"], r["week"])),
         "basis": "one pick per game, the last one logged before kickoff",
     }
+
+
+# ------------------------------------------------------------ touchdown meters
+
+TD_METERS_DEFINITION = (
+    "Two meters from the live record - touchdown picks logged before kickoff, games graded "
+    "from the box score. TOP 3 -> SCORED: of the times a player was in his team's top three "
+    "most likely touchdown scorers, how often he scored a rushing or receiving touchdown; a "
+    "pick who did not play is left out, as every chance was if he plays. NOT TOP 3 -> NO TD: "
+    "of the times a player played without being in that top three, how often he did not "
+    "score. Where the whole list a bettor could back (every active QB, RB, FB, WR and TE) was "
+    "logged before kickoff, 'not top 3' is the rest of that list who played. Games logged "
+    "before that list was, with only the top three, rebuild 'not top 3' from the snap counts: "
+    "every other player of the team who took an offensive snap at QB, RB, FB, WR or TE, his "
+    "touchdowns from the box score (none if he has no box-score line).")
+
+
+def _meter(n, hits, key):
+    return {"n": n, key: hits, "rate": hits / n if n else None}
+
+
+def _blank():
+    return {"top3": [0, 0], "rest": [0, 0]}
+
+
+def _meters(acc):
+    return {"top3": _meter(*acc["top3"], "scored"), "rest": _meter(*acc["rest"], "no_td")}
+
+
+def td_meters(log, lines):
+    """For every player and team, and overall: how the touchdown picks did.
+
+    top3 - each time a player was in his team's logged top three and played:
+      n, scored (he scored a rushing or receiving TD), rate.
+    rest - each time a player played without being in it: n, no_td (he did
+      not score), rate. A game whose whole list was logged before kickoff
+      (home_td_all / away_td_all) counts the rest of that list who played,
+      once it is graded (td_all_graded); an older game, with only the top
+      three logged, counts every other player of the team who took an
+      offensive snap at QB, RB, FB, WR or TE (`lines`, from
+      nfl_predict.td_record_lines), with his touchdowns from the box score.
+      A side whose snap counts are not in yet is pending, not counted.
+
+    Only games whose top three are graded (td_graded) count, and only sides
+    with touchdown picks logged: nothing here was decided after kickoff but
+    who played and who scored. Returns overall, by_week, teams, players,
+    pending (sides waiting for snap counts) and the definition. A player's
+    team is his latest; one counted for more than one team also carries
+    by_team (_split())."""
+    snapped = lines[lines["in_snaps"].astype(bool)] if len(lines) else lines
+    by_side = {key: g for key, g in snapped.groupby(["game_id", "team"])} if len(snapped) else {}
+    events, pending = [], 0
+    picks = sorted(log.get("picks", {}).items(), key=lambda kv: (str(kv[1].get("kickoff")), kv[0]))
+    for gid, p in picks:
+        if not p.get("td_graded"):
+            continue
+        for side in ("home", "away"):
+            top = p.get(f"{side}_td") or []
+            if not top:
+                continue
+            team = p.get(side)
+            base = {"season": int(p["season"]), "week": int(p["week"]), "team": team}
+            for t in top:
+                if t.get("scored") is None:       # did not play: not a miss
+                    continue
+                events.append(dict(base, gsis_id=t.get("gsis_id"), name=t.get("name"),
+                                   position=t.get("position"), kind="top3", hit=bool(t["scored"])))
+            top_ids = {t.get("gsis_id") for t in top}
+            top_names = {t.get("name") for t in top}
+            full = p.get(f"{side}_td_all")
+            if full is not None:
+                if not p.get("td_all_graded"):
+                    pending += 1
+                    continue
+                rest = [(t.get("gsis_id"), t.get("name"), t.get("position"), not t["scored"])
+                        for t in full if t.get("gsis_id") not in top_ids and t.get("scored") is not None]
+                source = "list"
+            else:
+                g = by_side.get((gid, team))
+                if g is None:
+                    pending += 1
+                    continue
+                rest = [(i, n, pos, not (tds >= 1)) for i, n, pos, tds in
+                        zip(g["gsis_id"], g["name"], g["position"], g["tds"].astype(float))
+                        if i not in top_ids and n not in top_names]
+                source = "snaps"
+            for gsis, name, pos, no_td in rest:
+                events.append(dict(base, gsis_id=gsis, name=name, position=pos, kind="rest", hit=no_td,
+                                   source=source))
+
+    overall, weeks, teams, players = _blank(), {}, {}, {}
+    sources = {}
+    for e in events:
+        accs = [overall, weeks.setdefault((e["season"], e["week"]), _blank()),
+                teams.setdefault(e["team"], _blank())]
+        if e["gsis_id"]:
+            pl = players.setdefault(e["gsis_id"], dict(_blank(), info={}, by_team={}))
+            pl["info"] = {"name": e["name"], "team": e["team"], "position": e["position"]}   # latest wins
+            accs += [pl, pl["by_team"].setdefault(e["team"], _blank())]
+        for acc in accs:
+            acc[e["kind"]][0] += 1
+            acc[e["kind"]][1] += int(e["hit"])
+        if e["kind"] == "rest":
+            sources.setdefault((e["season"], e["week"]), set()).add(e["source"])
+    return {
+        "overall": _meters(overall),
+        "by_week": [dict(_meters(acc), season=s, week=w, rest_from=sorted(sources.get((s, w), ())))
+                    for (s, w), acc in sorted(weeks.items())],
+        "teams": sorted(({"team": code, "name": nd.TEAMS.get(code, (code,))[0], **_meters(acc)}
+                         for code, acc in teams.items()),
+                        key=lambda t: (-(t["top3"]["n"] + t["rest"]["n"]), t["team"])),
+        "players": sorted(({"gsis_id": gsis, **acc["info"], **_meters(acc), **_split(acc["by_team"])}
+                           for gsis, acc in players.items()),
+                          key=lambda r: (str(r["team"]), -r["top3"]["n"], -r["rest"]["n"], str(r["name"]))),
+        "pending": pending,
+        "list_from": min((k for k, v in sources.items() if "list" in v), default=None),
+        "definition": TD_METERS_DEFINITION,
+    }
+
+
+def _split(by_team):
+    """A player counted for more than one team (traded, or signed from
+    another) carries by_team: {team: his two meters for that team}, so a
+    team's players add up to the team's meters; one team, nothing extra."""
+    if len(by_team) < 2:
+        return {}
+    return {"by_team": {team: _meters(acc) for team, acc in sorted(by_team.items())}}
+
+
+def _no_meters():
+    return {"top3": _meter(0, 0, "scored"), "rest": _meter(0, 0, "no_td")}
+
+
+def team_td_meters(meters, team):
+    """One team's two meters; n = 0 and rate None when it has none yet."""
+    for t in (meters or {}).get("teams", []):
+        if t["team"] == team:
+            return {"top3": t["top3"], "rest": t["rest"]}
+    return _no_meters()
+
+
+def attach_td_meters(game, meters):
+    """Each listed touchdown player's two meters, and each side's team
+    meters, on a week.json game. Copies the lists: a logged list stays as
+    it was logged."""
+    by_id = {p["gsis_id"]: {"top3": p["top3"], "rest": p["rest"]} for p in (meters or {}).get("players", [])}
+    for key in ("home_td", "away_td", "home_td_all", "away_td_all"):
+        if game.get(key):
+            game[key] = [dict(e, meters=by_id.get(e.get("gsis_id")) or _no_meters()) for e in game[key]]
+    game["td_meters"] = {side: team_td_meters(meters, game[side]) for side in ("home", "away")}
+    return game
