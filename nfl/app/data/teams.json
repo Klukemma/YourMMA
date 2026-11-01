@@ -1,10 +1,10 @@
 {
- "as_of": "2026-10-29T18:31:46Z",
+ "as_of": "2026-11-01T15:17:19Z",
  "elo_scale": {
   "hfa": 48.0,
   "points_per_elo": 0.04
  },
- "generated": "2026-10-29T18:33:44Z",
+ "generated": "2026-11-01T15:19:15Z",
  "schema": 1,
  "season": 2026,
  "teams": [
@@ -1622,51 +1622,63 @@
   },
   {
    "conference": "NFC",
-   "def_epa": -0.019739,
+   "def_epa": -0.032669,
    "division": "NFC North",
-   "elo": 1525.756677,
+   "elo": 1539.485258,
    "key_players": {
     "defense": [
+     {
+      "line": "1.5 sacks, 1 INT, 8 PD",
+      "name": "Brandon Cisse",
+      "position": "CB",
+      "rank": 1,
+      "value": 7.0
+     },
      {
       "line": "1 sack, 2 INT, 6 PD",
       "name": "Evan Williams",
       "position": "SAF",
-      "rank": 1,
-      "value": 6.5
-     },
-     {
-      "line": "1.5 sacks, 1 INT, 6 PD",
-      "name": "Brandon Cisse",
-      "position": "CB",
       "rank": 2,
-      "value": 6.0
+      "value": 6.5
      }
     ],
     "offense": [
      {
-      "line": "1,958 pass yds, 13 TD, 5 INT",
+      "line": "2,246 pass yds, 16 TD, 6 INT",
       "name": "Jordan Love",
       "position": "QB",
       "rank": 1,
-      "value": 33.740446
+      "value": 45.48463
      },
      {
-      "line": "34 rec, 595 yds, 6 TD",
+      "line": "42 rec, 708 yds, 6 TD",
       "name": "Christian Watson",
       "position": "WR",
       "rank": 2,
-      "value": 29.180285
+      "value": 30.549241
      },
      {
-      "line": "29 rec, 297 yds, 2 TD",
+      "line": "35 rec, 350 yds, 3 TD",
       "name": "Tucker Kraft",
       "position": "TE",
       "rank": 3,
-      "value": 16.762048
+      "value": 24.050054
      }
     ]
    },
    "last5": [
+    {
+     "code": "8",
+     "date": "2026-10-29",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "CAR",
+     "result": "W",
+     "score": "27-19",
+     "season": 2026,
+     "week": 8
+    },
     {
      "code": "3",
      "date": "2026-10-25",
@@ -1714,33 +1726,21 @@
      "score": "17-14",
      "season": 2026,
      "week": 4
-    },
-    {
-     "code": "21",
-     "date": "2026-09-24",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "ATL",
-     "result": "L",
-     "score": "14-35",
-     "season": 2026,
-     "week": 3
     }
    ],
    "name": "Green Bay Packers",
-   "net_epa": 0.045177,
-   "off_epa": 0.025437,
-   "points_against": 20.745522,
-   "points_for": 21.18058,
+   "net_epa": 0.068016,
+   "off_epa": 0.035347,
+   "points_against": 20.57097,
+   "points_for": 21.762522,
    "qb": "Jordan Love",
-   "qb_rating": 0.124822,
-   "qb_starts": 59,
+   "qb_rating": 0.132811,
+   "qb_starts": 60,
    "rank": 14,
    "record": {
     "losses": 3,
     "ties": 0,
-    "wins": 4
+    "wins": 5
    },
    "team": "GB"
   },
@@ -2614,130 +2614,6 @@
   },
   {
    "conference": "NFC",
-   "def_epa": 0.034787,
-   "division": "NFC South",
-   "elo": 1450.645517,
-   "key_players": {
-    "defense": [
-     {
-      "line": "2 sacks, 2 INT, 3 PD",
-      "name": "Devin Lloyd",
-      "position": "LB",
-      "rank": 1,
-      "value": 8.5
-     },
-     {
-      "line": "1 sack, 1 INT, 1 FF",
-      "name": "Bobby Okereke",
-      "position": "ILB",
-      "rank": 2,
-      "value": 6.75
-     }
-    ],
-    "offense": [
-     {
-      "line": "36 rec, 511 yds, 2 TD",
-      "name": "Tetairoa McMillan",
-      "position": "WR",
-      "rank": 1,
-      "value": 23.172192
-     },
-     {
-      "line": "1,712 pass yds, 12 TD, 4 INT",
-      "name": "Bryce Young",
-      "position": "QB",
-      "rank": 2,
-      "value": 19.882988
-     },
-     {
-      "line": "459 rush yds, 112 rec yds, 6 TD",
-      "name": "Chuba Hubbard",
-      "position": "RB",
-      "rank": 3,
-      "value": 19.482527
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "30",
-     "date": "2026-10-25",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "TB",
-     "result": "L",
-     "score": "13-43",
-     "season": 2026,
-     "week": 7
-    },
-    {
-     "code": "11",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "PHI",
-     "result": "W",
-     "score": "25-14",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "6",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "DET",
-     "result": "W",
-     "score": "32-26",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "3",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "CLE",
-     "result": "L",
-     "score": "18-21",
-     "season": 2026,
-     "week": 3
-    },
-    {
-     "code": "31",
-     "date": "2026-09-20",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "ATL",
-     "result": "W",
-     "score": "34-3",
-     "season": 2026,
-     "week": 2
-    }
-   ],
-   "name": "Carolina Panthers",
-   "net_epa": -0.04455,
-   "off_epa": -0.009763,
-   "points_against": 24.952877,
-   "points_for": 22.57384,
-   "qb": "Bryce Young",
-   "qb_rating": -0.019756,
-   "qb_starts": 48,
-   "rank": 22,
-   "record": {
-    "losses": 3,
-    "ties": 0,
-    "wins": 3
-   },
-   "team": "CAR"
-  },
-  {
-   "conference": "NFC",
    "def_epa": 0.027586,
    "division": "NFC East",
    "elo": 1447.010308,
@@ -2852,13 +2728,137 @@
    "qb": "Jalen Hurts",
    "qb_rating": 0.015808,
    "qb_starts": 99,
-   "rank": 23,
+   "rank": 22,
    "record": {
     "losses": 5,
     "ties": 0,
     "wins": 2
    },
    "team": "PHI"
+  },
+  {
+   "conference": "NFC",
+   "def_epa": 0.043762,
+   "division": "NFC South",
+   "elo": 1436.916936,
+   "key_players": {
+    "defense": [
+     {
+      "line": "2 sacks, 2 INT, 3 PD",
+      "name": "Devin Lloyd",
+      "position": "LB",
+      "rank": 1,
+      "value": 8.5
+     },
+     {
+      "line": "1 sack, 1 INT, 1 FF",
+      "name": "Bobby Okereke",
+      "position": "ILB",
+      "rank": 2,
+      "value": 6.75
+     }
+    ],
+    "offense": [
+     {
+      "line": "42 rec, 569 yds, 2 TD",
+      "name": "Tetairoa McMillan",
+      "position": "WR",
+      "rank": 1,
+      "value": 22.718462
+     },
+     {
+      "line": "540 rush yds, 150 rec yds, 7 TD",
+      "name": "Chuba Hubbard",
+      "position": "RB",
+      "rank": 2,
+      "value": 19.596636
+     },
+     {
+      "line": "1,921 pass yds, 13 TD, 5 INT",
+      "name": "Bryce Young",
+      "position": "QB",
+      "rank": 3,
+      "value": 12.284271
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "8",
+     "date": "2026-10-29",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "GB",
+     "result": "L",
+     "score": "19-27",
+     "season": 2026,
+     "week": 8
+    },
+    {
+     "code": "30",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "TB",
+     "result": "L",
+     "score": "13-43",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "11",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "PHI",
+     "result": "W",
+     "score": "25-14",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "6",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "DET",
+     "result": "W",
+     "score": "32-26",
+     "season": 2026,
+     "week": 4
+    },
+    {
+     "code": "3",
+     "date": "2026-09-27",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "CLE",
+     "result": "L",
+     "score": "18-21",
+     "season": 2026,
+     "week": 3
+    }
+   ],
+   "name": "Carolina Panthers",
+   "net_epa": -0.067452,
+   "off_epa": -0.02369,
+   "points_against": 25.15759,
+   "points_for": 22.216456,
+   "qb": "Bryce Young",
+   "qb_rating": -0.031961,
+   "qb_starts": 49,
+   "rank": 23,
+   "record": {
+    "losses": 4,
+    "ties": 0,
+    "wins": 3
+   },
+   "team": "CAR"
   },
   {
    "conference": "AFC",
