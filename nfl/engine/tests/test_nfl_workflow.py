@@ -54,3 +54,18 @@ def test_a_failed_run_keeps_the_prices_it_paid_for():
     assert "if: failure() && (inputs.mode || 'predict') == 'predict'" in step
     assert "nfl/data/odds_cache.json" in step and "git push" in step
     assert text.index("- name: Run") < text.index("- name: Keep the prices a failed run paid for")
+
+
+def test_ncaa_sync_is_a_mode_with_the_full_flag_and_the_token():
+    """College football's data step: its own mode, the same full flag, the
+    token only for GitHub's API, and its files under nfl/data/ - which the
+    Commit step already takes."""
+    text = (WF / "nfl.yml").read_text()
+    assert "options: [predict, sync, backtest, ncaa-sync, probe-ncaa]" in text
+    run = text.split("- name: Run")[1].split("- name:")[0]
+    step = run.split('"$MODE" = "ncaa-sync"')[1].split("elif")[0]
+    assert "python nfl/engine/ncaa_data.py ${{ inputs.full && '--full' || '' }}" in step
+    assert 'GITHUB_TOKEN="${{ github.token }}"' in step and "secrets." not in step
+    assert 'PATHS="nfl/data/ ' in text
+    commit = text.split("- name: Commit")[1]
+    assert '"${{ inputs.mode }}" = "ncaa-sync"' in commit

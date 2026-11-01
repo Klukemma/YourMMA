@@ -109,9 +109,12 @@ choose on 2006-2015, and ship only what does not make 2016-2025 worse for the pi
     nfl/engine/nfl_predict.py     the weekly run: picks, log, grading, app data
     nfl/engine/nfl_export.py      app payloads and caveats
     nfl/engine/nfl_standalone.py  the offline single-file app
+    nfl/engine/ncaa_data.py       college football (FBS), data only so far: sportsdataverse schedules
+                                  and lines, ESPN's live board and teams (sync + loaders)
     nfl/data/                     snapshots (games, team games, QB games, injuries), odds cache, pick log
+    nfl/data/ncaa/                college snapshot: schedule and lines per season, teams, the live week
     nfl/app/                      the phone app (PWA)
-    .github/workflows/nfl.yml     runner: predict / sync / backtest, on a schedule in season
+    .github/workflows/nfl.yml     runner: predict / sync / backtest / ncaa-sync, on a schedule in season
 
 ## Running it
 

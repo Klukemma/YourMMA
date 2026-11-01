@@ -8,6 +8,10 @@ name: NFL predictions
 #             nfl/app/data and the standalone page, commit
 #   sync      nflverse snapshot only (all seasons with full=true)
 #   backtest  the walk-forward report, printed
+#   ncaa-sync college football snapshot (ncaa_data.py): this season's
+#             schedule and lines from sportsdataverse's releases (every season
+#             since 2004 with full=true), ESPN's teams and the live FBS board,
+#             into nfl/data/ncaa/
 #
 # On a schedule it runs predict through the season: Tuesday after Monday
 # night (grade the week, post the next one), Thursday before the night game,
@@ -20,16 +24,16 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "predict = this week's picks; sync = data only; backtest = report; probe-ncaa = save the college football sources' answers"
+        description: "predict = this week's picks; sync = data only; backtest = report; ncaa-sync = college football data; probe-ncaa = save the college football sources' answers"
         type: choice
-        options: [predict, sync, backtest, probe-ncaa]
+        options: [predict, sync, backtest, ncaa-sync, probe-ncaa]
         default: predict
       refresh_odds:
         description: "predict only: buy today's prices even if every game has one on file (3 credits)"
         type: boolean
         default: false
       full:
-        description: "sync only: rebuild every season since 1999, not just this one"
+        description: "sync / ncaa-sync only: rebuild every season (NFL since 1999, college since 2004), not just this one"
         type: boolean
         default: false
   schedule:
@@ -94,10 +98,18 @@ jobs:
           elif [ "$MODE" = "backtest" ]; then
             python nfl/engine/nfl_data.py 2>&1 | tee nfl.log
             python nfl/engine/nfl_backtest.py 2>&1 | tee -a nfl.log
+          elif [ "$MODE" = "ncaa-sync" ]; then
+            # College football (ncaa_data.py) into nfl/data/ncaa/. The token
+            # only lifts GitHub's API rate limit for reading the public
+            # release listings; it is never printed.
+            GITHUB_TOKEN="${{ github.token }}" python nfl/engine/ncaa_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee nfl.log
           elif [ "$MODE" = "probe-ncaa" ]; then
             # College football's possible sources, saved under
             # nfl/data/ncaa_probe/ (probe_ncaa.py). The token only lifts
-            # GitHub's API rate limit for reading public releases.
+            # GitHub's API rate limit for reading public releases. A re-probe
+            # commits ~2 MB of raw answers there on purpose (the sandbox can
+            # only read them from the branch): reduce them to test fixtures
+            # and delete the folder afterwards, as after the first probe.
             GITHUB_TOKEN="${{ github.token }}" python nfl/engine/probe_ncaa.py 2>&1 | tee nfl.log
           else
             # Scheduled Thursday and Sunday runs, and a dispatch that asks,
@@ -158,7 +170,9 @@ jobs:
           for p in $PATHS; do
             if [ -e "$p" ]; then git add -- "$p"; fi
           done
-          if [ -f nfl/app/data/week.json ]; then
+          if [ "${{ inputs.mode }}" = "ncaa-sync" ]; then
+            git commit -m "NFL: college football data"
+          elif [ -f nfl/app/data/week.json ]; then
             LABEL=$(python -c "import json;d=json.load(open('nfl/app/data/week.json'));print(d['season'], d['label'])")
             PICKS=$(python -c "import json;d=json.load(open('nfl/app/data/week.json'));print(sum(1 for g in d['games'] if g.get('pick') and g['status']=='upcoming'))")
             git commit -m "NFL: ${LABEL}, ${PICKS} picks"
