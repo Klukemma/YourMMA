@@ -7,7 +7,7 @@
 // app's. A worker's scope is its own directory, so neither controls the other.
 //
 // Bump CACHE when the shape of what is cached changes.
-const CACHE = "yournfl-v4";
+const CACHE = "yournfl-v5";
 // How long the page waits for the network before opening from the cache.
 const SHELL_WAIT = 2500;
 
