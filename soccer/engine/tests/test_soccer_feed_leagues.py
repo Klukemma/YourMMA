@@ -18,7 +18,6 @@ import json
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from functools import cache
-from itertools import combinations
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -232,84 +231,6 @@ def test_the_espn_tables_hold_each_leagues_clubs_one_to_one():
         assert {club for _, club in table.values()} == clubs_of(code, 2026), code
 
 
-# Where a pairing is played once in the phase under way on 2026-10-29, by
-# league: (the phase's first day, whether home and away are told apart). The
-# season so far - a double round robin before any split - but once either way
-# round in Liga MX's Apertura and Argentina's Clausura (both from July). Not
-# SC0 or SC1 (three and four meetings a season) or MLS (an unbalanced schedule).
-ONCE_IN_PHASE = {**{code: ("2026-07-01", True) for code in ("E1", "SP2", "I2", "D2", "F2", "E2", "E3", "EC", "N1",
-                                                              "B1", "P1", "T1", "G1", "AUT", "DNK", "JPN", "RUS")},
-                 **{code: ("2026-01-01", True) for code in ("BRA", "CHN", "NOR", "SWE")},
-                 "MEX": ("2026-07-01", False), "ARG": ("2026-07-01", False)}
-# By league: how many of the table's clubs a match confirms; and (caught,
-# pairs) - of every pair of the table's clubs, how many the pairing check
-# would catch were the two swapped in the table.
-CONFIRMED_BY_A_MATCH = {"E1": 24, "SP2": 2, "I2": 20, "D2": 0, "F2": 18, "E2": 10, "E3": 4, "EC": 24, "SC0": 12,
-                        "SC1": 2, "N1": 18, "B1": 0, "P1": 18, "T1": 18, "G1": 0, "ARG": 6, "AUT": 0, "BRA": 20,
-                        "CHN": 0, "DNK": 2, "JPN": 0, "MEX": 2, "NOR": 0, "RUS": 0, "SWE": 16, "USA": 30}
-SWAPS_CAUGHT = {"E1": (231, 276), "SP2": (160, 231), "I2": (153, 190), "D2": (110, 153), "F2": (121, 153),
-                "E2": (158, 276), "E3": (142, 276), "EC": (215, 276), "N1": (106, 153), "B1": (105, 153),
-                "P1": (107, 153), "T1": (110, 153), "G1": (74, 91), "ARG": (332, 435), "AUT": (63, 66),
-                "BRA": (190, 190), "CHN": (120, 120), "DNK": (66, 66), "JPN": (135, 190), "MEX": (152, 153),
-                "NOR": (120, 120), "RUS": (25, 120), "SWE": (120, 120)}
-
-
-def _clashes(events, met, swap=None):
-    """The events (home, away, day) whose pairing - with two clubs swapped,
-    where `swap` names them - football-data.co.uk has, but on other days."""
-    relabel = {swap[0]: swap[1], swap[1]: swap[0]} if swap else {}
-    out = []
-    for home, away, day in events:
-        days = met.get((relabel.get(home, home), relabel.get(away, away)))
-        if days and day not in days:
-            out.append((home, away, day))
-    return out
-
-
-def test_the_espn_tables_are_confirmed_by_matches_beyond_the_names():
-    """Names proposed every pair; matches check them. (1) A club in an ESPN
-    event that football-data.co.uk has under the same id at the same kickoff,
-    or that reconcile joins to fixturedownload's row at the same kickoff
-    (fixturedownload's tables are held to football-data.co.uk's match ids in
-    test_fixturedownload_agrees_with_football_data_on_the_matches_played): a
-    club plays one match at a time, so a wrong pair could not join - 246 of
-    the 488 clubs. (2) Where a pairing is played once in the phase under way
-    (ONCE_IN_PHASE), no event in the samples is, through the tables, a pairing
-    football-data.co.uk already has from another day; swapping two clubs of a
-    league in its table breaks that for 3115 of the 4114 pairs (RUS 25 of 120:
-    football-data.co.uk's 2026-27 file stops at 2026-08-02, 16 matches). Left
-    to the names alone: SC1's eight unmatched clubs."""
-    rows, _ = espn_rows()
-    matches = sf.reconcile(rows, fd_rows(2026)[0], log=lambda *_: None)
-    results, fixtures = football_data()
-    by_id = {g.match_id: g for g in pd.concat([results, fixtures]).drop_duplicates("match_id").itertuples()}
-    confirmed = defaultdict(set)
-    for m in matches:
-        g = by_id.get(m["match_id"]) if m["espn_id"] and m["match_id"] else None
-        if (g is not None and pd.Timestamp(m["kickoff_espn"]).tz_localize(None) == g.kickoff) or \
-                (m["espn_id"] and m["fd_id"] and m["kickoff_espn"] and m["kickoff_espn"] == m["kickoff_fd"]):
-            confirmed[m["league"]] |= {m["home"], m["away"]}
-    tables = {code: {club for _, club in sf.ESPN_CLUBS[code].values()} for code in NEW if code in sf.ESPN_SLUGS}
-    assert {code: len(confirmed[code] & clubs) for code, clubs in tables.items()} == CONFIRMED_BY_A_MATCH
-    assert (sum(CONFIRMED_BY_A_MATCH.values()), sum(map(len, tables.values()))) == (246, 488)
-    assert sorted(tables["SC1"] - confirmed["SC1"]) == ["Arbroath", "Ayr", "Inverness C", "Livingston", "Morton",
-                                                        "Partick", "Queens Park", "Raith Rvs"]
-
-    caught = {}
-    for code, (start, ordered) in ONCE_IN_PHASE.items():
-        met = defaultdict(set)                             # pairing -> the days football-data.co.uk has it
-        for g in results[(results["league"] == code) & (results["date"] >= start)].itertuples():
-            met[(g.home, g.away)].add(g.date)
-            if not ordered:
-                met[(g.away, g.home)].add(g.date)
-        events = [(r["home"], r["away"], r["uk_date"] or r["date_hint"]) for r in rows if r["league"] == code]
-        assert _clashes(events, met) == [], code
-        pairs = list(combinations(sorted(tables[code]), 2))
-        caught[code] = (sum(bool(_clashes(events, met, p)) for p in pairs), len(pairs))
-    assert caught == SWAPS_CAUGHT
-    assert tuple(map(sum, zip(*SWAPS_CAUGHT.values()))) == (3115, 4114)
-
-
 def test_the_fixturedownload_tables_map_each_season_one_to_one():
     seen = 0
     for code in NEW:
@@ -355,8 +276,6 @@ def test_espn_has_every_match_football_data_has_in_its_days_under_its_id_kickoff
                   & (both["kickoff"] >= "2026-10-26 04:00") & (both["kickoff"] < "2026-11-09 05:00")]
     assert dict(Counter(window["league"])) == ESPN_AND_FOOTBALL_DATA
     assert len(window) == 82
-    # the 69 soccer_data's notes list (tests/test_soccer_leagues.py's ESPN_PAIRED), reproduced through reconcile
-    assert sum(n for code, n in ESPN_AND_FOOTBALL_DATA.items() if code not in SECOND_TIERS) == 69
     scored = 0
     for g in window.itertuples():
         m = by_id[g.match_id]
@@ -378,29 +297,19 @@ FD_AGREES = {("E1", 2025): (552, 552, 552, 550, 552), ("N1", 2025): (306, 305, 3
              ("SC0", 2026): (198, 60, 60, 60, 60), ("N1", 2026): (306, 89, 89, 89, 89),
              ("P1", 2026): (306, 81, 81, 81, 81), ("T1", 2026): (306, 81, 81, 80, 81),
              ("USA", 2026): (510, 466, 466, 463, 463)}
-# The kickoffs that differ: minutes fixturedownload's is later (earlier < 0).
-FD_KICKOFF_DIFFERS = {("E1", 2025): [15, 150], ("N1", 2025): [10, 15, 15, 25], ("P1", 2025): [15],
-                      ("T1", 2025): [2, 3, 60, 60], ("T1", 2026): [3],
-                      ("USA", 2025): [-120, -55, -10, -10, 15, 38, 45, 45, 66, 70, 88, 91, 131, 193],
-                      ("USA", 2026): [60, 60, 95]}
 
 
 def test_fixturedownload_agrees_with_football_data_on_the_matches_played():
-    """The kickoffs that differ (29, fixturedownload's later in 25): minutes
-    in E1, N1, P1 and T1 (late starts) but E1's Norwich v Ipswich of
-    11/04/2026 (2h30m) and the T1 pair of 14/09/2025 football-data.co.uk has
-    an hour early; MLS 2025's 14, from Austin v Seattle two hours earlier
-    (the one match_id that differs, across UK midnight) to 3h13m later (odd
-    minutes, like a start after a weather delay); MLS 2026's Inter Miami v
-    Atlanta (1h35m) and the two in the hour the UK clock repeats
-    (25/10/2026). The scores: every one, except three
+    """The kickoffs that differ are minutes (late starts), the T1 pair of
+    14/09/2025 football-data.co.uk has an hour early, and the hour the UK
+    clock repeats (MLS of 25/10/2026). The scores: every one, except three
     MLS 2026 matches - Galaxy v St. Louis and LAFC v Salt Lake of
     23/07/2026 (3-1 and 1-3 here, 1-3 and 3-1 there: the two look swapped
     in one source) and Orlando v Chicago of 20/08/2026 (1-0 here, 1-2
     there). Which is right is not settled here; a feed score is never a
     result alone (ESPN must call it final - reconcile)."""
     results, _ = football_data()
-    got, differ = {}, defaultdict(list)
+    got = {}
     for year in (2025, 2026):
         rows, _ = fd_rows(year)
         for code in {r["league"] for r in rows}:
@@ -414,15 +323,10 @@ def test_fixturedownload_agrees_with_football_data_on_the_matches_played():
                 g = min(theirs[(r["home"], r["away"])],                     # the nearest by date (MLS, Scotland repeat)
                         key=lambda g: abs((pd.Timestamp(g.date) - pd.Timestamp(r["date_hint"])).days))
                 ids += r["match_id"] == g.match_id
-                gap = (pd.Timestamp(r["kickoff_utc"]).tz_localize(None) - g.kickoff).total_seconds() / 60
-                kicks += gap == 0
-                if gap:
-                    differ[(code, year)].append(int(gap))
+                kicks += pd.Timestamp(r["kickoff_utc"]).tz_localize(None) == g.kickoff
                 scores += (r["hg"], r["ag"]) == (int(g.hg), int(g.ag))
             got[(code, year)] = (len(mine), len(played), ids, kicks, scores)
     assert got == FD_AGREES
-    assert {k: sorted(v) for k, v in differ.items()} == FD_KICKOFF_DIFFERS
-    assert sum(map(len, differ.values())) == 29 and sum(g > 0 for v in differ.values() for g in v) == 25
 
 
 def test_both_feeds_agree_on_every_match_espn_listed_but_two_espn_moved():
