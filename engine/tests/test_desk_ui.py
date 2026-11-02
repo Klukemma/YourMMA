@@ -75,14 +75,15 @@ def test_the_mma_search_does_not_rely_on_a_datalist():
 
 
 def test_the_tab_bars_have_the_same_shape():
-    shapes = []
+    """Every tab is an icon in a pill over a word, in every app. Four tabs,
+    or five where an app has earned one (the NFL app's Touchdowns tab: its
+    touchdown lists were three taps deep and nobody found them); more than
+    five no longer fits a 320px phone."""
     for app in APPS.values():
         html = (app / "index.html").read_text()
         tabs = re.findall(r'<button role="tab" id="tab-(\w+)"', html)
-        assert len(tabs) == 4
-        assert html.count('<span class="pill"><svg') == 4
-        shapes.append(len(tabs))
-    assert len(set(shapes)) == 1
+        assert 4 <= len(tabs) <= 5
+        assert html.count('<span class="pill"><svg') == len(tabs)
 
 
 def test_every_script_parses_as_the_phone_runs_them():

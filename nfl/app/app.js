@@ -718,17 +718,30 @@ function tdLegend(c) {
 
 // One team's touchdown list: our top 3 first, then - folded, so the card
 // stays short - everyone else a bettor can back to score.
-function tdList(code, top, all, team) {
+function tdList(code, top, all, team, open = false) {
   if (!top || !top.length) return "";
   const ids = new Set(top.map((p) => p.gsis_id));
   const rest = (all || []).filter((p) => !ids.has(p.gsis_id));
   const more = rest.length
-    ? `<details class="tdmore"><summary><span>${rest.length} more you can bet on</span><span class="more">Show</span></summary>
-        <ul class="list">${rest.map(tdItem).join("")}</ul></details>`
+    ? (open
+      ? `<div class="tdhead mini">Everyone else you can bet on · ${rest.length}</div><ul class="list">${rest.map(tdItem).join("")}</ul>`
+      : `<details class="tdmore"><summary><span>${rest.length} more you can bet on</span><span class="more">Show</span></summary>
+        <ul class="list">${rest.map(tdItem).join("")}</ul></details>`)
     : all ? "" : `<div class="mini">Only our top 3 were logged for this game.</div>`;
   const teamLine = team ? `<div class="tdteam"><span class="mini">${esc(code)}, every game so far</span>${tdMeters(team)}</div>` : "";
   return `<div class="panel"><div class="eyebrow">${esc(code)} · touchdown</div>${teamLine}
     <div class="tdhead mini">Our top 3</div><ul class="list">${top.map(tdItem).join("")}</ul>${more}</div>`;
+}
+
+// One line on the closed card: each team's likeliest scorer.
+function tdPeek(g) {
+  const first = (side) => (g[`${side}_td`] || [])[0];
+  const parts = ["away", "home"].map((side) => {
+    const p = first(side);
+    return p ? `<span class="nowrap"><b>${esc(g[side])}</b> ${esc(p.name)} <span class="num">${p.prob == null ? "—" : pct(p.prob)}</span>${
+      p.scored === true ? " ✓" : p.scored === false ? " ✗" : ""}</span>` : "";
+  }).filter(Boolean);
+  return parts.length ? `<div class="tdpeek mini"><span class="eyebrow" style="margin-right:4px">Likeliest TD</span>${parts.join(" · ")}</div>` : "";
 }
 
 function newsList(items) {
@@ -826,6 +839,7 @@ function gameRow(g, d) {
       <div class="sides">${teamRow(g, "away")}${teamRow(g, "home")}</div>
       ${bar}
       <div class="pickline">${pickLine}</div>
+      ${tdPeek(g)}
       ${(g.alerts || []).slice(0, 2).map(alertLine).join("")}
       ${(g.alerts || []).length > 2 ? `<div class="mini">+${g.alerts.length - 2} more in the detail</div>` : ""}
     </summary>
@@ -930,6 +944,49 @@ const BOOT = {
         day.hidden = ![...day.querySelectorAll("details.match")].some((m) => !m.hidden);
       });
     }));
+  },
+
+  // Every player a bettor can back to score, for every game of the week,
+  // with his chance and his two meters; the live record's meters on top.
+  async td() {
+    const el = $("view-td");
+    el.innerHTML = DESK.skeleton(3);
+    let d, perf = null;
+    try { d = WEEK || await load("week"); } catch (e) { return fail(el, e, "the week", () => BOOT.td()); }
+    try { perf = await load("performance"); } catch (e) { perf = null; }
+    const m = perf && perf.td_meters;
+    const games = (d.games || []).filter((g) => g.away_td || g.home_td);
+    const upcoming = games.filter((g) => phase(g) === "upcoming").length;
+    const cards = games.map((g) => {
+      const ph = phase(g);
+      const tm = g.td_meters || {};
+      const score = ph === "upcoming" ? "" : ` · <span class="num">${esc(g.away_score ?? "")}-${esc(g.home_score ?? "")}</span>`;
+      return `<div class="card tdgame" data-status="${esc(ph)}">
+        <div class="match-top"><span class="when">${esc(kickTime(g.kickoff))}</span>${STATUS_WORD[ph] ? `<span class="badge ${ph === "final" ? "" : "live"}">${esc(STATUS_WORD[ph])}</span>` : ""}</div>
+        <h2 style="margin:4px 0 8px">${teamChip(g.away)} <span class="mini">at</span> ${teamChip(g.home)}${score}</h2>
+        <div class="two">${tdList(g.away, g.away_td, g.away_td_all, tm.away, true)}${tdList(g.home, g.home_td, g.home_td_all, tm.home, true)}</div>
+      </div>`;
+    }).join("");
+    const filter = `<div class="seg" role="group" aria-label="Show games">${[["upcoming", "Still to play", upcoming], ["all", "All", games.length]]
+      .map(([k, label, n]) => `<button type="button" data-tdf="${k}" aria-pressed="${k === (upcoming ? "upcoming" : "all")}">${label} <span class="num">${n}</span></button>`).join("")}</div>`;
+    const o = m && m.overall;
+    el.innerHTML = `
+      <div class="hero"><div class="eyebrow">${esc(d.season)} season · ${esc(d.label)}</div><h1>Touchdowns</h1>
+        <p class="lede">Every player you can bet on to score a rushing or receiving touchdown, his chance if he plays, and how our touchdown picks have done.</p></div>
+      ${o ? `<div class="card"><h2>Our touchdown picks, live</h2>${tdMeters(o, "big")}
+        <div class="mini">${esc(TD_LEGEND)}</div>
+        <button type="button" class="linkbtn" data-goto-record>Every team and week on Record</button></div>` : ""}
+      ${filter}
+      ${cards || `<div class="empty">No touchdown lists this week yet.</div>`}
+      ${tdLegend(d.caveats)}`;
+    const show = (k) => {
+      el.querySelectorAll("[data-tdf]").forEach((b) => b.setAttribute("aria-pressed", String(b.getAttribute("data-tdf") === k)));
+      el.querySelectorAll(".tdgame").forEach((c) => { c.hidden = k === "upcoming" && c.getAttribute("data-status") !== "upcoming"; });
+    };
+    show(upcoming ? "upcoming" : "all");
+    el.querySelectorAll("[data-tdf]").forEach((b) => b.addEventListener("click", () => show(b.getAttribute("data-tdf"))));
+    const go = el.querySelector("[data-goto-record]");
+    if (go) go.addEventListener("click", () => document.getElementById("tab-record").click());
   },
 
   async teams() {
@@ -1435,5 +1492,5 @@ DESK.init({
   stamp: () => (WEEK && WEEK.generated ? `Picks updated ${DESK.ago(WEEK.generated)}` : "Fetch the latest picks"),
   onReload: () => location.reload(),
 });
-DESK.tabs(["week", "teams", "record", "method"], BOOT, "yournfl.tab", "week");
+DESK.tabs(["week", "td", "teams", "record", "method"], BOOT, "yournfl.tab", "week");
 setInterval(stamp, 60000);
