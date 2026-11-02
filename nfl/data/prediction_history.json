@@ -4128,6 +4128,11 @@
      "tds_season": 1
     }
    ],
+   "correct": false,
+   "final": {
+    "away": 33,
+    "home": 30
+   },
    "first_logged": "2026-10-27T12:50:29Z",
    "game_id": "2026_08_ARI_DAL",
    "game_type": "REG",
@@ -4237,12 +4242,14 @@
    "pick": "DAL",
    "pick_prob": 0.74495,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 0.493734,
     "line": 7.5,
     "team": "ARI"
    },
    "tier": "SOLID",
+   "total_correct": false,
    "total_pick": {
     "edge": 1.899525,
     "line": 54.5,
@@ -4328,6 +4335,11 @@
      "tds_season": 4
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 0,
+    "home": 16
+   },
    "first_logged": "2026-10-27T12:50:29Z",
    "game_id": "2026_08_ATL_TB",
    "game_type": "REG",
@@ -4437,12 +4449,14 @@
    "pick": "TB",
    "pick_prob": 0.554168,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 0.426705,
     "line": 2.0,
     "team": "ATL"
    },
    "tier": "LEAN",
+   "total_correct": false,
    "total_pick": {
     "edge": 1.372061,
     "line": 43.5,
@@ -4528,6 +4542,11 @@
      "tds_season": 1
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 10,
+    "home": 36
+   },
    "first_logged": "2026-10-27T12:50:29Z",
    "game_id": "2026_08_BAL_BUF",
    "game_type": "REG",
@@ -4637,12 +4656,14 @@
    "pick": "BUF",
    "pick_prob": 0.609325,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 6.268217,
     "line": -3.0,
     "team": "BUF"
    },
    "tier": "LEAN",
+   "total_correct": true,
    "total_pick": {
     "edge": 0.847712,
     "line": 54.5,
@@ -4955,6 +4976,151 @@
      "tds_season": 2
     }
    ],
+   "away_td_all": [
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0036275",
+     "name": "D'Andre Swift",
+     "position": "RB",
+     "prob": 0.445636,
+     "rank": 1,
+     "status": "active",
+     "tds_season": 7
+    },
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0040126",
+     "name": "Colston Loveland",
+     "position": "TE",
+     "prob": 0.289369,
+     "rank": 2,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0040735",
+     "name": "Luther Burden",
+     "position": "WR",
+     "prob": 0.246966,
+     "rank": 3,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0039919",
+     "name": "Rome Odunze",
+     "position": "WR",
+     "prob": 0.224772,
+     "rank": 4,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 4,
+     "group": "3+",
+     "gsis_id": "00-0039918",
+     "name": "Caleb Williams",
+     "position": "QB",
+     "prob": 0.148983,
+     "rank": 5,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 6,
+     "group": "3+",
+     "gsis_id": "00-0039021",
+     "name": "Roschon Johnson",
+     "position": "RB",
+     "prob": 0.136297,
+     "rank": 6,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0032464",
+     "name": "Kalif Raymond",
+     "position": "WR",
+     "prob": 0.130563,
+     "rank": 7,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 3,
+     "group": "1-3",
+     "gsis_id": "00-0038416",
+     "name": "Tyson Bagent",
+     "position": "QB",
+     "prob": 0.074176,
+     "rank": 8,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "group": "1-3",
+     "gsis_id": "00-0041051",
+     "name": "Zavion Thomas",
+     "position": "WR",
+     "prob": 0.060851,
+     "rank": 9,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 3,
+     "group": "1-3",
+     "gsis_id": "00-0028986",
+     "name": "Case Keenum",
+     "position": "QB",
+     "prob": 0.056335,
+     "rank": 10,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 3,
+     "group": "0.5-1",
+     "gsis_id": "00-0038440",
+     "name": "Zavier Scott",
+     "position": "RB",
+     "prob": null,
+     "rank": 11,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 7,
+     "group": "under 0.5",
+     "gsis_id": "00-0041558",
+     "name": "Sam Roush",
+     "position": "TE",
+     "prob": null,
+     "rank": 12,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 7,
+     "group": "under 0.5",
+     "gsis_id": "00-0040277",
+     "name": "Jahdae Walker",
+     "position": "WR",
+     "prob": null,
+     "rank": 13,
+     "status": "active",
+     "tds_season": 1
+    }
+   ],
    "first_logged": "2026-10-27T12:50:29Z",
    "game_id": "2026_08_CHI_SEA",
    "game_type": "REG",
@@ -5036,8 +5202,175 @@
      "tds_season": 0
     }
    ],
+   "home_td_all": [
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0038543",
+     "name": "Jaxon Smith-Njigba",
+     "position": "WR",
+     "prob": 0.526342,
+     "rank": 1,
+     "status": "active",
+     "tds_season": 8
+    },
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0038797",
+     "name": "Emanuel Wilson",
+     "position": "RB",
+     "prob": 0.333271,
+     "rank": 2,
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 0,
+     "group": "3+",
+     "gsis_id": "00-0039165",
+     "name": "Zach Charbonnet",
+     "position": "RB",
+     "prob": 0.326226,
+     "rank": 3,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0039793",
+     "name": "AJ Barner",
+     "position": "TE",
+     "prob": 0.272464,
+     "rank": 4,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0039299",
+     "name": "George Holani",
+     "position": "RB",
+     "prob": 0.194312,
+     "rank": 5,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0033908",
+     "name": "Cooper Kupp",
+     "position": "WR",
+     "prob": 0.187572,
+     "rank": 6,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "group": "1-3",
+     "gsis_id": "00-0040648",
+     "name": "Tory Horton",
+     "position": "WR",
+     "prob": 0.155752,
+     "rank": 7,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 6,
+     "group": "1-3",
+     "gsis_id": "00-0034869",
+     "name": "Sam Darnold",
+     "position": "QB",
+     "prob": 0.078744,
+     "rank": 8,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 0,
+     "group": "1-3",
+     "gsis_id": "00-0040673",
+     "name": "Jalen Milroe",
+     "position": "QB",
+     "prob": 0.045785,
+     "rank": 9,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 2,
+     "group": "0.5-1",
+     "gsis_id": "00-0035704",
+     "name": "Drew Lock",
+     "position": "QB",
+     "prob": null,
+     "rank": 10,
+     "status": "questionable",
+     "tds_season": 0
+    },
+    {
+     "games_season": 7,
+     "group": "0.5-1",
+     "gsis_id": "00-0033576",
+     "name": "Eric Saubert",
+     "position": "TE",
+     "prob": null,
+     "rank": 11,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "group": "under 0.5",
+     "gsis_id": "00-0038488",
+     "name": "Brady Russell",
+     "position": "FB",
+     "prob": null,
+     "rank": 12,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 2,
+     "group": "under 0.5",
+     "gsis_id": "00-0037156",
+     "name": "Irvin Charles",
+     "position": "WR",
+     "prob": null,
+     "rank": 13,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 4,
+     "group": "under 0.5",
+     "gsis_id": "00-0040058",
+     "name": "Nick Kallerup",
+     "position": "TE",
+     "prob": null,
+     "rank": 14,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 0,
+     "group": "no history",
+     "gsis_id": "00-0041178",
+     "name": "Robert Henry Jr.",
+     "position": "RB",
+     "prob": null,
+     "rank": 15,
+     "status": "active",
+     "tds_season": 0
+    }
+   ],
    "kickoff": "2026-11-03T01:15:00Z",
-   "last_logged": "2026-11-01T19:56:58Z",
+   "last_logged": "2026-11-01T21:58:20Z",
    "market": {
     "as_of": "2026-11-01T16:44:39Z",
     "away_ml": 145.0,
@@ -5060,7 +5393,7 @@
    "market_total": 46.5,
    "model_prob": 0.64211,
    "model_spread": 4.080498,
-   "model_total": 44.647578,
+   "model_total": 44.584364,
    "pick": "SEA",
    "pick_prob": 0.600231,
    "season": 2026,
@@ -5071,7 +5404,7 @@
    },
    "tier": "LEAN",
    "total_pick": {
-    "edge": 1.852422,
+    "edge": 1.915636,
     "line": 46.5,
     "side": "UNDER"
    },
@@ -5155,6 +5488,11 @@
      "tds_season": 3
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 6,
+    "home": 27
+   },
    "first_logged": "2026-10-27T12:50:29Z",
    "game_id": "2026_08_CLE_PIT",
    "game_type": "REG",
@@ -5264,12 +5602,14 @@
    "pick": "PIT",
    "pick_prob": 0.619425,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 0.275152,
     "line": -3.5,
     "team": "PIT"
    },
    "tier": "LEAN",
+   "total_correct": false,
    "total_pick": {
     "edge": 0.713733,
     "line": 39.0,
@@ -5355,6 +5695,11 @@
      "tds_season": 0
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 7,
+    "home": 42
+   },
    "first_logged": "2026-10-27T12:50:29Z",
    "game_id": "2026_08_IND_JAX",
    "game_type": "REG",
@@ -5464,12 +5809,14 @@
    "pick": "JAX",
    "pick_prob": 0.809396,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 0.787494,
     "line": -10.0,
     "team": "JAX"
    },
    "tier": "STRONG",
+   "total_correct": true,
    "total_pick": {
     "edge": 0.419559,
     "line": 45.5,
@@ -5955,6 +6302,11 @@
      "tds_season": 4
     }
    ],
+   "correct": false,
+   "final": {
+    "away": 38,
+    "home": 33
+   },
    "first_logged": "2026-10-27T12:50:29Z",
    "game_id": "2026_08_LV_NYJ",
    "game_type": "REG",
@@ -6064,12 +6416,14 @@
    "pick": "NYJ",
    "pick_prob": 0.539471,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 0.446488,
     "line": 1.5,
     "team": "LV"
    },
    "tier": "TOSS-UP",
+   "total_correct": false,
    "total_pick": {
     "edge": 1.542733,
     "line": 46.5,
@@ -6155,6 +6509,11 @@
      "tds_season": 3
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 15,
+    "home": 19
+   },
    "first_logged": "2026-10-27T12:50:29Z",
    "game_id": "2026_08_MIN_DET",
    "game_type": "REG",
@@ -6264,12 +6623,14 @@
    "pick": "DET",
    "pick_prob": 0.609806,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 2.807075,
     "line": 3.5,
     "team": "MIN"
    },
    "tier": "LEAN",
+   "total_correct": false,
    "total_pick": {
     "edge": 2.198516,
     "line": 46.0,
@@ -6556,6 +6917,162 @@
      "tds_season": 1
     }
    ],
+   "away_td_all": [
+    {
+     "games_season": 5,
+     "group": "3+",
+     "gsis_id": "00-0034351",
+     "name": "Dallas Goedert",
+     "position": "TE",
+     "prob": 0.240373,
+     "rank": 1,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 5,
+     "group": "3+",
+     "gsis_id": "00-0034844",
+     "name": "Saquon Barkley",
+     "position": "RB",
+     "prob": 0.232581,
+     "rank": 2,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0040867",
+     "name": "Makai Lemon",
+     "position": "WR",
+     "prob": 0.195153,
+     "rank": 3,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "group": "1-3",
+     "gsis_id": "00-0040024",
+     "name": "Darius Cooper",
+     "position": "WR",
+     "prob": 0.142831,
+     "rank": 4,
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 0,
+     "group": "3+",
+     "gsis_id": "00-0040586",
+     "name": "Jaydon Blue",
+     "position": "RB",
+     "prob": 0.137098,
+     "rank": 5,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 1,
+     "group": "3+",
+     "gsis_id": "00-0036567",
+     "name": "Elijah Mitchell",
+     "position": "RB",
+     "prob": 0.122474,
+     "rank": 6,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 2,
+     "group": "3+",
+     "gsis_id": "00-0035662",
+     "name": "Marquise Brown",
+     "position": "WR",
+     "prob": 0.097941,
+     "rank": 7,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 2,
+     "group": "1-3",
+     "gsis_id": "00-0038400",
+     "name": "Tanner McKee",
+     "position": "QB",
+     "prob": 0.066968,
+     "rank": 8,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 1,
+     "group": "1-3",
+     "gsis_id": "00-0041483",
+     "name": "Eli Stowers",
+     "position": "TE",
+     "prob": 0.059941,
+     "rank": 9,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 0,
+     "group": "1-3",
+     "gsis_id": "00-0039398",
+     "name": "Joe Milton",
+     "position": "QB",
+     "prob": 0.055733,
+     "rank": 10,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 5,
+     "group": "1-3",
+     "gsis_id": "00-0036980",
+     "name": "Elijah Moore",
+     "position": "WR",
+     "prob": 0.047542,
+     "rank": 11,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 7,
+     "group": "0.5-1",
+     "gsis_id": "00-0033246",
+     "name": "Johnny Mundt",
+     "position": "TE",
+     "prob": null,
+     "rank": 12,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 1,
+     "group": "0.5-1",
+     "gsis_id": "00-0037086",
+     "name": "Grant Calcaterra",
+     "position": "TE",
+     "prob": null,
+     "rank": 13,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 0,
+     "group": "no history",
+     "gsis_id": "00-0040891",
+     "name": "Cole Payton",
+     "position": "QB",
+     "prob": null,
+     "rank": 14,
+     "status": "active",
+     "tds_season": 0
+    }
+   ],
    "first_logged": "2026-10-27T12:50:29Z",
    "game_id": "2026_08_PHI_WAS",
    "game_type": "REG",
@@ -6637,8 +7154,186 @@
      "tds_season": 2
     }
    ],
+   "home_td_all": [
+    {
+     "games_season": 5,
+     "group": "3+",
+     "gsis_id": "00-0037256",
+     "name": "Rachaad White",
+     "position": "RB",
+     "prob": 0.251684,
+     "rank": 1,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 5,
+     "group": "3+",
+     "gsis_id": "00-0031588",
+     "name": "Stefon Diggs",
+     "position": "WR",
+     "prob": 0.240287,
+     "rank": 2,
+     "status": "active",
+     "tds_season": 4
+    },
+    {
+     "games_season": 4,
+     "group": "3+",
+     "gsis_id": "00-0039910",
+     "name": "Jayden Daniels",
+     "position": "QB",
+     "prob": 0.239706,
+     "rank": 3,
+     "status": "active",
+     "tds_season": 2
+    },
+    {
+     "games_season": 4,
+     "group": "3+",
+     "gsis_id": "00-0037809",
+     "name": "Chig Okonkwo",
+     "position": "TE",
+     "prob": 0.20109,
+     "rank": 4,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "group": "3+",
+     "gsis_id": "00-0041040",
+     "name": "Antonio Williams",
+     "position": "WR",
+     "prob": 0.200585,
+     "rank": 5,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 5,
+     "group": "3+",
+     "gsis_id": "00-0037742",
+     "name": "Treylon Burks",
+     "position": "WR",
+     "prob": 0.177469,
+     "rank": 6,
+     "status": "questionable",
+     "tds_season": 2
+    },
+    {
+     "games_season": 1,
+     "group": "3+",
+     "gsis_id": "00-0041117",
+     "name": "Athan Kaliakmanis",
+     "position": "QB",
+     "prob": 0.146273,
+     "rank": 7,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 3,
+     "group": "3+",
+     "gsis_id": "00-0033699",
+     "name": "Austin Ekeler",
+     "position": "RB",
+     "prob": 0.136019,
+     "rank": 8,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 1,
+     "group": "3+",
+     "gsis_id": "00-0033955",
+     "name": "Jeremy McNichols",
+     "position": "RB",
+     "prob": 0.134693,
+     "rank": 9,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "group": "1-3",
+     "gsis_id": "00-0036626",
+     "name": "Dyami Brown",
+     "position": "WR",
+     "prob": 0.093709,
+     "rank": 10,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 1,
+     "group": "1-3",
+     "gsis_id": "00-0036415",
+     "name": "Van Jefferson",
+     "position": "WR",
+     "prob": 0.089279,
+     "rank": 11,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 3,
+     "group": "1-3",
+     "gsis_id": "00-0032268",
+     "name": "Marcus Mariota",
+     "position": "QB",
+     "prob": 0.086668,
+     "rank": 12,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "group": "0.5-1",
+     "gsis_id": "00-0036628",
+     "name": "John Bates",
+     "position": "TE",
+     "prob": null,
+     "rank": 13,
+     "status": "questionable",
+     "tds_season": 0
+    },
+    {
+     "games_season": 3,
+     "group": "0.5-1",
+     "gsis_id": "00-0039355",
+     "name": "Luke McCaffrey",
+     "position": "WR",
+     "prob": null,
+     "rank": 14,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "group": "under 0.5",
+     "gsis_id": "00-0039686",
+     "name": "Colson Yankoff",
+     "position": "TE",
+     "prob": null,
+     "rank": 15,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "group": "under 0.5",
+     "gsis_id": "00-0039912",
+     "name": "Ben Sinnott",
+     "position": "TE",
+     "prob": null,
+     "rank": 16,
+     "status": "active",
+     "tds_season": 0
+    }
+   ],
    "kickoff": "2026-11-02T01:20:00Z",
-   "last_logged": "2026-11-01T19:56:58Z",
+   "last_logged": "2026-11-01T21:58:20Z",
    "market": {
     "as_of": "2026-11-01T16:44:39Z",
     "away_ml": 220.0,
@@ -6661,7 +7356,7 @@
    "market_total": 40.5,
    "model_prob": 0.677696,
    "model_spread": 5.377703,
-   "model_total": 44.742488,
+   "model_total": 44.679274,
    "pick": "WAS",
    "pick_prob": 0.697339,
    "season": 2026,
@@ -6672,7 +7367,7 @@
    },
    "tier": "SOLID",
    "total_pick": {
-    "edge": 4.242488,
+    "edge": 4.179274,
     "line": 40.5,
     "side": "OVER"
    },
@@ -6756,6 +7451,11 @@
      "tds_season": 1
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 36,
+    "home": 43
+   },
    "first_logged": "2026-10-27T12:50:29Z",
    "game_id": "2026_08_TEN_CIN",
    "game_type": "REG",
@@ -6865,12 +7565,14 @@
    "pick": "CIN",
    "pick_prob": 0.881154,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 0.674438,
     "line": -13.5,
     "team": "CIN"
    },
    "tier": "STRONG",
+   "total_correct": false,
    "total_pick": {
     "edge": 1.062135,
     "line": 46.0,
