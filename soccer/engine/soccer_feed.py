@@ -51,7 +51,10 @@ feed - FEED_LEAGUES - and 7 have none (football-data.co.uk alone):
                              had SC2 and ROU matches those days), FIN IRL
                              (ESPN listed no clubs; FIN had 3 matches those
                              days), POL (no ESPN league: pol.1 is a 404) -
-                             ESPN_NOT_ASKED. fixturedownload answered for no
+                             ESPN_NOT_ASKED. ESPN's own index of its 220
+                             soccer leagues, fetched by the same probe, lists
+                             every one of the 31 codes asked about and none of
+                             these seven. fixturedownload answered for no
                              other league football-data.co.uk carries (of 28
                              slugs tried; its three European cups are not
                              leagues here).
@@ -811,7 +814,11 @@ FD_CLUBS = {
 ESPN_SLUGS = {code: sd.ALL_LEAGUES[code].espn for code in ESPN_CLUBS}
 # Leagues the registry has an ESPN code for that are not asked about: on the
 # probe of 2026-10-29 ESPN had no current season for them (football-data.co.uk
-# alone). POL has no ESPN code at all (pol.1 answered 404).
+# alone). POL has no ESPN code at all (pol.1 answered 404). None of the seven
+# codes is in ESPN's own league index of that day (its 220 soccer leagues),
+# where all 31 asked about are: a league that comes back there needs its
+# club table built from a probe first - asked without one, its every event
+# would be skipped as unmapped.
 ESPN_NOT_ASKED = {
     "SC2": "sco.3 listed 2025-26's clubs and no events Oct 26 - Nov 8",
     "SC3": "sco.4 listed 2025-26's clubs and no events Oct 26 - Nov 8",

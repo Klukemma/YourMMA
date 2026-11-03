@@ -44,8 +44,10 @@ England's pool stays E0-E1 (soccer_leagues.ENGLAND_POOL) and the weights are
 pooled per price type (PICK_WEIGHTS = "per_price": every European division's
 pre-match prices, every extra league's closing prices) - which changes the
 top five's weights too, and makes the Bundesliga's pick the raw market.
-Called with the defaults, predict and pick are what they were, bit for bit:
-the running app is unchanged until the pipeline switches to these.
+shipped_pick() is pick_leagues with those decisions; predict(frame,
+leagues=...) takes England's pool from soccer_leagues by default. Called
+without leagues, predict and pick are what they were, bit for bit: the
+running app is unchanged until the pipeline switches to these.
 """
 
 import numpy as np
@@ -60,7 +62,7 @@ MODEL = "shots_ratings"
 MIN_TRAIN = 1000
 
 
-def predict(frame, leagues=None, england="all"):
+def predict(frame, leagues=None, england=None):
     """The model's own p_h, p_d, p_a, p_o25 for every top-league row of
     `frame` (finished matches and fixtures still to play), each from matches
     on earlier days; club ratings in .attrs["ratings"]. Also each match's
@@ -71,10 +73,15 @@ def predict(frame, leagues=None, england="all"):
     leagues: which leagues get numbers - None is the five top leagues on the
     frame as it is (the shipped model, one pass); a list runs every league in
     the frame by shots_ratings.predict_leagues, with England's pool `england`
-    ("all": E0-EC; "top-two": E0-E1 as before - soccer_leagues.ENGLAND_POOL
-    is the measured choice)."""
+    ("all": E0-EC; "top-two": E0-E1 as before; None, the default: the
+    measured choice, soccer_leagues.ENGLAND_POOL)."""
     if leagues is None:
         return shots_ratings.predict_walk_forward(frame, score_params=True)
+    if england is None:
+        import soccer_leagues
+        england = soccer_leagues.ENGLAND_POOL
+    if england not in ("all", "top-two"):
+        raise ValueError(f"England's pool is not decided ({england!r}): soccer_leagues has no measured decisions")
     return shots_ratings.predict_leagues(frame, list(leagues), score_params=True, england=england)
 
 
@@ -296,6 +303,25 @@ def pick_leagues(frame, preds, leagues, option="top5", raw=(), min_train=None, m
     out["price"] = kind.where(mine, None)
     out["basis"] = np.where(mine, basis, None)
     return out, weights
+
+
+def shipped_pick(frame, preds, leagues=None):
+    """The pick as experiments/leagues.py decided it, for `leagues` (default
+    every league in the app, soccer_leagues.in_app(); each must be one it
+    measured): pick_leagues with the measured weight option, the raw price
+    where rule (a) found the recalibration lost, and the model's own where
+    no price was posted only in a league whose model beat its base rates in
+    both periods (rule b) - "unpriced" elsewhere."""
+    import soccer_leagues as sl
+    if sl.PICK_WEIGHTS not in WEIGHT_OPTIONS:
+        raise ValueError(f"the weight option is not decided ({sl.PICK_WEIGHTS!r}): "
+                         "soccer_leagues has no measured decisions")
+    leagues = sl.in_app() if leagues is None else list(leagues)
+    unmeasured = [c for c in leagues if c not in sl.SHIPPED]
+    if unmeasured:
+        raise ValueError(f"not measured, so never picked: {unmeasured}")
+    return pick_leagues(frame, preds, leagues, sl.PICK_WEIGHTS, raw=sl.raw_leagues(leagues),
+                        model_alone=sl.model_alone(leagues))
 
 
 # ------------------------------------------------------------- goals
