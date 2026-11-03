@@ -69,3 +69,20 @@ def test_ncaa_sync_is_a_mode_with_the_full_flag_and_the_token():
     assert 'PATHS="nfl/data/ ' in text
     commit = text.split("- name: Commit")[1]
     assert '"${{ inputs.mode }}" = "ncaa-sync"' in commit
+
+
+def test_sync_mode_refreshes_the_coaching_approach_with_the_full_flag():
+    """The play-by-play rows (nfl_approach.py) ride the sync mode, every
+    season with full=true, after the nflverse snapshot - and a failure there
+    warns instead of throwing that snapshot away (the Commit step would not
+    run). The predict mode refreshes this season inside nfl_predict.run."""
+    text = (WF / "nfl.yml").read_text()
+    run = text.split("- name: Run")[1].split("- name:")[0]
+    step = run.split('if [ "$MODE" = "sync" ]; then')[1].split("elif")[0]
+    data = step.index("python nfl/engine/nfl_data.py ${{ inputs.full && '--full' || '' }}")
+    approach = step.index("python nfl/engine/nfl_approach.py ${{ inputs.full && '--full' || '' }}")
+    assert data < approach
+    assert '|| echo "::warning::' in step[approach:]
+    assert "tee -a nfl.log" in step[approach:]
+    predict = (Path(__file__).resolve().parents[1] / "nfl_predict.py").read_text()
+    assert "nap.sync(log=log)" in predict.split("def run(")[1].split("games = nd.load_games()")[0]

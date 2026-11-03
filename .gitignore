@@ -17,3 +17,7 @@ Thumbs.db
 # already recoverable from git history, so tracking them doubles the repo for
 # nothing.
 engine/data/*.backup-*.csv
+
+# A snapshot being written: nfl_approach writes a temporary file beside the
+# target and renames it into place; one left by a killed run is never data.
+nfl/data/*.tmp

@@ -3,10 +3,12 @@ name: NFL predictions
 # The NFL app's runner: nfl/engine on GitHub's machines, which have the open
 # internet (nflverse, the odds API) that the development sandbox does not.
 #
-#   predict   sync this season from nflverse, refit, predict the week, log
-#             the picks before kickoff, grade the finished games, rebuild
+#   predict   sync this season from nflverse (and its play-by-play's
+#             coaching approach rows), refit, predict the week, log the
+#             picks before kickoff, grade the finished games, rebuild
 #             nfl/app/data and the standalone page, commit
-#   sync      nflverse snapshot only (all seasons with full=true)
+#   sync      nflverse snapshot and the play-by-play approach rows only
+#             (all seasons with full=true)
 #   backtest  the walk-forward report, printed
 #   ncaa-sync college football snapshot (ncaa_data.py): this season's
 #             schedule and lines from sportsdataverse's releases (every season
@@ -95,6 +97,14 @@ jobs:
           MODE="${{ inputs.mode || 'predict' }}"
           if [ "$MODE" = "sync" ]; then
             python nfl/engine/nfl_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee nfl.log
+            # Coaching approach from nflverse play-by-play (nfl_approach.py):
+            # ~18 MB a season, one at a time; full=true reads every season
+            # since 1999 (~500 MB, a few minutes). Its two files (team rows,
+            # red-zone player rows) are renamed into place only once whole,
+            # so a failure keeps them as they were and never throws away the
+            # snapshot refreshed above.
+            python nfl/engine/nfl_approach.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee -a nfl.log \
+              || echo "::warning::play-by-play approach sync failed; nfl/data/approach*.csv.gz kept as they were"
           elif [ "$MODE" = "backtest" ]; then
             python nfl/engine/nfl_data.py 2>&1 | tee nfl.log
             python nfl/engine/nfl_backtest.py 2>&1 | tee -a nfl.log
