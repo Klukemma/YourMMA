@@ -1,21 +1,21 @@
 {
  "caveats": {
   "draws": "A draw is rarely the single likeliest result, so it is rarely the pick - even though about a quarter of matches end level. Its chance is always shown.",
-  "feeds": "Fixtures football-data.co.uk has not posted yet, and results it has not posted yet, come from two free, unofficial feeds - ESPN's public scoreboard and fixturedownload.com - which give dates, kickoff times and scores, never a price. Until football-data.co.uk posts a match with its prices (Tuesday and Friday afternoons) its chances are the model's alone, and say so. A result from the feeds is provisional, and marked so, until football-data.co.uk posts its own; a provisional grade it disagrees with is corrected. Where the feeds have not confirmed a kickoff time, the pick closes at midnight UK time on match day. The model's ratings use only football-data.co.uk's results, with their shots, through Nov 1.",
+  "feeds": "Fixtures football-data.co.uk has not posted yet, and results it has not posted yet, come from two free, unofficial feeds - ESPN's public scoreboard and fixturedownload.com - which give dates, kickoff times and scores, never a price. Until football-data.co.uk posts a match with its prices (Tuesday and Friday afternoons) its chances are the model's alone, and say so. A result from the feeds is provisional, and marked so, until football-data.co.uk posts its own; a provisional grade it disagrees with is corrected. Where the feeds have not confirmed a kickoff time, the pick closes at midnight UK time on match day. The model's ratings use only football-data.co.uk's results, with their shots, through Nov 2.",
   "model": "The pick is the betting market's chances, recalibrated on earlier seasons: across 2016-2025 the model alone picked 53.3% of results and the market 54.1%, and blending the model in added nothing the market did not already know. The model's own chances are shown beside each pick, labelled. Betting the model where it disagreed with the price did not make money. Treat a pick as an opinion with a measured hit rate, not an edge.",
   "news": "The model does not read team news - injuries, suspensions, rotation. The betting market does, which is part of why the pick leans on it.",
   "rating": "The model rates each club's attack and defence from its goals, shots on target and shots, weighted toward recent matches; a promoted club carries its rating up with a measured step. The rating is the model's own view - the pick on each match is the market's chances, recalibrated, because the market forecasts better.",
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, each beat the leagues' own rates from earlier seasons. Both teams to score runs low: across 2016-2025 its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-02T19:32:43Z",
+ "generated": "2026-11-03T20:20:42Z",
  "leagues": [
   {
    "code": "E0",
-   "model_through": "2026-11-01",
+   "model_through": "2026-11-02",
    "name": "Premier League",
    "provisional": 0,
-   "results_through": "2026-11-01",
+   "results_through": "2026-11-02",
    "rows": [
     {
      "club": {
@@ -421,6 +421,73 @@
     },
     {
      "club": {
+      "bg": "#003399",
+      "code": "EVE",
+      "fg": "#FFFFFF",
+      "name": "Everton"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-02",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "E0",
+       "opponent": "Newcastle",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "E0",
+       "opponent": "Arsenal",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 2,
+       "gf": 0,
+       "home": true,
+       "league": "E0",
+       "opponent": "Chelsea",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-11",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "E0",
+       "opponent": "Hull",
+       "result": "D"
+      },
+      {
+       "date": "2026-09-19",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "E0",
+       "opponent": "Ipswich",
+       "result": "W"
+      }
+     ],
+     "ga": 9,
+     "gd": 0,
+     "gf": 9,
+     "lost": 2,
+     "played": 9,
+     "points": 13,
+     "position": 7,
+     "provisional": 0,
+     "rating": -0.07878525809738068,
+     "team": "Everton",
+     "won": 3
+    },
+    {
+     "club": {
       "bg": "#DA291C",
       "code": "BOU",
       "fg": "#000000",
@@ -480,7 +547,7 @@
      "lost": 3,
      "played": 9,
      "points": 12,
-     "position": 7,
+     "position": 8,
      "provisional": 0,
      "rating": 0.17617211915448583,
      "team": "Bournemouth",
@@ -547,7 +614,7 @@
      "lost": 3,
      "played": 9,
      "points": 12,
-     "position": 8,
+     "position": 9,
      "provisional": 0,
      "rating": -0.08935040005137362,
      "team": "Tottenham",
@@ -614,7 +681,7 @@
      "lost": 3,
      "played": 9,
      "points": 12,
-     "position": 9,
+     "position": 10,
      "provisional": 0,
      "rating": -0.03050879366919035,
      "team": "Aston Villa",
@@ -681,7 +748,7 @@
      "lost": 2,
      "played": 9,
      "points": 11,
-     "position": 10,
+     "position": 11,
      "provisional": 0,
      "rating": -0.4569120789683334,
      "team": "Hull",
@@ -748,7 +815,7 @@
      "lost": 2,
      "played": 9,
      "points": 11,
-     "position": 11,
+     "position": 12,
      "provisional": 0,
      "rating": -0.062285092524268615,
      "team": "Leeds",
@@ -763,6 +830,15 @@
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-02",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "E0",
+       "opponent": "Everton",
+       "result": "L"
+      },
       {
        "date": "2026-10-25",
        "ga": 0,
@@ -798,26 +874,17 @@
        "league": "E0",
        "opponent": "Hull",
        "result": "W"
-      },
-      {
-       "date": "2026-09-14",
-       "ga": 4,
-       "gf": 1,
-       "home": false,
-       "league": "E0",
-       "opponent": "Leeds",
-       "result": "L"
       }
      ],
-     "ga": 14,
-     "gd": -2,
+     "ga": 15,
+     "gd": -3,
      "gf": 12,
-     "lost": 3,
-     "played": 8,
+     "lost": 4,
+     "played": 9,
      "points": 11,
-     "position": 12,
+     "position": 13,
      "provisional": 0,
-     "rating": -0.12839873712057304,
+     "rating": -0.14656193088981362,
      "team": "Newcastle",
      "won": 3
     },
@@ -882,78 +949,11 @@
      "lost": 4,
      "played": 9,
      "points": 11,
-     "position": 13,
+     "position": 14,
      "provisional": 0,
      "rating": -0.37532166860378635,
      "team": "Ipswich",
      "won": 3
-    },
-    {
-     "club": {
-      "bg": "#003399",
-      "code": "EVE",
-      "fg": "#FFFFFF",
-      "name": "Everton"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "E0",
-       "opponent": "Arsenal",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 2,
-       "gf": 0,
-       "home": true,
-       "league": "E0",
-       "opponent": "Chelsea",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "E0",
-       "opponent": "Hull",
-       "result": "D"
-      },
-      {
-       "date": "2026-09-19",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "E0",
-       "opponent": "Ipswich",
-       "result": "W"
-      },
-      {
-       "date": "2026-09-12",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "E0",
-       "opponent": "Tottenham",
-       "result": "D"
-      }
-     ],
-     "ga": 9,
-     "gd": -1,
-     "gf": 8,
-     "lost": 2,
-     "played": 8,
-     "points": 10,
-     "position": 14,
-     "provisional": 0,
-     "rating": -0.09613588575213772,
-     "team": "Everton",
-     "won": 2
     },
     {
      "club": {
@@ -1362,10 +1362,10 @@
   },
   {
    "code": "SP1",
-   "model_through": "2026-11-01",
+   "model_through": "2026-11-02",
    "name": "La Liga",
    "provisional": 0,
-   "results_through": "2026-11-01",
+   "results_through": "2026-11-02",
    "rows": [
     {
      "club": {
@@ -1838,6 +1838,73 @@
     },
     {
      "club": {
+      "bg": "#1B5EAB",
+      "code": "DEP",
+      "fg": "#FFFFFF",
+      "name": "Deportivo La Coru\u00f1a"
+     },
+     "drawn": 5,
+     "form": [
+      {
+       "date": "2026-11-02",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "SP1",
+       "opponent": "Osasuna",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "SP1",
+       "opponent": "Ath Madrid",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-16",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "SP1",
+       "opponent": "Levante",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-11",
+       "ga": 3,
+       "gf": 2,
+       "home": false,
+       "league": "SP1",
+       "opponent": "Sociedad",
+       "result": "L"
+      },
+      {
+       "date": "2026-09-20",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "SP1",
+       "opponent": "Betis",
+       "result": "D"
+      }
+     ],
+     "ga": 14,
+     "gd": 1,
+     "gf": 15,
+     "lost": 3,
+     "played": 11,
+     "points": 14,
+     "position": 8,
+     "provisional": 0,
+     "rating": -0.254998569232162,
+     "team": "La Coruna",
+     "won": 3
+    },
+    {
+     "club": {
       "bg": "#FFE667",
       "code": "VIL",
       "fg": "#005187",
@@ -1897,7 +1964,7 @@
      "lost": 5,
      "played": 11,
      "points": 12,
-     "position": 8,
+     "position": 9,
      "provisional": 0,
      "rating": 0.20577130566552637,
      "team": "Villarreal",
@@ -1964,7 +2031,7 @@
      "lost": 3,
      "played": 11,
      "points": 12,
-     "position": 9,
+     "position": 10,
      "provisional": 0,
      "rating": -0.11717288875993992,
      "team": "Celta",
@@ -2031,7 +2098,7 @@
      "lost": 5,
      "played": 11,
      "points": 12,
-     "position": 10,
+     "position": 11,
      "provisional": 0,
      "rating": -0.06879517847345307,
      "team": "Alaves",
@@ -2098,7 +2165,7 @@
      "lost": 4,
      "played": 10,
      "points": 12,
-     "position": 11,
+     "position": 12,
      "provisional": 0,
      "rating": -0.004190977877982727,
      "team": "Vallecano",
@@ -2165,78 +2232,11 @@
      "lost": 5,
      "played": 11,
      "points": 12,
-     "position": 12,
+     "position": 13,
      "provisional": 0,
      "rating": -0.20156651571569673,
      "team": "Getafe",
      "won": 3
-    },
-    {
-     "club": {
-      "bg": "#1B5EAB",
-      "code": "DEP",
-      "fg": "#FFFFFF",
-      "name": "Deportivo La Coru\u00f1a"
-     },
-     "drawn": 5,
-     "form": [
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "SP1",
-       "opponent": "Ath Madrid",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-16",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "SP1",
-       "opponent": "Levante",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 3,
-       "gf": 2,
-       "home": false,
-       "league": "SP1",
-       "opponent": "Sociedad",
-       "result": "L"
-      },
-      {
-       "date": "2026-09-20",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "SP1",
-       "opponent": "Betis",
-       "result": "D"
-      },
-      {
-       "date": "2026-09-16",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "SP1",
-       "opponent": "Sevilla",
-       "result": "L"
-      }
-     ],
-     "ga": 13,
-     "gd": 0,
-     "gf": 13,
-     "lost": 3,
-     "played": 10,
-     "points": 11,
-     "position": 13,
-     "provisional": 0,
-     "rating": -0.28264034697363116,
-     "team": "La Coruna",
-     "won": 2
     },
     {
      "club": {
@@ -2315,6 +2315,15 @@
      "drawn": 2,
      "form": [
       {
+       "date": "2026-11-02",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "SP1",
+       "opponent": "La Coruna",
+       "result": "L"
+      },
+      {
        "date": "2026-10-26",
        "ga": 2,
        "gf": 0,
@@ -2349,26 +2358,17 @@
        "league": "SP1",
        "opponent": "Vallecano",
        "result": "D"
-      },
-      {
-       "date": "2026-09-16",
-       "ga": 4,
-       "gf": 0,
-       "home": false,
-       "league": "SP1",
-       "opponent": "Ath Madrid",
-       "result": "L"
       }
      ],
-     "ga": 20,
-     "gd": -10,
-     "gf": 10,
-     "lost": 5,
-     "played": 10,
+     "ga": 22,
+     "gd": -11,
+     "gf": 11,
+     "lost": 6,
+     "played": 11,
      "points": 11,
      "position": 15,
      "provisional": 0,
-     "rating": -0.22025210346512325,
+     "rating": -0.24532716940296395,
      "team": "Osasuna",
      "won": 3
     },
@@ -2712,9 +2712,9 @@
   },
   {
    "code": "I1",
-   "model_through": "2026-11-01",
+   "model_through": "2026-11-02",
    "name": "Serie A",
-   "provisional": 1,
+   "provisional": 0,
    "results_through": "2026-11-02",
    "rows": [
     {
@@ -3531,6 +3531,15 @@
      "drawn": 2,
      "form": [
       {
+       "date": "2026-11-02",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "I1",
+       "opponent": "Parma",
+       "result": "L"
+      },
+      {
        "date": "2026-10-29",
        "ga": 2,
        "gf": 2,
@@ -3565,26 +3574,17 @@
        "league": "I1",
        "opponent": "Venezia",
        "result": "W"
-      },
-      {
-       "date": "2026-09-20",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "I1",
-       "opponent": "Juventus",
-       "result": "L"
       }
      ],
-     "ga": 17,
-     "gd": -1,
+     "ga": 20,
+     "gd": -4,
      "gf": 16,
-     "lost": 4,
-     "played": 9,
+     "lost": 5,
+     "played": 10,
      "points": 11,
      "position": 13,
      "provisional": 0,
-     "rating": 0.1518294435551244,
+     "rating": 0.11077497772591238,
      "team": "Atalanta",
      "won": 3
     },
@@ -3657,6 +3657,73 @@
     },
     {
      "club": {
+      "bg": "#FFDD00",
+      "code": "PAR",
+      "fg": "#1B4593",
+      "name": "Parma"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-02",
+       "ga": 0,
+       "gf": 3,
+       "home": false,
+       "league": "I1",
+       "opponent": "Atalanta",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-28",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "I1",
+       "opponent": "Udinese",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "I1",
+       "opponent": "Lazio",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-19",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "I1",
+       "opponent": "Torino",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-10",
+       "ga": 3,
+       "gf": 0,
+       "home": false,
+       "league": "I1",
+       "opponent": "Inter",
+       "result": "L"
+      }
+     ],
+     "ga": 15,
+     "gd": -7,
+     "gf": 8,
+     "lost": 6,
+     "played": 10,
+     "points": 8,
+     "position": 15,
+     "provisional": 0,
+     "rating": -0.33486378994549637,
+     "team": "Parma",
+     "won": 2
+    },
+    {
+     "club": {
       "bg": "#482E92",
       "code": "FIO",
       "fg": "#FFFFFF",
@@ -3671,7 +3738,6 @@
        "home": false,
        "league": "I1",
        "opponent": "Sassuolo",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -3717,9 +3783,9 @@
      "lost": 6,
      "played": 10,
      "points": 8,
-     "position": 15,
-     "provisional": 1,
-     "rating": -0.16726906917341333,
+     "position": 16,
+     "provisional": 0,
+     "rating": -0.12266175348926955,
      "team": "Fiorentina",
      "won": 2
     },
@@ -3739,7 +3805,6 @@
        "home": true,
        "league": "I1",
        "opponent": "Fiorentina",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -3785,9 +3850,9 @@
      "lost": 6,
      "played": 10,
      "points": 8,
-     "position": 16,
-     "provisional": 1,
-     "rating": -0.25881835794966057,
+     "position": 17,
+     "provisional": 0,
+     "rating": -0.3130570081466435,
      "team": "Sassuolo",
      "won": 2
     },
@@ -3852,78 +3917,11 @@
      "lost": 7,
      "played": 10,
      "points": 7,
-     "position": 17,
+     "position": 18,
      "provisional": 0,
      "rating": -0.31955321061846576,
      "team": "Monza",
      "won": 2
-    },
-    {
-     "club": {
-      "bg": "#FFDD00",
-      "code": "PAR",
-      "fg": "#1B4593",
-      "name": "Parma"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-10-28",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "I1",
-       "opponent": "Udinese",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "I1",
-       "opponent": "Lazio",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-19",
-       "ga": 3,
-       "gf": 0,
-       "home": true,
-       "league": "I1",
-       "opponent": "Torino",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 3,
-       "gf": 0,
-       "home": false,
-       "league": "I1",
-       "opponent": "Inter",
-       "result": "L"
-      },
-      {
-       "date": "2026-09-20",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "I1",
-       "opponent": "Genoa",
-       "result": "W"
-      }
-     ],
-     "ga": 15,
-     "gd": -10,
-     "gf": 5,
-     "lost": 6,
-     "played": 9,
-     "points": 5,
-     "position": 18,
-     "provisional": 0,
-     "rating": -0.3688838416312138,
-     "team": "Parma",
-     "won": 1
     },
     {
      "club": {
@@ -5280,10 +5278,10 @@
   },
   {
    "code": "F1",
-   "model_through": "2026-11-01",
+   "model_through": "2026-11-02",
    "name": "Ligue 1",
    "provisional": 0,
-   "results_through": "2026-11-01",
+   "results_through": "2026-11-02",
    "rows": [
     {
      "club": {
@@ -5890,6 +5888,73 @@
     },
     {
      "club": {
+      "bg": "#E30613",
+      "code": "BRE",
+      "fg": "#FFFFFF",
+      "name": "Brest"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-02",
+       "ga": 0,
+       "gf": 2,
+       "home": false,
+       "league": "F1",
+       "opponent": "Lorient",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-23",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "F1",
+       "opponent": "Nice",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "F1",
+       "opponent": "Lille",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-10",
+       "ga": 1,
+       "gf": 5,
+       "home": true,
+       "league": "F1",
+       "opponent": "Angers",
+       "result": "W"
+      },
+      {
+       "date": "2026-09-20",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "F1",
+       "opponent": "Auxerre",
+       "result": "L"
+      }
+     ],
+     "ga": 12,
+     "gd": 4,
+     "gf": 16,
+     "lost": 3,
+     "played": 9,
+     "points": 12,
+     "position": 10,
+     "provisional": 0,
+     "rating": -0.020613417055314942,
+     "team": "Brest",
+     "won": 3
+    },
+    {
+     "club": {
       "bg": "#F58113",
       "code": "FCL",
       "fg": "#000000",
@@ -5897,6 +5962,15 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-02",
+       "ga": 2,
+       "gf": 0,
+       "home": true,
+       "league": "F1",
+       "opponent": "Brest",
+       "result": "L"
+      },
       {
        "date": "2026-10-25",
        "ga": 0,
@@ -5932,26 +6006,17 @@
        "league": "F1",
        "opponent": "Le Mans",
        "result": "L"
-      },
-      {
-       "date": "2026-09-12",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "F1",
-       "opponent": "Toulouse",
-       "result": "D"
       }
      ],
-     "ga": 6,
-     "gd": 1,
+     "ga": 8,
+     "gd": -1,
      "gf": 7,
-     "lost": 2,
-     "played": 8,
+     "lost": 3,
+     "played": 9,
      "points": 12,
-     "position": 10,
+     "position": 11,
      "provisional": 0,
-     "rating": -0.11322552370925565,
+     "rating": -0.1529141209801299,
      "team": "Lorient",
      "won": 3
     },
@@ -6016,7 +6081,7 @@
      "lost": 3,
      "played": 9,
      "points": 10,
-     "position": 11,
+     "position": 12,
      "provisional": 0,
      "rating": 0.06874809656654302,
      "team": "Toulouse",
@@ -6083,7 +6148,7 @@
      "lost": 5,
      "played": 9,
      "points": 10,
-     "position": 12,
+     "position": 13,
      "provisional": 0,
      "rating": 0.010547592186917809,
      "team": "Strasbourg",
@@ -6150,78 +6215,11 @@
      "lost": 5,
      "played": 9,
      "points": 10,
-     "position": 13,
+     "position": 14,
      "provisional": 0,
      "rating": -0.2975731414989462,
      "team": "Auxerre",
      "won": 3
-    },
-    {
-     "club": {
-      "bg": "#E30613",
-      "code": "BRE",
-      "fg": "#FFFFFF",
-      "name": "Brest"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-10-23",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "F1",
-       "opponent": "Nice",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "F1",
-       "opponent": "Lille",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 5,
-       "home": true,
-       "league": "F1",
-       "opponent": "Angers",
-       "result": "W"
-      },
-      {
-       "date": "2026-09-20",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "F1",
-       "opponent": "Auxerre",
-       "result": "L"
-      },
-      {
-       "date": "2026-09-13",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "F1",
-       "opponent": "Paris SG",
-       "result": "L"
-      }
-     ],
-     "ga": 12,
-     "gd": 2,
-     "gf": 14,
-     "lost": 3,
-     "played": 8,
-     "points": 9,
-     "position": 14,
-     "provisional": 0,
-     "rating": -0.06520113892981128,
-     "team": "Brest",
-     "won": 2
     },
     {
      "club": {
@@ -6495,7 +6493,7 @@
    "short": "FRA"
   }
  ],
- "model_through": "2026-11-01",
+ "model_through": "2026-11-02",
  "schema": 1,
  "season": 2026,
  "season_label": "2026-27 season"
