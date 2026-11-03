@@ -41,7 +41,8 @@ def main():
             "columns": list(df.columns),
             "present": {k: (k in df.columns) for k in KEY},
             "nonnull": {k: round(float(df[k].notna().mean()), 4) for k in KEY if k in df.columns},
-            "play_types": df["play_type"].value_counts(dropna=False).head(12).to_dict() if "play_type" in df else None,
+            "play_types": {str(k): int(v) for k, v in df["play_type"].value_counts(dropna=False).head(12).items()}
+                          if "play_type" in df else None,
         }
         print(season, len(df), "rows", report[season]["games"], "games", flush=True)
         if season == SEASONS[-1]:
