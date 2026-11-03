@@ -61,7 +61,7 @@ def test_ncaa_sync_is_a_mode_with_the_full_flag_and_the_token():
     token only for GitHub's API, and its files under nfl/data/ - which the
     Commit step already takes."""
     text = (WF / "nfl.yml").read_text()
-    assert "options: [predict, sync, backtest, ncaa-sync, probe-ncaa]" in text
+    assert "options: [predict, sync, backtest, ncaa-sync, probe-ncaa, probe-pbp]" in text
     run = text.split("- name: Run")[1].split("- name:")[0]
     step = run.split('"$MODE" = "ncaa-sync"')[1].split("elif")[0]
     assert "python nfl/engine/ncaa_data.py ${{ inputs.full && '--full' || '' }}" in step
