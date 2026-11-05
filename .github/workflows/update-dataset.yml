@@ -78,7 +78,10 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -r engine/requirements.txt kaggle
+        # six is named here because the kaggle release of early November
+        # 2026 imports it without declaring it, and every sync failed on
+        # "No module named 'six'" before a single fight was read.
+        run: pip install -r engine/requirements.txt kaggle six
 
       - name: Sync from Kaggle
         env:
