@@ -205,7 +205,14 @@ def test_division_is_left_empty_with_a_warning_when_their_last_bouts_differ(last
     days = pd.to_datetime(moved["date"], errors="coerce")
     mine = (moved["r_name"] == f["red"]) | (moved["b_name"] == f["red"])
     latest = days[mine].idxmax()
-    moved.loc[latest, "division"] = "lightweight"
+    # A class the blue corner did NOT last fight in. A fixed "lightweight"
+    # moved nothing when the last event opened with a lightweight bout
+    # (Moicano vs. Nolan, 2026-10-31): both still last fought there, no
+    # warning was due, and the sync's test gate failed on it.
+    theirs = (moved["r_name"] == f["blue"]) | (moved["b_name"] == f["blue"])
+    blue_last = pending_rows.normal_division(moved.loc[days[theirs].idxmax(), "division"])
+    moved.loc[latest, "division"] = next(d for d in ("lightweight", "welterweight")
+                                         if d != blue_last)
     with pytest.warns(UserWarning, match="last bouts differ"):
         pend = pending_rows.build_pending(moved, [f])
     assert pd.isna(pend["division"].iloc[0])
