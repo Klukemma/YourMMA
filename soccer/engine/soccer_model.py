@@ -37,15 +37,9 @@ the pre-match average, or for an extra league whose history carries only the
 close, the closing average where no pre-match price is posted), recalibrated
 with weights fitted, by one of WEIGHT_OPTIONS, only on matches dated before
 the league-season's first match - or the raw no-vig price for a league whose
-recalibration lost to it on its own development period - and, where no price
-was posted, the model's own (or no pick, for a league whose model did not
-beat its base rates). Measured and chosen on the development periods:
-England's pool stays E0-E1 (soccer_leagues.ENGLAND_POOL) and the weights are
-pooled per price type (PICK_WEIGHTS = "per_price": every European division's
-pre-match prices, every extra league's closing prices) - which changes the
-top five's weights too, and makes the Bundesliga's pick the raw market.
-Called with the defaults, predict and pick are what they were, bit for bit:
-the running app is unchanged until the pipeline switches to these.
+recalibration lost to it on its own development period - and the model's
+own where no price was posted. Called with the defaults, predict and pick
+are what they were, bit for bit.
 """
 
 import numpy as np
@@ -93,17 +87,12 @@ def recalibrate(q, w):
     return pd.DataFrame(e / e.sum(axis=1, keepdims=True), index=q.index, columns=["p_h", "p_d", "p_a"])
 
 
-def fit_recalibration(q, result, x0=None):
+def fit_recalibration(q, result):
     """(beta, c_draw, c_away) minimising log loss on these matches, with an
     analytic gradient and tight tolerances (the general pooling fit stopped
-    early on this surface). x0: where to start (default (1, 0, 0), no
-    recalibration) - the log loss is convex in the weights, so a start only
-    changes how many steps it takes, within the tolerances."""
-    return _fit_log3(_log3(q), bt.outcome_index(result).to_numpy(), x0)
-
-
-def _fit_log3(lq, idx, x0=None):
-    """fit_recalibration on log prices lq (n, 3) and outcome indices idx."""
+    early on this surface)."""
+    idx = bt.outcome_index(result).to_numpy()
+    lq = _log3(q)
     onehot = np.zeros_like(lq)
     onehot[np.arange(len(idx)), idx] = 1.0
 
@@ -118,8 +107,7 @@ def _fit_log3(lq, idx, x0=None):
         g_c = -(onehot - p).sum(axis=0) / n
         return -logp[np.arange(n), idx].mean(), np.array([g_beta, g_c[1], g_c[2]])
 
-    start = np.array([1.0, 0.0, 0.0]) if x0 is None else np.array(x0, float)
-    fit = minimize(loss, x0=start, jac=True, method="L-BFGS-B",
+    fit = minimize(loss, x0=np.array([1.0, 0.0, 0.0]), jac=True, method="L-BFGS-B",
                    options={"gtol": 1e-10, "ftol": 1e-14, "maxiter": 1000})
     return tuple(float(v) for v in fit.x)
 
@@ -198,49 +186,19 @@ def _top5_fits(frame, q_pre):
     return fits
 
 
-def _pool_fits(frame, q, done, min_train, keys):
-    """{(pool, first date): weights fitted on the pool's priced, finished
-    matches dated before that day (None: fewer than min_train)}. Per pool,
-    in date order, each fit started from the one before it - fitted on
-    earlier matches only, so a start never carries anything from the day on
-    (the log loss is convex: the start changes only the steps taken)."""
-    league = frame["league"].to_numpy()
-    dates = frame["date"].to_numpy()
-    lq = _log3(q)
-    res = bt.outcome_index(frame["result"]).to_numpy()
-    out = {}
-    for pool in sorted({k[0] for k in keys}):
-        pos = np.flatnonzero(done & np.isin(league, list(pool)))
-        pos = pos[np.argsort(dates[pos], kind="stable")]
-        on = dates[pos]
-        prev = None
-        for first in sorted(k[1] for k in keys if k[0] == pool):
-            n = int(np.searchsorted(on, first, side="left"))
-            if n < min_train:
-                out[(pool, first)] = None
-                continue
-            tr = pos[:n]
-            prev = out[(pool, first)] = _fit_log3(lq[tr], res[tr].astype(int), prev)
-    return out
-
-
-def pick_leagues(frame, preds, leagues, option="top5", raw=(), min_train=None, model_alone=None):
+def pick_leagues(frame, preds, leagues, option="top5", raw=(), min_train=None):
     """The pick for every row of `leagues` (other rows NaN): the league's
     market price (market_price) recalibrated - p proportional to
     q^beta exp(c) - with the weights `option` fits, each league-season's
     from matches dated before its first match only; the raw no-vig price for
     a league in `raw` (its recalibration lost to the raw price on its own
     development period), or where too few earlier matches to fit on
-    (`min_train`, default MIN_TRAIN); where no price was posted (model_only),
-    the model's own for a league in `model_alone` (default: every league) and
-    no pick at all (NaN, basis "unpriced": "no pick until priced") for the
-    others - soccer_leagues.MODEL_ALONE holds which leagues' model beat their
-    base rates. With option "top5", a top-five league-season's weights are
-    pick()'s for its season, to the bit.
+    (`min_train`, default MIN_TRAIN); the model's own where no price was
+    posted (model_only). With option "top5", a top-five league-season's
+    weights are pick()'s for its season, to the bit.
 
     Returns (frame p_h, p_d, p_a, model_only, price, basis; {(league, season):
-    weights or None}). basis: "recalibrated" / "raw" / "model" /
-    "unpriced"."""
+    weights or None}). basis: "recalibrated" / "raw" / "model"."""
     if option not in WEIGHT_OPTIONS:
         raise ValueError(f"unknown weight option {option!r}")
     min_train = MIN_TRAIN if min_train is None else min_train
@@ -254,21 +212,16 @@ def pick_leagues(frame, preds, leagues, option="top5", raw=(), min_train=None, m
     p3 = preds[["p_h", "p_d", "p_a"]].to_numpy(float).copy()
     model_only = np.ones(len(frame), bool)
     basis = np.full(len(frame), "model", dtype=object)
-    weights = {}
+    weights, cache = {}, {}
     top5 = _top5_fits(frame, bt.no_vig(frame, "pre")) if option == "top5" else None
     groups = frame.groupby(["league", "season"]).indices
-    jobs = []
     for (lg, season), pos in sorted(groups.items()):
         if lg not in leagues:
             continue
+        first = dates[pos].min()
         rows = pos[priced[pos]]
-        if len(rows):
-            pool = ([lg] if option == "per_league" else
-                    tuple(sd.EXTRA) if lg in sd.EXTRA else tuple(sd.MAIN))
-            jobs.append((lg, int(season), dates[pos].min(), rows, tuple(pool)))
-    fits = {} if option == "top5" else _pool_fits(frame, q, done, min_train,
-                                                  {(j[4], j[2]) for j in jobs if j[0] not in raw})
-    for lg, season, first, rows, pool in jobs:
+        if not len(rows):
+            continue
         w = None
         if lg in raw:
             pass
@@ -279,18 +232,21 @@ def pick_leagues(frame, preds, leagues, option="top5", raw=(), min_train=None, m
                 ok = [f for f in top5 if f[1] < first]
                 w = ok[-1][2] if ok else None
         else:
-            w = fits[(pool, first)]
-        weights[(lg, season)] = w
+            pool = ([lg] if option == "per_league" else
+                    list(sd.EXTRA) if lg in sd.EXTRA else list(sd.MAIN))
+            key = (tuple(pool), first)
+            if key not in cache:
+                train = done & np.isin(league, pool) & (dates < first)
+                cache[key] = (fit_recalibration(q[train], frame.loc[train, "result"])
+                              if train.sum() >= min_train else None)
+            w = cache[key]
+        weights[(lg, int(season))] = w
         qq = pd.DataFrame(qv[rows], columns=["p_h", "p_d", "p_a"])
         p3[rows] = recalibrate(qq, w).to_numpy() if w is not None else qv[rows]
         model_only[rows] = False
         basis[rows] = "recalibrated" if w is not None else "raw"
     mine = np.isin(league, leagues)
     p3[~mine] = np.nan
-    if model_alone is not None:
-        unpriced = mine & model_only & ~np.isin(league, list(model_alone))
-        p3[unpriced] = np.nan
-        basis[unpriced] = "unpriced"
     out = pd.DataFrame(p3, index=frame.index, columns=["p_h", "p_d", "p_a"])
     out["model_only"] = model_only
     out["price"] = kind.where(mine, None)
