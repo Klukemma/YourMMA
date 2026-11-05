@@ -32,7 +32,19 @@ import soccer_data as sd
 
 DEV = (2006, 2015)
 CONFIRM = (2016, 2025)
+# The extra leagues (soccer_data.EXTRA) start in 2012 with closing prices
+# only: 2012 warms the ratings up, then their own two periods
+# (experiments/leagues.py). Season 2026 is live and never measured.
+EXTRA_WARMUP = 2012
+EXTRA_DEV = (2013, 2018)
+EXTRA_CONFIRM = (2019, 2025)
 RESULTS = ("H", "D", "A")
+
+
+def periods_for(league):
+    """(DEV, CONFIRM) for a league: 2006-2015 / 2016-2025 for the European
+    divisions, 2013-2018 / 2019-2025 for the extra leagues."""
+    return (EXTRA_DEV, EXTRA_CONFIRM) if league in sd.EXTRA else (DEV, CONFIRM)
 PRICE_SETS = {
     "pre": ("avg_h", "avg_d", "avg_a"),
     "pinnacle": ("ps_h", "ps_d", "ps_a"),
