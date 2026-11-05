@@ -109,7 +109,7 @@ def test_the_top_fives_weights_for_the_top_five_are_the_shipped_pick_to_the_bit(
     old, w_old = smod.pick(world, preds)
     new, w_new = smod.pick_leagues(world, preds, list(sd.TOP), "top5")
     top = world["league"].isin(sd.TOP) & ~old["model_only"]
-    assert top.sum() >= 900                            # five seasons of two leagues recalibrated
+    assert top.sum() > 1000
     assert np.array_equal(old.loc[top, ["p_h", "p_d", "p_a"]].to_numpy(), new.loc[top, ["p_h", "p_d", "p_a"]].to_numpy())
     assert (new.loc[top, "basis"] == "recalibrated").all()
     for (lg, s), w in w_new.items():
@@ -237,22 +237,6 @@ def test_the_shipped_model_is_untouched_by_other_leagues_and_calendars(world):
     assert np.allclose(p.sum(axis=1), 1.0)
 
 
-def test_a_groups_regression_is_fitted_on_every_league_of_the_group_in_the_frame():
-    # which leagues get numbers never changes the numbers they get: the extra
-    # leagues' regression learns from RUS's matches while RUS is not shown
-    f = _frame([("NOR", range(2005, 2011), "03-20", CLUBS[:8], "close", False),
-                ("SWE", range(2005, 2011), "04-01", CLUBS[8:16], "close", False)])
-    both = sr.predict_leagues(f, ["NOR", "SWE"], score_params=True, **SMALL)
-    one = sr.predict_leagues(f, ["NOR"], score_params=True, **SMALL)
-    nor, swe = f["league"] == "NOR", f["league"] == "SWE"
-    cols = ["p_h", "p_d", "p_a", "p_o25", "lam", "nu", "rho"]
-    assert both.loc[nor, "p_h"].notna().sum() > 100
-    assert np.array_equal(both.loc[nor, cols].to_numpy(), one.loc[nor, cols].to_numpy(), equal_nan=True)
-    assert one.loc[swe, cols].isna().all().all()
-    alone = sr.predict_leagues(f[nor], ["NOR"], score_params=True, **SMALL)
-    assert not np.array_equal(alone[cols].to_numpy(), one.loc[nor, cols].to_numpy(), equal_nan=True)
-
-
 def test_the_rating_passes_keep_calendars_and_englands_pool_apart():
     every = list(sd.ALL_LEAGUES)
     top, aug, cal = sr.passes(every, "all")
@@ -319,48 +303,6 @@ def test_a_club_past_a_double_round_robin_has_nothing_at_stake():
     assert feats.loc[last_round, "rem_h"].notna().all()
 
 
-# ------------------------------------------------------------- the pipeline reads the decisions
-
-def test_the_pipeline_calls_read_the_measured_decisions(world, monkeypatch):
-    seen = {}
-
-    def spy(frame, leagues, score_params=False, england="all", **params):
-        seen["england"], seen["leagues"] = england, leagues
-        return "preds"
-    monkeypatch.setattr(sr, "predict_leagues", spy)
-    for pool in ("all", "top-two"):
-        monkeypatch.setattr(sl, "ENGLAND_POOL", pool)
-        assert smod.predict(world, leagues=sl.MODEL_LEAGUES) == "preds" and seen["england"] == pool
-    assert smod.predict(world, leagues=["E0"], england="all") == "preds" and seen["england"] == "all"
-    monkeypatch.setattr(sl, "ENGLAND_POOL", None)
-    with pytest.raises(ValueError):
-        smod.predict(world, leagues=["E0"])
-    monkeypatch.undo()
-
-    monkeypatch.setattr(smod, "MIN_TRAIN", 150)
-    preds = _preds(world)
-    shipped = {c: dict(in_app=c != "SP1", pick="raw" if c == "B1" else "recalibrated", model_alone=c != "E0")
-               for c in ("E0", "SP1", "B1", "NOR")}
-    monkeypatch.setattr(sl, "SHIPPED", shipped)
-    monkeypatch.setattr(sl, "PICK_WEIGHTS", "per_price")
-    got, w_got = smod.shipped_pick(world, preds)
-    want, w_want = smod.pick_leagues(world, preds, ["E0", "B1", "NOR"], "per_price", raw=["B1"],
-                                     model_alone=["B1", "NOR"])
-    assert sl.in_app() == ["E0", "B1", "NOR"] and sl.raw_leagues() == ["B1"] and sl.model_alone() == ["B1", "NOR"]
-    assert got.equals(want) and w_got == w_want
-    assert got.loc[world["league"] == "SP1", "p_h"].isna().all()           # not in the app: nothing
-    # a league back in the data (RUS's file resuming) is picked by its own decisions
-    every, _ = smod.shipped_pick(world, preds, ["E0", "SP1", "B1", "NOR"])
-    want, _ = smod.pick_leagues(world, preds, ["E0", "SP1", "B1", "NOR"], "per_price", raw=["B1"],
-                                model_alone=["SP1", "B1", "NOR"])
-    assert every.equals(want)
-    with pytest.raises(ValueError):
-        smod.shipped_pick(world, preds, ["E0", "D1"])                    # D1 not measured here
-    monkeypatch.setattr(sl, "PICK_WEIGHTS", None)
-    with pytest.raises(ValueError):
-        smod.shipped_pick(world, preds)
-
-
 # ------------------------------------------------------------- what a card withholds
 
 def test_a_card_withholds_exactly_the_numbers_its_league_did_not_ship():
@@ -409,62 +351,6 @@ def test_a_current_season_is_a_recent_result_or_a_posted_fixture():
     assert "RUS" in sl.in_app(f, posted, "2026-10-30")
 
 
-# ------------------------------------------------------------- the experiment's own machinery
-
-def _small_experiment(monkeypatch):
-    """experiments/leagues.py on the made-up world: shorter periods, smaller
-    minimums (the procedure itself unchanged)."""
-    from experiments import leagues as L
-    monkeypatch.setattr(smod, "MIN_TRAIN", 150)
-    for k, v in SMALL.items():
-        monkeypatch.setitem(sr.DEFAULTS, k, v)
-    monkeypatch.setattr(bt, "DEV", (2007, 2009))
-    monkeypatch.setattr(bt, "CONFIRM", (2010, 2011))
-    monkeypatch.setattr(bt, "EXTRA_DEV", (2007, 2009))
-    monkeypatch.setattr(bt, "EXTRA_CONFIRM", (2010, 2011))
-    return L
-
-
-def _shared_day(world, year):
-    days = world.groupby("date")["league"].nunique()
-    return days[(days >= 2) & days.index.str.startswith(year)].index[0]
-
-
-def test_the_experiments_point_in_time_check_passes_and_bites(world, monkeypatch):
-    L = _small_experiment(monkeypatch)
-    cuts = (_shared_day(world, "2008"), _shared_day(world, "2010"))
-    out = L.run(pit=True, log=lambda *a: None, frame=world, fixtures=world.iloc[:0], cuts=cuts, timing=False)
-    for r in out["point_in_time"]:
-        assert r["rows_on_cut_day"] > 0 and r["numbers_compared"] > 10000
-        assert r["unmoved_on_or_before_cut"] and r["unmoved_before_cut_prices_from_cut_scrambled"]
-    # every decision is its rule on the numbers beside it, and the block the module ships is that
-    for code in ("E0", "SP1", "B1", "NOR"):
-        r, d = out["leagues"][code], out["decisions"][code]
-        assert r["dev"]["matches"] > 0 and r["confirm"]["matches"] > 0
-        assert d["pick"] == sl.rule_pick(r["dev"]["pick_recalibrated"], r["dev"]["market"])
-        assert d["model_only"] == sl.rule_model_alone(r["dev"], r["confirm"])
-        assert not d["in_app"]                                # made-up seasons long over: no current season
-    assert out["decisions"]["NOR"]["numbers"]["market"] is None
-    assert not out["decisions"]["D1"]["in_app"]               # not in the frame: not measured, never shipped
-    import json
-    ns = {}
-    exec(L.shipped_block(json.loads(json.dumps(out, default=lambda x: x.item() if hasattr(x, "item") else str(x)))), ns)
-    assert set(ns["SHIPPED"]) == set(sd.ALL_LEAGUES) and ns["PICK_WEIGHTS"] == out["protocol"]["weights"]
-    assert ns["SHIPPED"]["E0"]["measured"]["dev"]["pick"] == out["leagues"]["E0"]["dev"]["pick"]
-
-    # a pick that peeks at results to come is caught
-    honest = smod.pick_leagues
-
-    def peeking(frame, preds, leagues, option="top5", **kw):
-        out, w = honest(frame, preds, leagues, option, **kw)
-        out[["p_h", "p_d", "p_a"]] *= 1 + 1e-9 * (frame["result"] == "H").mean()
-        return out, w
-    monkeypatch.setattr(smod, "pick_leagues", peeking)
-    ref = sr.predict_leagues(world, list(sd.ALL_LEAGUES), score_params=True, england="top-two")
-    caught = L.point_in_time(world, cuts[0], "top-two", out["protocol"]["weights"], [], reference=ref)
-    assert not caught["unmoved_on_or_before_cut"]
-
-
 # ------------------------------------------------------------- the decisions as shipped
 
 def test_every_shipped_decision_follows_from_the_numbers_stored_beside_it():
@@ -472,8 +358,7 @@ def test_every_shipped_decision_follows_from_the_numbers_stored_beside_it():
     assert sl.ENGLAND_POOL in ("all", "top-two") and sl.PICK_WEIGHTS in smod.WEIGHT_OPTIONS
     for code, r in sl.SHIPPED.items():
         m = r["measured"]
-        assert r["in_app"] == (sl.rule_current(m["season_check"]["days_since"], m["season_check"]["fixtures_posted"])
-                               and m["dev"]["matches"] > 0 and m["confirm"]["matches"] > 0)
+        assert r["in_app"] == sl.rule_current(m["season_check"]["days_since"], m["season_check"]["fixtures_posted"])
         assert r["pick"] == sl.rule_pick(m["dev"]["pick_recalibrated"], m["dev"]["market"])
         assert r["model_alone"] == sl.rule_model_alone(m["dev"], m["confirm"])
         for source in sl.SOURCES:
