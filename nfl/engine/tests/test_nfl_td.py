@@ -188,9 +188,11 @@ def test_the_whole_roster_keeps_the_top_three_and_prices_only_measured_groups(td
     full = nt.predict_roster(live, team, 24.0, home=True, exclude={out}, bettable=bettable,
                              ships={"1-3", "3+"})
     kept = [c for c in picks if c["gsis_id"] != out]
-    # The candidates first, with their chance exactly as predict_team gives it.
+    # The candidates first, with their chance as predict_team gives it - to
+    # the last few bits only: the model scores a bigger batch here, and a
+    # float sum taken in another order can move the 16th digit.
     assert [c["gsis_id"] for c in full[:len(kept)]] == [c["gsis_id"] for c in kept]
-    assert [c["prob"] for c in full[:len(kept)]] == [c["prob"] for c in kept]
+    assert [c["prob"] for c in full[:len(kept)]] == pytest.approx([c["prob"] for c in kept], rel=1e-9, abs=1e-12)
     assert out not in {c["gsis_id"] for c in full} and "00-LINEMAN" not in {c["gsis_id"] for c in full}
     assert [c["rank"] for c in full] == list(range(1, len(full) + 1))
     rookie = next(c for c in full if c["gsis_id"] == "00-ROOKIE")
