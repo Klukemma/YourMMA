@@ -5,7 +5,8 @@
 
 One run:
   1. refreshes the current season from nflverse (results, the schedule's
-     projected starters, injury reports);
+     projected starters, injury reports) and its play-by-play's coaching
+     approach rows (nfl_approach - data only, no pick reads them yet);
   2. rebuilds every pre-game feature and refits the models season by season,
      exactly as the backtest does, so the record the app prints is the
      record of this procedure;
@@ -35,6 +36,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import nfl_approach as nap
 import nfl_backtest as bt
 import nfl_data as nd
 import nfl_export as nx
@@ -403,6 +405,10 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
             nd.sync(log=log)
         except Exception as err:   # an outage must not stop a card going out
             log(f"   [sync] failed, using the snapshot on file: {err}")
+        try:   # this season's play-by-play (~18 MB, a few seconds); not read by the picks yet
+            nap.sync(log=log)
+        except Exception as err:
+            log(f"   [approach] failed, keeping the snapshot on file: {err}")
     games = nd.load_games()
     frame, state = nf.build_with_state(games, nd.load_team_games(), nd.load_qb_games(), nm.ELO)
     frame["market_prob"] = bt.market_prob(frame)

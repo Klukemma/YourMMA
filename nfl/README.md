@@ -147,7 +147,14 @@ choose on 2006-2015, and ship only what does not make 2016-2025 worse for the pi
     nfl/engine/nfl_standalone.py  the offline single-file app
     nfl/engine/ncaa_data.py       college football (FBS), data only so far: sportsdataverse schedules
                                   and lines, ESPN's live board and teams (sync + loaders)
-    nfl/data/                     snapshots (games, team games, QB games, injuries), odds cache, pick log
+    nfl/engine/nfl_approach.py    coaching approach, data only so far: one row per team per game from
+                                  nflverse play-by-play (pass rate over expected, red zone, fourth
+                                  downs, pace, EPA), with each side's head coach, and one row per
+                                  player per team-game for red-zone and goal-to-go carries, targets
+                                  and touchdowns; the measurement plan is in its docstring (sync +
+                                  loaders)
+    nfl/data/                     snapshots (games, team games, QB games, injuries, approach and
+                                  approach players), odds cache, pick log
     nfl/data/ncaa/                college snapshot: schedule and lines per season, teams, the live week
     nfl/app/                      the phone app (PWA)
     .github/workflows/nfl.yml     runner: predict / sync / backtest / ncaa-sync, on a schedule in season

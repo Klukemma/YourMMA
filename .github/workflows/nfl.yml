@@ -3,10 +3,12 @@ name: NFL predictions
 # The NFL app's runner: nfl/engine on GitHub's machines, which have the open
 # internet (nflverse, the odds API) that the development sandbox does not.
 #
-#   predict   sync this season from nflverse, refit, predict the week, log
-#             the picks before kickoff, grade the finished games, rebuild
+#   predict   sync this season from nflverse (and its play-by-play's
+#             coaching approach rows), refit, predict the week, log the
+#             picks before kickoff, grade the finished games, rebuild
 #             nfl/app/data and the standalone page, commit
-#   sync      nflverse snapshot only (all seasons with full=true)
+#   sync      nflverse snapshot and the play-by-play approach rows only
+#             (all seasons with full=true)
 #   backtest  the walk-forward report, printed
 #   ncaa-sync college football snapshot (ncaa_data.py): this season's
 #             schedule and lines from sportsdataverse's releases (every season
@@ -26,7 +28,7 @@ on:
       mode:
         description: "predict = this week's picks; sync = data only; backtest = report; ncaa-sync = college football data; probe-ncaa = save the college football sources' answers"
         type: choice
-        options: [predict, sync, backtest, ncaa-sync, probe-ncaa]
+        options: [predict, sync, backtest, ncaa-sync, probe-ncaa, probe-pbp]
         default: predict
       refresh_odds:
         description: "predict only: buy today's prices even if every game has one on file (3 credits)"
@@ -95,6 +97,14 @@ jobs:
           MODE="${{ inputs.mode || 'predict' }}"
           if [ "$MODE" = "sync" ]; then
             python nfl/engine/nfl_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee nfl.log
+            # Coaching approach from nflverse play-by-play (nfl_approach.py):
+            # ~18 MB a season, one at a time; full=true reads every season
+            # since 1999 (~500 MB, a few minutes). Its two files (team rows,
+            # red-zone player rows) are renamed into place only once whole,
+            # so a failure keeps them as they were and never throws away the
+            # snapshot refreshed above.
+            python nfl/engine/nfl_approach.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee -a nfl.log \
+              || echo "::warning::play-by-play approach sync failed; nfl/data/approach*.csv.gz kept as they were"
           elif [ "$MODE" = "backtest" ]; then
             python nfl/engine/nfl_data.py 2>&1 | tee nfl.log
             python nfl/engine/nfl_backtest.py 2>&1 | tee -a nfl.log
@@ -103,6 +113,10 @@ jobs:
             # only lifts GitHub's API rate limit for reading the public
             # release listings; it is never printed.
             GITHUB_TOKEN="${{ github.token }}" python nfl/engine/ncaa_data.py ${{ inputs.full && '--full' || '' }} 2>&1 | tee nfl.log
+          elif [ "$MODE" = "probe-pbp" ]; then
+            # nflverse play-by-play's columns and two real games, saved under
+            # nfl/data/pbp_probe/ (probe_pbp.py), for the coaching tendencies.
+            python nfl/engine/probe_pbp.py 2>&1 | tee nfl.log
           elif [ "$MODE" = "probe-ncaa" ]; then
             # College football's possible sources, saved under
             # nfl/data/ncaa_probe/ (probe_ncaa.py). The token only lifts
