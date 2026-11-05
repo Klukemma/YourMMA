@@ -50,8 +50,8 @@ RUN_OPTUNA = False
 # ==============================================================================
 # 2. EVENT DETAILS
 # ==============================================================================
-EVENT_NAME = "UFC Fight Night: Moicano vs. Nolan"
-EVENT_DATE = "2026-10-31"  # Format: YYYY-MM-DD
+EVENT_NAME = "UFC Fight Night: Cortes Acosta vs. Walker"
+EVENT_DATE = "2026-11-07"  # Format: YYYY-MM-DD
 
 # ==============================================================================
 # 3. FIGHT CARD
@@ -60,30 +60,33 @@ EVENT_DATE = "2026-10-31"  # Format: YYYY-MM-DD
 # - is_5_rounds: True for main events and title fights
 # - is_title_fight: True if fighting for a championship
 #
-# Bout list reconciled 2026-10-26 from Wikipedia, Tapology, Sherdog, Yahoo,
-# Cageside Press, Heavy, MMA Sucka, AgentMMA, Combat Edge and Rotowire; every
-# bout on two sources or more. Osbourne vs. Durden (moved from UFC 329) is on
-# Wikipedia and AgentMMA, the latter still calling it "targeted". No source
-# states corners: the first-billed fighter is listed first.
-# 2026-10-27: Bekoev vs. Petroski is off - Bekoev withdrew after an
-# anaphylactic reaction and Petroski declined a replacement (Bloody Elbow,
-# MMA Sucka, Middle Easy, Yardbarker, EssentiallySports).
+# Bout list reconciled 2026-11-05 from bet365 News, Yahoo Sports, Khel Now,
+# MMAOddsBreaker, DocSports, UFCalendar, AgentMMA, Cageside Press and
+# MMA Sucka; every bout on two sources or more. Cortes Acosta vs. Walker
+# replaced Bonfim vs. Brady as the five-round main event after Sean Brady
+# withdrew injured (Cageside Press, Heavy, MMA Sucka). Lorenco replaced
+# Hines against Petersen (AgentMMA). Left off: Austin Bashi - Lucas Brennan
+# tore his ACL (AgentMMA) and his replacement, Carlos Calderon (a UFC
+# debut), is on one source only. No source states corners: the
+# first-billed fighter is listed first.
 
 FIGHT_CARD = [
     # Main Card
-    ("Renato Moicano", "Tom Nolan", True, False),              # 0 - Main Event, Lightweight (5 rounds; Nolan replaced Brian Ortega)
-    ("Randy Brown", "Jacobe Smith"),                           # 1 - Co-Main, Welterweight (Smith on 12 days' notice for Carlos Leal)
-    ("Yana Santos", "Luana Santos"),                           # 2 - Women's Bantamweight
-    ("Ode Osbourne", "Cody Durden"),                           # 3 - Flyweight
-    ("Zachary Reese", "Mickey Gall"),                          # 4 - Middleweight (Gall up from welterweight)
-    ("Jean-Paul Lebosnoyani", "Farman Hasanov"),               # 5 - Welterweight
+    ("Waldo Cortes Acosta", "Johnny Walker", True, False),     # 0 - Main Event, Heavyweight (5 rounds)
+    ("Tatiana Suarez", "Virna Jandiroba"),                     # 1 - Co-Main, Women's Strawweight
+    ("Davey Grant", "Elijah Smith"),                           # 2 - Bantamweight
+    ("Seokhyeon Ko", "Wellington Turman"),                     # 3 - Welterweight
+    ("Billy Elekana", "Lucas Fernando"),                       # 4 - Light Heavyweight
+    ("Mantas Kondratavicius", "Andre Petroski"),               # 5 - Middleweight
 
     # Preliminary Card
-    ("Francis Marshall", "Dakota Hope"),                       # 6 - Featherweight (Hope replaced Gaston Bolanos; down from lightweight)
-    ("Rodrigo Sezinando", "Theodor Berggren"),                 # 7 - Welterweight
-    ("Julian Erosa", "JeongYeong Lee"),                        # 8 - Featherweight
-    ("Nick Klein", "Joe Kropschot"),                           # 9 - Middleweight (Kropschot: UFC debut, 9-3)
-    ("Talita Alencar", "Piera Rodriguez"),                     # 10 - Women's Strawweight
+    ("Keiichiro Nakamura", "Ollie Schmid"),                    # 6 - Featherweight
+    ("Gabriel Lorenco", "Thomas Petersen"),                    # 7 - Heavyweight (Lorenco: short notice for Hines, UFC debut)
+    ("Karine Silva", "Gabriella Fernandes"),                   # 8 - Women's Flyweight
+    ("Jose Delano", "Murtazali Magomedov"),                    # 9 - Featherweight
+    ("Jonny Parsons", "Jose Souza"),                           # 10 - Welterweight
+    ("Mitch Raposo", "Marcos Degli"),                          # 11 - Flyweight (Degli: UFC debut)
+    ("Priscila Cachoeira", "Nina Milosevic"),                  # 12 - Women's Bantamweight
 ]
 
 # ==============================================================================
@@ -92,7 +95,7 @@ FIGHT_CARD = [
 # Home advantage only counts when ONE fighter is home and the other is NOT.
 # If both fighters are "home" (e.g., both USA-based), no advantage.
 #
-# UFC Fight Night: Moicano vs. Nolan - Meta APEX, Enterprise (Las Vegas), NV (SMALL cage)
+# UFC Fight Night: Cortes Acosta vs. Walker - Meta APEX, Enterprise (Las Vegas), NV (SMALL cage)
 #
 # Home flags are left off this card: nobody's base was checked fight by
 # fight, and a guessed flag is worse than none.
@@ -105,17 +108,19 @@ FIGHT_CARD = [
 # is wrong whenever one of them is changing class.
 
 FIGHT_CONTEXTS = {
-    0: {"division": "lightweight", 'cage_size': 'small'},
-    1: {"division": "welterweight", 'cage_size': 'small'},
-    2: {"division": "women's bantamweight", 'cage_size': 'small'},
-    3: {"division": "flyweight", 'cage_size': 'small'},
-    4: {"division": "middleweight", 'cage_size': 'small'},
-    5: {"division": "welterweight", 'cage_size': 'small'},
+    0: {"division": "heavyweight", 'cage_size': 'small'},
+    1: {"division": "women's strawweight", 'cage_size': 'small'},
+    2: {"division": "bantamweight", 'cage_size': 'small'},
+    3: {"division": "welterweight", 'cage_size': 'small'},
+    4: {"division": "light heavyweight", 'cage_size': 'small'},
+    5: {"division": "middleweight", 'cage_size': 'small'},
     6: {"division": "featherweight", 'cage_size': 'small'},
-    7: {"division": "welterweight", 'cage_size': 'small'},
-    8: {"division": "featherweight", 'cage_size': 'small'},
-    9: {"division": "middleweight", 'cage_size': 'small'},
-    10: {"division": "women's strawweight", 'cage_size': 'small'},
+    7: {"division": "heavyweight", 'cage_size': 'small'},
+    8: {"division": "women's flyweight", 'cage_size': 'small'},
+    9: {"division": "featherweight", 'cage_size': 'small'},
+    10: {"division": "welterweight", 'cage_size': 'small'},
+    11: {"division": "flyweight", 'cage_size': 'small'},
+    12: {"division": "women's bantamweight", 'cage_size': 'small'},
 }
 
 # ==============================================================================
