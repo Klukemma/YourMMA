@@ -64,10 +64,16 @@ EVENT_DATE = "2026-11-07"  # Format: YYYY-MM-DD
 # MMAOddsBreaker, DocSports, UFCalendar, AgentMMA, Cageside Press and
 # MMA Sucka; every bout on two sources or more. Cortes Acosta vs. Walker
 # replaced Bonfim vs. Brady as the five-round main event after Sean Brady
-# withdrew injured (Cageside Press, Heavy, MMA Sucka). Lorenco replaced
-# Hines against Petersen (AgentMMA). Left off: Austin Bashi - Lucas Brennan
-# tore his ACL (AgentMMA) and his replacement, Carlos Calderon (a UFC
-# debut), is on one source only. No source states corners: the
+# withdrew injured (Cageside Press, Heavy, MMA Sucka). Thomas Petersen
+# replaced Alvin Hines (vertigo) as Lorenco's opponent (SI, Sherdog,
+# AgentMMA, RotoWire); Lorenco makes his UFC debut.
+# Rechecked 2026-11-06 against the official weigh-in results (UFC.com,
+# Sherdog, MMA Junkie via Yahoo): all 28 fighters made weight - 14 bouts.
+# Added then: Austin Bashi vs. Carlos Calderon, featherweight - Calderon
+# (Fury FC champion, UFC debut) replaced Lucas Brennan (torn ACL) on four
+# days' notice (Sherdog, Bloody Elbow, MMA Mania, AgentMMA) and both
+# weighed in at 145.5. Outlets disagree on whether it is a main card or a
+# prelim bout, so it is listed last. No source states corners: the
 # first-billed fighter is listed first.
 
 FIGHT_CARD = [
@@ -81,12 +87,13 @@ FIGHT_CARD = [
 
     # Preliminary Card
     ("Keiichiro Nakamura", "Ollie Schmid"),                    # 6 - Featherweight
-    ("Gabriel Lorenco", "Thomas Petersen"),                    # 7 - Heavyweight (Lorenco: short notice for Hines, UFC debut)
+    ("Gabriel Lorenco", "Thomas Petersen"),                    # 7 - Heavyweight (Petersen: short notice for Hines; Lorenco: UFC debut)
     ("Karine Silva", "Gabriella Fernandes"),                   # 8 - Women's Flyweight
     ("Jose Delano", "Murtazali Magomedov"),                    # 9 - Featherweight
     ("Jonny Parsons", "Jose Souza"),                           # 10 - Welterweight
     ("Mitch Raposo", "Marcos Degli"),                          # 11 - Flyweight (Degli: UFC debut)
     ("Priscila Cachoeira", "Nina Milosevic"),                  # 12 - Women's Bantamweight
+    ("Austin Bashi", "Carlos Calderon"),                       # 13 - Featherweight (Calderon: 4 days' notice for Brennan, UFC debut)
 ]
 
 # ==============================================================================
@@ -121,6 +128,7 @@ FIGHT_CONTEXTS = {
     10: {"division": "welterweight", 'cage_size': 'small'},
     11: {"division": "flyweight", 'cage_size': 'small'},
     12: {"division": "women's bantamweight", 'cage_size': 'small'},
+    13: {"division": "featherweight", 'cage_size': 'small'},
 }
 
 # ==============================================================================
