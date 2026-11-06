@@ -1,5 +1,5 @@
 {
- "as_of": "2026-11-05T20:00:25Z",
+ "as_of": "2026-11-06T19:24:02Z",
  "byes": [
   "PIT",
   "TEN"
@@ -18,7 +18,7 @@
   "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
   "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
  },
- "data_through": "2026-11-02",
+ "data_through": "2026-11-05",
  "game_type": "REG",
  "games": [
   {
@@ -26,7 +26,7 @@
     {
      "name": "Lamar Jackson",
      "position": "QB",
-     "reason": "Out on the injury report (thumb)",
+     "reason": "did not play",
      "role": "most valuable player",
      "side": "home",
      "status": "out",
@@ -35,7 +35,7 @@
     {
      "name": "Tavius Robinson",
      "position": "LB",
-     "reason": "on a reserve list",
+     "reason": "did not play",
      "role": "#2 defender",
      "side": "home",
      "status": "out",
@@ -131,22 +131,28 @@
    "away_injuries_total": 2,
    "away_leaders": {
     "passing": {
+     "actual": 242.0,
      "gsis_id": "00-0036971",
      "name": "Trevor Lawrence",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 225.256185
     },
     "receiving": {
+     "actual": 61.0,
      "gsis_id": "00-0038606",
      "name": "Parker Washington",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 50.401412
     },
     "rushing": {
+     "actual": 29.0,
      "gsis_id": "00-0040719",
      "name": "Bhayshul Tuten",
+     "over": false,
      "position": "RB",
      "status": "questionable",
      "yards": 55.969612
@@ -185,11 +191,6 @@
       "line": "1,690 pass yds, 17 TD, 4 INT",
       "name": "Trevor Lawrence",
       "position": "QB",
-      "proj": {
-       "pass_yds": 225.256185,
-       "rec_yds": null,
-       "rush_yds": 8.819072
-      },
       "rank": 1,
       "reason": null,
       "status": "active",
@@ -201,11 +202,6 @@
       "line": "27 rec, 432 yds, 4 TD",
       "name": "Parker Washington",
       "position": "WR",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 50.401412,
-       "rush_yds": 0.230755
-      },
       "rank": 2,
       "reason": null,
       "status": "active",
@@ -217,11 +213,6 @@
       "line": "22 rec, 309 yds, 2 TD",
       "name": "Jakobi Meyers",
       "position": "WR",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 30.451008,
-       "rush_yds": 0.010413
-      },
       "rank": 3,
       "reason": null,
       "status": "active",
@@ -250,9 +241,9 @@
        "rate": null
       },
       "top3": {
-       "n": 1,
+       "n": 2,
        "rate": 1.0,
-       "scored": 1
+       "scored": 2
       }
      },
      "name": "Bhayshul Tuten",
@@ -263,6 +254,7 @@
       "rec_yds": 12.942263,
       "rush_yds": 55.969612
      },
+     "scored": true,
      "status": "questionable",
      "tds_season": 6
     },
@@ -276,9 +268,9 @@
        "rate": null
       },
       "top3": {
-       "n": 1,
-       "rate": 0.0,
-       "scored": 0
+       "n": 2,
+       "rate": 0.5,
+       "scored": 1
       }
      },
      "name": "Parker Washington",
@@ -289,6 +281,7 @@
       "rec_yds": 50.401412,
       "rush_yds": 0.230755
      },
+     "scored": true,
      "status": "active",
      "tds_season": 4
     },
@@ -302,9 +295,9 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
+       "n": 1,
+       "rate": 1.0,
+       "scored": 1
       }
      },
      "name": "Chris Rodriguez",
@@ -315,6 +308,7 @@
       "rec_yds": 1.594804,
       "rush_yds": 24.779239
      },
+     "scored": true,
      "status": "active",
      "tds_season": 3
     }
@@ -331,15 +325,16 @@
        "rate": null
       },
       "top3": {
-       "n": 1,
+       "n": 2,
        "rate": 1.0,
-       "scored": 1
+       "scored": 2
       }
      },
      "name": "Bhayshul Tuten",
      "position": "RB",
      "prob": 0.448813,
      "rank": 1,
+     "scored": true,
      "status": "questionable",
      "tds_season": 6
     },
@@ -354,15 +349,16 @@
        "rate": null
       },
       "top3": {
-       "n": 1,
-       "rate": 0.0,
-       "scored": 0
+       "n": 2,
+       "rate": 0.5,
+       "scored": 1
       }
      },
      "name": "Parker Washington",
      "position": "WR",
      "prob": 0.313618,
      "rank": 2,
+     "scored": true,
      "status": "active",
      "tds_season": 4
     },
@@ -377,15 +373,16 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
+       "n": 1,
+       "rate": 1.0,
+       "scored": 1
       }
      },
      "name": "Chris Rodriguez",
      "position": "RB",
      "prob": 0.239275,
      "rank": 3,
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -395,9 +392,9 @@
      "gsis_id": "00-0038935",
      "meters": {
       "rest": {
-       "n": 0,
-       "no_td": 0,
-       "rate": null
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
       },
       "top3": {
        "n": 1,
@@ -409,6 +406,7 @@
      "position": "TE",
      "prob": 0.234456,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -418,8 +416,8 @@
      "gsis_id": "00-0034960",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -432,6 +430,7 @@
      "position": "WR",
      "prob": 0.227852,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -441,9 +440,9 @@
      "gsis_id": "00-0041503",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 0,
-       "rate": 0.0
+       "n": 2,
+       "no_td": 1,
+       "rate": 0.5
       },
       "top3": {
        "n": 0,
@@ -455,6 +454,7 @@
      "position": "TE",
      "prob": 0.161253,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -464,9 +464,9 @@
      "gsis_id": "00-0039893",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 0,
-       "rate": 0.0
+       "n": 2,
+       "no_td": 1,
+       "rate": 0.5
       },
       "top3": {
        "n": 0,
@@ -478,6 +478,7 @@
      "position": "WR",
      "prob": 0.148839,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -487,8 +488,8 @@
      "gsis_id": "00-0036971",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -501,6 +502,7 @@
      "position": "QB",
      "prob": 0.148525,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -510,8 +512,8 @@
      "gsis_id": "00-0041100",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -524,6 +526,7 @@
      "position": "WR",
      "prob": 0.136297,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -533,8 +536,8 @@
      "gsis_id": "00-0032104",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -547,6 +550,7 @@
      "position": "RB",
      "prob": 0.080639,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -556,8 +560,8 @@
      "gsis_id": "00-0040238",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -570,6 +574,7 @@
      "position": "RB",
      "prob": 0.067619,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -590,9 +595,11 @@
       }
      },
      "name": "Quinn Ewers",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 12,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -602,8 +609,8 @@
      "gsis_id": "00-0041084",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -616,6 +623,7 @@
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -625,8 +633,8 @@
      "gsis_id": "00-0036590",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -639,6 +647,7 @@
      "position": "TE",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -659,9 +668,11 @@
       }
      },
      "name": "CJ Williams",
+     "played": false,
      "position": "WR",
      "prob": null,
      "rank": 15,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -671,8 +682,8 @@
      "gsis_id": "00-0040718",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -685,6 +696,7 @@
      "position": "WR",
      "prob": null,
      "rank": 16,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -806,22 +818,28 @@
    "home_injuries_total": 5,
    "home_leaders": {
     "passing": {
+     "actual": 60.0,
      "gsis_id": "00-0040981",
      "name": "Joe Fagnano",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 193.185284
     },
     "receiving": {
+     "actual": 6.0,
      "gsis_id": "00-0039064",
      "name": "Zay Flowers",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 73.239686
     },
     "rushing": {
+     "actual": 57.0,
      "gsis_id": "00-0032764",
      "name": "Derrick Henry",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 67.96328
@@ -848,7 +866,7 @@
       "name": "Tavius Robinson",
       "position": "LB",
       "rank": 2,
-      "reason": "on a reserve list",
+      "reason": "did not play",
       "status": "out",
       "value": 6.25
      }
@@ -861,7 +879,7 @@
       "name": "Lamar Jackson",
       "position": "QB",
       "rank": 1,
-      "reason": "Out on the injury report (thumb)",
+      "reason": "did not play",
       "status": "out",
       "value": 41.62568
      },
@@ -871,11 +889,6 @@
       "line": "40 rec, 608 yds, 3 TD",
       "name": "Zay Flowers",
       "position": "WR",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 73.239686,
-       "rush_yds": 0.881978
-      },
       "rank": 2,
       "reason": null,
       "status": "active",
@@ -887,11 +900,6 @@
       "line": "19 rec, 288 yds, 1 TD",
       "name": "Rashod Bateman",
       "position": "WR",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 20.977023,
-       "rush_yds": 0.001049
-      },
       "rank": 3,
       "reason": null,
       "status": "active",
@@ -921,8 +929,8 @@
        "rate": null
       },
       "top3": {
-       "n": 2,
-       "rate": 0.5,
+       "n": 3,
+       "rate": 0.333333,
        "scored": 1
       }
      },
@@ -934,6 +942,7 @@
       "rec_yds": 2.676893,
       "rush_yds": 67.96328
      },
+     "scored": false,
      "status": "active",
      "tds_season": 9
     },
@@ -947,8 +956,8 @@
        "rate": null
       },
       "top3": {
-       "n": 2,
-       "rate": 0.5,
+       "n": 3,
+       "rate": 0.333333,
        "scored": 1
       }
      },
@@ -960,6 +969,7 @@
       "rec_yds": 73.239686,
       "rush_yds": 0.881978
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -973,9 +983,9 @@
        "rate": 1.0
       },
       "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
+       "n": 1,
+       "rate": 1.0,
+       "scored": 1
       }
      },
      "name": "Justice Hill",
@@ -986,6 +996,7 @@
       "rec_yds": 12.573547,
       "rush_yds": 11.461827
      },
+     "scored": true,
      "status": "active",
      "tds_season": 0
     }
@@ -1002,8 +1013,8 @@
        "rate": null
       },
       "top3": {
-       "n": 2,
-       "rate": 0.5,
+       "n": 3,
+       "rate": 0.333333,
        "scored": 1
       }
      },
@@ -1011,6 +1022,7 @@
      "position": "RB",
      "prob": 0.299464,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 9
     },
@@ -1025,8 +1037,8 @@
        "rate": null
       },
       "top3": {
-       "n": 2,
-       "rate": 0.5,
+       "n": 3,
+       "rate": 0.333333,
        "scored": 1
       }
      },
@@ -1034,6 +1046,7 @@
      "position": "WR",
      "prob": 0.23383,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -1048,15 +1061,16 @@
        "rate": 1.0
       },
       "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
+       "n": 1,
+       "rate": 1.0,
+       "scored": 1
       }
      },
      "name": "Justice Hill",
      "position": "RB",
      "prob": 0.149538,
      "rank": 3,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -1066,9 +1080,9 @@
      "gsis_id": "00-0034753",
      "meters": {
       "rest": {
-       "n": 0,
-       "no_td": 0,
-       "rate": null
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
       },
       "top3": {
        "n": 2,
@@ -1080,6 +1094,7 @@
      "position": "TE",
      "prob": 0.142784,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -1089,8 +1104,8 @@
      "gsis_id": "00-0036550",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -1103,6 +1118,7 @@
      "position": "WR",
      "prob": 0.138751,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -1112,8 +1128,8 @@
      "gsis_id": "00-0040870",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -1126,6 +1142,7 @@
      "position": "WR",
      "prob": 0.11631,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -1135,8 +1152,8 @@
      "gsis_id": "00-0040887",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -1149,6 +1166,7 @@
      "position": "TE",
      "prob": 0.092982,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -1169,9 +1187,11 @@
       }
      },
      "name": "Elijah Sarratt",
+     "played": false,
      "position": "WR",
      "prob": 0.085516,
      "rank": 8,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -1181,9 +1201,9 @@
      "gsis_id": "00-0040981",
      "meters": {
       "rest": {
-       "n": 0,
-       "no_td": 0,
-       "rate": null
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
       },
       "top3": {
        "n": 0,
@@ -1195,6 +1215,7 @@
      "position": "QB",
      "prob": 0.059263,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -1204,8 +1225,8 @@
      "gsis_id": "00-0039796",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -1218,6 +1239,7 @@
      "position": "RB",
      "prob": 0.057861,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -1227,8 +1249,8 @@
      "gsis_id": "00-0039792",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -1241,6 +1263,7 @@
      "position": "WR",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -1250,8 +1273,8 @@
      "gsis_id": "00-0040879",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -1264,6 +1287,7 @@
      "position": "TE",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -1273,8 +1297,8 @@
      "gsis_id": "00-0040075",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -1287,6 +1311,7 @@
      "position": "WR",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -1296,8 +1321,8 @@
      "gsis_id": "00-0032394",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -1310,6 +1335,7 @@
      "position": "TE",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -1330,14 +1356,17 @@
       }
      },
      "name": "Kedon Slovis",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 15,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
    ],
    "kickoff": "2026-11-06T01:15:00Z",
+   "logged_at": "2026-11-05T20:00:25Z",
    "market": {
     "as_of": "2026-11-05T20:00:25Z",
     "away_ml": -510.0,
@@ -1488,6 +1517,10 @@
    "pick": "JAX",
    "pick_prob": 0.822583,
    "roof": "outdoors",
+   "score": {
+    "away": 33,
+    "home": 10
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 0.782877,
@@ -1495,30 +1528,30 @@
     "team": "BAL"
    },
    "stadium": "M&T Bank Stadium",
-   "status": "upcoming",
+   "status": "final",
    "td_meters": {
     "away": {
      "rest": {
-      "n": 12,
-      "no_td": 9,
-      "rate": 0.75
+      "n": 23,
+      "no_td": 20,
+      "rate": 0.869565
      },
      "top3": {
-      "n": 3,
-      "rate": 0.333333,
-      "scored": 1
+      "n": 6,
+      "rate": 0.666667,
+      "scored": 4
      }
     },
     "home": {
      "rest": {
-      "n": 21,
-      "no_td": 21,
+      "n": 31,
+      "no_td": 31,
       "rate": 1.0
      },
      "top3": {
-      "n": 6,
+      "n": 9,
       "rate": 0.333333,
-      "scored": 2
+      "scored": 3
      }
     }
    },
@@ -2298,7 +2331,7 @@
      }
     ]
    },
-   "home_prob": 0.377241,
+   "home_prob": 0.377452,
    "home_qb": {
     "change": false,
     "id": "00-0039917",
@@ -2738,30 +2771,61 @@
    ],
    "kickoff": "2026-11-08T14:30:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
+    "as_of": "2026-11-06T19:24:02Z",
     "away_ml": -170.0,
-    "best_away_book": "BetMGM",
-    "best_away_ml": -165.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": -166.0,
     "best_home_book": "BetOnline.ag",
     "best_home_ml": 149.0,
     "books": 9,
     "home_ml": 145.0,
-    "home_prob": 0.392328,
+    "home_prob": 0.393299,
     "opening_spread": -3.0,
     "opening_total": 49.5,
     "source": "the-odds-api",
     "spread": -3.0,
     "total": 52.5
    },
-   "market_prob": 0.392328,
+   "market_prob": 0.393299,
    "market_source": "the-odds-api",
    "market_spread": -3.0,
    "market_total": 52.5,
    "model_prob": 0.343313,
    "model_spread": -4.860954,
-   "model_total": 50.801714,
+   "model_total": 50.809257,
    "neutral": true,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/dj-turner-set-to-play-for-bengals-kyle-dugger-ruled-out",
+     "players": [
+      "Kyle Dugger"
+     ],
+     "published": "2026-11-06T16:46:47Z",
+     "source": "ProFootballTalk",
+     "summary": "The Bengals have issued their injury designations for Sunday's game against the Falcons in Madrid.",
+     "teams": [
+      "ATL",
+      "CIN"
+     ],
+     "title": "DJ Turner set to play for Bengals, Kyle Dugger ruled out"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.cbssports.com/nfl/news/tee-higgins-states-2026-bengals-offense/",
+     "players": [
+      "Tee Higgins"
+     ],
+     "published": "2026-11-06T11:28:02Z",
+     "source": "CBS Sports",
+     "summary": "Higgins has always been one of the NFL's best contested-catch receivers, but new dimensions in his game have him producing at a historic pace",
+     "teams": [
+      "CIN"
+     ],
+     "title": "Tee Higgins is putting up historic numbers, and it's changing the Bengals offense"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
@@ -2846,38 +2910,10 @@
      "summary": "The pass rusher also had high praise for an offense that gets it done.",
      "teams": [],
      "title": "Boye Mafe: \u201cThere is no selfishness on this d-line right now\u201d"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-03T17:57:30Z",
-     "link": "https://sports.yahoo.com/articles/week-9-fantasy-quarterback-rankings-164120675.html",
-     "players": [
-      "Joe Burrow"
-     ],
-     "published": "2026-11-03T16:41:20Z",
-     "source": "Yahoo Sports",
-     "summary": "The Bengals' Joe Burrow, who's thrown 13 touchdown passes over his last three games, is the easy choice as this week's top fantasy quarterback.",
-     "teams": [
-      "CIN"
-     ],
-     "title": "Week 9 fantasy quarterback rankings: Top QB streamers, starts"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-03T17:57:30Z",
-     "link": "https://sports.yahoo.com/articles/caleb-williams-arrived-top-tier-160434388.html",
-     "players": [
-      "Joe Burrow"
-     ],
-     "published": "2026-11-03T16:04:34Z",
-     "source": "Yahoo Sports",
-     "summary": "Make room for the Bears QB in the Josh Allen, Patrick Mahomes, Joe Burrow club.",
-     "teams": [],
-     "title": "Caleb Williams has arrived as a top-tier quarterback"
     }
    ],
    "pick": "CIN",
-   "pick_prob": 0.622759,
+   "pick_prob": 0.622548,
    "roof": "retractable",
    "season": 2026,
    "spread_pick": {
@@ -2916,7 +2952,7 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 1.698286,
+    "edge": 1.690743,
     "line": 52.5,
     "side": "UNDER"
    },
@@ -3735,7 +3771,7 @@
      }
     ]
    },
-   "home_prob": 0.602678,
+   "home_prob": 0.602236,
    "home_qb": {
     "change": false,
     "id": "00-0040743",
@@ -4175,30 +4211,127 @@
    ],
    "kickoff": "2026-11-08T18:00:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
-    "away_ml": 140.0,
+    "as_of": "2026-11-06T19:24:02Z",
+    "away_ml": 138.0,
     "best_away_book": "BetOnline.ag",
-    "best_away_ml": 147.0,
-    "best_home_book": "MyBookie.ag",
-    "best_home_ml": -160.0,
+    "best_away_ml": 151.0,
+    "best_home_book": "FanDuel",
+    "best_home_ml": -158.0,
     "books": 9,
     "home_ml": -165.0,
-    "home_prob": 0.599092,
+    "home_prob": 0.597081,
     "opening_spread": 2.5,
     "opening_total": 43.0,
     "source": "the-odds-api",
     "spread": 3.0,
     "total": 42.5
    },
-   "market_prob": 0.599092,
+   "market_prob": 0.597081,
    "market_source": "the-odds-api",
    "market_spread": 3.0,
    "market_total": 42.5,
    "model_prob": 0.714291,
    "model_spread": 6.612607,
-   "model_total": 42.482402,
+   "model_total": 42.489946,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/shedeur-sanders-to-start-for-the-browns",
+     "players": [
+      "Deshaun Watson",
+      "Shedeur Sanders"
+     ],
+     "published": "2026-11-06T18:31:33Z",
+     "source": "ProFootballTalk",
+     "summary": "Deshaun Watson will be listed as questionable, remains in concussion protocol.",
+     "teams": [
+      "CLE"
+     ],
+     "title": "Shedeur Sanders to start for the Browns"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/nfl/breaking-news/article/browns-shedeur-sanders-to-start-vs-saints-as-deshaun-watson-remains-in-concussion-protocol-182544696.html",
+     "players": [
+      "Deshaun Watson",
+      "Shedeur Sanders"
+     ],
+     "published": "2026-11-06T18:25:44Z",
+     "source": "Yahoo Sports",
+     "summary": "Watson reported experiencing concussion symptoms Monday night after the team's loss to the Steelers.",
+     "teams": [
+      "CLE",
+      "NO"
+     ],
+     "title": "Browns' Shedeur Sanders to start vs. Saints as Deshaun Watson remains in concussion protocol"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/articles/5-quick-hitters-canal-street-182234811.html",
+     "players": [
+      "Tyler Shough"
+     ],
+     "published": "2026-11-06T18:22:34Z",
+     "source": "Yahoo Sports",
+     "summary": "A look at how the Saints view quarterback Tyler Shough, the biggest weakness on their defense, and more.",
+     "teams": [
+      "CLE",
+      "NO"
+     ],
+     "title": "5 quick hitters with Canal Street Chronicles: Browns can take advantage of Saints\u2019 run defense"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.profootballrumors.com/2026/11/browns-to-start-qb-shedeur-sanders-in-week-9",
+     "players": [
+      "Deshaun Watson",
+      "Shedeur Sanders"
+     ],
+     "published": "2026-11-06T18:21:15Z",
+     "source": "Pro Football Rumors",
+     "summary": "With Deshaun Watson in concussion protocol, Shedeur Sanders will make his first start since last season. The second-year quarterback is set to begin the ...",
+     "teams": [
+      "CLE"
+     ],
+     "title": "Browns To Start QB Shedeur Sanders In Week 9"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/deshaun-watson-returns-to-practice-friday-remains-in-concussion-protocol",
+     "players": [
+      "Deshaun Watson"
+     ],
+     "published": "2026-11-06T17:25:01Z",
+     "source": "ProFootballTalk",
+     "summary": "Browns quarterback Deshaun Watson is showing signs of progress in his recovery from a concussion.",
+     "teams": [
+      "CLE"
+     ],
+     "title": "Deshaun Watson returns to practice Friday, remains in concussion protocol"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.rotowire.com//football/player/deshaun-watson-11712",
+     "players": [
+      "Deshaun Watson",
+      "Shedeur Sanders"
+     ],
+     "published": "2026-11-06T10:28:00Z",
+     "source": "RotoWire",
+     "summary": "Watson (concussion) is listed as questionable for Sunday's game against the Saints, but Shedeur Sanders will start even if Watson is active Kelsey Russo of the Browns' official site reports. Visit RotoWire.com for more analysis on this update.",
+     "teams": [
+      "CLE",
+      "NO"
+     ],
+     "title": "Deshaun Watson: Listed as questionable, won't start"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
@@ -4228,102 +4361,10 @@
       "CLE"
      ],
      "title": "Shedeur Sanders deflects question about his decision to hire an agent"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-9-injury-report-micah-parsons-jaylen-watson-rams/",
-     "players": [
-      "Deshaun Watson"
-     ],
-     "published": "2026-11-05T03:07:09Z",
-     "source": "CBS Sports",
-     "summary": "Parsons has opened his 21-day practice window, while Jackson, Sam Darnold and Deshaun Watson headline the notable quarterback injuries entering Week 9",
-     "teams": [],
-     "title": "NFL Week 9 injury report: Micah Parsons returns to Packers practice, Rams lose Jaylen Watson for season"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://sports.yahoo.com/articles/browns-saints-injuries-no-reinforcements-002216458.html",
-     "players": [
-      "Denzel Boston",
-      "Jordyn Tyson"
-     ],
-     "published": "2026-11-05T00:22:16Z",
-     "source": "Yahoo Sports",
-     "summary": "New Orleans Saints got some good news with Jordyn Tyson, while the Cleveland Browns added Denzel Boston to injury list",
-     "teams": [
-      "CLE",
-      "NO"
-     ],
-     "title": "Browns, Saints injuries: NO reinforcements; big CLE weapon added to list (Video)"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/todd-monken-deshaun-watson-not-ruled-out-yet-but-shedeur-sanders-preparing-to-start",
-     "players": [
-      "Deshaun Watson",
-      "Shedeur Sanders"
-     ],
-     "published": "2026-11-04T21:13:22Z",
-     "source": "ProFootballTalk",
-     "summary": "Browns quarterback Deshaun Watson is in the concussion protocol after self-reporting symptoms on Tuesday.",
-     "teams": [
-      "CLE"
-     ],
-     "title": "Todd Monken: Deshaun Watson not ruled out yet, but Shedeur Sanders preparing to start"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.cbssports.com/nfl/news/browns-deshaun-watson-concussion-protocol-shedeur-sanders-week-9-saints/",
-     "players": [
-      "Deshaun Watson",
-      "Shedeur Sanders"
-     ],
-     "published": "2026-11-04T15:31:37Z",
-     "source": "CBS Sports",
-     "summary": "Watson cleared evaluation Sunday but started having symptoms Monday night",
-     "teams": [
-      "CLE",
-      "NO"
-     ],
-     "title": "Browns' Deshaun Watson in concussion protocol: Shedeur Sanders potentially in line to start Week 9 at Saints"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-02T23:11:05Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/saints-still-deciding-if-jordyn-tyson-travis-etienne-will-return-to-practice-this-week",
-     "players": [
-      "Jordyn Tyson",
-      "Travis Etienne"
-     ],
-     "published": "2026-11-02T17:37:12Z",
-     "source": "ProFootballTalk",
-     "summary": "The Saints have yet to see rookie wide receiver Jordyn Tyson in game action, but they would move closer to that moment if the first-round pick is designated for return from injured reserve this week.",
-     "teams": [
-      "NO"
-     ],
-     "title": "Saints still deciding if Jordyn Tyson, Travis Etienne will return to practice this week"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-02T12:17:48Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/frustrated-justin-jefferson-didnt-speak-to-reporters-after-sundays-loss",
-     "players": [
-      "Justin Jefferson"
-     ],
-     "published": "2026-11-02T03:07:08Z",
-     "source": "ProFootballTalk",
-     "summary": "When a team is winning, it's hard for any offensive players who aren't getting the ball as often as they should to be upset.",
-     "teams": [],
-     "title": "Frustrated Justin Jefferson didn't speak to reporters after Sunday's loss"
     }
    ],
    "pick": "NO",
-   "pick_prob": 0.602678,
+   "pick_prob": 0.602236,
    "roof": "dome",
    "season": 2026,
    "spread_pick": {
@@ -4362,7 +4403,7 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 0.017598,
+    "edge": 0.010054,
     "line": 42.5,
     "side": "UNDER"
    },
@@ -5621,12 +5662,12 @@
    ],
    "kickoff": "2026-11-08T18:00:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
+    "as_of": "2026-11-06T19:24:02Z",
     "away_ml": -240.0,
-    "best_away_book": "DraftKings",
-    "best_away_ml": -230.0,
+    "best_away_book": "MyBookie.ag",
+    "best_away_ml": -228.0,
     "best_home_book": "FanDuel",
-    "best_home_ml": 215.0,
+    "best_home_ml": 205.0,
     "books": 9,
     "home_ml": 200.0,
     "home_prob": 0.320755,
@@ -5642,9 +5683,39 @@
    "market_total": 51.5,
    "model_prob": 0.467387,
    "model_spread": -0.758931,
-   "model_total": 51.376998,
+   "model_total": 51.384541,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.cbssports.com/nfl/news/dak-prescott-cowboys-offensive-identity-comment-brian-schottenheimer/",
+     "players": [
+      "Dak Prescott"
+     ],
+     "published": "2026-11-06T01:19:02Z",
+     "source": "CBS Sports",
+     "summary": "Prescott's frustrations could be boiling over as Dallas reaches its midseason point",
+     "teams": [
+      "DAL"
+     ],
+     "title": "Dak Prescott delivers blunt assessment of Cowboys' offensive identity: 'Are we proud of it? I don't know'"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.cbssports.com/nfl/news/george-pickens-trade-rumors-cowboys-nfl-deadline/",
+     "players": [
+      "George Pickens"
+     ],
+     "published": "2026-11-05T22:52:14Z",
+     "source": "CBS Sports",
+     "summary": "As speculation builds about Pickens' future in Dallas, Prescott praised him as a teammate and Lamb explained how the receiver changes opposing defenses",
+     "teams": [
+      "DAL"
+     ],
+     "title": "Cowboys stars reject George Pickens trade talk ahead of NFL deadline"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
@@ -5729,37 +5800,6 @@
       "IND"
      ],
      "title": "Colts QB Daniel Jones On Trade Radar?"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://sports.yahoo.com/articles/wr-george-pickens-og-tyler-225239783.html",
-     "players": [
-      "George Pickens",
-      "Tyler Smith"
-     ],
-     "published": "2026-11-04T22:52:39Z",
-     "source": "Yahoo Sports",
-     "summary": "The Cowboys' injury report has 16 names, with five players sitting out Wednesday's practice with injuries.",
-     "teams": [
-      "DAL"
-     ],
-     "title": "WR George Pickens, OG Tyler Smith were limited in Wednesday's practice"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.cbssports.com/nfl/news/2026-nfl-trade-deadline-tracker-latest-deals-grades/",
-     "players": [
-      "DeForest Buckner"
-     ],
-     "published": "2026-11-04T20:49:09Z",
-     "source": "CBS Sports",
-     "summary": "Track every completed deal before the Nov. 10 deadline, including Chicago's blockbuster addition of Jeffery Simmons and the Colts' trades of Quenton Nelson and DeForest Buckner",
-     "teams": [
-      "IND"
-     ],
-     "title": "2026 NFL trade deadline tracker: Latest deals, grades as Jacoby Brissett heads to Baltimore"
     }
    ],
    "pick": "DAL",
@@ -5802,7 +5842,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 0.123002,
+    "edge": 0.115459,
     "line": 51.5,
     "side": "UNDER"
    },
@@ -5907,21 +5947,21 @@
      "name": "Bo Nix",
      "position": "QB",
      "status": "active",
-     "yards": 223.692502
+     "yards": 225.598802
     },
     "receiving": {
      "gsis_id": "00-0036613",
      "name": "Jaylen Waddle",
      "position": "WR",
      "status": "active",
-     "yards": 38.064407
+     "yards": 38.191097
     },
     "rushing": {
      "gsis_id": "00-0036158",
      "name": "J.K. Dobbins",
      "position": "RB",
      "status": "active",
-     "yards": 37.114938
+     "yards": 37.123596
     }
    },
    "away_name": "Denver Broncos",
@@ -6014,11 +6054,11 @@
      },
      "name": "Jonah Coleman",
      "position": "RB",
-     "prob": 0.400412,
+     "prob": 0.403887,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 16.949965,
-      "rush_yds": 32.09102
+      "rec_yds": 17.076753,
+      "rush_yds": 32.104312
      },
      "status": "active",
      "tds_season": 2
@@ -6040,11 +6080,11 @@
      },
      "name": "J.K. Dobbins",
      "position": "RB",
-     "prob": 0.251907,
+     "prob": 0.254539,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 1.66818,
-      "rush_yds": 37.114938
+      "rec_yds": 1.711293,
+      "rush_yds": 37.123596
      },
      "status": "active",
      "tds_season": 3
@@ -6066,11 +6106,11 @@
      },
      "name": "Jaylen Waddle",
      "position": "WR",
-     "prob": 0.233602,
+     "prob": 0.235991,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 38.064407,
-      "rush_yds": 0.355388
+      "rec_yds": 38.191097,
+      "rush_yds": 0.355479
      },
      "status": "active",
      "tds_season": 2
@@ -6095,7 +6135,7 @@
      },
      "name": "Jonah Coleman",
      "position": "RB",
-     "prob": 0.400412,
+     "prob": 0.403887,
      "rank": 1,
      "status": "active",
      "tds_season": 2
@@ -6118,7 +6158,7 @@
      },
      "name": "J.K. Dobbins",
      "position": "RB",
-     "prob": 0.251907,
+     "prob": 0.254539,
      "rank": 2,
      "status": "active",
      "tds_season": 3
@@ -6141,7 +6181,7 @@
      },
      "name": "Jaylen Waddle",
      "position": "WR",
-     "prob": 0.233602,
+     "prob": 0.235991,
      "rank": 3,
      "status": "active",
      "tds_season": 2
@@ -6164,7 +6204,7 @@
      },
      "name": "Courtland Sutton",
      "position": "WR",
-     "prob": 0.212711,
+     "prob": 0.214579,
      "rank": 4,
      "status": "active",
      "tds_season": 1
@@ -6187,7 +6227,7 @@
      },
      "name": "Bo Nix",
      "position": "QB",
-     "prob": 0.180265,
+     "prob": 0.181614,
      "rank": 5,
      "status": "active",
      "tds_season": 2
@@ -6210,7 +6250,7 @@
      },
      "name": "Marvin Mims",
      "position": "WR",
-     "prob": 0.129435,
+     "prob": 0.13057,
      "rank": 6,
      "status": "active",
      "tds_season": 0
@@ -6233,7 +6273,7 @@
      },
      "name": "Evan Engram",
      "position": "TE",
-     "prob": 0.112738,
+     "prob": 0.113721,
      "rank": 7,
      "status": "active",
      "tds_season": 1
@@ -6256,7 +6296,7 @@
      },
      "name": "Troy Franklin",
      "position": "WR",
-     "prob": 0.100976,
+     "prob": 0.101733,
      "rank": 8,
      "status": "active",
      "tds_season": 0
@@ -6279,7 +6319,7 @@
      },
      "name": "Jarrett Stidham",
      "position": "QB",
-     "prob": 0.075426,
+     "prob": 0.075972,
      "rank": 9,
      "status": "active",
      "tds_season": 0
@@ -6302,7 +6342,7 @@
      },
      "name": "Lil'Jordan Humphrey",
      "position": "WR",
-     "prob": 0.074736,
+     "prob": 0.075268,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -6325,7 +6365,7 @@
      },
      "name": "Sam Ehlinger",
      "position": "QB",
-     "prob": 0.044228,
+     "prob": 0.04454,
      "rank": 11,
      "status": "active",
      "tds_season": 0
@@ -6508,21 +6548,21 @@
      "name": "Bryce Young",
      "position": "QB",
      "status": "active",
-     "yards": 226.21827
+     "yards": 228.078925
     },
     "receiving": {
      "gsis_id": "00-0040124",
      "name": "Tetairoa McMillan",
      "position": "WR",
      "status": "active",
-     "yards": 62.412473
+     "yards": 62.558894
     },
     "rushing": {
      "gsis_id": "00-0036555",
      "name": "Chuba Hubbard",
      "position": "RB",
      "status": "active",
-     "yards": 68.699534
+     "yards": 68.745007
     }
    },
    "home_name": "Carolina Panthers",
@@ -6560,8 +6600,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 62.412473,
-       "rush_yds": 0.007985
+       "rec_yds": 62.558894,
+       "rush_yds": 0.008003
       },
       "rank": 1,
       "reason": null,
@@ -6576,8 +6616,8 @@
       "position": "RB",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 15.007984,
-       "rush_yds": 68.699534
+       "rec_yds": 15.145414,
+       "rush_yds": 68.745007
       },
       "rank": 2,
       "reason": null,
@@ -6591,9 +6631,9 @@
       "name": "Bryce Young",
       "position": "QB",
       "proj": {
-       "pass_yds": 226.21827,
+       "pass_yds": 228.078925,
        "rec_yds": null,
-       "rush_yds": 4.458632
+       "rush_yds": 4.449605
       },
       "rank": 3,
       "reason": null,
@@ -6602,7 +6642,7 @@
      }
     ]
    },
-   "home_prob": 0.399575,
+   "home_prob": 0.400324,
    "home_qb": {
     "change": false,
     "id": "00-0039150",
@@ -6631,11 +6671,11 @@
      },
      "name": "Chuba Hubbard",
      "position": "RB",
-     "prob": 0.476555,
+     "prob": 0.481708,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 15.007984,
-      "rush_yds": 68.699534
+      "rec_yds": 15.145414,
+      "rush_yds": 68.745007
      },
      "status": "active",
      "tds_season": 7
@@ -6657,11 +6697,11 @@
      },
      "name": "Tetairoa McMillan",
      "position": "WR",
-     "prob": 0.315627,
+     "prob": 0.318798,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 62.412473,
-      "rush_yds": 0.007985
+      "rec_yds": 62.558894,
+      "rush_yds": 0.008003
      },
      "status": "active",
      "tds_season": 2
@@ -6683,10 +6723,10 @@
      },
      "name": "Jalen Coker",
      "position": "WR",
-     "prob": 0.275025,
+     "prob": 0.277576,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 44.956266,
+      "rec_yds": 45.085083,
       "rush_yds": 0.0
      },
      "status": "active",
@@ -6712,7 +6752,7 @@
      },
      "name": "Chuba Hubbard",
      "position": "RB",
-     "prob": 0.476555,
+     "prob": 0.481708,
      "rank": 1,
      "status": "active",
      "tds_season": 7
@@ -6735,7 +6775,7 @@
      },
      "name": "Tetairoa McMillan",
      "position": "WR",
-     "prob": 0.315627,
+     "prob": 0.318798,
      "rank": 2,
      "status": "active",
      "tds_season": 2
@@ -6758,7 +6798,7 @@
      },
      "name": "Jalen Coker",
      "position": "WR",
-     "prob": 0.275025,
+     "prob": 0.277576,
      "rank": 3,
      "status": "active",
      "tds_season": 3
@@ -6781,7 +6821,7 @@
      },
      "name": "Darren Waller",
      "position": "TE",
-     "prob": 0.142352,
+     "prob": 0.143546,
      "rank": 4,
      "status": "active",
      "tds_season": 3
@@ -6804,7 +6844,7 @@
      },
      "name": "Tommy Tremble",
      "position": "TE",
-     "prob": 0.14147,
+     "prob": 0.142655,
      "rank": 5,
      "status": "active",
      "tds_season": 2
@@ -6827,7 +6867,7 @@
      },
      "name": "John Metchie",
      "position": "WR",
-     "prob": 0.122596,
+     "prob": 0.123694,
      "rank": 6,
      "status": "active",
      "tds_season": 1
@@ -6850,7 +6890,7 @@
      },
      "name": "Bryce Young",
      "position": "QB",
-     "prob": 0.10273,
+     "prob": 0.103426,
      "rank": 7,
      "status": "active",
      "tds_season": 1
@@ -6873,7 +6913,7 @@
      },
      "name": "AJ Dillon",
      "position": "RB",
-     "prob": 0.097939,
+     "prob": 0.098825,
      "rank": 8,
      "status": "active",
      "tds_season": 0
@@ -6896,7 +6936,7 @@
      },
      "name": "Mitchell Evans",
      "position": "TE",
-     "prob": 0.093284,
+     "prob": 0.09401,
      "rank": 9,
      "status": "active",
      "tds_season": 0
@@ -6919,7 +6959,7 @@
      },
      "name": "Ja'Tavion Sanders",
      "position": "TE",
-     "prob": 0.089636,
+     "prob": 0.090341,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -6942,7 +6982,7 @@
      },
      "name": "Trevor Etienne",
      "position": "RB",
-     "prob": 0.078202,
+     "prob": 0.07886,
      "rank": 11,
      "status": "active",
      "tds_season": 0
@@ -6965,7 +7005,7 @@
      },
      "name": "Brycen Tremayne",
      "position": "WR",
-     "prob": 0.064448,
+     "prob": 0.064927,
      "rank": 12,
      "status": "active",
      "tds_season": 0
@@ -7088,39 +7128,54 @@
    ],
    "kickoff": "2026-11-08T18:00:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
+    "as_of": "2026-11-06T19:24:02Z",
     "away_ml": -145.0,
     "best_away_book": "FanDuel",
     "best_away_ml": -142.0,
     "best_home_book": "DraftKings",
     "best_home_ml": 130.0,
     "books": 9,
-    "home_ml": 125.0,
-    "home_prob": 0.428884,
+    "home_ml": 123.0,
+    "home_prob": 0.432357,
     "opening_spread": -2.5,
     "opening_total": 44.5,
     "source": "the-odds-api",
     "spread": -2.5,
-    "total": 44.0
+    "total": 44.5
    },
-   "market_prob": 0.428884,
+   "market_prob": 0.432357,
    "market_source": "the-odds-api",
    "market_spread": -2.5,
-   "market_total": 44.0,
+   "market_total": 44.5,
    "model_prob": 0.37079,
    "model_spread": -3.378853,
-   "model_total": 44.264825,
+   "model_total": 44.272368,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.profootballrumors.com/2026/11/panthers-moving-closer-to-bryce-young-extension",
+     "players": [
+      "Bryce Young"
+     ],
+     "published": "2026-11-06T04:04:59Z",
+     "source": "Pro Football Rumors",
+     "summary": "Bryce Young has not walked a linear path since being drafted by the Panthers with the No. 1 overall pick in 2023. He struggled ...",
+     "teams": [
+      "CAR"
+     ],
+     "title": "Panthers Moving Closer To Bryce Young Extension"
+    },
+    {
+     "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/alex-singleton-named-the-afc-defensive-player-of-the-month",
+     "link": "https://sports.yahoo.com/articles/alex-singleton-named-afc-defensive-173234001.html",
      "players": [
       "Alex Singleton"
      ],
      "published": "2026-11-05T17:32:34Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "Broncos linebacker Alex Singleton's strong play in October drew recognition from the NFL on Thursday.",
      "teams": [
       "DEN"
@@ -7217,28 +7272,10 @@
       "DEN"
      ],
      "title": "Broncos make it a game, now trail 24-21"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-01T21:58:20Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jaylen-waddle-zach-allen-garett-bolles-brandon-jones-active-for-broncos",
-     "players": [
-      "Brandon Jones",
-      "Garett Bolles",
-      "Jaylen Waddle",
-      "Zach Allen"
-     ],
-     "published": "2026-11-01T20:35:36Z",
-     "source": "ProFootballTalk",
-     "summary": "The Broncos entered Sunday with four players listed as questionable.",
-     "teams": [
-      "DEN"
-     ],
-     "title": "Jaylen Waddle, Zach Allen, Garett Bolles, Brandon Jones active for Broncos"
     }
    ],
    "pick": "DEN",
-   "pick_prob": 0.600425,
+   "pick_prob": 0.599676,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
@@ -7277,9 +7314,9 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 0.264825,
-    "line": 44.0,
-    "side": "OVER"
+    "edge": 0.227632,
+    "line": 44.5,
+    "side": "UNDER"
    },
    "week": 9
   },
@@ -7363,21 +7400,21 @@
      "name": "Jared Goff",
      "position": "QB",
      "status": "active",
-     "yards": 285.941188
+     "yards": 284.946235
     },
     "receiving": {
      "gsis_id": "00-0036963",
      "name": "Amon-Ra St. Brown",
      "position": "WR",
      "status": "active",
-     "yards": 79.389966
+     "yards": 79.372123
     },
     "rushing": {
      "gsis_id": "00-0039139",
      "name": "Jahmyr Gibbs",
      "position": "RB",
      "status": "active",
-     "yards": 94.622992
+     "yards": 94.519814
     }
    },
    "away_name": "Detroit Lions",
@@ -7414,9 +7451,9 @@
       "name": "Jared Goff",
       "position": "QB",
       "proj": {
-       "pass_yds": 285.941188,
+       "pass_yds": 284.946235,
        "rec_yds": null,
-       "rush_yds": 0.959401
+       "rush_yds": 0.957988
       },
       "rank": 1,
       "reason": null,
@@ -7431,7 +7468,7 @@
       "position": "TE",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 41.493201,
+       "rec_yds": 41.475156,
        "rush_yds": null
       },
       "rank": 2,
@@ -7447,8 +7484,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 79.389966,
-       "rush_yds": 0.261941
+       "rec_yds": 79.372123,
+       "rush_yds": 0.258596
       },
       "rank": 3,
       "reason": null,
@@ -7485,11 +7522,11 @@
      },
      "name": "Jahmyr Gibbs",
      "position": "RB",
-     "prob": 0.783949,
+     "prob": 0.780325,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 32.537033,
-      "rush_yds": 94.622992
+      "rec_yds": 32.450866,
+      "rush_yds": 94.519814
      },
      "status": "active",
      "tds_season": 10
@@ -7511,11 +7548,11 @@
      },
      "name": "Amon-Ra St. Brown",
      "position": "WR",
-     "prob": 0.460302,
+     "prob": 0.456629,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 79.389966,
-      "rush_yds": 0.261941
+      "rec_yds": 79.372123,
+      "rush_yds": 0.258596
      },
      "status": "active",
      "tds_season": 5
@@ -7537,11 +7574,11 @@
      },
      "name": "Jameson Williams",
      "position": "WR",
-     "prob": 0.388913,
+     "prob": 0.386208,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 49.510714,
-      "rush_yds": 0.103577
+      "rec_yds": 49.500038,
+      "rush_yds": 0.102096
      },
      "status": "active",
      "tds_season": 5
@@ -7566,7 +7603,7 @@
      },
      "name": "Jahmyr Gibbs",
      "position": "RB",
-     "prob": 0.783949,
+     "prob": 0.780325,
      "rank": 1,
      "status": "active",
      "tds_season": 10
@@ -7589,7 +7626,7 @@
      },
      "name": "Amon-Ra St. Brown",
      "position": "WR",
-     "prob": 0.460302,
+     "prob": 0.456629,
      "rank": 2,
      "status": "active",
      "tds_season": 5
@@ -7612,7 +7649,7 @@
      },
      "name": "Jameson Williams",
      "position": "WR",
-     "prob": 0.388913,
+     "prob": 0.386208,
      "rank": 3,
      "status": "active",
      "tds_season": 5
@@ -7635,7 +7672,7 @@
      },
      "name": "Sam LaPorta",
      "position": "TE",
-     "prob": 0.342035,
+     "prob": 0.339683,
      "rank": 4,
      "status": "active",
      "tds_season": 3
@@ -7658,7 +7695,7 @@
      },
      "name": "Isaac TeSlaa",
      "position": "WR",
-     "prob": 0.15388,
+     "prob": 0.152907,
      "rank": 5,
      "status": "active",
      "tds_season": 0
@@ -7681,7 +7718,7 @@
      },
      "name": "Sione Vaki",
      "position": "RB",
-     "prob": 0.132837,
+     "prob": 0.13189,
      "rank": 6,
      "status": "active",
      "tds_season": 0
@@ -7704,7 +7741,7 @@
      },
      "name": "Jared Goff",
      "position": "QB",
-     "prob": 0.100442,
+     "prob": 0.099858,
      "rank": 7,
      "status": "active",
      "tds_season": 1
@@ -7727,7 +7764,7 @@
      },
      "name": "Joshua Dobbs",
      "position": "QB",
-     "prob": 0.066745,
+     "prob": 0.066362,
      "rank": 8,
      "status": "active",
      "tds_season": 0
@@ -7956,21 +7993,21 @@
      "name": "Malik Willis",
      "position": "QB",
      "status": "active",
-     "yards": 215.472594
+     "yards": 216.429697
     },
     "receiving": {
      "gsis_id": "00-0041523",
      "name": "Caleb Douglas",
      "position": "WR",
      "status": "active",
-     "yards": 45.369768
+     "yards": 45.375702
     },
     "rushing": {
      "gsis_id": "00-0040198",
      "name": "Ollie Gordon",
      "position": "RB",
      "status": "active",
-     "yards": 52.281469
+     "yards": 52.345197
     }
    },
    "home_name": "Miami Dolphins",
@@ -8008,7 +8045,7 @@
       "position": "TE",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 30.541451,
+       "rec_yds": 30.548968,
        "rush_yds": null
       },
       "rank": 1,
@@ -8024,8 +8061,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 45.369768,
-       "rush_yds": 0.11476
+       "rec_yds": 45.375702,
+       "rush_yds": 0.11639
       },
       "rank": 2,
       "reason": null,
@@ -8040,8 +8077,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 43.391598,
-       "rush_yds": 1.408607
+       "rec_yds": 43.417413,
+       "rush_yds": 1.416974
       },
       "rank": 3,
       "reason": null,
@@ -8050,7 +8087,7 @@
      }
     ]
    },
-   "home_prob": 0.256221,
+   "home_prob": 0.269567,
    "home_qb": {
     "change": false,
     "id": "00-0038128",
@@ -8079,11 +8116,11 @@
      },
      "name": "Ollie Gordon",
      "position": "RB",
-     "prob": 0.399542,
+     "prob": 0.403466,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 6.472853,
-      "rush_yds": 52.281469
+      "rec_yds": 6.513313,
+      "rush_yds": 52.345197
      },
      "status": "active",
      "tds_season": 4
@@ -8105,11 +8142,11 @@
      },
      "name": "Caleb Douglas",
      "position": "WR",
-     "prob": 0.293479,
+     "prob": 0.295968,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 45.369768,
-      "rush_yds": 0.11476
+      "rec_yds": 45.375702,
+      "rush_yds": 0.11639
      },
      "status": "active",
      "tds_season": 2
@@ -8131,11 +8168,11 @@
      },
      "name": "Malik Washington",
      "position": "WR",
-     "prob": 0.25844,
+     "prob": 0.261076,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 43.391598,
-      "rush_yds": 1.408607
+      "rec_yds": 43.417413,
+      "rush_yds": 1.416974
      },
      "status": "active",
      "tds_season": 1
@@ -8160,7 +8197,7 @@
      },
      "name": "Ollie Gordon",
      "position": "RB",
-     "prob": 0.399542,
+     "prob": 0.403466,
      "rank": 1,
      "status": "active",
      "tds_season": 4
@@ -8183,7 +8220,7 @@
      },
      "name": "Caleb Douglas",
      "position": "WR",
-     "prob": 0.293479,
+     "prob": 0.295968,
      "rank": 2,
      "status": "active",
      "tds_season": 2
@@ -8206,7 +8243,7 @@
      },
      "name": "Malik Washington",
      "position": "WR",
-     "prob": 0.25844,
+     "prob": 0.261076,
      "rank": 3,
      "status": "active",
      "tds_season": 1
@@ -8229,7 +8266,7 @@
      },
      "name": "Malik Willis",
      "position": "QB",
-     "prob": 0.21237,
+     "prob": 0.213918,
      "rank": 4,
      "status": "active",
      "tds_season": 3
@@ -8252,7 +8289,7 @@
      },
      "name": "Greg Dulcich",
      "position": "TE",
-     "prob": 0.187774,
+     "prob": 0.189571,
      "rank": 5,
      "status": "active",
      "tds_season": 0
@@ -8275,7 +8312,7 @@
      },
      "name": "Chris Bell",
      "position": "WR",
-     "prob": 0.17481,
+     "prob": 0.176456,
      "rank": 6,
      "status": "active",
      "tds_season": 0
@@ -8298,7 +8335,7 @@
      },
      "name": "Kevin Coleman",
      "position": "WR",
-     "prob": 0.169059,
+     "prob": 0.170538,
      "rank": 7,
      "status": "active",
      "tds_season": 2
@@ -8321,7 +8358,7 @@
      },
      "name": "Jaylen Wright",
      "position": "RB",
-     "prob": 0.097658,
+     "prob": 0.098525,
      "rank": 8,
      "status": "active",
      "tds_season": 0
@@ -8344,7 +8381,7 @@
      },
      "name": "Kaytron Allen",
      "position": "RB",
-     "prob": 0.083099,
+     "prob": 0.083712,
      "rank": 9,
      "status": "active",
      "tds_season": 0
@@ -8367,7 +8404,7 @@
      },
      "name": "Jalen Tolbert",
      "position": "WR",
-     "prob": 0.079513,
+     "prob": 0.080115,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -8390,7 +8427,7 @@
      },
      "name": "Jared Wayne",
      "position": "WR",
-     "prob": 0.064512,
+     "prob": 0.064975,
      "rank": 11,
      "status": "active",
      "tds_season": 0
@@ -8513,30 +8550,46 @@
    ],
    "kickoff": "2026-11-08T18:00:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
-    "away_ml": -325.0,
+    "as_of": "2026-11-06T19:24:02Z",
+    "away_ml": -300.0,
     "best_away_book": "BetUS",
-    "best_away_ml": -310.0,
+    "best_away_ml": -285.0,
     "best_home_book": "FanDuel",
-    "best_home_ml": 285.0,
+    "best_home_ml": 265.0,
     "books": 9,
-    "home_ml": 255.0,
-    "home_prob": 0.271433,
+    "home_ml": 238.0,
+    "home_prob": 0.283093,
     "opening_spread": -7.5,
     "opening_total": 48.5,
     "source": "the-odds-api",
-    "spread": -7.0,
+    "spread": -6.5,
     "total": 50.5
    },
-   "market_prob": 0.271433,
+   "market_prob": 0.283093,
    "market_source": "the-odds-api",
-   "market_spread": -7.0,
+   "market_spread": -6.5,
    "market_total": 50.5,
    "model_prob": 0.333643,
    "model_spread": -5.174538,
-   "model_total": 48.83184,
+   "model_total": 48.839384,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-9-bold-predictions-joe-milton-eagles-vikings-josh-allen/",
+     "players": [
+      "Jared Goff"
+     ],
+     "published": "2026-11-06T11:49:40Z",
+     "source": "CBS Sports",
+     "summary": "Plus, the Dolphins stifle Jared Goff and the roaring Lions offense",
+     "teams": [
+      "DET",
+      "MIA"
+     ],
+     "title": "NFL Week 9 bold predictions: Joe Milton-led Eagles upset first-place Giants, Vikings torture Josh Allen"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
@@ -8644,30 +8697,15 @@
       "DET"
      ],
      "title": "Dan Campbell: Jack Campbell is \"improving\""
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-03T17:57:30Z",
-     "link": "https://sports.yahoo.com/articles/film-study-cade-mays-still-150000385.html",
-     "players": [
-      "Cade Mays"
-     ],
-     "published": "2026-11-03T15:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Cade Mays had a flawless start in second game for the Detroit Lions, cut short with an ankle injury",
-     "teams": [
-      "DET"
-     ],
-     "title": "Film study: Cade Mays is still the Detroit Lions\u2019 best center"
     }
    ],
    "pick": "DET",
-   "pick_prob": 0.743779,
+   "pick_prob": 0.730433,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
-    "edge": 1.825462,
-    "line": 7.0,
+    "edge": 1.325462,
+    "line": 6.5,
     "team": "MIA"
    },
    "stadium": "Hard Rock Stadium",
@@ -8701,7 +8739,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 1.66816,
+    "edge": 1.660616,
     "line": 50.5,
     "side": "UNDER"
    },
@@ -8806,21 +8844,21 @@
      "name": "Matthew Stafford",
      "position": "QB",
      "status": "active",
-     "yards": 269.836746
+     "yards": 265.858801
     },
     "receiving": {
      "gsis_id": "00-0039075",
      "name": "Puka Nacua",
      "position": "WR",
      "status": "active",
-     "yards": 98.754136
+     "yards": 98.33411
     },
     "rushing": {
      "gsis_id": "00-0037840",
      "name": "Kyren Williams",
      "position": "RB",
      "status": "active",
-     "yards": 55.414401
+     "yards": 55.368215
     }
    },
    "away_name": "Los Angeles Rams",
@@ -8868,9 +8906,9 @@
       "name": "Matthew Stafford",
       "position": "QB",
       "proj": {
-       "pass_yds": 269.836746,
+       "pass_yds": 265.858801,
        "rec_yds": null,
-       "rush_yds": 0.355854
+       "rush_yds": 0.361538
       },
       "rank": 2,
       "reason": null,
@@ -8885,8 +8923,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 98.754136,
-       "rush_yds": 0.952313
+       "rec_yds": 98.33411,
+       "rush_yds": 0.948849
       },
       "rank": 3,
       "reason": null,
@@ -8923,11 +8961,11 @@
      },
      "name": "Kyren Williams",
      "position": "RB",
-     "prob": 0.561662,
+     "prob": 0.553376,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 16.820045,
-      "rush_yds": 55.414401
+      "rec_yds": 16.552148,
+      "rush_yds": 55.368215
      },
      "status": "active",
      "tds_season": 7
@@ -8949,11 +8987,11 @@
      },
      "name": "Puka Nacua",
      "position": "WR",
-     "prob": 0.474915,
+     "prob": 0.466717,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 98.754136,
-      "rush_yds": 0.952313
+      "rec_yds": 98.33411,
+      "rush_yds": 0.948849
      },
      "status": "active",
      "tds_season": 4
@@ -8975,11 +9013,11 @@
      },
      "name": "Blake Corum",
      "position": "RB",
-     "prob": 0.325927,
+     "prob": 0.320392,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 5.258853,
-      "rush_yds": 38.861665
+      "rec_yds": 5.114901,
+      "rush_yds": 38.851853
      },
      "status": "active",
      "tds_season": 4
@@ -9004,7 +9042,7 @@
      },
      "name": "Kyren Williams",
      "position": "RB",
-     "prob": 0.561662,
+     "prob": 0.553376,
      "rank": 1,
      "status": "active",
      "tds_season": 7
@@ -9027,7 +9065,7 @@
      },
      "name": "Puka Nacua",
      "position": "WR",
-     "prob": 0.474915,
+     "prob": 0.466717,
      "rank": 2,
      "status": "active",
      "tds_season": 4
@@ -9050,7 +9088,7 @@
      },
      "name": "Blake Corum",
      "position": "RB",
-     "prob": 0.325927,
+     "prob": 0.320392,
      "rank": 3,
      "status": "active",
      "tds_season": 4
@@ -9073,7 +9111,7 @@
      },
      "name": "Colby Parkinson",
      "position": "TE",
-     "prob": 0.245092,
+     "prob": 0.241533,
      "rank": 4,
      "status": "active",
      "tds_season": 1
@@ -9096,7 +9134,7 @@
      },
      "name": "Tyler Higbee",
      "position": "TE",
-     "prob": 0.173097,
+     "prob": 0.170541,
      "rank": 5,
      "status": "active",
      "tds_season": 1
@@ -9119,7 +9157,7 @@
      },
      "name": "Davis Allen",
      "position": "TE",
-     "prob": 0.156483,
+     "prob": 0.154344,
      "rank": 6,
      "status": "active",
      "tds_season": 2
@@ -9142,7 +9180,7 @@
      },
      "name": "Konata Mumpfield",
      "position": "WR",
-     "prob": 0.115981,
+     "prob": 0.114338,
      "rank": 7,
      "status": "active",
      "tds_season": 1
@@ -9165,7 +9203,7 @@
      },
      "name": "Tutu Atwell",
      "position": "WR",
-     "prob": 0.085888,
+     "prob": 0.084678,
      "rank": 8,
      "status": "active",
      "tds_season": 0
@@ -9188,7 +9226,7 @@
      },
      "name": "Matthew Stafford",
      "position": "QB",
-     "prob": 0.065959,
+     "prob": 0.06519,
      "rank": 9,
      "status": "active",
      "tds_season": 0
@@ -9211,7 +9249,7 @@
      },
      "name": "Stetson Bennett",
      "position": "QB",
-     "prob": 0.053885,
+     "prob": 0.053275,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -9394,21 +9432,21 @@
      "name": "Jayden Daniels",
      "position": "QB",
      "status": "active",
-     "yards": 214.782513
+     "yards": 210.978269
     },
     "receiving": {
      "gsis_id": "00-0031588",
      "name": "Stefon Diggs",
      "position": "WR",
      "status": "active",
-     "yards": 41.672969
+     "yards": 41.427242
     },
     "rushing": {
      "gsis_id": "00-0037256",
      "name": "Rachaad White",
      "position": "RB",
      "status": "active",
-     "yards": 25.834743
+     "yards": 25.811343
     }
    },
    "home_name": "Washington Commanders",
@@ -9445,9 +9483,9 @@
       "name": "Jayden Daniels",
       "position": "QB",
       "proj": {
-       "pass_yds": 214.782513,
+       "pass_yds": 210.978269,
        "rec_yds": null,
-       "rush_yds": 24.174631
+       "rush_yds": 24.200158
       },
       "rank": 1,
       "reason": null,
@@ -9474,7 +9512,7 @@
       "proj": {
        "pass_yds": null,
        "rec_yds": null,
-       "rush_yds": 10.724895
+       "rush_yds": 10.749182
       },
       "rank": 3,
       "reason": null,
@@ -9483,7 +9521,7 @@
      }
     ]
    },
-   "home_prob": 0.330159,
+   "home_prob": 0.332184,
    "home_qb": {
     "change": false,
     "id": "00-0039910",
@@ -9512,11 +9550,11 @@
      },
      "name": "Rachaad White",
      "position": "RB",
-     "prob": 0.281833,
+     "prob": 0.276108,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 11.464407,
-      "rush_yds": 25.834743
+      "rec_yds": 11.257301,
+      "rush_yds": 25.811343
      },
      "status": "active",
      "tds_season": 3
@@ -9538,10 +9576,10 @@
      },
      "name": "Stefon Diggs",
      "position": "WR",
-     "prob": 0.237307,
+     "prob": 0.232563,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 41.672969,
+      "rec_yds": 41.427242,
       "rush_yds": 0.0
      },
      "status": "active",
@@ -9564,11 +9602,11 @@
      },
      "name": "Antonio Williams",
      "position": "WR",
-     "prob": 0.215192,
+     "prob": 0.211213,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 37.005535,
-      "rush_yds": 0.031684
+      "rec_yds": 36.768118,
+      "rush_yds": 0.032105
      },
      "status": "active",
      "tds_season": 1
@@ -9593,7 +9631,7 @@
      },
      "name": "Rachaad White",
      "position": "RB",
-     "prob": 0.281833,
+     "prob": 0.276108,
      "rank": 1,
      "status": "active",
      "tds_season": 3
@@ -9616,7 +9654,7 @@
      },
      "name": "Stefon Diggs",
      "position": "WR",
-     "prob": 0.237307,
+     "prob": 0.232563,
      "rank": 2,
      "status": "active",
      "tds_season": 5
@@ -9639,7 +9677,7 @@
      },
      "name": "Antonio Williams",
      "position": "WR",
-     "prob": 0.215192,
+     "prob": 0.211213,
      "rank": 3,
      "status": "active",
      "tds_season": 1
@@ -9662,7 +9700,7 @@
      },
      "name": "Jayden Daniels",
      "position": "QB",
-     "prob": 0.200046,
+     "prob": 0.196928,
      "rank": 4,
      "status": "active",
      "tds_season": 2
@@ -9685,7 +9723,7 @@
      },
      "name": "Treylon Burks",
      "position": "WR",
-     "prob": 0.183919,
+     "prob": 0.180567,
      "rank": 5,
      "status": "active",
      "tds_season": 2
@@ -9708,7 +9746,7 @@
      },
      "name": "Chig Okonkwo",
      "position": "TE",
-     "prob": 0.183591,
+     "prob": 0.18007,
      "rank": 6,
      "status": "active",
      "tds_season": 0
@@ -9731,7 +9769,7 @@
      },
      "name": "Austin Ekeler",
      "position": "RB",
-     "prob": 0.151544,
+     "prob": 0.148724,
      "rank": 7,
      "status": "active",
      "tds_season": 0
@@ -9754,7 +9792,7 @@
      },
      "name": "Athan Kaliakmanis",
      "position": "QB",
-     "prob": 0.140927,
+     "prob": 0.138789,
      "rank": 8,
      "status": "active",
      "tds_season": 0
@@ -9777,7 +9815,7 @@
      },
      "name": "Marcus Mariota",
      "position": "QB",
-     "prob": 0.083545,
+     "prob": 0.082297,
      "rank": 9,
      "status": "active",
      "tds_season": 0
@@ -9800,7 +9838,7 @@
      },
      "name": "Van Jefferson",
      "position": "WR",
-     "prob": 0.073438,
+     "prob": 0.072289,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -9823,7 +9861,7 @@
      },
      "name": "Dyami Brown",
      "position": "WR",
-     "prob": 0.07192,
+     "prob": 0.070823,
      "rank": 11,
      "status": "active",
      "tds_season": 0
@@ -9946,30 +9984,137 @@
    ],
    "kickoff": "2026-11-08T18:00:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
-    "away_ml": -225.0,
-    "best_away_book": "MyBookie.ag",
-    "best_away_ml": -222.0,
-    "best_home_book": "BetRivers",
-    "best_home_ml": 195.0,
+    "as_of": "2026-11-06T19:24:02Z",
+    "away_ml": -222.0,
+    "best_away_book": "BetUS",
+    "best_away_ml": -210.0,
+    "best_home_book": "FanDuel",
+    "best_home_ml": 190.0,
     "books": 9,
-    "home_ml": 189.0,
-    "home_prob": 0.333248,
+    "home_ml": 180.0,
+    "home_prob": 0.342525,
     "opening_spread": -5.5,
     "opening_total": 48.5,
     "source": "the-odds-api",
     "spread": -4.5,
-    "total": 48.5
+    "total": 47.5
    },
-   "market_prob": 0.333248,
+   "market_prob": 0.342525,
    "market_source": "the-odds-api",
    "market_spread": -4.5,
-   "market_total": 48.5,
+   "market_total": 47.5,
    "model_prob": 0.402239,
    "model_spread": -2.929805,
-   "model_total": 47.316862,
+   "model_total": 47.324406,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.profootballrumors.com/2026/11/rams-expected-to-activate-de-myles-garrett-from-ir",
+     "players": [
+      "Myles Garrett"
+     ],
+     "published": "2026-11-06T19:20:36Z",
+     "source": "Pro Football Rumors",
+     "summary": "Myles Garrett returned to practice this week. That opened the door to a Week 9 return, and he is indeed on track to offer a ...",
+     "teams": [
+      "LA"
+     ],
+     "title": "Rams Expected To Activate DE Myles Garrett From IR"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/articles/uh-oh-rams-myles-garrett-184035004.html",
+     "players": [
+      "Myles Garrett"
+     ],
+     "published": "2026-11-06T18:40:35Z",
+     "source": "Yahoo Sports",
+     "summary": "Rams edge rusher Myles Garrett is reportedly set to return off injured reserve for Sunday\u2019s game against the Commanders",
+     "teams": [
+      "LA",
+      "WAS"
+     ],
+     "title": "Uh-oh: Rams\u2019 Myles Garrett reportedly on track to play Commanders in NFL Week 9"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/articles/rams-got-great-news-myles-181218052.html",
+     "players": [
+      "Myles Garrett"
+     ],
+     "published": "2026-11-06T18:12:18Z",
+     "source": "Yahoo Sports",
+     "summary": "Rams will activate Garrett in time to play against Commanders, per reports",
+     "teams": [
+      "LA",
+      "WAS"
+     ],
+     "title": "Rams got great news about Myles Garrett"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/articles/bills-trade-deadline-candidate-commanders-181136757.html",
+     "players": [
+      "Nick Cross"
+     ],
+     "published": "2026-11-06T18:11:36Z",
+     "source": "Yahoo Sports",
+     "summary": "The eleventh installment in the series examining possible Bills trade targets before the deadline",
+     "teams": [
+      "WAS"
+     ],
+     "title": "Bills trade deadline candidate: Commanders safety Nick Cross"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.cbssports.com/nfl/news/myles-garrett-injury-status-rams-week-9-vs-commanders/",
+     "players": [
+      "Myles Garrett"
+     ],
+     "published": "2026-11-06T18:03:08Z",
+     "source": "CBS Sports",
+     "summary": "Los Angeles could be getting its star pass rusher back",
+     "teams": [
+      "LA",
+      "WAS"
+     ],
+     "title": "Myles Garrett on track to be activated ahead of Rams Week 9 matchup vs. Commanders, per report"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/report-myles-garrett-on-track-to-be-activated",
+     "players": [
+      "Myles Garrett"
+     ],
+     "published": "2026-11-06T17:37:42Z",
+     "source": "ProFootballTalk",
+     "summary": "Garrett has not played since Week 1 due to a knee injury.",
+     "teams": [],
+     "title": "Report: Myles Garrett on track to be activated"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/nfl/breaking-news/article/rams-myles-garrett-knee-set-to-return-this-week-vs-commanders-190940222.html",
+     "players": [
+      "Myles Garrett"
+     ],
+     "published": "2026-11-06T17:34:12Z",
+     "source": "Yahoo Sports",
+     "summary": "Garrett played in Week 1, but has been out since undergoing arthroscopic knee surgery in September.",
+     "teams": [
+      "LA",
+      "WAS"
+     ],
+     "title": "Rams' Myles Garrett (knee) set to return this week vs. Commanders"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
@@ -9984,119 +10129,10 @@
       "LA"
      ],
      "title": "Rams holding punt returner competition again"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/the-matthew-stafford-elbow-injury-is-a-something-to-monitor",
-     "players": [
-      "Matthew Stafford"
-     ],
-     "published": "2026-11-05T15:20:28Z",
-     "source": "ProFootballTalk",
-     "summary": "A question emerged about Rams quarterback Matthew Stafford's throwing arm after reporters spotted ice on it following Sunday's game against the Chargers.",
-     "teams": [
-      "LA"
-     ],
-     "title": "The Matthew Stafford elbow injury is a something to monitor"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://sports.yahoo.com/articles/faith-josh-wallace-031512796.html",
-     "players": [
-      "Jaylen Watson",
-      "Josh Wallace"
-     ],
-     "published": "2026-11-05T03:15:12Z",
-     "source": "Yahoo Sports",
-     "summary": "Rams are in good hands with Josh Wallace following Jaylen Watson\u2019s season-ending injury",
-     "teams": [
-      "LA"
-     ],
-     "title": "Have faith in Josh Wallace"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-9-injury-report-micah-parsons-jaylen-watson-rams/",
-     "players": [
-      "Jaylen Watson"
-     ],
-     "published": "2026-11-05T03:07:09Z",
-     "source": "CBS Sports",
-     "summary": "Parsons has opened his 21-day practice window, while Jackson, Sam Darnold and Deshaun Watson headline the notable quarterback injuries entering Week 9",
-     "teams": [
-      "LA"
-     ],
-     "title": "NFL Week 9 injury report: Micah Parsons returns to Packers practice, Rams lose Jaylen Watson for season"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.profootballrumors.com/2026/11/giants-interested-in-buccaneers-vita-vea",
-     "players": [
-      "Daron Payne"
-     ],
-     "published": "2026-11-05T03:03:49Z",
-     "source": "Pro Football Rumors",
-     "summary": "From negotiations with a division rival about Daron Payne to John Harbaugh\u2019s effort to inquire on Jeffery Simmons \u2014 after interest emerged in DeForest ...",
-     "teams": [],
-     "title": "Giants Interested In Buccaneers\u2019 Vita Vea"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.profootballrumors.com/2026/11/rams-designate-te-terrance-ferguson-rb-ronnie-rivers-for-return",
-     "players": [
-      "Davante Adams",
-      "Kobie Turner",
-      "Myles Garrett",
-      "Ronnie Rivers",
-      "Terrance Ferguson"
-     ],
-     "published": "2026-11-05T01:42:00Z",
-     "source": "Pro Football Rumors",
-     "summary": "Injury activation decisions may come up for the Rams, who have Myles Garrett close to returning and Davante Adams and Kobie Turner moves to ...",
-     "teams": [
-      "LA"
-     ],
-     "title": "Rams Designate TE Terrance Ferguson, RB Ronnie Rivers For Return"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://sports.yahoo.com/articles/jim-harbaugh-justin-herbert-respond-013132827.html",
-     "players": [
-      "Quentin Lake"
-     ],
-     "published": "2026-11-05T01:31:32Z",
-     "source": "Yahoo Sports",
-     "summary": "As the football-following world tries to figure out the problem(s) with Chargers quarterback Justin Herbert, Rams safety Quentin Lake provided a scathing critique of Herbert's most recent performance, in a 24-9 loss to the Rams.",
-     "teams": [
-      "LA"
-     ],
-     "title": "Jim Harbaugh, Justin Herbert respond to Quentin Lake's \"seeing ghosts\" critique"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://sports.yahoo.com/articles/matthew-stafford-full-participation-wednesday-012024613.html",
-     "players": [
-      "Matthew Stafford",
-      "Myles Garrett"
-     ],
-     "published": "2026-11-05T01:20:24Z",
-     "source": "Yahoo Sports",
-     "summary": "Rams coach Sean McVay wouldn't allow much about the ice pack on quarterback Matthew Stafford's arm after Sunday's win over the Chargers other than to say it was soreness.",
-     "teams": [
-      "LA"
-     ],
-     "title": "Matthew Stafford has full participation with elbow injury; Myles Garrett limited in return"
     }
    ],
    "pick": "LA",
-   "pick_prob": 0.669841,
+   "pick_prob": 0.667816,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
@@ -10135,8 +10171,8 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 1.183138,
-    "line": 48.5,
+    "edge": 0.175594,
+    "line": 47.5,
     "side": "UNDER"
    },
    "week": 9
@@ -10619,29 +10655,6 @@
      "tds_season": 1
     },
     {
-     "games_season": 0,
-     "group": "1-3",
-     "gsis_id": "00-0038998",
-     "meters": {
-      "rest": {
-       "n": 0,
-       "no_td": 0,
-       "rate": null
-      },
-      "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
-      }
-     },
-     "name": "Jake Haener",
-     "position": "QB",
-     "prob": 0.035505,
-     "rank": 10,
-     "status": "active",
-     "tds_season": 0
-    },
-    {
      "games_season": 4,
      "group": "0.5-1",
      "gsis_id": "00-0038576",
@@ -10660,7 +10673,7 @@
      "name": "Charlie Jones",
      "position": "WR",
      "prob": null,
-     "rank": 11,
+     "rank": 10,
      "status": "active",
      "tds_season": 0
     },
@@ -10683,7 +10696,7 @@
      "name": "Thomas Fidone",
      "position": "TE",
      "prob": null,
-     "rank": 12,
+     "rank": 11,
      "status": "active",
      "tds_season": 0
     },
@@ -10706,7 +10719,7 @@
      "name": "Patrick Ricard",
      "position": "FB",
      "prob": null,
-     "rank": 13,
+     "rank": 12,
      "status": "active",
      "tds_season": 0
     },
@@ -10729,7 +10742,7 @@
      "name": "Chris Manhertz",
      "position": "TE",
      "prob": null,
-     "rank": 14,
+     "rank": 13,
      "status": "active",
      "tds_season": 0
     },
@@ -10752,7 +10765,7 @@
      "name": "Gregory Desrosiers",
      "position": "RB",
      "prob": null,
-     "rank": 15,
+     "rank": 14,
      "status": "active",
      "tds_season": 0
     }
@@ -10936,7 +10949,7 @@
      }
     ]
    },
-   "home_prob": 0.377529,
+   "home_prob": 0.378267,
    "home_qb": {
     "change": true,
     "id": "00-0039398",
@@ -11399,39 +11412,67 @@
    ],
    "kickoff": "2026-11-08T18:00:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
+    "as_of": "2026-11-06T19:24:02Z",
     "away_ml": -175.0,
     "best_away_book": "DraftKings",
-    "best_away_ml": -166.0,
+    "best_away_ml": -162.0,
     "best_home_book": "BetOnline.ag",
     "best_home_ml": 153.0,
     "books": 9,
-    "home_ml": 148.0,
-    "home_prob": 0.387379,
+    "home_ml": 145.0,
+    "home_prob": 0.390764,
     "opening_spread": -1.5,
     "opening_total": 39.5,
     "source": "the-odds-api",
     "spread": -3.0,
     "total": 38.5
    },
-   "market_prob": 0.387379,
+   "market_prob": 0.390764,
    "market_source": "the-odds-api",
    "market_spread": -3.0,
    "market_total": 38.5,
    "model_prob": 0.367695,
    "model_spread": -3.606106,
-   "model_total": 41.853763,
+   "model_total": 41.861306,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.cbssports.com/nfl/news/giants-malik-nabers-ballin-with-backup-quarterbacks-jj-mccarthy/",
+     "players": [
+      "Malik Nabers"
+     ],
+     "published": "2026-11-06T12:44:00Z",
+     "source": "CBS Sports",
+     "summary": "Malik Nabers has four straight 100-yard receiving games with backup QBs entering Sunday's game vs. Philadelphia",
+     "teams": [],
+     "title": "Ballin' with backups: Malik Nabers is most QB proof WR since Larry Fitzgerald, DeAndre Hopkins"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.rotowire.com//football/player/cam-skattebo-18514",
+     "players": [
+      "Cam Skattebo"
+     ],
+     "published": "2026-11-06T10:31:00Z",
+     "source": "RotoWire",
+     "summary": "Head coach John Harbaugh said Skattebo (hamstring) didn't practice Friday, but the Giants are \"keeping the door open\" for the running back to play Sunday at Philadelphia, Ryan Dunleavy of the New York Post reports. Visit RotoWire.com for more analysis on this update.",
+     "teams": [
+      "NYG"
+     ],
+     "title": "Cam Skattebo: Has chance to play Sunday"
+    },
+    {
+     "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/an-investigation-regarding-the-jalen-hurts-situation-has-not-begun",
+     "link": "https://sports.yahoo.com/articles/investigation-regarding-jalen-hurts-situation-185001657.html",
      "players": [
       "Jalen Hurts"
      ],
      "published": "2026-11-05T18:50:01Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "The return of Eagles quarterback Jalen Hurts to the team's facility on Wednesday is a reminder that plenty of questions remain regarding the decisions made as to his health before flying to London with a blood clot in his leg, playing in London with a blood clot in his leg, and flying back from London with a blood clot",
      "teams": [
       "PHI"
@@ -11508,42 +11549,10 @@
       "PHI"
      ],
      "title": "DeVonta Smith still sidelined with injury"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://sports.yahoo.com/articles/saquon-barkley-devonta-smith-dontayvion-001844200.html",
-     "players": [
-      "DeVonta Smith",
-      "Dontayvion Wicks",
-      "Saquon Barkley"
-     ],
-     "published": "2026-11-05T00:18:44Z",
-     "source": "Yahoo Sports",
-     "summary": "Eagles running back Saquon Barkley missed practice Wednesday with his hamstring and back injuries.",
-     "teams": [
-      "PHI"
-     ],
-     "title": "Saquon Barkley, DeVonta Smith, Dontayvion Wicks miss Wednesday's practice"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.profootballrumors.com/2026/11/jaguars-willing-to-be-aggressive-in-d-line-trade-market-eagles-moro-ojomo-on-radar",
-     "players": [
-      "Moro Ojomo"
-     ],
-     "published": "2026-11-05T00:16:21Z",
-     "source": "Pro Football Rumors",
-     "summary": "Joining the Bills, Steelers and Broncos as midseason AFC division leaders, the Jaguars have the biggest lead presently. The 5-2 team, however, just lost ...",
-     "teams": [
-      "PHI"
-     ],
-     "title": "Jaguars Willing To Be Aggressive In D-Line Trade Market; Eagles\u2019 Moro Ojomo On Radar"
     }
    ],
    "pick": "NYG",
-   "pick_prob": 0.622471,
+   "pick_prob": 0.621733,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
@@ -11582,7 +11591,7 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 3.353763,
+    "edge": 3.361306,
     "line": 38.5,
     "side": "OVER"
    },
@@ -11678,21 +11687,21 @@
      "name": "Geno Smith",
      "position": "QB",
      "status": "active",
-     "yards": 224.626022
+     "yards": 227.44664
     },
     "receiving": {
      "gsis_id": "00-0037740",
      "name": "Garrett Wilson",
      "position": "WR",
      "status": "active",
-     "yards": 61.716665
+     "yards": 61.858427
     },
     "rushing": {
      "gsis_id": "00-0039794",
      "name": "Braelon Allen",
      "position": "RB",
      "status": "active",
-     "yards": 73.206497
+     "yards": 73.351265
     }
    },
    "away_name": "New York Jets",
@@ -11729,9 +11738,9 @@
       "name": "Geno Smith",
       "position": "QB",
       "proj": {
-       "pass_yds": 224.626022,
+       "pass_yds": 227.44664,
        "rec_yds": null,
-       "rush_yds": 3.307598
+       "rush_yds": 3.304749
       },
       "rank": 1,
       "reason": null,
@@ -11746,7 +11755,7 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 61.716665,
+       "rec_yds": 61.858427,
        "rush_yds": 0.0
       },
       "rank": 2,
@@ -11762,7 +11771,7 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 38.064254,
+       "rec_yds": 38.187023,
        "rush_yds": 0.0
       },
       "rank": 3,
@@ -11800,11 +11809,11 @@
      },
      "name": "Braelon Allen",
      "position": "RB",
-     "prob": 0.39435,
+     "prob": 0.404074,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 13.359955,
-      "rush_yds": 73.206497
+      "rec_yds": 13.555498,
+      "rush_yds": 73.351265
      },
      "status": "active",
      "tds_season": 3
@@ -11826,11 +11835,11 @@
      },
      "name": "Breece Hall",
      "position": "RB",
-     "prob": 0.295802,
+     "prob": 0.303868,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 11.892484,
-      "rush_yds": 52.920677
+      "rec_yds": 12.074394,
+      "rush_yds": 53.035491
      },
      "status": "active",
      "tds_season": 1
@@ -11852,10 +11861,10 @@
      },
      "name": "Garrett Wilson",
      "position": "WR",
-     "prob": 0.266782,
+     "prob": 0.272871,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 61.716665,
+      "rec_yds": 61.858427,
       "rush_yds": 0.0
      },
      "status": "active",
@@ -11881,7 +11890,7 @@
      },
      "name": "Braelon Allen",
      "position": "RB",
-     "prob": 0.39435,
+     "prob": 0.404074,
      "rank": 1,
      "status": "active",
      "tds_season": 3
@@ -11904,7 +11913,7 @@
      },
      "name": "Breece Hall",
      "position": "RB",
-     "prob": 0.295802,
+     "prob": 0.303868,
      "rank": 2,
      "status": "active",
      "tds_season": 1
@@ -11927,7 +11936,7 @@
      },
      "name": "Garrett Wilson",
      "position": "WR",
-     "prob": 0.266782,
+     "prob": 0.272871,
      "rank": 3,
      "status": "active",
      "tds_season": 3
@@ -11950,7 +11959,7 @@
      },
      "name": "Omar Cooper",
      "position": "WR",
-     "prob": 0.214683,
+     "prob": 0.218289,
      "rank": 4,
      "status": "active",
      "tds_season": 2
@@ -11973,7 +11982,7 @@
      },
      "name": "Adonai Mitchell",
      "position": "WR",
-     "prob": 0.200165,
+     "prob": 0.204656,
      "rank": 5,
      "status": "active",
      "tds_season": 1
@@ -11996,7 +12005,7 @@
      },
      "name": "Mason Taylor",
      "position": "TE",
-     "prob": 0.158358,
+     "prob": 0.161631,
      "rank": 6,
      "status": "active",
      "tds_season": 2
@@ -12019,7 +12028,7 @@
      },
      "name": "Kenyon Sadiq",
      "position": "TE",
-     "prob": 0.139021,
+     "prob": 0.141565,
      "rank": 7,
      "status": "active",
      "tds_season": 2
@@ -12042,7 +12051,7 @@
      },
      "name": "Isaiah Williams",
      "position": "WR",
-     "prob": 0.094985,
+     "prob": 0.096588,
      "rank": 8,
      "status": "active",
      "tds_season": 2
@@ -12065,7 +12074,7 @@
      },
      "name": "Isaiah Davis",
      "position": "RB",
-     "prob": 0.08842,
+     "prob": 0.090114,
      "rank": 9,
      "status": "active",
      "tds_season": 0
@@ -12088,7 +12097,7 @@
      },
      "name": "Tim Patrick",
      "position": "WR",
-     "prob": 0.081061,
+     "prob": 0.082423,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -12111,7 +12120,7 @@
      },
      "name": "Geno Smith",
      "position": "QB",
-     "prob": 0.072014,
+     "prob": 0.073169,
      "rank": 11,
      "status": "active",
      "tds_season": 0
@@ -12340,21 +12349,21 @@
      "name": "Patrick Mahomes",
      "position": "QB",
      "status": "active",
-     "yards": 259.147637
+     "yards": 260.174521
     },
     "receiving": {
      "gsis_id": "00-0039067",
      "name": "Rashee Rice",
      "position": "WR",
      "status": "active",
-     "yards": 39.167218
+     "yards": 39.283818
     },
     "rushing": {
      "gsis_id": "00-0038134",
      "name": "Kenneth Walker III",
      "position": "RB",
      "status": "active",
-     "yards": 93.40298
+     "yards": 93.34589
     }
    },
    "home_name": "Kansas City Chiefs",
@@ -12391,9 +12400,9 @@
       "name": "Patrick Mahomes",
       "position": "QB",
       "proj": {
-       "pass_yds": 259.147637,
+       "pass_yds": 260.174521,
        "rec_yds": null,
-       "rush_yds": 9.812428
+       "rush_yds": 9.79393
       },
       "rank": 1,
       "reason": null,
@@ -12408,7 +12417,7 @@
       "position": "TE",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 37.102063,
+       "rec_yds": 37.21555,
        "rush_yds": null
       },
       "rank": 2,
@@ -12429,7 +12438,7 @@
      }
     ]
    },
-   "home_prob": 0.810175,
+   "home_prob": 0.800624,
    "home_qb": {
     "change": false,
     "id": "00-0033873",
@@ -12461,8 +12470,8 @@
      "prob": 0.682791,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 19.54264,
-      "rush_yds": 93.40298
+      "rec_yds": 19.625028,
+      "rush_yds": 93.34589
      },
      "status": "active",
      "tds_season": 8
@@ -12487,8 +12496,8 @@
      "prob": 0.30851,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 39.167218,
-      "rush_yds": 0.012401
+      "rec_yds": 39.283818,
+      "rush_yds": 0.011752
      },
      "status": "active",
      "tds_season": 2
@@ -12513,7 +12522,7 @@
      "prob": 0.294554,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 37.102063,
+      "rec_yds": 37.21555,
       "rush_yds": null
      },
      "status": "active",
@@ -12915,30 +12924,77 @@
    ],
    "kickoff": "2026-11-08T18:00:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
-    "away_ml": 390.0,
-    "best_away_book": "DraftKings",
-    "best_away_ml": 425.0,
-    "best_home_book": "BetOnline.ag",
+    "as_of": "2026-11-06T19:24:02Z",
+    "away_ml": 380.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": 420.0,
+    "best_home_book": "BetUS",
     "best_home_ml": -485.0,
     "books": 9,
-    "home_ml": -525.0,
-    "home_prob": 0.803279,
+    "home_ml": -500.0,
+    "home_prob": 0.801512,
     "opening_spread": 9.5,
     "opening_total": 43.5,
     "source": "the-odds-api",
-    "spread": 10.0,
-    "total": 47.5
+    "spread": 9.5,
+    "total": 48.0
    },
-   "market_prob": 0.803279,
+   "market_prob": 0.801512,
    "market_source": "the-odds-api",
-   "market_spread": 10.0,
-   "market_total": 47.5,
+   "market_spread": 9.5,
+   "market_total": 48.0,
    "model_prob": 0.805653,
    "model_spread": 10.654027,
-   "model_total": 44.705149,
+   "model_total": 44.712692,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mansoor-delane-will-not-play-for-the-chiefs-on-sunday",
+     "players": [
+      "Garrett Wilson",
+      "Mansoor Delane"
+     ],
+     "published": "2026-11-06T19:15:07Z",
+     "source": "ProFootballTalk",
+     "summary": "The Jets will be down a receiver for Sunday's game in Kansas City after ruling out Garrett Wilson and the Chiefs will be short a cornerback.",
+     "teams": [
+      "KC",
+      "NYJ"
+     ],
+     "title": "Mansoor Delane will not play for the Chiefs on Sunday"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/minkah-fitzpatrick-no-controversy-with-my-quote-everyone-on-the-jets-knows-what-i-meant",
+     "players": [
+      "Minkah Fitzpatrick"
+     ],
+     "published": "2026-11-06T16:36:41Z",
+     "source": "ProFootballTalk",
+     "summary": "After Sunday's loss to the Raiders, Jets safety Minkah Fitzpatrick said something that caused a bit of a controversy, but Fitzpatrick says there was no controversy with the only people who matter to him.",
+     "teams": [
+      "NYJ"
+     ],
+     "title": "Minkah Fitzpatrick: No controversy with my quote, everyone on the Jets knows what I meant"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jets-rule-out-garrett-wilson-for-week-9",
+     "players": [
+      "Garrett Wilson"
+     ],
+     "published": "2026-11-06T16:15:10Z",
+     "source": "ProFootballTalk",
+     "summary": "The Jets confirmed that they will be without wide receiver Garrett Wilson for Sunday's game in Kansas City.",
+     "teams": [
+      "NYJ"
+     ],
+     "title": "Jets rule out Garrett Wilson for Week 9"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T04:05:26Z",
@@ -13014,56 +13070,15 @@
       "NYJ"
      ],
      "title": "Garrett Wilson is in the concussion protocol"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.cbssports.com/nfl/news/2026-nfl-trade-deadline-no-trade-clause-joe-burrow-patrick-mahomes/",
-     "players": [
-      "Patrick Mahomes"
-     ],
-     "published": "2026-11-03T18:46:48Z",
-     "source": "CBS Sports",
-     "summary": "Joe Burrow, Patrick Mahomes and 10 other prominent players would have to approve any trade before the Nov. 10 deadline, but one quarterback may have reason to listen",
-     "teams": [],
-     "title": "2026 NFL trade deadline: 12 players with no-trade clauses, including Joe Burrow, Patrick Mahomes"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-03T17:57:30Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/andy-reid-chris-jones-is-giving-his-all-doing-everything-he-can-do",
-     "players": [
-      "Chris Jones"
-     ],
-     "published": "2026-11-03T17:51:17Z",
-     "source": "ProFootballTalk",
-     "summary": "The Chiefs have lost their last two games.",
-     "teams": [
-      "KC"
-     ],
-     "title": "Andy Reid: Chris Jones is giving his all, doing everything he can do"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-03T17:57:30Z",
-     "link": "https://sports.yahoo.com/articles/caleb-williams-arrived-top-tier-160434388.html",
-     "players": [
-      "Patrick Mahomes"
-     ],
-     "published": "2026-11-03T16:04:34Z",
-     "source": "Yahoo Sports",
-     "summary": "Make room for the Bears QB in the Josh Allen, Patrick Mahomes, Joe Burrow club.",
-     "teams": [],
-     "title": "Caleb Williams has arrived as a top-tier quarterback"
     }
    ],
    "pick": "KC",
-   "pick_prob": 0.810175,
+   "pick_prob": 0.800624,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
-    "edge": 0.654027,
-    "line": -10.0,
+    "edge": 1.154027,
+    "line": -9.5,
     "team": "KC"
    },
    "stadium": "GEHA Field at Arrowhead Stadium",
@@ -13097,8 +13112,8 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 2.794851,
-    "line": 47.5,
+    "edge": 3.287308,
+    "line": 48.0,
     "side": "UNDER"
    },
    "week": 9
@@ -13193,21 +13208,21 @@
      "name": "C.J. Stroud",
      "position": "QB",
      "status": "active",
-     "yards": 228.179632
+     "yards": 230.058457
     },
     "receiving": {
      "gsis_id": "00-0036554",
      "name": "Nico Collins",
      "position": "WR",
      "status": "active",
-     "yards": 49.266914
+     "yards": 49.302981
     },
     "rushing": {
      "gsis_id": "00-0040583",
      "name": "Woody Marks",
      "position": "RB",
      "status": "active",
-     "yards": 45.79892
+     "yards": 45.918628
     }
    },
    "away_name": "Houston Texans",
@@ -13244,9 +13259,9 @@
       "name": "C.J. Stroud",
       "position": "QB",
       "proj": {
-       "pass_yds": 228.179632,
+       "pass_yds": 230.058457,
        "rec_yds": null,
-       "rush_yds": 6.51826
+       "rush_yds": 6.529646
       },
       "rank": 1,
       "reason": null,
@@ -13261,8 +13276,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 49.266914,
-       "rush_yds": 0.304907
+       "rec_yds": 49.302981,
+       "rush_yds": 0.311556
       },
       "rank": 2,
       "reason": null,
@@ -13310,11 +13325,11 @@
      },
      "name": "Woody Marks",
      "position": "RB",
-     "prob": 0.337034,
+     "prob": 0.344376,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 10.506514,
-      "rush_yds": 45.79892
+      "rec_yds": 10.607233,
+      "rush_yds": 45.918628
      },
      "status": "active",
      "tds_season": 2
@@ -13336,11 +13351,11 @@
      },
      "name": "Nico Collins",
      "position": "WR",
-     "prob": 0.264377,
+     "prob": 0.269358,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 49.266914,
-      "rush_yds": 0.304907
+      "rec_yds": 49.302981,
+      "rush_yds": 0.311556
      },
      "status": "active",
      "tds_season": 3
@@ -13362,11 +13377,11 @@
      },
      "name": "David Montgomery",
      "position": "RB",
-     "prob": 0.216601,
+     "prob": 0.221097,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 4.980148,
-      "rush_yds": 26.658765
+      "rec_yds": 5.043875,
+      "rush_yds": 26.729381
      },
      "status": "active",
      "tds_season": 3
@@ -13391,7 +13406,7 @@
      },
      "name": "Woody Marks",
      "position": "RB",
-     "prob": 0.337034,
+     "prob": 0.344376,
      "rank": 1,
      "status": "active",
      "tds_season": 2
@@ -13414,7 +13429,7 @@
      },
      "name": "Nico Collins",
      "position": "WR",
-     "prob": 0.264377,
+     "prob": 0.269358,
      "rank": 2,
      "status": "active",
      "tds_season": 3
@@ -13437,7 +13452,7 @@
      },
      "name": "David Montgomery",
      "position": "RB",
-     "prob": 0.216601,
+     "prob": 0.221097,
      "rank": 3,
      "status": "active",
      "tds_season": 3
@@ -13460,7 +13475,7 @@
      },
      "name": "Xavier Hutchinson",
      "position": "WR",
-     "prob": 0.182797,
+     "prob": 0.186417,
      "rank": 4,
      "status": "active",
      "tds_season": 1
@@ -13483,7 +13498,7 @@
      },
      "name": "Tank Dell",
      "position": "WR",
-     "prob": 0.172074,
+     "prob": 0.175039,
      "rank": 5,
      "status": "active",
      "tds_season": 0
@@ -13506,7 +13521,7 @@
      },
      "name": "Dalton Schultz",
      "position": "TE",
-     "prob": 0.165345,
+     "prob": 0.16855,
      "rank": 6,
      "status": "active",
      "tds_season": 0
@@ -13529,7 +13544,7 @@
      },
      "name": "Marvin Harrison Jr.",
      "position": "WR",
-     "prob": 0.153888,
+     "prob": 0.156522,
      "rank": 7,
      "status": "active",
      "tds_season": 2
@@ -13552,7 +13567,7 @@
      },
      "name": "Kayshon Boutte",
      "position": "WR",
-     "prob": 0.146377,
+     "prob": 0.148825,
      "rank": 8,
      "status": "active",
      "tds_season": 0
@@ -13575,7 +13590,7 @@
      },
      "name": "Foster Moreau",
      "position": "TE",
-     "prob": 0.115725,
+     "prob": 0.117385,
      "rank": 9,
      "status": "active",
      "tds_season": 3
@@ -13598,7 +13613,7 @@
      },
      "name": "C.J. Stroud",
      "position": "QB",
-     "prob": 0.110516,
+     "prob": 0.11212,
      "rank": 10,
      "status": "active",
      "tds_season": 1
@@ -13621,7 +13636,7 @@
      },
      "name": "Emari Demercado",
      "position": "RB",
-     "prob": 0.077381,
+     "prob": 0.078772,
      "rank": 11,
      "status": "active",
      "tds_season": 0
@@ -13644,7 +13659,7 @@
      },
      "name": "Davis Mills",
      "position": "QB",
-     "prob": 0.076778,
+     "prob": 0.077846,
      "rank": 12,
      "status": "active",
      "tds_season": 0
@@ -13667,7 +13682,7 @@
      },
      "name": "Cade Stover",
      "position": "TE",
-     "prob": 0.063811,
+     "prob": 0.064702,
      "rank": 13,
      "status": "active",
      "tds_season": 0
@@ -13827,21 +13842,21 @@
      "name": "Justin Herbert",
      "position": "QB",
      "status": "active",
-     "yards": 198.497932
+     "yards": 197.075306
     },
     "receiving": {
      "gsis_id": "00-0038544",
      "name": "Quentin Johnston",
      "position": "WR",
      "status": "active",
-     "yards": 32.069886
+     "yards": 32.038407
     },
     "rushing": {
      "gsis_id": "00-0040666",
      "name": "Omarion Hampton",
      "position": "RB",
      "status": "active",
-     "yards": 31.629631
+     "yards": 31.524536
     }
    },
    "home_name": "Los Angeles Chargers",
@@ -13879,8 +13894,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 29.39521,
-       "rush_yds": 0.000799
+       "rec_yds": 29.383513,
+       "rush_yds": 0.000563
       },
       "rank": 1,
       "reason": null,
@@ -13895,8 +13910,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 26.562702,
-       "rush_yds": 0.051781
+       "rec_yds": 26.548759,
+       "rush_yds": 0.049452
       },
       "rank": 2,
       "reason": null,
@@ -13911,8 +13926,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 18.557946,
-       "rush_yds": 0.044899
+       "rec_yds": 18.542803,
+       "rush_yds": 0.043381
       },
       "rank": 3,
       "reason": null,
@@ -13921,7 +13936,7 @@
      }
     ]
    },
-   "home_prob": 0.326086,
+   "home_prob": 0.298594,
    "home_qb": {
     "change": false,
     "id": "00-0036355",
@@ -13950,11 +13965,11 @@
      },
      "name": "Omarion Hampton",
      "position": "RB",
-     "prob": 0.246045,
+     "prob": 0.240115,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 5.425788,
-      "rush_yds": 31.629631
+      "rec_yds": 5.357772,
+      "rush_yds": 31.524536
      },
      "status": "active",
      "tds_season": 3
@@ -13976,40 +13991,40 @@
      },
      "name": "Quentin Johnston",
      "position": "WR",
-     "prob": 0.182928,
+     "prob": 0.179351,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 32.069886,
-      "rush_yds": 0.01644
+      "rec_yds": 32.038407,
+      "rush_yds": 0.01508
      },
      "status": "active",
      "tds_season": 0
     },
     {
-     "games_season": 7,
-     "gsis_id": "00-0039391",
+     "games_season": 6,
+     "gsis_id": "00-0039915",
      "meters": {
       "rest": {
-       "n": 0,
-       "no_td": 0,
-       "rate": null
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
       },
       "top3": {
-       "n": 1,
-       "rate": 0.0,
+       "n": 0,
+       "rate": null,
        "scored": 0
       }
      },
-     "name": "Kimani Vidal",
-     "position": "RB",
-     "prob": 0.167709,
+     "name": "Ladd McConkey",
+     "position": "WR",
+     "prob": 0.163978,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 5.591379,
-      "rush_yds": 18.063357
+      "rec_yds": 29.383513,
+      "rush_yds": 0.000563
      },
      "status": "active",
-     "tds_season": 2
+     "tds_season": 1
     }
    ],
    "home_td_all": [
@@ -14031,7 +14046,7 @@
      },
      "name": "Omarion Hampton",
      "position": "RB",
-     "prob": 0.246045,
+     "prob": 0.240115,
      "rank": 1,
      "status": "active",
      "tds_season": 3
@@ -14054,33 +14069,10 @@
      },
      "name": "Quentin Johnston",
      "position": "WR",
-     "prob": 0.182928,
+     "prob": 0.179351,
      "rank": 2,
      "status": "active",
      "tds_season": 0
-    },
-    {
-     "games_season": 7,
-     "group": "3+",
-     "gsis_id": "00-0039391",
-     "meters": {
-      "rest": {
-       "n": 0,
-       "no_td": 0,
-       "rate": null
-      },
-      "top3": {
-       "n": 1,
-       "rate": 0.0,
-       "scored": 0
-      }
-     },
-     "name": "Kimani Vidal",
-     "position": "RB",
-     "prob": 0.167709,
-     "rank": 3,
-     "status": "active",
-     "tds_season": 2
     },
     {
      "games_season": 6,
@@ -14100,10 +14092,33 @@
      },
      "name": "Ladd McConkey",
      "position": "WR",
-     "prob": 0.16725,
-     "rank": 4,
+     "prob": 0.163978,
+     "rank": 3,
      "status": "active",
      "tds_season": 1
+    },
+    {
+     "games_season": 7,
+     "group": "3+",
+     "gsis_id": "00-0039391",
+     "meters": {
+      "rest": {
+       "n": 0,
+       "no_td": 0,
+       "rate": null
+      },
+      "top3": {
+       "n": 1,
+       "rate": 0.0,
+       "scored": 0
+      }
+     },
+     "name": "Kimani Vidal",
+     "position": "RB",
+     "prob": 0.163922,
+     "rank": 4,
+     "status": "active",
+     "tds_season": 2
     },
     {
      "games_season": 7,
@@ -14123,7 +14138,7 @@
      },
      "name": "Keaton Mitchell",
      "position": "RB",
-     "prob": 0.142533,
+     "prob": 0.139278,
      "rank": 5,
      "status": "active",
      "tds_season": 1
@@ -14146,7 +14161,7 @@
      },
      "name": "Tre Harris",
      "position": "WR",
-     "prob": 0.141994,
+     "prob": 0.138987,
      "rank": 6,
      "status": "active",
      "tds_season": 0
@@ -14169,7 +14184,7 @@
      },
      "name": "Oronde Gadsden II",
      "position": "TE",
-     "prob": 0.139072,
+     "prob": 0.13623,
      "rank": 7,
      "status": "active",
      "tds_season": 1
@@ -14192,7 +14207,7 @@
      },
      "name": "Charlie Kolar",
      "position": "TE",
-     "prob": 0.130319,
+     "prob": 0.127721,
      "rank": 8,
      "status": "active",
      "tds_season": 0
@@ -14215,7 +14230,7 @@
      },
      "name": "Theo Wease",
      "position": "WR",
-     "prob": 0.12942,
+     "prob": 0.127066,
      "rank": 9,
      "status": "active",
      "tds_season": 0
@@ -14238,7 +14253,7 @@
      },
      "name": "Justin Herbert",
      "position": "QB",
-     "prob": 0.121943,
+     "prob": 0.11963,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -14261,7 +14276,7 @@
      },
      "name": "KeAndre Lambert-Smith",
      "position": "WR",
-     "prob": 0.099996,
+     "prob": 0.098108,
      "rank": 11,
      "status": "active",
      "tds_season": 0
@@ -14284,7 +14299,7 @@
      },
      "name": "Brenen Thompson",
      "position": "WR",
-     "prob": 0.078196,
+     "prob": 0.07679,
      "rank": 12,
      "status": "active",
      "tds_season": 0
@@ -14384,30 +14399,46 @@
    ],
    "kickoff": "2026-11-08T21:05:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
-    "away_ml": -232.0,
+    "as_of": "2026-11-06T19:24:02Z",
+    "away_ml": -250.0,
     "best_away_book": "DraftKings",
-    "best_away_ml": -218.0,
-    "best_home_book": "BetUS",
-    "best_home_ml": 200.0,
+    "best_away_ml": -238.0,
+    "best_home_book": "Bovada",
+    "best_home_ml": 215.0,
     "books": 9,
-    "home_ml": 190.0,
-    "home_prob": 0.330993,
+    "home_ml": 204.0,
+    "home_prob": 0.313199,
     "opening_spread": -3.5,
     "opening_total": 42.0,
     "source": "the-odds-api",
-    "spread": -4.5,
+    "spread": -5.5,
     "total": 40.5
    },
-   "market_prob": 0.330993,
+   "market_prob": 0.313199,
    "market_source": "the-odds-api",
-   "market_spread": -4.5,
+   "market_spread": -5.5,
    "market_total": 40.5,
    "model_prob": 0.333247,
    "model_spread": -5.271289,
-   "model_total": 43.429758,
+   "model_total": 43.437301,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.profootballrumors.com/2026/11/chargers-designate-te-david-njoku-lb-denzel-perryman-for-return",
+     "players": [
+      "David Njoku",
+      "Denzel Perryman"
+     ],
+     "published": "2026-11-05T23:09:14Z",
+     "source": "Pro Football Rumors",
+     "summary": "Chargers tight end David Njoku has played just two games this year, while linebacker Denzel Perryman has yet to take the field. Injuries have ...",
+     "teams": [
+      "LAC"
+     ],
+     "title": "Chargers Designate TE David Njoku, LB Denzel Perryman For Return"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
@@ -14511,32 +14542,16 @@
       "LAC"
      ],
      "title": "Khalil Mack trade proposals: Bears reunion headlines 3 deals Chargers could make before NFL deadline"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-02T23:11:05Z",
-     "link": "https://sports.yahoo.com/articles/chargers-week-8-pff-grades-211252268.html",
-     "players": [
-      "Isas Waxter",
-      "Joe Alt"
-     ],
-     "published": "2026-11-02T21:12:52Z",
-     "source": "Yahoo Sports",
-     "summary": "Joe Alt was nearly elite in pass protection against the Rams while rookie Isas Waxter was a standout on defense.",
-     "teams": [
-      "LAC"
-     ],
-     "title": "Chargers Week 8 PFF Grades: Herbert struggles despite great protection up front vs. Rams"
     }
    ],
    "pick": "HOU",
-   "pick_prob": 0.673914,
+   "pick_prob": 0.701406,
    "roof": "dome",
    "season": 2026,
    "spread_pick": {
-    "edge": 0.771289,
-    "line": -4.5,
-    "team": "HOU"
+    "edge": 0.228711,
+    "line": 5.5,
+    "team": "LAC"
    },
    "stadium": "SoFi Stadium",
    "status": "upcoming",
@@ -14569,7 +14584,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 2.929758,
+    "edge": 2.937301,
     "line": 40.5,
     "side": "OVER"
    },
@@ -15411,7 +15426,7 @@
      }
     ]
    },
-   "home_prob": 0.809129,
+   "home_prob": 0.80931,
    "home_qb": {
     "change": false,
     "id": "00-0037834",
@@ -15874,30 +15889,44 @@
    ],
    "kickoff": "2026-11-08T21:05:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
+    "as_of": "2026-11-06T19:24:02Z",
     "away_ml": 360.0,
-    "best_away_book": "DraftKings",
-    "best_away_ml": 390.0,
+    "best_away_book": "FanDuel",
+    "best_away_ml": 385.0,
     "best_home_book": "BetUS",
     "best_home_ml": -440.0,
     "books": 9,
-    "home_ml": -475.0,
-    "home_prob": 0.791667,
+    "home_ml": -485.0,
+    "home_prob": 0.792546,
     "opening_spread": 9.5,
     "opening_total": 48.5,
     "source": "the-odds-api",
     "spread": 10.0,
     "total": 52.0
    },
-   "market_prob": 0.791667,
+   "market_prob": 0.792546,
    "market_source": "the-odds-api",
    "market_spread": 10.0,
    "market_total": 52.0,
    "model_prob": 0.830341,
    "model_spread": 11.923624,
-   "model_total": 50.664018,
+   "model_total": 50.671562,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/articles/tale-2-best-tight-ends-191445610.html",
+     "players": [
+      "Brock Bowers",
+      "George Kittle"
+     ],
+     "published": "2026-11-06T19:14:45Z",
+     "source": "Yahoo Sports",
+     "summary": "Two very different tight ends, but both are very impactful",
+     "teams": [],
+     "title": "A tale of the 2 best tight ends in the NFL: George Kittle vs. Brock Bowers"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
@@ -16001,25 +16030,10 @@
       "LV"
      ],
      "title": "Maxx Crosby: I love being a Raider, and this is where I want to be"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://sports.yahoo.com/articles/kyle-shanahan-refutes-jay-glazer-234339443.html",
-     "players": [
-      "DeForest Buckner"
-     ],
-     "published": "2026-11-04T23:43:39Z",
-     "source": "Yahoo Sports",
-     "summary": "DeForest Buckner isn't the only former player the 49ers have tried to bring back in the fold ahead of the NFL trade deadline.",
-     "teams": [
-      "SF"
-     ],
-     "title": "Kyle Shanahan refutes Jay Glazer\u2019s Jauan Jennings report, confirms 49ers FaceTime"
     }
    ],
    "pick": "SF",
-   "pick_prob": 0.809129,
+   "pick_prob": 0.80931,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
@@ -16058,7 +16072,7 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 1.335982,
+    "edge": 1.328438,
     "line": 52.0,
     "side": "UNDER"
    },
@@ -16836,7 +16850,7 @@
      }
     ]
    },
-   "home_prob": 0.773053,
+   "home_prob": 0.77232,
    "home_qb": {
     "change": true,
     "id": "00-0035704",
@@ -17322,30 +17336,76 @@
    ],
    "kickoff": "2026-11-08T21:25:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
-    "away_ml": 320.0,
+    "as_of": "2026-11-06T19:24:02Z",
+    "away_ml": 315.0,
     "best_away_book": "DraftKings",
-    "best_away_ml": 350.0,
+    "best_away_ml": 360.0,
     "best_home_book": "BetUS",
     "best_home_ml": -390.0,
     "books": 9,
-    "home_ml": -425.0,
-    "home_prob": 0.772727,
+    "home_ml": -414.0,
+    "home_prob": 0.769387,
     "opening_spread": 11.0,
     "opening_total": 44.5,
     "source": "the-odds-api",
     "spread": 8.5,
     "total": 39.5
    },
-   "market_prob": 0.772727,
+   "market_prob": 0.769387,
    "market_source": "the-odds-api",
    "market_spread": 8.5,
    "market_total": 39.5,
    "model_prob": 0.772018,
    "model_spread": 9.659837,
-   "model_total": 43.964082,
+   "model_total": 43.971626,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/articles/seahawks-vs-cardinals-week-9-181447643.html",
+     "players": [
+      "Drew Lock"
+     ],
+     "published": "2026-11-06T18:14:47Z",
+     "source": "Yahoo Sports",
+     "summary": "The Seahawks seek a bounce-back win as Drew Lock prepares to face Arizona again",
+     "teams": [
+      "ARI",
+      "SEA"
+     ],
+     "title": "Seahawks vs. Cardinals Week 9 game preview: Can Drew Lock repeat his Week 2 success?"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.cbssports.com/nfl/news/jacoby-brissett-trade-grades-cardinals-ravens-trade-deadline/",
+     "players": [
+      "Jacoby Brissett"
+     ],
+     "published": "2026-11-06T16:30:50Z",
+     "source": "CBS Sports",
+     "summary": "The Ravens needed a quarterback, and the Cardinals got valuable draft capital",
+     "teams": [
+      "ARI"
+     ],
+     "title": "Jacoby Brissett trade grades: Cardinals earn high mark, Ravens stay afloat in mutually beneficial trade"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/ravens-cardinals-announce-jacoby-brissett-trade",
+     "players": [
+      "Jacoby Brissett"
+     ],
+     "published": "2026-11-06T16:07:08Z",
+     "source": "ProFootballTalk",
+     "summary": "The Jacoby Brissett trade is done.",
+     "teams": [
+      "ARI"
+     ],
+     "title": "Ravens, Cardinals announce Jacoby Brissett trade"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
@@ -17421,51 +17481,10 @@
       "ARI"
      ],
      "title": "Minor NFL Transactions: 11/4/26"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://sports.yahoo.com/articles/nfl-week-9-injury-report-201510607.html",
-     "players": [
-      "Jeremiyah Love"
-     ],
-     "published": "2026-11-05T01:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Track the injuries to know around the NFL, all in one place.",
-     "teams": [],
-     "title": "NFL Week 9 Injury Report: Jeremiyah Love hits IR, Lamar Jackson likely done for season, and more"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://sports.yahoo.com/articles/seahawks-sign-former-ufl-mvp-235745832.html",
-     "players": [
-      "Sam Darnold"
-     ],
-     "published": "2026-11-04T23:57:45Z",
-     "source": "Yahoo Sports",
-     "summary": "The Seahawks are signing a former UFL MVP and champion as insurance at the quarterback position following Sam Darnold\u2019s injury.",
-     "teams": [
-      "SEA"
-     ],
-     "title": "Seahawks sign former UFL MVP quarterback following Sam Darnold injury"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.profootballrumors.com/2026/11/colts-daniel-jones-on-trade-radar",
-     "players": [
-      "Quenton Nelson"
-     ],
-     "published": "2026-11-04T23:33:51Z",
-     "source": "Pro Football Rumors",
-     "summary": "Already dealing away line cornerstones in Quenton Nelson and DeForest Buckner, the Colts are expected to make more moves before the November 10 deadline. ...",
-     "teams": [],
-     "title": "Colts QB Daniel Jones On Trade Radar?"
     }
    ],
    "pick": "SEA",
-   "pick_prob": 0.773053,
+   "pick_prob": 0.77232,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
@@ -17504,7 +17523,7 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 4.464082,
+    "edge": 4.471626,
     "line": 39.5,
     "side": "OVER"
    },
@@ -17590,21 +17609,21 @@
      "name": "Jordan Love",
      "position": "QB",
      "status": "active",
-     "yards": 242.908089
+     "yards": 239.084546
     },
     "receiving": {
      "gsis_id": "00-0040667",
      "name": "Matthew Golden",
      "position": "WR",
      "status": "active",
-     "yards": 58.893997
+     "yards": 58.594206
     },
     "rushing": {
      "gsis_id": "00-0035700",
      "name": "Josh Jacobs",
      "position": "RB",
      "status": "active",
-     "yards": 50.497326
+     "yards": 50.42504
     }
    },
    "away_name": "Green Bay Packers",
@@ -17641,9 +17660,9 @@
       "name": "Jordan Love",
       "position": "QB",
       "proj": {
-       "pass_yds": 242.908089,
+       "pass_yds": 239.084546,
        "rec_yds": null,
-       "rush_yds": 3.047475
+       "rush_yds": 3.062688
       },
       "rank": 1,
       "reason": null,
@@ -17658,8 +17677,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 54.310286,
-       "rush_yds": 0.002815
+       "rec_yds": 54.027791,
+       "rush_yds": 0.002851
       },
       "rank": 2,
       "reason": null,
@@ -17674,7 +17693,7 @@
       "position": "TE",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 38.034214,
+       "rec_yds": 37.773158,
        "rush_yds": null
       },
       "rank": 3,
@@ -17712,11 +17731,11 @@
      },
      "name": "Josh Jacobs",
      "position": "RB",
-     "prob": 0.381661,
+     "prob": 0.372372,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 12.439084,
-      "rush_yds": 50.497326
+      "rec_yds": 12.194291,
+      "rush_yds": 50.42504
      },
      "status": "active",
      "tds_season": 3
@@ -17738,11 +17757,11 @@
      },
      "name": "Matthew Golden",
      "position": "WR",
-     "prob": 0.341119,
+     "prob": 0.334419,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 58.893997,
-      "rush_yds": 0.058906
+      "rec_yds": 58.594206,
+      "rush_yds": 0.058495
      },
      "status": "active",
      "tds_season": 4
@@ -17764,11 +17783,11 @@
      },
      "name": "Christian Watson",
      "position": "WR",
-     "prob": 0.335558,
+     "prob": 0.329648,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 54.310286,
-      "rush_yds": 0.002815
+      "rec_yds": 54.027791,
+      "rush_yds": 0.002851
      },
      "status": "active",
      "tds_season": 6
@@ -17793,7 +17812,7 @@
      },
      "name": "Josh Jacobs",
      "position": "RB",
-     "prob": 0.381661,
+     "prob": 0.372372,
      "rank": 1,
      "status": "active",
      "tds_season": 3
@@ -17816,7 +17835,7 @@
      },
      "name": "Matthew Golden",
      "position": "WR",
-     "prob": 0.341119,
+     "prob": 0.334419,
      "rank": 2,
      "status": "active",
      "tds_season": 4
@@ -17839,7 +17858,7 @@
      },
      "name": "Christian Watson",
      "position": "WR",
-     "prob": 0.335558,
+     "prob": 0.329648,
      "rank": 3,
      "status": "active",
      "tds_season": 6
@@ -17862,7 +17881,7 @@
      },
      "name": "Tucker Kraft",
      "position": "TE",
-     "prob": 0.279559,
+     "prob": 0.274783,
      "rank": 4,
      "status": "active",
      "tds_season": 3
@@ -17885,7 +17904,7 @@
      },
      "name": "MarShawn Lloyd",
      "position": "RB",
-     "prob": 0.196804,
+     "prob": 0.192824,
      "rank": 5,
      "status": "active",
      "tds_season": 3
@@ -17908,7 +17927,7 @@
      },
      "name": "Savion Williams",
      "position": "WR",
-     "prob": 0.117455,
+     "prob": 0.115483,
      "rank": 6,
      "status": "active",
      "tds_season": 0
@@ -17931,7 +17950,7 @@
      },
      "name": "Kaleb Johnson",
      "position": "RB",
-     "prob": 0.097901,
+     "prob": 0.09606,
      "rank": 7,
      "status": "active",
      "tds_season": 0
@@ -17954,7 +17973,7 @@
      },
      "name": "Pierre Strong",
      "position": "RB",
-     "prob": 0.097499,
+     "prob": 0.095687,
      "rank": 8,
      "status": "active",
      "tds_season": 0
@@ -17977,7 +17996,7 @@
      },
      "name": "Jordan Love",
      "position": "QB",
-     "prob": 0.080653,
+     "prob": 0.079562,
      "rank": 9,
      "status": "active",
      "tds_season": 1
@@ -18000,7 +18019,7 @@
      },
      "name": "Tyrod Taylor",
      "position": "QB",
-     "prob": 0.064937,
+     "prob": 0.063872,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -18023,7 +18042,7 @@
      },
      "name": "Bo Melton",
      "position": "WR",
-     "prob": 0.057154,
+     "prob": 0.056327,
      "rank": 11,
      "status": "active",
      "tds_season": 0
@@ -18046,7 +18065,7 @@
      },
      "name": "Jonnu Smith",
      "position": "TE",
-     "prob": 0.056804,
+     "prob": 0.056027,
      "rank": 12,
      "status": "active",
      "tds_season": 0
@@ -18229,21 +18248,21 @@
      "name": "Drake Maye",
      "position": "QB",
      "status": "active",
-     "yards": 229.846685
+     "yards": 226.031679
     },
     "receiving": {
      "gsis_id": "00-0035676",
      "name": "A.J. Brown",
      "position": "WR",
      "status": "active",
-     "yards": 52.180839
+     "yards": 51.905507
     },
     "rushing": {
      "gsis_id": "00-0036875",
      "name": "Rhamondre Stevenson",
      "position": "RB",
      "status": "active",
-     "yards": 38.843651
+     "yards": 38.806991
     }
    },
    "home_name": "New England Patriots",
@@ -18280,9 +18299,9 @@
       "name": "Drake Maye",
       "position": "QB",
       "proj": {
-       "pass_yds": 229.846685,
+       "pass_yds": 226.031679,
        "rec_yds": null,
-       "rush_yds": 18.97525
+       "rush_yds": 18.997434
       },
       "rank": 1,
       "reason": null,
@@ -18297,8 +18316,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 31.637807,
-       "rush_yds": 0.010577
+       "rec_yds": 31.412081,
+       "rush_yds": 0.010891
       },
       "rank": 2,
       "reason": null,
@@ -18313,7 +18332,7 @@
       "position": "TE",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 22.442231,
+       "rec_yds": 22.254771,
        "rush_yds": null
       },
       "rank": 3,
@@ -18323,7 +18342,7 @@
      }
     ]
    },
-   "home_prob": 0.599331,
+   "home_prob": 0.598246,
    "home_qb": {
     "change": false,
     "id": "00-0039851",
@@ -18352,11 +18371,11 @@
      },
      "name": "Rhamondre Stevenson",
      "position": "RB",
-     "prob": 0.398112,
+     "prob": 0.390627,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 19.749859,
-      "rush_yds": 38.843651
+      "rec_yds": 19.471482,
+      "rush_yds": 38.806991
      },
      "status": "active",
      "tds_season": 3
@@ -18378,10 +18397,10 @@
      },
      "name": "A.J. Brown",
      "position": "WR",
-     "prob": 0.291579,
+     "prob": 0.286164,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 52.180839,
+      "rec_yds": 51.905507,
       "rush_yds": 0.0
      },
      "status": "active",
@@ -18404,11 +18423,11 @@
      },
      "name": "DeMario Douglas",
      "position": "WR",
-     "prob": 0.232983,
+     "prob": 0.229079,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 31.637807,
-      "rush_yds": 0.010577
+      "rec_yds": 31.412081,
+      "rush_yds": 0.010891
      },
      "status": "active",
      "tds_season": 4
@@ -18433,7 +18452,7 @@
      },
      "name": "Rhamondre Stevenson",
      "position": "RB",
-     "prob": 0.398112,
+     "prob": 0.390627,
      "rank": 1,
      "status": "active",
      "tds_season": 3
@@ -18456,7 +18475,7 @@
      },
      "name": "A.J. Brown",
      "position": "WR",
-     "prob": 0.291579,
+     "prob": 0.286164,
      "rank": 2,
      "status": "active",
      "tds_season": 0
@@ -18479,7 +18498,7 @@
      },
      "name": "DeMario Douglas",
      "position": "WR",
-     "prob": 0.232983,
+     "prob": 0.229079,
      "rank": 3,
      "status": "active",
      "tds_season": 4
@@ -18502,7 +18521,7 @@
      },
      "name": "Eli Raridon",
      "position": "TE",
-     "prob": 0.231536,
+     "prob": 0.227891,
      "rank": 4,
      "status": "active",
      "tds_season": 2
@@ -18525,7 +18544,7 @@
      },
      "name": "Drake Maye",
      "position": "QB",
-     "prob": 0.222394,
+     "prob": 0.219153,
      "rank": 5,
      "status": "active",
      "tds_season": 3
@@ -18548,7 +18567,7 @@
      },
      "name": "Hunter Henry",
      "position": "TE",
-     "prob": 0.219281,
+     "prob": 0.215502,
      "rank": 6,
      "status": "active",
      "tds_season": 2
@@ -18571,7 +18590,7 @@
      },
      "name": "TreVeyon Henderson",
      "position": "RB",
-     "prob": 0.208347,
+     "prob": 0.204633,
      "rank": 7,
      "status": "active",
      "tds_season": 1
@@ -18594,7 +18613,7 @@
      },
      "name": "Efton Chism III",
      "position": "WR",
-     "prob": 0.189966,
+     "prob": 0.186914,
      "rank": 8,
      "status": "active",
      "tds_season": 1
@@ -18617,7 +18636,7 @@
      },
      "name": "Kyle Williams",
      "position": "WR",
-     "prob": 0.13857,
+     "prob": 0.136692,
      "rank": 9,
      "status": "active",
      "tds_season": 2
@@ -18640,7 +18659,7 @@
      },
      "name": "Corey Kiner",
      "position": "RB",
-     "prob": 0.127643,
+     "prob": 0.125529,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -18663,7 +18682,7 @@
      },
      "name": "Lan Larison",
      "position": "RB",
-     "prob": 0.088969,
+     "prob": 0.087751,
      "rank": 11,
      "status": "active",
      "tds_season": 0
@@ -18686,7 +18705,7 @@
      },
      "name": "Tommy DeVito",
      "position": "QB",
-     "prob": 0.064187,
+     "prob": 0.063303,
      "rank": 12,
      "status": "active",
      "tds_season": 0
@@ -18763,151 +18782,154 @@
    ],
    "kickoff": "2026-11-08T21:25:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
-    "away_ml": 143.0,
-    "best_away_book": "BetUS",
-    "best_away_ml": 150.0,
+    "as_of": "2026-11-06T19:24:02Z",
+    "away_ml": 140.0,
+    "best_away_book": "BetOnline.ag",
+    "best_away_ml": 147.0,
     "best_home_book": "BetMGM",
     "best_home_ml": -165.0,
     "books": 9,
-    "home_ml": -170.0,
-    "home_prob": 0.606701,
+    "home_ml": -167.0,
+    "home_prob": 0.601804,
     "opening_spread": 2.5,
     "opening_total": 46.5,
     "source": "the-odds-api",
     "spread": 3.0,
-    "total": 45.5
+    "total": 44.5
    },
-   "market_prob": 0.606701,
+   "market_prob": 0.601804,
    "market_source": "the-odds-api",
    "market_spread": 3.0,
-   "market_total": 45.5,
+   "market_total": 44.5,
    "model_prob": 0.630022,
    "model_spread": 3.731065,
-   "model_total": 46.984968,
+   "model_total": 46.992511,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://sports.yahoo.com/articles/jonathan-gannon-built-top-5-190221339.html",
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/articles/unexplained-neurological-symptoms-behind-henderson-183938684.html",
      "players": [
-      "Micah Parsons"
+      "TreVeyon Henderson"
      ],
-     "published": "2026-11-05T19:02:21Z",
+     "published": "2026-11-06T18:39:38Z",
      "source": "Yahoo Sports",
-     "summary": "Green Bay\u2019s defense fell apart after Micah Parsons tore his ACL last December. But under new coordinator Jonathan Gannon, the Packers rank fourth in Defensive DVOA, and Parsons is on the way back. How did this happen?",
-     "teams": [
-      "GB"
-     ],
-     "title": "How Jonathan Gannon built a Top-5 Packers defense without Micah Parsons"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.profootballrumors.com/2026/11/packers-micah-parsons-not-expecting-full-workload-upon-return",
-     "players": [
-      "Micah Parsons"
-     ],
-     "published": "2026-11-05T18:05:10Z",
-     "source": "Pro Football Rumors",
-     "summary": "Micah Parsons has returned to practice, marking the latest checkpoint on the path to his 2026 debut. It remains to be seen when that will ...",
-     "teams": [
-      "GB"
-     ],
-     "title": "Packers\u2019 Micah Parsons Not Expecting Full Workload Upon Return"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/brandon-cisse-named-defensive-rookie-of-the-month-for-october",
-     "players": [
-      "Brandon Cisse"
-     ],
-     "published": "2026-11-05T17:39:15Z",
-     "source": "ProFootballTalk",
-     "summary": "Packers cornerback Brandon Cisse has been named defensive rookie of the month, the NFL announced on Thursday.",
-     "teams": [
-      "GB"
-     ],
-     "title": "Brandon Cisse named defensive rookie of the month for October"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/evan-williams-named-nfc-defensive-player-of-the-month",
-     "players": [
-      "Evan Williams"
-     ],
-     "published": "2026-11-05T17:16:29Z",
-     "source": "ProFootballTalk",
-     "summary": "Packers safety Evan Williams has been named NFC defensive player of the month for October.",
-     "teams": [
-      "GB"
-     ],
-     "title": "Evan Williams named NFC defensive player of the month"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/drake-maye-is-the-afc-offensive-player-of-the-month",
-     "players": [
-      "Drake Maye"
-     ],
-     "published": "2026-11-05T17:09:07Z",
-     "source": "ProFootballTalk",
-     "summary": "Patriots quarterback Drake Maye heard a lot of criticism in September, but it faded away in October.",
+     "summary": "TreVeyon Henderson says \"a series of unexplained neurological symptoms\" are the reason for his absence for the New England Patriots.",
      "teams": [
       "NE"
      ],
-     "title": "Drake Maye is the AFC offensive player of the month"
+     "title": "'Unexplained neurological symptoms' behind Henderson absence"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.cbssports.com/nfl/news/packers-josh-jacobs-addresses-latest-allegations/",
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/articles/j-brown-playing-week-latest-182351622.html",
      "players": [
-      "Josh Jacobs"
+      "A.J. Brown"
      ],
-     "published": "2026-11-05T16:21:59Z",
-     "source": "CBS Sports",
-     "summary": "Jacobs and his attorneys dismissed the allegations as false",
-     "teams": [],
-     "title": "Josh Jacobs addresses latest allegations after being accused of abuse by three more women"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.cbssports.com/nfl/news/packers-micah-parsons-update-details-timeline-for-return/",
-     "players": [
-      "Micah Parsons"
-     ],
-     "published": "2026-11-05T14:57:12Z",
-     "source": "CBS Sports",
-     "summary": "Parsons has been out since tearing his ACL late last season",
+     "published": "2026-11-06T18:23:51Z",
+     "source": "Yahoo Sports",
+     "summary": "A.J. Brown is dealing with a knee injury that kept him out in Week 8. Will he be able to return in Week 9? Here's the latest on the Patriots WR.",
      "teams": [
-      "GB"
+      "NE"
      ],
-     "title": "Micah Parsons details why knee recovery has taken so long, refuses to set timeline for Packers return"
+     "title": "Is A.J. Brown playing this week? Latest injury update on Patriots WR"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/micah-parsons-expects-all-pro-moments-and-terrible-moments-once-hes-back-in-games",
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/a-j-brown-to-miss-second-straight-game-for-patriots",
      "players": [
-      "Micah Parsons"
+      "A.J. Brown"
      ],
-     "published": "2026-11-05T14:37:13Z",
+     "published": "2026-11-06T18:23:10Z",
      "source": "ProFootballTalk",
-     "summary": "Packers defensive end Micah Parsons isn't willing to pinpoint a date for his return to game action, but it is on everyone's mind now that he is back on the practice field.",
+     "summary": "It will be another Sunday without wide receiver A.J.",
+     "teams": [
+      "NE"
+     ],
+     "title": "A.J. Brown to miss second straight game for Patriots"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.profootballrumors.com/2026/11/patriots-rb-treveyon-henderson-recovering-from-unknown-medical-issue",
+     "players": [
+      "TreVeyon Henderson"
+     ],
+     "published": "2026-11-06T17:20:43Z",
+     "source": "Pro Football Rumors",
+     "summary": "TreVeyon Henderson was absent from the Patriots\u2019 Week 8 game. The second-year running back was listed with an illness on the team\u2019s injury report, ...",
+     "teams": [
+      "NE"
+     ],
+     "title": "Patriots RB TreVeyon Henderson Recovering From Unknown Medical Issue"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.cbssports.com/nfl/news/patriots-treveyon-henderson-update-unknown-unexplainable-illness/",
+     "players": [
+      "TreVeyon Henderson"
+     ],
+     "published": "2026-11-06T16:55:37Z",
+     "source": "CBS Sports",
+     "summary": "The second-year back spent several days in the hospital with neurological symptoms that affected his strength and coordination",
+     "teams": [
+      "NE"
+     ],
+     "title": "Patriots' TreVeyon Henderson provides update on 'unknown and unexplainable' illness"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/treveyon-henderson-was-hospitalized-after-unexpected-and-unusual-medical-emergency",
+     "players": [
+      "Treveyon Henderson"
+     ],
+     "published": "2026-11-06T15:57:12Z",
+     "source": "ProFootballTalk",
+     "summary": "Patriots running back Treveyon Henderson, who missed the Week 8 game against the Dolphins with an illness, remains absent from practice due to illness.",
+     "teams": [
+      "NE"
+     ],
+     "title": "Treveyon Henderson was hospitalized after \"unexpected and unusual medical emergency\""
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.rotowire.com//football/player/rhamondre-stevenson-15372",
+     "players": [
+      "Rhamondre Stevenson",
+      "TreVeyon Henderson"
+     ],
+     "published": "2026-11-06T11:10:00Z",
+     "source": "RotoWire",
+     "summary": "With TreVeyon Henderson (illness) ruled out for Week 9, Stevenson is set to handle an expanded workload Sunday against the Packers, Mark Daniels of MassLive.com reports. Visit RotoWire.com for more analysis on this update.",
      "teams": [
       "GB"
      ],
-     "title": "Micah Parsons expects \"All-Pro\" moments and \"terrible\" moments once he's back in games"
+     "title": "Rhamondre Stevenson: Set for expanded workload again in Week 9"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.cbssports.com/nfl/news/jordan-love-halloween-costume-nfl-fine/",
+     "players": [
+      "Jordan Love"
+     ],
+     "published": "2026-11-05T22:11:58Z",
+     "source": "CBS Sports",
+     "summary": "Love and his wife dressed as \"blind refs\" less than a week after controversial calls contributed to a Packers loss",
+     "teams": [
+      "GB"
+     ],
+     "title": "Why Jordan Love could face an NFL fine over Halloween costume"
     }
    ],
    "pick": "NE",
-   "pick_prob": 0.599331,
+   "pick_prob": 0.598246,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
@@ -18946,8 +18968,8 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 1.484968,
-    "line": 45.5,
+    "edge": 2.492511,
+    "line": 44.5,
     "side": "OVER"
    },
    "week": 9
@@ -19742,7 +19764,7 @@
      }
     ]
    },
-   "home_prob": 0.699817,
+   "home_prob": 0.699388,
    "home_qb": {
     "change": false,
     "id": "00-0039918",
@@ -20088,29 +20110,6 @@
      "tds_season": 1
     },
     {
-     "games_season": 4,
-     "group": "0.5-1",
-     "gsis_id": "00-0038440",
-     "meters": {
-      "rest": {
-       "n": 1,
-       "no_td": 1,
-       "rate": 1.0
-      },
-      "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
-      }
-     },
-     "name": "Zavier Scott",
-     "position": "RB",
-     "prob": null,
-     "rank": 12,
-     "status": "active",
-     "tds_season": 0
-    },
-    {
      "games_season": 8,
      "group": "under 0.5",
      "gsis_id": "00-0041558",
@@ -20129,7 +20128,7 @@
      "name": "Sam Roush",
      "position": "TE",
      "prob": null,
-     "rank": 13,
+     "rank": 12,
      "status": "active",
      "tds_season": 0
     },
@@ -20152,37 +20151,104 @@
      "name": "Jahdae Walker",
      "position": "WR",
      "prob": null,
-     "rank": 14,
+     "rank": 13,
      "status": "active",
      "tds_season": 1
+    },
+    {
+     "games_season": 1,
+     "group": "under 0.5",
+     "gsis_id": "00-0035039",
+     "meters": {
+      "rest": {
+       "n": 0,
+       "no_td": 0,
+       "rate": null
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "name": "Stephen Carlson",
+     "position": "TE",
+     "prob": null,
+     "rank": 14,
+     "status": "active",
+     "tds_season": 0
     }
    ],
    "kickoff": "2026-11-09T01:20:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
-    "away_ml": 225.0,
+    "as_of": "2026-11-06T19:24:02Z",
+    "away_ml": 222.0,
     "best_away_book": "DraftKings",
-    "best_away_ml": 240.0,
-    "best_home_book": "BetUS",
+    "best_away_ml": 230.0,
+    "best_home_book": "FanDuel",
     "best_home_ml": -270.0,
     "books": 9,
-    "home_ml": -275.0,
-    "home_prob": 0.703407,
+    "home_ml": -270.0,
+    "home_prob": 0.701468,
     "opening_spread": 6.0,
     "opening_total": 48.5,
     "source": "the-odds-api",
     "spread": 6.0,
     "total": 47.5
    },
-   "market_prob": 0.703407,
+   "market_prob": 0.701468,
    "market_source": "the-odds-api",
    "market_spread": 6.0,
    "market_total": 47.5,
    "model_prob": 0.710169,
    "model_spread": 6.38896,
-   "model_total": 43.832448,
+   "model_total": 43.839991,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://sports.yahoo.com/articles/giants-trade-deadline-2026-bucs-180000158.html",
+     "players": [
+      "Vita Vea"
+     ],
+     "published": "2026-11-06T18:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "Is Tampa Bay Buccaneers NT Vita Vea a realistic target for the Giants?",
+     "teams": [
+      "TB"
+     ],
+     "title": "Giants trade deadline 2026: Bucs\u2019 DT reportedly on New York\u2019s radar"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/tristan-wirfs-to-play-sunday-emeka-egbuka-questionable",
+     "players": [
+      "Emeka Egbuka",
+      "Tristan Wirfs"
+     ],
+     "published": "2026-11-06T17:30:28Z",
+     "source": "ProFootballTalk",
+     "summary": "The Bucs will have left tackle Tristan Wirfs in the lineup as they try to stretch their winning streak to three games on Sunday.",
+     "teams": [],
+     "title": "Tristan Wirfs to play Sunday, Emeka Egbuka questionable"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-5-26",
+     "players": [
+      "Zavier Scott"
+     ],
+     "published": "2026-11-06T00:38:36Z",
+     "source": "Pro Football Rumors",
+     "summary": "Here are Thursday\u2019s minor moves from around the NFL: Chicago Bears Placed on IR: RB Zavier Scott Cleveland Browns Waived: TE Carsen Ryan Jacksonville ...",
+     "teams": [
+      "CHI"
+     ],
+     "title": "Minor NFL Transactions: 11/5/26"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
@@ -20258,53 +20324,10 @@
       "CHI"
      ],
      "title": "Bears T Braxton Jones, DT Kentavius Street Out For Season"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://sports.yahoo.com/articles/buccaneers-linebacker-alex-anzalone-named-001043058.html",
-     "players": [
-      "Alex Anzalone"
-     ],
-     "published": "2026-11-05T00:10:43Z",
-     "source": "Yahoo Sports",
-     "summary": "Tampa Bay Buccaneers linebacker Alex Anzalone has been named the NFC Defensive Player of the Week following his standout performance in the team\u2019s 16-0 shutout victory over the Atlanta Falcons in Week 8. The veteran linebacker played a key role in Tampa Bay\u2019s defensive dominance on Sunday, intercepting Falcons quarterb",
-     "teams": [
-      "TB"
-     ],
-     "title": "Buccaneers linebacker Alex Anzalone named NFC Defensive Player of the Week"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/bears-put-dl-kentavius-street-on-injured-reserve",
-     "players": [
-      "Kentavius Street"
-     ],
-     "published": "2026-11-04T21:37:35Z",
-     "source": "ProFootballTalk",
-     "summary": "The Bears saw defensive lineman Kentavius Street leave Monday night's win over the Seahawks with a knee injury and it is going to keep him out for an extended period of time.",
-     "teams": [
-      "CHI"
-     ],
-     "title": "Bears put DL Kentavius Street on injured reserve"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.cbssports.com/nfl/news/2026-nfl-trade-deadline-tracker-latest-deals-grades/",
-     "players": [
-      "Jeffery Simmons"
-     ],
-     "published": "2026-11-04T20:49:09Z",
-     "source": "CBS Sports",
-     "summary": "Track every completed deal before the Nov. 10 deadline, including Chicago's blockbuster addition of Jeffery Simmons and the Colts' trades of Quenton Nelson and DeForest Buckner",
-     "teams": [],
-     "title": "2026 NFL trade deadline tracker: Latest deals, grades as Jacoby Brissett heads to Baltimore"
     }
    ],
    "pick": "CHI",
-   "pick_prob": 0.699817,
+   "pick_prob": 0.699388,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
@@ -20343,7 +20366,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 3.667552,
+    "edge": 3.660009,
     "line": 47.5,
     "side": "UNDER"
    },
@@ -20429,21 +20452,21 @@
      "name": "Josh Allen",
      "position": "QB",
      "status": "active",
-     "yards": 221.578914
+     "yards": 218.116516
     },
     "receiving": {
      "gsis_id": "00-0037261",
      "name": "Khalil Shakir",
      "position": "WR",
      "status": "active",
-     "yards": 41.963029
+     "yards": 41.710008
     },
     "rushing": {
      "gsis_id": "00-0037248",
      "name": "James Cook",
      "position": "RB",
      "status": "active",
-     "yards": 74.017426
+     "yards": 73.957359
     }
    },
    "away_name": "Buffalo Bills",
@@ -20480,9 +20503,9 @@
       "name": "Josh Allen",
       "position": "QB",
       "proj": {
-       "pass_yds": 221.578914,
+       "pass_yds": 218.116516,
        "rec_yds": null,
-       "rush_yds": 21.994724
+       "rush_yds": 22.011615
       },
       "rank": 1,
       "reason": null,
@@ -20497,8 +20520,8 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 28.696608,
-       "rush_yds": 0.029871
+       "rec_yds": 28.481079,
+       "rush_yds": 0.030552
       },
       "rank": 2,
       "reason": null,
@@ -20513,7 +20536,7 @@
       "position": "TE",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 36.161671,
+       "rec_yds": 35.925089,
        "rush_yds": null
       },
       "rank": 3,
@@ -20551,11 +20574,11 @@
      },
      "name": "James Cook",
      "position": "RB",
-     "prob": 0.548522,
+     "prob": 0.539763,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 10.269974,
-      "rush_yds": 74.017426
+      "rec_yds": 10.049548,
+      "rush_yds": 73.957359
      },
      "status": "active",
      "tds_season": 7
@@ -20577,11 +20600,11 @@
      },
      "name": "Josh Allen",
      "position": "QB",
-     "prob": 0.375606,
+     "prob": 0.370963,
      "proj": {
-      "pass_yds": 221.578914,
+      "pass_yds": 218.116516,
       "rec_yds": null,
-      "rush_yds": 21.994724
+      "rush_yds": 22.011615
      },
      "status": "active",
      "tds_season": 9
@@ -20603,11 +20626,11 @@
      },
      "name": "D.J. Moore",
      "position": "WR",
-     "prob": 0.260287,
+     "prob": 0.255698,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 28.43617,
-      "rush_yds": 0.107756
+      "rec_yds": 28.199094,
+      "rush_yds": 0.107774
      },
      "status": "active",
      "tds_season": 2
@@ -20632,7 +20655,7 @@
      },
      "name": "James Cook",
      "position": "RB",
-     "prob": 0.548522,
+     "prob": 0.539763,
      "rank": 1,
      "status": "active",
      "tds_season": 7
@@ -20655,7 +20678,7 @@
      },
      "name": "Josh Allen",
      "position": "QB",
-     "prob": 0.375606,
+     "prob": 0.370963,
      "rank": 2,
      "status": "active",
      "tds_season": 9
@@ -20678,7 +20701,7 @@
      },
      "name": "D.J. Moore",
      "position": "WR",
-     "prob": 0.260287,
+     "prob": 0.255698,
      "rank": 3,
      "status": "active",
      "tds_season": 2
@@ -20701,7 +20724,7 @@
      },
      "name": "Dalton Kincaid",
      "position": "TE",
-     "prob": 0.25107,
+     "prob": 0.246797,
      "rank": 4,
      "status": "active",
      "tds_season": 2
@@ -20724,7 +20747,7 @@
      },
      "name": "Keon Coleman",
      "position": "WR",
-     "prob": 0.232832,
+     "prob": 0.229149,
      "rank": 5,
      "status": "active",
      "tds_season": 3
@@ -20747,7 +20770,7 @@
      },
      "name": "Khalil Shakir",
      "position": "WR",
-     "prob": 0.216183,
+     "prob": 0.212148,
      "rank": 6,
      "status": "active",
      "tds_season": 1
@@ -20770,7 +20793,7 @@
      },
      "name": "Ty Johnson",
      "position": "RB",
-     "prob": 0.170294,
+     "prob": 0.167352,
      "rank": 7,
      "status": "active",
      "tds_season": 0
@@ -20793,7 +20816,7 @@
      },
      "name": "Dawson Knox",
      "position": "TE",
-     "prob": 0.14098,
+     "prob": 0.138908,
      "rank": 8,
      "status": "active",
      "tds_season": 1
@@ -20816,7 +20839,7 @@
      },
      "name": "Skyler Bell",
      "position": "WR",
-     "prob": 0.111786,
+     "prob": 0.110137,
      "rank": 9,
      "status": "active",
      "tds_season": 0
@@ -20839,7 +20862,7 @@
      },
      "name": "Ray Davis",
      "position": "RB",
-     "prob": 0.08997,
+     "prob": 0.088661,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -20862,7 +20885,7 @@
      },
      "name": "Josh Palmer",
      "position": "WR",
-     "prob": 0.08158,
+     "prob": 0.080342,
      "rank": 11,
      "status": "active",
      "tds_season": 2
@@ -20885,7 +20908,7 @@
      },
      "name": "Kyle Allen",
      "position": "QB",
-     "prob": 0.039575,
+     "prob": 0.039078,
      "rank": 12,
      "status": "active",
      "tds_season": 0
@@ -21045,21 +21068,21 @@
      "name": "Kyler Murray",
      "position": "QB",
      "status": "active",
-     "yards": 210.271361
+     "yards": 206.498189
     },
     "receiving": {
      "gsis_id": "00-0036322",
      "name": "Justin Jefferson",
      "position": "WR",
      "status": "active",
-     "yards": 61.091742
+     "yards": 60.783744
     },
     "rushing": {
      "gsis_id": "00-0033293",
      "name": "Aaron Jones",
      "position": "RB",
      "status": "active",
-     "yards": 44.120652
+     "yards": 44.070686
     }
    },
    "home_name": "Minnesota Vikings",
@@ -21097,7 +21120,7 @@
       "position": "TE",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 30.550703,
+       "rec_yds": 30.334177,
        "rush_yds": null
       },
       "rank": 1,
@@ -21113,7 +21136,7 @@
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 61.091742,
+       "rec_yds": 60.783744,
        "rush_yds": 0.0
       },
       "rank": 2,
@@ -21130,7 +21153,7 @@
       "proj": {
        "pass_yds": null,
        "rec_yds": null,
-       "rush_yds": 4.280862
+       "rush_yds": 4.29519
       },
       "rank": 3,
       "reason": null,
@@ -21139,7 +21162,7 @@
      }
     ]
    },
-   "home_prob": 0.382888,
+   "home_prob": 0.38289,
    "home_qb": {
     "change": false,
     "id": "00-0035228",
@@ -21168,11 +21191,11 @@
      },
      "name": "Aaron Jones",
      "position": "RB",
-     "prob": 0.289183,
+     "prob": 0.282278,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 10.525797,
-      "rush_yds": 44.120652
+      "rec_yds": 10.311714,
+      "rush_yds": 44.070686
      },
      "status": "active",
      "tds_season": 2
@@ -21194,10 +21217,10 @@
      },
      "name": "Justin Jefferson",
      "position": "WR",
-     "prob": 0.281162,
+     "prob": 0.275113,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 61.091742,
+      "rec_yds": 60.783744,
       "rush_yds": 0.0
      },
      "status": "active",
@@ -21220,11 +21243,11 @@
      },
      "name": "Jordan Addison",
      "position": "WR",
-     "prob": 0.273267,
+     "prob": 0.267955,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 44.283276,
-      "rush_yds": 1.326675
+      "rec_yds": 44.002855,
+      "rush_yds": 1.325435
      },
      "status": "active",
      "tds_season": 1
@@ -21249,7 +21272,7 @@
      },
      "name": "Aaron Jones",
      "position": "RB",
-     "prob": 0.289183,
+     "prob": 0.282278,
      "rank": 1,
      "status": "active",
      "tds_season": 2
@@ -21272,7 +21295,7 @@
      },
      "name": "Justin Jefferson",
      "position": "WR",
-     "prob": 0.281162,
+     "prob": 0.275113,
      "rank": 2,
      "status": "active",
      "tds_season": 4
@@ -21295,7 +21318,7 @@
      },
      "name": "Jordan Addison",
      "position": "WR",
-     "prob": 0.273267,
+     "prob": 0.267955,
      "rank": 3,
      "status": "active",
      "tds_season": 1
@@ -21318,7 +21341,7 @@
      },
      "name": "Jordan Mason",
      "position": "RB",
-     "prob": 0.212866,
+     "prob": 0.208183,
      "rank": 4,
      "status": "active",
      "tds_season": 1
@@ -21341,7 +21364,7 @@
      },
      "name": "T.J. Hockenson",
      "position": "TE",
-     "prob": 0.212218,
+     "prob": 0.208075,
      "rank": 5,
      "status": "active",
      "tds_season": 3
@@ -21364,7 +21387,7 @@
      },
      "name": "Kyler Murray",
      "position": "QB",
-     "prob": 0.153449,
+     "prob": 0.150861,
      "rank": 6,
      "status": "active",
      "tds_season": 0
@@ -21387,7 +21410,7 @@
      },
      "name": "Jauan Jennings",
      "position": "WR",
-     "prob": 0.140312,
+     "prob": 0.138045,
      "rank": 7,
      "status": "active",
      "tds_season": 0
@@ -21410,7 +21433,7 @@
      },
      "name": "Carson Wentz",
      "position": "QB",
-     "prob": 0.094507,
+     "prob": 0.093032,
      "rank": 8,
      "status": "active",
      "tds_season": 0
@@ -21433,7 +21456,7 @@
      },
      "name": "Gavin Bartholomew",
      "position": "TE",
-     "prob": 0.081412,
+     "prob": 0.080146,
      "rank": 9,
      "status": "active",
      "tds_season": 0
@@ -21456,7 +21479,7 @@
      },
      "name": "Demond Claiborne",
      "position": "RB",
-     "prob": 0.079864,
+     "prob": 0.078643,
      "rank": 10,
      "status": "active",
      "tds_season": 0
@@ -21479,7 +21502,7 @@
      },
      "name": "Myles Price",
      "position": "WR",
-     "prob": 0.05501,
+     "prob": 0.054211,
      "rank": 11,
      "status": "active",
      "tds_season": 0
@@ -21502,7 +21525,7 @@
      },
      "name": "Max Brosmer",
      "position": "QB",
-     "prob": 0.051495,
+     "prob": 0.050807,
      "rank": 12,
      "status": "active",
      "tds_season": 0
@@ -21531,6 +21554,29 @@
      "tds_season": 0
     },
     {
+     "games_season": 7,
+     "group": "0.5-1",
+     "gsis_id": "00-0036425",
+     "meters": {
+      "rest": {
+       "n": 2,
+       "no_td": 2,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "name": "DeeJay Dallas",
+     "position": "RB",
+     "prob": null,
+     "rank": 14,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
      "games_season": 3,
      "group": "0.5-1",
      "gsis_id": "00-0040509",
@@ -21549,7 +21595,7 @@
      "name": "Ben Yurosek",
      "position": "TE",
      "prob": null,
-     "rank": 14,
+     "rank": 15,
      "status": "active",
      "tds_season": 0
     },
@@ -21572,37 +21618,52 @@
      "name": "Max Bredeson",
      "position": "FB",
      "prob": null,
-     "rank": 15,
+     "rank": 16,
      "status": "active",
      "tds_season": 0
     }
    ],
    "kickoff": "2026-11-10T01:15:00Z",
    "market": {
-    "as_of": "2026-11-05T20:00:25Z",
-    "away_ml": -173.0,
+    "as_of": "2026-11-06T19:24:02Z",
+    "away_ml": -175.0,
     "best_away_book": "BetOnline.ag",
     "best_away_ml": -168.0,
-    "best_home_book": "BetMGM",
+    "best_home_book": "FanDuel",
     "best_home_ml": 150.0,
     "books": 9,
-    "home_ml": 148.0,
-    "home_prob": 0.390757,
+    "home_ml": 146.0,
+    "home_prob": 0.390764,
     "opening_spread": -2.5,
     "opening_total": 47.5,
     "source": "the-odds-api",
     "spread": -3.0,
-    "total": 45.0
+    "total": 44.0
    },
-   "market_prob": 0.390757,
+   "market_prob": 0.390764,
    "market_source": "the-odds-api",
    "market_spread": -3.0,
-   "market_total": 45.0,
+   "market_total": 44.0,
    "model_prob": 0.454398,
    "model_spread": -1.293273,
-   "model_total": 48.860554,
+   "model_total": 48.868097,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-06T19:24:02Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-9-bold-predictions-joe-milton-eagles-vikings-josh-allen/",
+     "players": [
+      "Josh Allen"
+     ],
+     "published": "2026-11-06T11:49:40Z",
+     "source": "CBS Sports",
+     "summary": "Plus, the Dolphins stifle Jared Goff and the roaring Lions offense",
+     "teams": [
+      "MIN"
+     ],
+     "title": "NFL Week 9 bold predictions: Joe Milton-led Eagles upset first-place Giants, Vikings torture Josh Allen"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
@@ -21639,13 +21700,13 @@
     {
      "dated_by_feed": true,
      "gathered": "2026-11-05T20:00:25Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/kyler-murray-out-for-monday-vs-bills-week-to-week-with-hamstring-injury",
+     "link": "https://sports.yahoo.com/articles/kyler-murray-monday-vs-bills-184007456.html",
      "players": [
       "Carson Wentz",
       "Kyler Murray"
      ],
      "published": "2026-11-05T18:40:07Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "Carson Wentz will make his second start of the season in place of the injured Murray.",
      "teams": [
       "BUF"
@@ -21713,25 +21774,10 @@
      "summary": "Yes, the 49ers tried to arrange a reunion with receiver Jauan Jennings.",
      "teams": [],
      "title": "Kyle Shanahan confirms Jauan Jennings decided not to pursue trade back to 49ers"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-05T04:05:26Z",
-     "link": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-4-26",
-     "players": [
-      "Jordan Hancock"
-     ],
-     "published": "2026-11-05T02:08:19Z",
-     "source": "Pro Football Rumors",
-     "summary": "Today\u2019s midweek minor moves: Arizona Cardinals Designated for return from IR: G Isaiah Adams Buffalo Bills Designated for return from IR: S Jordan Hancock ...",
-     "teams": [
-      "BUF"
-     ],
-     "title": "Minor NFL Transactions: 11/4/26"
     }
    ],
    "pick": "BUF",
-   "pick_prob": 0.617112,
+   "pick_prob": 0.61711,
    "roof": "dome",
    "season": 2026,
    "spread_pick": {
@@ -21770,14 +21816,14 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 3.860554,
-    "line": 45.0,
+    "edge": 4.868097,
+    "line": 44.0,
     "side": "OVER"
    },
    "week": 9
   }
  ],
- "generated": "2026-11-05T20:02:16Z",
+ "generated": "2026-11-06T19:25:46Z",
  "label": "Week 9",
  "schema": 1,
  "season": 2026,
