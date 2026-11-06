@@ -145,6 +145,22 @@ def test_every_league_espn_or_fixturedownload_covers_is_asked_and_every_other_sa
     assert len(sf.FEED_LEAGUES) == 31
 
 
+def test_espns_own_league_index_lists_every_league_asked_about_and_none_of_the_others():
+    """A second, independent line of evidence for ESPN_NOT_ASKED: ESPN's core
+    API index of its soccer leagues (fetched by the same probe, 220 of them)
+    lists all 31 codes asked about and none of the seven that are not -
+    sco.3, sco.4, rou.1, sui.1, fin.1, irl.1 - nor pol.1."""
+    index = json.loads(raw("espn_leagues.json"))
+    assert REPORT["requests"]["espn_leagues.json"]["status"] == 200
+    listed = {item["$ref"].split("/leagues/")[1].split("?")[0] for item in index["items"]}
+    assert len(listed) == index["count"] == 220
+    assert set(sf.ESPN_SLUGS.values()) <= listed and len(sf.ESPN_SLUGS) == 31
+    assert not {sd.ALL_LEAGUES[code].espn for code in sf.ESPN_NOT_ASKED} & listed
+    assert "pol.1" not in listed
+    assert sorted(sd.ALL_LEAGUES[code].espn for code in sf.ESPN_NOT_ASKED) == \
+        ["fin.1", "irl.1", "rou.1", "sco.3", "sco.4", "sui.1"]
+
+
 def test_a_fetch_of_every_league_asks_each_feed_where_it_covers_the_league():
     reqs = sf.requests_for(NOW, leagues=sf.FEED_LEAGUES)
     espn = [r for r in reqs if r[3] == "espn"]
@@ -171,18 +187,31 @@ def test_each_feed_takes_football_datas_season_for_the_league():
     assert keys["fixturedownload:E1:2026"][1].endswith("/championship-2026")
     assert {r[4] for r in keys.values() if r[2] == "ARG"} == {2027} and {r[4] for r in keys.values()
                                                                         if r[2] == "JPN"} == {2026}
-    template = board_events("USA")[0]
     for code, when, season in (("USA", "2027-03-01T00:30Z", 2027), ("ARG", "2027-02-01T22:00Z", 2027),
                                ("BRA", "2026-12-06T19:00Z", 2026), ("JPN", "2027-03-06T05:00Z", 2026),
                                ("E1", "2027-03-06T15:00Z", 2026), ("USA", "2026-12-05T20:00Z", 2026)):
-        ev = json.loads(json.dumps(template))
+        ev = json.loads(json.dumps(board_events(code)[0]))
         ev["date"] = ev["competitions"][0]["date"] = when
         ev["season"]["year"] = season
         warnings = []
-        row = sf.parse_espn({"events": [ev]}, "USA", log=warnings.append)[0] if code == "USA" else None
-        if row is not None:
-            assert row["season"] == season and not warnings, (code, when)
+        row = sf.parse_espn({"events": [ev]}, code, log=warnings.append)[0]
+        assert row["season"] == season and not warnings, (code, when)
         assert sd.season_for(code, sf.uk_date(sf.parse_utc(when)).isoformat()) == season, (code, when)
+    # Every league ESPN is asked about, each on one of its own events moved to
+    # mid-January 2027: the new season in a calendar-year league (and the
+    # season ESPN files it in, where ESPN says otherwise, only warned), the
+    # one under way in every other - the J1 League included since 2026.
+    calendar = {code for code, meta in sd.ALL_LEAGUES.items() if meta.calendar == "calendar-year"}
+    assert calendar == {"ARG", "BRA", "CHN", "FIN", "IRL", "NOR", "SWE", "USA"}
+    for code in sf.ESPN_SLUGS:
+        events = board_events(code) if code not in sd.TOP else \
+            gz_json(FIXTURES / "feeds" / f"espn_{code}_board_20261025.json.gz")["events"]
+        ev = json.loads(json.dumps(events[0]))
+        ev["date"] = ev["competitions"][0]["date"] = "2027-01-16T15:00Z"
+        warnings = []
+        row = sf.parse_espn({"events": [ev]}, code, log=warnings.append)[0]
+        assert row["season"] == (2027 if code in calendar else 2026), code
+        assert bool(warnings) == (code in calendar), code             # ESPN's own year still 2026 there
     # An MLS 2027 fixturedownload row is in its season, not "outside" it.
     warnings = []
     rows = sf.parse_fixturedownload([dict(fxd("USA", 2026)[0], DateUtc="2027-03-01 00:30:00Z", HomeTeamScore=None,
