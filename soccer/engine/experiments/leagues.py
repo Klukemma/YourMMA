@@ -65,19 +65,16 @@ details this module had to settle written down before the first run).
             matches all precede its first match). A match with no price:
             the model alone.
   ship (a)  a league is in the app if it has a current season in the data
-            (a result in the 45 days before the check, or a fixture posted)
-            - and its pick is the recalibrated market if that is not worse
-            in log loss than the raw no-vig market on its DEV, else the raw
-            no-vig market. As run (soccer_leagues.season_check): the check
-            on 2026-11-02, the day of the run (soccer_leagues.CHECKED_ON),
-            on the snapshot as synced then (newest result 2026-10-30);
-            "posted" is a fixture on file dated no earlier than 45 days
-            before (football-data's fixture files list only matches still
-            to play). It decides no league but RUS either way: every other
-            league has a result within 16 days (SC3's newest is 2026-10-17,
-            CHN's 2026-10-24 with no fixture posted), and RUS has neither.
-            A league with no match in either of its periods would not be
-            measured and never ships (none of the 38).
+            (a result in the 45 days to 2026-10-29, or a fixture posted on
+            or after it) - and its pick is the recalibrated market if that
+            is not worse in log loss than the raw no-vig market on its DEV,
+            else the raw no-vig market. As run (soccer_leagues.season_check):
+            the check on 2026-10-30, the day it ran; "posted" is a fixture on
+            file dated no earlier than 45 days before (football-data's
+            fixture files list only matches still to play, and the
+            snapshot's were posted on Oct 27-29). It decides no league
+            either way: every league but RUS has a result within 13 days,
+            and RUS has neither.
        (b)  model-alone picks (no price yet) are shown for a league only if
             the model beats the league's base rate - its home / draw / away
             frequencies over its earlier seasons - on log loss in BOTH
@@ -104,24 +101,17 @@ details this module had to settle written down before the first run).
             again with prices from the cut on shuffled too - nothing dated
             before it may move.
 
-MEASURED (the run of 2026-11-02, main(); every table below is printed by it
-and the results JSON is OUT). History of the numbers, said plainly: a first,
-interrupted pass of this same code (2026-10-30) chose England's pool and the
-weight option on DEV and also printed the CONFIRM columns; nothing was
-chosen or changed on them since. This run re-ran everything from scratch on
-the snapshot of 2026-11-02 (228,071 matches - 37 more of the live 2026
-season, never measured) and reproduced every DEV and CONFIRM number of that
-pass exactly; it added the point-in-time checks, which the first pass did
-not finish.
+MEASURED (the run of 2026-10-30, main(); every table below is printed by it
+and the results JSON is OUT; DEV-only numbers had been seen by an earlier,
+interrupted pass of this same code - England's pool and the weight option
+were chosen there, on DEV, and are what this run chose again).
 
-  Runtime (a 4-core sandbox). The model over all 228,071 matches: 74 s wall,
-  219 s CPU, on a quiet machine (the ten leagues alone: ~15 s); inside this
-  run, with other jobs loading the machine to 12-17, 355 s. The runner's
-  core over every league, timed alone on a quiet machine - the model 74 s,
-  the pick 22 s, the score matrices of 213,160 matches 22 s - about 2
-  minutes, against about 20 s for the ten today (under that load: 176 s,
-  30 s, 23 s). The whole experiment: 31 minutes under load, two thirds of
-  it the point-in-time checks.
+  Runtime: the model over all 228,034 matches 77-82 s wall (about 230 s of
+  CPU over 4 cores; the ten leagues alone: ~15 s). The runner's core over
+  every league - model 82 s, pick 23 s, the score matrices of 213,123
+  matches 23 s - about 2 minutes 10, against about 20 s for the ten today.
+  On a 4-core sandbox shared with other jobs: wall times varied by up to 2x
+  between runs (one model run took 184 s under load).
 
   England's pool (the model's log loss, same matches; E0-EC minus E0-E1):
                   DEV 2006-2015            CONFIRM 2016-2025
@@ -209,11 +199,9 @@ not finish.
 DECISIONS (soccer_leagues.SHIPPED holds them with these numbers; a test
 re-applies the rules to them).
   (a) in the app: 37 leagues - every one but RUS (newest result 2026-08-02,
-      92 days before the check of 2026-11-02, no fixture posted:
-      football-data's file stops two rounds into 2026-27; it is measured and
-      comes in by the same rule when its file resumes). The pick is the raw
-      no-vig market in D1, E1, E3, SC0, SC1, SC3, AUT, FIN, POL; the
-      recalibrated market elsewhere.
+      89 days before the check, no fixture posted: football-data's file stops
+      two rounds into 2026-27). The pick is the raw no-vig market in D1, E1,
+      E3, SC0, SC1, SC3, AUT, FIN, POL; the recalibrated market elsewhere.
   (b) the model alone beat its league's base rate in both periods in all 38:
       a match with no price yet gets the model's own pick everywhere.
   (c) numbers withheld (did not beat the league's base rate in both periods):
@@ -230,17 +218,7 @@ re-applies the rules to them).
       other Eur 70.7% (9,511)|73.7  54.8% (12,446)|56.6 44.7% (23,231)|45.1 37.0% (13,434)|37.0
       extra     68.9% (5,915)|67.1  53.9% (7,066)|53.5  44.4% (10,814)|44.4 35.9% (5,746)|37.0
 
-POINT IN TIME. The whole pipeline - the model (p_h, p_d, p_a, p_o25, lam, nu,
-rho), the pick as shipped, the base rates and every shown score matrix (121
-cells) - re-run at one cut in each period (point_in_time):
-  2014-04-12 (DEV of both kinds): 76,816 matches on or before it, 158 on the
-    day in 33 leagues; 11,421,750 numbers compared.
-  2021-10-16 (CONFIRM of both kinds): 165,526 on or before it, 155 on the day
-    in 33 leagues; 26,937,376 numbers compared.
-  With every result and match statistic from the cut on scrambled and every
-  price (pre-match, closing, best, Pinnacle, Bet365) after it shuffled,
-  nothing dated on or before the cut moved; with prices from the cut on
-  shuffled too, nothing dated before it moved. Both cuts, both checks: True.
+POINT IN TIME. POINT_IN_TIME_RESULT
 
 CAVEATS (never deleted; each league's own are in soccer_leagues.SHIPPED).
   - The extra leagues' history has closing prices only: their picks, their
@@ -259,7 +237,7 @@ CAVEATS (never deleted; each league's own are in soccer_leagues.SHIPPED).
     (CONFIRM) within 0.0001 of the base rate; over 3.5 in DNK (CONFIRM). The
     rules were fixed in advance and are applied as written.
   - On CONFIRM the recalibrated pick scored worse than the raw market in E0,
-    D2, ARG, IRL, SWZ and USA (by 0.0002 to 0.00095); the rule decides on DEV
+    D2, ARG, IRL, SWZ and USA (by 0.0002-0.0009); the rule decides on DEV
     only. Each league says so in its caveats.
   - The weight option pools every European division, so the top five's pick
     changed (weights fitted on 22 divisions, the Bundesliga's now raw). It is
@@ -541,8 +519,7 @@ def decide(leagues, scores, season):
                 shown[s] = None                                    # no over/under price: no K
                 continue
             shown[s] = sl.rule_numbers(scores[code]["dev"][s], scores[code]["confirm"][s])
-        measured = bool(dev.get("matches")) and bool(conf.get("matches"))     # nothing ships unmeasured
-        out[code] = {"in_app": season[code]["ok"] and measured,
+        out[code] = {"in_app": season[code]["ok"],
                      "pick": sl.rule_pick(dev.get("pick_recalibrated"), dev.get("market")),
                      "model_only": sl.rule_model_alone(dev, conf),
                      "numbers": {"market": shown["K"], "model": shown["M"]}}
@@ -652,26 +629,14 @@ def caveats_for(code, league, decision, scores, gap, no_shots=()):
     out = []
     dev, conf = league["dev"], league["confirm"]
     pd_, pc = dev["seasons"], conf["seasons"]
-    if not dev.get("matches") or not conf.get("matches"):
-        return ["Not in the app: not measured - no match in one of its periods, and nothing ships unmeasured."]
-    if not decision["in_app"]:
-        sc = league["season_check"]
-        out.append(f"Not in the app: no current season in the data - its newest result is {sc['last_result']} "
-                   f"({sc['days_since']} days before the check of {TODAY}) and no fixture is posted. It is "
-                   f"measured, and comes in by the same rule when its file resumes.")
     if code in sd.EXTRA:
         g = gap["all"]
-        if g.get("matches"):
-            out.append(
-                f"Measured on closing prices, the only ones its history has; its live pick uses the pre-match price. "
-                f"On the European divisions' 2019-2025, where both exist, the pre-match price scored {g['gap']:.4f} "
-                f"worse in log loss than the closing one ({g['pre']:.4f} against {g['close']:.4f}, {g['matches']:,} "
-                f"matches; accuracy {100 * g['acc_pre']:.1f}% against {100 * g['acc_close']:.1f}%): its live picks "
-                f"should do about that much worse than measured, and its band rates were measured on closing-price "
-                f"picks.")
-        else:
-            out.append("Measured on closing prices, the only ones its history has; its live pick uses the pre-match "
-                       "price, and how much worse that is could not be measured (no matches with both).")
+        out.append(
+            f"Measured on closing prices, the only ones its history has; its live pick uses the pre-match price. "
+            f"On the European divisions' 2019-2025, where both exist, the pre-match price scored {g['gap']:.4f} "
+            f"worse in log loss than the closing one ({g['pre']:.4f} against {g['close']:.4f}, {g['matches']:,} "
+            f"matches; accuracy {100 * g['acc_pre']:.1f}% against {100 * g['acc_close']:.1f}%): its live picks "
+            f"should do about that much worse than measured, and its band rates were measured on closing-price picks.")
         out.append("No shots in its history: the model rates its clubs on goals alone.")
         out.append("No over/under price: every goals and scores number is the model's own.")
     elif no_shots:
@@ -720,7 +685,7 @@ def shipped_block(out):
     """soccer_leagues' data block, as Python source, from a run's results."""
     def rnd(x):
         if isinstance(x, float):
-            return None if math.isnan(x) else round(x, 5)          # a missing number is shown as missing
+            return round(x, 5)
         if isinstance(x, dict):
             return {k: rnd(v) for k, v in x.items()}
         if isinstance(x, (list, tuple)):
@@ -785,7 +750,7 @@ def shipped_block(out):
     for g, v in bands.items():
         lines.append(f"    {g!r}: {{")
         for basis, x in v.items():
-            lines.append(f"        {basis!r}: {rnd(x)!r},")
+            lines.append(f"        {basis!r}: {x!r},")
         lines.append("    },")
     lines.append("}")
     gap = {k: out["price_gap"][k] for k in ("all", "top", "europe")}
