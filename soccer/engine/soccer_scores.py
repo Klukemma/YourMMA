@@ -357,63 +357,94 @@ def shown_matrices(p_h, p_d, p_a, p_o25, rho, lam, nu, max_miss=FIT_MAX_MISS, ne
                   "rho": np.asarray(rho, float)}
 
 
-def card(mat, source, reason, miss=None, miss_on=-1, max_miss=FIT_MAX_MISS):
+# The numbers a card can carry that a league may withhold (soccer_leagues:
+# each ships only where its source beat the league's own rates in both
+# periods). "exact" is the likeliest scores and the beyond-5-5 chance.
+NUMBERS = ("btts", "o15", "o25", "o35", "exact")
+
+
+def card(mat, source, reason, miss=None, miss_on=-1, max_miss=FIT_MAX_MISS, withhold=()):
     """One match's numbers for the app and the log: the summary of its shown
     matrix, the matrix's own home/draw/away (shown beside the pick's, never
     in its place), where it came from and - for the market's - how far it
     misses the prices it was fitted to ("flagged" above max_miss). None
-    where there is no matrix."""
+    where there is no matrix. withhold: NUMBERS this card must not show
+    (its league's measurement did not ship them): each is None, listed in
+    "withheld" - a missing number is shown as missing."""
     s = summary(mat)
     if s is None or source is None:
         return None
     mk = markets(np.asarray(mat, float)[None])
     fit = miss is not None and not math.isnan(miss)
-    return dict(s, source=source, reason=reason,
-                matrix={k: float(mk[k][0]) for k in ("p_h", "p_d", "p_a")},
-                miss=float(miss) if fit else None,
-                miss_on=TARGET_NAMES[int(miss_on)] if fit and int(miss_on) >= 0 else None,
-                flagged=bool(fit and miss > max_miss))
+    out = dict(s, source=source, reason=reason,
+               matrix={k: float(mk[k][0]) for k in ("p_h", "p_d", "p_a")},
+               miss=float(miss) if fit else None,
+               miss_on=TARGET_NAMES[int(miss_on)] if fit and int(miss_on) >= 0 else None,
+               flagged=bool(fit and miss > max_miss))
+    unknown = set(withhold) - set(NUMBERS)
+    if unknown:
+        raise ValueError(f"unknown numbers to withhold: {sorted(unknown)}")
+    withhold = [k for k in NUMBERS if k in set(withhold)]
+    if withhold:
+        for k in withhold:
+            if k == "exact":
+                out["scores"], out["other"] = None, None
+            else:
+                out[k] = None
+        out["withheld"] = withhold
+    return out
 
 
 # ----------------------------------------------------------- the league baseline
 
-def baseline(matches):
-    """B: each top league's rates from EARLIER SEASONS only (every finished
-    match back to 2005-06) - BTTS, over 1.5 / 2.5 / 3.5, and the empirical
-    frequency of each of the 37 score categories (plus half a match in each,
-    so no score is impossible). Rows of a league's first season are NaN."""
+def baseline(matches, leagues=None):
+    """B: each league's rates from EARLIER SEASONS only (every finished match
+    of the league dated before the season's first match, back to 2005-06) -
+    BTTS, over 1.5 / 2.5 / 3.5, the empirical frequency of each of the 37
+    score categories (plus half a match in each, so no score is impossible)
+    and of home / draw / away (p_h, p_d, p_a). Rows of a league's first
+    season are NaN. leagues: whose rows (default the top five). Cut on
+    dates, not season numbers: a match filed under an earlier season but
+    played after a later one's start (ARG 2013/14's of 29/01/2015) is not in
+    that later season's rates; for the five top leagues, whose seasons never
+    overlap, the two are the same."""
     m = matches
     hg = pd.to_numeric(m["hg"], errors="coerce").to_numpy(float)
     ag = pd.to_numeric(m["ag"], errors="coerce").to_numpy(float)
-    done = m["league"].isin(sd.TOP).to_numpy() & np.isfinite(hg) & np.isfinite(ag)
+    leagues = list(sd.TOP) if leagues is None else list(leagues)
+    done = m["league"].isin(leagues).to_numpy() & np.isfinite(hg) & np.isfinite(ag)
     cat = score_index(np.nan_to_num(hg), np.nan_to_num(ag))
     ys = {"btts": (hg > 0) & (ag > 0), "o15": hg + ag > 1.5, "o25": hg + ag > 2.5, "o35": hg + ag > 3.5}
-    out = pd.DataFrame(np.nan, index=m.index, columns=list(ys) + [f"c{k}" for k in range(N_CELLS)])
+    res = {"p_h": hg > ag, "p_d": hg == ag, "p_a": hg < ag}
+    cols = list(ys) + [f"c{k}" for k in range(N_CELLS)] + list(res)
+    vals = np.full((len(m), len(cols)), np.nan)
     seasons = m["season"].to_numpy(float)
     league = m["league"].to_numpy()
-    for lg in sd.TOP:
+    dates = m["date"].astype(str).to_numpy()
+    for lg in leagues:
         in_lg = league == lg
         for s in np.unique(seasons[in_lg & np.isfinite(seasons)]):
-            train = done & in_lg & (seasons < s)
             rows = in_lg & (seasons == s)
+            train = done & in_lg & (dates < dates[rows].min())
             if not train.any():
                 continue
             rates = [float(ys[k][train].mean()) for k in ys]
             cnt = np.bincount(cat[train], minlength=N_CELLS) + 0.5
-            out.loc[rows, :] = np.r_[rates, cnt / cnt.sum()]
-    return out
+            vals[rows] = np.r_[rates, cnt / cnt.sum(), [float(res[k][train].mean()) for k in res]]
+    return pd.DataFrame(vals, index=m.index, columns=cols)
 
 
 # ----------------------------------------------------------- the run's numbers
 
-def walk(frame, preds, pick, q_o25=None, **rule):
-    """The shown matrix for every top-league row the model predicts (finished
-    or still to play), each from the model's walk-forward rates, the pick
-    (recalibrated on earlier seasons) and the match's own pre-match prices.
-    preds: soccer_model.predict (lam, nu, rho columns; without them the
-    model's matrix is missing). Returns (index, mats, info frame)."""
+def walk(frame, preds, pick, q_o25=None, leagues=None, **rule):
+    """The shown matrix for every row the model predicts (finished or still
+    to play) of `leagues` (default the top five), each from the model's
+    walk-forward rates, the pick (recalibrated on earlier seasons) and the
+    match's own pre-match prices. preds: soccer_model.predict (lam, nu, rho
+    columns; without them the model's matrix is missing). Returns (index,
+    mats, info frame)."""
     q_o25 = bt.no_vig_total(frame) if q_o25 is None else q_o25
-    rows = frame["league"].isin(sd.TOP) & preds["p_h"].notna()
+    rows = frame["league"].isin(sd.TOP if leagues is None else list(leagues)) & preds["p_h"].notna()
     idx = frame.index[rows]
 
     def col(c):
@@ -449,7 +480,7 @@ def _band_table(p_top, hit, bands=BANDS):
     return out
 
 
-def measure(frame, preds, pick, walked=None, periods=(bt.DEV, bt.CONFIRM)):
+def measure(frame, preds, pick, walked=None, periods=(bt.DEV, bt.CONFIRM), leagues=None):
     """What the Method tab prints, from the same walk-forward the cards come
     from - the rule as shipped (`walked`, from walk()), the model's own
     matrix and each league's earlier-season rates, on the same matches of
@@ -461,7 +492,7 @@ def measure(frame, preds, pick, walked=None, periods=(bt.DEV, bt.CONFIRM)):
     chance favoured happened (against always "yes"), the matrix's own
     home/draw/away against the pick's where the matrix is the market's, and
     the bands - the pick's and the model's own picks', same edges."""
-    idx, mats, info = walked if walked is not None else walk(frame, preds, pick)
+    idx, mats, info = walked if walked is not None else walk(frame, preds, pick, leagues=leagues)
     if not len(idx):
         return None
     shown = markets(mats)
@@ -470,7 +501,7 @@ def measure(frame, preds, pick, walked=None, periods=(bt.DEV, bt.CONFIRM)):
     def col(c):
         return preds.loc[idx, c].to_numpy(float) if c in preds else np.full(len(idx), np.nan)
     own = markets(dc_matrix(col("lam"), col("nu"), col("rho")))
-    base = baseline(frame).loc[idx]
+    base = baseline(frame, leagues).loc[idx]
     cells = [f"c{k}" for k in range(N_CELLS)]
     src = {"shown": shown, "model": own,
            "base": {k: base[k].to_numpy(float) for k in ("btts", "o15", "o25", "o35")}
