@@ -1,10 +1,10 @@
 {
- "as_of": "2026-11-05T20:00:25Z",
+ "as_of": "2026-11-06T19:24:02Z",
  "elo_scale": {
   "hfa": 48.0,
   "points_per_elo": 0.04
  },
- "generated": "2026-11-05T20:02:25Z",
+ "generated": "2026-11-06T19:25:54Z",
  "schema": 1,
  "season": 2026,
  "teams": [
@@ -146,6 +146,142 @@
   },
   {
    "conference": "AFC",
+   "def_epa": -0.10809,
+   "division": "AFC South",
+   "elo": 1645.343873,
+   "key_players": {
+    "defense": [
+     {
+      "line": "2 sacks, 2 INT, 1 FF",
+      "name": "Foyesade Oluokun",
+      "position": "LB",
+      "rank": 1,
+      "value": 7.0
+     },
+     {
+      "line": "1 INT, 4 PD, 1 TD",
+      "name": "Rayuan Lane III",
+      "position": "SAF",
+      "rank": 2,
+      "value": 5.0
+     }
+    ],
+    "offense": [
+     {
+      "line": "1,932 pass yds, 18 TD, 4 INT",
+      "name": "Trevor Lawrence",
+      "position": "QB",
+      "rank": 1,
+      "value": 77.150513
+     },
+     {
+      "line": "29 rec, 493 yds, 5 TD",
+      "name": "Parker Washington",
+      "position": "WR",
+      "rank": 2,
+      "value": 23.300105
+     },
+     {
+      "line": "26 rec, 374 yds, 2 TD",
+      "name": "Jakobi Meyers",
+      "position": "WR",
+      "rank": 3,
+      "value": 22.003655
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "23",
+     "date": "2026-11-05",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "BAL",
+     "result": "W",
+     "score": "33-10",
+     "season": 2026,
+     "week": 9
+    },
+    {
+     "code": "35",
+     "date": "2026-11-01",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "IND",
+     "result": "W",
+     "score": "42-7",
+     "season": 2026,
+     "week": 8
+    },
+    {
+     "code": "3",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": true,
+     "neutral": true,
+     "opponent": "HOU",
+     "result": "L",
+     "score": "31-34",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "2",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": true,
+     "neutral": true,
+     "opponent": "PHI",
+     "result": "W",
+     "score": "19-17",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "5",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "CIN",
+     "result": "W",
+     "score": "22-17",
+     "season": 2026,
+     "week": 4
+    }
+   ],
+   "name": "Jacksonville Jaguars",
+   "net_epa": 0.207744,
+   "off_epa": 0.099654,
+   "points_against": 17.3568,
+   "points_for": 27.705941,
+   "qb": "Trevor Lawrence",
+   "qb_rating": 0.137071,
+   "qb_starts": 88,
+   "rank": 2,
+   "record": {
+    "losses": 2,
+    "ties": 0,
+    "wins": 6
+   },
+   "td_meters": {
+    "rest": {
+     "n": 23,
+     "no_td": 20,
+     "rate": 0.869565
+    },
+    "top3": {
+     "n": 6,
+     "rate": 0.666667,
+     "scored": 4
+    }
+   },
+   "team": "JAX"
+  },
+  {
+   "conference": "AFC",
    "def_epa": -0.034072,
    "division": "AFC West",
    "elo": 1637.472348,
@@ -260,7 +396,7 @@
    "qb": "Bo Nix",
    "qb_rating": 0.025085,
    "qb_starts": 44,
-   "rank": 2,
+   "rank": 3,
    "record": {
     "losses": 2,
     "ties": 0,
@@ -396,7 +532,7 @@
    "qb": "Sam Darnold",
    "qb_rating": -0.002247,
    "qb_starts": 98,
-   "rank": 3,
+   "rank": 4,
    "record": {
     "losses": 4,
     "ties": 0,
@@ -532,7 +668,7 @@
    "qb": "Brock Purdy",
    "qb_rating": 0.1731,
    "qb_starts": 60,
-   "rank": 4,
+   "rank": 5,
    "record": {
     "losses": 1,
     "ties": 0,
@@ -668,7 +804,7 @@
    "qb": "Caleb Williams",
    "qb_rating": 0.091055,
    "qb_starts": 41,
-   "rank": 5,
+   "rank": 6,
    "record": {
     "losses": 2,
     "ties": 0,
@@ -687,142 +823,6 @@
     }
    },
    "team": "CHI"
-  },
-  {
-   "conference": "AFC",
-   "def_epa": -0.081704,
-   "division": "AFC South",
-   "elo": 1620.771785,
-   "key_players": {
-    "defense": [
-     {
-      "line": "1 sack, 2 INT, 1 FF",
-      "name": "Foyesade Oluokun",
-      "position": "LB",
-      "rank": 1,
-      "value": 5.75
-     },
-     {
-      "line": "1 INT, 4 PD, 1 TD",
-      "name": "Rayuan Lane III",
-      "position": "SAF",
-      "rank": 2,
-      "value": 5.0
-     }
-    ],
-    "offense": [
-     {
-      "line": "1,690 pass yds, 17 TD, 4 INT",
-      "name": "Trevor Lawrence",
-      "position": "QB",
-      "rank": 1,
-      "value": 64.763026
-     },
-     {
-      "line": "27 rec, 432 yds, 4 TD",
-      "name": "Parker Washington",
-      "position": "WR",
-      "rank": 2,
-      "value": 22.505492
-     },
-     {
-      "line": "22 rec, 309 yds, 2 TD",
-      "name": "Jakobi Meyers",
-      "position": "WR",
-      "rank": 3,
-      "value": 17.35533
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "35",
-     "date": "2026-11-01",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "IND",
-     "result": "W",
-     "score": "42-7",
-     "season": 2026,
-     "week": 8
-    },
-    {
-     "code": "3",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": true,
-     "neutral": true,
-     "opponent": "HOU",
-     "result": "L",
-     "score": "31-34",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "2",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": true,
-     "neutral": true,
-     "opponent": "PHI",
-     "result": "W",
-     "score": "19-17",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "5",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "CIN",
-     "result": "W",
-     "score": "22-17",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "29",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "NE",
-     "result": "W",
-     "score": "35-6",
-     "season": 2026,
-     "week": 3
-    }
-   ],
-   "name": "Jacksonville Jaguars",
-   "net_epa": 0.177678,
-   "off_epa": 0.095974,
-   "points_against": 18.174222,
-   "points_for": 27.117712,
-   "qb": "Trevor Lawrence",
-   "qb_rating": 0.12385,
-   "qb_starts": 87,
-   "rank": 6,
-   "record": {
-    "losses": 2,
-    "ties": 0,
-    "wins": 5
-   },
-   "td_meters": {
-    "rest": {
-     "n": 12,
-     "no_td": 9,
-     "rate": 0.75
-    },
-    "top3": {
-     "n": 3,
-     "rate": 0.333333,
-     "scored": 1
-    }
-   },
-   "team": "JAX"
   },
   {
    "conference": "NFC",
@@ -2049,142 +2049,6 @@
    "team": "HOU"
   },
   {
-   "conference": "AFC",
-   "def_epa": 0.028912,
-   "division": "AFC North",
-   "elo": 1501.672023,
-   "key_players": {
-    "defense": [
-     {
-      "line": "2 sacks, 1 INT, 2 FF",
-      "name": "Roquan Smith",
-      "position": "ILB",
-      "rank": 1,
-      "value": 6.75
-     },
-     {
-      "line": "3.5 sacks, 1 FF, 2 PD",
-      "name": "Tavius Robinson",
-      "position": "LB",
-      "rank": 2,
-      "value": 6.25
-     }
-    ],
-    "offense": [
-     {
-      "line": "967 pass yds, 6 TD, 1 INT, 144 rush yds",
-      "name": "Lamar Jackson",
-      "position": "QB",
-      "rank": 1,
-      "value": 41.62568
-     },
-     {
-      "line": "40 rec, 608 yds, 3 TD",
-      "name": "Zay Flowers",
-      "position": "WR",
-      "rank": 2,
-      "value": 26.643973
-     },
-     {
-      "line": "19 rec, 288 yds, 1 TD",
-      "name": "Rashod Bateman",
-      "position": "WR",
-      "rank": 3,
-      "value": 17.581285
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "26",
-     "date": "2026-11-01",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "BUF",
-     "result": "L",
-     "score": "10-36",
-     "season": 2026,
-     "week": 8
-    },
-    {
-     "code": "22",
-     "date": "2026-10-25",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "CIN",
-     "result": "L",
-     "score": "13-35",
-     "season": 2026,
-     "week": 7
-    },
-    {
-     "code": "3",
-     "date": "2026-10-18",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "CLE",
-     "result": "L",
-     "score": "10-13",
-     "season": 2026,
-     "week": 6
-    },
-    {
-     "code": "7",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "ATL",
-     "result": "W",
-     "score": "30-23",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "6",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "TEN",
-     "result": "W",
-     "score": "24-18",
-     "season": 2026,
-     "week": 4
-    }
-   ],
-   "name": "Baltimore Ravens",
-   "net_epa": -0.027078,
-   "off_epa": 0.001834,
-   "points_against": 24.057207,
-   "points_for": 21.72396,
-   "qb": "Lamar Jackson",
-   "qb_rating": 0.147908,
-   "qb_starts": 120,
-   "rank": 16,
-   "record": {
-    "losses": 4,
-    "ties": 0,
-    "wins": 4
-   },
-   "td_meters": {
-    "rest": {
-     "n": 21,
-     "no_td": 21,
-     "rate": 1.0
-    },
-    "top3": {
-     "n": 6,
-     "rate": 0.333333,
-     "scored": 2
-    }
-   },
-   "team": "BAL"
-  },
-  {
    "conference": "NFC",
    "def_epa": -0.101422,
    "division": "NFC South",
@@ -2300,7 +2164,7 @@
    "qb": "Baker Mayfield",
    "qb_rating": -0.025077,
    "qb_starts": 130,
-   "rank": 17,
+   "rank": 16,
    "record": {
     "losses": 5,
     "ties": 0,
@@ -2319,6 +2183,142 @@
     }
    },
    "team": "TB"
+  },
+  {
+   "conference": "AFC",
+   "def_epa": 0.039298,
+   "division": "AFC North",
+   "elo": 1477.099935,
+   "key_players": {
+    "defense": [
+     {
+      "line": "1 INT, 1 FF, 5 PD",
+      "name": "Kyle Hamilton",
+      "position": "SAF",
+      "rank": 1,
+      "value": 6.75
+     },
+     {
+      "line": "2 sacks, 1 INT, 2 FF",
+      "name": "Roquan Smith",
+      "position": "ILB",
+      "rank": 2,
+      "value": 6.75
+     }
+    ],
+    "offense": [
+     {
+      "line": "967 pass yds, 6 TD, 1 INT, 144 rush yds",
+      "name": "Lamar Jackson",
+      "position": "QB",
+      "rank": 1,
+      "value": 41.62568
+     },
+     {
+      "line": "20 rec, 294 yds, 1 TD",
+      "name": "Rashod Bateman",
+      "position": "WR",
+      "rank": 2,
+      "value": 16.464663
+     },
+     {
+      "line": "43 rec, 614 yds, 3 TD",
+      "name": "Zay Flowers",
+      "position": "WR",
+      "rank": 3,
+      "value": 14.975277
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "23",
+     "date": "2026-11-05",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "JAX",
+     "result": "L",
+     "score": "10-33",
+     "season": 2026,
+     "week": 9
+    },
+    {
+     "code": "26",
+     "date": "2026-11-01",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "BUF",
+     "result": "L",
+     "score": "10-36",
+     "season": 2026,
+     "week": 8
+    },
+    {
+     "code": "22",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "CIN",
+     "result": "L",
+     "score": "13-35",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "3",
+     "date": "2026-10-18",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "CLE",
+     "result": "L",
+     "score": "10-13",
+     "season": 2026,
+     "week": 6
+    },
+    {
+     "code": "7",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "ATL",
+     "result": "W",
+     "score": "30-23",
+     "season": 2026,
+     "week": 5
+    }
+   ],
+   "name": "Baltimore Ravens",
+   "net_epa": -0.072204,
+   "off_epa": -0.032906,
+   "points_against": 24.951486,
+   "points_for": 20.551564,
+   "qb": "Joe Fagnano",
+   "qb_rating": -0.261617,
+   "qb_starts": 1,
+   "rank": 17,
+   "record": {
+    "losses": 5,
+    "ties": 0,
+    "wins": 4
+   },
+   "td_meters": {
+    "rest": {
+     "n": 31,
+     "no_td": 31,
+     "rate": 1.0
+    },
+    "top3": {
+     "n": 9,
+     "rate": 0.333333,
+     "scored": 3
+    }
+   },
+   "team": "BAL"
   },
   {
    "conference": "NFC",
