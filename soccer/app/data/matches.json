@@ -10,8 +10,8 @@
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, each beat the leagues' own rates from earlier seasons. Both teams to score runs low: across 2016-2025 its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
  "data_through": "2026-11-02",
- "feeds_at": "2026-11-06T21:48:26Z",
- "generated": "2026-11-06T21:48:32Z",
+ "feeds_at": "2026-11-07T13:59:51Z",
+ "generated": "2026-11-07T14:00:00Z",
  "league_order": [
   "E0",
   "SP1",
@@ -4374,6 +4374,8 @@
    "away_position": 16,
    "band": "SOLID",
    "band_basis": "pick",
+   "btts_correct": true,
+   "correct": true,
    "fixture_source": "football-data.co.uk",
    "home": {
     "bg": "#003399",
@@ -4456,6 +4458,7 @@
     "p_h": 0.5045077538319547
    },
    "model_o25": 0.48723510216910826,
+   "o25_correct": true,
    "p_a": 0.18192134648223865,
    "p_btts": 0.538970755806905,
    "p_d": 0.23367039763932934,
@@ -4479,6 +4482,12 @@
     }
    },
    "prices_at": "2026-11-06T19:22:43Z",
+   "provisional": true,
+   "result_source": "ESPN + fixturedownload.com",
+   "score": {
+    "away": 1,
+    "home": 3
+   },
    "score_source": "market",
    "scores": {
     "flagged": false,
@@ -4503,6 +4512,210 @@
      },
      {
       "p": 0.09972895439713399,
+      "score": "1-0"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "final",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#132257",
+    "code": "TOT",
+    "fg": "#FFFFFF",
+    "name": "Tottenham Hotspur"
+   },
+   "away_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 0,
+     "gf": 2,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Crystal Palace",
+     "opponent_name": "Crystal Palace",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-24",
+     "ga": 0,
+     "gf": 2,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Chelsea",
+     "opponent_name": "Chelsea",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-19",
+     "ga": 1,
+     "gf": 3,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Coventry",
+     "opponent_name": "Coventry City",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 1,
+     "gf": 1,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Man United",
+     "opponent_name": "Manchester United",
+     "result": "D"
+    },
+    {
+     "date": "2026-09-19",
+     "ga": 3,
+     "gf": 2,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Aston Villa",
+     "opponent_name": "Aston Villa",
+     "result": "L"
+    }
+   ],
+   "away_position": 9,
+   "band": "TOSS-UP",
+   "band_basis": "pick",
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#FFFFFF",
+    "code": "LEE",
+    "fg": "#1D428A",
+    "name": "Leeds United"
+   },
+   "home_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 2,
+     "gf": 0,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Bournemouth",
+     "opponent_name": "Bournemouth",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 0,
+     "gf": 0,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Sunderland",
+     "opponent_name": "Sunderland",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 1,
+     "gf": 1,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Man United",
+     "opponent_name": "Manchester United",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 2,
+     "gf": 1,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Arsenal",
+     "opponent_name": "Arsenal",
+     "result": "L"
+    },
+    {
+     "date": "2026-09-20",
+     "ga": 0,
+     "gf": 0,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Crystal Palace",
+     "opponent_name": "Crystal Palace",
+     "result": "D"
+    }
+   ],
+   "home_position": 12,
+   "kickoff": "2026-11-07T12:30:00Z",
+   "kickoff_sources": null,
+   "league": "E0",
+   "logged_at": "2026-11-06T21:48:32Z",
+   "market": {
+    "p_a": 0.3694125409819164,
+    "p_d": 0.2817741303585789,
+    "p_h": 0.34881332865950476
+   },
+   "market_o25": 0.48930481283422456,
+   "match_id": "E0-20261107-leeds-tottenham",
+   "model": {
+    "p_a": 0.3030562053391618,
+    "p_d": 0.2795147161335101,
+    "p_h": 0.41742907852732813
+   },
+   "model_o25": 0.469130244544567,
+   "p_a": 0.3699100964576313,
+   "p_btts": 0.5406718933872237,
+   "p_d": 0.2839752338580901,
+   "p_h": 0.3461146696842787,
+   "p_o15": 0.7441277577058495,
+   "p_o25": 0.48930481283422456,
+   "p_o35": 0.2686188096508493,
+   "pick": "A",
+   "pick_prob": 0.3699100964576313,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 2.54,
+     "d": 3.33,
+     "h": 2.69
+    },
+    "best": {
+     "a": 2.66,
+     "d": 3.4,
+     "h": 2.75
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.37308248438563896,
+     "p_d": 0.27745612066813574,
+     "p_h": 0.3494613949462252
+    },
+    "miss": 0.006519113189954351,
+    "miss_on": "draw",
+    "o25": 0.4868801831379149,
+    "other": 0.004652700199716309,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.1322996102959576,
+      "score": "1-1"
+     },
+     {
+      "p": 0.08969566488109863,
+      "score": "0-1"
+     },
+     {
+      "p": 0.08601653902913096,
       "score": "1-0"
      }
     ]
@@ -9400,6 +9613,414 @@
   },
   {
    "away": {
+    "bg": "#FFDD00",
+    "code": "FRO",
+    "fg": "#0055A4",
+    "name": "Frosinone"
+   },
+   "away_form": [
+    {
+     "date": "2026-11-01",
+     "ga": 0,
+     "gf": 2,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Torino",
+     "opponent_name": "Torino",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-29",
+     "ga": 1,
+     "gf": 5,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Lecce",
+     "opponent_name": "Lecce",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 4,
+     "gf": 4,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Atalanta",
+     "opponent_name": "Atalanta",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-16",
+     "ga": 2,
+     "gf": 4,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Sassuolo",
+     "opponent_name": "Sassuolo",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 3,
+     "gf": 0,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Napoli",
+     "opponent_name": "Napoli",
+     "result": "L"
+    }
+   ],
+   "away_position": 6,
+   "band": "TOSS-UP",
+   "band_basis": "pick",
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#002350",
+    "code": "CAG",
+    "fg": "#FFFFFF",
+    "name": "Cagliari"
+   },
+   "home_form": [
+    {
+     "date": "2026-11-01",
+     "ga": 2,
+     "gf": 1,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Lazio",
+     "opponent_name": "Lazio",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-27",
+     "ga": 4,
+     "gf": 2,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Roma",
+     "opponent_name": "Roma",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-24",
+     "ga": 2,
+     "gf": 0,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Bologna",
+     "opponent_name": "Bologna",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-19",
+     "ga": 4,
+     "gf": 0,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Monza",
+     "opponent_name": "Monza",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-11",
+     "ga": 1,
+     "gf": 1,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Juventus",
+     "opponent_name": "Juventus",
+     "result": "D"
+    }
+   ],
+   "home_position": 12,
+   "kickoff": "2026-11-07T14:00:00Z",
+   "kickoff_sources": null,
+   "league": "I1",
+   "logged_at": "2026-11-06T21:48:32Z",
+   "market": {
+    "p_a": 0.3914383807164421,
+    "p_d": 0.2591666201996224,
+    "p_h": 0.34939499908393534
+   },
+   "market_o25": 0.6126582278481012,
+   "match_id": "I1-20261107-cagliari-frosinone",
+   "model": {
+    "p_a": 0.4172254124224087,
+    "p_d": 0.2623264973653968,
+    "p_h": 0.32044809021219456
+   },
+   "model_o25": 0.5433292721942405,
+   "p_a": 0.3944648840767035,
+   "p_btts": 0.6343544921678649,
+   "p_d": 0.25878848489501244,
+   "p_h": 0.3467466310282841,
+   "p_o15": 0.828339299442249,
+   "p_o25": 0.6126582278481012,
+   "p_o35": 0.3860721039625092,
+   "pick": "A",
+   "pick_prob": 0.3944648840767035,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 2.41,
+     "d": 3.64,
+     "h": 2.7
+    },
+    "best": {
+     "a": 2.5,
+     "d": 3.8,
+     "h": 2.75
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.39925796520351864,
+     "p_d": 0.24870726439695443,
+     "p_h": 0.35203477039952685
+    },
+    "miss": 0.010081220498058013,
+    "miss_on": "draw",
+    "o25": 0.6093149804292447,
+    "other": 0.011278689215010629,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.11254957777067083,
+      "score": "1-1"
+     },
+     {
+      "p": 0.08652940740558923,
+      "score": "1-2"
+     },
+     {
+      "p": 0.08069924306412225,
+      "score": "2-1"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "started",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#FFDD00",
+    "code": "LEC",
+    "fg": "#D7141A",
+    "name": "Lecce"
+   },
+   "away_form": [
+    {
+     "date": "2026-11-01",
+     "ga": 2,
+     "gf": 1,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Genoa",
+     "opponent_name": "Genoa",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-29",
+     "ga": 5,
+     "gf": 1,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Frosinone",
+     "opponent_name": "Frosinone",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 2,
+     "gf": 0,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Juventus",
+     "opponent_name": "Juventus",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 0,
+     "gf": 3,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Udinese",
+     "opponent_name": "Udinese",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-11",
+     "ga": 2,
+     "gf": 1,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Bologna",
+     "opponent_name": "Bologna",
+     "result": "L"
+    }
+   ],
+   "away_position": 14,
+   "band": "SOLID",
+   "band_basis": "pick",
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#8A1E03",
+    "code": "TOR",
+    "fg": "#FFFFFF",
+    "name": "Torino"
+   },
+   "home_form": [
+    {
+     "date": "2026-11-01",
+     "ga": 2,
+     "gf": 0,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Frosinone",
+     "opponent_name": "Frosinone",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-27",
+     "ga": 3,
+     "gf": 1,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Como",
+     "opponent_name": "Como",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-23",
+     "ga": 2,
+     "gf": 3,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Monza",
+     "opponent_name": "Monza",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-19",
+     "ga": 0,
+     "gf": 3,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Parma",
+     "opponent_name": "Parma",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-12",
+     "ga": 1,
+     "gf": 2,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Udinese",
+     "opponent_name": "Udinese",
+     "result": "W"
+    }
+   ],
+   "home_position": 10,
+   "kickoff": "2026-11-07T14:00:00Z",
+   "kickoff_sources": null,
+   "league": "I1",
+   "logged_at": "2026-11-06T21:48:32Z",
+   "market": {
+    "p_a": 0.2152097450469964,
+    "p_d": 0.261113208671979,
+    "p_h": 0.5236770462810245
+   },
+   "market_o25": 0.5,
+   "match_id": "I1-20261107-torino-lecce",
+   "model": {
+    "p_a": 0.26058252315091734,
+    "p_d": 0.27479864665450376,
+    "p_h": 0.46461883019457884
+   },
+   "model_o25": 0.4659709070633653,
+   "p_a": 0.20154886270573893,
+   "p_btts": 0.5123597287261896,
+   "p_d": 0.2590323801465236,
+   "p_h": 0.5394187571477375,
+   "p_o15": 0.7519130889784316,
+   "p_o25": 0.5,
+   "p_o35": 0.2784397837538362,
+   "pick": "H",
+   "pick_prob": 0.5394187571477375,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 4.38,
+     "d": 3.61,
+     "h": 1.8
+    },
+    "best": {
+     "a": 4.75,
+     "d": 3.75,
+     "h": 1.85
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.2055401519783579,
+     "p_d": 0.25330065445957106,
+     "p_h": 0.541159193562071
+    },
+    "miss": 0.005731725686952516,
+    "miss_on": "draw",
+    "o25": 0.4980257049684755,
+    "other": 0.008557844317904961,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.1207988883324008,
+      "score": "1-1"
+     },
+     {
+      "p": 0.11164090519532338,
+      "score": "1-0"
+     },
+     {
+      "p": 0.10088170532843206,
+      "score": "2-0"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "started",
+   "time_confirmed": true
+  },
+  {
+   "away": {
     "bg": "#007FC8",
     "code": "ESP",
     "fg": "#FFFFFF",
@@ -11595,6 +12216,8 @@
    "away_position": 11,
    "band": "SOLID",
    "band_basis": "pick",
+   "btts_correct": true,
+   "correct": false,
    "fixture_source": "football-data.co.uk",
    "home": {
     "bg": "#D81E05",
@@ -11677,6 +12300,7 @@
     "p_h": 0.4537269302200943
    },
    "model_o25": 0.4708785053592025,
+   "o25_correct": true,
    "p_a": 0.20184394842470227,
    "p_btts": 0.4565934558046188,
    "p_d": 0.2772590957147883,
@@ -11700,6 +12324,12 @@
     }
    },
    "prices_at": "2026-11-06T19:22:43Z",
+   "provisional": true,
+   "result_source": "ESPN + fixturedownload.com",
+   "score": {
+    "away": 0,
+    "home": 0
+   },
    "score_source": "market",
    "scores": {
     "flagged": false,
@@ -11729,213 +12359,7 @@
     ]
    },
    "season": 2026,
-   "status": "started",
-   "time_confirmed": true
-  },
-  {
-   "away": {
-    "bg": "#132257",
-    "code": "TOT",
-    "fg": "#FFFFFF",
-    "name": "Tottenham Hotspur"
-   },
-   "away_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 0,
-     "gf": 2,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Crystal Palace",
-     "opponent_name": "Crystal Palace",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-24",
-     "ga": 0,
-     "gf": 2,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Chelsea",
-     "opponent_name": "Chelsea",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-19",
-     "ga": 1,
-     "gf": 3,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Coventry",
-     "opponent_name": "Coventry City",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 1,
-     "gf": 1,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Man United",
-     "opponent_name": "Manchester United",
-     "result": "D"
-    },
-    {
-     "date": "2026-09-19",
-     "ga": 3,
-     "gf": 2,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Aston Villa",
-     "opponent_name": "Aston Villa",
-     "result": "L"
-    }
-   ],
-   "away_key": "Tottenham",
-   "away_position": 9,
-   "band": "TOSS-UP",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-07T12:30:00Z",
-   "home": {
-    "bg": "#FFFFFF",
-    "code": "LEE",
-    "fg": "#1D428A",
-    "name": "Leeds United"
-   },
-   "home_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 2,
-     "gf": 0,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Bournemouth",
-     "opponent_name": "Bournemouth",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 0,
-     "gf": 0,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Sunderland",
-     "opponent_name": "Sunderland",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-18",
-     "ga": 1,
-     "gf": 1,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Man United",
-     "opponent_name": "Manchester United",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 2,
-     "gf": 1,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Arsenal",
-     "opponent_name": "Arsenal",
-     "result": "L"
-    },
-    {
-     "date": "2026-09-20",
-     "ga": 0,
-     "gf": 0,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Crystal Palace",
-     "opponent_name": "Crystal Palace",
-     "result": "D"
-    }
-   ],
-   "home_key": "Leeds",
-   "home_position": 12,
-   "kickoff": "2026-11-07T12:30:00Z",
-   "league": "E0",
-   "logged_at": "2026-11-06T21:48:32Z",
-   "market": {
-    "p_a": 0.3694125409819164,
-    "p_d": 0.2817741303585789,
-    "p_h": 0.34881332865950476
-   },
-   "market_o25": 0.48930481283422456,
-   "match_id": "E0-20261107-leeds-tottenham",
-   "model": {
-    "p_a": 0.3030562053391618,
-    "p_d": 0.2795147161335101,
-    "p_h": 0.41742907852732813
-   },
-   "model_o25": 0.469130244544567,
-   "p_a": 0.3699100964576313,
-   "p_btts": 0.5406718933872237,
-   "p_d": 0.2839752338580901,
-   "p_h": 0.3461146696842787,
-   "p_o15": 0.7441277577058495,
-   "p_o25": 0.48930481283422456,
-   "p_o35": 0.2686188096508493,
-   "pick": "A",
-   "pick_prob": 0.3699100964576313,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 2.54,
-     "d": 3.33,
-     "h": 2.69
-    },
-    "best": {
-     "a": 2.66,
-     "d": 3.4,
-     "h": 2.75
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.37308248438563896,
-     "p_d": 0.27745612066813574,
-     "p_h": 0.3494613949462252
-    },
-    "miss": 0.006519113189954351,
-    "miss_on": "draw",
-    "o25": 0.4868801831379149,
-    "other": 0.004652700199716309,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.1322996102959576,
-      "score": "1-1"
-     },
-     {
-      "p": 0.08969566488109863,
-      "score": "0-1"
-     },
-     {
-      "p": 0.08601653902913096,
-      "score": "1-0"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
+   "status": "final",
    "time_confirmed": true
   },
   {
@@ -12002,12 +12426,10 @@
      "result": "L"
     }
    ],
-   "away_key": "Santander",
    "away_position": 16,
    "band": "TOSS-UP",
    "band_basis": "pick",
    "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-07T13:00:00Z",
    "home": {
     "bg": "#0E74B9",
     "code": "MAL",
@@ -12071,9 +12493,9 @@
      "result": "L"
     }
    ],
-   "home_key": "Malaga",
    "home_position": 20,
    "kickoff": "2026-11-07T13:00:00Z",
+   "kickoff_sources": null,
    "league": "SP1",
    "logged_at": "2026-11-06T21:48:32Z",
    "market": {
@@ -12141,419 +12563,7 @@
     ]
    },
    "season": 2026,
-   "status": "upcoming",
-   "time_confirmed": true
-  },
-  {
-   "away": {
-    "bg": "#FFDD00",
-    "code": "FRO",
-    "fg": "#0055A4",
-    "name": "Frosinone"
-   },
-   "away_form": [
-    {
-     "date": "2026-11-01",
-     "ga": 0,
-     "gf": 2,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Torino",
-     "opponent_name": "Torino",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-29",
-     "ga": 1,
-     "gf": 5,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Lecce",
-     "opponent_name": "Lecce",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 4,
-     "gf": 4,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Atalanta",
-     "opponent_name": "Atalanta",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-16",
-     "ga": 2,
-     "gf": 4,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Sassuolo",
-     "opponent_name": "Sassuolo",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 3,
-     "gf": 0,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Napoli",
-     "opponent_name": "Napoli",
-     "result": "L"
-    }
-   ],
-   "away_key": "Frosinone",
-   "away_position": 6,
-   "band": "TOSS-UP",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-07T14:00:00Z",
-   "home": {
-    "bg": "#002350",
-    "code": "CAG",
-    "fg": "#FFFFFF",
-    "name": "Cagliari"
-   },
-   "home_form": [
-    {
-     "date": "2026-11-01",
-     "ga": 2,
-     "gf": 1,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Lazio",
-     "opponent_name": "Lazio",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-27",
-     "ga": 4,
-     "gf": 2,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Roma",
-     "opponent_name": "Roma",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-24",
-     "ga": 2,
-     "gf": 0,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Bologna",
-     "opponent_name": "Bologna",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-19",
-     "ga": 4,
-     "gf": 0,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Monza",
-     "opponent_name": "Monza",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-11",
-     "ga": 1,
-     "gf": 1,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Juventus",
-     "opponent_name": "Juventus",
-     "result": "D"
-    }
-   ],
-   "home_key": "Cagliari",
-   "home_position": 12,
-   "kickoff": "2026-11-07T14:00:00Z",
-   "league": "I1",
-   "logged_at": "2026-11-06T21:48:32Z",
-   "market": {
-    "p_a": 0.3914383807164421,
-    "p_d": 0.2591666201996224,
-    "p_h": 0.34939499908393534
-   },
-   "market_o25": 0.6126582278481012,
-   "match_id": "I1-20261107-cagliari-frosinone",
-   "model": {
-    "p_a": 0.4172254124224087,
-    "p_d": 0.2623264973653968,
-    "p_h": 0.32044809021219456
-   },
-   "model_o25": 0.5433292721942405,
-   "p_a": 0.3944648840767035,
-   "p_btts": 0.6343544921678649,
-   "p_d": 0.25878848489501244,
-   "p_h": 0.3467466310282841,
-   "p_o15": 0.828339299442249,
-   "p_o25": 0.6126582278481012,
-   "p_o35": 0.3860721039625092,
-   "pick": "A",
-   "pick_prob": 0.3944648840767035,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 2.41,
-     "d": 3.64,
-     "h": 2.7
-    },
-    "best": {
-     "a": 2.5,
-     "d": 3.8,
-     "h": 2.75
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.39925796520351864,
-     "p_d": 0.24870726439695443,
-     "p_h": 0.35203477039952685
-    },
-    "miss": 0.010081220498058013,
-    "miss_on": "draw",
-    "o25": 0.6093149804292447,
-    "other": 0.011278689215010629,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.11254957777067083,
-      "score": "1-1"
-     },
-     {
-      "p": 0.08652940740558923,
-      "score": "1-2"
-     },
-     {
-      "p": 0.08069924306412225,
-      "score": "2-1"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
-   "time_confirmed": true
-  },
-  {
-   "away": {
-    "bg": "#FFDD00",
-    "code": "LEC",
-    "fg": "#D7141A",
-    "name": "Lecce"
-   },
-   "away_form": [
-    {
-     "date": "2026-11-01",
-     "ga": 2,
-     "gf": 1,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Genoa",
-     "opponent_name": "Genoa",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-29",
-     "ga": 5,
-     "gf": 1,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Frosinone",
-     "opponent_name": "Frosinone",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 2,
-     "gf": 0,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Juventus",
-     "opponent_name": "Juventus",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-18",
-     "ga": 0,
-     "gf": 3,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Udinese",
-     "opponent_name": "Udinese",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-11",
-     "ga": 2,
-     "gf": 1,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Bologna",
-     "opponent_name": "Bologna",
-     "result": "L"
-    }
-   ],
-   "away_key": "Lecce",
-   "away_position": 14,
-   "band": "SOLID",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-07T14:00:00Z",
-   "home": {
-    "bg": "#8A1E03",
-    "code": "TOR",
-    "fg": "#FFFFFF",
-    "name": "Torino"
-   },
-   "home_form": [
-    {
-     "date": "2026-11-01",
-     "ga": 2,
-     "gf": 0,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Frosinone",
-     "opponent_name": "Frosinone",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-27",
-     "ga": 3,
-     "gf": 1,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Como",
-     "opponent_name": "Como",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-23",
-     "ga": 2,
-     "gf": 3,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Monza",
-     "opponent_name": "Monza",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-19",
-     "ga": 0,
-     "gf": 3,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Parma",
-     "opponent_name": "Parma",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-12",
-     "ga": 1,
-     "gf": 2,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Udinese",
-     "opponent_name": "Udinese",
-     "result": "W"
-    }
-   ],
-   "home_key": "Torino",
-   "home_position": 10,
-   "kickoff": "2026-11-07T14:00:00Z",
-   "league": "I1",
-   "logged_at": "2026-11-06T21:48:32Z",
-   "market": {
-    "p_a": 0.2152097450469964,
-    "p_d": 0.261113208671979,
-    "p_h": 0.5236770462810245
-   },
-   "market_o25": 0.5,
-   "match_id": "I1-20261107-torino-lecce",
-   "model": {
-    "p_a": 0.26058252315091734,
-    "p_d": 0.27479864665450376,
-    "p_h": 0.46461883019457884
-   },
-   "model_o25": 0.4659709070633653,
-   "p_a": 0.20154886270573893,
-   "p_btts": 0.5123597287261896,
-   "p_d": 0.2590323801465236,
-   "p_h": 0.5394187571477375,
-   "p_o15": 0.7519130889784316,
-   "p_o25": 0.5,
-   "p_o35": 0.2784397837538362,
-   "pick": "H",
-   "pick_prob": 0.5394187571477375,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 4.38,
-     "d": 3.61,
-     "h": 1.8
-    },
-    "best": {
-     "a": 4.75,
-     "d": 3.75,
-     "h": 1.85
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.2055401519783579,
-     "p_d": 0.25330065445957106,
-     "p_h": 0.541159193562071
-    },
-    "miss": 0.005731725686952516,
-    "miss_on": "draw",
-    "o25": 0.4980257049684755,
-    "other": 0.008557844317904961,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.1207988883324008,
-      "score": "1-1"
-     },
-     {
-      "p": 0.11164090519532338,
-      "score": "1-0"
-     },
-     {
-      "p": 0.10088170532843206,
-      "score": "2-0"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
+   "status": "started",
    "time_confirmed": true
   },
   {
@@ -12693,7 +12703,7 @@
    "home_position": 2,
    "kickoff": "2026-11-07T14:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.11450364260624712,
     "p_d": 0.16236181447276146,
@@ -12702,18 +12712,18 @@
    "market_o25": 0.7057522123893805,
    "match_id": "D1-20261107-dortmund-elversberg",
    "model": {
-    "p_a": 0.10027157506989873,
-    "p_d": 0.1676420024323829,
-    "p_h": 0.7320864224977184
+    "p_a": 0.10027157506988593,
+    "p_d": 0.16764200243240848,
+    "p_h": 0.7320864224977056
    },
    "model_o25": 0.6500887642683293,
    "p_a": 0.0976191217189214,
-   "p_btts": 0.5635462665663219,
+   "p_btts": 0.5635462665663458,
    "p_d": 0.14916466391105632,
    "p_h": 0.7532162143700223,
-   "p_o15": 0.8832495717617534,
+   "p_o15": 0.8832495717617397,
    "p_o25": 0.7057522123893805,
-   "p_o35": 0.49587351243382505,
+   "p_o35": 0.4958735124337681,
    "pick": "H",
    "pick_prob": 0.7532162143700223,
    "price_status": "posted",
@@ -12734,26 +12744,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.09500495347311488,
-     "p_d": 0.15213313598050157,
-     "p_h": 0.7528619105463836
+     "p_a": 0.09500495347313549,
+     "p_d": 0.15213313598055525,
+     "p_h": 0.7528619105463092
     },
-    "miss": 0.002968472069445255,
+    "miss": 0.002968472069498934,
     "miss_on": "draw",
-    "o25": 0.7064444061302474,
-    "other": 0.0602790611220092,
+    "o25": 0.7064444061302005,
+    "other": 0.06027906112198145,
     "reason": null,
     "top": [
      {
-      "p": 0.09736193350729747,
+      "p": 0.09736193350729987,
       "score": "2-0"
      },
      {
-      "p": 0.08894744613050001,
+      "p": 0.08894744613049127,
       "score": "3-0"
      },
      {
-      "p": 0.08879691531509055,
+      "p": 0.08879691531509919,
       "score": "2-1"
      }
     ]
@@ -12899,7 +12909,7 @@
    "home_position": 10,
    "kickoff": "2026-11-07T14:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.7126144207588403,
     "p_d": 0.1522879104721176,
@@ -12908,18 +12918,18 @@
    "market_o25": 0.7810218978102189,
    "match_id": "D1-20261107-mainz-bayernmunich",
    "model": {
-    "p_a": 0.7433994555130733,
-    "p_d": 0.14836554557034826,
-    "p_h": 0.10823499891657846
+    "p_a": 0.7433994555130633,
+    "p_d": 0.1483655455703681,
+    "p_h": 0.10823499891656853
    },
-   "model_o25": 0.7645886108236124,
+   "model_o25": 0.7645886108236125,
    "p_a": 0.743856832596219,
-   "p_btts": 0.6526146284438717,
-   "p_d": 0.13906115571146166,
+   "p_btts": 0.6526146284450303,
+   "p_d": 0.13906115571146171,
    "p_h": 0.11708201169231933,
-   "p_o15": 0.9219415301749917,
+   "p_o15": 0.9219415301755661,
    "p_o25": 0.7810218978102189,
-   "p_o35": 0.594880157816301,
+   "p_o35": 0.5948801578179592,
    "pick": "A",
    "pick_prob": 0.743856832596219,
    "price_status": "posted",
@@ -12940,26 +12950,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.742683731012246,
-     "p_d": 0.146180424704615,
-     "p_h": 0.11113584428313898
+     "p_a": 0.7426837310124113,
+     "p_d": 0.14618042470440684,
+     "p_h": 0.11113584428318218
     },
-    "miss": 0.007119268993153349,
+    "miss": 0.007119268992945127,
     "miss_on": "draw",
-    "o25": 0.7828002202311806,
-    "other": 0.0845837085869946,
+    "o25": 0.7828002202323803,
+    "other": 0.08458370858756958,
     "reason": null,
     "top": [
      {
-      "p": 0.08164968683364401,
+      "p": 0.08164968683345764,
       "score": "1-2"
      },
      {
-      "p": 0.08160111299679472,
+      "p": 0.0816011129967609,
       "score": "1-3"
      },
      {
-      "p": 0.07097979496049728,
+      "p": 0.07097979496013589,
       "score": "0-2"
      }
     ]
@@ -13105,7 +13115,7 @@
    "home_position": 15,
    "kickoff": "2026-11-07T14:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.4377788486949492,
     "p_d": 0.2478430519066644,
@@ -13114,18 +13124,18 @@
    "market_o25": 0.6496350364963503,
    "match_id": "D1-20261107-paderborn-einfrankfurt",
    "model": {
-    "p_a": 0.4107791225152945,
-    "p_d": 0.24741746319632665,
-    "p_h": 0.3418034142883789
+    "p_a": 0.4107791225152763,
+    "p_d": 0.24741746319636304,
+    "p_h": 0.3418034142883607
    },
    "model_o25": 0.6131759643979762,
    "p_a": 0.44606180260263306,
-   "p_btts": 0.6584847964771463,
+   "p_btts": 0.6584847964788846,
    "p_d": 0.2459493417367006,
    "p_h": 0.3079888556606664,
-   "p_o15": 0.8511056079164148,
+   "p_o15": 0.8511056079177527,
    "p_o25": 0.6496350364963503,
-   "p_o35": 0.42671321506809373,
+   "p_o35": 0.4267132150705865,
    "pick": "A",
    "pick_prob": 0.44606180260263306,
    "price_status": "posted",
@@ -13146,26 +13156,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.4496281996877046,
-     "p_d": 0.23766228518131347,
-     "p_h": 0.31270951513098194
+     "p_a": 0.4496281996879321,
+     "p_d": 0.23766228518086296,
+     "p_h": 0.3127095151312048
     },
-    "miss": 0.00828705655538714,
+    "miss": 0.00828705655583764,
     "miss_on": "draw",
-    "o25": 0.6469537599252092,
-    "other": 0.015607282679118484,
+    "o25": 0.6469537599274536,
+    "other": 0.015607282679355627,
     "reason": null,
     "top": [
      {
-      "p": 0.10404444424411102,
+      "p": 0.1040444442436609,
       "score": "1-1"
      },
      {
-      "p": 0.08983492313815127,
+      "p": 0.08983492313803852,
       "score": "1-2"
      },
      {
-      "p": 0.07374803926115878,
+      "p": 0.07374803926109286,
       "score": "2-1"
      }
     ]
@@ -13311,7 +13321,7 @@
    "home_position": 4,
    "kickoff": "2026-11-07T14:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.1697888403647738,
     "p_d": 0.1826716512095718,
@@ -13320,18 +13330,18 @@
    "market_o25": 0.75,
    "match_id": "D1-20261107-rbleipzig-augsburg",
    "model": {
-    "p_a": 0.15106346610861104,
-    "p_d": 0.1761058303657101,
-    "p_h": 0.672830703525679
+    "p_a": 0.15106346610859925,
+    "p_d": 0.17610583036573368,
+    "p_h": 0.6728307035256671
    },
    "model_o25": 0.7383212019037473,
    "p_a": 0.15308586481169,
-   "p_btts": 0.6670305172587372,
+   "p_btts": 0.6670305172592065,
    "p_d": 0.17216758805495905,
    "p_h": 0.6747465471333509,
-   "p_o15": 0.9065708397884686,
+   "p_o15": 0.9065708397886909,
    "p_o25": 0.75,
-   "p_o35": 0.5513841178190566,
+   "p_o35": 0.5513841178196089,
    "pick": "H",
    "pick_prob": 0.6747465471333509,
    "price_status": "posted",
@@ -13352,26 +13362,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.15185846426722802,
-     "p_d": 0.1737628065561396,
-     "p_h": 0.6743787291766323
+     "p_a": 0.15185846426734456,
+     "p_d": 0.17376280655612433,
+     "p_h": 0.6743787291765311
     },
-    "miss": 0.0015952185011805509,
+    "miss": 0.0015952185011652853,
     "miss_on": "draw",
-    "o25": 0.7504370591952696,
-    "other": 0.056632206704862575,
+    "o25": 0.7504370591956919,
+    "other": 0.05663220670497371,
     "reason": null,
     "top": [
      {
-      "p": 0.08831111381753058,
+      "p": 0.08831111381747594,
       "score": "2-1"
      },
      {
-      "p": 0.07885360487198421,
+      "p": 0.07885360487197333,
       "score": "3-1"
      },
      {
-      "p": 0.07094772373341507,
+      "p": 0.07094772373328632,
       "score": "2-0"
      }
     ]
@@ -13517,7 +13527,7 @@
    "home_position": 1,
    "kickoff": "2026-11-07T15:00:00Z",
    "league": "E0",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.05793675096566909,
     "p_d": 0.12641455500460683,
@@ -13526,18 +13536,18 @@
    "market_o25": 0.625,
    "match_id": "E0-20261107-arsenal-hull",
    "model": {
-    "p_a": 0.07244475740822197,
-    "p_d": 0.16825276714120638,
-    "p_h": 0.7593024754505716
+    "p_a": 0.07244475740820913,
+    "p_d": 0.16825276714123213,
+    "p_h": 0.7593024754505587
    },
    "model_o25": 0.5520479094598989,
    "p_a": 0.044934987342389744,
-   "p_btts": 0.35567922164755317,
-   "p_d": 0.11079480125854604,
+   "p_btts": 0.35567922164740695,
+   "p_d": 0.11079480125854614,
    "p_h": 0.8442702113990642,
-   "p_o15": 0.8356073199677184,
+   "p_o15": 0.8356073199675667,
    "p_o25": 0.625,
-   "p_o35": 0.40386595983503715,
+   "p_o35": 0.40386595983475565,
    "pick": "H",
    "pick_prob": 0.8442702113990642,
    "price_status": "posted",
@@ -13558,26 +13568,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.03851487673419026,
-     "p_d": 0.11674955637299733,
-     "p_h": 0.8447355668928125
+     "p_a": 0.03851487673419046,
+     "p_d": 0.1167495563730781,
+     "p_h": 0.8447355668927315
     },
-    "miss": 0.0064201106081994835,
+    "miss": 0.006420110608199282,
     "miss_on": "away win",
-    "o25": 0.6260819515675305,
-    "other": 0.061270047178850096,
+    "o25": 0.6260819515672691,
+    "other": 0.06127004717876261,
     "reason": null,
     "top": [
      {
-      "p": 0.15045976585204382,
+      "p": 0.15045976585212067,
       "score": "2-0"
      },
      {
-      "p": 0.1382555393688316,
+      "p": 0.13825553936884993,
       "score": "3-0"
      },
      {
-      "p": 0.10608581555433161,
+      "p": 0.1060858155544185,
       "score": "1-0"
      }
     ]
@@ -13723,7 +13733,7 @@
    "home_position": 15,
    "kickoff": "2026-11-07T15:00:00Z",
    "league": "E0",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.28234664724027636,
     "p_d": 0.2590122135840552,
@@ -13732,18 +13742,18 @@
    "market_o25": 0.5744125326370757,
    "match_id": "E0-20261107-fulham-newcastle",
    "model": {
-    "p_a": 0.2943525254252623,
-    "p_d": 0.26760992760776153,
-    "p_h": 0.43803754696697617
+    "p_a": 0.2943525254252417,
+    "p_d": 0.26760992760780306,
+    "p_h": 0.4380375469669553
    },
-   "model_o25": 0.5119094835786622,
+   "model_o25": 0.5119094835786621,
    "p_a": 0.2738931325863131,
-   "p_btts": 0.5954250181236883,
+   "p_btts": 0.5954250181252047,
    "p_d": 0.2580745289376951,
    "p_h": 0.46803233847599174,
-   "p_o15": 0.8042086951207095,
+   "p_o15": 0.804208695121936,
    "p_o25": 0.5744125326370757,
-   "p_o35": 0.3479669357497889,
+   "p_o35": 0.34796693575159793,
    "pick": "H",
    "pick_prob": 0.46803233847599174,
    "price_status": "posted",
@@ -13764,26 +13774,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.27828233059456664,
-     "p_d": 0.25080882944856925,
-     "p_h": 0.47090883995686406
+     "p_a": 0.2782823305950926,
+     "p_d": 0.2508088294482537,
+     "p_h": 0.47090883995665345
     },
-    "miss": 0.007265699489125865,
+    "miss": 0.007265699489441391,
     "miss_on": "draw",
-    "o25": 0.5719919768425422,
-    "other": 0.010165597593584708,
+    "o25": 0.5719919768443642,
+    "other": 0.010165597593695952,
     "reason": null,
     "top": [
      {
-      "p": 0.11693799560429823,
+      "p": 0.11693799560403506,
       "score": "1-1"
      },
      {
-      "p": 0.09431315287804068,
+      "p": 0.09431315287800353,
       "score": "2-1"
      },
      {
-      "p": 0.0803600933994966,
+      "p": 0.08036009339896691,
       "score": "1-0"
      }
     ]
@@ -13929,7 +13939,7 @@
    "home_position": 14,
    "kickoff": "2026-11-07T15:15:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.30420841683366734,
     "p_d": 0.28577154308617236,
@@ -13938,18 +13948,18 @@
    "market_o25": 0.4693333333333332,
    "match_id": "SP1-20261107-espanol-lacoruna",
    "model": {
-    "p_a": 0.26447759344974336,
-    "p_d": 0.27705431765684285,
-    "p_h": 0.4584680888934138
+    "p_a": 0.264477593449722,
+    "p_d": 0.2770543176568858,
+    "p_h": 0.45846808889339224
    },
    "model_o25": 0.4600908504997041,
    "p_a": 0.2979362356814355,
-   "p_btts": 0.520464578655764,
+   "p_btts": 0.5204645786559966,
    "p_d": 0.2882262664555062,
    "p_h": 0.4138374978630583,
-   "p_o15": 0.7282340212988562,
+   "p_o15": 0.7282340212991346,
    "p_o25": 0.4693333333333332,
-   "p_o35": 0.2509054437917746,
+   "p_o35": 0.2509054437920536,
    "pick": "H",
    "pick_prob": 0.4138374978630583,
    "price_status": "posted",
@@ -13970,26 +13980,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.30247277862675237,
-     "p_d": 0.28021424765322195,
-     "p_h": 0.4173129737200256
+     "p_a": 0.3024727786264526,
+     "p_d": 0.28021424765315234,
+     "p_h": 0.4173129737203951
     },
-    "miss": 0.008012018802284249,
+    "miss": 0.00801201880235386,
     "miss_on": "draw",
-    "o25": 0.46628516492228583,
-    "other": 0.004304840423925427,
+    "o25": 0.46628516492261535,
+    "other": 0.00430484042393986,
     "reason": null,
     "top": [
      {
-      "p": 0.13356561629230418,
+      "p": 0.13356561629227537,
       "score": "1-1"
      },
      {
-      "p": 0.10226814854628331,
+      "p": 0.10226814854623165,
       "score": "1-0"
      },
      {
-      "p": 0.08769069387931017,
+      "p": 0.08769069387936439,
       "score": "2-1"
      }
     ]
@@ -14135,7 +14145,7 @@
    "home_position": 15,
    "kickoff": "2026-11-07T17:00:00Z",
    "league": "I1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.5139837398373984,
     "p_d": 0.2702845528455285,
@@ -14144,18 +14154,18 @@
    "market_o25": 0.445910290237467,
    "match_id": "I1-20261107-parma-bologna",
    "model": {
-    "p_a": 0.47157526725866505,
-    "p_d": 0.29240218302054855,
-    "p_h": 0.23602254972078646
+    "p_a": 0.47157526725864296,
+    "p_d": 0.2924021830205925,
+    "p_h": 0.2360225497207645
    },
-   "model_o25": 0.3894413624054649,
+   "model_o25": 0.389441362405465,
    "p_a": 0.529555384142979,
-   "p_btts": 0.471525343069825,
+   "p_btts": 0.47152534307021704,
    "p_d": 0.2690173295361652,
    "p_h": 0.20142728632085585,
-   "p_o15": 0.7109002079610078,
+   "p_o15": 0.7109002079613942,
    "p_o25": 0.445910290237467,
-   "p_o35": 0.23331704015226598,
+   "p_o35": 0.23331704015263607,
    "pick": "A",
    "pick_prob": 0.529555384142979,
    "price_status": "posted",
@@ -14176,26 +14186,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.5301567699992624,
-     "p_d": 0.26702483337429733,
-     "p_h": 0.20281839662644036
+     "p_a": 0.5301567699992915,
+     "p_d": 0.26702483337422733,
+     "p_h": 0.20281839662648146
     },
-    "miss": 0.0019924961618678627,
+    "miss": 0.0019924961619378623,
     "miss_on": "draw",
-    "o25": 0.44516456812902183,
-    "other": 0.005943858151465808,
+    "o25": 0.44516456812947375,
+    "other": 0.005943858151483461,
     "reason": null,
     "top": [
      {
-      "p": 0.12799513106769098,
+      "p": 0.12799513106751917,
       "score": "0-1"
      },
      {
-      "p": 0.12602890874391673,
+      "p": 0.12602890874390593,
       "score": "1-1"
      },
      {
-      "p": 0.10650015503066895,
+      "p": 0.10650015503061373,
       "score": "0-2"
      }
     ]
@@ -14341,7 +14351,7 @@
    "home_position": 12,
    "kickoff": "2026-11-07T17:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.22015538330785656,
     "p_d": 0.20931999531507617,
@@ -14350,18 +14360,18 @@
    "market_o25": 0.7152173913043478,
    "match_id": "D1-20261107-stuttgart-werderbremen",
    "model": {
-    "p_a": 0.1956951564408458,
-    "p_d": 0.2023396433666258,
-    "p_h": 0.6019652001925284
+    "p_a": 0.19569515644083188,
+    "p_d": 0.2023396433666538,
+    "p_h": 0.6019652001925143
    },
    "model_o25": 0.6973628708735069,
    "p_a": 0.20616121036474458,
-   "p_btts": 0.6755138498258827,
+   "p_btts": 0.6755138498260197,
    "p_d": 0.2021284934380576,
    "p_h": 0.5917102961971977,
-   "p_o15": 0.8887520945300494,
+   "p_o15": 0.8887520945301373,
    "p_o25": 0.7152173913043478,
-   "p_o35": 0.5064765411484345,
+   "p_o35": 0.5064765411486077,
    "pick": "H",
    "pick_prob": 0.5917102961971977,
    "price_status": "posted",
@@ -14382,26 +14392,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.2064790922504803,
-     "p_d": 0.2016709273700117,
-     "p_h": 0.591849980379508
+     "p_a": 0.20647909225049432,
+     "p_d": 0.201670927370015,
+     "p_h": 0.5918499803794908
     },
-    "miss": 0.0004575660680459226,
+    "miss": 0.0004575660680426197,
     "miss_on": "draw",
-    "o25": 0.7150814420418214,
-    "other": 0.03533295857069896,
+    "o25": 0.7150814420419618,
+    "other": 0.035332958570726714,
     "reason": null,
     "top": [
      {
-      "p": 0.09209037502267471,
+      "p": 0.09209037502265914,
       "score": "2-1"
      },
      {
-      "p": 0.083048562982334,
+      "p": 0.08304856298231848,
       "score": "1-1"
      },
      {
-      "p": 0.07213700601178812,
+      "p": 0.07213700601178893,
       "score": "3-1"
      }
     ]
@@ -14547,7 +14557,7 @@
    "home_position": 19,
    "kickoff": "2026-11-07T17:30:00Z",
    "league": "E0",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.5551913789464537,
     "p_d": 0.23814046457347884,
@@ -14556,18 +14566,18 @@
    "market_o25": 0.5833333333333334,
    "match_id": "E0-20261107-nottmforest-mancity",
    "model": {
-    "p_a": 0.5263974979527707,
-    "p_d": 0.2560626941130897,
-    "p_h": 0.21753980793413963
+    "p_a": 0.5263974979527508,
+    "p_d": 0.2560626941131295,
+    "p_h": 0.21753980793411973
    },
    "model_o25": 0.5005751402794947,
    "p_a": 0.5753469702619993,
-   "p_btts": 0.5682515912671408,
+   "p_btts": 0.5682515912671219,
    "p_d": 0.23311353790754796,
    "p_h": 0.19153949183045266,
-   "p_o15": 0.8103302564120507,
+   "p_o15": 0.8103302564120912,
    "p_o25": 0.5833333333333334,
-   "p_o35": 0.35796099737535475,
+   "p_o35": 0.3579609973753919,
    "pick": "A",
    "pick_prob": 0.5753469702619993,
    "price_status": "posted",
@@ -14588,26 +14598,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.5765969910648083,
-     "p_d": 0.2287528760868952,
-     "p_h": 0.19465013284829644
+     "p_a": 0.5765969910649396,
+     "p_d": 0.22875287608688655,
+     "p_h": 0.194650132848174
     },
-    "miss": 0.004360661820652756,
+    "miss": 0.004360661820661416,
     "miss_on": "draw",
-    "o25": 0.5819843703429638,
-    "other": 0.015991011870289173,
+    "o25": 0.5819843703430007,
+    "other": 0.015991011870302163,
     "reason": null,
     "top": [
      {
-      "p": 0.1073644643165279,
+      "p": 0.10736446431652523,
       "score": "1-1"
      },
      {
-      "p": 0.09935257989877885,
+      "p": 0.0993525798987811,
       "score": "1-2"
      },
      {
-      "p": 0.09354436890653645,
+      "p": 0.09354436890656027,
       "score": "0-2"
      }
     ]
@@ -14753,7 +14763,7 @@
    "home_position": 15,
    "kickoff": "2026-11-07T17:30:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.4592339162916735,
     "p_d": 0.2785294462715771,
@@ -14762,18 +14772,18 @@
    "market_o25": 0.4535809018567639,
    "match_id": "SP1-20261107-osasuna-athbilbao",
    "model": {
-    "p_a": 0.3932234971350112,
-    "p_d": 0.2897376050097956,
-    "p_h": 0.3170388978551932
+    "p_a": 0.393223497134989,
+    "p_d": 0.2897376050098403,
+    "p_h": 0.3170388978551707
    },
-   "model_o25": 0.43521755798998774,
+   "model_o25": 0.4352175579899876,
    "p_a": 0.4693637112952104,
-   "p_btts": 0.49840537085144704,
+   "p_btts": 0.4984053708514921,
    "p_d": 0.2793648149927797,
    "p_h": 0.25127147371200986,
-   "p_o15": 0.717306420951957,
+   "p_o15": 0.71730642095195,
    "p_o25": 0.4535809018567639,
-   "p_o35": 0.23952027939879436,
+   "p_o35": 0.2395202793987641,
    "pick": "A",
    "pick_prob": 0.4693637112952104,
    "price_status": "posted",
@@ -14794,26 +14804,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.4702284635979172,
-     "p_d": 0.2770394730560289,
-     "p_h": 0.2527320633460539
+     "p_a": 0.4702284635976945,
+     "p_d": 0.27703947305611193,
+     "p_h": 0.25273206334619347
     },
-    "miss": 0.0023253419367508243,
+    "miss": 0.0023253419366677797,
     "miss_on": "draw",
-    "o25": 0.4526932460144953,
-    "other": 0.004719187890653176,
+    "o25": 0.45269324601445865,
+    "other": 0.004719187890648291,
     "reason": null,
     "top": [
      {
-      "p": 0.13161841959709725,
+      "p": 0.13161841959713783,
       "score": "1-1"
      },
      {
-      "p": 0.11515454272423382,
+      "p": 0.1151545427241899,
       "score": "0-1"
      },
      {
-      "p": 0.09147769777014199,
+      "p": 0.09147769777012632,
       "score": "1-2"
      }
     ]
@@ -14964,7 +14974,7 @@
     "football-data.co.uk": "2026-11-07T18:00:00Z"
    },
    "league": "F1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.5350846871759419,
     "p_d": 0.24196335983408226,
@@ -14973,18 +14983,18 @@
    "market_o25": 0.5567282321899736,
    "match_id": "F1-20261107-auxerre-parisfc",
    "model": {
-    "p_a": 0.4424061263133972,
-    "p_d": 0.2717664927679077,
-    "p_h": 0.28582738091869514
+    "p_a": 0.4424061263133762,
+    "p_d": 0.27176649276794995,
+    "p_h": 0.28582738091867393
    },
    "model_o25": 0.4915918163677284,
    "p_a": 0.5534242392658166,
-   "p_btts": 0.5574275991412975,
+   "p_btts": 0.5574275991413399,
    "p_d": 0.23777152733059412,
    "p_h": 0.20880423340358917,
-   "p_o15": 0.7938892569091692,
+   "p_o15": 0.7938892569092023,
    "p_o25": 0.5567282321899736,
-   "p_o35": 0.333361161884893,
+   "p_o35": 0.3333611618849139,
    "pick": "A",
    "pick_prob": 0.5534242392658166,
    "price_status": "posted",
@@ -15005,26 +15015,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.5530530143002191,
-     "p_d": 0.2389854522563824,
-     "p_h": 0.20796153344339838
+     "p_a": 0.5530530143001864,
+     "p_d": 0.2389854522564184,
+     "p_h": 0.20796153344339516
     },
-    "miss": 0.0012139249257882845,
+    "miss": 0.0012139249258242835,
     "miss_on": "draw",
-    "o25": 0.5571182224453238,
-    "other": 0.012629100232047219,
+    "o25": 0.5571182224453454,
+    "other": 0.012629100232048107,
     "reason": null,
     "top": [
      {
-      "p": 0.11300872561252247,
+      "p": 0.1130087256125395,
       "score": "1-1"
      },
      {
-      "p": 0.09884593500942876,
+      "p": 0.09884593500942848,
       "score": "1-2"
      },
      {
-      "p": 0.09428257124431665,
+      "p": 0.09428257124428982,
       "score": "0-1"
      }
     ]
@@ -15170,7 +15180,7 @@
    "home_position": 3,
    "kickoff": "2026-11-07T19:45:00Z",
    "league": "I1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.10800892908829829,
     "p_d": 0.15937236585541487,
@@ -15179,18 +15189,18 @@
    "market_o25": 0.6938775510204082,
    "match_id": "I1-20261107-roma-sassuolo",
    "model": {
-    "p_a": 0.1053333823810498,
-    "p_d": 0.16969487862691254,
-    "p_h": 0.7249717389920376
+    "p_a": 0.10533338238103701,
+    "p_d": 0.16969487862693836,
+    "p_h": 0.7249717389920247
    },
-   "model_o25": 0.6559048209646039,
+   "model_o25": 0.6559048209646038,
    "p_a": 0.0913269919966137,
-   "p_btts": 0.5419332759556974,
+   "p_btts": 0.5419332759564952,
    "p_d": 0.14585591384501076,
    "p_h": 0.7628170941583756,
-   "p_o15": 0.8767787614699145,
+   "p_o15": 0.8767787614702078,
    "p_o25": 0.6938775510204082,
-   "p_o35": 0.48174519679930045,
+   "p_o35": 0.4817451967999074,
    "pick": "H",
    "pick_prob": 0.7628170941583756,
    "price_status": "posted",
@@ -15211,26 +15221,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.08795087535279567,
-     "p_d": 0.1496111508282906,
-     "p_h": 0.7624379738189139
+     "p_a": 0.08795087535299273,
+     "p_d": 0.14961115082835888,
+     "p_h": 0.7624379738186485
     },
-    "miss": 0.0037552369832798416,
+    "miss": 0.0037552369833481203,
     "miss_on": "draw",
-    "o25": 0.6947327422908962,
-    "other": 0.0592017653985083,
+    "o25": 0.694732742291404,
+    "other": 0.05920176539858968,
     "reason": null,
     "top": [
      {
-      "p": 0.10317595845632782,
+      "p": 0.10317595845610596,
       "score": "2-0"
      },
      {
-      "p": 0.09384920074299723,
+      "p": 0.09384920074282826,
       "score": "3-0"
      },
      {
-      "p": 0.0884450021077617,
+      "p": 0.08844500210776708,
       "score": "2-1"
      }
     ]
@@ -15376,7 +15386,7 @@
    "home_position": 19,
    "kickoff": "2026-11-07T20:00:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.7439714017366973,
     "p_d": 0.15388333553837227,
@@ -15385,18 +15395,18 @@
    "market_o25": 0.6626794258373206,
    "match_id": "SP1-20261107-valencia-realmadrid",
    "model": {
-    "p_a": 0.630195074825151,
-    "p_d": 0.22185534208554233,
-    "p_h": 0.1479495830893066
+    "p_a": 0.6301950748251338,
+    "p_d": 0.22185534208557678,
+    "p_h": 0.14794958308928938
    },
-   "model_o25": 0.5340289431177471,
+   "model_o25": 0.534028943117747,
    "p_a": 0.7750123049921684,
-   "p_btts": 0.49770493035432745,
-   "p_d": 0.13972933640387997,
+   "p_btts": 0.497704930357337,
+   "p_d": 0.13972933640388005,
    "p_h": 0.08525835860395158,
-   "p_o15": 0.8595752067335788,
+   "p_o15": 0.8595752067346393,
    "p_o25": 0.6626794258373206,
-   "p_o35": 0.4464472954083708,
+   "p_o35": 0.4464472954104153,
    "pick": "A",
    "pick_prob": 0.7750123049921684,
    "price_status": "posted",
@@ -15417,26 +15427,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.774439165706892,
-     "p_d": 0.14795879499538483,
-     "p_h": 0.07760203929772315
+     "p_a": 0.7744391657058732,
+     "p_d": 0.14795879499565118,
+     "p_h": 0.07760203929847566
     },
-    "miss": 0.008229458591504868,
+    "miss": 0.008229458591771127,
     "miss_on": "draw",
-    "o25": 0.664501706337289,
-    "other": 0.05404975418882785,
+    "o25": 0.6645017063390813,
+    "other": 0.05404975418904734,
     "reason": null,
     "top": [
      {
-      "p": 0.11598197307005328,
+      "p": 0.11598197306920482,
       "score": "0-2"
      },
      {
-      "p": 0.10306100665425336,
+      "p": 0.10306100665360567,
       "score": "0-3"
      },
      {
-      "p": 0.08773955512218728,
+      "p": 0.08773955512231442,
       "score": "1-2"
      }
     ]
@@ -15587,7 +15597,7 @@
     "football-data.co.uk": "2026-11-07T20:05:00Z"
    },
    "league": "F1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.050427560782753046,
     "p_d": 0.09734666198872056,
@@ -15596,18 +15606,18 @@
    "market_o25": 0.748995983935743,
    "match_id": "F1-20261107-parissg-troyes",
    "model": {
-    "p_a": 0.05752657685837812,
-    "p_d": 0.12336049772533565,
-    "p_h": 0.8191129254162862
+    "p_a": 0.05752657685836871,
+    "p_d": 0.12336049772535466,
+    "p_h": 0.8191129254162767
    },
-   "model_o25": 0.6994304417340917,
+   "model_o25": 0.6994304417340915,
    "p_a": 0.038218415484583705,
-   "p_btts": 0.4313990913414043,
-   "p_d": 0.08225391144596904,
+   "p_btts": 0.43139909134110815,
+   "p_d": 0.08225391144596911,
    "p_h": 0.8795276730694472,
-   "p_o15": 0.9046357177437855,
+   "p_o15": 0.9046357177437101,
    "p_o25": 0.748995983935743,
-   "p_o35": 0.5504347465003139,
+   "p_o35": 0.5504347465001044,
    "pick": "H",
    "pick_prob": 0.8795276730694472,
    "price_status": "posted",
@@ -15628,26 +15638,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.03282071662425237,
-     "p_d": 0.08725045880155342,
-     "p_h": 0.8799288245741943
+     "p_a": 0.03282071662421405,
+     "p_d": 0.08725045880155381,
+     "p_h": 0.8799288245742323
     },
-    "miss": 0.005397698860331333,
+    "miss": 0.005397698860369657,
     "miss_on": "away win",
-    "o25": 0.7497647525276432,
-    "other": 0.1203326245758346,
+    "o25": 0.7497647525274826,
+    "other": 0.12033262457577387,
     "reason": null,
     "top": [
      {
-      "p": 0.12232727959174258,
+      "p": 0.12232727959181598,
       "score": "3-0"
      },
      {
-      "p": 0.11016482185153152,
+      "p": 0.11016482185161422,
       "score": "2-0"
      },
      {
-      "p": 0.10187437614488594,
+      "p": 0.10187437614493172,
       "score": "4-0"
      }
     ]
@@ -15793,7 +15803,7 @@
    "home_position": 8,
    "kickoff": "2026-11-08T11:30:00Z",
    "league": "I1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.316080600553141,
     "p_d": 0.26669300671671275,
@@ -15802,18 +15812,18 @@
    "market_o25": 0.5464190981432361,
    "match_id": "I1-20261108-napoli-lazio",
    "model": {
-    "p_a": 0.2497671344545097,
-    "p_d": 0.2714045355318005,
-    "p_h": 0.4788283300136899
+    "p_a": 0.24976713445448867,
+    "p_d": 0.2714045355318426,
+    "p_h": 0.47882833001366887
    },
-   "model_o25": 0.47116241182099394,
+   "model_o25": 0.47116241182099405,
    "p_a": 0.3109543429454856,
-   "p_btts": 0.5817915063901866,
+   "p_btts": 0.5817915063905832,
    "p_d": 0.26701413325740625,
    "p_h": 0.42203152379710807,
-   "p_o15": 0.7857348381069182,
+   "p_o15": 0.7857348381072604,
    "p_o25": 0.5464190981432361,
-   "p_o35": 0.3212452870709426,
+   "p_o35": 0.3212452870713865,
    "pick": "H",
    "pick_prob": 0.42203152379710807,
    "price_status": "posted",
@@ -15834,26 +15844,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.31402371234748255,
-     "p_d": 0.261536139069133,
-     "p_h": 0.4244401485833845
+     "p_a": 0.31402371234763904,
+     "p_d": 0.2615361390690759,
+     "p_h": 0.42444014858328516
     },
-    "miss": 0.005477994188273272,
+    "miss": 0.005477994188330337,
     "miss_on": "draw",
-    "o25": 0.54452370989815,
-    "other": 0.007519737642885382,
+    "o25": 0.544523709898616,
+    "other": 0.00751973764290792,
     "reason": null,
     "top": [
      {
-      "p": 0.1232025472252208,
+      "p": 0.12320254722517225,
       "score": "1-1"
      },
      {
-      "p": 0.09026786316593874,
+      "p": 0.09026786316593181,
       "score": "2-1"
      },
      {
-      "p": 0.08206651382579541,
+      "p": 0.08206651382564499,
       "score": "1-0"
      }
     ]
@@ -15999,7 +16009,7 @@
    "home_position": 17,
    "kickoff": "2026-11-08T13:00:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.45135390672225933,
     "p_d": 0.2566765348667793,
@@ -16008,18 +16018,18 @@
    "market_o25": 0.5759162303664922,
    "match_id": "SP1-20261108-elche-betis",
    "model": {
-    "p_a": 0.3935875969250573,
-    "p_d": 0.2665289036300111,
-    "p_h": 0.3398834994449316
+    "p_a": 0.39358759692503686,
+    "p_d": 0.2665289036300521,
+    "p_h": 0.339883499444911
    },
-   "model_o25": 0.5303849354183244,
+   "model_o25": 0.5303849354183245,
    "p_a": 0.46104802803279926,
-   "p_btts": 0.5991587546923824,
+   "p_btts": 0.5991587546932908,
    "p_d": 0.255480835025151,
    "p_h": 0.2834711369420497,
-   "p_o15": 0.8059032797985748,
+   "p_o15": 0.8059032797993434,
    "p_o25": 0.5759162303664922,
-   "p_o35": 0.3504828059985244,
+   "p_o35": 0.3504828059996568,
    "pick": "A",
    "pick_prob": 0.46104802803279926,
    "price_status": "posted",
@@ -16040,26 +16050,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.4627409097150972,
-     "p_d": 0.25129912818359174,
-     "p_h": 0.2859599621013108
+     "p_a": 0.4627409097151479,
+     "p_d": 0.2512991281833839,
+     "p_h": 0.2859599621014681
     },
-    "miss": 0.004181706841559274,
+    "miss": 0.004181706841767108,
     "miss_on": "draw",
-    "o25": 0.5745211545016126,
-    "other": 0.010084166279819562,
+    "o25": 0.574521154502749,
+    "other": 0.010084166279894613,
     "reason": null,
     "top": [
      {
-      "p": 0.11692979433616918,
+      "p": 0.11692979433599927,
       "score": "1-1"
      },
      {
-      "p": 0.09362345216500281,
+      "p": 0.09362345216499264,
       "score": "1-2"
      },
      {
-      "p": 0.07876699978647483,
+      "p": 0.07876699978616368,
       "score": "0-1"
      }
     ]
@@ -16133,7 +16143,7 @@
     }
    ],
    "away_key": "Brentford",
-   "away_position": 6,
+   "away_position": 7,
    "band": "SOLID",
    "band_basis": "pick",
    "fixture_source": "football-data.co.uk",
@@ -16205,7 +16215,7 @@
    "home_position": 3,
    "kickoff": "2026-11-08T14:00:00Z",
    "league": "E0",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.2611467718257966,
     "p_d": 0.2454232750928298,
@@ -16214,18 +16224,18 @@
    "market_o25": 0.5943152454780362,
    "match_id": "E0-20261108-brighton-brentford",
    "model": {
-    "p_a": 0.21344365705855664,
-    "p_d": 0.24204389383160832,
-    "p_h": 0.5445124491098351
+    "p_a": 0.21344365705853807,
+    "p_d": 0.24204389383164568,
+    "p_h": 0.5445124491098162
    },
-   "model_o25": 0.5511785930344627,
+   "model_o25": 0.5511785930344626,
    "p_a": 0.2506942314989953,
-   "p_btts": 0.6037265726546411,
+   "p_btts": 0.6037265726543536,
    "p_d": 0.24263760130960715,
    "p_h": 0.5066681671913975,
-   "p_o15": 0.8182876483310817,
+   "p_o15": 0.8182876483308781,
    "p_o25": 0.5943152454780362,
-   "p_o35": 0.3699552423529337,
+   "p_o35": 0.3699552423525794,
    "pick": "H",
    "pick_prob": 0.5066681671913975,
    "price_status": "posted",
@@ -16246,26 +16256,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.2517481498076502,
-     "p_d": 0.24098393286677677,
-     "p_h": 0.5072679173255732
+     "p_a": 0.2517481498074916,
+     "p_d": 0.24098393286686648,
+     "p_h": 0.5072679173256419
     },
-    "miss": 0.0016536684428303805,
+    "miss": 0.0016536684427406745,
     "miss_on": "draw",
-    "o25": 0.5937817439995042,
-    "other": 0.01309680129348112,
+    "o25": 0.5937817439991587,
+    "other": 0.013096801293458027,
     "reason": null,
     "top": [
      {
-      "p": 0.11129503099734137,
+      "p": 0.11129503099741077,
       "score": "1-1"
      },
      {
-      "p": 0.09642904480079649,
+      "p": 0.09642904480081001,
       "score": "2-1"
      },
      {
-      "p": 0.07840175408664905,
+      "p": 0.07840175408673493,
       "score": "1-0"
      }
     ]
@@ -16339,7 +16349,7 @@
     }
    ],
    "away_key": "Liverpool",
-   "away_position": 5,
+   "away_position": 6,
    "band": "STRONG",
    "band_basis": "pick",
    "fixture_source": "football-data.co.uk",
@@ -16411,7 +16421,7 @@
    "home_position": 18,
    "kickoff": "2026-11-08T14:00:00Z",
    "league": "E0",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.5978945021601472,
     "p_d": 0.21983474669588554,
@@ -16420,18 +16430,18 @@
    "market_o25": 0.6071428571428571,
    "match_id": "E0-20261108-crystalpalace-liverpool",
    "model": {
-    "p_a": 0.5198968247123716,
-    "p_d": 0.25217135704793664,
-    "p_h": 0.2279318182396917
+    "p_a": 0.5198968247123522,
+    "p_d": 0.2521713570479757,
+    "p_h": 0.22793181823967207
    },
-   "model_o25": 0.5261307102108291,
+   "model_o25": 0.526130710210829,
    "p_a": 0.6218248637418797,
-   "p_btts": 0.5669954124899778,
+   "p_btts": 0.5669954124900157,
    "p_d": 0.21233090491904447,
    "p_h": 0.1658442313390758,
-   "p_o15": 0.8261644390265108,
+   "p_o15": 0.8261644390265436,
    "p_o25": 0.6071428571428571,
-   "p_o35": 0.3837393213535556,
+   "p_o35": 0.3837393213535833,
    "pick": "A",
    "pick_prob": 0.6218248637418797,
    "price_status": "posted",
@@ -16452,26 +16462,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.6218680258844028,
-     "p_d": 0.21215376980193354,
-     "p_h": 0.16597820431366372
+     "p_a": 0.6218680258843894,
+     "p_d": 0.2121537698019606,
+     "p_h": 0.16597820431365
     },
-    "miss": 0.000177135117110927,
+    "miss": 0.0001771351170838653,
     "miss_on": "draw",
-    "o25": 0.607091218037957,
-    "other": 0.022038961666830503,
+    "o25": 0.6070912180379834,
+    "other": 0.022038961666833723,
     "reason": null,
     "top": [
      {
-      "p": 0.09920259286902017,
+      "p": 0.09920259286901967,
       "score": "1-2"
      },
      {
-      "p": 0.09902651270400048,
+      "p": 0.09902651270401275,
       "score": "1-1"
      },
      {
-      "p": 0.09769807629261414,
+      "p": 0.0976980762926087,
       "score": "0-2"
      }
     ]
@@ -16617,7 +16627,7 @@
    "home_position": 14,
    "kickoff": "2026-11-08T14:00:00Z",
    "league": "E0",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.49366678894331395,
     "p_d": 0.25419157154262784,
@@ -16626,18 +16636,18 @@
    "market_o25": 0.5593667546174144,
    "match_id": "E0-20261108-ipswich-bournemouth",
    "model": {
-    "p_a": 0.5000940241608394,
-    "p_d": 0.24928655531347946,
-    "p_h": 0.25061942052568126
+    "p_a": 0.5000940241608203,
+    "p_d": 0.24928655531351765,
+    "p_h": 0.25061942052566216
    },
    "model_o25": 0.5582482448489134,
    "p_a": 0.5078069649813818,
-   "p_btts": 0.5739108041157605,
+   "p_btts": 0.5739108041163878,
    "p_d": 0.25200854018997704,
    "p_h": 0.24018449482864115,
-   "p_o15": 0.7946711258835708,
+   "p_o15": 0.7946711258841689,
    "p_o25": 0.5593667546174144,
-   "p_o35": 0.3341783126462747,
+   "p_o35": 0.3341783126471073,
    "pick": "A",
    "pick_prob": 0.5078069649813818,
    "price_status": "posted",
@@ -16658,26 +16668,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.5093101476883348,
-     "p_d": 0.24774843652072712,
-     "p_h": 0.24294141579093792
+     "p_a": 0.5093101476886149,
+     "p_d": 0.2477484365205399,
+     "p_h": 0.24294141579084516
     },
-    "miss": 0.0042601036692499206,
+    "miss": 0.004260103669437132,
     "miss_on": "draw",
-    "o25": 0.5579587777564528,
-    "other": 0.010645090436157134,
+    "o25": 0.557958777757309,
+    "other": 0.010645090436223525,
     "reason": null,
     "top": [
      {
-      "p": 0.1166576910451855,
+      "p": 0.11665769104506025,
       "score": "1-1"
      },
      {
-      "p": 0.09698850978843696,
+      "p": 0.09698850978845311,
       "score": "1-2"
      },
      {
-      "p": 0.08874881380878887,
+      "p": 0.0887488138085571,
       "score": "0-1"
      }
     ]
@@ -16823,7 +16833,7 @@
    "home_position": 20,
    "kickoff": "2026-11-08T14:00:00Z",
    "league": "E0",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.4853031679512353,
     "p_d": 0.2601764205960789,
@@ -16832,18 +16842,18 @@
    "market_o25": 0.5267379679144386,
    "match_id": "E0-20261108-sunderland-chelsea",
    "model": {
-    "p_a": 0.4555923150537949,
-    "p_d": 0.26435808131155314,
-    "p_h": 0.280049603634652
+    "p_a": 0.45559231505377445,
+    "p_d": 0.26435808131159405,
+    "p_h": 0.28004960363463155
    },
    "model_o25": 0.5176349836021603,
    "p_a": 0.498478851761184,
-   "p_btts": 0.5505859024718871,
+   "p_btts": 0.5505859024712118,
    "p_d": 0.2587154089056061,
    "p_h": 0.24280573933320987,
-   "p_o15": 0.7723893400890236,
+   "p_o15": 0.7723893400884871,
    "p_o25": 0.5267379679144386,
-   "p_o35": 0.3036751099015853,
+   "p_o35": 0.3036751099008627,
    "pick": "A",
    "pick_prob": 0.498478851761184,
    "price_status": "posted",
@@ -16864,26 +16874,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.4994243760873998,
-     "p_d": 0.2560616019920755,
-     "p_h": 0.2445140219205247
+     "p_a": 0.499424376087558,
+     "p_d": 0.2560616019922464,
+     "p_h": 0.2445140219201955
     },
-    "miss": 0.002653806913530621,
+    "miss": 0.002653806913359702,
     "miss_on": "draw",
-    "o25": 0.5258292735017174,
-    "other": 0.008438466494300356,
+    "o25": 0.5258292735009376,
+    "other": 0.00843846649426605,
     "reason": null,
     "top": [
      {
-      "p": 0.12170710924501392,
+      "p": 0.12170710924511718,
       "score": "1-1"
      },
      {
-      "p": 0.09697516216737968,
+      "p": 0.09697516216761742,
       "score": "0-1"
      },
      {
-      "p": 0.09613583706881977,
+      "p": 0.0961358370688158,
       "score": "1-2"
      }
     ]
@@ -17029,7 +17039,7 @@
    "home_position": 5,
    "kickoff": "2026-11-08T14:00:00Z",
    "league": "F1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.3000255317477464,
     "p_d": 0.2577567413633954,
@@ -17038,18 +17048,18 @@
    "market_o25": 0.5906735751295337,
    "match_id": "F1-20261108-rennes-lille",
    "model": {
-    "p_a": 0.3833482502464049,
-    "p_d": 0.26166142138791926,
-    "p_h": 0.35499032836567596
+    "p_a": 0.38334825024638497,
+    "p_d": 0.2616614213879591,
+    "p_h": 0.3549903283656559
    },
-   "model_o25": 0.5529318182789084,
+   "model_o25": 0.5529318182789081,
    "p_a": 0.2932473522543495,
-   "p_btts": 0.6118530630235455,
+   "p_btts": 0.6118530630228818,
    "p_d": 0.25690551939414197,
    "p_h": 0.44984712835150853,
-   "p_o15": 0.814872526999169,
+   "p_o15": 0.8148725269986348,
    "p_o25": 0.5906735751295337,
-   "p_o35": 0.3642817379613966,
+   "p_o35": 0.3642817379605256,
    "pick": "H",
    "pick_prob": 0.44984712835150853,
    "price_status": "posted",
@@ -17070,26 +17080,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.29754580611889786,
-     "p_d": 0.24952790041873948,
-     "p_h": 0.4529262934623627
+     "p_a": 0.2975458061186641,
+     "p_d": 0.24952790041895231,
+     "p_h": 0.45292629346238367
     },
-    "miss": 0.0073776189754024835,
+    "miss": 0.007377618975189654,
     "miss_on": "draw",
-    "o25": 0.5882264755535356,
-    "other": 0.010727739185209972,
+    "o25": 0.5882264755526794,
+    "other": 0.010727739185151464,
     "reason": null,
     "top": [
      {
-      "p": 0.11504687693331127,
+      "p": 0.11504687693347661,
       "score": "1-1"
      },
      {
-      "p": 0.0925352016385961,
+      "p": 0.09253520163861899,
       "score": "2-1"
      },
      {
-      "p": 0.07413969465126498,
+      "p": 0.07413969465146872,
       "score": "1-0"
      }
     ]
@@ -17235,7 +17245,7 @@
    "home_position": 11,
    "kickoff": "2026-11-08T14:00:00Z",
    "league": "I1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.5207645234302959,
     "p_d": 0.26858915248553944,
@@ -17244,18 +17254,18 @@
    "market_o25": 0.4562334217506631,
    "match_id": "I1-20261108-genoa-milan",
    "model": {
-    "p_a": 0.5044198515562824,
-    "p_d": 0.27149768606811436,
-    "p_h": 0.22408246237560325
+    "p_a": 0.5044198515562615,
+    "p_d": 0.2714976860681562,
+    "p_h": 0.22408246237558227
    },
-   "model_o25": 0.45015668486444216,
+   "model_o25": 0.45015668486444205,
    "p_a": 0.5369817393803832,
-   "p_btts": 0.47649767042359464,
+   "p_btts": 0.4764976704240593,
    "p_d": 0.2669778837337819,
    "p_h": 0.19604037688583498,
-   "p_o15": 0.7185872498235991,
+   "p_o15": 0.7185872498240548,
    "p_o25": 0.4562334217506631,
-   "p_o35": 0.24125980267812697,
+   "p_o35": 0.24125980267858085,
    "pick": "A",
    "pick_prob": 0.5369817393803832,
    "price_status": "posted",
@@ -17276,26 +17286,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.5381451639785736,
-     "p_d": 0.26303791066969084,
-     "p_h": 0.1988169253517352
+     "p_a": 0.5381451639786208,
+     "p_d": 0.26303791066959786,
+     "p_h": 0.19881692535178136
     },
-    "miss": 0.003939973064091051,
+    "miss": 0.0039399730641840325,
     "miss_on": "draw",
-    "o25": 0.4547888863161929,
-    "other": 0.006548503286495699,
+    "o25": 0.45478888631673886,
+    "other": 0.006548503286518903,
     "reason": null,
     "top": [
      {
-      "p": 0.12597262815429505,
+      "p": 0.12597262815409355,
       "score": "0-1"
      },
      {
-      "p": 0.124471146546486,
+      "p": 0.12447114654646482,
       "score": "1-1"
      },
      {
-      "p": 0.10712555559586964,
+      "p": 0.10712555559580156,
       "score": "0-2"
      }
     ]
@@ -17441,7 +17451,7 @@
    "home_position": 18,
    "kickoff": "2026-11-08T14:00:00Z",
    "league": "I1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.4565055874816152,
     "p_d": 0.25144425406741366,
@@ -17450,18 +17460,18 @@
    "market_o25": 0.6071428571428571,
    "match_id": "I1-20261108-monza-atalanta",
    "model": {
-    "p_a": 0.48068115618762414,
-    "p_d": 0.2508015020837857,
-    "p_h": 0.2685173417285901
+    "p_a": 0.480681156187605,
+    "p_d": 0.250801502083824,
+    "p_h": 0.268517341728571
    },
    "model_o25": 0.5655888775560807,
    "p_a": 0.4668203582137666,
-   "p_btts": 0.6223614069662778,
+   "p_btts": 0.6223614069659448,
    "p_d": 0.24966627736452437,
    "p_h": 0.2835133644217091,
-   "p_o15": 0.8257455060755762,
+   "p_o15": 0.825745506075358,
    "p_o25": 0.6071428571428571,
-   "p_o35": 0.38192111545818314,
+   "p_o35": 0.3819211154577922,
    "pick": "A",
    "pick_prob": 0.4668203582137666,
    "price_status": "posted",
@@ -17482,26 +17492,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.46904020957079895,
-     "p_d": 0.24417102231615978,
-     "p_h": 0.2867887681130413
+     "p_a": 0.46904020957104886,
+     "p_d": 0.24417102231624038,
+     "p_h": 0.2867887681127107
     },
-    "miss": 0.0054952550483645946,
+    "miss": 0.005495255048283992,
     "miss_on": "draw",
-    "o25": 0.6053487002935716,
-    "other": 0.012488309713796664,
+    "o25": 0.605348700293197,
+    "other": 0.012488309713776014,
     "reason": null,
     "top": [
      {
-      "p": 0.11135541802282012,
+      "p": 0.11135541802289378,
       "score": "1-1"
      },
      {
-      "p": 0.09341153242819653,
+      "p": 0.0934115324282304,
       "score": "1-2"
      },
      {
-      "p": 0.07143411923122932,
+      "p": 0.07143411923133344,
       "score": "0-1"
      }
     ]
@@ -17647,7 +17657,7 @@
    "home_position": 14,
    "kickoff": "2026-11-08T14:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.5252031859832983,
     "p_d": 0.23197560075689103,
@@ -17656,18 +17666,18 @@
    "market_o25": 0.6721698113207547,
    "match_id": "D1-20261108-fckoln-leverkusen",
    "model": {
-    "p_a": 0.49473979711282784,
-    "p_d": 0.2337792281436113,
-    "p_h": 0.27148097474356087
+    "p_a": 0.49473979711281096,
+    "p_d": 0.23377922814364507,
+    "p_h": 0.27148097474354405
    },
-   "model_o25": 0.6402659297825463,
+   "model_o25": 0.6402659297825462,
    "p_a": 0.5428756364628425,
-   "p_btts": 0.6541790020009984,
+   "p_btts": 0.6541790019976776,
    "p_d": 0.2272294468358223,
    "p_h": 0.22989491670133513,
-   "p_o15": 0.8641010961524298,
+   "p_o15": 0.8641010961502791,
    "p_o25": 0.6721698113207547,
-   "p_o35": 0.4525686937010869,
+   "p_o35": 0.452568693696709,
    "pick": "A",
    "pick_prob": 0.5428756364628425,
    "price_status": "posted",
@@ -17688,26 +17698,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.5454675357638024,
-     "p_d": 0.21961671604111624,
-     "p_h": 0.23491574819508154
+     "p_a": 0.5454675357643245,
+     "p_d": 0.21961671604174815,
+     "p_h": 0.23491574819392724
     },
-    "miss": 0.007612730794706063,
+    "miss": 0.007612730794074152,
     "miss_on": "draw",
-    "o25": 0.6698321698503928,
-    "other": 0.02336062361719926,
+    "o25": 0.6698321698465861,
+    "other": 0.023360623616719645,
     "reason": null,
     "top": [
      {
-      "p": 0.09513039325533022,
+      "p": 0.0951303932560643,
       "score": "1-1"
      },
      {
-      "p": 0.09467427143761221,
+      "p": 0.09467427143792576,
       "score": "1-2"
      },
      {
-      "p": 0.0705960040698703,
+      "p": 0.0705960040706939,
       "score": "0-2"
      }
     ]
@@ -17853,7 +17863,7 @@
    "home_position": 5,
    "kickoff": "2026-11-08T15:15:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.20785319797700247,
     "p_d": 0.22868933762750884,
@@ -17862,18 +17872,18 @@
    "market_o25": 0.6025641025641025,
    "match_id": "SP1-20261108-sociedad-vallecano",
    "model": {
-    "p_a": 0.2982149724542266,
-    "p_d": 0.2584116725933938,
-    "p_h": 0.44337335495237956
+    "p_a": 0.2982149724542069,
+    "p_d": 0.25841167259343334,
+    "p_h": 0.4433733549523597
    },
-   "model_o25": 0.5511024630085285,
+   "model_o25": 0.5511024630085284,
    "p_a": 0.1934142072102691,
-   "p_btts": 0.5827193777037631,
+   "p_btts": 0.582719377703742,
    "p_d": 0.22299941154361744,
    "p_h": 0.5835863812461134,
-   "p_o15": 0.8236001291858162,
+   "p_o15": 0.8236001291858124,
    "p_o25": 0.6025641025641025,
-   "p_o35": 0.37912532840469354,
+   "p_o35": 0.37912532840465984,
    "pick": "H",
    "pick_prob": 0.5835863812461134,
    "price_status": "posted",
@@ -17894,26 +17904,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.1931761840107829,
-     "p_d": 0.22333216592138316,
-     "p_h": 0.583491650067834
+     "p_a": 0.1931761840107437,
+     "p_d": 0.22333216592141708,
+     "p_h": 0.5834916500678391
     },
-    "miss": 0.00033275437776572603,
+    "miss": 0.00033275437779964334,
     "miss_on": "draw",
-    "o25": 0.6026651536339922,
-    "other": 0.018407966034152068,
+    "o25": 0.6026651536339598,
+    "other": 0.018407966034150625,
     "reason": null,
     "top": [
      {
-      "p": 0.1037527478971294,
+      "p": 0.10375274789714885,
       "score": "1-1"
      },
      {
-      "p": 0.0991600932989551,
+      "p": 0.09916009329895613,
       "score": "2-1"
      },
      {
-      "p": 0.09077978981624532,
+      "p": 0.09077978981625637,
       "score": "2-0"
      }
     ]
@@ -18059,7 +18069,7 @@
    "home_position": 15,
    "kickoff": "2026-11-08T16:15:00Z",
    "league": "F1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.46604129586201104,
     "p_d": 0.2581946237462665,
@@ -18068,18 +18078,18 @@
    "market_o25": 0.5517241379310345,
    "match_id": "F1-20261108-angers-nice",
    "model": {
-    "p_a": 0.4410762130995199,
-    "p_d": 0.2733114405685401,
-    "p_h": 0.28561234633194005
+    "p_a": 0.4410762130994987,
+    "p_d": 0.27331144056858253,
+    "p_h": 0.28561234633191873
    },
-   "model_o25": 0.4855388446254283,
+   "model_o25": 0.4855388446254284,
    "p_a": 0.47727998126369636,
-   "p_btts": 0.5767063959114584,
+   "p_btts": 0.576706395911628,
    "p_d": 0.2569147061382123,
    "p_h": 0.26580531259809126,
-   "p_o15": 0.7899186580191411,
+   "p_o15": 0.7899186580193605,
    "p_o25": 0.5517241379310345,
-   "p_o35": 0.32726453003814143,
+   "p_o35": 0.327264530038424,
    "pick": "A",
    "pick_prob": 0.47727998126369636,
    "price_status": "posted",
@@ -18100,26 +18110,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.47831912381686686,
-     "p_d": 0.25420890465249857,
-     "p_h": 0.26747197153063473
+     "p_a": 0.47831912381720143,
+     "p_d": 0.2542089046524253,
+     "p_h": 0.2674719715303733
     },
-    "miss": 0.0027058014857137547,
+    "miss": 0.0027058014857870294,
     "miss_on": "draw",
-    "o25": 0.5508101133312566,
-    "other": 0.00911183154961559,
+    "o25": 0.5508101133315502,
+    "other": 0.009111831549643457,
     "reason": null,
     "top": [
      {
-      "p": 0.1197710448053533,
+      "p": 0.11977104480530867,
       "score": "1-1"
      },
      {
-      "p": 0.09498971674938551,
+      "p": 0.09498971674941169,
       "score": "1-2"
      },
      {
-      "p": 0.0870373518775568,
+      "p": 0.08703735187749838,
       "score": "0-1"
      }
     ]
@@ -18265,7 +18275,7 @@
    "home_position": 11,
    "kickoff": "2026-11-08T16:15:00Z",
    "league": "F1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.3872687789219504,
     "p_d": 0.27210430239122463,
@@ -18274,18 +18284,18 @@
    "market_o25": 0.5093833780160857,
    "match_id": "F1-20261108-brest-lyon",
    "model": {
-    "p_a": 0.3952313809740658,
-    "p_d": 0.2656994905657335,
-    "p_h": 0.3390691284602007
+    "p_a": 0.39523138097404537,
+    "p_d": 0.26569949056577435,
+    "p_h": 0.3390691284601802
    },
-   "model_o25": 0.5337079743919357,
+   "model_o25": 0.5337079743919358,
    "p_a": 0.3897746764469386,
-   "p_btts": 0.5570911469778438,
+   "p_btts": 0.557091146977855,
    "p_d": 0.2731500027803815,
    "p_h": 0.3370753207726799,
-   "p_o15": 0.7604403167516427,
+   "p_o15": 0.7604403167516594,
    "p_o25": 0.5093833780160857,
-   "p_o35": 0.2881390431770004,
+   "p_o35": 0.2881390431769951,
    "pick": "A",
    "pick_prob": 0.3897746764469386,
    "price_status": "posted",
@@ -18306,26 +18316,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.3904692642838995,
-     "p_d": 0.2716741668323937,
-     "p_h": 0.33785656888370696
+     "p_a": 0.39046926428395956,
+     "p_d": 0.27167416683243395,
+     "p_h": 0.3378565688836065
     },
-    "miss": 0.0014758359479877803,
+    "miss": 0.0014758359479475347,
     "miss_on": "draw",
-    "o25": 0.5088501393879854,
-    "other": 0.005543558946219718,
+    "o25": 0.5088501393879795,
+    "other": 0.005543558946220273,
     "reason": null,
     "top": [
      {
-      "p": 0.12921290014283135,
+      "p": 0.12921290014285172,
       "score": "1-1"
      },
      {
-      "p": 0.08668549690323499,
+      "p": 0.08668549690322698,
       "score": "0-1"
      },
      {
-      "p": 0.08610693417404543,
+      "p": 0.08610693417405492,
       "score": "1-2"
      }
     ]
@@ -18471,7 +18481,7 @@
    "home_position": 18,
    "kickoff": "2026-11-08T16:15:00Z",
    "league": "F1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.37790639490275874,
     "p_d": 0.2863278513527037,
@@ -18480,18 +18490,18 @@
    "market_o25": 0.4732620320855615,
    "match_id": "F1-20261108-lehavre-lorient",
    "model": {
-    "p_a": 0.3412584318846395,
-    "p_d": 0.28975157201719914,
-    "p_h": 0.3689899960981614
+    "p_a": 0.34125843188461713,
+    "p_d": 0.28975157201724394,
+    "p_h": 0.368989996098139
    },
    "model_o25": 0.4388477359920051,
    "p_a": 0.3792845955916385,
-   "p_btts": 0.5271640514753757,
+   "p_btts": 0.5271640514762869,
    "p_d": 0.2890138699423002,
    "p_h": 0.3317015344660614,
-   "p_o15": 0.7314374303588506,
+   "p_o15": 0.7314374303597783,
    "p_o25": 0.4732620320855615,
-   "p_o35": 0.25433552964354134,
+   "p_o35": 0.25433552964453615,
    "pick": "A",
    "pick_prob": 0.3792845955916385,
    "price_status": "posted",
@@ -18512,26 +18522,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.38293773633934547,
-     "p_d": 0.2812902323455038,
-     "p_h": 0.3357720313151507
+     "p_a": 0.38293773633997086,
+     "p_d": 0.2812902323452337,
+     "p_h": 0.3357720313147953
     },
-    "miss": 0.0077236375967963955,
+    "miss": 0.007723637597066513,
     "miss_on": "draw",
-    "o25": 0.4703245409379194,
-    "other": 0.004150276513813056,
+    "o25": 0.4703245409390872,
+    "other": 0.004150276513852358,
     "reason": null,
     "top": [
      {
-      "p": 0.13413654904879294,
+      "p": 0.13413654904867234,
       "score": "1-1"
      },
      {
-      "p": 0.09555867662090597,
+      "p": 0.09555867662067988,
       "score": "0-1"
      },
      {
-      "p": 0.08779693372362654,
+      "p": 0.08779693372326856,
       "score": "1-0"
      }
     ]
@@ -18677,7 +18687,7 @@
    "home_position": 17,
    "kickoff": "2026-11-08T16:15:00Z",
    "league": "F1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.546172204883422,
     "p_d": 0.23407380209289516,
@@ -18686,18 +18696,18 @@
    "market_o25": 0.5922077922077923,
    "match_id": "F1-20261108-lemans-monaco",
    "model": {
-    "p_a": 0.5301028225891675,
-    "p_d": 0.24813187567629275,
-    "p_h": 0.22176530173453973
+    "p_a": 0.5301028225891483,
+    "p_d": 0.2481318756763311,
+    "p_h": 0.22176530173452055
    },
    "model_o25": 0.5358849941848562,
    "p_a": 0.565699387444802,
-   "p_btts": 0.5819195240961802,
+   "p_btts": 0.5819195240962098,
    "p_d": 0.2289895353834515,
    "p_h": 0.20531107717174651,
-   "p_o15": 0.8171308134423606,
+   "p_o15": 0.8171308134423861,
    "p_o25": 0.5922077922077923,
-   "p_o35": 0.3685160508502047,
+   "p_o35": 0.3685160508502177,
    "pick": "A",
    "pick_prob": 0.565699387444802,
    "price_status": "posted",
@@ -18718,26 +18728,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.5655344181195032,
-     "p_d": 0.22953705328966717,
-     "p_h": 0.20492852859082947
+     "p_a": 0.5655344181194822,
+     "p_d": 0.2295370532897005,
+     "p_h": 0.20492852859081706
     },
-    "miss": 0.0005475179062156832,
+    "miss": 0.0005475179062490176,
     "miss_on": "draw",
-    "o25": 0.5923776360901114,
-    "other": 0.016186084870917883,
+    "o25": 0.592377636090124,
+    "other": 0.01618608487091877,
     "reason": null,
     "top": [
      {
-      "p": 0.10696964510530678,
+      "p": 0.10696964510532267,
       "score": "1-1"
      },
      {
-      "p": 0.09898368299826475,
+      "p": 0.09898368299826445,
       "score": "1-2"
      },
      {
-      "p": 0.0892315119116567,
+      "p": 0.08923151191165353,
       "score": "0-2"
      }
     ]
@@ -18883,7 +18893,7 @@
    "home_position": 3,
    "kickoff": "2026-11-08T16:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.1588636600986538,
     "p_d": 0.2131450929341847,
@@ -18892,18 +18902,18 @@
    "market_o25": 0.5870129870129869,
    "match_id": "D1-20261108-freiburg-unionberlin",
    "model": {
-    "p_a": 0.18965216210105484,
-    "p_d": 0.22839059160871222,
-    "p_h": 0.5819572462902329
+    "p_a": 0.1896521621010374,
+    "p_d": 0.22839059160874722,
+    "p_h": 0.5819572462902154
    },
-   "model_o25": 0.5764721765724229,
+   "model_o25": 0.5764721765724228,
    "p_a": 0.14237563165516534,
-   "p_btts": 0.5304098157710897,
+   "p_btts": 0.5304098157710084,
    "p_d": 0.20460055083943696,
    "p_h": 0.6530238175053977,
-   "p_o15": 0.8132923844412897,
+   "p_o15": 0.8132923844412789,
    "p_o25": 0.5870129870129869,
-   "p_o35": 0.3633656583888299,
+   "p_o35": 0.36336565838878954,
    "pick": "H",
    "pick_prob": 0.6530238175053977,
    "price_status": "posted",
@@ -18924,26 +18934,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.1414900547374247,
-     "p_d": 0.2057096084858561,
-     "p_h": 0.6528003367767192
+     "p_a": 0.14149005473734136,
+     "p_d": 0.2057096084858637,
+     "p_h": 0.6528003367767949
     },
-    "miss": 0.001109057646419137,
+    "miss": 0.001109057646426742,
     "miss_on": "draw",
-    "o25": 0.5873281462343655,
-    "other": 0.022689743635529558,
+    "o25": 0.5873281462343257,
+    "other": 0.022689743635533777,
     "reason": null,
     "top": [
      {
-      "p": 0.1091955097234887,
+      "p": 0.10919550972351975,
       "score": "2-0"
      },
      {
-      "p": 0.0985809106554005,
+      "p": 0.09858091065539666,
       "score": "2-1"
      },
      {
-      "p": 0.09741767138045836,
+      "p": 0.09741767138046535,
       "score": "1-1"
      }
     ]
@@ -19089,7 +19099,7 @@
    "home_position": 17,
    "kickoff": "2026-11-08T16:30:00Z",
    "league": "E0",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.30529189759728304,
     "p_d": 0.25468644718034206,
@@ -19098,18 +19108,18 @@
    "market_o25": 0.6015424164524421,
    "match_id": "E0-20261108-manunited-astonvilla",
    "model": {
-    "p_a": 0.25185513010713745,
-    "p_d": 0.2468623692939718,
-    "p_h": 0.5012825005988908
+    "p_a": 0.2518551301071186,
+    "p_d": 0.24686236929400945,
+    "p_h": 0.501282500598872
    },
-   "model_o25": 0.5692685208163466,
-   "p_a": 0.2990136250059481,
-   "p_btts": 0.6212496367742284,
+   "model_o25": 0.5692685208163465,
+   "p_a": 0.29901362500594814,
+   "p_btts": 0.6212496367733938,
    "p_d": 0.25354956904146686,
    "p_h": 0.447436805952585,
-   "p_o15": 0.822115437031825,
+   "p_o15": 0.8221154370311143,
    "p_o25": 0.6015424164524421,
-   "p_o35": 0.3758797348828412,
+   "p_o35": 0.3758797348816514,
    "pick": "H",
    "pick_prob": 0.447436805952585,
    "price_status": "posted",
@@ -19130,26 +19140,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.3025332084905985,
-     "p_d": 0.24745752655051861,
-     "p_h": 0.4500092649588828
+     "p_a": 0.30253320849062126,
+     "p_d": 0.24745752655082667,
+     "p_h": 0.4500092649585519
     },
-    "miss": 0.006092042490948246,
+    "miss": 0.006092042490640187,
     "miss_on": "draw",
-    "o25": 0.5995334255764134,
-    "other": 0.011463189918214933,
+    "o25": 0.5995334255752631,
+    "other": 0.011463189918120786,
     "reason": null,
     "top": [
      {
-      "p": 0.11316220806246428,
+      "p": 0.11316220806270083,
       "score": "1-1"
      },
      {
-      "p": 0.09198147871179116,
+      "p": 0.09198147871179727,
       "score": "2-1"
      },
      {
-      "p": 0.07372197055303556,
+      "p": 0.07372197055306479,
       "score": "1-2"
      }
     ]
@@ -19295,7 +19305,7 @@
    "home_position": 2,
    "kickoff": "2026-11-08T17:00:00Z",
    "league": "I1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.2619515895649242,
     "p_d": 0.23386201761656575,
@@ -19304,18 +19314,18 @@
    "market_o25": 0.6412776412776413,
    "match_id": "I1-20261108-inter-como",
    "model": {
-    "p_a": 0.2500363084522132,
-    "p_d": 0.24888267074235265,
-    "p_h": 0.5010810208054342
+    "p_a": 0.25003630845219404,
+    "p_d": 0.24888267074239076,
+    "p_h": 0.5010810208054152
    },
-   "model_o25": 0.5594220532334013,
+   "model_o25": 0.5594220532334014,
    "p_a": 0.25143180783821706,
-   "p_btts": 0.6390030138292172,
+   "p_btts": 0.6390030138292355,
    "p_d": 0.22987149815438412,
    "p_h": 0.5186966940073988,
-   "p_o15": 0.8475749117236068,
+   "p_o15": 0.8475749117236251,
    "p_o25": 0.6412776412776413,
-   "p_o35": 0.42042400486502474,
+   "p_o35": 0.42042400486502796,
    "pick": "H",
    "pick_prob": 0.5186966940073988,
    "price_status": "posted",
@@ -19336,26 +19346,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.2514527604692006,
-     "p_d": 0.2298387100531214,
-     "p_h": 0.5187085294776781
+     "p_a": 0.2514527604691824,
+     "p_d": 0.2298387100531537,
+     "p_h": 0.518708529477664
     },
-    "miss": 3.2788101262726244e-05,
+    "miss": 3.2788101230418754e-05,
     "miss_on": "draw",
-    "o25": 0.6412673453441611,
-    "other": 0.018083987442140903,
+    "o25": 0.641267345344164,
+    "other": 0.018083987442141347,
     "reason": null,
     "top": [
      {
-      "p": 0.10221509963526293,
+      "p": 0.10221509963527889,
       "score": "1-1"
      },
      {
-      "p": 0.0952038628694017,
+      "p": 0.09520386286940168,
       "score": "2-1"
      },
      {
-      "p": 0.07160432880490303,
+      "p": 0.07160432880490292,
       "score": "2-0"
      }
     ]
@@ -19498,10 +19508,10 @@
     }
    ],
    "home_key": "Celta",
-   "home_position": 10,
+   "home_position": 11,
    "kickoff": "2026-11-08T17:30:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.23307286166842664,
     "p_d": 0.2631890179514256,
@@ -19510,18 +19520,18 @@
    "market_o25": 0.4973118279569893,
    "match_id": "SP1-20261108-celta-levante",
    "model": {
-    "p_a": 0.23441085729079858,
-    "p_d": 0.26359287277450866,
-    "p_h": 0.5019962699346928
+    "p_a": 0.23441085729077812,
+    "p_d": 0.26359287277454957,
+    "p_h": 0.5019962699346724
    },
-   "model_o25": 0.4880925264649626,
+   "model_o25": 0.4880925264649627,
    "p_a": 0.22060377262925823,
-   "p_btts": 0.5195525375475751,
+   "p_btts": 0.5195525375474996,
    "p_d": 0.2617934869493297,
    "p_h": 0.5176027404214121,
-   "p_o15": 0.7506782294131592,
+   "p_o15": 0.7506782294131135,
    "p_o25": 0.4973118279569893,
-   "p_o35": 0.2768124687204415,
+   "p_o35": 0.27681246872036375,
    "pick": "H",
    "pick_prob": 0.5176027404214121,
    "price_status": "posted",
@@ -19542,26 +19552,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.2227510501303848,
-     "p_d": 0.25859670311201444,
-     "p_h": 0.5186522467576009
+     "p_a": 0.22275105013029844,
+     "p_d": 0.2585967031120607,
+     "p_h": 0.5186522467576411
     },
-    "miss": 0.0031967838373152535,
+    "miss": 0.0031967838372690127,
     "miss_on": "draw",
-    "o25": 0.49619187159897565,
-    "other": 0.007649245308436914,
+    "o25": 0.49619187159888795,
+    "other": 0.0076492453084349155,
     "reason": null,
     "top": [
      {
-      "p": 0.12333654051462421,
+      "p": 0.12333654051464704,
       "score": "1-1"
      },
      {
-      "p": 0.10890018361047919,
+      "p": 0.10890018361049637,
       "score": "1-0"
      },
      {
-      "p": 0.09625111641017414,
+      "p": 0.09625111641017323,
       "score": "2-1"
      }
     ]
@@ -19704,10 +19714,10 @@
     }
    ],
    "home_key": "Villarreal",
-   "home_position": 9,
+   "home_position": 10,
    "kickoff": "2026-11-08T17:30:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.13140643623361145,
     "p_d": 0.21156138259833135,
@@ -19716,18 +19726,18 @@
    "market_o25": 0.5320855614973262,
    "match_id": "SP1-20261108-villarreal-getafe",
    "model": {
-    "p_a": 0.1560373103783717,
-    "p_d": 0.24470954595366004,
-    "p_h": 0.5992531436679682
+    "p_a": 0.15603731037835303,
+    "p_d": 0.24470954595369757,
+    "p_h": 0.5992531436679495
    },
    "model_o25": 0.4621881749905632,
    "p_a": 0.1147713128234703,
-   "p_btts": 0.4577592707547314,
+   "p_btts": 0.4577592707553214,
    "p_d": 0.20192829143832805,
    "p_h": 0.6833003957382017,
-   "p_o15": 0.7757671638230096,
+   "p_o15": 0.775767163823343,
    "p_o25": 0.5320855614973262,
-   "p_o35": 0.30989575942335706,
+   "p_o35": 0.3098957594237734,
    "pick": "H",
    "pick_prob": 0.6833003957382017,
    "price_status": "posted",
@@ -19748,26 +19758,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.1134972809894713,
-     "p_d": 0.2034161932575853,
-     "p_h": 0.6830865257529433
+     "p_a": 0.11349728098964543,
+     "p_d": 0.20341619325762403,
+     "p_h": 0.6830865257527308
     },
-    "miss": 0.001487901819257259,
+    "miss": 0.001487901819295978,
     "miss_on": "draw",
-    "o25": 0.5325107892928136,
-    "other": 0.01976014955654759,
+    "o25": 0.5325107892932585,
+    "other": 0.019760149556573126,
     "reason": null,
     "top": [
      {
-      "p": 0.1305742142800099,
+      "p": 0.13057421427984184,
       "score": "2-0"
      },
      {
-      "p": 0.12005510250366667,
+      "p": 0.120055102503452,
       "score": "1-0"
      },
      {
-      "p": 0.0967278057745167,
+      "p": 0.0967278057745478,
       "score": "1-1"
      }
     ]
@@ -19913,7 +19923,7 @@
    "home_position": 13,
    "kickoff": "2026-11-08T18:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.19470360493100944,
     "p_d": 0.21628737637832687,
@@ -19922,18 +19932,18 @@
    "market_o25": 0.6379310344827586,
    "match_id": "D1-20261108-hoffenheim-schalke04",
    "model": {
-    "p_a": 0.1523154073431125,
-    "p_d": 0.2072753595054382,
-    "p_h": 0.6404092331514494
+    "p_a": 0.15231540734309668,
+    "p_d": 0.20727535950546996,
+    "p_h": 0.6404092331514335
    },
    "model_o25": 0.6025961294474222,
    "p_a": 0.17942381399762036,
-   "p_btts": 0.5998781270599008,
+   "p_btts": 0.599878127059684,
    "p_d": 0.20908490333577234,
    "p_h": 0.6114912826666072,
-   "p_o15": 0.8453332275563917,
+   "p_o15": 0.8453332275562568,
    "p_o25": 0.6379310344827586,
-   "p_o35": 0.4170348666353054,
+   "p_o35": 0.41703486663503075,
    "pick": "H",
    "pick_prob": 0.6114912826666072,
    "price_status": "posted",
@@ -19954,26 +19964,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.17878455806001045,
-     "p_d": 0.20995395102508507,
-     "p_h": 0.6112614909149047
+     "p_a": 0.17878455805993276,
+     "p_d": 0.20995395102515077,
+     "p_h": 0.6112614909149165
     },
-    "miss": 0.0008690476893127297,
+    "miss": 0.0008690476893784271,
     "miss_on": "draw",
-    "o25": 0.6381841800076048,
-    "other": 0.024859324327847432,
+    "o25": 0.6381841800073543,
+    "other": 0.024859324327817345,
     "reason": null,
     "top": [
      {
-      "p": 0.09827681761863807,
+      "p": 0.09827681761864912,
       "score": "2-1"
      },
      {
-      "p": 0.09561587070551793,
+      "p": 0.09561587070557033,
       "score": "1-1"
      },
      {
-      "p": 0.08854318520038934,
+      "p": 0.08854318520045097,
       "score": "2-0"
      }
     ]
@@ -20119,7 +20129,7 @@
    "home_position": 9,
    "kickoff": "2026-11-08T19:45:00Z",
    "league": "F1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.3231717140757681,
     "p_d": 0.246429090680467,
@@ -20128,18 +20138,18 @@
    "market_o25": 0.6403940886699507,
    "match_id": "F1-20261108-lens-marseille",
    "model": {
-    "p_a": 0.2830301851922106,
-    "p_d": 0.24595769504481685,
-    "p_h": 0.4710121197629726
+    "p_a": 0.2830301851921923,
+    "p_d": 0.24595769504485368,
+    "p_h": 0.4710121197629541
    },
    "model_o25": 0.5954438062575084,
    "p_a": 0.31866240782027083,
-   "p_btts": 0.6537446853436412,
+   "p_btts": 0.6537446853451815,
    "p_d": 0.2445512264039261,
    "p_h": 0.43678636577580304,
-   "p_o15": 0.846401727136051,
+   "p_o15": 0.8464017271372337,
    "p_o25": 0.6403940886699507,
-   "p_o35": 0.4179164731921826,
+   "p_o35": 0.4179164731943281,
    "pick": "H",
    "pick_prob": 0.43678636577580304,
    "price_status": "posted",
@@ -20160,26 +20170,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.32108776128229516,
-     "p_d": 0.2402207990952993,
-     "p_h": 0.43869143962240564
+     "p_a": 0.32108776128268746,
+     "p_d": 0.2402207990949263,
+     "p_h": 0.4386914396223863
     },
-    "miss": 0.004330427308626789,
+    "miss": 0.004330427308999796,
     "miss_on": "draw",
-    "o25": 0.6389855575847975,
-    "other": 0.014510625736915861,
+    "o25": 0.6389855575867527,
+    "other": 0.014510625737103933,
     "reason": null,
     "top": [
      {
-      "p": 0.10596276592932098,
+      "p": 0.10596276592894245,
       "score": "1-1"
      },
      {
-      "p": 0.08929338287320977,
+      "p": 0.08929338287310366,
       "score": "2-1"
      },
      {
-      "p": 0.07531229083330238,
+      "p": 0.07531229083327898,
       "score": "1-2"
      }
     ]
@@ -20325,7 +20335,7 @@
    "home_position": 16,
    "kickoff": "2026-11-08T19:45:00Z",
    "league": "I1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.45523562419878566,
     "p_d": 0.26566158239362564,
@@ -20334,18 +20344,18 @@
    "market_o25": 0.5345744680851062,
    "match_id": "I1-20261108-fiorentina-juventus",
    "model": {
-    "p_a": 0.5422893414747366,
-    "p_d": 0.25280260792311005,
-    "p_h": 0.2049080506021534
+    "p_a": 0.542289341474717,
+    "p_d": 0.2528026079231493,
+    "p_h": 0.20490805060213374
    },
    "model_o25": 0.49918886221893644,
    "p_a": 0.4652115852724954,
-   "p_btts": 0.5646032749511516,
+   "p_btts": 0.5646032749493859,
    "p_d": 0.2652912745701899,
-   "p_h": 0.2694971401573146,
-   "p_o15": 0.7773086752312952,
+   "p_h": 0.26949714015731463,
+   "p_o15": 0.7773086752298162,
    "p_o25": 0.5345744680851062,
-   "p_o35": 0.309983457047968,
+   "p_o35": 0.3099834570459769,
    "pick": "A",
    "pick_prob": 0.4652115852724954,
    "price_status": "posted",
@@ -20366,26 +20376,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.4674515496139745,
-     "p_d": 0.25957605805725215,
-     "p_h": 0.27297239232877346
+     "p_a": 0.46745154961426644,
+     "p_d": 0.25957605805770684,
+     "p_h": 0.27297239232802684
     },
-    "miss": 0.005715216512937771,
+    "miss": 0.005715216512483079,
     "miss_on": "draw",
-    "o25": 0.5326015741385669,
-    "other": 0.007828879709088632,
+    "o25": 0.53260157413644,
+    "other": 0.007828879708990377,
     "reason": null,
     "top": [
      {
-      "p": 0.12299267371906916,
+      "p": 0.12299267371936293,
       "score": "1-1"
      },
      {
-      "p": 0.09405565999694028,
+      "p": 0.09405565999694036,
       "score": "1-2"
      },
      {
-      "p": 0.09078349223728828,
+      "p": 0.09078349223790937,
       "score": "0-1"
      }
     ]
@@ -20531,7 +20541,7 @@
    "home_position": 2,
    "kickoff": "2026-11-08T20:00:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-06T21:48:32Z",
+   "logged_at": "2026-11-07T14:00:00Z",
    "market": {
     "p_a": 0.5177822521574118,
     "p_d": 0.22260947183014618,
@@ -20540,18 +20550,18 @@
    "market_o25": 0.7176724137931035,
    "match_id": "SP1-20261108-athmadrid-barcelona",
    "model": {
-    "p_a": 0.4848620003055999,
-    "p_d": 0.24330324190432587,
-    "p_h": 0.2718347577900742
+    "p_a": 0.48486200030558185,
+    "p_d": 0.24330324190436226,
+    "p_h": 0.27183475779005595
    },
-   "model_o25": 0.5994653950481563,
+   "model_o25": 0.5994653950481561,
    "p_a": 0.5348805055397983,
-   "p_btts": 0.6953896529422211,
+   "p_btts": 0.6953896529420641,
    "p_d": 0.2172757625181841,
    "p_h": 0.2478437319420177,
-   "p_o15": 0.8895157189701542,
+   "p_o15": 0.8895157189700357,
    "p_o25": 0.7176724137931035,
-   "p_o35": 0.5078708147122545,
+   "p_o35": 0.5078708147119418,
    "pick": "A",
    "pick_prob": 0.5348805055397983,
    "price_status": "posted",
@@ -20572,26 +20582,26 @@
    "scores": {
     "flagged": false,
     "matrix": {
-     "p_a": 0.5365730137991509,
-     "p_d": 0.2125643840164636,
-     "p_h": 0.25086260218438544
+     "p_a": 0.5365730137989995,
+     "p_d": 0.212564384016563,
+     "p_h": 0.2508626021844375
     },
-    "miss": 0.004711378501720487,
+    "miss": 0.004711378501621094,
     "miss_on": "draw",
-    "o25": 0.7162083685965687,
-    "other": 0.030019241313765543,
+    "o25": 0.7162083685963161,
+    "other": 0.030019241313707257,
     "reason": null,
     "top": [
      {
-      "p": 0.0898618173601145,
+      "p": 0.08986181736013638,
       "score": "1-2"
      },
      {
-      "p": 0.08582191616558928,
+      "p": 0.08582191616566619,
       "score": "1-1"
      },
      {
-      "p": 0.06698049995320929,
+      "p": 0.06698049995320701,
       "score": "2-2"
      }
     ]
@@ -20603,7 +20613,7 @@
  ],
  "model_through": "2026-11-02",
  "prices_at": "2026-11-06T19:22:43Z",
- "provisional_results": 3,
+ "provisional_results": 5,
  "results": [],
  "results_through": "2026-11-06",
  "schema": 1,
