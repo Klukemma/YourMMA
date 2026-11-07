@@ -38,6 +38,11 @@ def _pred(red, blue, winner, date, prob=0.6, method='Decision', stamp='2026-01-0
     ('Decision - Majority', 'Decision'), ('KO/TKO', 'KO/TKO'),
     ("TKO - Doctor's Stoppage", 'KO/TKO'), ('Submission', 'Submission'),
     ('Overturned', None), ('Could Not Continue', None), (None, None),
+    # The newest archive rows' short labels: 60 window fights were ungraded
+    # on method while only the long form was read.
+    ('U-DEC', 'Decision'), ('S-DEC', 'Decision'), ('M-DEC', 'Decision'),
+    ('SUB Rear Naked Choke', 'Submission'), ('KO/TKO Punches', 'KO/TKO'),
+    ('DQ', None), ('CNC', None),
 ])
 def test_method_categories(raw, expected):
     assert categorise_method(raw) == expected
@@ -104,7 +109,7 @@ def test_deduplicate_keeps_distinct_bouts():
     assert len(deduplicate(preds)) == 2
 
 
-def test_the_shipped_history_grades(): 
+def test_the_shipped_history_grades():
     """End to end against the real files."""
     history = json.loads((ENGINE / "data" / "prediction_history.json").read_text())
     unique = deduplicate(history['predictions'])

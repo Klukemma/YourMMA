@@ -56,7 +56,7 @@ def test_every_card_carries_the_caveats():
     """A probability shown with no context is how -1.8% gets mistaken for an
     edge. The app renders these; it does not get to omit them."""
     payload = ax.card_payload("Card", "2026-01-01", [])
-    for key in ("model", "simulation", "parlay"):
+    for key in ("model", "simulation", "parlay", "parlay_profiles"):
         assert len(payload["caveats"][key]) > 60
 
 

@@ -12,6 +12,7 @@ carry three times the weight in the accuracy figure.
 import argparse
 import json
 import os
+import re
 import sys
 from collections import defaultdict
 from datetime import timedelta
@@ -79,11 +80,17 @@ def made_before_the_card(pred):
 
 
 def categorise_method(method):
-    """Dataset method text -> the three classes the model predicts."""
+    """Dataset method text -> the three classes the model predicts.
+
+    The newest archive rows (Sept-Dec 2025) carry the short labels - U-DEC,
+    S-DEC, M-DEC - and reading only the word "decision" left 60 fights of
+    the 3-year window with no method at all: graded on the winner, silently
+    dropped from the method record, and a method leg on one could never
+    settle."""
     if not isinstance(method, str):
         return None
     text = method.lower()
-    if 'decision' in text:
+    if 'decision' in text or re.search(r'(^|[\s-])dec\b', text):
         return 'Decision'
     if 'sub' in text:
         return 'Submission'
@@ -299,8 +306,146 @@ def write_back(graded, ungraded, path, index):
         'unique_bouts_graded': len(graded),
         'accuracy': round(sum(r['correct'] for r in graded) / len(graded), 4) if graded else None,
     }
+    report_parlays(grade_parlays(history, index), history)
     Path(path).write_text(json.dumps(history, indent=2))
     print(f"\nWrote outcomes to {path}")
+
+
+# ------------------------------------------------------------------ parlays
+
+def _corner(winner, red, blue):
+    """'red' / 'blue' for the recorded winner, or None when the name is
+    neither fighter's - a spelling the matcher cannot place is left open
+    rather than guessed into a win or a loss."""
+    w = norm_name(winner)
+    if w == norm_name(red):
+        return 'red'
+    if w == norm_name(blue):
+        return 'blue'
+    return None
+
+
+def _bout(red, blue, event_date):
+    return {'red_corner': red, 'blue_corner': blue, 'event_date': event_date}
+
+
+def _cards_with_results(history, results):
+    """Card dates (as logged) with at least one logged bout - a pick or a
+    parlay leg - whose result is on file.
+
+    WHY THAT MEANS A MISSING BOUT WAS CANCELLED. Results arrive a card at a
+    time (the UFCStats dataset and the provisional Wikipedia rows both add
+    whole events), so once a card's results are in, a logged bout with no
+    record is a bout that did not happen: a withdrawal on the night. Before
+    they are in, the same absence means only "not yet", and the leg stays
+    open. Grading reruns from scratch every time, so a bout that turns up
+    later is settled on its real result at the next run."""
+    found = set()
+    for p in history.get('predictions', []):
+        day = str(p.get('event_date'))[:10]
+        if day not in found and find_result(
+                _bout(p.get('red_corner'), p.get('blue_corner'), day), results) is not None:
+            found.add(day)
+    for t in history.get('parlays', []):
+        day = str(t.get('event_date'))[:10]
+        for leg in t.get('legs', []):
+            if day in found:
+                break
+            if find_result(_bout(leg.get('red'), leg.get('blue'), day), results) is not None:
+                found.add(day)
+    return found
+
+
+def grade_parlays(history, results):
+    """Settle the logged parlay tickets in `history["parlays"]`, in place,
+    against `results` (load_results' index). Returns the graded tickets.
+
+    ONE TICKET PER CARD AND PROFILE: the newest one logged before the card,
+    which is the rule the picks follow and for the same reason - a re-run
+    logs the card again, and a ticket logged after the first bell is not a
+    prediction. The others stay in the file, marked "superseded" or "late",
+    and never count.
+
+    Each leg is read off its bout's real result by the same date-tolerant
+    match the picks use (find_result, on the full names). A draw or no
+    contest voids the leg; so does a bout with no record once the rest of
+    its card is graded (cancelled). The ticket is then settled by
+    parlay_profiles.settle at the decimals that were logged, a void leg
+    counting 1.0 - so a ticket is lost the moment one leg loses, and open
+    ("pending") while a leg is still unknown and none has lost.
+
+    Every chosen ticket is settled again from scratch on every run, never
+    trusted from the last one: a provisional result replaced, or a bout that
+    arrives late, then changes the grade instead of leaving a stale one.
+    """
+    import parlay_profiles as pp
+    tickets = history.get('parlays') or []
+    cards = _cards_with_results(history, results)
+
+    newest = {}
+    for i, t in enumerate(tickets):
+        if not made_before_the_card(t):
+            continue
+        key = (str(t.get('event_date'))[:10], t.get('profile'))
+        if key not in newest or (str(t.get('timestamp') or '')
+                                 > str(tickets[newest[key]].get('timestamp') or '')):
+            newest[key] = i
+    chosen = set(newest.values())
+
+    graded = []
+    for i, t in enumerate(tickets):
+        if i not in chosen:
+            t['status'] = 'superseded' if made_before_the_card(t) else 'late'
+            for stale in ('paid', 'profit'):
+                t.pop(stale, None)
+            continue
+        day = str(t.get('event_date'))[:10]
+        rebuilt = []
+        for leg in t.get('legs', []):
+            found = find_result(_bout(leg.get('red'), leg.get('blue'), day), results)
+            why = None
+            if found is None:
+                result = {'winner': None, 'method': None} if day in cards else None
+                why = 'cancelled' if day in cards else None
+            else:
+                _, winner, method = found
+                if not isinstance(winner, str) or not winner.strip():
+                    result, why = {'winner': None, 'method': None}, 'draw or no contest'
+                else:
+                    corner = _corner(winner, leg.get('red'), leg.get('blue'))
+                    result = (None if corner is None
+                              else {'winner': corner, 'method': categorise_method(method)})
+            rebuilt.append({'side': leg.get('side'), 'market': leg.get('market') or 'moneyline',
+                            'decimal': float(leg['decimal']), 'result': result})
+            leg['outcome'] = pp.leg_outcome(rebuilt[-1])
+            if why and leg['outcome'] == 'void':
+                leg['void_reason'] = why
+            else:
+                leg.pop('void_reason', None)
+        settled = pp.settle({'legs': rebuilt})
+        t['status'] = 'pending' if settled['status'] == 'open' else settled['status']
+        t['paid'] = settled['paid']
+        t['profit'] = settled['profit']
+        graded.append(t)
+    return graded
+
+
+def report_parlays(graded, history):
+    """One line per profile: what its settled tickets returned."""
+    if not history.get('parlays'):
+        return
+    print("\n" + "-" * 66)
+    print("PARLAY TICKETS (one a card per profile, logged before the card)")
+    print("-" * 66)
+    by = defaultdict(list)
+    for t in graded:
+        by[t.get('profile')].append(t)
+    for profile, rows in by.items():
+        done = [t for t in rows if t['status'] in ('won', 'lost', 'void')]
+        won = sum(t['status'] == 'won' for t in done)
+        units = sum(t['profit'] for t in done)
+        print(f"  {str(profile):<12}{len(done):>4} settled  {won:>3} won  "
+              f"{units:+8.2f} units  {len(rows) - len(done):>3} pending")
 
 
 def main():
@@ -321,7 +466,13 @@ def main():
               f"different event names\n")
     report(graded, ungraded, len(predictions))
     if args.write:
+        # The parlay tickets are settled inside write_back, on the history it
+        # writes, so one write carries the picks and the tickets together.
         write_back(graded, ungraded, HISTORY, index)
+    else:
+        import copy
+        shown = copy.deepcopy(history)
+        report_parlays(grade_parlays(shown, index), shown)
 
 
 if __name__ == '__main__':

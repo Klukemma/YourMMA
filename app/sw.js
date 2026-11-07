@@ -26,7 +26,7 @@
 // not fail on a missing extra: a 404 on one icon should not cost the user an
 // offline app.
 
-const CACHE = "yourmma-v4";
+const CACHE = "yourmma-v5";
 // How long the page waits for the network before opening from the cache.
 const SHELL_WAIT = 2500;
 

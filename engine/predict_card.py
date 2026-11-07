@@ -3450,6 +3450,29 @@ def log_card_predictions(predictions_list, event_name, event_date, first_start=N
         print(f"[Tracking] Overall: {summary['accuracy_pct']} accuracy ({summary['correct']}/{summary['verified']})")
     return logged
 
+
+def log_parlay_tickets(entries, event_name, event_date, first_start=None):
+    """Append this run's parlay tickets to the history's "parlays" list.
+
+    One record per ticket (app_export.parlay_records), graded later by
+    grade.grade_parlays: the newest ticket per card and profile logged before
+    the card is the one that counts, so a re-run logs again and the last
+    pre-fight run wins - exactly as the picks do. Every other key of the
+    history file is kept as it was."""
+    import app_export as _ax_log
+    records = _ax_log.parlay_records(entries, event_name, str(event_date),
+                                     first_start=first_start)
+    if not records:
+        print(f"[Tracking] No parlay ticket on {event_name} to log")
+        return 0
+    history = load_prediction_history()
+    history.setdefault('parlays', []).extend(records)
+    PREDICTIONS_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(PREDICTIONS_LOG_FILE, 'w') as f:
+        json.dump(history, f, indent=2)
+    print(f"[Tracking] Logged {len(records)} parlay ticket(s) for {event_name}")
+    return len(records)
+
 print("\n[Advanced Improvements] Loaded: Calibration, Weight Classes, Recency, Value Flags, Kelly, Tracking")
 
 
@@ -3608,6 +3631,10 @@ def analyze_fight_value(pred, fighter_name, odds_data):
         'fighter': odds_match['name'],
         'best_odds': best_odds,
         'book_with_best': next((o['book'] for o in odds_match['odds'] if o['odds'] == best_odds), 'Unknown'),
+        # When the line was seen (odds_cache's cached_at; None for a live
+        # response that never went through the cache). A multiplier built
+        # from it is only as fresh as this.
+        'cached_at': odds_match.get('cached_at'),
         'implied_prob': value_info['implied_prob'],
         'our_prob': model_prob,
         'blended_prob': pred['win_prob'],
@@ -3862,13 +3889,20 @@ for ba in bet_analysis:
 # before the prelims logs, one after the first bell does not. Each pick keeps
 # it, so grading applies the same cutoff (grade.made_before_the_card).
 _first_start = _card_first_start()
+# The parlay tickets ride on the same decision. They are built with the app
+# export below - they need both prices and the archive the reasons are read
+# from - so this branch only records that they may be logged, and they are
+# logged there under this same cutoff, read again at the moment of writing:
+# a run that crosses the first bell in between logs no ticket late.
+_may_log_parlays = False
 if predictions_to_log and not _grade.picks_may_be_logged(
         EVENT_DATE, first_start=_first_start):
     print(f"::warning::{EVENT_NAME} ({EVENT_DATE}) is in the past - its picks "
-          f"are NOT logged to the track record.")
+          f"and parlay tickets are NOT logged to the track record.")
 elif predictions_to_log:
     log_card_predictions(predictions_to_log, EVENT_NAME, EVENT_DATE,
                          first_start=_first_start)
+    _may_log_parlays = True
 
 # Show tracking summary
 tracking = get_tracking_summary()
@@ -3942,6 +3976,12 @@ _app_fights = []
 for _ba in bet_analysis:
     _pred = _ba['pred_full']
     _vi = _ba.get('value_info') or {}
+    # The other corner's price too: a parlay leg can be either side, and the
+    # market's chance for a bout needs both prices to take the margin out.
+    # Through the same matcher as the pick's, so both come from the same bout.
+    _other_name = _pred['blue'] if _pred['winner'] == _pred['red'] else _pred['red']
+    _other_vi = (analyze_fight_value(_pred, _other_name, CURRENT_ODDS)
+                 if CURRENT_ODDS else None) or {}
     _sim = None
     for _label, _summary in _card_simulations:
         if _label == f"{_pred['red']} vs {_pred['blue']}":
@@ -3967,6 +4007,11 @@ for _ba in bet_analysis:
         'recommendation': _ba.get('recommendation'),
         'parlay_tier': _ba.get('parlay_tier'),
         'odds': _vi.get('best_odds'),
+        'odds_other': _other_vi.get('best_odds'),
+        'book': _vi.get('book_with_best'),
+        'book_other': _other_vi.get('book_with_best'),
+        'odds_seen': _vi.get('cached_at'),
+        'odds_other_seen': _other_vi.get('cached_at'),
         'edge': _vi.get('edge'),
         'rounds_scheduled': 5 if _ba.get('is_5rnd') else 3,
         'title_fight': bool(_ba.get('is_title')),
@@ -4093,6 +4138,47 @@ for _fight in _app_fights:
     _fight['p_fail'] = _flag_scores.get(
         _strategies.key_of({'date': EVENT_DATE, 'pick': _p, 'opponent': _o}))
 
+# ------------------------------------------------------------------ 2d
+# THREE PARLAYS - about 5x, about 10x and 50-100x - built by the function the
+# 3-year backtest scored (parlay_profiles.build), each band by the rule that
+# backtest shipped for it and carrying its measured record. Reasons quote
+# only bouts before this card, from the archive loaded above for the form
+# lines. A reader's aid like the form and the intel: a failure here must
+# never cost the card, so it degrades to "no tickets" and says so.
+_profiles_measured = _app_export.load_parlay_profiles()
+try:
+    _parlay_tickets = _app_export.parlay_profiles_payload(
+        _app_fights, _form_archive if _form_ready else None,
+        _profiles_measured, event_date=str(EVENT_DATE))
+except Exception as _err:                                      # noqa: BLE001
+    print(f"::warning::parlay tickets not built: {type(_err).__name__}: {_err}")
+    _parlay_tickets = []
+
+print("\n" + "=" * 70)
+print("THREE PARLAYS" + ("" if _profiles_measured else
+                         " - NOT MEASURED YET (no experiments/parlay_profiles.json)"))
+print("=" * 70)
+for _t in _parlay_tickets:
+    print(f"\n  {_t['label']} {_t['target']}  (rule: {_t['rule']})")
+    if _t['multiplier'] is None:
+        print(f"    {_t['missing_reason']}")
+        continue
+    print(f"    x{_t['multiplier']:.2f}   chance {_t['prob']:.1%}"
+          + (f", market {_t['market_prob']:.1%}" if _t['market_prob'] is not None else ""))
+    for _l in _t['legs']:
+        _o_txt = '-' if _l['odds'] is None else (f"+{_l['odds']}" if _l['odds'] > 0 else str(_l['odds']))
+        print(f"    [{_l['number']}] {_l['pick']:<24} {_o_txt:>6}  {_l['prob']:.0%}  {_l['reason']}")
+    _w = (_t.get('measured') or {}).get('window') or {}
+    if _w.get('tickets') and _w.get('roi') is not None:
+        print(f"    window: {_w['tickets']} tickets, {_w.get('wins', 0)} won, ROI {_w['roi']:+.1%}")
+    elif _t.get('measured') is None:
+        print("    not measured yet")
+
+if _may_log_parlays and _parlay_tickets and _grade.picks_may_be_logged(
+        EVENT_DATE, first_start=_first_start):
+    log_parlay_tickets(_parlay_tickets, EVENT_NAME, EVENT_DATE,
+                       first_start=_first_start)
+
 _app_card = _app_export.card_payload(
     EVENT_NAME, str(EVENT_DATE),
     _app_fights,
@@ -4110,7 +4196,9 @@ _app_card = _app_export.card_payload(
              for _s in skipped_fights],
     parlays=_app_export.parlay_payload(parlay_candidates),
     dataset_end=str(ufc_valid['date'].max().date()),
-    trained_on=int(len(X_train_full)))
+    trained_on=int(len(X_train_full)),
+    parlay_profiles=_parlay_tickets,
+    profiles_measured=_profiles_measured)
 
 for _path in _app_export.write_all(APP_DATA_DIR, {'card': _app_card}):
     print(f"\nApp data: {_path}")

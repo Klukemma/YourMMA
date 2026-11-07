@@ -45,7 +45,9 @@ underdog-KO prop 2012-2024 returned -24% (underdog submission -52%). So the
 risk lover's long leg is priced as the underdog's moneyline - which pays
 whatever route the upset takes - and the route is the reason, not the bet.
 The backtest measures a method variant (risk_lover_method) where props were
-priced, to say what swapping in the prop would have done.
+priced, to say what swapping in the prop would have done; a prop leg's
+chance is its win chance times the share of those wins the de-vigged
+six-way method market gives the route (_as_method).
 
 NOTHING HERE IS AN EDGE. The market is hard to beat in MMA: flat-betting the
 model's picks returned -0.2% (between -3.9% and +3.4%) from 2020. A ticket's
@@ -114,11 +116,25 @@ def american_from_decimal(decimal):
     return int(round((decimal - 1.0) * 100)) if decimal >= 2.0 else int(round(-100.0 / (decimal - 1.0)))
 
 
+def _price(decimal):
+    """A decimal price as a float, or None when it is not one.
+
+    NaN is truthy, so `not price` lets a pandas gap through as a "price":
+    devig then returned (nan, nan) for a one-sided row and every leg on that
+    fight carried a NaN chance. A missing price is missing, so it is None."""
+    try:
+        d = float(decimal)
+    except (TypeError, ValueError):
+        return None
+    return d if math.isfinite(d) and d > 1.0 else None
+
+
 def devig(dec_a, dec_b, max_margin=0.15):
     """The two sides' chances with the margin removed in proportion; None
     when either price is missing or the pair is not a believable book
     (an overround below 0 or above max_margin)."""
-    if not dec_a or not dec_b or dec_a <= 1.0 or dec_b <= 1.0:
+    dec_a, dec_b = _price(dec_a), _price(dec_b)
+    if dec_a is None or dec_b is None:
         return None
     ia, ib = 1.0 / dec_a, 1.0 / dec_b
     over = ia + ib - 1.0
@@ -137,8 +153,11 @@ def fight_legs(fight):
     at the shipped weight when absent), "dec_red", "dec_blue" (decimal
     prices), optional "facts": {"red": {...}, "blue": {...}} (see facts()),
     optional "ko_red", "ko_blue", "sub_red", "sub_blue" (decimal method
-    prices), optional "result": {"winner": "red"|"blue"|None, "method":
-    "KO/TKO"|"Submission"|"Decision"|None}}.
+    prices), optional "decision_red", "decision_blue" (decimal win-by-
+    decision props - with the four above they make the six-way method
+    market a method leg's chance is read from), optional "result":
+    {"winner": "red"|"blue"|None, "method": "KO/TKO"|"Submission"|
+    "Decision"|None}}.
     A side without a price gives no leg."""
     pm_red = fight.get("p_model")
     if pm_red is None or not np.isfinite(pm_red):
@@ -150,10 +169,11 @@ def fight_legs(fight):
             return []
         import market_blend
         pb_red = market_blend.blend(pm_red, mk[0])
+    mm = _method_market(fight)
     legs = []
     for side, other in (("red", "blue"), ("blue", "red")):
-        dec = fight.get(f"dec_{side}")
-        if not dec or dec <= 1.0:
+        dec = _price(fight.get(f"dec_{side}"))
+        if dec is None:
             continue
         pm = pm_red if side == "red" else 1.0 - pm_red
         pb = pb_red if side == "red" else 1.0 - pb_red
@@ -168,10 +188,40 @@ def fight_legs(fight):
             "favourite": pk is not None and pk >= 0.5,
             "facts": (fight.get("facts") or {}).get(side) or {},
             "opp_facts": (fight.get("facts") or {}).get(other) or {},
-            "method_prices": {"KO/TKO": fight.get(f"ko_{side}"), "Submission": fight.get(f"sub_{side}")},
+            "method_prices": {"KO/TKO": _price(fight.get(f"ko_{side}")),
+                              "Submission": _price(fight.get(f"sub_{side}"))},
+            "method_market": None if mm is None else mm[side],
             "result": fight.get("result"),
         })
     return legs
+
+
+# A six-way method market runs about 22% over (method_odds.csv); a set below
+# zero or this far over is a stale or mistyped line, not a market view.
+METHOD_MAX_MARGIN = 0.40
+_ROUTES = (("KO/TKO", "ko"), ("Submission", "sub"), ("Decision", "decision"))
+
+
+def _method_market(fight):
+    """The six method props de-vigged together: {"red": {"KO/TKO": q,
+    "Submission": q, "Decision": q}, "blue": {...}}, the six chances summing
+    to one; None unless all six are priced and the set is a believable book.
+    The six outcomes cover every way the fight can be won, so they share
+    one margin, which is removed in proportion."""
+    inv = {}
+    for side in ("red", "blue"):
+        for route_name, col in _ROUTES:
+            d = _price(fight.get(f"{col}_{side}"))
+            if d is None:
+                return None
+            inv[(side, route_name)] = 1.0 / d
+    total = sum(inv.values())
+    if not (0.0 <= total - 1.0 <= METHOD_MAX_MARGIN):
+        return None
+    out = {"red": {}, "blue": {}}
+    for (side, route_name), x in inv.items():
+        out[side][route_name] = x / total
+    return out
 
 
 def _safe(l, min_p=SAFE_MIN_P):
@@ -241,20 +291,27 @@ def build(card_legs, profile, band=None):
     fight), or None. Profiles: steady, risker, risk_lover, mixed, market_only
     (mixed and market_only need `band`); risk_lover_method is the backtest's
     variant with the long legs priced as KO/submission props."""
+    # Resolved once, so the ticket records the band it was searched in: the
+    # method variant used to search the risk lover's band and then label
+    # its ticket with none.
+    if band is None:
+        band = BANDS.get("risk_lover" if profile == "risk_lover_method" else profile)
+        if band is None and profile in ("mixed", "market_only"):
+            raise ValueError(f"{profile} needs a band")
     legs = [l for l in card_legs if l["decimal"] and l["decimal"] > 1.0]
     if profile == "steady":
         pool = _top([l for l in legs if _safe(l)])
-        picked = _search([(pool, 1, MAX_LEGS)], band or BANDS["steady"])
+        picked = _search([(pool, 1, MAX_LEGS)], band)
     elif profile == "risker":
         risky = _top([l for l in legs if _risky(l)], 4, key="edge")
         safe = _top([l for l in legs if _safe(l)])
-        picked = _search([(risky, 1, 2), (safe, 0, MAX_LEGS - 1)], band or BANDS["risker"], max_legs=6)
+        picked = _search([(risky, 1, 2), (safe, 0, MAX_LEGS - 1)], band, max_legs=6)
     elif profile in ("risk_lover", "risk_lover_method"):
         longs = _top([l for l in legs if _long(l)], 4, key="edge")
         if profile == "risk_lover_method":
             longs = [m for m in (_as_method(l) for l in longs) if m is not None]
         core = _top([l for l in legs if _safe(l, CORE_MIN_P)])
-        picked = _search([(longs, 1, 2), (core, 2, MAX_LEGS - 1)], band or BANDS["risk_lover"])
+        picked = _search([(longs, 1, 2), (core, 2, MAX_LEGS - 1)], band)
     elif profile == "mixed":
         pool = _top([l for l in legs if l["p"] >= MIXED_MIN_P and l["p_market"] is not None], 12)
         picked = _search([(pool, 1, MAX_LEGS)], band,
@@ -266,17 +323,29 @@ def build(card_legs, profile, band=None):
         raise ValueError(f"unknown profile {profile!r}")
     if not picked:
         return None
-    return ticket(picked, profile, band or BANDS.get(profile))
+    return ticket(picked, profile, band)
 
 
 def _as_method(leg):
-    """The long leg as its likeliest-route prop, where that prop is priced."""
+    """The long leg as its likeliest-route prop, where that prop is priced.
+
+    A prop lands only when the pick wins THAT way, so the leg cannot keep the
+    moneyline's chance: it did, and every risk_lover_method ticket claimed
+    two to three times the hit rate it could have, and was searched for by
+    that number. The model here has no view of the route, so the leg's
+    chance is its own win chance times the share of this side's wins the
+    de-vigged six-way method market gives the route, and its market chance
+    is that market's own. Without all six props there is no split to read,
+    so there is no method leg rather than a guessed one."""
     r = route(leg["facts"])
-    price = (leg.get("method_prices") or {}).get(r) if r else None
-    if not price or price <= 1.0:
+    price = _price((leg.get("method_prices") or {}).get(r)) if r else None
+    mm = leg.get("method_market")
+    if price is None or not mm or not mm.get(r):
         return None
-    m = dict(leg, market=r, decimal=float(price))
-    return m
+    share = mm[r] / sum(mm.values())
+    pm = leg["p_model"] * share
+    return dict(leg, market=r, decimal=price, p=leg["p"] * share, p_model=pm,
+                p_market=mm[r], edge=pm - mm[r])
 
 
 def ticket(legs, profile, band):
@@ -358,18 +427,30 @@ def summarise(tickets, n_boot=4000, seed=7):
 def facts(history, name, before):
     """A fighter's UFC record strictly before `before`, from an archive frame
     with r_name, b_name, date, winner, method: wins, losses, KO/TKO and
-    submission wins and losses, and the last five results ("W"/"L")."""
+    submission wins and losses, and the last five results ("W"/"L").
+
+    The winner is matched to a CORNER by normalised name, not compared with
+    `name` as typed: the archive spells some winners differently from the
+    corner ("Waldo Cortes-Acosta" beside r_name "Waldo Cortes Acosta"), and
+    an exact comparison filed every one of those wins as a loss. A winner that matches neither corner is not counted either way."""
+    from name_resolution import norm_name
+
     d = history[(history["date"] < str(before)[:10])
                 & ((history["r_name"] == name) | (history["b_name"] == name))]
     d = d.sort_values("date")
     out = {"fights": int(len(d)), "wins": 0, "losses": 0, "ko_wins": 0, "sub_wins": 0,
            "ko_losses": 0, "sub_losses": 0, "last5": []}
+    me = norm_name(name)
     for _, r in d.iterrows():
         m = method_class(r.get("method"))
         w = r.get("winner")
         if not isinstance(w, str) or not w:
             continue
-        won = w == name
+        w = norm_name(w)
+        other = norm_name(r["b_name"] if r["r_name"] == name else r["r_name"])
+        if w not in (me, other):
+            continue
+        won = w == me
         out["wins" if won else "losses"] += 1
         if m == "KO/TKO":
             out["ko_wins" if won else "ko_losses"] += 1
@@ -405,7 +486,7 @@ def reason(leg):
     numbers - never a claim the data does not hold. Gender-neutral."""
     f, o = leg.get("facts") or {}, leg.get("opp_facts") or {}
     pm, pk = leg["p_model"], leg["p_market"]
-    form = "".join(f.get("last5") or [])
+    form = "".join(reversed(f.get("last5") or []))      # newest first, as the app's form line reads
     if leg["market"] != "moneyline":
         r = leg["market"]
         n = f.get("ko_wins" if r == "KO/TKO" else "sub_wins", 0)
@@ -426,5 +507,5 @@ def reason(leg):
     if leg["edge"] is not None and leg["edge"] >= RISKY_MIN_EDGE:
         line += " - the model rates them higher"
     if form:
-        line += f"; last {len(form)}: {form}"
+        line += f"; last {len(form)} UFC, newest first: {form}"
     return line

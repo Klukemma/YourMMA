@@ -134,6 +134,7 @@ def build(out_dir=DEFAULT_OUT):
     performance["strategy_meta"] = meta
     performance["dataset_end"] = str(df["date"].max())[:10]
     performance["bouts"] = int(len(df))
+    performance["parlay_profiles"] = parlay_profiles(history)
 
     written = ax.write_all(out_dir, {
         "fighters": fighters,
@@ -190,6 +191,24 @@ def strategies():
         "measured": data.get("generated"),
     }
     return out, meta
+
+
+def parlay_profiles(history):
+    """The three parlay profiles on the Record tab: what the 3-year backtest
+    measured (read from experiments/parlay_profiles.json - null when it has
+    not been run, never a remembered figure) and what the logged tickets have
+    returned since, as grade.py settled them.
+
+    The old fixed-size parlays' caveat rides along: those parlays are no
+    longer on the card, but what was measured about them still holds, and a
+    caveat is never dropped."""
+    measured = ax.load_parlay_profiles(EXPERIMENTS / "parlay_profiles.json")
+    return {
+        "backtest": ax.parlay_profiles_backtest(measured),
+        "live": ax.parlay_profiles_live(history),
+        "caveats": {"profiles": ax.parlay_profiles_caveat(measured),
+                    "parlay": ax.parlay_caveat()},
+    }
 
 
 def main():
