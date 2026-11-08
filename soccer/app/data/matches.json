@@ -10,8 +10,8 @@
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, each beat the leagues' own rates from earlier seasons. Both teams to score runs low: across 2016-2025 its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
  "data_through": "2026-11-02",
- "feeds_at": "2026-11-08T01:31:11Z",
- "generated": "2026-11-08T01:31:21Z",
+ "feeds_at": "2026-11-08T14:23:03Z",
+ "generated": "2026-11-08T14:23:14Z",
  "league_order": [
   "E0",
   "SP1",
@@ -6439,6 +6439,822 @@
   },
   {
    "away": {
+    "bg": "#E30613",
+    "code": "BRE",
+    "fg": "#FFFFFF",
+    "name": "Brentford"
+   },
+   "away_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 0,
+     "gf": 2,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Nott'm Forest",
+     "opponent_name": "Nottingham Forest",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 1,
+     "gf": 1,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Hull",
+     "opponent_name": "Hull City",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 2,
+     "gf": 1,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Liverpool",
+     "opponent_name": "Liverpool",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 2,
+     "gf": 2,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Aston Villa",
+     "opponent_name": "Aston Villa",
+     "result": "D"
+    },
+    {
+     "date": "2026-09-18",
+     "ga": 0,
+     "gf": 3,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Chelsea",
+     "opponent_name": "Chelsea",
+     "result": "W"
+    }
+   ],
+   "away_position": 7,
+   "band": "SOLID",
+   "band_basis": "pick",
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#0057B8",
+    "code": "BHA",
+    "fg": "#FFFFFF",
+    "name": "Brighton"
+   },
+   "home_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 0,
+     "gf": 1,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Man City",
+     "opponent_name": "Manchester City",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 2,
+     "gf": 0,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Liverpool",
+     "opponent_name": "Liverpool",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 0,
+     "gf": 5,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Crystal Palace",
+     "opponent_name": "Crystal Palace",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 0,
+     "gf": 2,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Sunderland",
+     "opponent_name": "Sunderland",
+     "result": "W"
+    },
+    {
+     "date": "2026-09-19",
+     "ga": 0,
+     "gf": 3,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Arsenal",
+     "opponent_name": "Arsenal",
+     "result": "W"
+    }
+   ],
+   "home_position": 3,
+   "kickoff": "2026-11-08T14:00:00Z",
+   "kickoff_sources": null,
+   "league": "E0",
+   "logged_at": "2026-11-08T01:31:21Z",
+   "market": {
+    "p_a": 0.2611467718257966,
+    "p_d": 0.2454232750928298,
+    "p_h": 0.49342995308137355
+   },
+   "market_o25": 0.5943152454780362,
+   "match_id": "E0-20261108-brighton-brentford",
+   "model": {
+    "p_a": 0.21344365705856067,
+    "p_d": 0.24204389383162717,
+    "p_h": 0.5445124491098122
+   },
+   "model_o25": 0.5511785930344468,
+   "p_a": 0.2506942314989953,
+   "p_btts": 0.6037265726543074,
+   "p_d": 0.24263760130960715,
+   "p_h": 0.5066681671913975,
+   "p_o15": 0.8182876483308278,
+   "p_o25": 0.5943152454780362,
+   "p_o35": 0.3699552423525182,
+   "pick": "H",
+   "pick_prob": 0.5066681671913975,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 3.59,
+     "d": 3.82,
+     "h": 1.9
+    },
+    "best": {
+     "a": 3.7,
+     "d": 4.0,
+     "h": 1.95
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.2517481498075341,
+     "p_d": 0.24098393286686215,
+     "p_h": 0.5072679173256036
+    },
+    "miss": 0.0016536684427450044,
+    "miss_on": "draw",
+    "o25": 0.593781743999099,
+    "other": 0.013096801293451144,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.11129503099741153,
+      "score": "1-1"
+     },
+     {
+      "p": 0.0964290448008084,
+      "score": "2-1"
+     },
+     {
+      "p": 0.07840175408675827,
+      "score": "1-0"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "started",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#C8102E",
+    "code": "LIV",
+    "fg": "#FFFFFF",
+    "name": "Liverpool"
+   },
+   "away_form": [
+    {
+     "date": "2026-11-01",
+     "ga": 1,
+     "gf": 0,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Arsenal",
+     "opponent_name": "Arsenal",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 0,
+     "gf": 2,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Brighton",
+     "opponent_name": "Brighton",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 1,
+     "gf": 2,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Brentford",
+     "opponent_name": "Brentford",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-11",
+     "ga": 3,
+     "gf": 0,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Man City",
+     "opponent_name": "Manchester City",
+     "result": "L"
+    },
+    {
+     "date": "2026-09-20",
+     "ga": 0,
+     "gf": 1,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Bournemouth",
+     "opponent_name": "Bournemouth",
+     "result": "W"
+    }
+   ],
+   "away_position": 6,
+   "band": "STRONG",
+   "band_basis": "pick",
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#1B458F",
+    "code": "CRY",
+    "fg": "#FFFFFF",
+    "name": "Crystal Palace"
+   },
+   "home_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 2,
+     "gf": 0,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Tottenham",
+     "opponent_name": "Tottenham Hotspur",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 2,
+     "gf": 0,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Newcastle",
+     "opponent_name": "Newcastle United",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 5,
+     "gf": 0,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Brighton",
+     "opponent_name": "Brighton",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-11",
+     "ga": 1,
+     "gf": 3,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Nott'm Forest",
+     "opponent_name": "Nottingham Forest",
+     "result": "W"
+    },
+    {
+     "date": "2026-09-20",
+     "ga": 0,
+     "gf": 0,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Leeds",
+     "opponent_name": "Leeds United",
+     "result": "D"
+    }
+   ],
+   "home_position": 19,
+   "kickoff": "2026-11-08T14:00:00Z",
+   "kickoff_sources": null,
+   "league": "E0",
+   "logged_at": "2026-11-08T01:31:21Z",
+   "market": {
+    "p_a": 0.5978945021601472,
+    "p_d": 0.21983474669588554,
+    "p_h": 0.1822707511439672
+   },
+   "market_o25": 0.6071428571428571,
+   "match_id": "E0-20261108-crystalpalace-liverpool",
+   "model": {
+    "p_a": 0.519896824712322,
+    "p_d": 0.25217135704796106,
+    "p_h": 0.22793181823971692
+   },
+   "model_o25": 0.5261307102108133,
+   "p_a": 0.6218248637418797,
+   "p_btts": 0.5669954124899472,
+   "p_d": 0.21233090491904447,
+   "p_h": 0.1658442313390758,
+   "p_o15": 0.8261644390264905,
+   "p_o25": 0.6071428571428571,
+   "p_o35": 0.38373932135351313,
+   "pick": "A",
+   "pick_prob": 0.6218248637418797,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 1.57,
+     "d": 4.27,
+     "h": 5.15
+    },
+    "best": {
+     "a": 1.63,
+     "d": 4.35,
+     "h": 5.5
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.6218680258843979,
+     "p_d": 0.21215376980195066,
+     "p_h": 0.16597820431365162
+    },
+    "miss": 0.0001771351170938018,
+    "miss_on": "draw",
+    "o25": 0.6070912180379163,
+    "other": 0.02203896166682573,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.09920259286902089,
+      "score": "1-2"
+     },
+     {
+      "p": 0.09902651270401114,
+      "score": "1-1"
+     },
+     {
+      "p": 0.09769807629262345,
+      "score": "0-2"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "started",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#DA291C",
+    "code": "BOU",
+    "fg": "#000000",
+    "name": "Bournemouth"
+   },
+   "away_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 0,
+     "gf": 2,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Leeds",
+     "opponent_name": "Leeds United",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 0,
+     "gf": 3,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Man United",
+     "opponent_name": "Manchester United",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 0,
+     "gf": 2,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Sunderland",
+     "opponent_name": "Sunderland",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 5,
+     "gf": 1,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Chelsea",
+     "opponent_name": "Chelsea",
+     "result": "L"
+    },
+    {
+     "date": "2026-09-20",
+     "ga": 1,
+     "gf": 0,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Liverpool",
+     "opponent_name": "Liverpool",
+     "result": "L"
+    }
+   ],
+   "away_position": 9,
+   "band": "SOLID",
+   "band_basis": "pick",
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#0044A9",
+    "code": "IPS",
+    "fg": "#FFFFFF",
+    "name": "Ipswich Town"
+   },
+   "home_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 2,
+     "gf": 2,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Hull",
+     "opponent_name": "Hull City",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-23",
+     "ga": 1,
+     "gf": 1,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Nott'm Forest",
+     "opponent_name": "Nottingham Forest",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 3,
+     "gf": 2,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Man City",
+     "opponent_name": "Manchester City",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 1,
+     "gf": 2,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Fulham",
+     "opponent_name": "Fulham",
+     "result": "W"
+    },
+    {
+     "date": "2026-09-19",
+     "ga": 1,
+     "gf": 0,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Everton",
+     "opponent_name": "Everton",
+     "result": "L"
+    }
+   ],
+   "home_position": 14,
+   "kickoff": "2026-11-08T14:00:00Z",
+   "kickoff_sources": null,
+   "league": "E0",
+   "logged_at": "2026-11-08T01:31:21Z",
+   "market": {
+    "p_a": 0.49366678894331395,
+    "p_d": 0.25419157154262784,
+    "p_h": 0.2521416395140582
+   },
+   "market_o25": 0.5593667546174144,
+   "match_id": "E0-20261108-ipswich-bournemouth",
+   "model": {
+    "p_a": 0.5000940241607867,
+    "p_d": 0.24928655531350644,
+    "p_h": 0.2506194205257068
+   },
+   "model_o25": 0.5582482448488795,
+   "p_a": 0.5078069649813818,
+   "p_btts": 0.5739108041154594,
+   "p_d": 0.25200854018997704,
+   "p_h": 0.24018449482864115,
+   "p_o15": 0.794671125883285,
+   "p_o25": 0.5593667546174144,
+   "p_o35": 0.3341783126458548,
+   "pick": "A",
+   "pick_prob": 0.5078069649813818,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 1.9,
+     "d": 3.69,
+     "h": 3.72
+    },
+    "best": {
+     "a": 1.95,
+     "d": 3.8,
+     "h": 3.9
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.5093101476881794,
+     "p_d": 0.2477484365208528,
+     "p_h": 0.24294141579096795
+    },
+    "miss": 0.004260103669124243,
+    "miss_on": "draw",
+    "o25": 0.5579587777560209,
+    "other": 0.010645090436123383,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.11665769104526429,
+      "score": "1-1"
+     },
+     {
+      "p": 0.0969885097884289,
+      "score": "1-2"
+     },
+     {
+      "p": 0.08874881380889023,
+      "score": "0-1"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "started",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#034694",
+    "code": "CHE",
+    "fg": "#FFFFFF",
+    "name": "Chelsea"
+   },
+   "away_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 0,
+     "gf": 2,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Man United",
+     "opponent_name": "Manchester United",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-24",
+     "ga": 2,
+     "gf": 0,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Tottenham",
+     "opponent_name": "Tottenham Hotspur",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 0,
+     "gf": 2,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Everton",
+     "opponent_name": "Everton",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 1,
+     "gf": 5,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Bournemouth",
+     "opponent_name": "Bournemouth",
+     "result": "W"
+    },
+    {
+     "date": "2026-09-18",
+     "ga": 3,
+     "gf": 0,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Brentford",
+     "opponent_name": "Brentford",
+     "result": "L"
+    }
+   ],
+   "away_position": 4,
+   "band": "LEAN",
+   "band_basis": "pick",
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#EB172B",
+    "code": "SUN",
+    "fg": "#FFFFFF",
+    "name": "Sunderland"
+   },
+   "home_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 3,
+     "gf": 1,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Coventry",
+     "opponent_name": "Coventry City",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 0,
+     "gf": 0,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Leeds",
+     "opponent_name": "Leeds United",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 2,
+     "gf": 0,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Bournemouth",
+     "opponent_name": "Bournemouth",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 2,
+     "gf": 0,
+     "home": true,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Brighton",
+     "opponent_name": "Brighton",
+     "result": "L"
+    },
+    {
+     "date": "2026-09-20",
+     "ga": 5,
+     "gf": 3,
+     "home": false,
+     "league": "E0",
+     "league_name": "Premier League",
+     "opponent": "Man City",
+     "opponent_name": "Manchester City",
+     "result": "L"
+    }
+   ],
+   "home_position": 20,
+   "kickoff": "2026-11-08T14:00:00Z",
+   "kickoff_sources": null,
+   "league": "E0",
+   "logged_at": "2026-11-08T01:31:21Z",
+   "market": {
+    "p_a": 0.4853031679512353,
+    "p_d": 0.2601764205960789,
+    "p_h": 0.25452041145268584
+   },
+   "market_o25": 0.5267379679144386,
+   "match_id": "E0-20261108-sunderland-chelsea",
+   "model": {
+    "p_a": 0.45559231505375597,
+    "p_d": 0.2643580813115729,
+    "p_h": 0.28004960363467113
+   },
+   "model_o25": 0.5176349836021489,
+   "p_a": 0.498478851761184,
+   "p_btts": 0.5505859024721078,
+   "p_d": 0.2587154089056061,
+   "p_h": 0.24280573933320987,
+   "p_o15": 0.7723893400892011,
+   "p_o25": 0.5267379679144386,
+   "p_o35": 0.3036751099018078,
+   "pick": "A",
+   "pick_prob": 0.498478851761184,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 1.93,
+     "d": 3.6,
+     "h": 3.68
+    },
+    "best": {
+     "a": 2.0,
+     "d": 3.75,
+     "h": 3.9
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.499424376087338,
+     "p_d": 0.25606160199204797,
+     "p_h": 0.24451402192061406
+    },
+    "miss": 0.0026538069135581543,
+    "miss_on": "draw",
+    "o25": 0.5258292735019574,
+    "other": 0.008438466494310903,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.12170710924499466,
+      "score": "1-1"
+     },
+     {
+      "p": 0.09697516216729389,
+      "score": "0-1"
+     },
+     {
+      "p": 0.09613583706882095,
+      "score": "1-2"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "started",
+   "time_confirmed": true
+  },
+  {
+   "away": {
     "bg": "#004170",
     "code": "PSG",
     "fg": "#FFFFFF",
@@ -8989,6 +9805,210 @@
    },
    "season": 2026,
    "status": "final",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#E01E13",
+    "code": "LIL",
+    "fg": "#FFFFFF",
+    "name": "Lille"
+   },
+   "away_form": [
+    {
+     "date": "2026-10-30",
+     "ga": 0,
+     "gf": 1,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Lens",
+     "opponent_name": "Lens",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 1,
+     "gf": 1,
+     "home": false,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Monaco",
+     "opponent_name": "Monaco",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 1,
+     "gf": 1,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Brest",
+     "opponent_name": "Brest",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 0,
+     "gf": 1,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Le Havre",
+     "opponent_name": "Le Havre",
+     "result": "W"
+    },
+    {
+     "date": "2026-09-20",
+     "ga": 2,
+     "gf": 1,
+     "home": false,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Nice",
+     "opponent_name": "Nice",
+     "result": "L"
+    }
+   ],
+   "away_position": 3,
+   "band": "LEAN",
+   "band_basis": "pick",
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#E2001A",
+    "code": "REN",
+    "fg": "#000000",
+    "name": "Rennes"
+   },
+   "home_form": [
+    {
+     "date": "2026-10-30",
+     "ga": 5,
+     "gf": 2,
+     "home": false,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Nice",
+     "opponent_name": "Nice",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 0,
+     "gf": 3,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Strasbourg",
+     "opponent_name": "Strasbourg",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 4,
+     "gf": 3,
+     "home": false,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Paris FC",
+     "opponent_name": "Paris FC",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-11",
+     "ga": 1,
+     "gf": 4,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Auxerre",
+     "opponent_name": "Auxerre",
+     "result": "W"
+    },
+    {
+     "date": "2026-09-19",
+     "ga": 4,
+     "gf": 0,
+     "home": false,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Lyon",
+     "opponent_name": "Lyon",
+     "result": "L"
+    }
+   ],
+   "home_position": 5,
+   "kickoff": "2026-11-08T14:00:00Z",
+   "kickoff_sources": null,
+   "league": "F1",
+   "logged_at": "2026-11-08T01:31:21Z",
+   "market": {
+    "p_a": 0.3000255317477464,
+    "p_d": 0.2577567413633954,
+    "p_h": 0.4422177268888584
+   },
+   "market_o25": 0.5906735751295337,
+   "match_id": "F1-20261108-rennes-lille",
+   "model": {
+    "p_a": 0.3833482502463683,
+    "p_d": 0.2616614213879449,
+    "p_h": 0.3549903283656869
+   },
+   "model_o25": 0.5529318182788547,
+   "p_a": 0.2932473522543495,
+   "p_btts": 0.6118530630222991,
+   "p_d": 0.25690551939414197,
+   "p_h": 0.44984712835150853,
+   "p_o15": 0.8148725269981368,
+   "p_o25": 0.5906735751295337,
+   "p_o35": 0.36428173795976077,
+   "pick": "H",
+   "pick_prob": 0.44984712835150853,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 3.11,
+     "d": 3.62,
+     "h": 2.11
+    },
+    "best": {
+     "a": 3.3,
+     "d": 3.75,
+     "h": 2.18
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.2975458061186376,
+     "p_d": 0.24952790041909836,
+     "p_h": 0.4529262934622641
+    },
+    "miss": 0.007377618975043604,
+    "miss_on": "draw",
+    "o25": 0.5882264755519273,
+    "other": 0.010727739185095508,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.1150468769335993,
+      "score": "1-1"
+     },
+     {
+      "p": 0.09253520163862439,
+      "score": "2-1"
+     },
+     {
+      "p": 0.07413969465165898,
+      "score": "1-0"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "started",
    "time_confirmed": true
   },
   {
@@ -12612,6 +13632,627 @@
   },
   {
    "away": {
+    "bg": "#FB090B",
+    "code": "MIL",
+    "fg": "#000000",
+    "name": "Milan"
+   },
+   "away_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 1,
+     "gf": 3,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Inter",
+     "opponent_name": "Inter",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-28",
+     "ga": 4,
+     "gf": 2,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Bologna",
+     "opponent_name": "Bologna",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 0,
+     "gf": 2,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Udinese",
+     "opponent_name": "Udinese",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 2,
+     "gf": 3,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Atalanta",
+     "opponent_name": "Atalanta",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-11",
+     "ga": 1,
+     "gf": 1,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Sassuolo",
+     "opponent_name": "Sassuolo",
+     "result": "D"
+    }
+   ],
+   "away_position": 5,
+   "band": "SOLID",
+   "band_basis": "pick",
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#A41F35",
+    "code": "GEN",
+    "fg": "#FFFFFF",
+    "name": "Genoa"
+   },
+   "home_form": [
+    {
+     "date": "2026-11-01",
+     "ga": 1,
+     "gf": 2,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Lecce",
+     "opponent_name": "Lecce",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-28",
+     "ga": 0,
+     "gf": 2,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Juventus",
+     "opponent_name": "Juventus",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 0,
+     "gf": 1,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Venezia",
+     "opponent_name": "Venezia",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 2,
+     "gf": 0,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Roma",
+     "opponent_name": "Roma",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 1,
+     "gf": 2,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Fiorentina",
+     "opponent_name": "Fiorentina",
+     "result": "W"
+    }
+   ],
+   "home_position": 12,
+   "kickoff": "2026-11-08T14:00:00Z",
+   "kickoff_sources": null,
+   "league": "I1",
+   "logged_at": "2026-11-08T01:31:21Z",
+   "market": {
+    "p_a": 0.5207645234302959,
+    "p_d": 0.26858915248553944,
+    "p_h": 0.21064632408416464
+   },
+   "market_o25": 0.4562334217506631,
+   "match_id": "I1-20261108-genoa-milan",
+   "model": {
+    "p_a": 0.5044198515562491,
+    "p_d": 0.2714976860681289,
+    "p_h": 0.22408246237562196
+   },
+   "model_o25": 0.4501566848644609,
+   "p_a": 0.5369817393803832,
+   "p_btts": 0.4764976704233676,
+   "p_d": 0.2669778837337819,
+   "p_h": 0.19604037688583498,
+   "p_o15": 0.7185872498235365,
+   "p_o25": 0.4562334217506631,
+   "p_o35": 0.24125980267805758,
+   "pick": "A",
+   "pick_prob": 0.5369817393803832,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 1.8,
+     "d": 3.49,
+     "h": 4.45
+    },
+    "best": {
+     "a": 1.84,
+     "d": 3.6,
+     "h": 4.6
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.5381451639789423,
+     "p_d": 0.26303791066963184,
+     "p_h": 0.19881692535142576
+    },
+    "miss": 0.00393997306415006,
+    "miss_on": "draw",
+    "o25": 0.4547888863161094,
+    "other": 0.006548503286504359,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.1259726281543819,
+      "score": "0-1"
+     },
+     {
+      "p": 0.12447114654645038,
+      "score": "1-1"
+     },
+     {
+      "p": 0.10712555559598146,
+      "score": "0-2"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "started",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#1E71B8",
+    "code": "ATA",
+    "fg": "#000000",
+    "name": "Atalanta"
+   },
+   "away_form": [
+    {
+     "date": "2026-11-02",
+     "ga": 3,
+     "gf": 0,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Parma",
+     "opponent_name": "Parma",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-29",
+     "ga": 2,
+     "gf": 2,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Fiorentina",
+     "opponent_name": "Fiorentina",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 4,
+     "gf": 4,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Frosinone",
+     "opponent_name": "Frosinone",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 3,
+     "gf": 2,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Milan",
+     "opponent_name": "Milan",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-12",
+     "ga": 1,
+     "gf": 3,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Venezia",
+     "opponent_name": "Venezia",
+     "result": "W"
+    }
+   ],
+   "away_position": 13,
+   "band": "LEAN",
+   "band_basis": "pick",
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#E2001A",
+    "code": "MON",
+    "fg": "#FFFFFF",
+    "name": "Monza"
+   },
+   "home_form": [
+    {
+     "date": "2026-10-31",
+     "ga": 2,
+     "gf": 1,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Bologna",
+     "opponent_name": "Bologna",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-28",
+     "ga": 4,
+     "gf": 1,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Napoli",
+     "opponent_name": "Napoli",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-23",
+     "ga": 3,
+     "gf": 2,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Torino",
+     "opponent_name": "Torino",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-19",
+     "ga": 0,
+     "gf": 4,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Cagliari",
+     "opponent_name": "Cagliari",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-11",
+     "ga": 3,
+     "gf": 1,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Lazio",
+     "opponent_name": "Lazio",
+     "result": "L"
+    }
+   ],
+   "home_position": 18,
+   "kickoff": "2026-11-08T14:00:00Z",
+   "kickoff_sources": null,
+   "league": "I1",
+   "logged_at": "2026-11-08T01:31:21Z",
+   "market": {
+    "p_a": 0.4565055874816152,
+    "p_d": 0.25144425406741366,
+    "p_h": 0.2920501584509712
+   },
+   "market_o25": 0.6071428571428571,
+   "match_id": "I1-20261108-monza-atalanta",
+   "model": {
+    "p_a": 0.4806811561875742,
+    "p_d": 0.25080150208381385,
+    "p_h": 0.268517341728612
+   },
+   "model_o25": 0.5655888775560349,
+   "p_a": 0.4668203582137666,
+   "p_btts": 0.6223614069662868,
+   "p_d": 0.24966627736452437,
+   "p_h": 0.2835133644217091,
+   "p_o15": 0.8257455060755595,
+   "p_o25": 0.6071428571428571,
+   "p_o35": 0.38192111545814544,
+   "pick": "A",
+   "pick_prob": 0.4668203582137666,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 2.06,
+     "d": 3.74,
+     "h": 3.22
+    },
+    "best": {
+     "a": 2.15,
+     "d": 4.0,
+     "h": 3.5
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.469040209570635,
+     "p_d": 0.24417102231619786,
+     "p_h": 0.286788768113167
+    },
+    "miss": 0.005495255048326514,
+    "miss_on": "draw",
+    "o25": 0.6053487002935355,
+    "other": 0.012488309713788448,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.11135541802283937,
+      "score": "1-1"
+     },
+     {
+      "p": 0.09341153242818506,
+      "score": "1-2"
+     },
+     {
+      "p": 0.07143411923121694,
+      "score": "0-1"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "started",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#87D8F7",
+    "code": "LAZ",
+    "fg": "#15366F",
+    "name": "Lazio"
+   },
+   "away_form": [
+    {
+     "date": "2026-11-01",
+     "ga": 1,
+     "gf": 2,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Cagliari",
+     "opponent_name": "Cagliari",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-27",
+     "ga": 2,
+     "gf": 6,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Sassuolo",
+     "opponent_name": "Sassuolo",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-24",
+     "ga": 1,
+     "gf": 2,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Parma",
+     "opponent_name": "Parma",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 0,
+     "gf": 3,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Juventus",
+     "opponent_name": "Juventus",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-11",
+     "ga": 1,
+     "gf": 3,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Monza",
+     "opponent_name": "Monza",
+     "result": "W"
+    }
+   ],
+   "away_position": 1,
+   "band": "LEAN",
+   "band_basis": "pick",
+   "btts_correct": true,
+   "correct": false,
+   "fixture_source": "football-data.co.uk",
+   "home": {
+    "bg": "#12A0D7",
+    "code": "NAP",
+    "fg": "#000000",
+    "name": "Napoli"
+   },
+   "home_form": [
+    {
+     "date": "2026-11-01",
+     "ga": 2,
+     "gf": 0,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Juventus",
+     "opponent_name": "Juventus",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-28",
+     "ga": 1,
+     "gf": 4,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Monza",
+     "opponent_name": "Monza",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-24",
+     "ga": 3,
+     "gf": 3,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Roma",
+     "opponent_name": "Roma",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 1,
+     "gf": 0,
+     "home": false,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Venezia",
+     "opponent_name": "Venezia",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 0,
+     "gf": 3,
+     "home": true,
+     "league": "I1",
+     "league_name": "Serie A",
+     "opponent": "Frosinone",
+     "opponent_name": "Frosinone",
+     "result": "W"
+    }
+   ],
+   "home_position": 10,
+   "kickoff": "2026-11-08T11:30:00Z",
+   "kickoff_sources": null,
+   "league": "I1",
+   "logged_at": "2026-11-08T01:31:21Z",
+   "market": {
+    "p_a": 0.316080600553141,
+    "p_d": 0.26669300671671275,
+    "p_h": 0.4172263927301461
+   },
+   "market_o25": 0.5464190981432361,
+   "match_id": "I1-20261108-napoli-lazio",
+   "model": {
+    "p_a": 0.24976713445451237,
+    "p_d": 0.2714045355318121,
+    "p_h": 0.4788283300136754
+   },
+   "model_o25": 0.4711624118210076,
+   "o25_correct": false,
+   "p_a": 0.3109543429454856,
+   "p_btts": 0.581791506390307,
+   "p_d": 0.26701413325740625,
+   "p_h": 0.42203152379710807,
+   "p_o15": 0.7857348381069997,
+   "p_o25": 0.5464190981432361,
+   "p_o35": 0.32124528707104544,
+   "pick": "H",
+   "pick_prob": 0.42203152379710807,
+   "price_status": "posted",
+   "prices": {
+    "avg": {
+     "a": 2.97,
+     "d": 3.52,
+     "h": 2.25
+    },
+    "best": {
+     "a": 3.15,
+     "d": 3.6,
+     "h": 2.3
+    }
+   },
+   "prices_at": "2026-11-06T19:22:43Z",
+   "provisional": true,
+   "result_source": "ESPN",
+   "score": {
+    "away": 1,
+    "home": 1
+   },
+   "score_source": "market",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.31402371234770704,
+     "p_d": 0.26153613906913936,
+     "p_h": 0.4244401485831537
+    },
+    "miss": 0.005477994188266888,
+    "miss_on": "draw",
+    "o25": 0.544523709898258,
+    "other": 0.007519737642887492,
+    "reason": null,
+    "top": [
+     {
+      "p": 0.12320254722521802,
+      "score": "1-1"
+     },
+     {
+      "p": 0.09026786316591619,
+      "score": "2-1"
+     },
+     {
+      "p": 0.0820665138257329,
+      "score": "1-0"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "final",
+   "time_confirmed": true
+  },
+  {
+   "away": {
     "bg": "#007FC8",
     "code": "ESP",
     "fg": "#FFFFFF",
@@ -15807,212 +17448,6 @@
   },
   {
    "away": {
-    "bg": "#87D8F7",
-    "code": "LAZ",
-    "fg": "#15366F",
-    "name": "Lazio"
-   },
-   "away_form": [
-    {
-     "date": "2026-11-01",
-     "ga": 1,
-     "gf": 2,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Cagliari",
-     "opponent_name": "Cagliari",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-27",
-     "ga": 2,
-     "gf": 6,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Sassuolo",
-     "opponent_name": "Sassuolo",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-24",
-     "ga": 1,
-     "gf": 2,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Parma",
-     "opponent_name": "Parma",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-18",
-     "ga": 0,
-     "gf": 3,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Juventus",
-     "opponent_name": "Juventus",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-11",
-     "ga": 1,
-     "gf": 3,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Monza",
-     "opponent_name": "Monza",
-     "result": "W"
-    }
-   ],
-   "away_key": "Lazio",
-   "away_position": 1,
-   "band": "LEAN",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-08T11:30:00Z",
-   "home": {
-    "bg": "#12A0D7",
-    "code": "NAP",
-    "fg": "#000000",
-    "name": "Napoli"
-   },
-   "home_form": [
-    {
-     "date": "2026-11-01",
-     "ga": 2,
-     "gf": 0,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Juventus",
-     "opponent_name": "Juventus",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-28",
-     "ga": 1,
-     "gf": 4,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Monza",
-     "opponent_name": "Monza",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-24",
-     "ga": 3,
-     "gf": 3,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Roma",
-     "opponent_name": "Roma",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-17",
-     "ga": 1,
-     "gf": 0,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Venezia",
-     "opponent_name": "Venezia",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 0,
-     "gf": 3,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Frosinone",
-     "opponent_name": "Frosinone",
-     "result": "W"
-    }
-   ],
-   "home_key": "Napoli",
-   "home_position": 10,
-   "kickoff": "2026-11-08T11:30:00Z",
-   "league": "I1",
-   "logged_at": "2026-11-08T01:31:21Z",
-   "market": {
-    "p_a": 0.316080600553141,
-    "p_d": 0.26669300671671275,
-    "p_h": 0.4172263927301461
-   },
-   "market_o25": 0.5464190981432361,
-   "match_id": "I1-20261108-napoli-lazio",
-   "model": {
-    "p_a": 0.24976713445451237,
-    "p_d": 0.2714045355318121,
-    "p_h": 0.4788283300136754
-   },
-   "model_o25": 0.4711624118210076,
-   "p_a": 0.3109543429454856,
-   "p_btts": 0.581791506390307,
-   "p_d": 0.26701413325740625,
-   "p_h": 0.42203152379710807,
-   "p_o15": 0.7857348381069997,
-   "p_o25": 0.5464190981432361,
-   "p_o35": 0.32124528707104544,
-   "pick": "H",
-   "pick_prob": 0.42203152379710807,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 2.97,
-     "d": 3.52,
-     "h": 2.25
-    },
-    "best": {
-     "a": 3.15,
-     "d": 3.6,
-     "h": 2.3
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.31402371234770704,
-     "p_d": 0.26153613906913936,
-     "p_h": 0.4244401485831537
-    },
-    "miss": 0.005477994188266888,
-    "miss_on": "draw",
-    "o25": 0.544523709898258,
-    "other": 0.007519737642887492,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.12320254722521802,
-      "score": "1-1"
-     },
-     {
-      "p": 0.09026786316591619,
-      "score": "2-1"
-     },
-     {
-      "p": 0.0820665138257329,
-      "score": "1-0"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
-   "time_confirmed": true
-  },
-  {
-   "away": {
     "bg": "#00954C",
     "code": "BET",
     "fg": "#FFFFFF",
@@ -16075,12 +17510,10 @@
      "result": "D"
     }
    ],
-   "away_key": "Betis",
    "away_position": 4,
    "band": "LEAN",
    "band_basis": "pick",
    "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-08T13:00:00Z",
    "home": {
     "bg": "#05642C",
     "code": "ELC",
@@ -16144,9 +17577,9 @@
      "result": "W"
     }
    ],
-   "home_key": "Elche",
    "home_position": 17,
    "kickoff": "2026-11-08T13:00:00Z",
+   "kickoff_sources": null,
    "league": "SP1",
    "logged_at": "2026-11-08T01:31:21Z",
    "market": {
@@ -16214,1449 +17647,7 @@
     ]
    },
    "season": 2026,
-   "status": "upcoming",
-   "time_confirmed": true
-  },
-  {
-   "away": {
-    "bg": "#E30613",
-    "code": "BRE",
-    "fg": "#FFFFFF",
-    "name": "Brentford"
-   },
-   "away_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 0,
-     "gf": 2,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Nott'm Forest",
-     "opponent_name": "Nottingham Forest",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 1,
-     "gf": 1,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Hull",
-     "opponent_name": "Hull City",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-17",
-     "ga": 2,
-     "gf": 1,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Liverpool",
-     "opponent_name": "Liverpool",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 2,
-     "gf": 2,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Aston Villa",
-     "opponent_name": "Aston Villa",
-     "result": "D"
-    },
-    {
-     "date": "2026-09-18",
-     "ga": 0,
-     "gf": 3,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Chelsea",
-     "opponent_name": "Chelsea",
-     "result": "W"
-    }
-   ],
-   "away_key": "Brentford",
-   "away_position": 7,
-   "band": "SOLID",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-08T14:00:00Z",
-   "home": {
-    "bg": "#0057B8",
-    "code": "BHA",
-    "fg": "#FFFFFF",
-    "name": "Brighton"
-   },
-   "home_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 0,
-     "gf": 1,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Man City",
-     "opponent_name": "Manchester City",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 2,
-     "gf": 0,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Liverpool",
-     "opponent_name": "Liverpool",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-18",
-     "ga": 0,
-     "gf": 5,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Crystal Palace",
-     "opponent_name": "Crystal Palace",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 0,
-     "gf": 2,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Sunderland",
-     "opponent_name": "Sunderland",
-     "result": "W"
-    },
-    {
-     "date": "2026-09-19",
-     "ga": 0,
-     "gf": 3,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Arsenal",
-     "opponent_name": "Arsenal",
-     "result": "W"
-    }
-   ],
-   "home_key": "Brighton",
-   "home_position": 3,
-   "kickoff": "2026-11-08T14:00:00Z",
-   "league": "E0",
-   "logged_at": "2026-11-08T01:31:21Z",
-   "market": {
-    "p_a": 0.2611467718257966,
-    "p_d": 0.2454232750928298,
-    "p_h": 0.49342995308137355
-   },
-   "market_o25": 0.5943152454780362,
-   "match_id": "E0-20261108-brighton-brentford",
-   "model": {
-    "p_a": 0.21344365705856067,
-    "p_d": 0.24204389383162717,
-    "p_h": 0.5445124491098122
-   },
-   "model_o25": 0.5511785930344468,
-   "p_a": 0.2506942314989953,
-   "p_btts": 0.6037265726543074,
-   "p_d": 0.24263760130960715,
-   "p_h": 0.5066681671913975,
-   "p_o15": 0.8182876483308278,
-   "p_o25": 0.5943152454780362,
-   "p_o35": 0.3699552423525182,
-   "pick": "H",
-   "pick_prob": 0.5066681671913975,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 3.59,
-     "d": 3.82,
-     "h": 1.9
-    },
-    "best": {
-     "a": 3.7,
-     "d": 4.0,
-     "h": 1.95
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.2517481498075341,
-     "p_d": 0.24098393286686215,
-     "p_h": 0.5072679173256036
-    },
-    "miss": 0.0016536684427450044,
-    "miss_on": "draw",
-    "o25": 0.593781743999099,
-    "other": 0.013096801293451144,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.11129503099741153,
-      "score": "1-1"
-     },
-     {
-      "p": 0.0964290448008084,
-      "score": "2-1"
-     },
-     {
-      "p": 0.07840175408675827,
-      "score": "1-0"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
-   "time_confirmed": true
-  },
-  {
-   "away": {
-    "bg": "#C8102E",
-    "code": "LIV",
-    "fg": "#FFFFFF",
-    "name": "Liverpool"
-   },
-   "away_form": [
-    {
-     "date": "2026-11-01",
-     "ga": 1,
-     "gf": 0,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Arsenal",
-     "opponent_name": "Arsenal",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 0,
-     "gf": 2,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Brighton",
-     "opponent_name": "Brighton",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-17",
-     "ga": 1,
-     "gf": 2,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Brentford",
-     "opponent_name": "Brentford",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-11",
-     "ga": 3,
-     "gf": 0,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Man City",
-     "opponent_name": "Manchester City",
-     "result": "L"
-    },
-    {
-     "date": "2026-09-20",
-     "ga": 0,
-     "gf": 1,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Bournemouth",
-     "opponent_name": "Bournemouth",
-     "result": "W"
-    }
-   ],
-   "away_key": "Liverpool",
-   "away_position": 6,
-   "band": "STRONG",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-08T14:00:00Z",
-   "home": {
-    "bg": "#1B458F",
-    "code": "CRY",
-    "fg": "#FFFFFF",
-    "name": "Crystal Palace"
-   },
-   "home_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 2,
-     "gf": 0,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Tottenham",
-     "opponent_name": "Tottenham Hotspur",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 2,
-     "gf": 0,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Newcastle",
-     "opponent_name": "Newcastle United",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-18",
-     "ga": 5,
-     "gf": 0,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Brighton",
-     "opponent_name": "Brighton",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-11",
-     "ga": 1,
-     "gf": 3,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Nott'm Forest",
-     "opponent_name": "Nottingham Forest",
-     "result": "W"
-    },
-    {
-     "date": "2026-09-20",
-     "ga": 0,
-     "gf": 0,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Leeds",
-     "opponent_name": "Leeds United",
-     "result": "D"
-    }
-   ],
-   "home_key": "Crystal Palace",
-   "home_position": 19,
-   "kickoff": "2026-11-08T14:00:00Z",
-   "league": "E0",
-   "logged_at": "2026-11-08T01:31:21Z",
-   "market": {
-    "p_a": 0.5978945021601472,
-    "p_d": 0.21983474669588554,
-    "p_h": 0.1822707511439672
-   },
-   "market_o25": 0.6071428571428571,
-   "match_id": "E0-20261108-crystalpalace-liverpool",
-   "model": {
-    "p_a": 0.519896824712322,
-    "p_d": 0.25217135704796106,
-    "p_h": 0.22793181823971692
-   },
-   "model_o25": 0.5261307102108133,
-   "p_a": 0.6218248637418797,
-   "p_btts": 0.5669954124899472,
-   "p_d": 0.21233090491904447,
-   "p_h": 0.1658442313390758,
-   "p_o15": 0.8261644390264905,
-   "p_o25": 0.6071428571428571,
-   "p_o35": 0.38373932135351313,
-   "pick": "A",
-   "pick_prob": 0.6218248637418797,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 1.57,
-     "d": 4.27,
-     "h": 5.15
-    },
-    "best": {
-     "a": 1.63,
-     "d": 4.35,
-     "h": 5.5
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.6218680258843979,
-     "p_d": 0.21215376980195066,
-     "p_h": 0.16597820431365162
-    },
-    "miss": 0.0001771351170938018,
-    "miss_on": "draw",
-    "o25": 0.6070912180379163,
-    "other": 0.02203896166682573,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.09920259286902089,
-      "score": "1-2"
-     },
-     {
-      "p": 0.09902651270401114,
-      "score": "1-1"
-     },
-     {
-      "p": 0.09769807629262345,
-      "score": "0-2"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
-   "time_confirmed": true
-  },
-  {
-   "away": {
-    "bg": "#DA291C",
-    "code": "BOU",
-    "fg": "#000000",
-    "name": "Bournemouth"
-   },
-   "away_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 0,
-     "gf": 2,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Leeds",
-     "opponent_name": "Leeds United",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 0,
-     "gf": 3,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Man United",
-     "opponent_name": "Manchester United",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-18",
-     "ga": 0,
-     "gf": 2,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Sunderland",
-     "opponent_name": "Sunderland",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 5,
-     "gf": 1,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Chelsea",
-     "opponent_name": "Chelsea",
-     "result": "L"
-    },
-    {
-     "date": "2026-09-20",
-     "ga": 1,
-     "gf": 0,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Liverpool",
-     "opponent_name": "Liverpool",
-     "result": "L"
-    }
-   ],
-   "away_key": "Bournemouth",
-   "away_position": 9,
-   "band": "SOLID",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-08T14:00:00Z",
-   "home": {
-    "bg": "#0044A9",
-    "code": "IPS",
-    "fg": "#FFFFFF",
-    "name": "Ipswich Town"
-   },
-   "home_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 2,
-     "gf": 2,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Hull",
-     "opponent_name": "Hull City",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-23",
-     "ga": 1,
-     "gf": 1,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Nott'm Forest",
-     "opponent_name": "Nottingham Forest",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-17",
-     "ga": 3,
-     "gf": 2,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Man City",
-     "opponent_name": "Manchester City",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 1,
-     "gf": 2,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Fulham",
-     "opponent_name": "Fulham",
-     "result": "W"
-    },
-    {
-     "date": "2026-09-19",
-     "ga": 1,
-     "gf": 0,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Everton",
-     "opponent_name": "Everton",
-     "result": "L"
-    }
-   ],
-   "home_key": "Ipswich",
-   "home_position": 14,
-   "kickoff": "2026-11-08T14:00:00Z",
-   "league": "E0",
-   "logged_at": "2026-11-08T01:31:21Z",
-   "market": {
-    "p_a": 0.49366678894331395,
-    "p_d": 0.25419157154262784,
-    "p_h": 0.2521416395140582
-   },
-   "market_o25": 0.5593667546174144,
-   "match_id": "E0-20261108-ipswich-bournemouth",
-   "model": {
-    "p_a": 0.5000940241607867,
-    "p_d": 0.24928655531350644,
-    "p_h": 0.2506194205257068
-   },
-   "model_o25": 0.5582482448488795,
-   "p_a": 0.5078069649813818,
-   "p_btts": 0.5739108041154594,
-   "p_d": 0.25200854018997704,
-   "p_h": 0.24018449482864115,
-   "p_o15": 0.794671125883285,
-   "p_o25": 0.5593667546174144,
-   "p_o35": 0.3341783126458548,
-   "pick": "A",
-   "pick_prob": 0.5078069649813818,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 1.9,
-     "d": 3.69,
-     "h": 3.72
-    },
-    "best": {
-     "a": 1.95,
-     "d": 3.8,
-     "h": 3.9
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.5093101476881794,
-     "p_d": 0.2477484365208528,
-     "p_h": 0.24294141579096795
-    },
-    "miss": 0.004260103669124243,
-    "miss_on": "draw",
-    "o25": 0.5579587777560209,
-    "other": 0.010645090436123383,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.11665769104526429,
-      "score": "1-1"
-     },
-     {
-      "p": 0.0969885097884289,
-      "score": "1-2"
-     },
-     {
-      "p": 0.08874881380889023,
-      "score": "0-1"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
-   "time_confirmed": true
-  },
-  {
-   "away": {
-    "bg": "#034694",
-    "code": "CHE",
-    "fg": "#FFFFFF",
-    "name": "Chelsea"
-   },
-   "away_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 0,
-     "gf": 2,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Man United",
-     "opponent_name": "Manchester United",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-24",
-     "ga": 2,
-     "gf": 0,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Tottenham",
-     "opponent_name": "Tottenham Hotspur",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-17",
-     "ga": 0,
-     "gf": 2,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Everton",
-     "opponent_name": "Everton",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 1,
-     "gf": 5,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Bournemouth",
-     "opponent_name": "Bournemouth",
-     "result": "W"
-    },
-    {
-     "date": "2026-09-18",
-     "ga": 3,
-     "gf": 0,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Brentford",
-     "opponent_name": "Brentford",
-     "result": "L"
-    }
-   ],
-   "away_key": "Chelsea",
-   "away_position": 4,
-   "band": "LEAN",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-08T14:00:00Z",
-   "home": {
-    "bg": "#EB172B",
-    "code": "SUN",
-    "fg": "#FFFFFF",
-    "name": "Sunderland"
-   },
-   "home_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 3,
-     "gf": 1,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Coventry",
-     "opponent_name": "Coventry City",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 0,
-     "gf": 0,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Leeds",
-     "opponent_name": "Leeds United",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-18",
-     "ga": 2,
-     "gf": 0,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Bournemouth",
-     "opponent_name": "Bournemouth",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 2,
-     "gf": 0,
-     "home": true,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Brighton",
-     "opponent_name": "Brighton",
-     "result": "L"
-    },
-    {
-     "date": "2026-09-20",
-     "ga": 5,
-     "gf": 3,
-     "home": false,
-     "league": "E0",
-     "league_name": "Premier League",
-     "opponent": "Man City",
-     "opponent_name": "Manchester City",
-     "result": "L"
-    }
-   ],
-   "home_key": "Sunderland",
-   "home_position": 20,
-   "kickoff": "2026-11-08T14:00:00Z",
-   "league": "E0",
-   "logged_at": "2026-11-08T01:31:21Z",
-   "market": {
-    "p_a": 0.4853031679512353,
-    "p_d": 0.2601764205960789,
-    "p_h": 0.25452041145268584
-   },
-   "market_o25": 0.5267379679144386,
-   "match_id": "E0-20261108-sunderland-chelsea",
-   "model": {
-    "p_a": 0.45559231505375597,
-    "p_d": 0.2643580813115729,
-    "p_h": 0.28004960363467113
-   },
-   "model_o25": 0.5176349836021489,
-   "p_a": 0.498478851761184,
-   "p_btts": 0.5505859024721078,
-   "p_d": 0.2587154089056061,
-   "p_h": 0.24280573933320987,
-   "p_o15": 0.7723893400892011,
-   "p_o25": 0.5267379679144386,
-   "p_o35": 0.3036751099018078,
-   "pick": "A",
-   "pick_prob": 0.498478851761184,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 1.93,
-     "d": 3.6,
-     "h": 3.68
-    },
-    "best": {
-     "a": 2.0,
-     "d": 3.75,
-     "h": 3.9
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.499424376087338,
-     "p_d": 0.25606160199204797,
-     "p_h": 0.24451402192061406
-    },
-    "miss": 0.0026538069135581543,
-    "miss_on": "draw",
-    "o25": 0.5258292735019574,
-    "other": 0.008438466494310903,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.12170710924499466,
-      "score": "1-1"
-     },
-     {
-      "p": 0.09697516216729389,
-      "score": "0-1"
-     },
-     {
-      "p": 0.09613583706882095,
-      "score": "1-2"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
-   "time_confirmed": true
-  },
-  {
-   "away": {
-    "bg": "#E01E13",
-    "code": "LIL",
-    "fg": "#FFFFFF",
-    "name": "Lille"
-   },
-   "away_form": [
-    {
-     "date": "2026-10-30",
-     "ga": 0,
-     "gf": 1,
-     "home": true,
-     "league": "F1",
-     "league_name": "Ligue 1",
-     "opponent": "Lens",
-     "opponent_name": "Lens",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 1,
-     "gf": 1,
-     "home": false,
-     "league": "F1",
-     "league_name": "Ligue 1",
-     "opponent": "Monaco",
-     "opponent_name": "Monaco",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-17",
-     "ga": 1,
-     "gf": 1,
-     "home": true,
-     "league": "F1",
-     "league_name": "Ligue 1",
-     "opponent": "Brest",
-     "opponent_name": "Brest",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 0,
-     "gf": 1,
-     "home": true,
-     "league": "F1",
-     "league_name": "Ligue 1",
-     "opponent": "Le Havre",
-     "opponent_name": "Le Havre",
-     "result": "W"
-    },
-    {
-     "date": "2026-09-20",
-     "ga": 2,
-     "gf": 1,
-     "home": false,
-     "league": "F1",
-     "league_name": "Ligue 1",
-     "opponent": "Nice",
-     "opponent_name": "Nice",
-     "result": "L"
-    }
-   ],
-   "away_key": "Lille",
-   "away_position": 3,
-   "band": "LEAN",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-08T14:00:00Z",
-   "home": {
-    "bg": "#E2001A",
-    "code": "REN",
-    "fg": "#000000",
-    "name": "Rennes"
-   },
-   "home_form": [
-    {
-     "date": "2026-10-30",
-     "ga": 5,
-     "gf": 2,
-     "home": false,
-     "league": "F1",
-     "league_name": "Ligue 1",
-     "opponent": "Nice",
-     "opponent_name": "Nice",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 0,
-     "gf": 3,
-     "home": true,
-     "league": "F1",
-     "league_name": "Ligue 1",
-     "opponent": "Strasbourg",
-     "opponent_name": "Strasbourg",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-18",
-     "ga": 4,
-     "gf": 3,
-     "home": false,
-     "league": "F1",
-     "league_name": "Ligue 1",
-     "opponent": "Paris FC",
-     "opponent_name": "Paris FC",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-11",
-     "ga": 1,
-     "gf": 4,
-     "home": true,
-     "league": "F1",
-     "league_name": "Ligue 1",
-     "opponent": "Auxerre",
-     "opponent_name": "Auxerre",
-     "result": "W"
-    },
-    {
-     "date": "2026-09-19",
-     "ga": 4,
-     "gf": 0,
-     "home": false,
-     "league": "F1",
-     "league_name": "Ligue 1",
-     "opponent": "Lyon",
-     "opponent_name": "Lyon",
-     "result": "L"
-    }
-   ],
-   "home_key": "Rennes",
-   "home_position": 5,
-   "kickoff": "2026-11-08T14:00:00Z",
-   "league": "F1",
-   "logged_at": "2026-11-08T01:31:21Z",
-   "market": {
-    "p_a": 0.3000255317477464,
-    "p_d": 0.2577567413633954,
-    "p_h": 0.4422177268888584
-   },
-   "market_o25": 0.5906735751295337,
-   "match_id": "F1-20261108-rennes-lille",
-   "model": {
-    "p_a": 0.3833482502463683,
-    "p_d": 0.2616614213879449,
-    "p_h": 0.3549903283656869
-   },
-   "model_o25": 0.5529318182788547,
-   "p_a": 0.2932473522543495,
-   "p_btts": 0.6118530630222991,
-   "p_d": 0.25690551939414197,
-   "p_h": 0.44984712835150853,
-   "p_o15": 0.8148725269981368,
-   "p_o25": 0.5906735751295337,
-   "p_o35": 0.36428173795976077,
-   "pick": "H",
-   "pick_prob": 0.44984712835150853,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 3.11,
-     "d": 3.62,
-     "h": 2.11
-    },
-    "best": {
-     "a": 3.3,
-     "d": 3.75,
-     "h": 2.18
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.2975458061186376,
-     "p_d": 0.24952790041909836,
-     "p_h": 0.4529262934622641
-    },
-    "miss": 0.007377618975043604,
-    "miss_on": "draw",
-    "o25": 0.5882264755519273,
-    "other": 0.010727739185095508,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.1150468769335993,
-      "score": "1-1"
-     },
-     {
-      "p": 0.09253520163862439,
-      "score": "2-1"
-     },
-     {
-      "p": 0.07413969465165898,
-      "score": "1-0"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
-   "time_confirmed": true
-  },
-  {
-   "away": {
-    "bg": "#FB090B",
-    "code": "MIL",
-    "fg": "#000000",
-    "name": "Milan"
-   },
-   "away_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 1,
-     "gf": 3,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Inter",
-     "opponent_name": "Inter",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-28",
-     "ga": 4,
-     "gf": 2,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Bologna",
-     "opponent_name": "Bologna",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 0,
-     "gf": 2,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Udinese",
-     "opponent_name": "Udinese",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-18",
-     "ga": 2,
-     "gf": 3,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Atalanta",
-     "opponent_name": "Atalanta",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-11",
-     "ga": 1,
-     "gf": 1,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Sassuolo",
-     "opponent_name": "Sassuolo",
-     "result": "D"
-    }
-   ],
-   "away_key": "Milan",
-   "away_position": 5,
-   "band": "SOLID",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-08T14:00:00Z",
-   "home": {
-    "bg": "#A41F35",
-    "code": "GEN",
-    "fg": "#FFFFFF",
-    "name": "Genoa"
-   },
-   "home_form": [
-    {
-     "date": "2026-11-01",
-     "ga": 1,
-     "gf": 2,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Lecce",
-     "opponent_name": "Lecce",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-28",
-     "ga": 0,
-     "gf": 2,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Juventus",
-     "opponent_name": "Juventus",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 0,
-     "gf": 1,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Venezia",
-     "opponent_name": "Venezia",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-17",
-     "ga": 2,
-     "gf": 0,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Roma",
-     "opponent_name": "Roma",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-10",
-     "ga": 1,
-     "gf": 2,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Fiorentina",
-     "opponent_name": "Fiorentina",
-     "result": "W"
-    }
-   ],
-   "home_key": "Genoa",
-   "home_position": 12,
-   "kickoff": "2026-11-08T14:00:00Z",
-   "league": "I1",
-   "logged_at": "2026-11-08T01:31:21Z",
-   "market": {
-    "p_a": 0.5207645234302959,
-    "p_d": 0.26858915248553944,
-    "p_h": 0.21064632408416464
-   },
-   "market_o25": 0.4562334217506631,
-   "match_id": "I1-20261108-genoa-milan",
-   "model": {
-    "p_a": 0.5044198515562491,
-    "p_d": 0.2714976860681289,
-    "p_h": 0.22408246237562196
-   },
-   "model_o25": 0.4501566848644609,
-   "p_a": 0.5369817393803832,
-   "p_btts": 0.4764976704233676,
-   "p_d": 0.2669778837337819,
-   "p_h": 0.19604037688583498,
-   "p_o15": 0.7185872498235365,
-   "p_o25": 0.4562334217506631,
-   "p_o35": 0.24125980267805758,
-   "pick": "A",
-   "pick_prob": 0.5369817393803832,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 1.8,
-     "d": 3.49,
-     "h": 4.45
-    },
-    "best": {
-     "a": 1.84,
-     "d": 3.6,
-     "h": 4.6
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.5381451639789423,
-     "p_d": 0.26303791066963184,
-     "p_h": 0.19881692535142576
-    },
-    "miss": 0.00393997306415006,
-    "miss_on": "draw",
-    "o25": 0.4547888863161094,
-    "other": 0.006548503286504359,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.1259726281543819,
-      "score": "0-1"
-     },
-     {
-      "p": 0.12447114654645038,
-      "score": "1-1"
-     },
-     {
-      "p": 0.10712555559598146,
-      "score": "0-2"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
-   "time_confirmed": true
-  },
-  {
-   "away": {
-    "bg": "#1E71B8",
-    "code": "ATA",
-    "fg": "#000000",
-    "name": "Atalanta"
-   },
-   "away_form": [
-    {
-     "date": "2026-11-02",
-     "ga": 3,
-     "gf": 0,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Parma",
-     "opponent_name": "Parma",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-29",
-     "ga": 2,
-     "gf": 2,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Fiorentina",
-     "opponent_name": "Fiorentina",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-25",
-     "ga": 4,
-     "gf": 4,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Frosinone",
-     "opponent_name": "Frosinone",
-     "result": "D"
-    },
-    {
-     "date": "2026-10-18",
-     "ga": 3,
-     "gf": 2,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Milan",
-     "opponent_name": "Milan",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-12",
-     "ga": 1,
-     "gf": 3,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Venezia",
-     "opponent_name": "Venezia",
-     "result": "W"
-    }
-   ],
-   "away_key": "Atalanta",
-   "away_position": 13,
-   "band": "LEAN",
-   "band_basis": "pick",
-   "fixture_source": "football-data.co.uk",
-   "freeze_at": "2026-11-08T14:00:00Z",
-   "home": {
-    "bg": "#E2001A",
-    "code": "MON",
-    "fg": "#FFFFFF",
-    "name": "Monza"
-   },
-   "home_form": [
-    {
-     "date": "2026-10-31",
-     "ga": 2,
-     "gf": 1,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Bologna",
-     "opponent_name": "Bologna",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-28",
-     "ga": 4,
-     "gf": 1,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Napoli",
-     "opponent_name": "Napoli",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-23",
-     "ga": 3,
-     "gf": 2,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Torino",
-     "opponent_name": "Torino",
-     "result": "L"
-    },
-    {
-     "date": "2026-10-19",
-     "ga": 0,
-     "gf": 4,
-     "home": true,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Cagliari",
-     "opponent_name": "Cagliari",
-     "result": "W"
-    },
-    {
-     "date": "2026-10-11",
-     "ga": 3,
-     "gf": 1,
-     "home": false,
-     "league": "I1",
-     "league_name": "Serie A",
-     "opponent": "Lazio",
-     "opponent_name": "Lazio",
-     "result": "L"
-    }
-   ],
-   "home_key": "Monza",
-   "home_position": 18,
-   "kickoff": "2026-11-08T14:00:00Z",
-   "league": "I1",
-   "logged_at": "2026-11-08T01:31:21Z",
-   "market": {
-    "p_a": 0.4565055874816152,
-    "p_d": 0.25144425406741366,
-    "p_h": 0.2920501584509712
-   },
-   "market_o25": 0.6071428571428571,
-   "match_id": "I1-20261108-monza-atalanta",
-   "model": {
-    "p_a": 0.4806811561875742,
-    "p_d": 0.25080150208381385,
-    "p_h": 0.268517341728612
-   },
-   "model_o25": 0.5655888775560349,
-   "p_a": 0.4668203582137666,
-   "p_btts": 0.6223614069662868,
-   "p_d": 0.24966627736452437,
-   "p_h": 0.2835133644217091,
-   "p_o15": 0.8257455060755595,
-   "p_o25": 0.6071428571428571,
-   "p_o35": 0.38192111545814544,
-   "pick": "A",
-   "pick_prob": 0.4668203582137666,
-   "price_status": "posted",
-   "prices": {
-    "avg": {
-     "a": 2.06,
-     "d": 3.74,
-     "h": 3.22
-    },
-    "best": {
-     "a": 2.15,
-     "d": 4.0,
-     "h": 3.5
-    }
-   },
-   "prices_at": "2026-11-06T19:22:43Z",
-   "score_source": "market",
-   "scores": {
-    "flagged": false,
-    "matrix": {
-     "p_a": 0.469040209570635,
-     "p_d": 0.24417102231619786,
-     "p_h": 0.286788768113167
-    },
-    "miss": 0.005495255048326514,
-    "miss_on": "draw",
-    "o25": 0.6053487002935355,
-    "other": 0.012488309713788448,
-    "reason": null,
-    "top": [
-     {
-      "p": 0.11135541802283937,
-      "score": "1-1"
-     },
-     {
-      "p": 0.09341153242818506,
-      "score": "1-2"
-     },
-     {
-      "p": 0.07143411923121694,
-      "score": "0-1"
-     }
-    ]
-   },
-   "season": 2026,
-   "status": "upcoming",
+   "status": "started",
    "time_confirmed": true
   },
   {
@@ -17796,7 +17787,7 @@
    "home_position": 15,
    "kickoff": "2026-11-08T14:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.5252031859832983,
     "p_d": 0.23197560075689103,
@@ -18002,7 +17993,7 @@
    "home_position": 5,
    "kickoff": "2026-11-08T15:15:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.20785319797700247,
     "p_d": 0.22868933762750884,
@@ -18208,7 +18199,7 @@
    "home_position": 15,
    "kickoff": "2026-11-08T16:15:00Z",
    "league": "F1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.46604129586201104,
     "p_d": 0.2581946237462665,
@@ -18414,7 +18405,7 @@
    "home_position": 11,
    "kickoff": "2026-11-08T16:15:00Z",
    "league": "F1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.3872687789219504,
     "p_d": 0.27210430239122463,
@@ -18620,7 +18611,7 @@
    "home_position": 18,
    "kickoff": "2026-11-08T16:15:00Z",
    "league": "F1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.37790639490275874,
     "p_d": 0.2863278513527037,
@@ -18826,7 +18817,7 @@
    "home_position": 17,
    "kickoff": "2026-11-08T16:15:00Z",
    "league": "F1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.546172204883422,
     "p_d": 0.23407380209289516,
@@ -19032,7 +19023,7 @@
    "home_position": 4,
    "kickoff": "2026-11-08T16:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.1588636600986538,
     "p_d": 0.2131450929341847,
@@ -19238,7 +19229,7 @@
    "home_position": 18,
    "kickoff": "2026-11-08T16:30:00Z",
    "league": "E0",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.30529189759728304,
     "p_d": 0.25468644718034206,
@@ -19444,7 +19435,7 @@
    "home_position": 3,
    "kickoff": "2026-11-08T17:00:00Z",
    "league": "I1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.2619515895649242,
     "p_d": 0.23386201761656575,
@@ -19650,7 +19641,7 @@
    "home_position": 12,
    "kickoff": "2026-11-08T17:30:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.23307286166842664,
     "p_d": 0.2631890179514256,
@@ -19856,7 +19847,7 @@
    "home_position": 11,
    "kickoff": "2026-11-08T17:30:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.13140643623361145,
     "p_d": 0.21156138259833135,
@@ -20062,7 +20053,7 @@
    "home_position": 14,
    "kickoff": "2026-11-08T18:30:00Z",
    "league": "D1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.19470360493100944,
     "p_d": 0.21628737637832687,
@@ -20268,7 +20259,7 @@
    "home_position": 9,
    "kickoff": "2026-11-08T19:45:00Z",
    "league": "F1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.3231717140757681,
     "p_d": 0.246429090680467,
@@ -20474,7 +20465,7 @@
    "home_position": 15,
    "kickoff": "2026-11-08T19:45:00Z",
    "league": "I1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.45523562419878566,
     "p_d": 0.26566158239362564,
@@ -20680,7 +20671,7 @@
    "home_position": 3,
    "kickoff": "2026-11-08T20:00:00Z",
    "league": "SP1",
-   "logged_at": "2026-11-08T01:31:21Z",
+   "logged_at": "2026-11-08T14:23:14Z",
    "market": {
     "p_a": 0.5177822521574118,
     "p_d": 0.22260947183014618,
@@ -20752,9 +20743,9 @@
  ],
  "model_through": "2026-11-02",
  "prices_at": "2026-11-06T19:22:43Z",
- "provisional_results": 24,
+ "provisional_results": 25,
  "results": [],
- "results_through": "2026-11-07",
+ "results_through": "2026-11-08",
  "schema": 1,
  "scores_measured": {
   "band_edges": [

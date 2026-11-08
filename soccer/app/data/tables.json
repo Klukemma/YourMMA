@@ -8,7 +8,7 @@
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, each beat the leagues' own rates from earlier seasons. Both teams to score runs low: across 2016-2025 its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-08T01:31:21Z",
+ "generated": "2026-11-08T14:23:14Z",
  "leagues": [
   {
    "code": "E0",
@@ -2734,8 +2734,8 @@
    "code": "I1",
    "model_through": "2026-11-02",
    "name": "Serie A",
-   "provisional": 5,
-   "results_through": "2026-11-07",
+   "provisional": 6,
+   "results_through": "2026-11-08",
    "rows": [
     {
      "club": {
@@ -2744,8 +2744,18 @@
       "fg": "#15366F",
       "name": "Lazio"
      },
-     "drawn": 1,
+     "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-08",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "I1",
+       "opponent": "Napoli",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-01",
        "ga": 1,
@@ -2781,25 +2791,16 @@
        "league": "I1",
        "opponent": "Juventus",
        "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "I1",
-       "opponent": "Monza",
-       "result": "W"
       }
      ],
-     "ga": 8,
+     "ga": 9,
      "gd": 16,
-     "gf": 24,
+     "gf": 25,
      "lost": 0,
-     "played": 10,
-     "points": 28,
+     "played": 11,
+     "points": 29,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.19224037923348547,
      "team": "Lazio",
      "won": 9
@@ -3351,8 +3352,18 @@
       "fg": "#000000",
       "name": "Napoli"
      },
-     "drawn": 2,
+     "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-08",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "I1",
+       "opponent": "Lazio",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-01",
        "ga": 2,
@@ -3388,25 +3399,16 @@
        "league": "I1",
        "opponent": "Venezia",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "I1",
-       "opponent": "Frosinone",
-       "result": "W"
       }
      ],
-     "ga": 13,
+     "ga": 14,
      "gd": 4,
-     "gf": 17,
+     "gf": 18,
      "lost": 4,
-     "played": 10,
-     "points": 14,
+     "played": 11,
+     "points": 15,
      "position": 10,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.4162713116597174,
      "team": "Napoli",
      "won": 4
