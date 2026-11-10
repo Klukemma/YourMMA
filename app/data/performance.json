@@ -85,9 +85,9 @@
    "year": 2026
   }
  ],
- "bouts": 8741,
- "dataset_end": "2026-10-31",
- "generated": "2026-11-05T04:29:24Z",
+ "bouts": 8755,
+ "dataset_end": "2026-11-07",
+ "generated": "2026-11-09T14:43:04Z",
  "notes": {
   "leak": "Figures published before 2026-09-18 came from a model that could see each fighter's final career record, which inflated historical accuracy to 78% and backtests to +16.2%. Those numbers were fiction and are not shown here.",
   "which_number_counts": "The confirm period is 2020 onward. Anything before it was used to choose how the strategies work, so its +6.1% is not a forecast. The confirm number is."
@@ -316,9 +316,15 @@
   ]
  },
  "track_record": {
-  "accuracy": 0.5922,
+  "accuracy": 0.6,
   "accuracy_basis": "unique bouts",
   "by_event": [
+   {
+    "correct": 8,
+    "date": "2026-11-07",
+    "event": "UFC Fight Night: Cortes Acosta vs. Walker",
+    "graded": 11
+   },
    {
     "correct": 5,
     "date": "2026-10-31",
@@ -372,19 +378,13 @@
     "date": "2026-04-25",
     "event": "UFC Fight Night: Sterling vs. Zalal",
     "graded": 10
-   },
-   {
-    "correct": 3,
-    "date": "2026-04-05",
-    "event": "UFC Fight Night: Moicano vs. Duncan",
-    "graded": 9
    }
   ],
-  "correct": 239,
-  "graded": 404,
-  "pending": 82,
-  "predictions": 486,
-  "unique_bouts": 179,
-  "upcoming": 11
+  "correct": 255,
+  "graded": 426,
+  "pending": 71,
+  "predictions": 497,
+  "unique_bouts": 190,
+  "upcoming": 0
  }
 }
