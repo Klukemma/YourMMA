@@ -1183,7 +1183,8 @@ DESK.init({
   name: "YourSoccer",
   icon: "icons/icon-192.png",
   siblings: [{ name: "YourMMA", href: "../../app/", blurb: "The MMA fight desk" },
-    { name: "YourNFL", href: "../../nfl/app/", blurb: "The NFL pick desk" }],
+    { name: "YourNFL", href: "../../nfl/app/", blurb: "The NFL pick desk" },
+    { name: "YourMulti", href: "../../parlays/app/", blurb: "Same-day parlays, 3-5x" }],
   stamp: () => (MATCHES && MATCHES.generated ? `Picks updated ${DESK.ago(MATCHES.generated)}` : "Fetch the latest picks"),
   onReload: () => location.reload(),
 });

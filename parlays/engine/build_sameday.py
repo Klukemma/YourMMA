@@ -346,8 +346,11 @@ def payload(history, show, now, graded):
     measured = None
     caveats = []
     if bt:
+        sp = bt["splits"]["same_day"]
         measured = {"rule": bt["results"]["same_day"], "market_only": bt["results"]["market_only"],
-                    "periods": bt["periods"], "multipliers": bt["splits"]["same_day"]["multipliers"]}
+                    "periods": bt["periods"], "multipliers": sp["multipliers"],
+                    "splits": {k: sp[k] for k in ("by_sports", "by_mix", "by_weekday", "by_year")},
+                    "legs_used": sp.get("legs_used")}
         caveats = list(bt.get("caveats") or [])
     else:
         caveats = ["Not measured yet: the backtest (parlays/engine/experiments/sameday_backtest.py) "

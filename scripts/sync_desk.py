@@ -8,7 +8,7 @@ app's app.js, between marker comments. The copies are inlined rather than
 linked so that each app stays one page and one script: the service worker
 caches its own directory, and the standalone builders (engine/build_standalone.py,
 nfl/engine/nfl_standalone.py, soccer/engine/soccer_standalone.py) inline exactly those two files into the offline
-page. Edit the shared files, never the copies - the tests compare them.
+page. The same-day parlays page (parlays/app) has no standalone copy. Edit the shared files, never the copies - the tests compare them.
 """
 
 import argparse
@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SHARED = ROOT / "shared"
-APPS = (ROOT / "app", ROOT / "nfl" / "app", ROOT / "soccer" / "app")
+APPS = (ROOT / "app", ROOT / "nfl" / "app", ROOT / "soccer" / "app", ROOT / "parlays" / "app")
 
 CSS_BEGIN = "/* desk.css:begin - copied from shared/desk.css by scripts/sync_desk.py; edit that file */"
 CSS_END = "/* desk.css:end */"

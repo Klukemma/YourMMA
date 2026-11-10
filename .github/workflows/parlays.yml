@@ -1,0 +1,71 @@
+name: Same-day parlays
+
+# The 4th page (parlays/app): one same-day ticket a day from the three apps'
+# picks. It owns no data of its own - it reads what the UFC, NFL and soccer
+# runners last committed (app/data/card.json, nfl/app/data/week.json,
+# soccer/app/data/matches.json) - so it runs right after any of them, plus
+# on a schedule that rolls the US-Eastern day and grades yesterday's ticket
+# even when no sport ran. It needs no network: everything it reads is in the
+# repository.
+
+on:
+  workflow_run:
+    workflows: ["Update UFC dataset", "NFL predictions", "Soccer predictions"]
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: "23 5 * * *"      # 00:23 EST / 01:23 EDT: a new Eastern day, and yesterday graded
+    - cron: "41 15 * * 6,0"   # Saturday and Sunday late morning Eastern, before the day's first starts
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Its own queue: it writes only parlays/, so it never contends with a sport's
+# runner for a file, and the rebase-and-retry push absorbs their commits.
+concurrency:
+  group: parlays-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  parlays:
+    runs-on: ubuntu-latest
+    steps:
+      # main as it is now, not the commit that triggered the run: a sport's
+      # runner has just pushed, and the ticket must read what it pushed.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r engine/requirements.txt pytest
+      - name: Tests
+        run: python -m pytest parlays/engine/tests -q
+      - name: Build, log and grade the ticket
+        run: python parlays/engine/build_sameday.py
+      - name: Commit
+        run: |
+          PATHS="parlays/app/data/ parlays/data/history.json"
+          if [ -z "$(git status --porcelain -- $PATHS)" ]; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for p in $PATHS; do
+            if [ -e "$p" ]; then git add -- "$p"; fi
+          done
+          git commit -m "Same-day parlays: $(python -c "import json;d=json.load(open('parlays/app/data/sameday.json'));t=(d.get('tickets') or [{}])[0];print(t.get('day'), t.get('status'), t.get('multiplier') or '')")"
+          pushed=0
+          for attempt in 1 2 3; do
+            git push && { pushed=1; break; }
+            echo "push rejected, rebasing onto main (attempt $attempt)"
+            git pull --rebase --autostash origin main || exit 1
+            sleep $((attempt * 3))
+          done
+          if [ "$pushed" != 1 ]; then
+            git push || { echo "::error::push failed after 3 rebases"; exit 1; }
+          fi

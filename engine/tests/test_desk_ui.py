@@ -13,7 +13,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-APPS = {"mma": ROOT / "app", "nfl": ROOT / "nfl" / "app", "soccer": ROOT / "soccer" / "app"}
+APPS = {"mma": ROOT / "app", "nfl": ROOT / "nfl" / "app", "soccer": ROOT / "soccer" / "app",
+        "parlays": ROOT / "parlays" / "app"}
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import sync_desk  # noqa: E402
@@ -64,8 +65,8 @@ def test_the_sport_switch_links_each_app_to_the_others_in_one_order():
         targets = {(app / link / "index.html").resolve() for link in links}
         others = {(a / "index.html").resolve() for n, a in APPS.items() if n != name}
         assert targets == others, (name, links)
-        orders.append(re.findall(r'>(MMA|NFL|Soccer)<', nav))
-    assert all(o == ["MMA", "NFL", "Soccer"] for o in orders), orders
+        orders.append(re.findall(r'>(MMA|NFL|Soccer|Multi)<', nav))
+    assert all(o == ["MMA", "NFL", "Soccer", "Multi"] for o in orders), orders
 
 
 def test_the_mma_search_does_not_rely_on_a_datalist():
