@@ -13,8 +13,9 @@ status, a postponement or a result belongs to its own meeting only. The
 rows are made up in the feeds' and football-data.co.uk's own schemas; the
 last test runs the league probe's real week."""
 
+from collections import Counter
+
 import pandas as pd
-import pytest
 
 import soccer_data as sd
 import soccer_feed as sfeed
@@ -96,7 +97,8 @@ def test_the_leagues_passed_are_the_leagues_joined_and_rus_never_is():
             espn("RUS", "Spartak Moscow", "CSKA Moscow", "2026-11-08 13:00")]
     fx = [fixture("RUS", "Zenit", "Krasnodar", "2026-11-09 16:00"), fixture("E0", "Leeds", "Stoke", "2026-11-09 16:00")]
     default = run([], fx, rows)
-    assert to_play(default) == ["E0-20261108-arsenal-chelsea", "E0-20261109-leeds-stoke", "RUS-20261109-zenit-krasnodar"]
+    assert to_play(default) == ["E0-20261108-arsenal-chelsea", "E0-20261109-leeds-stoke",
+                                "RUS-20261109-zenit-krasnodar"]
     assert set(default.status) == {("E0", 2026, "Arsenal", "Chelsea")}
     lines = []
     app = run([], fx, rows, leagues=slg.in_app(), log=lines.append)
@@ -236,7 +238,8 @@ def test_where_pairings_repeat_a_move_is_seen_within_pair_days_only():
     goes like any other."""
     fx = [fixture("SC0", "Rangers", "Celtic", "2026-11-04 19:45"), fixture("SC0", "Hearts", "Hibernian",
                                                                            "2026-11-04 19:45")]
-    rows = [espn("SC0", "Rangers", "Celtic", "2026-11-07 15:00"), espn("SC0", "Hearts", "Hibernian", "2026-11-11 19:45")]
+    rows = [espn("SC0", "Rangers", "Celtic", "2026-11-07 15:00"),
+            espn("SC0", "Hearts", "Hibernian", "2026-11-11 19:45")]
     s = run([], fx, rows, leagues=slg.in_app())
     assert to_play(s) == ["SC0-20261107-rangers-celtic", "SC0-20261111-hearts-hibernian"]
     moved = s.info["SC0-20261107-rangers-celtic"]
@@ -278,9 +281,10 @@ def test_the_probes_week_of_every_app_league_joins_each_match_once(tmp_path):
     leagues beyond the five and joined to football-data.co.uk's files as the
     same probe downloaded them: no RUS anywhere, every match to play once,
     each feed match under its own key (none shares one: so no meeting of a
-    repeated pairing is lost), and every football-data.co.uk fixture in
-    ESPN's days of a league ESPN covers joined to the feed match of its own
-    id - in the leagues where pairings repeat too."""
+    repeated pairing is lost), every football-data.co.uk fixture in ESPN's
+    days of a league ESPN covers joined to the feed match of its own id, and
+    every feed match still to play in the window a match to play, once - in
+    the leagues where pairings repeat too."""
     from test_soccer_feed_leagues import NOW as PROBED, football_data, probe_getter
     asked = [c for c in sfeed.leagues_for(slg.in_app()) if c not in sd.TOP]
     snap = sfeed.sync(PROBED, path=tmp_path / "feed.json", get=probe_getter(), leagues=asked, days_back=3,
@@ -299,7 +303,13 @@ def test_the_probes_week_of_every_app_league_joins_each_match_once(tmp_path):
     window = up[up["league"].isin(fed) & (up["kickoff"] < pd.Timestamp("2026-11-09 05:00"))]
     joined = [mid for mid in window["match_id"] if s.info[mid]["source"] == ssch.FD_SOURCE]
     assert joined and all(s.info[mid]["feed_id"] == mid for mid in joined)
-    assert any(mid.split("-")[0] in sfeed.REPEATS for mid in joined)
+    # Every feed match still to play in the window is a match to play, once -
+    # in the leagues where pairings repeat as everywhere else.
+    feed_ids = Counter(v["feed_id"] for v in s.info.values() if v["feed_id"])
+    ahead = [m for m in matches if m["status"] == "scheduled" and m["kickoff_utc"]
+             and now < ssch.naive(m["kickoff_utc"]) <= now + pd.Timedelta(days=10)]
+    assert all(feed_ids[m["match_id"]] == 1 for m in ahead)
+    assert sum(m["league"] in sfeed.REPEATS for m in ahead) > 50
     for m in matches:
         if m["status"] == "scheduled" and m["uk_date"]:
             assert s.status[ssch.feed_key(m)] == "scheduled"

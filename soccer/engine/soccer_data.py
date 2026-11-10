@@ -254,8 +254,9 @@ later correction by the site rewrites the season as usual).
 Conservative - only names PROVEN to be one club:
   ALIASES    the spellings seen and checked (above), per league.
   learned    (learned_aliases) in one league-season, a name with 1-4 matches
-             beside exactly one NAMESAKE with a season's worth (10 or more,
-             in a season whose median club has 10 or more): the same words
+             beside exactly one NAMESAKE with a season's worth (5 or more
+             and at most 4 behind the median club, in a season whose
+             median club has 10 or more): the same words
              once "Utd" reads "United" and case, accents and punctuation go
              ("Sheffield Utd" / "Sheffield United", "Ham-Kam" / "HamKam"),
              or the namesake's words with a club-form word added to the
@@ -448,10 +449,12 @@ ALIASES = {
     "E2": {"Oxford Utd": "Oxford"},                   # Oxford Utd v Reading, 04/11/2026
     "B1": {"KV Mechelen": "Mechelen"},                # Kortrijk v KV Mechelen, 04/11/2026
 }
-# The learned rule (learned_aliases): a thin name has 1-4 matches, a
-# namesake a season's worth, in a season whose median club has a season's
-# worth; a name with more than THIN matches in any season of the league is
-# a club of its own.
+# The learned rule (learned_aliases): in a season whose median club has
+# SEASONS_WORTH matches, a thin name has 1 to THIN and its namesake a
+# season's worth - more than THIN and no more than THIN behind the median
+# (B1's Mechelen had 9 beside its one "KV Mechelen" when the median was
+# 10); a name with more than THIN in any season of the league is a club of
+# its own.
 THIN, SEASONS_WORTH = 4, 10
 # Abbreviations read as their word, and the words a club's name may carry
 # in front of or after the name the site usually writes ("KV Mechelen",
@@ -772,8 +775,9 @@ def learned_aliases(df):
     """{(league, season): {thin name: its namesake}} - the second spellings
     the rows of `df` prove (module notes, CLUB NAMES): in a league-season
     whose median club has SEASONS_WORTH matches, a name with 1 to THIN
-    beside exactly one namesake with SEASONS_WORTH or more (a "same"
-    spelling preferred to a "form" one), the two never meeting in `df`,
+    beside exactly one namesake with a season's worth (more than THIN, no
+    more than THIN behind the median; a "same" spelling preferred to a
+    "form" one), the two never meeting in `df`,
     never playing on one day that season, and the thin name never more
     than THIN in any season of the league. Fixtures count as matches (the
     site has listed them); a frame of one round proves nothing."""
@@ -787,9 +791,10 @@ def learned_aliases(df):
     out = {}
     for (lg, season), counts in n.groupby(level=["league", "season"]):
         counts = counts.droplevel(["league", "season"])
-        if counts.median() < SEASONS_WORTH:
+        median = counts.median()
+        if median < SEASONS_WORTH:
             continue
-        thick = [c for c in counts.index[counts >= SEASONS_WORTH]]
+        thick = list(counts.index[(counts > THIN) & (counts >= median - THIN)])
         for name in counts.index[counts <= THIN]:
             if most[(lg, name)] > THIN:
                 continue                                 # a club of its own somewhere in the league
@@ -1204,16 +1209,18 @@ def _typed(df):
     return df
 
 
-def load_matches(path=MATCHES, leagues=None):
+def load_matches(path=MATCHES, leagues=None, aliases=True):
     """Every match on file for the given leagues (league_codes: default the
-    ten the pipeline runs on; "all" for every league), oldest first. `path`
-    is the snapshot's folder; a single .csv.gz (the layout of before) is
-    read as it always was."""
+    ten the pipeline runs on; "all" for every league), oldest first, each
+    club under one name per league (canonical_clubs; aliases=False: the
+    site's own spellings, as on file). `path` is the snapshot's folder; a
+    single .csv.gz (the layout of before) is read as it always was."""
     path = Path(path)
     codes = league_codes(leagues)
     if path.is_file():
         df = _typed(pd.read_csv(path, low_memory=False))
-        return df[df["league"].isin(codes)].reset_index(drop=True)
+        df = df[df["league"].isin(codes)].reset_index(drop=True)
+        return canonical_clubs(df).reset_index(drop=True) if aliases else df
     # One read for every file: the season files share a header, and pandas
     # sees the same text the single file held, in another order.
     groups = defaultdict(list)
@@ -1229,12 +1236,33 @@ def load_matches(path=MATCHES, leagues=None):
         parts.append(pd.read_csv(io.StringIO(head + "\n" + "".join(bodies)), low_memory=False,
                                  dtype={c: "str" for c in TEXT if c in names}))
     df = parts[0] if len(parts) == 1 else pd.concat(parts, ignore_index=True)
-    return order(_typed(df))
+    df = _typed(df)
+    return order(canonical_clubs(df) if aliases else df)
 
 
-def load_fixtures(path=FIXTURES, leagues=None):
+def _results_beside(path, fx):
+    """The results a fixtures file's club names are checked against
+    (canonical_clubs): the seasons its fixtures are in, from the snapshot
+    folder beside it (data/matches for data/fixtures.csv), where there is
+    one - the season files only, so a fixtures load stays quick."""
+    root = Path(path).parent / "matches"
+    if not root.is_dir() or not len(fx):
+        return None
+    parts = []
+    for lg, season in fx[["league", "season"]].dropna().drop_duplicates().itertuples(index=False):
+        f = season_path(root, lg, int(season))
+        if f.exists():
+            parts.append(pd.read_csv(f, usecols=["league", "season", "date", "home", "away"],
+                                     dtype={"league": str, "date": str, "home": str, "away": str}))
+    return pd.concat(parts, ignore_index=True) if parts else None
+
+
+def load_fixtures(path=FIXTURES, leagues=None, aliases=True, matches=None):
     """The fixtures on file for the given leagues (league_codes: default the
-    ten the pipeline runs on; "all" for every league)."""
+    ten the pipeline runs on; "all" for every league), each club under one
+    name per league (canonical_clubs: ALIASES, and the spellings the
+    fixtures and `matches` prove - default the season files beside the
+    fixtures file; aliases=False: the site's own spellings, as on file)."""
     if not Path(path).exists():
         return frame([], FIXTURE_COLUMNS)
     df = pd.read_csv(path, low_memory=False)
@@ -1244,7 +1272,11 @@ def load_fixtures(path=FIXTURES, leagues=None):
     df["kickoff"] = pd.to_datetime(df["kickoff"])
     df["fetched_at"] = pd.to_datetime(df["fetched_at"])
     df["date"] = df["date"].astype(str)
-    return df[df["league"].isin(league_codes(leagues))].reset_index(drop=True)
+    df = df[df["league"].isin(league_codes(leagues))].reset_index(drop=True)
+    if not aliases:
+        return df
+    beside = _results_beside(path, df) if matches is None else matches
+    return canonical_clubs(df, learn_from=beside).reset_index(drop=True)
 
 
 if __name__ == "__main__":

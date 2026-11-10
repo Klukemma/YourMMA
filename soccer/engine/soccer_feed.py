@@ -326,7 +326,8 @@ KEEP_AHEAD = 28
 # feed in between, the feed is taken for down and the rest of its requests
 # are skipped; and no request starts once the fetch has run FETCH_BUDGET
 # seconds. Skipped requests are failed requests: what is on file for them is
-# kept. With every league (FEED_LEAGUES: 465 ESPN days and 12 season files)
+# kept. With every league (FEED_LEAGUES: 465 ESPN days and 12 season files;
+# the app's, leagues_for(in_app()): 450 and 12)
 # a run is about 80 seconds - the league probe's 997 requests took 161 s on
 # GitHub's runner on 2026-10-29 - and an outage of both feeds, timing out,
 # still stops at 5 x 3 + 5 = 20 requests: the ten minutes the five leagues

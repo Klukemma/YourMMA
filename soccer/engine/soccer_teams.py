@@ -6,7 +6,24 @@ the name a fan would write, a three-letter code for the badge chip, and
 the club's colours (chip background, chip text). A club missing here is
 shown under its football-data.co.uk name with a neutral chip - never a
 guessed identity.
+
+A MISSING CLUB'S CODE. Its first three letters, unless another club of its
+league already has those: across the 37 leagues the app carries, the first
+three letters clashed for 21 groups in 14 leagues (Dundee / Dundee United,
+Genk / Gent, Shanghai Port / Shanghai Shenhua, Corinthians / Coritiba, the
+New York and New England clubs), and the app prints the codes in the
+probability line ("DUN 40% - draw - DUN 35%"). So within a league the code
+is unique and deterministic (codes_for): the clubs here keep their own
+codes, then the missing ones in name order each take the first free of -
+their first three letters, their words' initials (a two-word name: the
+first word's initial and the second's first two letters, then the first
+word's first two letters and the second's initial), the first letter and
+the next two consonants, the first letter and any two later letters in
+order, and finally two letters and a digit. The colours stay neutral:
+extending TEAMS for the ~500 missing clubs is data work, from sources.
 """
+
+import itertools
 
 # key: (display name, code, background, text)
 TEAMS = {
@@ -210,11 +227,58 @@ def readable(bg, fg):
     return max(("#FFFFFF", "#000000"), key=lambda c: contrast(bg, c))
 
 
-def display(key):
-    """{name, code, bg, fg} for a football-data.co.uk team name."""
+VOWELS = set("AEIOUY")
+
+
+def code_candidates(key):
+    """The badge codes a club missing from TEAMS may take, in the order the
+    notes give (A MISSING CLUB'S CODE), without repeats; first, its first
+    three letters (what every missing club showed before)."""
+    text = str(key).upper()
+    letters = "".join(ch for ch in text if ch.isalpha())
+    words = ["".join(ch for ch in w if ch.isalpha()) for w in text.split()]
+    words = [w for w in words if w]
+    out = [letters[:3] or "?"]
+    if len(words) >= 3:
+        out.append("".join(w[0] for w in words[:3]))
+    if len(words) == 2:
+        a, b = words
+        out += [a[0] + b[:2], a[:2] + b[0]]
+    if letters:
+        rest = [ch for ch in letters[1:] if ch not in VOWELS]
+        if len(rest) >= 2:
+            out.append(letters[0] + "".join(rest[:2]))
+        out += [letters[0] + letters[i] + letters[j]
+                for i, j in itertools.combinations(range(1, len(letters)), 2)]
+        out += [letters[:2].ljust(2, "X") + str(d) for d in range(2, 10)]
+    return [c for k, c in enumerate(out) if len(c) == 3 and c not in out[:k]] or ["?"]
+
+
+def display(key, taken=()):
+    """{name, code, bg, fg} for a football-data.co.uk team name. A club
+    missing from TEAMS takes the first of its code_candidates not in
+    `taken` (the codes already shown in its league; codes_for gives a whole
+    league's at once)."""
     if key in TEAMS:
         name, code, bg, fg = TEAMS[key]
     else:
-        letters = "".join(ch for ch in str(key).upper() if ch.isalpha())
-        name, code, (bg, fg) = key, letters[:3] or "?", NEUTRAL
+        taken = set(taken)
+        cands = code_candidates(key)
+        code = next((c for c in cands if c not in taken), cands[0])
+        name, (bg, fg) = key, NEUTRAL
     return {"name": name, "code": code, "bg": bg, "fg": readable(bg, fg)}
+
+
+def codes_for(keys):
+    """{key: display(key)} for every club of one league, each code unique
+    within it where any can be: the clubs in TEAMS keep their own codes,
+    then the missing ones take theirs in name order - so the same clubs
+    always get the same codes, whatever order they are asked in."""
+    keys = sorted({str(k) for k in keys})
+    out = {k: display(k) for k in keys if k in TEAMS}
+    taken = {d["code"] for d in out.values()}
+    for k in keys:
+        if k not in out:
+            out[k] = display(k, taken)
+            taken.add(out[k]["code"])
+    return out

@@ -26,11 +26,11 @@ So, one rule each:
       football-data.co.uk fixture of its pairing nearest its date within
       PAIR_DAYS (closest first, each once: soccer_feed.legs' rule), or none.
       A lookup by the pairing alone there would give one meeting another's
-      status, kickoff or result (find_key does it by date). Where
-      football-data.co.uk has the fixture, its row is the
-      match - its id and its prices; the feeds only add their kickoff time. A
-      feed match football-data.co.uk has not posted is added with no price:
-      the model's own chances, labelled (price_status "not_yet").
+      status, kickoff or result (find_key does it by date).
+      Where football-data.co.uk has the fixture, its row is the match - its
+      id and its prices; the feeds only add their kickoff time. A feed match
+      football-data.co.uk has not posted is added with no price: the
+      model's own chances, labelled (price_status "not_yet").
   KICKOFF, the one shown - the match's day, its id, when "kicked off"
       shows: football-data.co.uk's own time where it has the fixture (or
       the feeds' confirmed time, where that is earlier); for a match only
@@ -47,7 +47,10 @@ So, one rule each:
   POSTPONED or CANCELLED (per ESPN) on football-data.co.uk's date for it: not
       picked, shown as such (with the pick, where one was logged before -
       soccer_predict). A feed match ESPN says has started, finished or was
-      abandoned is never picked, whatever its listed time.
+      abandoned is never picked, whatever its listed time. Where pairings
+      repeat, a postponement more than PAIR_DAYS from football-data.co.uk's
+      new date for the pairing is not joined to it: it is shown postponed
+      on its own day, and the new fixture stands beside it.
   MOVED. A football-data.co.uk fixture whose time has passed with no result
       while ESPN lists the match as scheduled more than MOVED later was
       rescheduled and its fixtures file has not caught up: ESPN's date
@@ -520,6 +523,7 @@ def shown(frame, provisional):
         if not repeats(league):
             return k in keys
         return _iso(day) is not None and any(days_apart(d, day) <= sfeed.PAIR_DAYS for d in days.get(k, ()))
+
     # A row still to play for a match the feeds say is over: the result
     # replaces it - where pairings repeat, only the row of that day's match.
     todo = base["result"].isna()

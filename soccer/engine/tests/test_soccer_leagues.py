@@ -683,7 +683,9 @@ def test_a_body_cut_off_part_way_through_a_row_keeps_what_is_on_file(tmp_path):
     pd.testing.assert_frame_equal(sd.load_matches(matches, leagues="all"), before_m)
     pd.testing.assert_frame_equal(sd.load_fixtures(fixtures, leagues="all"), before_f)
     kept = [line for line in lines if "KEPT ON FILE" in line]
-    assert kept == ["   KEPT ON FILE after a failed or unreadable download: USA, extra-league fixtures"]
+    # Both fixtures files are fetched before any history file (a posting
+    # day's run needs their prices first), so they are listed first.
+    assert kept == ["   KEPT ON FILE after a failed or unreadable download: extra-league fixtures, USA"]
     # Every file of the probe ends its last row whole; a header alone, or a
     # body without its last line break but with its last row whole, is no cut.
     for path in PROBE.glob("fd_*.csv.gz"):
@@ -757,8 +759,13 @@ def test_a_sync_of_some_leagues_replaces_their_fixtures_and_no_other_leagues(tmp
     sd.sync_fixtures(fetch=files.get, log=q, path=fixtures)
     first = sd.load_fixtures(fixtures, leagues="all")
     # E2's and USA's rounds are played: the next files no longer list them.
-    files = {sd.FIXTURES_URL: sd._text(raw("fd_fixtures.csv")).replace("\nE2,", "\nXX,").encode(),
-             sd.EXTRA_FIXTURES_URL: sd._text(raw("fd_new_league_fixtures.csv")).replace("\nUSA,", "\nXXX,").encode()}
+    # (Rows dropped, not relabelled: an extra-league row under a label the
+    # registry does not know is read as the league renamed, and its rows on
+    # file are kept - test_a_renamed_extra_league_keeps_its_fixtures_on_file.)
+    drop = lambda text, code: "".join(l for l in text.splitlines(keepends=True)
+                                      if not l.startswith(f"{code},"))
+    files = {sd.FIXTURES_URL: drop(sd._text(raw("fd_fixtures.csv")), "E2").encode(),
+             sd.EXTRA_FIXTURES_URL: drop(sd._text(raw("fd_new_league_fixtures.csv")), "USA").encode()}
     sd.sync_fixtures(["E2", "USA"], fetch=files.get, log=q, path=fixtures)
     after = sd.load_fixtures(fixtures, leagues="all")
     rest = first[~first["league"].isin(["E2", "USA"])].reset_index(drop=True)
@@ -769,6 +776,25 @@ def test_a_sync_of_some_leagues_replaces_their_fixtures_and_no_other_leagues(tmp
     sd.sync(leagues=["EC"], today="2026-10-29", fetch=files.get, log=q, matches_path=matches, fixtures_path=fixtures)
     pd.testing.assert_frame_equal(sd.load_fixtures(fixtures, leagues="all"),
                                   rest[rest["league"] != "EC"].reset_index(drop=True))
+
+
+def test_a_renamed_extra_league_keeps_its_fixtures_on_file(tmp_path):
+    """An extra-league row under a label the registry does not know, while a
+    league asked for gets none, reads as that league renamed: its rows on
+    file are kept and the log says so, rather than its fixtures vanishing
+    without a line."""
+    fixtures = tmp_path / "f.csv"
+    files = {sd.FIXTURES_URL: raw("fd_fixtures.csv"), sd.EXTRA_FIXTURES_URL: raw("fd_new_league_fixtures.csv")}
+    sd.sync_fixtures(fetch=files.get, log=lambda *_: None, path=fixtures)
+    first = sd.load_fixtures(fixtures, leagues="all")
+    lines = []
+    files[sd.EXTRA_FIXTURES_URL] = sd._text(raw("fd_new_league_fixtures.csv")).replace("\nUSA,", "\nXXX,").encode()
+    sd.sync_fixtures(["USA"], fetch=files.get, log=lines.append, path=fixtures)
+    after = sd.load_fixtures(fixtures, leagues="all")
+    assert (first["league"] == "USA").sum() > 0
+    pd.testing.assert_frame_equal(after, first)
+    assert any(l.strip().startswith("USA:") and "renamed league" in l and "kept what is on file" in l
+               for l in lines), lines
 
 
 def test_the_hour_the_uk_clock_repeats_reads_as_its_first_pass():
