@@ -50,8 +50,8 @@ RUN_OPTUNA = False
 # ==============================================================================
 # 2. EVENT DETAILS
 # ==============================================================================
-EVENT_NAME = "UFC Fight Night: Cortes Acosta vs. Walker"
-EVENT_DATE = "2026-11-07"  # Format: YYYY-MM-DD
+EVENT_NAME = "UFC 334: Gane vs. Hokit"
+EVENT_DATE = "2026-11-14"  # Format: YYYY-MM-DD
 
 # ==============================================================================
 # 3. FIGHT CARD
@@ -60,40 +60,40 @@ EVENT_DATE = "2026-11-07"  # Format: YYYY-MM-DD
 # - is_5_rounds: True for main events and title fights
 # - is_title_fight: True if fighting for a championship
 #
-# Bout list reconciled 2026-11-05 from bet365 News, Yahoo Sports, Khel Now,
-# MMAOddsBreaker, DocSports, UFCalendar, AgentMMA, Cageside Press and
-# MMA Sucka; every bout on two sources or more. Cortes Acosta vs. Walker
-# replaced Bonfim vs. Brady as the five-round main event after Sean Brady
-# withdrew injured (Cageside Press, Heavy, MMA Sucka). Thomas Petersen
-# replaced Alvin Hines (vertigo) as Lorenco's opponent (SI, Sherdog,
-# AgentMMA, RotoWire); Lorenco makes his UFC debut.
-# Rechecked 2026-11-06 against the official weigh-in results (UFC.com,
-# Sherdog, MMA Junkie via Yahoo): all 28 fighters made weight - 14 bouts.
-# Added then: Austin Bashi vs. Carlos Calderon, featherweight - Calderon
-# (Fury FC champion, UFC debut) replaced Lucas Brennan (torn ACL) on four
-# days' notice (Sherdog, Bloody Elbow, MMA Mania, AgentMMA) and both
-# weighed in at 145.5. Outlets disagree on whether it is a main card or a
-# prelim bout, so it is listed last. No source states corners: the
-# first-billed fighter is listed first.
+# Bout list reconciled 2026-11-10 by two independent passes over Bloody
+# Elbow (Nov 9 preview), MMA News (full-card preview), UFC.com (event page
+# and fight-by-fight preview), Sherdog, Boxing News, Cageside Press, Heavy,
+# AgentMMA, MMA Sucka, MMA Mania, Combat Edge and UFCalendar: 13 bouts, each
+# on two outlets or more, both passes agreeing. Changes since announcement:
+# Baisangur Susurkaev withdrew, Cesar Almeida replaced him against Donte
+# Johnson (Sherdog, Boxing News, MMA Sucka, AgentMMA); Adrian Yanez withdrew,
+# Alatengheili replaced him against Juan Diaz on about eight days' notice
+# (Boxing News, Bloody Elbow, MMA Mania); Nazim Sadykhov vs. Jefferson
+# Nascimento is off (both withdrew). Joselyne Edwards is the named backup
+# for the women's bantamweight title fight. Samuel Sanches makes his UFC
+# debut. The champions are listed in the red corner; elsewhere the
+# first-billed fighter is listed first (no source states corners), and the
+# order within each segment follows the outlets' listings where they give one.
 
 FIGHT_CARD = [
     # Main Card
-    ("Waldo Cortes Acosta", "Johnny Walker", True, False),     # 0 - Main Event, Heavyweight (5 rounds)
-    ("Tatiana Suarez", "Virna Jandiroba"),                     # 1 - Co-Main, Women's Strawweight
-    ("Davey Grant", "Elijah Smith"),                           # 2 - Bantamweight
-    ("Seokhyeon Ko", "Wellington Turman"),                     # 3 - Welterweight
-    ("Billy Elekana", "Lucas Fernando"),                       # 4 - Light Heavyweight
-    ("Mantas Kondratavicius", "Andre Petroski"),               # 5 - Middleweight
+    ("Ciryl Gane", "Josh Hokit", True, True),                  # 0 - Main Event, Heavyweight title (5 rounds)
+    ("Kayla Harrison", "Amanda Nunes", True, True),            # 1 - Co-Main, Women's Bantamweight title (5 rounds)
+    ("Caio Borralho", "Yousri Belgaroui"),                     # 2 - Middleweight
+    ("Uros Medic", "Kevin Holland"),                           # 3 - Welterweight
+    ("Bilal Hasan", "Luis Gurule"),                            # 4 - Flyweight
 
     # Preliminary Card
-    ("Keiichiro Nakamura", "Ollie Schmid"),                    # 6 - Featherweight
-    ("Gabriel Lorenco", "Thomas Petersen"),                    # 7 - Heavyweight (Petersen: short notice for Hines; Lorenco: UFC debut)
-    ("Karine Silva", "Gabriella Fernandes"),                   # 8 - Women's Flyweight
-    ("Jose Delano", "Murtazali Magomedov"),                    # 9 - Featherweight
-    ("Jonny Parsons", "Jose Souza"),                           # 10 - Welterweight
-    ("Mitch Raposo", "Marcos Degli"),                          # 11 - Flyweight (Degli: UFC debut)
-    ("Priscila Cachoeira", "Nina Milosevic"),                  # 12 - Women's Bantamweight
-    ("Austin Bashi", "Carlos Calderon"),                       # 13 - Featherweight (Calderon: 4 days' notice for Brennan, UFC debut)
+    ("Stephen Thompson", "Charles Radtke"),                    # 5 - Welterweight (Thompson: announced as the last fight of his career)
+    ("Drew Dober", "Chris Duncan"),                            # 6 - Lightweight
+    ("Jim Miller", "Terrance McKinney"),                       # 7 - Lightweight
+    ("Donte Johnson", "Cesar Almeida"),                        # 8 - Middleweight (Almeida: replacement for Susurkaev)
+
+    # Early Preliminary Card
+    ("Jared Gordon", "Melquizael Costa"),                      # 9 - Lightweight (Costa: up from featherweight)
+    ("Macy Chiasson", "Bia Mesquita"),                         # 10 - Women's Bantamweight
+    ("Evan Elder", "Samuel Sanches"),                          # 11 - Lightweight (Sanches: UFC debut)
+    ("Juan Diaz", "Alatengheili"),                             # 12 - Bantamweight (Alatengheili: short notice for Yanez)
 ]
 
 # ==============================================================================
@@ -102,12 +102,12 @@ FIGHT_CARD = [
 # Home advantage only counts when ONE fighter is home and the other is NOT.
 # If both fighters are "home" (e.g., both USA-based), no advantage.
 #
-# UFC Fight Night: Cortes Acosta vs. Walker - Meta APEX, Enterprise (Las Vegas), NV (SMALL cage)
+# UFC 334: Gane vs. Hokit - Madison Square Garden, New York, NY: the
+# standard Octagon, so no cage_size (that key is for cages smaller or larger
+# than standard, e.g. 'small' at the Apex).
 #
 # Home flags are left off this card: nobody's base was checked fight by
 # fight, and a guessed flag is worse than none.
-#
-# NOTE: All bouts at the Apex use the SMALL cage -> cage_size: 'small' for every fight.
 #
 # 'division' tells the model the weight class of the bout (e.g. 'lightweight',
 # "women's flyweight"). It feeds the weight-class features the model was
@@ -115,20 +115,19 @@ FIGHT_CARD = [
 # is wrong whenever one of them is changing class.
 
 FIGHT_CONTEXTS = {
-    0: {"division": "heavyweight", 'cage_size': 'small'},
-    1: {"division": "women's strawweight", 'cage_size': 'small'},
-    2: {"division": "bantamweight", 'cage_size': 'small'},
-    3: {"division": "welterweight", 'cage_size': 'small'},
-    4: {"division": "light heavyweight", 'cage_size': 'small'},
-    5: {"division": "middleweight", 'cage_size': 'small'},
-    6: {"division": "featherweight", 'cage_size': 'small'},
-    7: {"division": "heavyweight", 'cage_size': 'small'},
-    8: {"division": "women's flyweight", 'cage_size': 'small'},
-    9: {"division": "featherweight", 'cage_size': 'small'},
-    10: {"division": "welterweight", 'cage_size': 'small'},
-    11: {"division": "flyweight", 'cage_size': 'small'},
-    12: {"division": "women's bantamweight", 'cage_size': 'small'},
-    13: {"division": "featherweight", 'cage_size': 'small'},
+    0: {"division": "heavyweight"},
+    1: {"division": "women's bantamweight"},
+    2: {"division": "middleweight"},
+    3: {"division": "welterweight"},
+    4: {"division": "flyweight"},
+    5: {"division": "welterweight"},
+    6: {"division": "lightweight"},
+    7: {"division": "lightweight"},
+    8: {"division": "middleweight"},
+    9: {"division": "lightweight"},
+    10: {"division": "women's bantamweight"},
+    11: {"division": "lightweight"},
+    12: {"division": "bantamweight"},
 }
 
 # ==============================================================================
