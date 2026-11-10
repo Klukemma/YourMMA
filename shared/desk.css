@@ -125,6 +125,15 @@ code{font:500 .92em "IBM Plex Mono",ui-monospace,monospace}
   .switch:has(>:nth-child(3)) a,.switch:has(>:nth-child(3)) span{padding:0 8px}
 }
 @media (max-width:340px){.brand .logo{display:none}}
+/* A fourth pill (the same-day parlays page) is tighter still: smaller type
+   and padding, and the logo gives way sooner, so four pills, the name and
+   the menu button fit a 320px phone with no sideways scroll. */
+.switch:has(>:nth-child(4)) a,.switch:has(>:nth-child(4)) span{padding:0 7px;font-size:11px;letter-spacing:.02em}
+@media (max-width:400px){
+  .switch:has(>:nth-child(4)) a,.switch:has(>:nth-child(4)) span{padding:0 5px;font-size:10.5px;letter-spacing:0}
+  .appbar-in:has(.switch>:nth-child(4)) .brand-name{font-size:16px}
+}
+@media (max-width:370px){.appbar-in:has(.switch>:nth-child(4)) .brand .logo{display:none}}
 .iconbtn{display:inline-flex;align-items:center;justify-content:center;flex:none;
   width:44px;height:44px;border-radius:12px;border:0;background:none;color:var(--ink-2);cursor:pointer}
 .iconbtn:active{background:var(--chip)}

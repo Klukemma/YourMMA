@@ -1531,7 +1531,8 @@ DESK.init({
   name: "YourMMA",
   icon: "icons/icon-192.png",
   siblings: [{ name: "YourNFL", href: "../nfl/app/", blurb: "The NFL pick desk" },
-    { name: "YourSoccer", href: "../soccer/app/", blurb: "Europe's top five leagues" }],
+    { name: "YourSoccer", href: "../soccer/app/", blurb: "Europe's top five leagues" },
+    { name: "YourMulti", href: "../parlays/app/", blurb: "Same-day parlays, 3-5x" }],
   stamp: () => (CARD && CARD.generated ? `Card updated ${DESK.ago(CARD.generated)}` : "Fetch the latest card"),
   onReload: () => location.reload(),
 });
