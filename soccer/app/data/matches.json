@@ -10,8 +10,8 @@
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, each beat the leagues' own rates from earlier seasons. Both teams to score runs low: across 2016-2025 its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
  "data_through": "2026-11-08",
- "feeds_at": "2026-11-09T19:52:26Z",
- "generated": "2026-11-09T19:52:33Z",
+ "feeds_at": "2026-11-10T20:38:58Z",
+ "generated": "2026-11-10T20:39:06Z",
  "league_order": [
   "E0",
   "SP1",
@@ -10277,6 +10277,612 @@
    },
    "season": 2026,
    "status": "final",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#ED1C24",
+    "code": "KOE",
+    "fg": "#FFFFFF",
+    "name": "K\u00f6ln"
+   },
+   "away_form": [
+    {
+     "date": "2026-11-08",
+     "ga": 2,
+     "gf": 1,
+     "home": true,
+     "league": "D1",
+     "league_name": "Bundesliga",
+     "opponent": "Leverkusen",
+     "opponent_name": "Leverkusen",
+     "result": "L"
+    },
+    {
+     "date": "2026-11-01",
+     "ga": 1,
+     "gf": 1,
+     "home": false,
+     "league": "D1",
+     "league_name": "Bundesliga",
+     "opponent": "Union Berlin",
+     "opponent_name": "Union Berlin",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-24",
+     "ga": 0,
+     "gf": 0,
+     "home": true,
+     "league": "D1",
+     "league_name": "Bundesliga",
+     "opponent": "Schalke 04",
+     "opponent_name": "Schalke",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-16",
+     "ga": 1,
+     "gf": 0,
+     "home": false,
+     "league": "D1",
+     "league_name": "Bundesliga",
+     "opponent": "Ein Frankfurt",
+     "opponent_name": "Eintracht Frankfurt",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-11",
+     "ga": 1,
+     "gf": 2,
+     "home": true,
+     "league": "D1",
+     "league_name": "Bundesliga",
+     "opponent": "M'gladbach",
+     "opponent_name": "M\u00f6nchengladbach",
+     "result": "W"
+    }
+   ],
+   "away_key": "FC Koln",
+   "away_position": 15,
+   "band": "STRONG",
+   "band_basis": "model",
+   "fixture_source": "ESPN + fixturedownload.com",
+   "freeze_at": "2026-11-20T19:30:00Z",
+   "home": {
+    "bg": "#DC052D",
+    "code": "FCB",
+    "fg": "#FFFFFF",
+    "name": "Bayern Munich"
+   },
+   "home_form": [
+    {
+     "date": "2026-11-07",
+     "ga": 1,
+     "gf": 2,
+     "home": false,
+     "league": "D1",
+     "league_name": "Bundesliga",
+     "opponent": "Mainz",
+     "opponent_name": "Mainz",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-31",
+     "ga": 2,
+     "gf": 2,
+     "home": true,
+     "league": "D1",
+     "league_name": "Bundesliga",
+     "opponent": "Dortmund",
+     "opponent_name": "Dortmund",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 1,
+     "gf": 3,
+     "home": false,
+     "league": "D1",
+     "league_name": "Bundesliga",
+     "opponent": "Freiburg",
+     "opponent_name": "Freiburg",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 1,
+     "gf": 6,
+     "home": true,
+     "league": "D1",
+     "league_name": "Bundesliga",
+     "opponent": "RB Leipzig",
+     "opponent_name": "RB Leipzig",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 2,
+     "gf": 2,
+     "home": false,
+     "league": "D1",
+     "league_name": "Bundesliga",
+     "opponent": "Augsburg",
+     "opponent_name": "Augsburg",
+     "result": "D"
+    }
+   ],
+   "home_key": "Bayern Munich",
+   "home_position": 1,
+   "kickoff": "2026-11-20T19:30:00Z",
+   "league": "D1",
+   "logged_at": "2026-11-10T20:39:06Z",
+   "market": null,
+   "market_o25": null,
+   "match_id": "D1-20261120-bayernmunich-fckoln",
+   "model": {
+    "p_a": 0.02873377428918187,
+    "p_d": 0.0658855574624126,
+    "p_h": 0.9053806682484056
+   },
+   "model_o25": 0.8499025059479415,
+   "p_a": 0.02873377428918187,
+   "p_btts": 0.517840639799477,
+   "p_d": 0.0658855574624126,
+   "p_h": 0.9053806682484056,
+   "p_o15": 0.9506989196519253,
+   "p_o25": 0.8499025059479415,
+   "p_o35": 0.6935843413026038,
+   "pick": "H",
+   "pick_prob": 0.9053806682484056,
+   "price_status": "not_yet",
+   "prices": {
+    "avg": {
+     "a": null,
+     "d": null,
+     "h": null
+    },
+    "best": {
+     "a": null,
+     "d": null,
+     "h": null
+    }
+   },
+   "prices_at": null,
+   "score_source": "model",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.028733774289181866,
+     "p_d": 0.06588555746241258,
+     "p_h": 0.9053806682484056
+    },
+    "miss": null,
+    "miss_on": null,
+    "o25": 0.8499025059479415,
+    "other": 0.20959619553443898,
+    "reason": "no_price",
+    "top": [
+     {
+      "p": 0.0933076458096718,
+      "score": "3-0"
+     },
+     {
+      "p": 0.0928266467357421,
+      "score": "4-0"
+     },
+     {
+      "p": 0.07387850176204176,
+      "score": "5-0"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "upcoming",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#7FB4E3",
+    "code": "HAC",
+    "fg": "#00305E",
+    "name": "Le Havre"
+   },
+   "away_form": [
+    {
+     "date": "2026-11-08",
+     "ga": 2,
+     "gf": 0,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Lorient",
+     "opponent_name": "Lorient",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-30",
+     "ga": 5,
+     "gf": 1,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Paris SG",
+     "opponent_name": "Paris Saint-Germain",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 4,
+     "gf": 3,
+     "home": false,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Marseille",
+     "opponent_name": "Marseille",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-18",
+     "ga": 3,
+     "gf": 1,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Auxerre",
+     "opponent_name": "Auxerre",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-10",
+     "ga": 1,
+     "gf": 0,
+     "home": false,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Lille",
+     "opponent_name": "Lille",
+     "result": "L"
+    }
+   ],
+   "away_key": "Le Havre",
+   "away_position": 18,
+   "band": "LEAN",
+   "band_basis": "model",
+   "fixture_source": "ESPN + fixturedownload.com",
+   "freeze_at": "2026-11-20T19:45:00Z",
+   "home": {
+    "bg": "#005BAC",
+    "code": "TRO",
+    "fg": "#FFFFFF",
+    "name": "Troyes"
+   },
+   "home_form": [
+    {
+     "date": "2026-11-07",
+     "ga": 1,
+     "gf": 0,
+     "home": false,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Paris SG",
+     "opponent_name": "Paris Saint-Germain",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-31",
+     "ga": 0,
+     "gf": 2,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Le Mans",
+     "opponent_name": "Le Mans",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 0,
+     "gf": 0,
+     "home": false,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Toulouse",
+     "opponent_name": "Toulouse",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 3,
+     "gf": 1,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Lens",
+     "opponent_name": "Lens",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-11",
+     "ga": 2,
+     "gf": 0,
+     "home": true,
+     "league": "F1",
+     "league_name": "Ligue 1",
+     "opponent": "Marseille",
+     "opponent_name": "Marseille",
+     "result": "L"
+    }
+   ],
+   "home_key": "Troyes",
+   "home_position": 17,
+   "kickoff": "2026-11-20T19:45:00Z",
+   "league": "F1",
+   "logged_at": "2026-11-10T20:39:06Z",
+   "market": null,
+   "market_o25": null,
+   "match_id": "F1-20261120-troyes-lehavre",
+   "model": {
+    "p_a": 0.31121848451194395,
+    "p_d": 0.283249853424014,
+    "p_h": 0.4055316620640421
+   },
+   "model_o25": 0.45756150314051103,
+   "p_a": 0.31121848451194395,
+   "p_btts": 0.51493742499838,
+   "p_d": 0.283249853424014,
+   "p_h": 0.4055316620640421,
+   "p_o15": 0.721381955055129,
+   "p_o25": 0.45756150314051103,
+   "p_o35": 0.24357053710508622,
+   "pick": "H",
+   "pick_prob": 0.4055316620640421,
+   "price_status": "not_yet",
+   "prices": {
+    "avg": {
+     "a": null,
+     "d": null,
+     "h": null
+    },
+    "best": {
+     "a": null,
+     "d": null,
+     "h": null
+    }
+   },
+   "prices_at": null,
+   "score_source": "model",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.311218484511944,
+     "p_d": 0.283249853424014,
+     "p_h": 0.405531662064042
+    },
+    "miss": null,
+    "miss_on": null,
+    "o25": 0.45756150314051114,
+    "other": 0.003928239573173897,
+    "reason": "no_price",
+    "top": [
+     {
+      "p": 0.13489724072941314,
+      "score": "1-1"
+     },
+     {
+      "p": 0.10279476224729708,
+      "score": "1-0"
+     },
+     {
+      "p": 0.08922693624503895,
+      "score": "0-0"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "upcoming",
+   "time_confirmed": true
+  },
+  {
+   "away": {
+    "bg": "#007FC8",
+    "code": "ESP",
+    "fg": "#FFFFFF",
+    "name": "Espanyol"
+   },
+   "away_form": [
+    {
+     "date": "2026-11-07",
+     "ga": 0,
+     "gf": 0,
+     "home": true,
+     "league": "SP1",
+     "league_name": "La Liga",
+     "opponent": "La Coruna",
+     "opponent_name": "Deportivo La Coru\u00f1a",
+     "result": "D"
+    },
+    {
+     "date": "2026-10-30",
+     "ga": 0,
+     "gf": 1,
+     "home": false,
+     "league": "SP1",
+     "league_name": "La Liga",
+     "opponent": "Villarreal",
+     "opponent_name": "Villarreal",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-24",
+     "ga": 2,
+     "gf": 1,
+     "home": false,
+     "league": "SP1",
+     "league_name": "La Liga",
+     "opponent": "Santander",
+     "opponent_name": "Racing Santander",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 1,
+     "gf": 0,
+     "home": true,
+     "league": "SP1",
+     "league_name": "La Liga",
+     "opponent": "Ath Madrid",
+     "opponent_name": "Atl\u00e9tico Madrid",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-09",
+     "ga": 1,
+     "gf": 1,
+     "home": false,
+     "league": "SP1",
+     "league_name": "La Liga",
+     "opponent": "Malaga",
+     "opponent_name": "M\u00e1laga",
+     "result": "D"
+    }
+   ],
+   "away_key": "Espanol",
+   "away_position": 13,
+   "band": "SOLID",
+   "band_basis": "model",
+   "fixture_source": "ESPN + fixturedownload.com",
+   "freeze_at": "2026-11-20T20:00:00Z",
+   "home": {
+    "bg": "#EE2523",
+    "code": "ATH",
+    "fg": "#FFFFFF",
+    "name": "Athletic Club"
+   },
+   "home_form": [
+    {
+     "date": "2026-11-07",
+     "ga": 1,
+     "gf": 1,
+     "home": false,
+     "league": "SP1",
+     "league_name": "La Liga",
+     "opponent": "Osasuna",
+     "opponent_name": "Osasuna",
+     "result": "D"
+    },
+    {
+     "date": "2026-11-01",
+     "ga": 1,
+     "gf": 2,
+     "home": true,
+     "league": "SP1",
+     "league_name": "La Liga",
+     "opponent": "Sociedad",
+     "opponent_name": "Real Sociedad",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-25",
+     "ga": 0,
+     "gf": 4,
+     "home": true,
+     "league": "SP1",
+     "league_name": "La Liga",
+     "opponent": "Getafe",
+     "opponent_name": "Getafe",
+     "result": "W"
+    },
+    {
+     "date": "2026-10-21",
+     "ga": 3,
+     "gf": 1,
+     "home": false,
+     "league": "SP1",
+     "league_name": "La Liga",
+     "opponent": "Levante",
+     "opponent_name": "Levante",
+     "result": "L"
+    },
+    {
+     "date": "2026-10-17",
+     "ga": 0,
+     "gf": 0,
+     "home": false,
+     "league": "SP1",
+     "league_name": "La Liga",
+     "opponent": "Valencia",
+     "opponent_name": "Valencia",
+     "result": "D"
+    }
+   ],
+   "home_key": "Ath Bilbao",
+   "home_position": 7,
+   "kickoff": "2026-11-20T20:00:00Z",
+   "league": "SP1",
+   "logged_at": "2026-11-10T20:39:06Z",
+   "market": null,
+   "market_o25": null,
+   "match_id": "SP1-20261120-athbilbao-espanol",
+   "model": {
+    "p_a": 0.1726777749534176,
+    "p_d": 0.2518502518424032,
+    "p_h": 0.5754719732041792
+   },
+   "model_o25": 0.4615935027480763,
+   "p_a": 0.1726777749534176,
+   "p_btts": 0.4647031745063373,
+   "p_d": 0.2518502518424032,
+   "p_h": 0.5754719732041792,
+   "p_o15": 0.7236944361254648,
+   "p_o25": 0.4615935027480763,
+   "p_o35": 0.24694785663477736,
+   "pick": "H",
+   "pick_prob": 0.5754719732041792,
+   "price_status": "not_yet",
+   "prices": {
+    "avg": {
+     "a": null,
+     "d": null,
+     "h": null
+    },
+    "best": {
+     "a": null,
+     "d": null,
+     "h": null
+    }
+   },
+   "prices_at": null,
+   "score_source": "model",
+   "scores": {
+    "flagged": false,
+    "matrix": {
+     "p_a": 0.17267777495341755,
+     "p_d": 0.2518502518424031,
+     "p_h": 0.5754719732041792
+    },
+    "miss": null,
+    "miss_on": null,
+    "o25": 0.4615935027480762,
+    "other": 0.00818647792466809,
+    "reason": "no_price",
+    "top": [
+     {
+      "p": 0.12985887796964532,
+      "score": "1-0"
+     },
+     {
+      "p": 0.11894699362776079,
+      "score": "1-1"
+     },
+     {
+      "p": 0.11599034084830943,
+      "score": "2-0"
+     }
+    ]
+   },
+   "season": 2026,
+   "status": "upcoming",
    "time_confirmed": true
   }
  ],
