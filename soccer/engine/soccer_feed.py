@@ -35,6 +35,41 @@ under tests/fixtures/feeds/ by probe_feeds.py):
                     it cannot be told apart, so a fixturedownload time is
                     never "confirmed" on its own (see reconcile).
 
+EVERY LEAGUE (the league probe, GitHub's machines 2026-10-29 12:43 UTC, saved
+under tests/fixtures/feeds/leagues/ by probe_leagues.py; checked in
+tests/test_soccer_feed_leagues.py). Of soccer_data's 38 leagues, 31 have a
+feed - FEED_LEAGUES - and 7 have none (football-data.co.uk alone):
+
+  ESPN and fixturedownload   E0 SP1 I1 D1 F1, E1 (championship), F2
+                             (ligue-2), SC0 (scottish-premiership), N1
+                             (eredivisie), P1 (primeira-liga), T1 (super-lig),
+                             USA (mls)
+  ESPN only                  SP2 I2 D2, E2 E3 EC, SC1, B1, G1, ARG AUT BRA
+                             CHN DNK JPN MEX NOR RUS SWE
+  none                       SC2 SC3 ROU SWZ (ESPN listed 2025-26's clubs and
+                             no events Oct 26 - Nov 8, while football-data.co.uk
+                             had SC2 and ROU matches those days), FIN IRL
+                             (ESPN listed no clubs; FIN had 3 matches those
+                             days), POL (no ESPN league: pol.1 is a 404) -
+                             ESPN_NOT_ASKED. fixturedownload answered for no
+                             other league football-data.co.uk carries (of 28
+                             slugs tried; its three European cups are not
+                             leagues here).
+
+A sync asks about LIVE_LEAGUES unless told otherwise - the five the app
+predicts today (soccer_schedule joins only those): 80 requests. Every league
+is leagues=FEED_LEAGUES: 31 x 15 ESPN days and 12 season files, 477
+requests, about 80 seconds on GitHub's runner (the league probe made 997 in
+161 s). RUS: ESPN lists its 2026-27 rounds, football-data.co.uk's file
+stopped at 2026-08-02 (soccer_data). fixturedownload's placeholders, in its
+2026-27 files: midnight UTC in the Eredivisie (100 rows) and the Primeira
+Liga, local midnight in Ligue 2 (171), the Primeira Liga's summer time (198
+with its UTC ones) and the Super Lig (162), each a whole unscheduled round
+but one Eredivisie match moved with no time (Twente v Sparta, filed at
+00:00 UTC on 2027-02-06); the Championship's and the Scottish Premiership's
+read Saturday 15:00 UK like the Premier League's. MLS has none, and kicks
+off at 00:00 UTC for real (LOCAL: no placeholder rule there).
+
 ROWS. parse_espn and parse_fixturedownload return one dict per match, every
 key always present (ROW_FIELDS); None means "the source does not say":
 
@@ -43,8 +78,14 @@ key always present (ROW_FIELDS); None means "the source does not say":
   request        the request that returned it ("espn:E0:20261025",
                  "fixturedownload:E0:2026"): a fetch that fails keeps
                  every row of its request as it is on file
-  league         football-data.co.uk code (E0, SP1, I1, D1, F1)
-  season         football-data.co.uk convention: 2026 for 2026-27
+  league         football-data.co.uk code (soccer_data.ALL_LEAGUES: E0, SP1,
+                 ..., USA)
+  season         football-data.co.uk convention for the league
+                 (soccer_data.season_for): the year the season starts, 2026
+                 for 2026-27 - a calendar year where the league plays one
+                 (ARG BRA CHN FIN IRL NOR SWE USA; JPN until 2025, August-May
+                 since). A request is for the league's own current season:
+                 in January MLS's is the new year's, the Championship's not.
   home, away     football-data.co.uk club names (CLUB NAMES below)
   home_name, away_name   the feed's own spelling, for the audit trail
   kickoff_utc    "2026-10-25T14:00:00Z", or None when the source has no
@@ -81,9 +122,31 @@ abbreviation "MUN" is Bayern Munich, "MAN" Manchester United); the id and
 display name agreed on every event in the samples. tests/test_soccer_feed.py
 checks every club in the samples maps, one to one, to a club football-data.co.uk
 has in that league and season.
+  Every other league's tables were built from the league probe the same
+way: normalised names only PROPOSED pairs, each was checked by hand, and the
+tests hold each table to exactly the clubs ESPN listed (its teams page and
+every event, by id, under the same display name) and football-data.co.uk
+has that season - one to one. A calendar-year league's tables hold 2026's
+clubs: its promoted ones arrive in the winter. fixturedownload renamed MLS's
+clubs between 2025 ("LA", "New York", "D.C.") and 2026 ("LA Galaxy", "Red
+Bull New York", "D.C. United"), so both sets are in its table.
 
 RECONCILING (reconcile). One row per match: league, season, home, away - a
-pairing is played once per league season.
+pairing is played once per league season - EXCEPT in the 15 leagues whose
+format plays a pairing more than once a season (REPEATS: a split, a third or
+fourth round robin, play-offs, two tournaments a season - every league where
+football-data.co.uk has a pairing twice in a 2021-2025 season, often within
+the feeds' seven-week window - within 14 days 13 times in MLS, 3 in Romania,
+2 in Liga MX and Austria). There every ESPN event is a match, and a
+fixturedownload row is the ESPN event's nearest in date within PAIR_DAYS (3:
+half MLS's shortest gap, 7 days) or a match of its own (legs). So there a
+match ESPN moves by more than three days while fixturedownload does not is
+two rows, neither confirmed, until fixturedownload catches up; and ESPN
+listing one match as two events (a postponed one beside its new date - not
+seen: the probe's one postponed event, in Scotland, stood alone) would be
+two rows, one postponed. NOTE for soccer_schedule and soccer_log: they key a
+match by its pairing, which holds for the five they join today and not for
+REPEATS.
 
   kickoff     each source's time is kept (kickoff_espn, kickoff_fd); the
               match's kickoff_utc - its date, its id, the time shown - is
@@ -134,12 +197,52 @@ MEASURED (tests/test_soccer_feed.py, on the probe of 2026-10-26):
       (round 1, played, and round 23) and Paris SG v Rennes never. Warned;
       reconcile uses the played one.
 
+MEASURED, EVERY OTHER LEAGUE (tests/test_soccer_feed_leagues.py, on the league
+probe of 2026-10-29, against football-data.co.uk as the same probe
+downloaded it, and the second tiers' snapshot frozen that day):
+  ESPN   all 531 events of the 26 leagues (Oct 26 - Nov 8) read and map, none
+      warned; 15 of Argentina's have no time yet. Every football-data.co.uk
+      match of those leagues in those days - 82: the 69 soccer_data paired by
+      name likeness, and 13 of the second tiers' - is a match reconcile makes,
+      under the same match_id at the same kickoff; the 48 with a result have
+      ESPN's score. No play-off or cup tie was on a league's board.
+  fixturedownload v football-data.co.uk   every played match pairs, under
+      the same match_id but one (MLS 2025, Austin v Seattle, two hours
+      apart across UK midnight). Kickoffs: 2025 E1 550/552, N1 301/305, P1
+      305/306, T1 300/304, USA 496/510; 2026 every one but T1 80/81 and USA
+      463/466 - minutes (late starts), T1's two of 14/09/2025 football-data
+      has an hour early, MLS's three in the hour the UK clock repeats
+      (25/10/2026; soccer_data reads it as its first pass). Scores: every
+      one, but three of MLS 2026 - Galaxy v St. Louis and LAFC v Salt Lake
+      of 23/07/2026 (3-1 and 1-3 here, 1-3 and 3-1 there: swapped between
+      the two in one source) and Orlando v Chicago of 20/08/2026 (1-0 here,
+      1-2 there). Which source is right is not settled here; a
+      fixturedownload score is never a result alone.
+  ESPN v fixturedownload   the 174 matches both list (seven leagues): every
+      kickoff equal, but two Ligue 2 matches ESPN had moved and
+      fixturedownload still had on Saturday at 13:00 UTC (Reims v Sochaux to
+      Monday, Montpellier v Metz to Friday) - Ligue 1's pattern of
+      2026-10-27 again; no score contradicts.
+  KNOCK-OUT PHASES   ESPN names a phase in the event's season slug; every
+      play-off or cup-tie event the probe saved (usa.usl.1's 8 play-off
+      quarter-finals, 115 cup ties) matches KNOCKOUT, no league event does.
+      In a main division - football-data.co.uk leaves its play-offs out - an
+      event in such a phase is skipped (the EFL play-offs, a relegation
+      play-off): never in a sample, so how ESPN will label them is not
+      measured. A split phase it names a "round" or a "play-off" (Belgium's
+      play-offs, which football-data.co.uk keeps) would be skipped with
+      them: football-data.co.uk alone there. The extra leagues' files keep
+      their play-offs (MLS Cup, the liguilla, Argentina's knock-outs), so
+      their events are read; a lower-league club in a relegation play-off
+      has no mapping and is skipped, counted in last_run.unmapped.
+
 THE SNAPSHOT. sync() fetches and writes soccer/data/feed.json: the source
 rows (normalised, sorted, one per line, no NaN) and when each request last
 succeeded. A request that fails, or returns something that is not the feed,
 keeps its rows as they are on file (and an outage is cut short: a league's
 other requests to a feed are skipped after STRAIGHT_FAILS failures in a
-row, and none starts after FETCH_BUDGET seconds); so does an ESPN day that
+row, a feed's after FEED_DOWN leagues in a row failed, and none starts
+after FETCH_BUDGET seconds); so does an ESPN day that
 answers with no events while matches still to play are on file for it (one
 glitchy empty answer must not unconfirm a whole day; a second in a row is
 believed); a re-fetch that drops
@@ -153,15 +256,17 @@ clubs a feed named that the tables below do not map. load() reads it, so a
 run without the network - and every test - works from the file.
 
     python soccer/engine/soccer_feed.py            # fetch, write, summarise
+    python soccer/engine/soccer_feed.py --all      # ...every league (FEED_LEAGUES)
     python soccer/engine/soccer_feed.py --offline  # summarise the snapshot
 """
 
 import json
 import math
+import re
 import sys
 import time
 import unicodedata
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -176,20 +281,25 @@ SCHEMA = 1
 # run whose fetch fails).
 KEEP_BEHIND = 21
 KEEP_AHEAD = 28
-# An outage must not hold the run up: after this many failures in a row from
-# one feed for one league, that league's other requests to it are skipped
-# (each up to a 30-second timeout - 80 of them would be 40 minutes), and no
-# request starts once the fetch has run this many seconds. Skipped requests
-# are failed requests: what is on file for them is kept.
+# An outage must not hold the run up: after STRAIGHT_FAILS failures in a row
+# from one feed for one league, that league's other requests to it are
+# skipped (each up to a 30-second timeout - 80 of them would be 40 minutes);
+# after FEED_DOWN leagues in a row cut short that way (or, for
+# fixturedownload's one request a league, failed) with no answer from the
+# feed in between, the feed is taken for down and the rest of its requests
+# are skipped; and no request starts once the fetch has run FETCH_BUDGET
+# seconds. Skipped requests are failed requests: what is on file for them is
+# kept. With every league (FEED_LEAGUES: 465 ESPN days and 12 season files)
+# a run is about 80 seconds - the league probe's 997 requests took 161 s on
+# GitHub's runner on 2026-10-29 - and an outage of both feeds, timing out,
+# still stops at 5 x 3 + 5 = 20 requests: the ten minutes the five leagues
+# alone could take.
 STRAIGHT_FAILS = 3
+FEED_DOWN = 5
 FETCH_BUDGET = 600
 
-ESPN_SLUGS = {"E0": "eng.1", "SP1": "esp.1", "I1": "ita.1", "D1": "ger.1", "F1": "fra.1"}
 ESPN_BOARD = "https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}/scoreboard?dates={day}"
-FD_SLUGS = {"E0": "epl", "SP1": "la-liga", "I1": "serie-a", "D1": "bundesliga", "F1": "ligue-1"}
 FD_URL = "https://fixturedownload.com/feed/json/{slug}-{season}"
-LOCAL = {"E0": ZoneInfo("Europe/London"), "SP1": ZoneInfo("Europe/Madrid"), "I1": ZoneInfo("Europe/Rome"),
-         "D1": ZoneInfo("Europe/Berlin"), "F1": ZoneInfo("Europe/Paris")}
 UA = {"User-Agent": "YourSoccer fixtures sync (github.com/Klukemma/YourMMA)"}
 
 ROW_FIELDS = ("source", "source_id", "request", "league", "season", "home", "away", "home_name", "away_name",
@@ -274,6 +384,278 @@ ESPN_CLUBS = {
         "160": ("Paris Saint-Germain", "Paris SG"), "169": ("Stade Rennais", "Rennes"),
         "180": ("Strasbourg", "Strasbourg"), "179": ("Toulouse", "Toulouse"), "170": ("Troyes", "Troyes"),
     },
+    # ---- every other league ESPN covers (league probe of 2026-10-29)
+    "E1": {
+        "392": ("Birmingham City", "Birmingham"), "365": ("Blackburn Rovers", "Blackburn"),
+        "358": ("Bolton Wanderers", "Bolton"), "333": ("Bristol City", "Bristol City"), "379": ("Burnley", "Burnley"),
+        "347": ("Cardiff City", "Cardiff"), "372": ("Charlton Athletic", "Charlton"),
+        "374": ("Derby County", "Derby"), "314": ("Lincoln City", "Lincoln"),
+        "369": ("Middlesbrough", "Middlesbrough"), "391": ("Millwall", "Millwall"),
+        "381": ("Norwich City", "Norwich"), "385": ("Portsmouth", "Portsmouth"),
+        "394": ("Preston North End", "Preston"), "334": ("Queens Park Rangers", "QPR"),
+        "398": ("Sheffield United", "Sheffield United"), "376": ("Southampton", "Southampton"),
+        "336": ("Stoke City", "Stoke"), "318": ("Swansea City", "Swansea"), "395": ("Watford", "Watford"),
+        "383": ("West Bromwich Albion", "West Brom"), "371": ("West Ham United", "West Ham"),
+        "380": ("Wolverhampton Wanderers", "Wolves"), "352": ("Wrexham", "Wrexham"),
+    },
+    "SP2": {
+        "2737": ("Albacete", "Albacete"), "6832": ("Almería", "Almeria"), "12597": ("Burgos", "Burgos"),
+        "4438": ("Castellón", "Castellon"), "11487": ("CD Sabadell", "Sabadell"), "5404": ("Ceuta", "Ceuta"),
+        "3842": ("Cádiz", "Cadiz"), "8447": ("Córdoba", "Cordoba"), "3752": ("Eibar", "Eibar"),
+        "7320": ("Eldense", "Eldense"), "20179": ("FC Andorra", "Andorra"), "9812": ("Girona", "Girona"),
+        "3747": ("Granada", "Granada"), "98": ("Las Palmas", "Las Palmas"), "17534": ("Leganés", "Leganes"),
+        "84": ("Mallorca", "Mallorca"), "131858": ("RC Celta Fortuna", "Celta B"), "92": ("Real Oviedo", "Oviedo"),
+        "20983": ("Real Sociedad II", "Sociedad B"), "95": ("Real Valladolid", "Valladolid"),
+        "3788": ("Sporting Gijón", "Sp Gijon"), "245": ("Tenerife", "Tenerife"),
+    },
+    "I2": {
+        "3345": ("Arezzo", "Arezzo"), "3346": ("Ascoli", "Ascoli"), "4059": ("Benevento", "Benevento"),
+        "3988": ("Carrarese", "Carrarese"), "3257": ("Catanzaro", "Catanzaro"), "3337": ("Cesena", "Cesena"),
+        "4050": ("Cremonese", "Cremonese"), "2574": ("Empoli", "Empoli"), "119": ("Hellas Verona", "Verona"),
+        "3975": ("Juve Stabia", "Juve Stabia"), "3991": ("Mantova", "Mantova"), "2573": ("Modena", "Modena"),
+        "3952": ("Padova", "Padova"), "2923": ("Palermo", "Palermo"), "3956": ("Pisa", "Pisa"),
+        "2734": ("Sampdoria", "Sampdoria"), "11139": ("Sudtirol", "Sudtirol"), "4055": ("US Avellino", "Avellino"),
+        "120": ("Vicenza", "Vicenza"), "11137": ("Virtus Entella", "Virtus Entella"),
+    },
+    "D2": {
+        "6418": ("1. FC Heidenheim 1846", "Heidenheim"), "10382": ("1. FC Magdeburg", "Magdeburg"),
+        "269": ("1. FC Nürnberg", "Nurnberg"), "2506": ("Arminia Bielefeld", "Bielefeld"),
+        "7017": ("Dynamo Dresden", "Dresden"), "123": ("Energie Cottbus", "Cottbus"),
+        "2428": ("Hannover 96", "Hannover"), "129": ("Hertha Berlin", "Hertha"),
+        "7884": ("Holstein Kiel", "Holstein Kiel"), "130": ("Kaiserslautern", "Kaiserslautern"),
+        "4471": ("Karlsruher SC", "Karlsruhe"), "3070": ("SpVgg Greuther Fürth", "Greuther Furth"),
+        "270": ("St. Pauli", "St Pauli"), "3812": ("SV Darmstadt 98", "Darmstadt"),
+        "3067": ("TSV Eintracht Braunschweig", "Braunschweig"), "121": ("VfL Bochum", "Bochum"),
+        "7013": ("VfL Osnabruck", "Osnabruck"), "138": ("VfL Wolfsburg", "Wolfsburg"),
+    },
+    "F2": {
+        "18066": ("Annecy", "Annecy"), "3267": ("AS Nancy Lorraine", "Nancy"), "7869": ("Boulogne", "Boulogne"),
+        "3171": ("Clermont Foot", "Clermont"), "3170": ("Dijon FCO", "Dijon"), "7732": ("Dunkerque", "Dunkerque"),
+        "6994": ("Grenoble", "Grenoble"), "171": ("Guingamp", "Guingamp"), "177": ("Metz", "Metz"),
+        "274": ("Montpellier", "Montpellier"), "165": ("Nantes", "Nantes"), "10678": ("Pau", "Pau FC"),
+        "11884": ("Red Star FC 93", "Red Star"), "7719": ("Rodez Aveyron", "Rodez"),
+        "178": ("Saint-Étienne", "St Etienne"), "272": ("Sochaux", "Sochaux"), "3243": ("Stade de Reims", "Reims"),
+        "3266": ("Stade Laval", "Laval"),
+    },
+    "E2": {
+        "3802": ("AFC Wimbledon", "AFC Wimbledon"), "397": ("Barnsley", "Barnsley"),
+        "346": ("Blackpool", "Blackpool"), "387": ("Bradford City", "Bradford"), "3129": ("Bromley", "Bromley"),
+        "2567": ("Burton Albion", "Burton"), "351": ("Cambridge United", "Cambridge"),
+        "279": ("Doncaster Rovers", "Doncaster"), "335": ("Huddersfield Town", "Huddersfield"),
+        "375": ("Leicester City", "Leicester"), "309": ("Leyton Orient", "Leyton Orient"),
+        "301": ("Luton Town", "Luton"), "304": ("Mansfield Town", "Mansfield"),
+        "390": ("Milton Keynes Dons", "Milton Keynes Dons"), "340": ("Notts County", "Notts County"),
+        "311": ("Oxford United", "Oxford"), "342": ("Peterborough United", "Peterboro"),
+        "307": ("Plymouth Argyle", "Plymouth"), "338": ("Reading", "Reading"),
+        "399": ("Sheffield Wednesday", "Sheffield Weds"), "285": ("Stevenage", "Stevenage"),
+        "400": ("Stockport County", "Stockport"), "350": ("Wigan Athletic", "Wigan"),
+        "344": ("Wycombe Wanderers", "Wycombe"),
+    },
+    "E3": {
+        "2731": ("Accrington Stanley", "Accrington"), "280": ("Barnet", "Barnet"),
+        "308": ("Bristol Rovers", "Bristol Rvs"), "320": ("Cheltenham Town", "Cheltenham"),
+        "343": ("Chesterfield", "Chesterfield"), "339": ("Colchester United", "Colchester"),
+        "2594": ("Crawley Town", "Crawley Town"), "396": ("Crewe Alexandra", "Crewe"),
+        "324": ("Exeter City", "Exeter"), "3891": ("Fleetwood Town", "Fleetwood Town"),
+        "389": ("Gillingham", "Gillingham"), "386": ("Grimsby Town", "Grimsby"),
+        "635": ("Newport County", "Newport County"), "353": ("Northampton Town", "Northampton"),
+        "332": ("Oldham Athletic", "Oldham"), "348": ("Port Vale", "Port Vale"), "303": ("Rochdale", "Rochdale"),
+        "402": ("Rotherham United", "Rotherham"), "4703": ("Salford City", "Salford"),
+        "302": ("Shrewsbury Town", "Shrewsbury"), "341": ("Swindon Town", "Swindon"),
+        "345": ("Tranmere Rovers", "Tranmere"), "401": ("Walsall", "Walsall"), "315": ("York City", "York"),
+    },
+    "EC": {
+        "13884": ("AFC Fylde", "Fylde"), "10167": ("AFC Hornchurch", "Hornchurch"),
+        "632": ("Aldershot Town", "Aldershot"), "633": ("Altrincham", "Altrincham"), "642": ("Barrow", "Barrow"),
+        "2595": ("Boreham Wood", "Boreham Wood"), "3256": ("Boston United", "Boston Utd"),
+        "322": ("Carlisle United", "Carlisle"), "3897": ("Eastleigh", "Eastleigh"),
+        "312": ("FC Halifax Town", "Halifax"), "282": ("Forest Green Rovers", "Forest Green"),
+        "3138": ("Gateshead", "Gateshead"), "19262": ("Harrogate Town", "Harrogate"),
+        "323": ("Hartlepool United", "Hartlepool"), "319": ("Kidderminster Harriers", "Kidderminster"),
+        "313": ("Scunthorpe United", "Scunthorpe"), "13061": ("Solihull Moors", "Solihull"),
+        "310": ("Southend United", "Southend"), "3231": ("Sutton United", "Sutton"), "645": ("Tamworth", "Tamworth"),
+        "3887": ("Wealdstone", "Wealdstone"), "290": ("Woking", "Woking"), "128663": ("Worthing", "Worthing"),
+        "284": ("Yeovil Town", "Yeovil"),
+    },
+    "SC0": {
+        "263": ("Aberdeen", "Aberdeen"), "256": ("Celtic", "Celtic"), "261": ("Dundee", "Dundee"),
+        "264": ("Dundee United", "Dundee United"), "254": ("Falkirk", "Falkirk"),
+        "262": ("Heart of Midlothian", "Hearts"), "258": ("Hibernian", "Hibernian"),
+        "260": ("Kilmarnock", "Kilmarnock"), "266": ("Motherwell", "Motherwell"), "257": ("Rangers", "Rangers"),
+        "267": ("St Johnstone", "St Johnstone"), "250": ("St Mirren", "St Mirren"),
+    },
+    "SC1": {
+        "252": ("Arbroath", "Arbroath"), "248": ("Ayr United", "Ayr"), "265": ("Dunfermline Athletic", "Dunfermline"),
+        "411": ("Greenock Morton", "Morton"), "253": ("Inverness Caledonian Thistle", "Inverness C"),
+        "259": ("Livingston", "Livingston"), "247": ("Partick Thistle", "Partick"),
+        "422": ("Queen's Park", "Queens Park"), "249": ("Raith Rovers", "Raith Rvs"),
+        "405": ("Stenhousemuir", "Stenhousemuir"),
+    },
+    "N1": {
+        "2726": ("ADO Den Haag", "Den Haag"), "139": ("Ajax Amsterdam", "Ajax"), "140": ("AZ Alkmaar", "AZ Alkmaar"),
+        "2566": ("Excelsior", "Excelsior"), "145": ("FC Groningen", "Groningen"), "152": ("FC Twente", "Twente"),
+        "153": ("FC Utrecht", "Utrecht"), "142": ("Feyenoord Rotterdam", "Feyenoord"),
+        "143": ("Fortuna Sittard", "For Sittard"), "3706": ("Go Ahead Eagles", "Go Ahead Eagles"),
+        "146": ("Heerenveen", "Heerenveen"), "147": ("NEC Nijmegen", "Nijmegen"), "2565": ("PEC Zwolle", "Zwolle"),
+        "148": ("PSV Eindhoven", "PSV Eindhoven"), "3736": ("SC Cambuur", "Cambuur"),
+        "151": ("Sparta Rotterdam", "Sparta Rotterdam"), "3735": ("Telstar", "Telstar"),
+        "156": ("Willem II", "Willem II"),
+    },
+    "B1": {
+        "441": ("Anderlecht", "Anderlecht"), "17544": ("Antwerp", "Antwerp"),
+        "3610": ("Cercle Brugge KSV", "Cercle Brugge"), "570": ("Club Brugge", "Club Brugge"),
+        "3611": ("KAA Gent", "Gent"), "5786": ("KV Kortrijk", "Kortrijk"), "7879": ("KV Mechelen", "Mechelen"),
+        "606": ("KVC Westerlo", "Westerlo"), "22269": ("Lommel SK", "Lommel SK"),
+        "5579": ("OH Leuven", "Oud-Heverlee Leuven"), "131235": ("RAAL La Louvière", "RAAL La Louviere"),
+        "938": ("Racing Genk", "Genk"), "3616": ("Royal Charleroi SC", "Charleroi"),
+        "936": ("Sint-Truidense", "St Truiden"), "559": ("Standard Liege", "Standard"),
+        "5807": ("Union St.-Gilloise", "St. Gilloise"), "13450": ("Waasland-Beveren", "Beveren"),
+        "4691": ("Zulte-Waregem", "Waregem"),
+    },
+    "P1": {
+        "21607": ("Académico de Viseu", "Academico Viseu"), "21613": ("Alverca", "Alverca"),
+        "15784": ("Arouca", "Arouca"), "1929": ("Benfica", "Benfica"), "2994": ("Braga", "Sp Braga"),
+        "3472": ("C.D. Nacional", "Nacional"), "21581": ("Casa Pia", "Casa Pia"), "12216": ("Estoril", "Estoril"),
+        "21610": ("Estrela", "Estrela"), "12698": ("FC Famalicao", "Famalicao"), "437": ("FC Porto", "Porto"),
+        "3699": ("Gil Vicente", "Gil Vicente"), "552": ("Maritimo", "Maritimo"), "3696": ("Moreirense", "Moreirense"),
+        "3822": ("Rio Ave", "Rio Ave"), "12215": ("Santa Clara", "Santa Clara"), "2250": ("Sporting CP", "Sp Lisbon"),
+        "5309": ("Vitória de Guimaraes", "Guimaraes"),
+    },
+    "T1": {
+        "9078": ("Alanyaspor", "Alanyaspor"), "132335": ("Amed SFK", "Amedspor"), "1895": ("Besiktas", "Besiktas"),
+        "7656": ("Caykur Rizespor", "Rizespor"), "19267": ("Erzurum BB", "Erzurumspor"),
+        "20729": ("Eyupspor", "Eyupspor"), "436": ("Fenerbahce", "Fenerbahce"), "432": ("Galatasaray", "Galatasaray"),
+        "20070": ("Gaziantep FK", "Gaziantep"), "996": ("Genclerbirligi", "Genclerbirligi"),
+        "789": ("Goztepe", "Goztep"), "7914": ("Istanbul Basaksehir", "Buyuksehyr"),
+        "6870": ("Kasimpasa", "Kasimpasa"), "995": ("Kocaelispor", "Kocaelispor"), "7648": ("Konyaspor", "Konyaspor"),
+        "11429": ("Samsunspor", "Samsunspor"), "997": ("Trabzonspor", "Trabzonspor"), "132334": ("Çorum FK", "Corum"),
+    },
+    "G1": {
+        "887": ("AEK Athens", "AEK"), "11553": ("Aris", "Aris"), "8354": ("Asteras Tripoli", "Asteras Tripolis"),
+        "6790": ("Atromitos", "Atromitos"), "2575": ("Iraklis", "Iraklis"), "132429": ("Kalamata", "Kalamata"),
+        "21969": ("Kifisia", "Kifisia"), "5276": ("Levadiakos", "Levadeiakos"), "1010": ("OFI Crete", "OFI Crete"),
+        "435": ("Olympiacos", "Olympiakos"), "443": ("Panathinaikos", "Panathinaikos"),
+        "11431": ("Panetolikos", "Panetolikos"), "605": ("PAOK", "PAOK"), "20043": ("Volos NFC", "Volos NFC"),
+    },
+    "ARG": {
+        "9739": ("Aldosivi", "Aldosivi"), "3": ("Argentinos Juniors", "Argentinos Jrs"),
+        "9785": ("Atlético Tucumán", "Atl. Tucuman"), "235": ("Banfield", "Banfield"),
+        "10060": ("Barracas Central", "Barracas Central"), "4": ("Belgrano (Córdoba)", "Belgrano"),
+        "5": ("Boca Juniors", "Boca Juniors"), "11989": ("Central Córdoba (Santiago del Estero)", "Central Cordoba"),
+        "8950": ("Defensa y Justicia", "Defensa y Justicia"), "17702": ("Deportivo Riestra", "Dep. Riestra"),
+        "8": ("Estudiantes de La Plata", "Estudiantes L.P."),
+        "19685": ("Estudiantes de Río Cuarto", "Estudiantes Rio Cuarto"),
+        "11972": ("Gimnasia (Mendoza)", "Gimnasia Mendoza"), "9": ("Gimnasia La Plata", "Gimnasia L.P."),
+        "10": ("Huracán", "Huracan"), "11": ("Independiente", "Independiente"),
+        "9744": ("Independiente Rivadavia", "Ind. Rivadavia"), "2975": ("Instituto (Córdoba)", "Instituto"),
+        "12": ("Lanús", "Lanus"), "14": ("Newell's Old Boys", "Newells Old Boys"), "7764": ("Platense", "Platense"),
+        "15": ("Racing Club", "Racing Club"), "16": ("River Plate", "River Plate"),
+        "17": ("Rosario Central", "Rosario Central"), "18": ("San Lorenzo", "San Lorenzo"),
+        "10158": ("Sarmiento (Junín)", "Sarmiento Junin"), "19": ("Talleres (Córdoba)", "Talleres Cordoba"),
+        "7767": ("Tigre", "Tigre"), "20": ("Unión (Santa Fe)", "Union de Santa Fe"),
+        "21": ("Vélez Sarsfield", "Velez Sarsfield"),
+    },
+    "AUT": {
+        "21540": ("Austria Lustenau", "A. Lustenau"), "1382": ("Austria Vienna", "Austria Vienna"),
+        "21846": ("Grazer AK", "Grazer AK"), "4411": ("LASK Linz", "LASK"), "519": ("Rapid Vienna", "SK Rapid"),
+        "2790": ("RB Salzburg", "Salzburg"), "4405": ("SC Rheindorf Altach", "Altach"),
+        "3746": ("SK Sturm Graz", "Sturm Graz"), "3759": ("SV Josko Ried", "Ried"),
+        "6907": ("TSV Hartberg", "Hartberg"), "13294": ("Wolfsberger", "Wolfsberger AC"),
+        "18794": ("WSG Swarovski Tirol", "Tirol"),
+    },
+    "BRA": {
+        "3458": ("Athletico-PR", "Athletico-PR"), "7632": ("Atlético-MG", "Atletico-MG"), "9967": ("Bahia", "Bahia"),
+        "6086": ("Botafogo", "Botafogo RJ"), "9318": ("Chapecoense", "Chapecoense-SC"),
+        "874": ("Corinthians", "Corinthians"), "3456": ("Coritiba", "Coritiba"), "2022": ("Cruzeiro", "Cruzeiro"),
+        "819": ("Flamengo", "Flamengo RJ"), "3445": ("Fluminense", "Fluminense"), "6273": ("Grêmio", "Gremio"),
+        "1936": ("Internacional", "Internacional"), "9169": ("Mirassol", "Mirassol"),
+        "2029": ("Palmeiras", "Palmeiras"), "6079": ("Red Bull Bragantino", "Bragantino"), "4936": ("Remo", "Remo"),
+        "2674": ("Santos", "Santos"), "2026": ("São Paulo", "Sao Paulo"), "3454": ("Vasco da Gama", "Vasco"),
+        "3457": ("Vitória", "Vitoria"),
+    },
+    "CHN": {
+        "2052": ("Beijing Guoan", "Beijing Guoan"), "21355": ("Chengdu Rongcheng", "Chengdu Rongcheng"),
+        "131704": ("Chongqing Tonglianglong", "Chongqing Tonglianglong"), "22537": ("Dalian Yingbo", "Dalian Yingbo"),
+        "8240": ("Henan", "Henan Songshan Longmen"), "131705": ("Liaoning Tieren", "Liaoning Tieren"),
+        "21910": ("Qingdao Hainiu", "Qingdao Hainiu"), "22198": ("Qingdao West Coast", "Qingdao West Coast"),
+        "7521": ("Shandong Taishan", "Shandong Taishan"), "15515": ("Shanghai Port FC", "Shanghai Port"),
+        "977": ("Shanghai Shenhua FC", "Shanghai Shenhua"),
+        "22199": ("Shenzhen Xinpengcheng", "Shenzhen Xinpengcheng"),
+        "8239": ("Tianjin Jinmen Tiger", "Tianjin Jinmen Tiger"), "21506": ("Wuhan Three Towns", "Wuhan Three Towns"),
+        "22536": ("Yunnan Yukun", "Yunnan Yukun"), "18203": ("Zhejiang Professional FC", "Zhejiang Professional"),
+    },
+    "DNK": {
+        "3585": ("AC Horsens", "Horsens"), "7853": ("AGF", "Aarhus"), "575": ("Brøndby IF", "Brondby"),
+        "909": ("F.C. København", "FC Copenhagen"), "572": ("FC Midtjylland", "Midtjylland"),
+        "3101": ("FC Nordsjælland", "Nordsjaelland"), "7860": ("Lyngby Boldklub", "Lyngby"),
+        "11550": ("Odense Boldklub", "Odense"), "3132": ("Randers FC", "Randers FC"),
+        "607": ("Silkeborg IF", "Silkeborg"), "8118": ("Sønderjyske Fodbold", "Sonderjyske"),
+        "3153": ("Viborg FF", "Viborg"),
+    },
+    "JPN": {
+        "7107": ("Avispa Fukuoka", "Avispa Fukuoka"), "7109": ("Cerezo Osaka", "Cerezo Osaka"),
+        "22522": ("Fagiano Okayama", "Okayama"), "3384": ("FC Tokyo", "FC Tokyo"),
+        "7102": ("Gamba Osaka", "Gamba Osaka"), "7111": ("JEF United Ichihara-Chiba", "Chiba"),
+        "7115": ("Kashima Antlers", "Kashima Antlers"), "7476": ("Kashiwa Reysol", "Kashiwa Reysol"),
+        "7112": ("Kawasaki Frontale", "Kawasaki Frontale"), "21361": ("Kyoto Sanga", "Kyoto"),
+        "22167": ("Machida Zelvia", "Machida"), "131701": ("Mito Hollyhock", "Mito"),
+        "7108": ("Nagoya Grampus", "Nagoya Grampus"), "7114": ("Sanfrecce Hiroshima", "Sanfrecce Hiroshima"),
+        "7104": ("Shimizu S-Pulse", "Shimizu S-Pulse"), "3393": ("Tokyo Verdy 1969", "Verdy"),
+        "3385": ("Urawa Red Diamonds", "Urawa Reds"), "19001": ("V-Varen Nagasaki", "V-Varen Nagasaki"),
+        "7477": ("Vissel Kobe", "Vissel Kobe"), "7116": ("Yokohama F. Marinos", "Yokohama F. Marinos"),
+    },
+    "MEX": {
+        "227": ("América", "Club America"), "226": ("Atlante", "Atlante"), "216": ("Atlas", "Atlas"),
+        "15720": ("Atlético de San Luis", "Atl. San Luis"), "218": ("Cruz Azul", "Cruz Azul"),
+        "17851": ("FC Juárez", "Juarez"), "219": ("Guadalajara", "Guadalajara Chivas"), "228": ("León", "Club Leon"),
+        "220": ("Monterrey", "Monterrey"), "229": ("Necaxa", "Necaxa"), "234": ("Pachuca", "Pachuca"),
+        "231": ("Puebla", "Puebla"), "233": ("Pumas UNAM", "UNAM Pumas"), "222": ("Querétaro", "Queretaro"),
+        "225": ("Santos", "Santos Laguna"), "232": ("Tigres UANL", "Tigres UANL"),
+        "10125": ("Tijuana", "Club Tijuana"), "223": ("Toluca", "Toluca"),
+    },
+    "NOR": {
+        "3278": ("Aalesund", "Aalesund"), "2980": ("Bodo/Glimt", "Bodo/Glimt"),
+        "3039": ("Fredrikstad", "Fredrikstad"), "21380": ("Hamarkameratene", "HamKam"), "6750": ("IK Start", "Start"),
+        "22165": ("KFUM Oslo", "KFUM Oslo"), "6672": ("Kristiansund BK", "Kristiansund"),
+        "987": ("Lillestrom", "Lillestrom"), "2715": ("Molde", "Molde"), "438": ("Rosenborg", "Rosenborg"),
+        "3279": ("Sandefjord", "Sandefjord"), "5002": ("Sarpsborg FK", "Sarpsborg 08"), "620": ("SK Brann", "Brann"),
+        "5270": ("Tromso", "Tromso"), "510": ("Viking FK", "Viking"), "2791": ("Vålerenga", "Valerenga"),
+    },
+    "RUS": {
+        "2991": ("Akhmat Grozny", "Akhmat Grozny"), "22271": ("Akron Tolyatti", "Akron Togliatti"),
+        "1963": ("CSKA Moscow", "CSKA Moscow"), "596": ("Dinamo Moscow", "Dynamo Moscow"),
+        "22300": ("Dynamo Makhachkala", "Dynamo Makhachkala"), "21539": ("Fakel Voronezh", "Fakel Voronezh"),
+        "21949": ("FC Baltika Kaliningrad", "Baltika"), "18285": ("Gazovik Orenburg", "Orenburg"),
+        "11336": ("Krasnodar", "Krasnodar"), "3850": ("Krylia Sovetov", "Krylya Sovetov"),
+        "442": ("Lokomotiv Moscow", "Lokomotiv Moscow"), "21927": ("Rodina Moscow", "Rodina Moscow"),
+        "3852": ("Rostov", "FK Rostov"), "3851": ("Rubin Kazan", "Rubin Kazan"),
+        "1941": ("Spartak Moscow", "Spartak Moscow"), "2533": ("Zenit St Petersburg", "Zenit"),
+    },
+    "SWE": {
+        "994": ("AIK", "AIK"), "7834": ("BK Häcken", "Hacken"), "20856": ("Degerfors IF", "Degerfors"),
+        "2339": ("Djurgården", "Djurgarden"), "8222": ("GAIS", "GAIS"), "3017": ("Halmstads BK", "Halmstad"),
+        "2495": ("Hammarby IF", "Hammarby"), "8221": ("IF Brommapojkarna", "Brommapojkarna"),
+        "529": ("IF Elfsborg", "Elfsborg"), "2556": ("IFK Göteborg", "Goteborg"), "8547": ("IK Sirius", "Sirius"),
+        "3052": ("Kalmar FF", "Kalmar"), "2720": ("Malmö FF", "Malmo FF"), "20301": ("Mjällby AIF", "Mjallby"),
+        "22163": ("Västerås SK", "Vasteras SK"), "131552": ("Örgryte IS", "Orgryte"),
+    },
+    "USA": {
+        "18418": ("Atlanta United FC", "Atlanta Utd"), "20906": ("Austin FC", "Austin FC"),
+        "9720": ("CF Montréal", "CF Montreal"), "21300": ("Charlotte FC", "Charlotte"),
+        "182": ("Chicago Fire FC", "Chicago Fire"), "184": ("Colorado Rapids", "Colorado Rapids"),
+        "183": ("Columbus Crew", "Columbus Crew"), "193": ("D.C. United", "DC United"),
+        "18267": ("FC Cincinnati", "FC Cincinnati"), "185": ("FC Dallas", "FC Dallas"),
+        "6077": ("Houston Dynamo FC", "Houston Dynamo"), "20232": ("Inter Miami CF", "Inter Miami"),
+        "187": ("LA Galaxy", "Los Angeles Galaxy"), "18966": ("LAFC", "Los Angeles FC"),
+        "17362": ("Minnesota United FC", "Minnesota United"), "18986": ("Nashville SC", "Nashville SC"),
+        "189": ("New England Revolution", "New England Revolution"), "17606": ("New York City FC", "New York City"),
+        "12011": ("Orlando City SC", "Orlando City"), "10739": ("Philadelphia Union", "Philadelphia Union"),
+        "9723": ("Portland Timbers", "Portland Timbers"), "4771": ("Real Salt Lake", "Real Salt Lake"),
+        "190": ("Red Bull New York", "New York Red Bulls"), "22529": ("San Diego FC", "San Diego FC"),
+        "191": ("San Jose Earthquakes", "San Jose Earthquakes"), "9726": ("Seattle Sounders FC", "Seattle Sounders"),
+        "186": ("Sporting Kansas City", "Sporting Kansas City"), "21812": ("St. Louis CITY SC", "St. Louis City"),
+        "7318": ("Toronto FC", "Toronto FC"), "9727": ("Vancouver Whitecaps", "Vancouver Whitecaps"),
+    },
 }
 
 # league: {fixturedownload name: football-data.co.uk name}. The 2025-26 and
@@ -324,7 +706,144 @@ FD_CLUBS = {
         "RC Lens": "Lens", "RC Strasbourg Alsace": "Strasbourg", "Stade Brestois 29": "Brest",
         "Stade Rennais FC": "Rennes", "Toulouse FC": "Toulouse",
     },
+    # ---- every other league fixturedownload covers (league probe of 2026-10-29)
+    "E1": {
+        "Birmingham City": "Birmingham", "Blackburn Rovers": "Blackburn", "Bolton Wanderers": "Bolton",
+        "Bristol City": "Bristol City", "Burnley": "Burnley", "Cardiff City": "Cardiff",
+        "Charlton Athletic": "Charlton", "Coventry City": "Coventry", "Derby County": "Derby", "Hull City": "Hull",
+        "Ipswich Town": "Ipswich", "Leicester City": "Leicester", "Lincoln City": "Lincoln",
+        "Middlesbrough": "Middlesbrough", "Millwall": "Millwall", "Norwich City": "Norwich",
+        "Oxford United": "Oxford", "Portsmouth": "Portsmouth", "Preston North End": "Preston",
+        "Queens Park Rangers": "QPR", "Sheffield United": "Sheffield United", "Sheffield Wednesday": "Sheffield Weds",
+        "Southampton": "Southampton", "Stoke City": "Stoke", "Swansea City": "Swansea", "Watford": "Watford",
+        "West Bromwich Albion": "West Brom", "West Ham United": "West Ham", "Wolverhampton Wanderers": "Wolves",
+        "Wrexham": "Wrexham",
+    },
+    "F2": {
+        "AS Nancy Lorraine": "Nancy", "AS Saint-Étienne": "St Etienne", "Clermont Foot 63": "Clermont",
+        "Dijon FCO": "Dijon", "EN Avant Guingamp": "Guingamp", "FC Annecy": "Annecy", "FC Metz": "Metz",
+        "FC Nantes": "Nantes", "FC Sochaux-Montbéliard": "Sochaux", "Grenoble Foot 38": "Grenoble",
+        "Montpellier Hérault SC": "Montpellier", "Pau FC": "Pau FC", "Red Star FC": "Red Star",
+        "Rodez Aveyron Football": "Rodez", "Stade DE Reims": "Reims", "Stade Lavallois MFC": "Laval",
+        "US Boulogne CO": "Boulogne", "USL Dunkerque": "Dunkerque",
+    },
+    "SC0": {
+        "Aberdeen": "Aberdeen", "Celtic": "Celtic", "Dundee": "Dundee", "Dundee United": "Dundee United",
+        "Falkirk": "Falkirk", "Heart of Midlothian": "Hearts", "Hibernian": "Hibernian", "Kilmarnock": "Kilmarnock",
+        "Motherwell": "Motherwell", "Rangers": "Rangers", "St. Johnstone": "St Johnstone", "St. Mirren": "St Mirren",
+    },
+    "N1": {
+        "ADO Den Haag": "Den Haag", "Ajax": "Ajax", "AZ": "AZ Alkmaar", "Excelsior Rotterdam": "Excelsior",
+        "FC Groningen": "Groningen", "FC Twente": "Twente", "FC Utrecht": "Utrecht", "FC Volendam": "Volendam",
+        "Feyenoord": "Feyenoord", "Fortuna Sittard": "For Sittard", "Go Ahead Eagles": "Go Ahead Eagles",
+        "Heracles Almelo": "Heracles", "N.E.C. Nijmegen": "Nijmegen", "NAC Breda": "NAC Breda",
+        "PEC Zwolle": "Zwolle", "PSV": "PSV Eindhoven", "SC Cambuur": "Cambuur", "sc Heerenveen": "Heerenveen",
+        "Sparta Rotterdam": "Sparta Rotterdam", "Telstar": "Telstar", "Willem II": "Willem II",
+    },
+    "P1": {
+        "Académico": "Academico Viseu", "AFS": "AVS", "Casa Pia AC": "Casa Pia", "CD Nacional": "Nacional",
+        "CD Tondela": "Tondela", "Estoril Praia": "Estoril", "Estrela Amadora": "Estrela", "FC Alverca": "Alverca",
+        "FC Arouca": "Arouca", "FC Famalicão": "Famalicao", "FC Porto": "Porto", "Gil Vicente FC": "Gil Vicente",
+        "Marítimo M.": "Maritimo", "Moreirense FC": "Moreirense", "Rio Ave FC": "Rio Ave",
+        "Santa Clara": "Santa Clara", "SC Braga": "Sp Braga", "SL Benfica": "Benfica", "Sporting CP": "Sp Lisbon",
+        "Vitória SC": "Guimaraes",
+    },
+    "T1": {
+        "Alanyaspor": "Alanyaspor", "Amedspor": "Amedspor", "Antalyaspor": "Antalyaspor", "Besiktas": "Besiktas",
+        "Erzurumspor": "Erzurumspor", "Eyüpspor": "Eyupspor", "Fatih Karagümrük": "Karagumruk",
+        "Fenerbahçe": "Fenerbahce", "Galatasaray": "Galatasaray", "Gaziantep": "Gaziantep",
+        "Gençlerbirligi": "Genclerbirligi", "Göztepe": "Goztep", "Istanbul Basaksehir": "Buyuksehyr",
+        "Kasimpasa": "Kasimpasa", "Kayserispor": "Kayserispor", "Kocaelispor": "Kocaelispor",
+        "Konyaspor": "Konyaspor", "Samsunspor": "Samsunspor", "Trabzonspor": "Trabzonspor",
+        "Çaykur Rizespor": "Rizespor", "Çorum": "Corum",
+    },
+    "USA": {
+        "Atlanta": "Atlanta Utd", "Atlanta United": "Atlanta Utd", "Austin": "Austin FC", "Austin FC": "Austin FC",
+        "CF Montréal": "CF Montreal", "Charlotte": "Charlotte", "Charlotte FC": "Charlotte",
+        "Chicago": "Chicago Fire", "Chicago Fire FC": "Chicago Fire", "Cincinnati": "FC Cincinnati",
+        "Colorado": "Colorado Rapids", "Colorado Rapids": "Colorado Rapids", "Columbus": "Columbus Crew",
+        "Columbus Crew": "Columbus Crew", "D.C.": "DC United", "D.C. United": "DC United", "Dallas": "FC Dallas",
+        "FC Cincinnati": "FC Cincinnati", "FC Dallas": "FC Dallas", "Houston": "Houston Dynamo",
+        "Houston Dynamo FC": "Houston Dynamo", "Inter Miami CF": "Inter Miami", "Kansas City": "Sporting Kansas City",
+        "LA": "Los Angeles Galaxy", "LA Galaxy": "Los Angeles Galaxy", "LAFC": "Los Angeles FC",
+        "Los Angeles Football Club": "Los Angeles FC", "Miami": "Inter Miami", "Minnesota": "Minnesota United",
+        "Minnesota United FC": "Minnesota United", "Montréal": "CF Montreal", "Nashville": "Nashville SC",
+        "Nashville SC": "Nashville SC", "New England": "New England Revolution",
+        "New England Revolution": "New England Revolution", "New York": "New York Red Bulls",
+        "New York City": "New York City", "New York City Football Club": "New York City", "Orlando": "Orlando City",
+        "Orlando City": "Orlando City", "Philadelphia": "Philadelphia Union",
+        "Philadelphia Union": "Philadelphia Union", "Portland": "Portland Timbers",
+        "Portland Timbers": "Portland Timbers", "Real Salt Lake": "Real Salt Lake",
+        "Red Bull New York": "New York Red Bulls", "Salt Lake": "Real Salt Lake", "San Diego": "San Diego FC",
+        "San Diego FC": "San Diego FC", "San Jose": "San Jose Earthquakes",
+        "San Jose Earthquakes": "San Jose Earthquakes", "Seattle": "Seattle Sounders",
+        "Seattle Sounders FC": "Seattle Sounders", "Sporting Kansas City": "Sporting Kansas City",
+        "St. Louis": "St. Louis City", "St. Louis CITY SC": "St. Louis City", "Toronto": "Toronto FC",
+        "Toronto FC": "Toronto FC", "Vancouver": "Vancouver Whitecaps",
+        "Vancouver Whitecaps FC": "Vancouver Whitecaps",
+    },
 }
+
+# ------------------------------------------------------------- the leagues asked about
+
+# ESPN's league code for each league with a club table: soccer_data's
+# registry (ALL_LEAGUES[code].espn).
+ESPN_SLUGS = {code: sd.ALL_LEAGUES[code].espn for code in ESPN_CLUBS}
+# Leagues the registry has an ESPN code for that are not asked about: on the
+# probe of 2026-10-29 ESPN had no current season for them (football-data.co.uk
+# alone). POL has no ESPN code at all (pol.1 answered 404).
+ESPN_NOT_ASKED = {
+    "SC2": "sco.3 listed 2025-26's clubs and no events Oct 26 - Nov 8",
+    "SC3": "sco.4 listed 2025-26's clubs and no events Oct 26 - Nov 8",
+    "ROU": "rou.1 listed 2025-26's clubs and no events Oct 26 - Nov 8",
+    "SWZ": "sui.1 listed 2025-26's clubs and no events Oct 26 - Nov 8",
+    "FIN": "fin.1 listed no clubs and no events",
+    "IRL": "irl.1 listed no clubs and no events",
+}
+# fixturedownload.com's feed name per league: the slugs that answered on the
+# probe (2026-10-29; of 28 tried, the rest 404). Its "season" is the year the
+# season starts, a calendar year for MLS - football-data.co.uk's convention.
+FD_SLUGS = {"E0": "epl", "SP1": "la-liga", "I1": "serie-a", "D1": "bundesliga", "F1": "ligue-1",
+            "E1": "championship", "F2": "ligue-2", "SC0": "scottish-premiership", "N1": "eredivisie",
+            "P1": "primeira-liga", "T1": "super-lig", "USA": "mls"}
+# The zone of fixturedownload's placeholder clock per league (is_placeholder):
+# midnight UTC or midnight here. None: no placeholder rule - MLS kicks off at
+# 00:00 UTC for real (20:00 Eastern summer time: 4 played matches in 2025,
+# 5 in 2026 and 8 still to play), and its feed had no unscheduled round to
+# learn one from.
+LOCAL = {"E0": ZoneInfo("Europe/London"), "SP1": ZoneInfo("Europe/Madrid"), "I1": ZoneInfo("Europe/Rome"),
+         "D1": ZoneInfo("Europe/Berlin"), "F1": ZoneInfo("Europe/Paris"), "E1": ZoneInfo("Europe/London"),
+         "F2": ZoneInfo("Europe/Paris"), "SC0": ZoneInfo("Europe/London"), "N1": ZoneInfo("Europe/Amsterdam"),
+         "P1": ZoneInfo("Europe/Lisbon"), "T1": ZoneInfo("Europe/Istanbul"), "USA": None}
+# Every league either feed covers, in the registry's order (the five first,
+# so a fetch cut short by its budget loses the others first) - and the five
+# a sync asks about unless told otherwise: the leagues the app predicts today
+# (soccer_schedule joins only those). Switching the app to more leagues is
+# soccer_predict's sync call with leagues=FEED_LEAGUES.
+FEED_LEAGUES = tuple(code for code in sd.ALL_LEAGUES if code in ESPN_SLUGS or code in FD_SLUGS)
+LIVE_LEAGUES = tuple(sd.TOP)
+
+# Leagues whose format plays one pairing (home v away) more than once a
+# season - a split into groups, a third or fourth round robin, play-offs or
+# two tournaments in one season. Every league where football-data.co.uk has a
+# pairing twice in a season of 2021-2025 (none of the others has one): there
+# reconcile pairs ESPN's and fixturedownload's rows of a pairing by date, not
+# by the pairing alone (RECONCILING in the module's notes).
+REPEATS = frozenset({"SC0", "SC1", "SC2", "SC3", "B1", "G1", "ARG", "AUT", "DNK", "FIN", "IRL", "MEX", "ROU",
+                     "SWZ", "USA"})
+# In those leagues an ESPN event and a fixturedownload row of one pairing are
+# one match when their dates are at most this far apart (nearest first): half
+# the shortest gap between a pairing's two meetings there, USA's 7 days.
+PAIR_DAYS = 3
+# ESPN's season slug for a knock-out phase: in the probe, every play-off and
+# cup-tie event (usa.usl.1's 8 "...-conference-playoffs---quarterfinals", the
+# 115 of eng.fa, eng.league_cup, esp.copa_del_rey and ger.dfb_pokal:
+# "first-round", "second-round", "fourth-round") matched it and no league
+# event (all 661 on the 31 leagues' boards) did. football-data.co.uk leaves
+# play-offs out of its main divisions, so there an event in such a phase is
+# skipped; the extra leagues' files keep theirs (MLS Cup, the liguilla, ...),
+# and their events are read.
+KNOCKOUT = re.compile(r"play-?offs?|(^|-)round(-|$)")
 
 
 class FeedError(ValueError):
@@ -459,7 +978,21 @@ def parse_espn(payload, league, request=None, seen_at=None, log=print, missing=N
     return rows
 
 
+def knockout_phase(event, league):
+    """ESPN's season slug for the event where it names a knock-out phase (a
+    play-off, a cup round: KNOCKOUT) in a division football-data.co.uk files
+    without its play-offs (its main divisions); else None."""
+    meta = sd.ALL_LEAGUES.get(league)
+    phase = str((event.get("season") or {}).get("slug") or "")
+    return phase if meta is not None and meta.kind == "main" and KNOCKOUT.search(phase) else None
+
+
 def _espn_event(event, league, request, seen_at, log, missing=None):
+    phase = knockout_phase(event, league)
+    if phase:
+        log(f"   espn {league}: event {event.get('id')} is in ESPN's '{phase}' phase, a play-off or cup tie - "
+            f"football-data.co.uk leaves those out of this division; skipped")
+        return None
     comp = (event.get("competitions") or [{}])[0]
     sides = {c.get("homeAway"): c for c in comp.get("competitors") or []}
     if "home" not in sides or "away" not in sides:
@@ -481,7 +1014,7 @@ def _espn_event(event, league, request, seen_at, log, missing=None):
             status = "unknown"
             hg = ag = None
     day = uk_date(when)
-    season = sd.season_of(day.isoformat())
+    season = sd.season_for(league, day.isoformat())         # football-data.co.uk's convention for the league
     espn_season = (event.get("season") or {}).get("year")
     if espn_season is not None and int(espn_season) != season:
         log(f"   espn {league} {home} v {away}: ESPN files it in season {espn_season}, its date in {season}")
@@ -497,9 +1030,14 @@ def _espn_event(event, league, request, seen_at, log, missing=None):
 
 def is_placeholder(moment, league):
     """fixturedownload's clock for a kickoff not yet set: midnight UTC (La
-    Liga, Serie A, the Bundesliga) or midnight in the league's own time
-    zone (Ligue 1). No top-five league kicks off at either."""
-    local = moment.astimezone(LOCAL[league])
+    Liga, Serie A, the Bundesliga, the Eredivisie, the Primeira Liga) or
+    midnight in the league's own time zone (Ligue 1, Ligue 2, the Primeira
+    Liga in summer time, the Super Lig). No league with a zone in LOCAL
+    kicks off at either; a league with none (MLS) has no placeholder rule."""
+    zone = LOCAL.get(league)
+    if zone is None:
+        return False
+    local = moment.astimezone(zone)
     return (moment.hour, moment.minute) == (0, 0) or (local.hour, local.minute) == (0, 0)
 
 
@@ -520,7 +1058,7 @@ def parse_fixturedownload(rows, league, season, request=None, seen_at=None, log=
             out.append(row)
             pairs[(row["home"], row["away"])].append(row["source_id"])
     for (home, away), ids in pairs.items():
-        if len(ids) > 1:
+        if len(ids) > 1 and league not in REPEATS:          # where pairings repeat, two rows are two matches
             log(f"   fixturedownload {league} {season}: {home} v {away} listed {len(ids)} times ({', '.join(ids)}); "
                 f"a pairing is played once a season - the feed has home and away swapped somewhere")
     return out
@@ -543,7 +1081,7 @@ def _fd_row(raw, league, season, request, seen_at, log, missing=None):
         status, hg, ag = "scheduled", None, None
     day = uk_date(when)
     hint = when.astimezone(LOCAL[league]).date() if placeholder else day
-    if sd.season_of(hint.isoformat()) != int(season):
+    if sd.season_for(league, hint.isoformat()) != int(season):
         log(f"   fixturedownload {league} {home} v {away}: dated {hint}, outside season {season}")
     return _row(source="fixturedownload", source_id=f"{int(season)}-{raw.get('MatchNumber')}", request=request,
                 league=league, season=int(season), home=home, away=away,
@@ -584,32 +1122,40 @@ def espn_days(now, days_back=4, days_ahead=10):
     return [today + timedelta(days=k) for k in range(-days_back, days_ahead + 1)]
 
 
-def requests_for(now, days_back=4, days_ahead=10, leagues=tuple(ESPN_SLUGS)):
-    """[(request key, url, league, kind, season)] for one fetch."""
-    season = sd.current_season(_aware(now).date())
+def requests_for(now, days_back=4, days_ahead=10, leagues=LIVE_LEAGUES):
+    """[(request key, url, league, kind, season)] for one fetch: ESPN's days
+    for a league in ESPN_SLUGS, fixturedownload's season file for one in
+    FD_SLUGS. The season is the league's own (soccer_data.season_for: a
+    calendar year for MLS, Brazil, ...; the year it starts otherwise)."""
+    today = _aware(now).date()
     out = []
     for league in leagues:
-        for day in espn_days(now, days_back, days_ahead):
-            out.append((f"espn:{league}:{day:%Y%m%d}",
-                        ESPN_BOARD.format(slug=ESPN_SLUGS[league], day=f"{day:%Y%m%d}"), league, "espn", season))
-        out.append((f"fixturedownload:{league}:{season}", FD_URL.format(slug=FD_SLUGS[league], season=season),
-                    league, "fixturedownload", season))
+        season = sd.season_for(league, today.isoformat())
+        if league in ESPN_SLUGS:
+            for day in espn_days(now, days_back, days_ahead):
+                out.append((f"espn:{league}:{day:%Y%m%d}",
+                            ESPN_BOARD.format(slug=ESPN_SLUGS[league], day=f"{day:%Y%m%d}"), league, "espn", season))
+        if league in FD_SLUGS:
+            out.append((f"fixturedownload:{league}:{season}", FD_URL.format(slug=FD_SLUGS[league], season=season),
+                        league, "fixturedownload", season))
     return out
 
 
-def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=tuple(ESPN_SLUGS), log=print,
+def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=LIVE_LEAGUES, log=print,
           clock=time.monotonic, budget=FETCH_BUDGET, wall=None):
     """ESPN's scoreboard one league and UTC day at a time from days_back
-    before now to days_ahead after (the scoreboard's calendar starts its days
-    at 07:00 or 08:00 UTC - midnight US Pacific - before any European
-    kickoff, so a European match is on the same day either way), plus
-    fixturedownload's current season per league.
+    before now to days_ahead after, plus fixturedownload's current season
+    per league. ESPN files an event under its US Eastern date: on the league
+    probe, which of 47 leagues' boards answered empty fits that on all 658
+    days (the Pacific date on 653, the UTC date on 642) - so a European
+    match is on its UTC day, and an MLS evening or an Asian morning kickoff
+    can be on the day before; the window has days to spare either side.
 
     Returns {"at", "rows", "ok": {request: rows}, "failed": {request: why},
     "unmapped": [clubs a feed named that the tables do not map]}. A request
     that fails is only reported: merge() keeps its rows on file.
-    STRAIGHT_FAILS and `budget` (seconds) bound how long an outage can take;
-    the requests they skip are reported as failed.
+    STRAIGHT_FAILS, FEED_DOWN and `budget` (seconds) bound how long an
+    outage can take; the requests they skip are reported as failed.
 
     seen_at: with `wall` (a clock: a real run, sync) each row is stamped
     with the moment its own request was answered, never earlier; without it
@@ -617,13 +1163,23 @@ def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=tuple(ESPN_SLU
     at = stamp(_aware(now))
     rows, ok, failed, missing = [], {}, {}, set()
     start, streak, skipping = clock(), defaultdict(int), set()
-    for key, url, league, kind, season in requests_for(now, days_back, days_ahead, leagues):
+    asked = requests_for(now, days_back, days_ahead, leagues)
+    per_league = Counter((kind, league) for _, _, league, kind, _ in asked)
+    down = defaultdict(int)                  # feed -> leagues in a row it failed for, with no answer between
+    for key, url, league, kind, season in asked:
         if streak[(kind, league)] >= STRAIGHT_FAILS:
             failed[key] = f"skipped: {STRAIGHT_FAILS} {kind} requests for {league} failed in a row"
             if (kind, league) not in skipping:
                 skipping.add((kind, league))
                 log(f"   {kind} {league}: {STRAIGHT_FAILS} failures in a row; its other requests skipped, "
                     f"kept what is on file")
+            continue
+        if down[kind] >= FEED_DOWN:
+            failed[key] = f"skipped: {kind} failed for {FEED_DOWN} leagues in a row"
+            if kind not in skipping:
+                skipping.add(kind)
+                log(f"   {kind}: failed for {FEED_DOWN} leagues in a row, taken for down; its other requests "
+                    f"skipped, kept what is on file")
             continue
         if clock() - start > budget:
             failed[key] = f"skipped: the fetch ran past {budget} s"
@@ -645,8 +1201,10 @@ def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=tuple(ESPN_SLU
             failed[key] = f"{err.__class__.__name__}: {str(err)[:120]}"
             log(f"   {key}: FAILED ({failed[key]}); kept what is on file")
             streak[(kind, league)] += 1
+            if streak[(kind, league)] == min(STRAIGHT_FAILS, per_league[(kind, league)]):
+                down[kind] += 1                  # this league's requests to the feed stop here
             continue
-        streak[(kind, league)] = 0
+        streak[(kind, league)] = down[kind] = 0
         ok[key] = len(got)
         rows.extend(got)
     log(f"   feeds: {len(ok)} requests answered, {len(failed)} failed, {len(rows)} rows"
@@ -789,7 +1347,7 @@ def distrust_empty(old_rows, fetched, log=print, previous=None):
     return fetched
 
 
-def sync(now=None, path=FEED, get=_get, days_back=4, days_ahead=10, leagues=tuple(ESPN_SLUGS), log=print,
+def sync(now=None, path=FEED, get=_get, days_back=4, days_ahead=10, leagues=LIVE_LEAGUES, log=print,
          wall=None):
     """Fetch both feeds, merge into the snapshot on file, write it. Returns
     the snapshot; its last_run says what answered and what failed, and which
@@ -872,8 +1430,36 @@ def _one_fd(rows, notes):
     return pick
 
 
+def _day(row):
+    hint = row.get("date_hint")
+    return date.fromisoformat(hint) if hint else None
+
+
+def legs(espn_rows, fd_rows):
+    """One pairing's rows in a league where pairings repeat (REPEATS) -> one
+    ([ESPN row], [fixturedownload row]) per match: every ESPN event is a
+    match, and a fixturedownload row is the ESPN event's nearest in date
+    within PAIR_DAYS (closest pairs first, each row once) or a match of its
+    own."""
+    gaps = sorted((abs((_day(e) - _day(f)).days), i, j) for i, e in enumerate(espn_rows)
+                  for j, f in enumerate(fd_rows) if _day(e) and _day(f) and abs((_day(e) - _day(f)).days) <= PAIR_DAYS)
+    used_e, used_f, out = set(), set(), []
+    for _, i, j in gaps:
+        if i in used_e or j in used_f:
+            continue
+        used_e.add(i)
+        used_f.add(j)
+        out.append(([espn_rows[i]], [fd_rows[j]]))
+    out += [([e], []) for i, e in enumerate(espn_rows) if i not in used_e]
+    out += [([], [f]) for j, f in enumerate(fd_rows) if j not in used_f]
+    return out
+
+
 def reconcile(espn_rows, fd_rows, log=print):
-    """One row per match (league, season, home, away) from both feeds' rows.
+    """One row per match from both feeds' rows: per pairing (league, season,
+    home, away) - a pairing is played once a season - except in a league
+    where pairings repeat (REPEATS), where each of a pairing's matches is
+    one row (legs: by date).
 
     Each row: match_id, league, season, home, away, uk_date, date_hint,
     kickoff_utc (ESPN's valid time, else fixturedownload's: the match's
@@ -891,10 +1477,12 @@ def reconcile(espn_rows, fd_rows, log=print):
         groups[match_key(r)][1].append(r)
     out = []
     for key in sorted(groups):
-        row = _reconcile_one(key, *groups[key])
-        for note in row["warnings"]:
-            log(f"   {row['league']} {row['home']} v {row['away']}: {note}")
-        out.append(row)
+        es, fs = groups[key]
+        for e_rows, f_rows in (legs(es, fs) if key[0] in REPEATS else [(es, fs)]):
+            row = _reconcile_one(key, e_rows, f_rows)
+            for note in row["warnings"]:
+                log(f"   {row['league']} {row['home']} v {row['away']}: {note}")
+            out.append(row)
     return sorted(out, key=lambda m: (m["date_hint"] or "", m["kickoff_utc"] or "", m["league"], m["home"]))
 
 
@@ -982,5 +1570,5 @@ if __name__ == "__main__":
     offline = "--offline" in sys.argv
     if not offline:
         print("Fixture feeds (ESPN, fixturedownload)")
-        sync()
+        sync(leagues=FEED_LEAGUES if "--all" in sys.argv else LIVE_LEAGUES)
     summary(reconciled(log=lambda *_: None))
