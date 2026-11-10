@@ -87,7 +87,7 @@
  ],
  "bouts": 8755,
  "dataset_end": "2026-11-07",
- "generated": "2026-11-10T01:06:39Z",
+ "generated": "2026-11-10T01:11:34Z",
  "notes": {
   "leak": "Figures published before 2026-09-18 came from a model that could see each fighter's final career record, which inflated historical accuracy to 78% and backtests to +16.2%. Those numbers were fiction and are not shown here.",
   "which_number_counts": "The confirm period is 2020 onward. Anything before it was used to choose how the strategies work, so its +6.1% is not a forecast. The confirm number is."
@@ -823,13 +823,110 @@
    "profiles": "The market is hard to beat in MMA, and a parlay pays the bookmaker's margin once for every leg. These are the likeliest tickets that reach each payout, not bets expected to profit. Backtested point in time, one ticket a card, from 2023-11-01 to 2026-08-08: ~5x (mixed, else steady): 90 tickets, 12 won, -38% a ticket (-69% to -7%), paying x4.59 at the median (x4.50 to x6.15); ~10x: 75 tickets, 8 won, +8% a ticket (-58% to +84%), paying x9.78 at the median (x9.52 to x11.7); 50-100x: 36 tickets, 0 won, -100% a ticket (-100% to -100%), paying x51.9 at the median (x50.1 to x71.2). A 50-100x ticket landed 0 times in 36. An interval that spans zero is no evidence of an edge. Multipliers use the best price seen across the books on file, so one book may pay less than shown. Method props (KO, submission) are not priced live: every leg is a moneyline, and a finishing route is the reason, not the bet. Combined chances multiply the legs, which assumes the fights are independent."
   },
   "live": {
-   "last": [],
+   "last": [
+    {
+     "event_date": "2026-11-14",
+     "event_name": "UFC 334: Gane vs. Hokit",
+     "legs": [
+      {
+       "decimal": 2.3,
+       "outcome": null,
+       "pick": "Charles Radtke"
+      },
+      {
+       "decimal": 1.60241,
+       "outcome": null,
+       "pick": "Donte Johnson"
+      },
+      {
+       "decimal": 1.277778,
+       "outcome": null,
+       "pick": "Melquizael Costa"
+      }
+     ],
+     "multiplier": 4.709304,
+     "prob": 0.234798,
+     "profile": "steady",
+     "profit": null,
+     "rule": "mixed_else@steady",
+     "status": "pending"
+    },
+    {
+     "event_date": "2026-11-14",
+     "event_name": "UFC 334: Gane vs. Hokit",
+     "legs": [
+      {
+       "decimal": 1.512821,
+       "outcome": null,
+       "pick": "Ciryl Gane"
+      },
+      {
+       "decimal": 1.540541,
+       "outcome": null,
+       "pick": "Kayla Harrison"
+      },
+      {
+       "decimal": 1.10989,
+       "outcome": null,
+       "pick": "Bilal Hasan"
+      },
+      {
+       "decimal": 2.3,
+       "outcome": null,
+       "pick": "Charles Radtke"
+      },
+      {
+       "decimal": 1.60241,
+       "outcome": null,
+       "pick": "Donte Johnson"
+      }
+     ],
+     "multiplier": 9.53327,
+     "prob": 0.107588,
+     "profile": "risker",
+     "profit": null,
+     "rule": "risker",
+     "status": "pending"
+    },
+    {
+     "event_date": "2026-11-14",
+     "event_name": "UFC 334: Gane vs. Hokit",
+     "legs": [
+      {
+       "decimal": 8.0,
+       "outcome": null,
+       "pick": "Luis Gurule"
+      },
+      {
+       "decimal": 1.60241,
+       "outcome": null,
+       "pick": "Donte Johnson"
+      },
+      {
+       "decimal": 1.277778,
+       "outcome": null,
+       "pick": "Melquizael Costa"
+      },
+      {
+       "decimal": 3.07,
+       "outcome": null,
+       "pick": "Macy Chiasson"
+      }
+     ],
+     "multiplier": 50.287175,
+     "prob": 0.03376,
+     "profile": "risk_lover",
+     "profit": null,
+     "rule": "risk_lover",
+     "status": "pending"
+    }
+   ],
    "profiles": {
     "risk_lover": {
      "label": "Risk lover",
      "lost": 0,
      "none": 0,
-     "pending": 0,
+     "pending": 1,
      "roi": null,
      "settled": 0,
      "target": "50-100x",
@@ -841,7 +938,7 @@
      "label": "Risker",
      "lost": 0,
      "none": 0,
-     "pending": 0,
+     "pending": 1,
      "roi": null,
      "settled": 0,
      "target": "~10x",
@@ -853,7 +950,7 @@
      "label": "Steady",
      "lost": 0,
      "none": 0,
-     "pending": 0,
+     "pending": 1,
      "roi": null,
      "settled": 0,
      "target": "~5x",
@@ -1154,9 +1251,9 @@
   ],
   "correct": 255,
   "graded": 426,
-  "pending": 71,
-  "predictions": 497,
+  "pending": 83,
+  "predictions": 509,
   "unique_bouts": 190,
-  "upcoming": 0
+  "upcoming": 12
  }
 }
