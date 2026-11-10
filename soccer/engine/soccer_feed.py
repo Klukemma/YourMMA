@@ -59,13 +59,20 @@ feed - FEED_LEAGUES - and 7 have none (football-data.co.uk alone):
                              slugs tried; its three European cups are not
                              leagues here).
 
-A sync asks about LIVE_LEAGUES unless told otherwise - the five the app
-predicts today (soccer_schedule joins only those): 80 requests. Every league
-is leagues=FEED_LEAGUES: 31 x 15 ESPN days and 12 season files, 477
-requests, about 80 seconds on GitHub's runner (the league probe made 997 in
-161 s). RUS: ESPN lists its 2026-27 rounds, football-data.co.uk's file
-stopped at 2026-08-02 (soccer_data) - so every RUS match after it is the
-feeds' alone (no price, no result of record) until the file resumes.
+A sync asks about the leagues it is given: the pipeline gives the app's
+leagues that have a feed, leagues_for(soccer_leagues.in_app()) - in_app()
+∩ FEED_LEAGUES, in the registry's order: 30 leagues, 30 x 15 ESPN days and
+12 season files, 462 requests, about 80 seconds on GitHub's runner (the
+league probe made 997 in 161 s). Not FEED_LEAGUES itself: that has RUS,
+which soccer_leagues keeps out of the app - RUS's matches from the feeds
+alone, unpriced, would get the model's picks. And not the seven in the app
+with no feed (SC2 SC3 FIN IRL POL ROU SWZ: football-data.co.uk alone - see
+coverage()). Told nothing, a sync asks about LIVE_LEAGUES, the five the app
+predicted before every league was measured (80 requests), so a caller
+written for them is unchanged. RUS: ESPN lists its 2026-27 rounds,
+football-data.co.uk's file stopped at 2026-08-02 (soccer_data) - so every
+RUS match after it would be the feeds' alone (no price, no result of
+record) until the file resumes.
 fixturedownload's placeholders, in its 2026-27 files: midnight UTC in the
 Eredivisie (100 rows) and the Primeira Liga, local midnight in Ligue 2
 (171), the Primeira Liga's summer time (198 with its UTC ones) and the
@@ -149,9 +156,11 @@ match ESPN moves by more than three days while fixturedownload does not is
 two rows, neither confirmed, until fixturedownload catches up; and ESPN
 listing one match as two events (a postponed one beside its new date - not
 seen: the probe's one postponed event, in Scotland, stood alone) would be
-two rows, one postponed. NOTE for soccer_schedule and soccer_log: they key a
-match by its pairing, which holds for the five they join today and not for
-REPEATS.
+two rows, one postponed. soccer_schedule follows the same rule: in REPEATS
+it keys a match by its pairing AND its day, and joins football-data.co.uk's
+fixture to the feed match nearest its date within PAIR_DAYS
+(soccer_schedule.key, find_key) - a lookup by the pairing alone there would
+take one meeting's status, kickoff or result for another's.
 
   kickoff     each source's time is kept (kickoff_espn, kickoff_fd); the
               match's kickoff_utc - its date, its id, the time shown - is
@@ -254,7 +263,11 @@ downloaded it, and the second tiers' snapshot frozen that day):
       play-off): never in a sample, so how ESPN will label them is not
       measured. A split phase it names a "round" or a "play-off" (Belgium's
       play-offs, which football-data.co.uk keeps) would be skipped with
-      them: football-data.co.uk alone there. The extra leagues' files keep
+      them: football-data.co.uk alone there - so every phase skipped is
+      listed in the snapshot's last_run.skipped_phase ("B1:<slug>"), and a
+      league whose feed goes quiet that way says so in the snapshot, not
+      only in a log line; the rule stays until a probe measures a split
+      phase. The extra leagues' files keep
       their play-offs (MLS Cup, the liguilla, Argentina's knock-outs), so
       their events are read; a lower-league club in a relegation play-off
       has no mapping and is skipped, counted in last_run.unmapped.
@@ -275,11 +288,12 @@ Each row's seen_at is the moment its own request was answered. A snapshot
 on file that cannot be read is rebuilt from what this fetch brings (said
 in the log; every committed version is in git), or left as it is when no
 request answered. last_run also lists the
-clubs a feed named that the tables below do not map. load() reads it, so a
+clubs a feed named that the tables below do not map (unmapped) and the
+knock-out phases skipped (skipped_phase). load() reads it, so a
 run without the network - and every test - works from the file.
 
     python soccer/engine/soccer_feed.py            # fetch, write, summarise
-    python soccer/engine/soccer_feed.py --all      # ...every league (FEED_LEAGUES)
+    python soccer/engine/soccer_feed.py --all      # ...the app's leagues (leagues_for(in_app()))
     python soccer/engine/soccer_feed.py --offline  # summarise the snapshot
 """
 
@@ -843,12 +857,16 @@ LOCAL = {"E0": ZoneInfo("Europe/London"), "SP1": ZoneInfo("Europe/Madrid"), "I1"
          "F2": ZoneInfo("Europe/Paris"), "SC0": ZoneInfo("Europe/London"), "N1": ZoneInfo("Europe/Amsterdam"),
          "P1": ZoneInfo("Europe/Lisbon"), "T1": ZoneInfo("Europe/Istanbul"), "USA": None}
 # Every league either feed covers, in the registry's order (the five first,
-# so a fetch cut short by its budget loses the others first) - and the five
-# a sync asks about unless told otherwise: the leagues the app predicts today
-# (soccer_schedule joins only those). Switching the app to more leagues is
-# soccer_predict's sync call with leagues=FEED_LEAGUES.
+# so a fetch cut short by its budget loses the others first). The pipeline
+# asks about leagues_for(the app's leagues), never FEED_LEAGUES whole: RUS
+# has a feed and is out of the app. LIVE_LEAGUES, the five, is what a sync
+# asks about when told nothing - a caller written for the five (and the
+# tests that replay five-league samples) is unchanged.
 FEED_LEAGUES = tuple(code for code in sd.ALL_LEAGUES if code in ESPN_SLUGS or code in FD_SLUGS)
 LIVE_LEAGUES = tuple(sd.TOP)
+# Why the leagues with no feed at all have none: ESPN_NOT_ASKED's six, and
+# POL, which the registry has no ESPN code for (pol.1 answered 404).
+NO_ESPN = {"POL": "no ESPN league: pol.1 answered 404 on the probe of 2026-10-29"}
 
 # Leagues whose format plays one pairing (home v away) more than once a
 # season - a split into groups, a third or fourth round robin, play-offs or
@@ -871,6 +889,62 @@ PAIR_DAYS = 3
 # skipped; the extra leagues' files keep theirs (MLS Cup, the liguilla, ...),
 # and their events are read.
 KNOCKOUT = re.compile(r"play-?offs?|(^|-)round(-|$)")
+
+# What a league's cards can rest on between football-data.co.uk's postings,
+# by its coverage (coverage_caveat): said beside soccer_leagues.caveats(code),
+# never in place of one. Both feeds: nothing to add. ESPN alone: a time is
+# never confirmed (reconcile wants both feeds on one time), so a match only
+# the feeds list closes at 00:00 UK on its day, and a provisional result
+# rests on one source. None: the matches, a postponement and a result come
+# from football-data.co.uk alone (soccer_log voids a pick with no result 21
+# days after its kickoff).
+COVERAGE_CAVEATS = {
+    "espn": ("One live feed (ESPN) covers this league: no second source confirms a kickoff time, so a match "
+             "only the feed lists closes its pick at 00:00 UK time on its day, and a provisional result rests "
+             "on ESPN alone until football-data.co.uk posts its own."),
+    "none": ("No live feed covers this league (neither ESPN nor fixturedownload.com lists its current season): "
+             "its matches appear only when football-data.co.uk posts them, on Tuesday and Friday; a "
+             "postponement or a moved kickoff is not seen - a postponed match keeps its pick until it is voided "
+             "21 days after its kickoff - and there are no provisional results."),
+    # No league has this today (FD_SLUGS is a subset of ESPN_SLUGS): the rule
+    # for one, should a table be dropped.
+    "fixturedownload": ("One live feed (fixturedownload.com) covers this league: it lists kickoff times but no "
+                        "status, so a time is never confirmed, a postponement is not seen, and its scores are "
+                        "never taken as a result."),
+}
+
+
+def leagues_for(codes):
+    """The leagues of `codes` a feed covers, in FEED_LEAGUES' order - the
+    registry's, the five first, so a fetch its budget cuts short loses the
+    others first. What a sync is asked about for the app's leagues:
+    leagues_for(soccer_leagues.in_app()) is 30 leagues and 462 requests, with
+    neither RUS (it has a feed, and is out of the app) nor the seven in the
+    app with no feed (coverage)."""
+    codes = set(codes)
+    return tuple(code for code in FEED_LEAGUES if code in codes)
+
+
+def coverage(code):
+    """Which live source covers a league: {"espn": ESPN's league code or
+    None, "fixturedownload": its feed name or None, "none_because": why
+    neither does, else None}. The app says it beside the league's measured
+    caveats (coverage_caveat): what a pick there can rest on between
+    football-data.co.uk's postings is not the same in every league."""
+    if code not in sd.ALL_LEAGUES:
+        raise KeyError(f"{code}: not a league soccer_data carries")
+    espn, fd = ESPN_SLUGS.get(code), FD_SLUGS.get(code)
+    why = None if (espn or fd) else (ESPN_NOT_ASKED.get(code) or NO_ESPN.get(code) or "no feed was probed for it")
+    return {"espn": espn, "fixturedownload": fd, "none_because": why}
+
+
+def coverage_caveat(code):
+    """The caveat a league's coverage adds (COVERAGE_CAVEATS), or None where
+    both feeds cover it."""
+    c = coverage(code)
+    if c["espn"] and c["fixturedownload"]:
+        return None
+    return COVERAGE_CAVEATS["espn" if c["espn"] else "fixturedownload" if c["fixturedownload"] else "none"]
 
 
 class FeedError(ValueError):
@@ -986,16 +1060,17 @@ def espn_status(kind, log=print, where=""):
     return status, name
 
 
-def parse_espn(payload, league, request=None, seen_at=None, log=print, missing=None):
+def parse_espn(payload, league, request=None, seen_at=None, log=print, missing=None, phases=None):
     """One ESPN scoreboard response -> rows. Raises FeedError for a body that
     is not a scoreboard; an event it cannot read is skipped and warned (a
-    club with no mapping is also added to `missing`)."""
+    club with no mapping is also added to `missing`; an event skipped for its
+    knock-out phase adds "league:phase" to `phases`)."""
     if not isinstance(payload, dict) or not isinstance(payload.get("events"), list):
         raise FeedError("not an ESPN scoreboard (no events list)")
     rows = []
     for event in payload["events"]:
         try:
-            row = _espn_event(event, league, request, seen_at, log, missing)
+            row = _espn_event(event, league, request, seen_at, log, missing, phases)
         except (AttributeError, KeyError, TypeError, ValueError, IndexError) as err:
             eid = event.get("id") if isinstance(event, dict) else None
             log(f"   espn {league}: event {eid or '?'} unreadable ({err.__class__.__name__}: {err}); skipped")
@@ -1014,11 +1089,13 @@ def knockout_phase(event, league):
     return phase if meta is not None and meta.kind == "main" and KNOCKOUT.search(phase) else None
 
 
-def _espn_event(event, league, request, seen_at, log, missing=None):
+def _espn_event(event, league, request, seen_at, log, missing=None, phases=None):
     phase = knockout_phase(event, league)
     if phase:
         log(f"   espn {league}: event {event.get('id')} is in ESPN's '{phase}' phase, a play-off or cup tie - "
             f"football-data.co.uk leaves those out of this division; skipped")
+        if phases is not None:
+            phases.add(f"{league}:{phase}")
         return None
     comp = (event.get("competitions") or [{}])[0]
     sides = {c.get("homeAway"): c for c in comp.get("competitors") or []}
@@ -1152,8 +1229,11 @@ def espn_days(now, days_back=4, days_ahead=10):
 def requests_for(now, days_back=4, days_ahead=10, leagues=LIVE_LEAGUES):
     """[(request key, url, league, kind, season)] for one fetch: ESPN's days
     for a league in ESPN_SLUGS, fixturedownload's season file for one in
-    FD_SLUGS. The season is the league's own (soccer_data.season_for: a
-    calendar year for MLS, Brazil, ...; the year it starts otherwise)."""
+    FD_SLUGS - for `leagues`, in the order given (the pipeline's:
+    leagues_for(in_app()), 462 requests; LIVE_LEAGUES, 80, when told
+    nothing). A league neither feed covers asks nothing. The season is the
+    league's own (soccer_data.season_for: a calendar year for MLS, Brazil,
+    ...; the year it starts otherwise)."""
     today = _aware(now).date()
     out = []
     for league in leagues:
@@ -1178,9 +1258,13 @@ def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=LIVE_LEAGUES, 
     match is on its UTC day, and an MLS evening or an Asian morning kickoff
     can be on the day before; the window has days to spare either side.
 
+    `leagues`: what the pipeline passes (leagues_for(in_app())); the five
+    (LIVE_LEAGUES) when told nothing.
+
     Returns {"at", "rows", "ok": {request: rows}, "failed": {request: why},
-    "unmapped": [clubs a feed named that the tables do not map]}. A request
-    that fails is only reported: merge() keeps its rows on file.
+    "unmapped": [clubs a feed named that the tables do not map],
+    "skipped_phase": ["league:phase" of the knock-out events skipped]}. A
+    request that fails is only reported: merge() keeps its rows on file.
     STRAIGHT_FAILS, FEED_DOWN and `budget` (seconds) bound how long an
     outage can take; the requests they skip are reported as failed.
 
@@ -1188,8 +1272,12 @@ def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=LIVE_LEAGUES, 
     with the moment its own request was answered, never earlier; without it
     (a replay, a test) with `now`."""
     at = stamp(_aware(now))
-    rows, ok, failed, missing = [], {}, {}, set()
+    rows, ok, failed, missing, phases = [], {}, {}, set(), set()
     start, streak, skipping = clock(), defaultdict(int), set()
+    leagues = tuple(leagues)
+    unfed = [code for code in leagues if code not in ESPN_SLUGS and code not in FD_SLUGS]
+    if unfed:
+        log(f"   feeds: no feed covers {' '.join(unfed)}; football-data.co.uk alone there")
     asked = requests_for(now, days_back, days_ahead, leagues)
     per_league = Counter((kind, league) for _, _, league, kind, _ in asked)
     down = defaultdict(int)                  # feed -> leagues in a row it failed for, with no answer between
@@ -1218,7 +1306,8 @@ def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=LIVE_LEAGUES, 
             payload = _decode(get(url))
             seen = stamp(_aware(wall())) if wall is not None else at
             if kind == "espn":
-                got = parse_espn(payload, league, request=key, seen_at=seen, log=log, missing=missing)
+                got = parse_espn(payload, league, request=key, seen_at=seen, log=log, missing=missing,
+                                 phases=phases)
             else:
                 got = parse_fixturedownload(payload, league, season, request=key, seen_at=seen, log=log,
                                             missing=missing)
@@ -1235,8 +1324,10 @@ def fetch(now=None, days_back=4, days_ahead=10, get=_get, leagues=LIVE_LEAGUES, 
         ok[key] = len(got)
         rows.extend(got)
     log(f"   feeds: {len(ok)} requests answered, {len(failed)} failed, {len(rows)} rows"
-        + (f"; {len(missing)} clubs with no mapping" if missing else ""))
-    return {"at": at, "rows": rows, "ok": ok, "failed": failed, "unmapped": sorted(missing)}
+        + (f"; {len(missing)} clubs with no mapping" if missing else "")
+        + (f"; knock-out phases skipped: {', '.join(sorted(phases))}" if phases else ""))
+    return {"at": at, "rows": rows, "ok": ok, "failed": failed, "unmapped": sorted(missing),
+            "skipped_phase": sorted(phases)}
 
 
 # ------------------------------------------------------------- the snapshot
@@ -1376,10 +1467,14 @@ def distrust_empty(old_rows, fetched, log=print, previous=None):
 
 def sync(now=None, path=FEED, get=_get, days_back=4, days_ahead=10, leagues=LIVE_LEAGUES, log=print,
          wall=None):
-    """Fetch both feeds, merge into the snapshot on file, write it. Returns
-    the snapshot; its last_run says what answered and what failed, and which
-    clubs a feed named that the tables do not map. `now` None is a real run:
-    each row is stamped when its own request was answered (fetch's `wall`).
+    """Fetch both feeds for `leagues` (the pipeline's: leagues_for(in_app());
+    the five when told nothing), merge into the snapshot on file, write it.
+    Returns the snapshot; its last_run says what answered and what failed,
+    which clubs a feed named that the tables do not map (unmapped), and
+    which knock-out phases were skipped (skipped_phase: a division whose
+    feed goes quiet for a phase ESPN names a play-off says so). `now` None
+    is a real run: each row is stamped when its own request was answered
+    (fetch's `wall`).
 
     A snapshot on file that cannot be read is rebuilt from what this fetch
     brings, said so in the log (every committed version is in git) - and,
@@ -1411,7 +1506,7 @@ def sync(now=None, path=FEED, get=_get, days_back=4, days_ahead=10, leagues=LIVE
                 if k in on_file or k in got["ok"] or (k.startswith("espn:") and k.rsplit(":", 1)[1] >= oldest)}
     snap = {"schema": SCHEMA, "requests": requests, "rows": rows,
             "last_run": {"at": got["at"], "answered": len(got["ok"]), "failed": dict(sorted(got["failed"].items())),
-                         "unmapped": got.get("unmapped", [])}}
+                         "unmapped": got.get("unmapped", []), "skipped_phase": got.get("skipped_phase", [])}}
     save(snap, path)
     log(f"   feed snapshot: {len(rows)} rows ({sum(r['source'] == 'espn' for r in rows)} ESPN, "
         f"{sum(r['source'] == 'fixturedownload' for r in rows)} fixturedownload) -> {path}")
@@ -1597,5 +1692,9 @@ if __name__ == "__main__":
     offline = "--offline" in sys.argv
     if not offline:
         print("Fixture feeds (ESPN, fixturedownload)")
-        sync(leagues=FEED_LEAGUES if "--all" in sys.argv else LIVE_LEAGUES)
+        if "--all" in sys.argv:
+            import soccer_leagues                      # here only: the feed itself needs no league decisions
+            sync(leagues=leagues_for(soccer_leagues.in_app()))
+        else:
+            sync(leagues=LIVE_LEAGUES)
     summary(reconciled(log=lambda *_: None))

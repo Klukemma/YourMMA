@@ -9,8 +9,25 @@ scoreboard and fixturedownload.com) list the next rounds and the scores of the
 round just played long before that; they carry no price the engine reads.
 So, one rule each:
 
+  LEAGUES. The ones the caller passes (soccer_predict: the app's,
+      soccer_leagues.in_app()): the feeds' matches and football-data.co.uk's
+      fixtures of any other league are left out - RUS has a feed and is out
+      of the app, and a feed match of it would otherwise be picked by the
+      model alone, unpriced. Told nothing, the feeds' matches of the five
+      (sd.TOP) and every fixture given: the run before every league was
+      measured, bit for bit.
   A MATCH IS ONE ROW. A pairing (league, season, home, away) is played once a
-      league season. Where football-data.co.uk has the fixture, its row is the
+      league season - EXCEPT in the leagues whose format repeats one
+      (soccer_feed.REPEATS: a split, a third round robin, play-offs). There
+      a match is its pairing AND its day (key): a pairing played earlier in
+      the season does not make a fixture "played", only a result of the
+      pairing within soccer_feed.PAIR_DAYS of its date does (the same match,
+      a day or two apart between the sources); and a feed match joins the
+      football-data.co.uk fixture of its pairing nearest its date within
+      PAIR_DAYS (closest first, each once: soccer_feed.legs' rule), or none.
+      A lookup by the pairing alone there would give one meeting another's
+      status, kickoff or result (find_key does it by date). Where
+      football-data.co.uk has the fixture, its row is the
       match - its id and its prices; the feeds only add their kickoff time. A
       feed match football-data.co.uk has not posted is added with no price:
       the model's own chances, labelled (price_status "not_yet").
@@ -37,7 +54,10 @@ So, one rule each:
       stands, with no price, until football-data.co.uk posts the new one.
       ESPN, because it is the feed that reports status: fixturedownload's
       "scheduled" only means no score posted yet, and its times were
-      measured stale (soccer_feed).
+      measured stale (soccer_feed). Where pairings repeat, only a move
+      within PAIR_DAYS is seen as one: a feed match further away may be the
+      pairing's next meeting, so it stands as a match of its own (no price),
+      and the passed fixture is dropped like any other.
   PROVISIONAL RESULTS. A feed result (soccer_feed's accepted "final": ESPN
       final and fixturedownload not contradicting it) for a match
       football-data.co.uk has not posted. It grades a pick provisionally
