@@ -186,15 +186,41 @@ def _form_payload(form):
             "as_of": form.get("as_of")}
 
 
+def _american_int(price):
+    """An American price as a whole number, or None when there is none."""
+    try:
+        value = float(price)
+    except (TypeError, ValueError):
+        return None
+    return int(round(value)) if math.isfinite(value) and value != 0 else None
+
+
+def _decimal(price):
+    import parlay_profiles as pp
+    return pp.decimal_from_american(price)
+
+
+# What load_parlay_profiles() reads when the caller does not say.
+_ON_DISK = object()
+
+
 def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
-                 dataset_end=None, trained_on=None):
+                 dataset_end=None, trained_on=None, parlay_profiles=None,
+                 profiles_measured=_ON_DISK):
     """The card: one entry per fight, with the model and the simulation.
 
     `fights` entries carry whatever the pipeline has; anything absent comes out
     as null rather than as a confident zero. A fight the model refused belongs
     in `skipped` and keeps its reason, because "no data" is an answer the app
     has to be able to show.
+
+    `parlay_profiles` is parlay_profiles_payload's three tickets, and
+    `profiles_measured` the backtest they are read against (by default
+    experiments/parlay_profiles.json; None when it has not been run), which
+    the caveat beside them quotes.
     """
+    measured_pp = (load_parlay_profiles() if profiles_measured is _ON_DISK
+                   else profiles_measured)
     out = []
     for fight in fights:
         simulation = fight.get("simulation")
@@ -228,6 +254,18 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
             "recommendation": fight.get("recommendation"),
             "parlay_tier": fight.get("parlay_tier"),
             "odds": fight.get("odds"),
+            # BOTH SIDES' PRICES, and where and when each was seen. A parlay
+            # leg can be either corner, so the pick's price alone cannot
+            # build one; and a multiplier is only as good as the line it was
+            # read from, which is the best price on file across the books -
+            # the book and the time say which, and that one book may pay less.
+            "odds_other": _american_int(fight.get("odds_other")),
+            "decimal": _clean(_decimal(fight.get("odds"))),
+            "decimal_other": _clean(_decimal(fight.get("odds_other"))),
+            "book": fight.get("book"),
+            "book_other": fight.get("book_other"),
+            "odds_seen": fight.get("odds_seen"),
+            "odds_other_seen": fight.get("odds_other_seen"),
             "edge": _clean(fight.get("edge")),
             # The second layer. Absent, never 0.5, when it could not run: the
             # app must be able to tell a safe-looking pick from an unscored one.
@@ -264,8 +302,14 @@ def card_payload(event_name, event_date, fights, skipped=(), parlays=None,
                     for s in skipped],
         "caveats": {"model": model_caveat(), "simulation": SIMULATION_CAVEAT,
                     "parlay": parlay_caveat(), "flag": FLAG_CAVEAT,
-                    "intel": INTEL_CAVEAT},
+                    "intel": INTEL_CAVEAT,
+                    "parlay_profiles": parlay_profiles_caveat(measured_pp),
+                    # The backtest's own caveats, carried whole: a caveat is
+                    # never dropped on the way to the phone.
+                    "parlay_profiles_notes": [str(c) for c in
+                                              (measured_pp or {}).get("caveats") or []]},
         "parlays": parlays or [],
+        "parlay_profiles": parlay_profiles or [],
     }
 
 
@@ -325,6 +369,434 @@ def parlay_payload(candidates):
             "fair_odds": american(combined),
         })
     return out
+
+
+# ------------------------------------------------------------ parlay profiles
+# Three tickets a card - about 5x, about 10x, 50-100x - built by
+# parlay_profiles.build, the function the 3-year backtest scored, so what the
+# phone shows is what was measured. The record beside each ticket is READ
+# from the backtest's file, never typed; with no file the ticket says "not
+# measured yet" and is built by the profile named for its band.
+PARLAY_PROFILES = Path(__file__).resolve().parent / "experiments" / "parlay_profiles.json"
+
+
+def load_parlay_profiles(path=None):
+    """The backtest (engineer A's experiments/parlay_profiles.json), or None
+    when it has not been run or cannot be read."""
+    try:
+        data = json.loads(Path(path or PARLAY_PROFILES).read_text())
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def shipped_rule(measured, band):
+    """The rule that builds `band`'s ticket live: "mixed_else@<band>" where
+    the pre-registered rule in the backtest shipped the mixed profile there -
+    mixed, with the named profile standing in on a card where mixed builds no
+    ticket (that fallback was added after the first run; the backtest
+    measures the combined procedure under this name) - and the named profile
+    otherwise, including when there is no backtest at all, or it names
+    anything but the two choices the rule allows."""
+    ship = ((measured or {}).get("ship") or {}).get(band)
+    return f"mixed_else@{band}" if ship == "mixed" else band
+
+
+def _summary(measured, period, rule):
+    if not measured:
+        return None
+    s = ((measured.get("results") or {}).get(period) or {}).get(rule)
+    return s if isinstance(s, dict) else None
+
+
+def _whole_pct(x):
+    return f"{'+' if x >= 0 else '-'}{abs(x) * 100:.0f}%"
+
+
+def _band_text(band):
+    lo, hi = band
+    return f"{lo:g}-{hi:g}x"
+
+
+def _x(m):
+    return f"x{m:.2f}" if m < 10 else f"x{m:.1f}"
+
+
+def _multiplier_spread(measured, period, rule):
+    """What `rule`'s tickets paid in `period` - the multiplier each settled
+    ticket carried, {"median", "min", "max"} - from the backtest's
+    "multipliers" block; None when the file carries none for it, so a band
+    is never quoted for a payout the tickets did not have."""
+    m = (((measured or {}).get("multipliers") or {}).get(period) or {}).get(rule)
+    if not isinstance(m, dict):
+        return None
+    try:
+        out = {k: float(m[k]) for k in ("median", "min", "max")}
+    except (KeyError, TypeError, ValueError):
+        return None
+    return out if all(math.isfinite(v) for v in out.values()) else None
+
+
+def parlay_profiles_caveat(measured):
+    """The paragraph beside the three tickets, built from the backtest's own
+    numbers. With no backtest it says so instead of quoting any."""
+    import parlay_profiles as pp
+    text = ("The market is hard to beat in MMA, and a parlay pays the bookmaker's "
+            "margin once for every leg. These are the likeliest tickets that reach "
+            "each payout, not bets expected to profit.")
+    window = ((measured or {}).get("results") or {}).get("window")
+    if window:
+        start, end = ((measured.get("periods") or {}).get("window") or [None, None])[:2]
+        parts = []
+        for band in pp.ORDER:
+            rule = shipped_rule(measured, band)
+            s = _summary(measured, "window", rule)
+            name = pp.PROFILES[band]["target"] + (
+                f" (mixed, else {pp.PROFILES[band]['label'].lower()})" if rule != band else "")
+            # Absent from the file is not the same as measured at zero: only
+            # a rule the backtest ran and that built nothing "built no ticket".
+            if s is None or s.get("tickets") is None:
+                parts.append(f"{name}: not measured")
+                continue
+            if not s["tickets"]:
+                parts.append(f"{name}: no ticket was built")
+                continue
+            part = f"{name}: {s['tickets']:,} tickets, {s.get('wins', 0):,} won"
+            if s.get("roi") is not None:
+                part += f", {_whole_pct(s['roi'])} a ticket"
+                if s.get("roi_low") is not None and s.get("roi_high") is not None:
+                    part += f" ({_whole_pct(s['roi_low'])} to {_whole_pct(s['roi_high'])})"
+            spread = _multiplier_spread(measured, "window", rule)
+            if spread:
+                part += (f", paying {_x(spread['median'])} at the median "
+                         f"({_x(spread['min'])} to {_x(spread['max'])})")
+            parts.append(part)
+        text += (f" Backtested point in time, one ticket a card, from {start} to {end}: "
+                 + "; ".join(parts) + ".")
+        top = _summary(measured, "window", shipped_rule(measured, "risk_lover")) or {}
+        if top.get("tickets"):
+            text += (f" A {pp.PROFILES['risk_lover']['target']} ticket landed "
+                     f"{top.get('wins', 0):,} time{'' if top.get('wins') == 1 else 's'} "
+                     f"in {top['tickets']:,}.")
+        spans = [s for s in (_summary(measured, "window", shipped_rule(measured, b))
+                             for b in pp.ORDER)
+                 if s and s.get("roi_low") is not None and s.get("roi_high") is not None
+                 and s["roi_low"] < 0 < s["roi_high"]]
+        if spans:
+            text += " An interval that spans zero is no evidence of an edge."
+    else:
+        text += (" Not measured yet: the backtest these tickets are scored by "
+                 "(experiments/parlay_profiles.py) has not been run, so no record is shown.")
+    text += (" Multipliers use the best price seen across the books on file, so one book "
+             "may pay less than shown. Method props (KO, submission) are not priced live: "
+             "every leg is a moneyline, and a finishing route is the reason, not the bet. "
+             "Combined chances multiply the legs, which assumes the fights are independent.")
+    return text
+
+
+def _number(x):
+    try:
+        value = float(x)
+    except (TypeError, ValueError):
+        return None
+    return value if math.isfinite(value) else None
+
+
+def _card_legs(fights, archive, event_date):
+    """parlay_profiles.fight_legs over every card fight with a model
+    probability and both prices, plus each side's American price as quoted
+    (so the app never shows a price rebuilt from a rounded decimal)."""
+    import parlay_profiles as pp
+    legs, quoted, priced = [], {}, 0
+    for f in fights or []:
+        red, blue, pick = f.get("red"), f.get("blue"), f.get("pick")
+        if not red or not blue or pick not in (red, blue):
+            continue
+        p_pick_model = _number(f.get("win_prob_model"))
+        odds_pick, odds_other = _american_int(f.get("odds")), _american_int(f.get("odds_other"))
+        dec_pick, dec_other = pp.decimal_from_american(odds_pick), pp.decimal_from_american(odds_other)
+        if p_pick_model is None or dec_pick is None or dec_other is None:
+            continue
+        red_picked = pick == red
+        p_pick_blend = _number(f.get("win_prob"))
+        key = f"{event_date}|{red}|{blue}"
+        fight = {
+            "key": key, "date": event_date, "number": f.get("number"),
+            "red": red, "blue": blue,
+            # Both probabilities arrive for the PICK; the legs want red's.
+            "p_model": p_pick_model if red_picked else 1.0 - p_pick_model,
+            "p_blend": (None if p_pick_blend is None
+                        else p_pick_blend if red_picked else 1.0 - p_pick_blend),
+            "dec_red": dec_pick if red_picked else dec_other,
+            "dec_blue": dec_other if red_picked else dec_pick,
+        }
+        if archive is not None and event_date:
+            # Strictly before the card: the reason may only quote bouts that
+            # had already happened, as the backtest's did.
+            fight["facts"] = {"red": pp.facts(archive, red, event_date),
+                              "blue": pp.facts(archive, blue, event_date)}
+        fight_legs = pp.fight_legs(fight)
+        if not fight_legs:
+            continue
+        priced += 1
+        quoted[(key, "red")] = odds_pick if red_picked else odds_other
+        quoted[(key, "blue")] = odds_other if red_picked else odds_pick
+        legs.extend(fight_legs)
+    return legs, quoted, priced
+
+
+def _leg_payload(leg, quoted):
+    import parlay_profiles as pp
+    red = leg["pick"] if leg["side"] == "red" else leg["opponent"]
+    blue = leg["opponent"] if leg["side"] == "red" else leg["pick"]
+    return {
+        "number": leg.get("number"),
+        "fight": f"{red} vs {blue}",
+        "red": red, "blue": blue,
+        "corner": leg["side"],
+        "pick": leg["pick"], "opponent": leg["opponent"],
+        "side": ("favourite" if leg["favourite"] else "underdog") if leg["p_market"] is not None else None,
+        "market": leg["market"],
+        "odds": quoted.get((leg["key"], leg["side"])),
+        "decimal": _clean(leg["decimal"]),
+        "prob": _clean(leg["p"]),
+        "prob_model": _clean(leg["p_model"]),
+        "market_prob": _clean(leg["p_market"]),
+        "reason": pp.reason(leg),
+    }
+
+
+def parlay_profiles_payload(fights, archive=None, measured=None, event_date=None):
+    """The card's three parlay tickets, in the order steady, risker, risk lover.
+
+    `fights` are the card's fights as the card exports them (pick, win_prob,
+    win_prob_model, odds and odds_other); `archive` is the results frame the
+    reasons are read from (r_name, b_name, date, winner, method) - only bouts
+    before `event_date` - and `measured` the backtest (load_parlay_profiles),
+    None when it has not been run.
+
+    Each band is built by the rule the backtest shipped for it
+    (shipped_rule), and carries that rule's measured record. A band with no
+    ticket says why in a sentence rather than showing a weaker one: a card
+    that cannot honestly make 50x shows no 50x ticket.
+    """
+    import parlay_profiles as pp
+    legs, quoted, priced = _card_legs(fights, archive, event_date)
+    out = []
+    for band in pp.ORDER:
+        profile = pp.PROFILES[band]
+        rule = shipped_rule(measured, band)
+        built_by = band
+        if rule == band:
+            ticket = pp.build(legs, band)
+        else:
+            # Mixed ships here; where it finds no ticket the named profile's
+            # stands in - the combined procedure the backtest measures as
+            # mixed_else@<band> (added after the first run, labelled so).
+            ticket = pp.build(legs, "mixed", band=pp.BANDS[band])
+            built_by = "mixed"
+            if ticket is None:
+                ticket = pp.build(legs, band)
+                built_by = band
+            rule = f"mixed_else@{band}"
+        if rule == band:
+            blurb = profile["blurb"]
+        else:
+            blurb = (f"Any legs the blend rates at least {pp.MIXED_MIN_P:.0%}, at least one the "
+                     f"model rates above the market, until the payout reaches {profile['target']} - "
+                     f"chosen at this band because it out-returned the {profile['label'].lower()} "
+                     f"profile in both measured periods. Where it finds no ticket the "
+                     f"{profile['label'].lower()} profile's is shown; that fallback was added after "
+                     "the first backtest and its record is measured on the same cards.")
+            if built_by == band:
+                blurb = (f"Mixed found no {_band_text(pp.BANDS[band])} ticket on this card, so this "
+                         f"is the {profile['label'].lower()} profile's: {profile['blurb'][0].lower()}"
+                         f"{profile['blurb'][1:]} The record below is the combined procedure's "
+                         "(mixed, else this profile), added after the first backtest.")
+        if ticket is not None:
+            missing = None
+        elif not priced:
+            missing = ("No fight on this card has both prices on file yet, so no "
+                       "ticket can be built.")
+        else:
+            missing = (f"No combination of this card's {priced} priced "
+                       f"fight{'' if priced == 1 else 's'} reaches "
+                       f"{_band_text(pp.BANDS[band])} under "
+                       + ("this profile." if rule == band
+                          else f"the mixed rule or the {profile['label'].lower()} profile."))
+        out.append({
+            "profile": band,
+            "rule": rule,
+            "built_by": built_by,
+            "label": profile["label"],
+            "target": profile["target"],
+            "band": list(pp.BANDS[band]),
+            "blurb": blurb,
+            "legs": [_leg_payload(l, quoted) for l in (ticket or {}).get("legs", [])],
+            "multiplier": _clean(ticket["multiplier"]) if ticket else None,
+            "prob": _clean(ticket["p"]) if ticket else None,
+            "market_prob": _clean(ticket["p_market"]) if ticket else None,
+            "measured": _measured_for(measured, rule),
+            "missing_reason": missing,
+        })
+    return out
+
+
+def _measured_for(measured, rule):
+    """The record a ticket built by `rule` carries; None with no backtest."""
+    return (None if measured is None else
+            {"window": _summary(measured, "window", rule),
+             "dev": _summary(measured, "dev", rule),
+             "periods": measured.get("periods")})
+
+
+def parlay_profiles_unbuilt(measured, error):
+    """The three entries for a run whose parlay build raised: one a band, in
+    the same order and shape as parlay_profiles_payload's, with no legs, no
+    multiplier and the reason in a sentence - "Not built on this run
+    (<ErrorType>)." `error` is the exception (or its type's name).
+
+    THE RUN IS THE UNIT. The card still says, band by band, that this run
+    built nothing, and the log records it (parlay_records' "none" rows), so
+    a failure never leaves an earlier run's ticket standing as if this run
+    had built it."""
+    import parlay_profiles as pp
+    kind = error if isinstance(error, str) else type(error).__name__
+    out = []
+    for band in pp.ORDER:
+        profile = pp.PROFILES[band]
+        rule = shipped_rule(measured, band)
+        out.append({
+            "profile": band, "rule": rule, "built_by": None,
+            "label": profile["label"], "target": profile["target"],
+            "band": list(pp.BANDS[band]), "blurb": profile["blurb"],
+            "legs": [], "multiplier": None, "prob": None, "market_prob": None,
+            "measured": _measured_for(measured, rule),
+            "missing_reason": f"Not built on this run ({kind}).",
+        })
+    return out
+
+
+def parlay_records(entries, event_name, event_date, first_start=None, timestamp=None):
+    """prediction_history.json's "parlays" rows for one run of the card: ONE
+    PER BAND, each leg by both full names and its corner so
+    grade.grade_parlays can find the bout, at the decimal the multiplier was
+    built from. Stamped in UTC: the cutoff it is graded against
+    (grade.made_before_the_card) is a UTC instant.
+
+    The run is the unit, so a band this run built no ticket for still logs a
+    row - multiplier None, legs [], status "none", and the reason. It is
+    never graded or counted, but as the newest row for its card and profile
+    it supersedes an earlier run's ticket: a ticket the latest run before
+    the bell would not have built does not stand."""
+    stamp = timestamp or datetime.now(timezone.utc).isoformat(timespec="seconds")
+    out = []
+    for entry in entries or []:
+        built = entry.get("multiplier") is not None and bool(entry.get("legs"))
+        out.append({
+            "event_name": event_name, "event_date": str(event_date)[:10],
+            "first_start": first_start,
+            "profile": entry["profile"], "rule": entry.get("rule"), "band": entry.get("band"),
+            "multiplier": entry["multiplier"] if built else None,
+            "prob": entry.get("prob") if built else None,
+            "market_prob": entry.get("market_prob") if built else None,
+            "legs": [{"red": l["red"], "blue": l["blue"], "pick": l["pick"],
+                      "side": l["corner"], "market": l["market"], "decimal": l["decimal"]}
+                     for l in entry["legs"]] if built else [],
+            "timestamp": stamp, "status": "pending" if built else "none",
+            **({} if built else {"missing_reason": entry.get("missing_reason")}),
+        })
+    return out
+
+
+def parlay_profiles_backtest(measured):
+    """The Record tab's backtest rows, read from the experiment's file: for
+    each band the named profile, the rule shipped there when it differs, and
+    the market-only control that says whether the model adds anything (plus
+    the props variant at the long band). None when it has not been run."""
+    if not measured:
+        return None
+    import parlay_profiles as pp
+    rows = []
+    for band in pp.ORDER:
+        shipped = shipped_rule(measured, band)
+        rules = [(band, "named")]
+        if shipped != band:
+            rules.append((f"mixed@{band}", "pre-registered"))
+            rules.append((shipped, "shipped"))
+        if band == "risk_lover":
+            rules.append(("risk_lover_method", "props"))
+        rules.append((f"market_only@{band}", "control"))
+        for rule, role in rules:
+            rows.append({"band": band, "label": pp.PROFILES[band]["label"],
+                         "target": pp.PROFILES[band]["target"],
+                         "rule": rule, "role": role, "shipped": rule == shipped,
+                         "dev": _summary(measured, "dev", rule),
+                         "window": _summary(measured, "window", rule)})
+    return {"generated": measured.get("generated"),
+            "protocol": measured.get("protocol"),
+            "periods": measured.get("periods"),
+            "cards": measured.get("cards"),
+            "ship": measured.get("ship"),
+            "by_snapshot": measured.get("by_snapshot"),
+            "rows": rows,
+            "caveats": [str(c) for c in measured.get("caveats") or []]}
+
+
+def parlay_profiles_live(history, last=8):
+    """The live record of the logged tickets, as grade.grade_parlays left
+    them: per profile, how many settled, won, lost, were void or are still
+    pending, how many cards' latest run built no ticket, the units and the
+    return a ticket; and the last `last` tickets.
+
+    Counted by grading's rule - the newest row per card and profile made
+    before the card - so a re-run card counts once and a late ticket never.
+    The newest row may be a "none" row (that run built nothing): it is never
+    counted as a ticket, and the earlier run's ticket it supersedes is not
+    counted either. A card logged under two dates is collapsed by grading
+    (it marks the duplicate "superseded"), which needs the results this
+    function does not have, so it reads that mark.
+    """
+    import parlay_profiles as pp
+    from grade import is_no_ticket, made_before_the_card
+    newest = {}
+    for t in (history or {}).get("parlays") or []:
+        if t.get("status") in ("superseded", "late") or not made_before_the_card(t):
+            continue
+        key = (str(t.get("event_date"))[:10], t.get("profile"))
+        if key not in newest or str(t.get("timestamp") or "") > str(newest[key].get("timestamp") or ""):
+            newest[key] = t
+    tickets = [t for t in newest.values() if not is_no_ticket(t)]
+    none = [t for t in newest.values() if is_no_ticket(t)]
+    profiles = {}
+    for band in pp.ORDER:
+        rows = [t for t in tickets if t.get("profile") == band]
+        done = [t for t in rows if t.get("status") in ("won", "lost", "void")]
+        units = sum(float(t.get("profit") or 0.0) for t in done)
+        profiles[band] = {
+            "label": pp.PROFILES[band]["label"], "target": pp.PROFILES[band]["target"],
+            "settled": len(done),
+            "won": sum(t["status"] == "won" for t in done),
+            "lost": sum(t["status"] == "lost" for t in done),
+            "void": sum(t["status"] == "void" for t in done),
+            "pending": len(rows) - len(done),
+            "none": sum(t.get("profile") == band for t in none),
+            "units": _clean(round(units, 4)) if done else None,
+            "roi": _clean(round(units / len(done), 4)) if done else None,
+        }
+    order = {b: i for i, b in enumerate(pp.ORDER)}
+    recent = sorted(tickets, key=lambda t: (str(t.get("event_date")), -order.get(t.get("profile"), 9)),
+                    reverse=True)[:last]
+    return {
+        "profiles": profiles,
+        "last": [{"event_name": t.get("event_name"), "event_date": t.get("event_date"),
+                  "profile": t.get("profile"), "rule": t.get("rule"),
+                  "multiplier": _clean(t.get("multiplier")), "prob": _clean(t.get("prob")),
+                  "status": t.get("status"), "profit": _clean(t.get("profit")),
+                  "legs": [{"pick": l.get("pick"), "decimal": _clean(l.get("decimal")),
+                            "outcome": l.get("outcome")} for l in t.get("legs") or []]}
+                 for t in recent],
+    }
 
 
 def fighters_payload(final_stats, columns=None):

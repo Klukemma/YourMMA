@@ -56,7 +56,7 @@ def test_every_card_carries_the_caveats():
     """A probability shown with no context is how -1.8% gets mistaken for an
     edge. The app renders these; it does not get to omit them."""
     payload = ax.card_payload("Card", "2026-01-01", [])
-    for key in ("model", "simulation", "parlay"):
+    for key in ("model", "simulation", "parlay", "parlay_profiles"):
         assert len(payload["caveats"][key]) > 60
 
 
@@ -297,3 +297,53 @@ def test_the_cards_on_the_record_add_up_the_way_grading_counts():
     assert rows[1]["graded"] == 1
     payload = ax.performance_payload(history)
     assert payload["track_record"]["by_event"] == rows
+
+
+# ------------------------------------------------- the parlay profiles caveat
+
+def _profiles_file(window, multipliers=None, ship=None):
+    import parlay_profiles as pp
+    out = {"periods": {"dev": ["2016-11-01", "2023-10-31"], "window": ["2023-11-01", "2026-08-31"]},
+           "results": {"dev": {}, "window": window},
+           "ship": ship or {b: b for b in pp.ORDER}, "caveats": []}
+    if multipliers is not None:
+        out["multipliers"] = multipliers
+    return out
+
+
+def _record(tickets, wins=1, roi=-0.2):
+    return {"tickets": tickets, "wins": wins, "roi": roi, "roi_low": -0.6, "roi_high": 0.3}
+
+
+def test_a_rule_absent_from_the_backtest_is_not_measured_not_no_ticket():
+    """Missing from the file and measured at zero are different facts: only a
+    rule the backtest ran that built nothing "built no ticket"."""
+    import parlay_profiles as pp
+    steady, risker, lover = (pp.PROFILES[b]["target"] for b in pp.ORDER)
+    text = ax.parlay_profiles_caveat(_profiles_file(
+        {"steady": _record(0, wins=0, roi=None), "risk_lover": _record(40)},
+        ship={"steady": "steady", "risker": "mixed", "risk_lover": "risk_lover"}))
+    named = f"{risker} (mixed, else {pp.PROFILES['risker']['label'].lower()})"
+    assert f"{named}: not measured" in text
+    assert f"{steady}: no ticket was built" in text
+    assert f"{lover}: 40 tickets, 1 won" in text
+    assert text.count("no ticket was built") == 1
+
+
+def test_the_caveat_quotes_what_the_tickets_paid_where_the_file_has_it():
+    import parlay_profiles as pp
+    window = {b: _record(41) for b in pp.ORDER}
+    bare = ax.parlay_profiles_caveat(_profiles_file(window))
+    assert "paying" not in bare, "no multiplier stats in the file, none quoted"
+    spread = {"window": {"steady": {"tickets": 41, "median": 4.71, "min": 4.5, "max": 6.42},
+                         "risker": {"tickets": 41, "median": 10.24, "min": 9.51, "max": 13.9},
+                         # A rule with no settled ticket carries Nones: skipped.
+                         "risk_lover": {"tickets": 0, "median": None, "min": None, "max": None}}}
+    text = ax.parlay_profiles_caveat(_profiles_file(window, multipliers=spread))
+    assert "paying x4.71 at the median (x4.50 to x6.42)" in text
+    assert "paying x10.2 at the median (x9.51 to x13.9)" in text
+    assert text.count("paying") == 2
+    # Only the window's: the dev period's spread is not quoted as the window's.
+    dev_only = ax.parlay_profiles_caveat(_profiles_file(
+        window, multipliers={"dev": spread["window"]}))
+    assert "paying" not in dev_only

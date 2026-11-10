@@ -818,21 +818,100 @@ function boutRow(f, i) {
   </details>`;
 }
 
-function parlayCard(parlays, caveat) {
-  if (!parlays?.length) return "";
-  const blocks = parlays.map((p) => `
-    <div class="panel">
-      <div class="eyebrow">${p.legs.length} legs
-        ${p.fair_odds != null ? `· breaks even at ${odds(p.fair_odds)}` : ""}</div>
-      <ul class="list">
-        ${p.legs.map((l) => `<li><span><b>${esc(l.pick)}</b> <span class="mini">${esc(l.fight)}</span></span>
-           <span class="num end">${pct(l.prob)}</span></li>`).join("")}
-      </ul>
-      <div class="mini num">Combined ${pct(p.combined_prob, 1)}</div>
-    </div>`).join("");
+/* ------------------------------------------------------- three parlays */
+// One ticket a band - about 5x, about 10x, 50-100x - built by the engine with
+// the function its backtest scored, so the record under each ticket is what
+// tickets like it actually returned. Everything here is read from card.json:
+// a ticket the card cannot honestly make is shown as missing, with the
+// engine's reason, never replaced by a weaker one.
+const chance = (x) => (x == null ? "—" : x < 0.1 ? pct(x, 1) : pct(x));
+const mult = (m) => (m == null ? "—" : `x${m.toFixed(m < 10 ? 2 : 1)}`);
+
+// The retired fixed-size parlays' caveat still holds, so it stays wherever it
+// shows - said as what it is, since those parlays are no longer on the card.
+const OLD_PARLAYS = "The fixed 2-, 3- and 4-leg parlays this card used to show: ";
+const oldParlays = (t) => {
+  const s = String(t || "");
+  if (!s || s.startsWith(OLD_PARLAYS)) return s;
+  return OLD_PARLAYS + (/^[A-Z][a-z]/.test(s) ? s[0].toLowerCase() + s.slice(1) : s);
+};
+
+// A ticket's target as a phrase, from the engine's own label: "~5x" reads
+// "about 5x", "50-100x" reads "50–100x". Never typed here, so a band the
+// engine moves is the band the sentence names.
+const targetWords = (t) => String(t || "").replace(/^~\s*/, "about ").replace(/(\d)-(\d)/g, "$1–$2");
+function listWords(words) {
+  const w = words.filter(Boolean);
+  const s = w.length < 2 ? (w[0] || "") : `${w.slice(0, -1).join(", ")} and ${w[w.length - 1]}`;
+  return s ? s[0].toUpperCase() + s.slice(1) : "";
+}
+
+// "3-yr" for the backtest's window, from its own dates.
+function windowLabel(periods) {
+  const w = periods && periods.window;
+  if (!w || !w[0] || !w[1]) return "Backtest";
+  const y = Math.round((new Date(`${w[1]}T12:00:00Z`) - new Date(`${w[0]}T12:00:00Z`)) / 315576e5);
+  return Number.isFinite(y) && y > 0 ? `${y}-yr` : "Backtest";
+}
+
+// "3-yr: 41 tickets, 6 won, ROI −12% (−45% to +30%)".
+function ticketRecord(s, label) {
+  if (!s) return `${label}: not measured`;
+  if (!s.tickets) return `${label}: no ticket was built`;
+  const iv = s.roi_low != null && s.roi_high != null
+    ? ` (${signed(s.roi_low * 100, 0)}% to ${signed(s.roi_high * 100, 0)}%)` : "";
+  return `${label}: ${s.tickets.toLocaleString()} tickets, ${s.wins} won${
+    s.roi == null ? "" : `, ROI ${signed(s.roi * 100, 0)}%${iv}`}`;
+}
+
+const legRow = (l) => `<li><span><b>${esc(l.pick)}</b> <span class="mini">over ${esc(l.opponent)}${
+    l.side === "underdog" ? " · underdog" : ""}</span><br><span class="mini">${esc(l.reason)}</span></span>
+    <span class="end num">${odds(l.odds)}<br><span class="mini">${pct(l.prob)}</span></span></li>`;
+
+function ticketPanel(t) {
+  const m = t.measured;
+  const record = m == null ? `<div><span class="tag warn">Not measured yet</span></div>`
+    : `<div class="mini num">${esc(ticketRecord(m.window, windowLabel(m.periods)))}</div>`;
+  const head = `<div class="eyebrow">${esc(t.label)} · ${esc(t.target)}</div>`;
+  if (t.multiplier == null) {
+    return `<div class="panel">${head}
+      <div class="mini">${esc(t.missing_reason || "No ticket on this card.")}</div>${record}</div>`;
+  }
+  return `<div class="panel">${head}
+    <div class="stat3">
+      <div><div class="k">Pays</div><div class="v">${mult(t.multiplier)}</div></div>
+      <div title="The chance every leg lands: each leg's blended chance (model and market), multiplied"><div class="k">Chance</div><div class="v">${chance(t.prob)}</div></div>
+      <div title="The same from the market's prices, the bookmaker's cut removed"><div class="k">Market</div><div class="v">${chance(t.market_prob)}</div></div>
+    </div>
+    <ul class="list">${(t.legs || []).map(legRow).join("")}</ul>
+    <div class="mini">${esc(t.blurb)}</div>
+    ${record}
+  </div>`;
+}
+
+function parlayTickets(d) {
+  const cav = d.caveats || {};
+  const old = oldParlays(cav.parlay);
+  const more = [old, ...(cav.parlay_profiles_notes || [])].filter(Boolean)
+    .map((t) => `<p style="margin:0">${esc(t)}</p>`).join("");
+  const list = Array.isArray(d.parlay_profiles) ? d.parlay_profiles : null;
+  // Empty: the engine could not even read the bands on this run. Missing: a
+  // card written before the tickets existed. Either way it is said, not blank.
+  if (!list || !list.length) {
+    return `<div class="card"><h2>Three parlays</h2>
+      <div class="mini">The tickets could not be built on this run.${list ? ""
+        : " This card was written before they existed; the next engine run builds them."}</div>
+      ${fold(cav.parlay_profiles || old, cav.parlay_profiles ? more : "")}</div>`;
+  }
+  const targets = listWords(list.map((t) => targetWords(t.target)));
   return `<div class="card">
-    <h2>Parlays</h2>${blocks}
-    ${fold(caveat)}
+    <h2>Three parlays</h2>
+    <div class="mini">${targets ? esc(targets) : "Tickets"} from this card's priced fights, each with
+      what tickets like it returned.</div>
+    <div class="note"><b>The market is hard to beat.</b> Each ticket is the likeliest combination
+      that reaches its payout, not a bet expected to profit: every leg pays the bookmaker's margin.</div>
+    ${list.map(ticketPanel).join("")}
+    ${fold(cav.parlay_profiles || old, more)}
   </div>`;
 }
 
@@ -882,8 +961,8 @@ BOOT.card = async () => {
     ${d.fights.length ? `<div class="matches">${d.fights.map(boutRow).join("")}</div>`
       : `<div class="empty">No fights to predict on this card yet.</div>`}
     ${skipped}
+    ${d.fights.length ? parlayTickets(d) : ""}
     ${d.fights.length ? doubtCard(d.fights, d.caveats.flag) : ""}
-    ${parlayCard(d.parlays, d.caveats.parlay)}
     <details class="fold"><summary><span class="ic">${icon("info")}</span><span class="clip"><b>Reading the card.</b>
       ${esc(FORM_LEGEND)}</span><span class="more">More</span></summary>
       <div class="fold-body">${LEGEND}${about}</div></details>`;
@@ -1220,6 +1299,75 @@ function ring(share, colour = "var(--gain)") {
       stroke-dasharray="${on.toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 38 38)"/></svg>`;
 }
 
+// The parlay profiles on the Record tab: the backtest the tickets are scored
+// by (read from its file by the engine; absent when it has not been run) and
+// the logged tickets' live record since. A performance.json built before the
+// profiles existed draws nothing.
+// Every backtest row says what it is: the named profile, mixed on its own (the
+// pre-registered comparison), the shipped fallback, the control, the props.
+const ROLE_WORD = {
+  named: "this profile", "pre-registered": "mixed alone", shipped: "mixed, else this profile",
+  control: "market only", props: "as KO/sub props",
+};
+
+function parlayRecord(pp) {
+  if (!pp) return "";
+  const bt = pp.backtest, live = pp.live || {};
+  const roiCell = (s) => (!s || !s.tickets || s.roi == null ? `<td class="n">—</td>`
+    : `<td class="n ${s.roi >= 0 ? "gain" : "loss"}">${signed(s.roi * 100, 0)}%${
+      s.roi_low != null && s.roi_high != null
+        ? `<span class="mini">${signed(s.roi_low * 100, 0)} to ${signed(s.roi_high * 100, 0)}</span>` : ""}</td>`);
+  const dev = bt && bt.periods && bt.periods.dev
+    ? `Dev ${String(bt.periods.dev[0]).slice(0, 4)}–${String(bt.periods.dev[1]).slice(0, 4)}` : "Dev";
+  const rows = bt ? (bt.rows || []).map((r) => `
+    <tr class="has-sub"><td><b>${esc(r.label)}</b><br><span class="mini">${esc(r.target)}${
+      ROLE_WORD[r.role] ? ` · ${esc(ROLE_WORD[r.role])}` : ""}</span>${
+      r.shipped ? ` <span class="tag good">ships</span>` : ""}</td>
+      <td class="n">${r.window && r.window.tickets != null ? r.window.tickets.toLocaleString() : "—"}</td>
+      <td class="n">${r.window && r.window.tickets ? r.window.wins : "—"}</td>
+      ${roiCell(r.window)}</tr>
+    <tr class="sub"><td colspan="4">${esc(ticketRecord(r.dev, dev))}</td></tr>`).join("") : "";
+  const backtest = bt ? `
+    <div class="mini">One ticket a card per profile, built point in time from the prices and records
+      known before each card; flat stake, one unit a ticket. Window ${esc(bt.periods?.window?.[0] ?? "—")}
+      to ${esc(bt.periods?.window?.[1] ?? "—")}${bt.cards?.window != null ? `, ${bt.cards.window} cards` : ""}.</div>
+    <div class="scroll"><table>
+      <thead><tr><th>${esc(windowLabel(bt.periods))}</th><th class="n">Tickets</th><th class="n">Won</th>
+        <th class="n">Return a ticket</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`
+    : `<div class="note warnbox"><b>Not measured yet.</b> The tickets' record is read from a backtest
+        the engine has to run (<code>experiments/parlay_profiles.py</code>); it is not carried in the
+        app as a constant.</div>`;
+
+  const profiles = Object.values(live.profiles || {});
+  const liveRows = profiles.map((p) => `<li><span><b>${esc(p.label)} ${esc(p.target)}</b><br><span class="mini">${
+      p.settled} settled, ${p.won} won${p.void ? `, ${p.void} void` : ""}${p.pending ? ` · ${p.pending} to come` : ""}${
+      p.none ? ` · ${p.none} card${p.none === 1 ? "" : "s"} with no ticket` : ""}</span></span>
+      <span class="end num">${p.units == null ? "—" : `${signed(p.units, 2)} u`}<br><span class="mini">${
+        p.roi == null ? "no ticket settled" : `ROI ${signed(p.roi * 100, 0)}%`}</span></span></li>`).join("");
+  const STATUS = { won: "won", lost: "lost", void: "void", pending: "to come" };
+  // The engine's label for the profile, never one typed here.
+  const labelOf = (k) => ((live.profiles || {})[k] || {}).label || k || "";
+  const recent = (live.last || []).map((t) => `<li><span><b>${esc(labelOf(t.profile))}</b> <span class="mini">${esc(t.event_date)}</span><br><span class="mini">${
+      (t.legs || []).map((l) => esc(surname(l.pick))).join(" · ")}</span></span>
+      <span class="end num">${mult(t.multiplier)}<br><span class="mini">${esc(STATUS[t.status] || t.status || "")}${
+        t.profit != null && t.status !== "pending" ? ` ${signed(t.profit, 2)}` : ""}</span></span></li>`).join("");
+  const more = (bt && bt.caveats || []).map((c) => `<p style="margin:0">${esc(c)}</p>`).join("");
+
+  return `<div class="card">
+    <h2>Parlay profiles</h2>
+    <div class="note"><b>The market is hard to beat.</b> These tickets are the card's likeliest
+      combinations at each payout, not bets expected to profit.</div>
+    ${backtest}
+    <div class="eyebrow">Live, logged before each card</div>
+    ${liveRows ? `<ul class="list">${liveRows}</ul>` : `<div class="mini">No ticket logged yet.</div>`}
+    ${recent ? `<ul class="list">${recent}</ul>` : ""}
+    ${fold(pp.caveats && pp.caveats.profiles, more)}
+    ${fold(oldParlays(pp.caveats && pp.caveats.parlay))}
+  </div>`;
+}
+
 BOOT.record = async () => {
   const el = $("view-record");
   el.innerHTML = DESK.skeleton(2);
@@ -1298,6 +1446,8 @@ BOOT.record = async () => {
           stale silently. Run the <code>historical_backtest</code> experiment
           to fill this in.</div>`}
     </div>
+
+    ${parlayRecord(d.parlay_profiles)}
 
     ${roi.length ? `<div class="card">
       <h2>Return by year</h2>
