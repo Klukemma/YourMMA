@@ -1,60 +1,72 @@
 {
- "as_of": "2026-11-09T23:50:13Z",
+ "as_of": "2026-11-10T17:59:02Z",
  "elo_scale": {
   "hfa": 48.0,
   "points_per_elo": 0.04
  },
- "generated": "2026-11-09T23:51:45Z",
+ "generated": "2026-11-10T18:01:01Z",
  "schema": 1,
  "season": 2026,
  "teams": [
   {
    "conference": "AFC",
-   "def_epa": -0.001561,
+   "def_epa": -0.075001,
    "division": "AFC East",
-   "elo": 1668.522893,
+   "elo": 1697.286383,
    "key_players": {
     "defense": [
      {
-      "line": "7 sacks, 3 FF, 7 PD",
+      "line": "8 sacks, 3 FF, 8 PD",
       "name": "Greg Rousseau",
       "position": "LB",
       "rank": 1,
-      "value": 15.75
+      "value": 17.5
      },
      {
-      "line": "1 INT, 8 PD",
+      "line": "1 INT, 9 PD",
       "name": "Davison Igbinosun",
       "position": "CB",
       "rank": 2,
-      "value": 5.0
+      "value": 5.5
      }
     ],
     "offense": [
      {
-      "line": "1,793 pass yds, 11 TD, 5 INT, 270 rush yds",
+      "line": "2,027 pass yds, 12 TD, 6 INT, 285 rush yds",
       "name": "Josh Allen",
       "position": "QB",
       "rank": 1,
-      "value": 78.884926
+      "value": 80.640871
      },
      {
-      "line": "20 rec, 287 yds, 3 TD",
-      "name": "Keon Coleman",
-      "position": "WR",
-      "rank": 2,
-      "value": 19.109483
-     },
-     {
-      "line": "27 rec, 401 yds, 2 TD",
+      "line": "30 rec, 429 yds, 2 TD",
       "name": "Dalton Kincaid",
       "position": "TE",
+      "rank": 2,
+      "value": 20.511177
+     },
+     {
+      "line": "31 rec, 412 yds, 1 TD",
+      "name": "Khalil Shakir",
+      "position": "WR",
       "rank": 3,
-      "value": 17.325729
+      "value": 20.500664
      }
     ]
    },
    "last5": [
+    {
+     "code": "17",
+     "date": "2026-11-09",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "MIN",
+     "result": "W",
+     "score": "23-6",
+     "season": 2026,
+     "week": 9
+    },
     {
      "code": "26",
      "date": "2026-11-01",
@@ -102,44 +114,32 @@
      "score": "26-29",
      "season": 2026,
      "week": 4
-    },
-    {
-     "code": "8",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "LAC",
-     "result": "W",
-     "score": "24-16",
-     "season": 2026,
-     "week": 3
     }
    ],
    "name": "Buffalo Bills",
-   "net_epa": 0.125136,
-   "off_epa": 0.123575,
-   "points_against": 23.470175,
-   "points_for": 29.339331,
+   "net_epa": 0.181986,
+   "off_epa": 0.106985,
+   "points_against": 21.723158,
+   "points_for": 28.705398,
    "qb": "Josh Allen",
-   "qb_rating": 0.206306,
-   "qb_starts": 146,
+   "qb_rating": 0.192531,
+   "qb_starts": 147,
    "rank": 1,
    "record": {
     "losses": 1,
     "ties": 0,
-    "wins": 6
+    "wins": 7
    },
    "td_meters": {
     "rest": {
-     "n": 11,
-     "no_td": 9,
-     "rate": 0.818182
+     "n": 21,
+     "no_td": 18,
+     "rate": 0.857143
     },
     "top3": {
-     "n": 3,
-     "rate": 0.666667,
-     "scored": 2
+     "n": 6,
+     "rate": 0.5,
+     "scored": 3
     }
    },
    "team": "BUF"
@@ -826,142 +826,6 @@
   },
   {
    "conference": "NFC",
-   "def_epa": -0.132467,
-   "division": "NFC North",
-   "elo": 1619.066212,
-   "key_players": {
-    "defense": [
-     {
-      "line": "6.5 sacks, 1 INT, 1 FF",
-      "name": "Andrew Van Ginkel",
-      "position": "OLB",
-      "rank": 1,
-      "value": 10.75
-     },
-     {
-      "line": "6 sacks, 2 FF, 5 TFL",
-      "name": "Dallas Turner",
-      "position": "LB",
-      "rank": 2,
-      "value": 9.25
-     }
-    ],
-    "offense": [
-     {
-      "line": "31 rec, 295 yds, 3 TD",
-      "name": "T.J. Hockenson",
-      "position": "TE",
-      "rank": 1,
-      "value": 24.945384
-     },
-     {
-      "line": "28 rec, 335 yds, 4 TD",
-      "name": "Justin Jefferson",
-      "position": "WR",
-      "rank": 2,
-      "value": 20.036639
-     },
-     {
-      "line": "276 pass yds, 3 TD, 0 INT",
-      "name": "Carson Wentz",
-      "position": "QB",
-      "rank": 3,
-      "value": 3.393642
-     }
-    ]
-   },
-   "last5": [
-    {
-     "code": "4",
-     "date": "2026-11-01",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "DET",
-     "result": "L",
-     "score": "15-19",
-     "season": 2026,
-     "week": 8
-    },
-    {
-     "code": "6",
-     "date": "2026-10-25",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "IND",
-     "result": "W",
-     "score": "16-10",
-     "season": 2026,
-     "week": 7
-    },
-    {
-     "code": "10",
-     "date": "2026-10-11",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "NO",
-     "result": "W",
-     "score": "23-13",
-     "season": 2026,
-     "week": 5
-    },
-    {
-     "code": "5",
-     "date": "2026-10-04",
-     "game_type": "REG",
-     "home": true,
-     "neutral": false,
-     "opponent": "MIA",
-     "result": "W",
-     "score": "15-10",
-     "season": 2026,
-     "week": 4
-    },
-    {
-     "code": "7",
-     "date": "2026-09-27",
-     "game_type": "REG",
-     "home": false,
-     "neutral": false,
-     "opponent": "TB",
-     "result": "W",
-     "score": "23-16",
-     "season": 2026,
-     "week": 3
-    }
-   ],
-   "name": "Minnesota Vikings",
-   "net_epa": 0.049423,
-   "off_epa": -0.083044,
-   "points_against": 16.125389,
-   "points_for": 19.772093,
-   "qb": "Kyler Murray",
-   "qb_rating": 0.009272,
-   "qb_starts": 93,
-   "rank": 7,
-   "record": {
-    "losses": 1,
-    "ties": 0,
-    "wins": 6
-   },
-   "td_meters": {
-    "rest": {
-     "n": 20,
-     "no_td": 18,
-     "rate": 0.9
-    },
-    "top3": {
-     "n": 6,
-     "rate": 0.166667,
-     "scored": 1
-    }
-   },
-   "team": "MIN"
-  },
-  {
-   "conference": "NFC",
    "def_epa": -0.077949,
    "division": "NFC West",
    "elo": 1604.279398,
@@ -1076,7 +940,7 @@
    "qb": "Matthew Stafford",
    "qb_rating": 0.07209,
    "qb_starts": 261,
-   "rank": 8,
+   "rank": 7,
    "record": {
     "losses": 4,
     "ties": 0,
@@ -1212,7 +1076,7 @@
    "qb": "Jared Goff",
    "qb_rating": 0.106222,
    "qb_starts": 168,
-   "rank": 9,
+   "rank": 8,
    "record": {
     "losses": 2,
     "ties": 0,
@@ -1348,7 +1212,7 @@
    "qb": "Joe Burrow",
    "qb_rating": 0.155764,
    "qb_starts": 92,
-   "rank": 10,
+   "rank": 9,
    "record": {
     "losses": 2,
     "ties": 0,
@@ -1367,6 +1231,142 @@
     }
    },
    "team": "CIN"
+  },
+  {
+   "conference": "NFC",
+   "def_epa": -0.123453,
+   "division": "NFC North",
+   "elo": 1590.302723,
+   "key_players": {
+    "defense": [
+     {
+      "line": "7.5 sacks, 1 INT, 1 FF",
+      "name": "Andrew Van Ginkel",
+      "position": "OLB",
+      "rank": 1,
+      "value": 12.0
+     },
+     {
+      "line": "7 sacks, 2 FF, 1 PD",
+      "name": "Dallas Turner",
+      "position": "LB",
+      "rank": 2,
+      "value": 11.0
+     }
+    ],
+    "offense": [
+     {
+      "line": "35 rec, 328 yds, 3 TD",
+      "name": "T.J. Hockenson",
+      "position": "TE",
+      "rank": 1,
+      "value": 17.555813
+     },
+     {
+      "line": "31 rec, 393 yds, 4 TD",
+      "name": "Justin Jefferson",
+      "position": "WR",
+      "rank": 2,
+      "value": 7.965578
+     },
+     {
+      "line": "7 rec, 54 yds, 0 TD",
+      "name": "Gavin Bartholomew",
+      "position": "TE",
+      "rank": 3,
+      "value": 3.313733
+     }
+    ]
+   },
+   "last5": [
+    {
+     "code": "17",
+     "date": "2026-11-09",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "BUF",
+     "result": "L",
+     "score": "6-23",
+     "season": 2026,
+     "week": 9
+    },
+    {
+     "code": "4",
+     "date": "2026-11-01",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "DET",
+     "result": "L",
+     "score": "15-19",
+     "season": 2026,
+     "week": 8
+    },
+    {
+     "code": "6",
+     "date": "2026-10-25",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "IND",
+     "result": "W",
+     "score": "16-10",
+     "season": 2026,
+     "week": 7
+    },
+    {
+     "code": "10",
+     "date": "2026-10-11",
+     "game_type": "REG",
+     "home": false,
+     "neutral": false,
+     "opponent": "NO",
+     "result": "W",
+     "score": "23-13",
+     "season": 2026,
+     "week": 5
+    },
+    {
+     "code": "5",
+     "date": "2026-10-04",
+     "game_type": "REG",
+     "home": true,
+     "neutral": false,
+     "opponent": "MIA",
+     "result": "W",
+     "score": "15-10",
+     "season": 2026,
+     "week": 4
+    }
+   ],
+   "name": "Minnesota Vikings",
+   "net_epa": -0.024884,
+   "off_epa": -0.148337,
+   "points_against": 16.81285,
+   "points_for": 18.394884,
+   "qb": "Carson Wentz",
+   "qb_rating": -0.120193,
+   "qb_starts": 102,
+   "rank": 10,
+   "record": {
+    "losses": 2,
+    "ties": 0,
+    "wins": 6
+   },
+   "td_meters": {
+    "rest": {
+     "n": 30,
+     "no_td": 28,
+     "rate": 0.933333
+    },
+    "top3": {
+     "n": 9,
+     "rate": 0.111111,
+     "scored": 1
+    }
+   },
+   "team": "MIN"
   },
   {
    "conference": "NFC",
