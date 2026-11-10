@@ -61,14 +61,16 @@ predicts today (soccer_schedule joins only those): 80 requests. Every league
 is leagues=FEED_LEAGUES: 31 x 15 ESPN days and 12 season files, 477
 requests, about 80 seconds on GitHub's runner (the league probe made 997 in
 161 s). RUS: ESPN lists its 2026-27 rounds, football-data.co.uk's file
-stopped at 2026-08-02 (soccer_data). fixturedownload's placeholders, in its
-2026-27 files: midnight UTC in the Eredivisie (100 rows) and the Primeira
-Liga, local midnight in Ligue 2 (171), the Primeira Liga's summer time (198
-with its UTC ones) and the Super Lig (162), each a whole unscheduled round
-but one Eredivisie match moved with no time (Twente v Sparta, filed at
-00:00 UTC on 2027-02-06); the Championship's and the Scottish Premiership's
-read Saturday 15:00 UK like the Premier League's. MLS has none, and kicks
-off at 00:00 UTC for real (LOCAL: no placeholder rule there).
+stopped at 2026-08-02 (soccer_data) - so every RUS match after it is the
+feeds' alone (no price, no result of record) until the file resumes.
+fixturedownload's placeholders, in its 2026-27 files: midnight UTC in the
+Eredivisie (100 rows) and the Primeira Liga, local midnight in Ligue 2
+(171), the Primeira Liga's summer time (198 with its UTC ones) and the
+Super Lig (162), each a whole unscheduled round but one Eredivisie match
+moved with no time (Twente v Sparta, filed at 00:00 UTC on 2027-02-06); the
+Championship's and the Scottish Premiership's read Saturday 15:00 UK like
+the Premier League's. MLS has none, and kicks off at 00:00 UTC for real
+(LOCAL: no placeholder rule there).
 
 ROWS. parse_espn and parse_fixturedownload return one dict per match, every
 key always present (ROW_FIELDS); None means "the source does not say":
@@ -206,18 +208,36 @@ downloaded it, and the second tiers' snapshot frozen that day):
       name likeness, and 13 of the second tiers' - is a match reconcile makes,
       under the same match_id at the same kickoff; the 48 with a result have
       ESPN's score. No play-off or cup tie was on a league's board.
+  CLUB TABLES   beyond the names, matches: 246 of the 26 leagues' 488 ESPN
+      clubs are in an event football-data.co.uk has under the same id at the
+      same kickoff, or that reconcile joins to fixturedownload's row at the
+      same kickoff (a club plays one match at a time, so a wrong pair cannot
+      join; fixturedownload's own tables give football-data.co.uk's id for
+      every played match but one, below). For the rest: in the 23 leagues
+      where a pairing is played once in the phase under way (all but SC0,
+      SC1 and MLS), no event is, through the tables, a pairing
+      football-data.co.uk already has from another day - a check that
+      swapping any two clubs of a league would fail for 3115 of the 4114
+      pairs (RUS: 25 of 120, its file stopping at 2026-08-02). Only SC1's
+      eight unmatched clubs rest on their names alone.
   fixturedownload v football-data.co.uk   every played match pairs, under
       the same match_id but one (MLS 2025, Austin v Seattle, two hours
       apart across UK midnight). Kickoffs: 2025 E1 550/552, N1 301/305, P1
       305/306, T1 300/304, USA 496/510; 2026 every one but T1 80/81 and USA
-      463/466 - minutes (late starts), T1's two of 14/09/2025 football-data
-      has an hour early, MLS's three in the hour the UK clock repeats
-      (25/10/2026; soccer_data reads it as its first pass). Scores: every
-      one, but three of MLS 2026 - Galaxy v St. Louis and LAFC v Salt Lake
-      of 23/07/2026 (3-1 and 1-3 here, 1-3 and 3-1 there: swapped between
-      the two in one source) and Orlando v Chicago of 20/08/2026 (1-0 here,
-      1-2 there). Which source is right is not settled here; a
-      fixturedownload score is never a result alone.
+      463/466. The 29 that differ, fixturedownload's later in 25: 2 to 25
+      minutes in E1, N1, P1 and T1 (late starts) but E1's Norwich v Ipswich
+      of 11/04/2026 (2h30m) and T1's two of 14/09/2025 (an hour); MLS 2025's
+      14 - Austin v Seattle 2 hours earlier, three 10 to 55 minutes earlier,
+      ten 15 minutes to 3h13m later (odd minutes - 01:08, 02:43, 03:41 UTC -
+      like a start after a weather delay); MLS 2026's Inter Miami v Atlanta
+      of 06/09/2026 (1h35m) and two in the hour the UK clock repeats
+      (25/10/2026; soccer_data reads it as its first pass, an hour early).
+      Hence, as for the five, a fixturedownload time is never confirmed
+      alone. Scores: every one, but three of MLS 2026 - Galaxy v St. Louis
+      and LAFC v Salt Lake of 23/07/2026 (3-1 and 1-3 here, 1-3 and 3-1
+      there: swapped between the two in one source) and Orlando v Chicago
+      of 20/08/2026 (1-0 here, 1-2 there). Which source is right is not
+      settled here; a fixturedownload score is never a result alone.
   ESPN v fixturedownload   the 174 matches both list (seven leagues): every
       kickoff equal, but two Ligue 2 matches ESPN had moved and
       fixturedownload still had on Saturday at 13:00 UTC (Reims v Sochaux to
