@@ -274,7 +274,7 @@ def report(graded, ungraded, total_logged):
             print(f"       {pred['event_date']}  {pred['red_corner']} vs {pred['blue_corner']}")
 
 
-def write_back(graded, ungraded, path, index):
+def write_back(graded, ungraded, path, index, now=None):
     """Record outcomes in the history file.
 
     EACH LOGGED PICK AGAINST ITS OWN BOUT. This used to key the outcome on the
@@ -306,7 +306,7 @@ def write_back(graded, ungraded, path, index):
         'unique_bouts_graded': len(graded),
         'accuracy': round(sum(r['correct'] for r in graded) / len(graded), 4) if graded else None,
     }
-    report_parlays(grade_parlays(history, index), history)
+    report_parlays(grade_parlays(history, index, now=now), history)
     Path(path).write_text(json.dumps(history, indent=2))
     print(f"\nWrote outcomes to {path}")
 
@@ -329,86 +329,193 @@ def _bout(red, blue, event_date):
     return {'red_corner': red, 'blue_corner': blue, 'event_date': event_date}
 
 
-def _cards_with_results(history, results):
-    """Card dates (as logged) with at least one logged bout - a pick or a
-    parlay leg - whose result is on file.
+def is_no_ticket(row):
+    """A logged run of a band that built no ticket (status "none"): no
+    multiplier, or no legs. Read from what the row holds, not its status,
+    because grading rewrites the status and a row with nothing to settle
+    must never be settled."""
+    return row.get('multiplier') is None or not row.get('legs')
 
-    WHY THAT MEANS A MISSING BOUT WAS CANCELLED. Results arrive a card at a
-    time (the UFCStats dataset and the provisional Wikipedia rows both add
-    whole events), so once a card's results are in, a logged bout with no
-    record is a bout that did not happen: a withdrawal on the night. Before
-    they are in, the same absence means only "not yet", and the leg stays
-    open. Grading reruns from scratch every time, so a bout that turns up
-    later is settled on its real result at the next run."""
-    found = set()
+
+def _day(value):
+    """A logged or matched date as "YYYY-MM-DD", or None when unreadable."""
+    when = pd.to_datetime(value, errors='coerce')
+    return None if pd.isna(when) else str(when)[:10]
+
+
+def _logged_cards(history, results):
+    """{card date as logged: Counter of the result dates its bouts matched},
+    over every logged bout - a pick or a parlay leg - whose result is on file.
+
+    WHY A CARD WITH RESULTS IS NEEDED BEFORE A MISSING BOUT IS CANCELLED.
+    Results arrive a card at a time (the UFCStats dataset and the provisional
+    Wikipedia rows both add whole events), so before any of a card's results
+    are in, a bout with no record means only "not yet". Being in is not
+    enough on its own either - see _cancelled.
+
+    WHICH REAL CARD A LOGGED DATE IS. One card was logged under two dates
+    (UFC 325 as 2026-01-31 and as 2026-02-08), and the date-tolerant match
+    finds the same bouts from both. The result dates its bouts matched say
+    which card a logged date was."""
+    from collections import Counter
+    found = defaultdict(Counter)
+
+    def add(day, red, blue):
+        hit = find_result(_bout(red, blue, day), results)
+        real = None if hit is None else _day(hit[0])
+        if real is not None:
+            found[day][real] += 1
+
     for p in history.get('predictions', []):
-        day = str(p.get('event_date'))[:10]
-        if day not in found and find_result(
-                _bout(p.get('red_corner'), p.get('blue_corner'), day), results) is not None:
-            found.add(day)
+        add(str(p.get('event_date'))[:10], p.get('red_corner'), p.get('blue_corner'))
     for t in history.get('parlays', []):
         day = str(t.get('event_date'))[:10]
-        for leg in t.get('legs', []):
-            if day in found:
-                break
-            if find_result(_bout(leg.get('red'), leg.get('blue'), day), results) is not None:
-                found.add(day)
+        for leg in t.get('legs') or []:
+            add(day, leg.get('red'), leg.get('blue'))
     return found
 
 
-def grade_parlays(history, results):
+def _fighter_dates(results):
+    """{norm_name: [dates]}: every date each fighter has a result row on."""
+    out = defaultdict(list)
+    for (name, _), entries in results.items():
+        out[name].extend(e[0] for e in entries)
+    return out
+
+
+def _instant(text):
+    from datetime import datetime, timezone
+    try:
+        when = datetime.fromisoformat(str(text).replace('Z', '+00:00'))
+    except (TypeError, ValueError):
+        return None
+    return when if when.tzinfo else when.replace(tzinfo=timezone.utc)
+
+
+def card_is_complete(ticket, now):
+    """Whether a card is old enough for its results to be whole: a day after
+    its first bell, or two days after its date when no start was logged. An
+    unreadable date never is."""
+    from datetime import date, datetime, timezone
+    start = _instant(ticket.get('first_start')) if ticket.get('first_start') else None
+    if start is not None:
+        return now >= start + timedelta(days=1)
+    try:
+        day = date.fromisoformat(str(ticket.get('event_date'))[:10])
+    except ValueError:
+        return False
+    return now >= datetime(day.year, day.month, day.day, tzinfo=timezone.utc) + timedelta(days=2)
+
+
+def _cancelled(leg, day, fighters):
+    """Whether a leg whose bout has no result was a bout that did not happen:
+    NEITHER fighter has any result row within DATE_TOLERANCE of the card.
+
+    A missing match alone is not enough. "Zachary Reese vs Mickey Gall" was
+    logged and the archive holds "Mickey Gall vs Zach Reese": the bout
+    happened, the names did not match, and voiding it as cancelled would have
+    paid a lost ticket. Where either fighter fought near the card, the leg
+    stays open - shown as missing - until a person reconciles the names."""
+    when = pd.to_datetime(day, errors='coerce')
+    if pd.isna(when):
+        return False
+    for name in (leg.get('red'), leg.get('blue')):
+        for seen in fighters.get(norm_name(name), ()):
+            if not pd.isna(seen) and abs(seen - when) <= DATE_TOLERANCE:
+                return False
+    return True
+
+
+def _newest(rows, key):
+    """{key(row): index of its newest row by timestamp}, rows as (i, row)."""
+    best = {}
+    for i, t in rows:
+        k = key(i, t)
+        if k not in best or (str(t.get('timestamp') or '')
+                             > str(best[k][1].get('timestamp') or '')):
+            best[k] = (i, t)
+    return {k: i for k, (i, _) in best.items()}
+
+
+def _supersede(t, status='superseded'):
+    t['status'] = status
+    for stale in ('paid', 'profit'):
+        t.pop(stale, None)
+
+
+def grade_parlays(history, results, now=None):
     """Settle the logged parlay tickets in `history["parlays"]`, in place,
     against `results` (load_results' index). Returns the graded tickets.
 
-    ONE TICKET PER CARD AND PROFILE: the newest one logged before the card,
-    which is the rule the picks follow and for the same reason - a re-run
-    logs the card again, and a ticket logged after the first bell is not a
-    prediction. The others stay in the file, marked "superseded" or "late",
-    and never count.
+    THE RUN IS THE UNIT. Every run of the card logs one row per band - a
+    ticket, or a "none" row saying that run built nothing - and per card and
+    profile the newest row logged before the card is the one that counts,
+    which is the rule the picks follow and for the same reason: a re-run
+    logs the card again, and a row logged after the first bell is not a
+    prediction. A "none" row is never graded or counted, so a later run that
+    built nothing supersedes an earlier ticket rather than letting it stand.
+    The other rows stay in the file, marked "superseded" or "late".
+
+    ONE CARD, ONE TICKET, WHATEVER DATE IT WAS LOGGED UNDER. After settling,
+    the chosen rows are collapsed per profile on the real card their legs
+    matched (the result date find_result returned; a row with no matched leg
+    takes the card its logged date's other bouts matched, else its logged
+    date), keeping the newest: UFC 325, logged as 2026-01-31 and as
+    2026-02-08, counts once.
 
     Each leg is read off its bout's real result by the same date-tolerant
     match the picks use (find_result, on the full names). A draw or no
-    contest voids the leg; so does a bout with no record once the rest of
-    its card is graded (cancelled). The ticket is then settled by
-    parlay_profiles.settle at the decimals that were logged, a void leg
-    counting 1.0 - so a ticket is lost the moment one leg loses, and open
-    ("pending") while a leg is still unknown and none has lost.
+    contest voids the leg. A bout with no result is voided as cancelled only
+    when its card has results in, neither fighter has a result within
+    DATE_TOLERANCE of it (_cancelled), and the card is old enough to be
+    complete (card_is_complete, at `now`); otherwise the leg stays open.
+    The ticket is then settled by parlay_profiles.settle at the decimals
+    that were logged, a void leg counting 1.0 - so a ticket is lost the
+    moment one leg loses, and open ("pending") while a leg is still unknown
+    and none has lost.
 
     Every chosen ticket is settled again from scratch on every run, never
     trusted from the last one: a provisional result replaced, or a bout that
     arrives late, then changes the grade instead of leaving a stale one.
     """
+    from collections import Counter
+    from datetime import datetime, timezone
     import parlay_profiles as pp
+    now = now or datetime.now(timezone.utc)
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
     tickets = history.get('parlays') or []
-    cards = _cards_with_results(history, results)
+    cards = _logged_cards(history, results)
+    fighters = _fighter_dates(results)
 
-    newest = {}
-    for i, t in enumerate(tickets):
-        if not made_before_the_card(t):
-            continue
-        key = (str(t.get('event_date'))[:10], t.get('profile'))
-        if key not in newest or (str(t.get('timestamp') or '')
-                                 > str(tickets[newest[key]].get('timestamp') or '')):
-            newest[key] = i
-    chosen = set(newest.values())
+    before = [(i, t) for i, t in enumerate(tickets) if made_before_the_card(t)]
+    chosen = set(_newest(before, lambda i, t: (str(t.get('event_date'))[:10],
+                                               t.get('profile'))).values())
 
-    graded = []
+    real = {}                  # index -> the real card date it settled on
     for i, t in enumerate(tickets):
         if i not in chosen:
-            t['status'] = 'superseded' if made_before_the_card(t) else 'late'
-            for stale in ('paid', 'profit'):
-                t.pop(stale, None)
+            _supersede(t, 'superseded' if made_before_the_card(t) else 'late')
             continue
         day = str(t.get('event_date'))[:10]
-        rebuilt = []
+        logged_as = cards[day].most_common(1)[0][0] if cards.get(day) else day
+        if is_no_ticket(t):
+            _supersede(t, 'none')
+            real[i] = logged_as
+            continue
+        complete = card_is_complete(t, now)
+        rebuilt, matched = [], Counter()
         for leg in t.get('legs', []):
             found = find_result(_bout(leg.get('red'), leg.get('blue'), day), results)
             why = None
             if found is None:
-                result = {'winner': None, 'method': None} if day in cards else None
-                why = 'cancelled' if day in cards else None
+                gone = day in cards and complete and _cancelled(leg, day, fighters)
+                result = {'winner': None, 'method': None} if gone else None
+                why = 'cancelled' if gone else None
             else:
-                _, winner, method = found
+                when, winner, method = found
+                if _day(when) is not None:
+                    matched[_day(when)] += 1
                 if not isinstance(winner, str) or not winner.strip():
                     result, why = {'winner': None, 'method': None}, 'draw or no contest'
                 else:
@@ -426,12 +533,23 @@ def grade_parlays(history, results):
         t['status'] = 'pending' if settled['status'] == 'open' else settled['status']
         t['paid'] = settled['paid']
         t['profit'] = settled['profit']
-        graded.append(t)
+        real[i] = matched.most_common(1)[0][0] if matched else logged_as
+
+    keep = set(_newest([(i, tickets[i]) for i in real],
+                       lambda i, t: (real[i], t.get('profile'))).values())
+    graded = []
+    for i in sorted(real):
+        t = tickets[i]
+        if i not in keep:
+            _supersede(t)
+        elif not is_no_ticket(t):
+            graded.append(t)
     return graded
 
 
 def report_parlays(graded, history):
-    """One line per profile: what its settled tickets returned."""
+    """One line per profile: what its settled tickets returned, and how many
+    cards' runs built no ticket."""
     if not history.get('parlays'):
         return
     print("\n" + "-" * 66)
@@ -440,12 +558,18 @@ def report_parlays(graded, history):
     by = defaultdict(list)
     for t in graded:
         by[t.get('profile')].append(t)
-    for profile, rows in by.items():
+    none = defaultdict(int)
+    for t in history.get('parlays') or []:
+        if t.get('status') == 'none':
+            none[t.get('profile')] += 1
+    for profile in list(by) + [p for p in none if p not in by]:
+        rows = by.get(profile, [])
         done = [t for t in rows if t['status'] in ('won', 'lost', 'void')]
         won = sum(t['status'] == 'won' for t in done)
         units = sum(t['profit'] for t in done)
         print(f"  {str(profile):<12}{len(done):>4} settled  {won:>3} won  "
-              f"{units:+8.2f} units  {len(rows) - len(done):>3} pending")
+              f"{units:+8.2f} units  {len(rows) - len(done):>3} pending  "
+              f"{none.get(profile, 0):>3} no ticket")
 
 
 def main():

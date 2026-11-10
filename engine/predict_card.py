@@ -3452,25 +3452,30 @@ def log_card_predictions(predictions_list, event_name, event_date, first_start=N
 
 
 def log_parlay_tickets(entries, event_name, event_date, first_start=None):
-    """Append this run's parlay tickets to the history's "parlays" list.
+    """Append this run's parlay rows to the history's "parlays" list.
 
-    One record per ticket (app_export.parlay_records), graded later by
-    grade.grade_parlays: the newest ticket per card and profile logged before
+    THE RUN IS THE UNIT: one record per band (app_export.parlay_records) - a
+    ticket, or a "none" row when this run built no ticket for that band,
+    including a run whose build raised - graded later by
+    grade.grade_parlays: the newest row per card and profile logged before
     the card is the one that counts, so a re-run logs again and the last
-    pre-fight run wins - exactly as the picks do. Every other key of the
-    history file is kept as it was."""
+    pre-fight run wins - exactly as the picks do - and a last run that built
+    nothing leaves no earlier ticket standing. Every other key of the
+    history file is kept as it was. Returns the number of rows logged."""
     import app_export as _ax_log
     records = _ax_log.parlay_records(entries, event_name, str(event_date),
                                      first_start=first_start)
     if not records:
-        print(f"[Tracking] No parlay ticket on {event_name} to log")
+        print(f"[Tracking] No parlay row on {event_name} to log")
         return 0
     history = load_prediction_history()
     history.setdefault('parlays', []).extend(records)
     PREDICTIONS_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(PREDICTIONS_LOG_FILE, 'w') as f:
         json.dump(history, f, indent=2)
-    print(f"[Tracking] Logged {len(records)} parlay ticket(s) for {event_name}")
+    built = sum(r['status'] != 'none' for r in records)
+    print(f"[Tracking] Logged {built} parlay ticket(s) and {len(records) - built} "
+          f"band(s) with no ticket for {event_name}")
     return len(records)
 
 print("\n[Advanced Improvements] Loaded: Calibration, Weight Classes, Recency, Value Flags, Kelly, Tracking")
@@ -4144,7 +4149,10 @@ for _fight in _app_fights:
 # backtest shipped for it and carrying its measured record. Reasons quote
 # only bouts before this card, from the archive loaded above for the form
 # lines. A reader's aid like the form and the intel: a failure here must
-# never cost the card, so it degrades to "no tickets" and says so.
+# never cost the card, so it degrades to "no tickets" and says so - one entry
+# a band, each "Not built on this run (<ErrorType>).", which is logged below
+# like any other run: the run is the unit, so a run that built nothing still
+# supersedes an earlier run's tickets.
 _profiles_measured = _app_export.load_parlay_profiles()
 try:
     _parlay_tickets = _app_export.parlay_profiles_payload(
@@ -4152,7 +4160,14 @@ try:
         _profiles_measured, event_date=str(EVENT_DATE))
 except Exception as _err:                                      # noqa: BLE001
     print(f"::warning::parlay tickets not built: {type(_err).__name__}: {_err}")
-    _parlay_tickets = []
+    try:
+        _parlay_tickets = _app_export.parlay_profiles_unbuilt(_profiles_measured, _err)
+    except Exception as _err2:                                 # noqa: BLE001
+        # Not even the bands could be read (the profile module itself
+        # failed): the card carries an empty list, which the app says
+        # could not be built, and nothing is logged.
+        print(f"::warning::parlay bands not readable: {type(_err2).__name__}: {_err2}")
+        _parlay_tickets = []
 
 print("\n" + "=" * 70)
 print("THREE PARLAYS" + ("" if _profiles_measured else
@@ -4174,7 +4189,9 @@ for _t in _parlay_tickets:
     elif _t.get('measured') is None:
         print("    not measured yet")
 
-if _may_log_parlays and _parlay_tickets and _grade.picks_may_be_logged(
+# Every band is logged, ticket or not (a "none" row), under the same
+# before-the-bell gate as the picks, read again at the moment of writing.
+if _may_log_parlays and _grade.picks_may_be_logged(
         EVENT_DATE, first_start=_first_start):
     log_parlay_tickets(_parlay_tickets, EVENT_NAME, EVENT_DATE,
                        first_start=_first_start)

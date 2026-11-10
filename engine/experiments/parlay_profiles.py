@@ -7,42 +7,67 @@ card, using only what was known before each card?
 
 THE PROFILES - copied from engine/parlay_profiles.py, where they were FIXED
 BEFORE ANY NUMBER IN THIS FILE WAS SEEN. Nothing below tunes them; a
-profile that loses is reported losing.
+profile that loses is reported losing. The bands changed once, as PROTOCOL
+v2 (below).
 
-  steady      ~5x  (band 4.5-6.5)   favourites only: every leg the market
-                                    favourite, the model agreeing, blended
-                                    probability >= 0.60
-  risker      ~10x (band 8-14)      one or two RISKY legs - a price of 2.0 or
-                                    longer that the model rates at least 3
-                                    points above the market (blended >= 0.35)
-                                    - filled with steady legs
-  risk_lover  50-100x (band 40-120) one or two LONG legs - an underdog at 2.5
-                                    or longer the model rates at least as high
-                                    as the market - on top of two or more
-                                    confident favourites (blended >= 0.65).
-                                    Each long leg carries its likeliest route
-                                    (KO or submission) from the fighter's own
-                                    UFC record as the reason.
-  mixed       every band            any legs from all three pools, at least
-                                    one the model rates above the market
-  market_only every band            any legs, chosen by the market alone - the
-                                    control that says whether the model adds
-                                    anything
+  steady      ~5x     (band 4.5-6.5)  favourites only: every leg the market
+                                      favourite, the model agreeing, blended
+                                      probability >= 0.60
+  risker      ~10x    (band 9.5-14)   one or two RISKY legs - a price of 2.0
+                                      or longer that the model rates at least
+                                      3 points above the market (blended >=
+                                      0.35) - filled with steady legs
+  risk_lover  50-100x (band 50-100)   one or two LONG legs - an underdog at 2.5
+                                      or longer the model rates at least as
+                                      high as the market - on top of two or
+                                      more confident favourites (blended >=
+                                      0.65). A long leg's reason names its
+                                      likeliest finishing route (KO or
+                                      submission) where the fighter's own UFC
+                                      record has a finish.
+  mixed       every band              the 12 likeliest legs on the card with a
+                                      market price and a blended probability
+                                      >= 0.30 (favourite or underdog, any
+                                      profile's pool or none), at least one
+                                      leg the model rates above the market
+  market_only every band              the 12 legs the de-vigged market rates
+                                      likeliest (market chance >= 0.30),
+                                      searched by the market's chance alone -
+                                      the control that says whether the model
+                                      adds anything
 
 plus risk_lover_method, the risk lover with its long legs priced as the
 KO/submission prop of their likeliest route where the props were priced.
 Within its pool and band every profile takes the combination with the
-highest combined (blended) probability; one leg per fight; a card with no
-combination inside the band gives no ticket.
+highest combined (blended; market_only: the market's) probability, so a
+ticket usually pays near its band's floor; one leg per fight; a card with
+no combination inside the band gives no ticket.
+
+PROTOCOL v2 - THE BANDS MOVED AFTER v1 WAS SEEN. v1 searched risker in 8-14
+and the risk lover in 40-120, and its tickets sat at those floors: no
+"~10x" ticket reached 10x (median about 8.3x) and the "50-100x" tickets had
+a median about 41x. v2 sets the bands to the payouts the bettor asked for -
+risker 9.5-14, the risk lover 50-100; steady unchanged at 4.5-6.5 - from
+the request, not from any result: the labels, not the outcomes, drove it.
+v2 also prices each card from ONE snapshot (below), where v1 let a ticket
+mix closing and opening prices that could never have been bought together.
+Every profile rule, the periods and the ship rule are unchanged. The JSON
+keeps v1's results, ship decision and caveats under "v1", and records the
+multipliers v2's tickets actually carry ("multipliers": median, min, max per
+rule and period).
 
 THE PROTOCOL.
 
   rows      experiments/parlay_legs.py: every walk-forward fight from
             2016-01-01 to the end of the cache, the shipped recipe's
             model probability (each year fitted on earlier years only), the
-            closing moneyline or, where none, the opening line, method props,
-            each corner's record strictly before the fight. Rebuilt on every
-            run, so the record and the rows it was read from cannot drift.
+            closing and the opening moneyline, method props, each corner's
+            record strictly before the fight. Each CARD is priced from one
+            snapshot - the one that prices more of its fights, ties to the
+            close - and every leg on it takes that snapshot's price, so no
+            ticket mixes two snapshots; a fight priced only in the other
+            snapshot gives no leg and is counted. Rebuilt on every run, so
+            the record and the rows it was read from cannot drift.
   cards     rows grouped by (event, date). Each card's legs come from
             parlay_profiles.fight_legs, which rebuilds the blended probability
             from the de-vigged market at the shipped weight
@@ -59,7 +84,10 @@ THE PROTOCOL.
   record    parlay_profiles.summarise per period and profile (hit rate, the
             model's expected hit rate, the market's, mean multiplier, ROI with
             a bootstrap 95% interval over tickets = cards); the window again
-            split by price snapshot (close / open).
+            split by price snapshot (close / open), which covers every
+            ticket because a card has one snapshot; and the multipliers the
+            tickets carry (median, min, max), so the record says what the
+            tickets paid, not only what their band promised.
   ship      PRE-REGISTERED: at each band, mixed ships in place of the named
             profile only if its ROI beats the named profile's in BOTH DEV and
             WINDOW. Otherwise the named profile ships. A profile with no
@@ -79,9 +107,10 @@ import json
 import sys
 import time
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 ENGINE = Path(__file__).resolve().parents[1]
@@ -96,8 +125,12 @@ OUT = HERE / "parlay_profiles.json"
 TICKETS = HERE / "parlay_tickets.csv.gz"
 ODDS_CACHE = ENGINE / "data" / "odds_cache.json"
 
-PROTOCOL = ("parlay-profiles-v1: profiles fixed in engine/parlay_profiles.py before "
-            "any backtest number; one ticket per card per profile, flat 1 unit; "
+PROTOCOL_VERSION = pp.PROTOCOL_VERSION
+PROTOCOL = ("parlay-profiles-v2: profiles fixed in engine/parlay_profiles.py before "
+            "any backtest number; bands steady 4.5-6.5, risker 9.5-14, risk lover 50-100 "
+            "(v1's 8-14 and 40-120 moved to the asked targets after v1 was seen - the "
+            "labels, not the outcomes, drove it); each card priced from one snapshot; "
+            "one ticket per card per profile, flat 1 unit; "
             "DEV 2016-11-01..2023-10-31, WINDOW 2023-11-01..end of walk-forward cache; "
             "mixed ships at a band only if its ROI beats the named profile's in both")
 PERIODS = {"dev": ("2016-11-01", "2023-10-31"), "window": ("2023-11-01", None)}
@@ -111,7 +144,11 @@ NAMES = BASE + tuple(f"{p}@{b}" for p in ("mixed", "market_only") for b in pp.OR
 # independent of the decision that created it.
 FALLBACK = tuple(f"mixed_else@{b}" for b in pp.ORDER)
 NAMES = NAMES + FALLBACK
-SNAPSHOTS = ("close", "open")
+SNAPSHOTS = parlay_legs.SNAPSHOTS
+SETTLED = ("won", "lost", "void")
+# What a v1 file is lifted into the "v1" block with, for the record.
+V1_FIELDS = ("generated", "protocol", "periods", "results", "by_snapshot", "cards",
+             "ship", "caveats")
 
 
 def spec(name):
@@ -207,6 +244,64 @@ def ship(results):
     return out
 
 
+def _spread(values):
+    m = sorted(float(x) for x in values)
+    if not m:
+        return {"tickets": 0, "median": None, "min": None, "max": None}
+    return {"tickets": len(m), "median": round(float(np.median(m)), 2),
+            "min": round(m[0], 2), "max": round(m[-1], 2)}
+
+
+def multipliers(rows, names=NAMES):
+    """{period: {NAME: {"tickets", "median", "min", "max"}}}: the multiplier
+    each settled ticket carried (what it paid had every leg won), over the
+    same tickets parlay_profiles.summarise counts. rows: ticket rows
+    (ticket_row's columns), a list of dicts or a frame. A rule with no
+    settled ticket has None, not a number."""
+    frame = pd.DataFrame(rows, columns=["period", "profile", "multiplier", "status"]) \
+        if not isinstance(rows, pd.DataFrame) else rows
+    frame = frame[frame["status"].isin(SETTLED)]
+    return {p: {name: _spread(frame.loc[(frame["period"] == p) & (frame["profile"] == name),
+                                        "multiplier"])
+                for name in names}
+            for p in PERIODS}
+
+
+def v1_block(previous, v1_tickets=None):
+    """v1's published record, kept beside v2's: carried forward unchanged
+    from a v2 file, or lifted from a v1 file - its protocol, results, ship
+    decision and caveats as published, the bands it searched, and (when the
+    v1 ticket file is handed over) the multipliers its tickets carried.
+    None when `previous` is neither."""
+    if not isinstance(previous, dict):
+        return None
+    if (previous.get("protocol_version") or 1) >= 2:
+        return previous.get("v1")
+    if not str(previous.get("protocol") or "").startswith("parlay-profiles-v1"):
+        return None
+    block = {k: previous.get(k) for k in V1_FIELDS}
+    block["protocol_version"] = 1
+    block["bands"] = {b: list(pp.V1_BANDS[b]) for b in pp.ORDER}
+    block["window_tickets_mixed_snapshot"] = (previous.get("coverage") or {}).get(
+        "window_tickets_mixed_snapshot")
+    if v1_tickets is not None and len(v1_tickets):
+        present = set(v1_tickets["profile"])
+        block["multipliers"] = multipliers(v1_tickets, [n for n in NAMES if n in present])
+    return block
+
+
+def _read_v1_tickets(path=TICKETS):
+    """The ticket file beside a v1 JSON, when it is still v1's (its risker
+    rows searched v1's band); None otherwise."""
+    try:
+        t = pd.read_csv(path)
+    except (OSError, ValueError):
+        return None
+    lo, hi = pp.V1_BANDS["risker"]
+    risker = t.loc[t["profile"] == "risker", "band"]
+    return t if len(risker) and (risker == f"{lo:g}-{hi:g}").all() else None
+
+
 def leg_text(l):
     pick = l["pick"] if l["market"] == "moneyline" else f"{l['pick']} ({l['market']})"
     return f"{pick}@{l['decimal']:.3f}"
@@ -259,6 +354,7 @@ def run(frame):
                               for s in SNAPSHOTS}}
     return {
         "results": results, "by_snapshot": by_snapshot, "rows": rows,
+        "multipliers": multipliers(rows),
         "cards": dict(n_cards), "priced_cards": dict(priced_cards),
         "snapshots": snaps, "method_years": method_years, "window_end": last,
     }
@@ -273,29 +369,51 @@ def _cards_after(last):
     return int(a.groupby(["event_name", "date"]).ngroups), (str(a["date"].max())[:10] if len(a) else None)
 
 
-def _cache_rows_in(frame, lo, hi):
+def _cache_rows_in(frame, lo, hi, path=None):
     """Close-priced fights in [lo, hi] whose price is an odds_cache.json entry
-    (best price per side across books)."""
+    (best price per side across books). A cache key carries the bout's UTC
+    commence date, and a US evening card starts on the next UTC day, so the
+    fight's local date or one day either side counts - as parlay_legs
+    matches the price files."""
     from odds_cache import fight_key  # the cache's own key, so no second spelling of it
 
     try:
-        cached = json.loads(ODDS_CACHE.read_text())["fights"]
+        cached = json.loads(Path(path or ODDS_CACHE).read_text())["fights"]
     except (OSError, ValueError, KeyError):
         return None, None
     keys = set(cached)
+    tol = parlay_legs.DATE_TOLERANCE_DAYS
     span = frame[(frame["date"] >= lo) & (frame["date"] <= hi) & (frame["price_source"] == "close")]
-    hits = sum(fight_key(r, b, d) in keys for r, b, d in zip(span["red"], span["blue"], span["date"]))
+
+    def in_cache(r, b, d):
+        day = pd.Timestamp(d).date()
+        return any(fight_key(r, b, (day + timedelta(days=k)).isoformat()) in keys
+                   for k in range(-tol, tol + 1))
+
+    hits = sum(in_cache(r, b, d) for r, b, d in zip(span["red"], span["blue"], span["date"]))
     dates = sorted(v.get("date") for v in cached.values() if v.get("date"))
     return hits, (dates[0] if dates else None)
 
 
-def caveats(frame, out, coverage):
+def _x(v):
+    return "n/a" if v is None else f"{v:g}x"
+
+
+def _spread_text(m):
+    if not m or not m.get("tickets"):
+        return "no ticket"
+    return f"median {_x(m['median'])} ({_x(m['min'])} to {_x(m['max'])}, {m['tickets']} tickets)"
+
+
+def caveats(frame, out, coverage, shipped=None, v1=None):
     lo_w = PERIODS["window"][0]
     last = out["window_end"]
     win = frame[frame["date"] >= lo_w]
     by_year = win.groupby(win["date"].str[:4])["price_source"].value_counts().unstack(fill_value=0)
     src = {y: {s: int(by_year.loc[y].get(s, 0)) for s in SNAPSHOTS} for y in by_year.index}
-    unpriced_w = int(win["price_source"].isna().sum())
+    no_price = win[win["price_source"].isna()].to_dict("records")
+    off_w = sum(any(parlay_legs.snapshot_pair(r, s) for s in SNAPSHOTS) for r in no_price)
+    unpriced_w = len(no_price) - off_w
     method_last = str(pd.read_csv(parlay_legs.METHOD_ODDS, usecols=["date"])["date"].max())
     rl = out["results"]["window"]["risk_lover"]
     rlm_years = sorted({y for (p, y), n in out["method_years"].items() if p == "window" and n})
@@ -304,13 +422,49 @@ def caveats(frame, out, coverage):
     cache_hits, cache_first = _cache_rows_in(frame, lo_w, last)
     tot = coverage["total"]
     c = []
+    v1 = v1 or {}
+    v1m = (v1.get("multipliers") or {}).get("window") or {}
+    v1_floor = "; ".join(
+        f"{b} {_spread_text(v1m.get(b))}" for b in ("risker", "risk_lover") if v1m.get(b))
+    c.append("PROTOCOL v2 - the bands moved after v1 was seen. v1 searched risker in 8-14 and "
+             "the risk lover in 40-120; the search takes the likeliest combination in a band, "
+             "so v1's tickets sat at the floor"
+             + (f" (window multipliers: {v1_floor})" if v1_floor else "")
+             + " - below the '~10x' and '50-100x' they were labelled. v2 moved the bands to "
+             "the payouts the bettor asked for (risker 9.5-14, the risk lover 50-100; steady "
+             "unchanged at 4.5-6.5) AFTER v1 was seen: the labels, not the outcomes, drove "
+             "it - the bands were set from the request, not from any result - and every "
+             "profile rule, the periods and the ship rule are unchanged. v1's results, ship "
+             "decision"
+             + (f" ({', '.join(f'{b} -> {v}' for b, v in (v1.get('ship') or {}).items())})"
+                if v1.get("ship") else "")
+             + " and caveats are kept under \"v1\" for the record. v1 also let a ticket mix "
+             "closing and opening prices"
+             + (f" ({v1['window_tickets_mixed_snapshot']} window tickets)"
+                if v1.get("window_tickets_mixed_snapshot") is not None else "")
+             + "; v2 prices each card from one snapshot. v2 is a second look at the same "
+             "cards, so its record is not independent of v1's.")
+    mult = out["multipliers"]["window"]
+    rules = []
+    for b in pp.ORDER:
+        rules.append(b)
+        if shipped and shipped.get(b) == "mixed":
+            rules.append(f"mixed_else@{b}")
+    c.append("A band is a range, not a payout: a ticket pays its multiplier only if every "
+             "leg wins, and the likeliest combination in a band sits near its floor. What "
+             "v2's window tickets carried: "
+             + "; ".join(f"{r} {_spread_text(mult.get(r))}" for r in rules)
+             + ". Every rule and period is under \"multipliers\" (median, min, max).")
     c.append("The price snapshots differ. Window fights priced from the CLOSING line by year: "
              + ", ".join(f"{y} {v['close']}" for y, v in src.items())
              + "; from the OPENING line: " + ", ".join(f"{y} {v['open']}" for y, v in src.items())
-             + f"; unpriced {unpriced_w}. odds.csv has no 2025 prices, so 2025 is opening-only: "
+             + f"; unpriced {unpriced_w}; priced only in the snapshot their card did not use "
+             f"{off_w} (no leg). odds.csv has no 2025 prices, so 2025 is opening-only: "
              "an opening line is quoted days before the close, without fight-week news. "
-             "by_snapshot splits the window by it; " + str(mixed_snap)
-             + " window tickets mixed both snapshots and are in neither split.")
+             "Each card is priced from one snapshot - the one that prices more of its "
+             "fights, ties to the close - because a ticket mixing the two could never have "
+             f"been bought; {mixed_snap} window tickets mix them, so by_snapshot splits "
+             "every window ticket.")
     c.append("Best-of-books prices overstate a multiplier. odds_cache.py keeps the best price "
              "per side across books, which no single book offered and which can even sum "
              "below 100% (devig rejects those). The live card is priced that way; of the "
@@ -325,7 +479,7 @@ def caveats(frame, out, coverage):
              "win chance times the six-way method market's share for that route, because "
              "the model has no route view here.")
     rare = []
-    for name in ("risk_lover", "mixed@risk_lover", "risk_lover_method"):
+    for name in ("risk_lover", "mixed@risk_lover", "mixed_else@risk_lover", "risk_lover_method"):
         for p in PERIODS:
             s = out["results"][p][name]
             if s.get("tickets"):
@@ -351,7 +505,8 @@ def caveats(frame, out, coverage):
              "live ticket would sometimes carry a void leg (paid at 1.0) that this record "
              "never meets. The void rule is tested, not exercised.")
     c.append(f"{tot.get('unpriced', 0)} of {tot.get('fights', 0)} fights since 2016 have no "
-             f"usable price and give no leg; {tot.get('close_rows_alias_gap', 0)} closing-line "
+             f"usable price and {tot.get('off_snapshot', 0)} more a price only in the snapshot "
+             f"their card did not use; neither gives a leg. {tot.get('close_rows_alias_gap', 0)} closing-line "
              "rows are one fighter under two names (a married name, a family-name-first "
              "order) that only an entry in data/fighter_aliases.json can join.")
     c.append("The walk-forward models are up to a year staler than production (a December "
@@ -401,8 +556,33 @@ def write_tickets(rows, path=TICKETS):
     pd.DataFrame(rows, columns=cols).to_csv(path, index=False, compression="gzip")
 
 
+def _previous(path=OUT):
+    try:
+        data = json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def multiplier_table(mult):
+    lines = [f"  {'multiplier':<24}{'period':<8}{'tickets':>8}{'median':>9}{'min':>9}{'max':>9}"]
+    for name in NAMES:
+        for period in PERIODS:
+            m = mult[period][name]
+            if not m["tickets"]:
+                lines.append(f"  {name:<24}{period:<8}{0:>8}   (no ticket)")
+                continue
+            lines.append(f"  {name:<24}{period:<8}{m['tickets']:>8}{m['median']:>8.2f}x"
+                         f"{m['min']:>8.2f}x{m['max']:>8.2f}x")
+    return "\n".join(lines)
+
+
 def main():
     t0 = time.time()
+    # v1's record, read before this run overwrites the files it lives in
+    previous = _previous()
+    v1 = v1_block(previous, _read_v1_tickets() if previous and not previous.get("protocol_version")
+                  else None)
     frame, coverage = parlay_legs.build()
     parlay_legs.write(frame)
     # score the rows as written, so the record is the file's
@@ -410,26 +590,32 @@ def main():
     print(parlay_legs.coverage_table(coverage))
     out = run(frame)
     last = out["window_end"]
+    shipped = ship(out["results"])
     payload = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "protocol_version": PROTOCOL_VERSION,
         "protocol": PROTOCOL,
+        "bands": {b: list(pp.BANDS[b]) for b in pp.ORDER},
         "periods": {"dev": list(PERIODS["dev"]), "window": [PERIODS["window"][0], last]},
         "results": out["results"],
         "by_snapshot": out["by_snapshot"],
+        "multipliers": out["multipliers"],
         "cards": {p: int(out["cards"].get(p, 0)) for p in PERIODS},
         "coverage": {
             "fights": coverage["total"].get("fights", 0),
             "priced_close": coverage["total"].get("priced_close", 0),
             "priced_open": coverage["total"].get("priced_open", 0),
             "unpriced": coverage["total"].get("unpriced", 0),
+            "off_snapshot": coverage["total"].get("off_snapshot", 0),
             "method_priced": coverage["total"].get("method_priced", 0),
             "cards_with_a_priced_fight": {p: int(out["priced_cards"].get(p, 0)) for p in PERIODS},
             "window_tickets_mixed_snapshot": sum(n for (_, s), n in out["snapshots"].items()
                                                  if s == "mixed"),
             "legs": coverage,
         },
-        "ship": ship(out["results"]),
-        "caveats": caveats(frame, out, coverage),
+        "ship": shipped,
+        "caveats": caveats(frame, out, coverage, shipped, v1),
+        "v1": v1,
     }
     OUT.write_text(json.dumps(payload, indent=1))
     write_tickets(out["rows"])
@@ -445,6 +631,8 @@ def main():
         roi = lambda s: "n/a" if not s.get("tickets") else f"{s['roi']:+.3f}"  # noqa: E731
         print(f"    {band:<11} -> {choice:<11} (mixed {roi(m[0])} dev / {roi(m[1])} window; "
               f"{band} {roi(n[0])} dev / {roi(n[1])} window)")
+    print()
+    print(multiplier_table(payload["multipliers"]))
     print(f"  wrote {OUT.name}, {TICKETS.name} ({len(out['rows']):,} tickets), "
           f"{parlay_legs.OUT.name} in {time.time() - t0:.0f}s")
     return 0

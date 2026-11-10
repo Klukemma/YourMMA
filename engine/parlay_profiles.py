@@ -8,33 +8,50 @@ band. The live card (app_export.parlay_profiles_payload) and the 3-year
 backtest (experiments/parlay_profiles.py) both call build() below, so what
 the app shows is what was measured.
 
-THE PROFILES - fixed here, before any backtest number was seen, and never
+THE PROFILES - fixed here before any backtest number was seen, and never
 tuned on the 3-year window they are scored on (the experiment's docstring
-has the protocol):
+has the protocol). The BANDS changed once, as PROTOCOL v2, recorded below.
 
-  steady      ~5x  (band 4.5-6.5)   favourites only: every leg the market
-                                    favourite, the model agreeing, blended
-                                    probability >= 0.60
-  risker      ~10x (band 8-14)      one or two RISKY legs - a price of 2.0 or
-                                    longer that the model rates at least 3
-                                    points above the market (blended >= 0.35)
-                                    - filled with steady legs
-  risk_lover  50-100x (band 40-120) one or two LONG legs - an underdog at 2.5
-                                    or longer the model rates at least as high
-                                    as the market - on top of two or more
-                                    confident favourites (blended >= 0.65).
-                                    Each long leg carries its likeliest route
-                                    (KO or submission) from the fighter's own
-                                    UFC record as the reason.
-  mixed       every band            any legs from all three pools, at least
-                                    one the model rates above the market
-  market_only every band            any legs, chosen by the market alone - the
-                                    control that says whether the model adds
-                                    anything
+  steady      ~5x     (band 4.5-6.5)  favourites only: every leg the market
+                                      favourite, the model agreeing, blended
+                                      probability >= 0.60
+  risker      ~10x    (band 9.5-14)   one or two RISKY legs - a price of 2.0
+                                      or longer that the model rates at least
+                                      3 points above the market (blended >=
+                                      0.35) - filled with steady legs
+  risk_lover  50-100x (band 50-100)   one or two LONG legs - an underdog at 2.5
+                                      or longer the model rates at least as
+                                      high as the market - on top of two or
+                                      more confident favourites (blended >=
+                                      0.65). A long leg's reason names its
+                                      likeliest finishing route (KO or
+                                      submission) where the fighter's own UFC
+                                      record has a finish.
+  mixed       every band              the 12 likeliest legs on the card with a
+                                      market price and a blended probability
+                                      >= 0.30 (favourite or underdog, any
+                                      profile's pool or none), at least one
+                                      leg the model rates above the market
+  market_only every band              the 12 legs the de-vigged market rates
+                                      likeliest (market chance >= 0.30),
+                                      searched by the market's chance alone -
+                                      the control that says whether the model
+                                      adds anything
+
+PROTOCOL v2 - THE BANDS MOVED AFTER v1 WAS SEEN. v1 searched risker in 8-14
+and the risk lover in 40-120. The search takes the likeliest combination in
+a band, which sits at the band's floor: no v1 "~10x" ticket reached 10x
+(median about 8.3x) and the "50-100x" tickets had a median about 41x. v2 sets
+the bands to the payouts the bettor asked for - risker 9.5-14 ("~10x"), the
+risk lover 50-100 ("50-100x"); steady stays 4.5-6.5 - from the request, not
+from any result: the labels, not the outcomes, drove the change. Every rule
+inside the bands, and the ship rule, is unchanged; v1's record is kept in
+experiments/parlay_profiles.json under "v1".
 
 Within its pool and band, every profile takes the combination with the
-highest combined probability (the product of its legs' blended chances):
-the likeliest ticket that pays what the band asks. One leg per fight. A
+highest combined probability (the product of its legs' blended chances;
+market_only uses the market's): the likeliest ticket that pays what the band
+asks, so a ticket usually pays near the band's floor. One leg per fight. A
 profile with nothing in its pool, or no combination inside its band, gives
 no ticket - a card that cannot honestly make 50x shows no 50x ticket.
 
@@ -71,16 +88,23 @@ PROFILES = {
         "blurb": "Favourites only, stacked until the payout reaches about 5x.",
     },
     "risker": {
-        "label": "Risker", "target": "~10x", "band": (8.0, 14.0),
+        "label": "Risker", "target": "~10x", "band": (9.5, 14.0),
         "blurb": "One or two longer prices the model rates above the market, filled with safe favourites.",
     },
     "risk_lover": {
-        "label": "Risk lover", "target": "50-100x", "band": (40.0, 120.0),
-        "blurb": "Confident favourites plus one or two underdogs with a finishing route to an upset.",
+        "label": "Risk lover", "target": "50-100x", "band": (50.0, 100.0),
+        "blurb": ("Confident favourites plus one or two underdogs the model rates at least as "
+                  "high as the market; the reason names a finishing route where the record has one."),
     },
 }
 ORDER = ("steady", "risker", "risk_lover")
 BANDS = {p: PROFILES[p]["band"] for p in ORDER}
+# PROTOCOL v2 (see the docstring): the bands v1 searched, kept for the record.
+# v1's tickets sat at these floors (risker median about 8.3x, risk lover about
+# 41x), below the labels; v2 moved the bands to the asked targets after v1 was
+# seen - the labels, not the outcomes, drove it.
+PROTOCOL_VERSION = 2
+V1_BANDS = {"steady": (4.5, 6.5), "risker": (8.0, 14.0), "risk_lover": (40.0, 120.0)}
 
 SAFE_MIN_P = 0.60            # steady legs: blended probability
 CORE_MIN_P = 0.65            # the risk lover's favourites

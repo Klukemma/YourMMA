@@ -401,8 +401,14 @@ def test_legs_join_prices_point_in_time_and_honestly(built):
     assert f.loc["c1", "dec_blue"] == pytest.approx(pp.decimal_from_american(250))
     assert f.loc["c2", "price_source"] == "close"                     # one day off
     assert f.loc["c3", "price_source"] == "close"                     # E Epsilon
-    assert f.loc["c4", "price_source"] == "open"                      # corrupt close
-    assert f.loc["c4", "dec_red"] == pytest.approx(pp.decimal_from_american(120))
+    # c4's close is corrupt and its open is clean - but UFC A prices three
+    # fights at the close and two at the open, so the card is close-priced
+    # and c4 gives no leg rather than an opening price beside closing ones
+    assert pd.isna(f.loc["c4", "dec_red_close"]) and pd.isna(f.loc["c4", "dec_blue_close"])
+    assert f.loc["c4", "dec_red_open"] == pytest.approx(pp.decimal_from_american(120))
+    assert pd.isna(f.loc["c4", "price_source"]) and pd.isna(f.loc["c4", "dec_red"])
+    assert f.loc["c1", "dec_red_open"] == pytest.approx(pp.decimal_from_american(-280))
+    assert f.loc["c1", "dec_red"] == f.loc["c1", "dec_red_close"]     # the card's snapshot
     assert pd.isna(f.loc["c5", "price_source"])                       # nothing guessed
     assert pd.isna(f.loc["c5", "dec_red"]) and pd.isna(f.loc["c5", "dec_blue"])
     assert f.loc["c6", "price_source"] == "close"                     # through the alias
@@ -410,7 +416,8 @@ def test_legs_join_prices_point_in_time_and_honestly(built):
     assert t["close_rejected"] == 1 and t["close_shifted"] == 1 and t["close_initial"] == 1
     assert t["excluded_fights"] == 1 and t["close_rows_excluded_fight"] == 1
     assert t["close_rows_unmatched"] == 1                             # C Gamma / Zed Other
-    assert t["priced_close"] == 4 and t["priced_open"] == 1 and t["unpriced"] == 1
+    assert t["priced_close"] == 4 and t.get("priced_open", 0) == 0
+    assert t["off_snapshot"] == 1 and t["unpriced"] == 1
 
 
 def test_legs_orient_method_props_to_the_corners(built):
@@ -498,3 +505,235 @@ def test_the_contract_lists_every_profile_and_band():
                              "mixed_else@risk_lover")
     assert harness.PERIODS["dev"] == ("2016-11-01", "2023-10-31")
     assert harness.PERIODS["window"][0] == "2023-11-01"
+
+
+# ---------------------------------------------------------------- protocol v2
+
+def test_v2_bands_are_the_asked_targets_and_v1_is_kept():
+    assert pp.PROTOCOL_VERSION == 2
+    assert pp.BANDS == {"steady": (4.5, 6.5), "risker": (9.5, 14.0), "risk_lover": (50.0, 100.0)}
+    assert pp.V1_BANDS == {"steady": (4.5, 6.5), "risker": (8.0, 14.0), "risk_lover": (40.0, 120.0)}
+    assert [pp.PROFILES[b]["target"] for b in pp.ORDER] == ["~5x", "~10x", "50-100x"]
+    # each label's number is a payout its band can pay
+    assert pp.BANDS["steady"][0] <= 5 <= pp.BANDS["steady"][1]
+    assert pp.BANDS["risker"][0] <= 10 <= pp.BANDS["risker"][1]
+    assert pp.BANDS["risk_lover"] == (50.0, 100.0)
+    assert harness.PROTOCOL.startswith("parlay-profiles-v2")
+    assert harness.PROTOCOL_VERSION == 2
+
+
+def test_the_risk_lover_blurb_promises_a_route_only_where_the_record_has_one():
+    blurb = pp.PROFILES["risk_lover"]["blurb"]
+    assert "at least as high as the market" in blurb
+    assert "where the record has one" in blurb
+    for b in pp.ORDER:
+        assert not GENDERED.search(pp.PROFILES[b]["blurb"])
+
+
+def _row(fid, event, close=None, opened=None, p_model=0.6, winner="red"):
+    """A parlay_legs row before price_cards: only the per-snapshot columns."""
+    close, opened = close or (None, None), opened or (None, None)
+    return {"fight_id": fid, "event": event, "date": "2024-02-03", "number": 1,
+            "red": f"Red {fid}", "blue": f"Blue {fid}", "p_model": p_model,
+            "price_source": None, "dec_red": None, "dec_blue": None,
+            "dec_red_close": close[0], "dec_blue_close": close[1],
+            "dec_red_open": opened[0], "dec_blue_open": opened[1],
+            "ko_red": None, "ko_blue": None, "sub_red": None, "sub_blue": None,
+            "decision_red": None, "decision_blue": None,
+            "winner": winner, "method": "Decision",
+            "facts_red": json.dumps({"wins": 3, "ko_wins": 1}),
+            "facts_blue": json.dumps({"wins": 2, "sub_wins": 1})}
+
+
+C, O = (1.50, 2.70), (1.45, 2.85)
+
+
+def test_a_card_takes_the_snapshot_that_prices_more_of_its_fights():
+    assert parlay_legs.card_snapshot([_row("a", "X", close=C), _row("b", "X", opened=O),
+                                      _row("c", "X", opened=O)]) == "open"
+    assert parlay_legs.card_snapshot([_row("a", "X", close=C), _row("b", "X", opened=O)]) == "close"
+    assert parlay_legs.card_snapshot([_row("a", "X")]) is None
+    # a pair devig refuses is no price, even with both numbers present
+    assert parlay_legs.card_snapshot([_row("a", "X", close=(2.2, 2.2)), _row("b", "X", opened=O)]) == "open"
+    # NaN from a CSV round trip is missing, not a price
+    nan = float("nan")
+    assert parlay_legs.card_snapshot([_row("a", "X", close=(nan, nan), opened=O)]) == "open"
+
+
+def test_every_leg_on_a_card_comes_from_the_one_snapshot():
+    rows = [_row("a", "Open card", close=C), _row("b", "Open card", opened=O),
+            _row("c", "Open card", close=C, opened=O), _row("d", "Open card", opened=O),
+            _row("e", "Close card", close=C, opened=O), _row("f", "Close card", opened=O),
+            _row("g", "Close card", close=C)]
+    status = parlay_legs.price_cards(rows)
+    by = {r["fight_id"]: (r, s) for r, s in zip(rows, status)}
+    assert [by[k][1] for k in "abcdefg"] == ["off_snapshot", "priced", "priced", "priced",
+                                             "priced", "off_snapshot", "priced"]
+    assert by["c"][0]["price_source"] == "open" and by["c"][0]["dec_red"] == O[0]
+    assert by["e"][0]["price_source"] == "close" and by["e"][0]["dec_red"] == C[0]
+    assert by["a"][0]["dec_red"] is None and by["f"][0]["dec_red"] is None
+    for event in ("Open card", "Close card"):
+        sources = {r["price_source"] for r in rows if r["event"] == event and r["price_source"]}
+        assert len(sources) == 1
+
+
+def _open_card_frame(tmp_path):
+    """Two cards: one the open prices more of, one the close does, each with
+    a fight priced only in the other snapshot. Through the CSV, as main()."""
+    fights = [("a1", 0.62, (1.60, 2.45), (1.55, 2.55)), ("a2", 0.66, None, (1.45, 2.85)),
+              ("a3", 0.58, None, (1.70, 2.20)), ("a4", 0.70, (1.40, 3.05), None),
+              ("a5", 0.40, None, (2.40, 1.62)), ("a6", 0.64, None, (1.50, 2.70))]
+    rows = [_row(k, "UFC Open", close=c, opened=o, p_model=pm) for k, pm, c, o in fights]
+    rows += [dict(_row(k, "UFC Close", close=o, opened=c, p_model=pm), date="2024-02-10")
+             for k, pm, c, o in fights]
+    for r in rows:
+        r["fight_id"] = f"{r['event']}-{r['fight_id']}"
+    parlay_legs.price_cards(rows)
+    path = tmp_path / "legs.csv.gz"
+    parlay_legs.write(pd.DataFrame(rows, columns=parlay_legs.COLUMNS), path)
+    return pd.read_csv(path)
+
+
+def test_no_ticket_mixes_snapshots_and_the_split_covers_every_ticket(tmp_path):
+    frame = _open_card_frame(tmp_path)
+    out = harness.run(frame)
+    assert out["rows"], "the fixture cards are priced enough for some ticket"
+    assert {r["price_source"] for r in out["rows"]} == {"open", "close"}
+    assert not any(s == "mixed" for (_, s) in out["snapshots"])
+    for name in harness.NAMES:
+        whole = out["results"]["window"][name].get("tickets", 0)
+        split = sum(out["by_snapshot"]["window"][s][name].get("tickets", 0)
+                    for s in harness.SNAPSHOTS)
+        assert whole == split, name
+    for r in out["rows"]:
+        snap = "open" if r["event"] == "UFC Open" else "close"
+        assert r["price_source"] == snap
+        card = frame[frame["event"] == r["event"]]
+        allowed = set(card[f"dec_red_{snap}"].dropna().round(4)) | set(card[f"dec_blue_{snap}"].dropna().round(4))
+        for leg in r["legs"].split("|"):
+            assert round(float(leg.rsplit("@", 1)[1]), 4) in allowed
+
+
+def test_multipliers_describe_the_settled_tickets_and_sit_in_their_band(tmp_path):
+    out = harness.run(_open_card_frame(tmp_path))
+    mult = out["multipliers"]
+    assert set(mult) == set(harness.PERIODS)
+    for name in harness.NAMES:
+        m = mult["window"][name]
+        mine = [r["multiplier"] for r in out["rows"]
+                if r["period"] == "window" and r["profile"] == name and r["status"] in harness.SETTLED]
+        assert m["tickets"] == len(mine) == out["results"]["window"][name].get("tickets", 0)
+        if not mine:
+            assert m["median"] is None and m["min"] is None and m["max"] is None
+            continue
+        lo, hi = harness.spec(name)[1] or pp.BANDS["risk_lover" if name == "risk_lover_method" else name]
+        assert lo <= m["min"] <= m["median"] <= m["max"] <= hi
+        assert m["median"] == pytest.approx(float(np.median(mine)), abs=0.01)
+
+
+def _v1_file():
+    return {"generated": "2026-11-07T04:00:00Z",
+            "protocol": "parlay-profiles-v1: profiles fixed before any backtest number",
+            "periods": {"dev": ["2016-11-01", "2023-10-31"], "window": ["2023-11-01", "2026-08-08"]},
+            "results": {"window": {"risker": {"tickets": 79, "roi": -0.1}}},
+            "by_snapshot": {"window": {}}, "cards": {"dev": 300, "window": 105},
+            "coverage": {"window_tickets_mixed_snapshot": 170},
+            "ship": {"steady": "steady", "risker": "risker", "risk_lover": "mixed"},
+            "caveats": ["a v1 caveat"]}
+
+
+def test_the_v1_record_is_lifted_once_and_then_carried_forward():
+    tickets = pd.DataFrame([
+        {"period": "window", "profile": "risker", "band": "8-14", "multiplier": 8.2, "status": "lost"},
+        {"period": "window", "profile": "risker", "band": "8-14", "multiplier": 8.4, "status": "won"},
+        {"period": "window", "profile": "risker", "band": "8-14", "multiplier": 9.9, "status": "open"},
+    ])
+    v1 = harness.v1_block(_v1_file(), tickets)
+    assert v1["protocol"].startswith("parlay-profiles-v1") and v1["protocol_version"] == 1
+    assert v1["results"] == _v1_file()["results"] and v1["ship"] == _v1_file()["ship"]
+    assert v1["caveats"] == ["a v1 caveat"]                      # caveats are never deleted
+    assert v1["bands"]["risker"] == [8.0, 14.0] and v1["bands"]["risk_lover"] == [40.0, 120.0]
+    assert v1["window_tickets_mixed_snapshot"] == 170
+    assert v1["multipliers"]["window"]["risker"] == {"tickets": 2, "median": 8.3, "min": 8.2, "max": 8.4}
+    v2 = {"protocol_version": 2, "protocol": harness.PROTOCOL, "v1": v1}
+    assert harness.v1_block(v2) == v1                            # a re-run keeps it as it was
+    assert harness.v1_block(None) is None
+    assert harness.v1_block({"protocol": "something else"}) is None
+
+
+def test_the_v1_ticket_file_is_read_only_while_it_is_v1s(tmp_path):
+    path = tmp_path / "t.csv.gz"
+    harness.write_tickets([{"period": "window", "profile": "risker", "band": "8-14",
+                            "multiplier": 8.2, "status": "lost"}], path)
+    assert harness._read_v1_tickets(path) is not None
+    harness.write_tickets([{"period": "window", "profile": "risker", "band": "9.5-14",
+                            "multiplier": 9.6, "status": "lost"}], path)
+    assert harness._read_v1_tickets(path) is None
+    assert harness._read_v1_tickets(tmp_path / "missing.csv.gz") is None
+
+
+def test_the_long_band_caveat_lists_the_rule_that_ships(built, tmp_path, monkeypatch):
+    f, coverage = built
+    frame = f.reset_index()
+    out = harness.run(frame)
+    hit = {"tickets": 40, "wins": 1, "roi": 0.2, "roi_low": -1.0, "roi_high": 1.9,
+           "mean_multiplier": 60.0}
+    for p in harness.PERIODS:
+        out["results"][p]["mixed_else@risk_lover"] = dict(hit)
+    monkeypatch.setattr(harness, "_cards_after", lambda last: (0, None))
+    monkeypatch.setattr(harness, "_cache_rows_in", lambda *a, **k: (0, None))
+    monkeypatch.setattr(parlay_legs, "METHOD_ODDS", tmp_path / "method.csv")
+    shipped = {"steady": "steady", "risker": "risker", "risk_lover": "mixed"}
+    text = harness.caveats(frame, out, coverage, shipped, harness.v1_block(_v1_file()))
+    long_band = next(c for c in text if c.startswith("The 50-100x band lands rarely"))
+    assert "mixed_else@risk_lover dev 1 of 40" in long_band
+    assert "mixed_else@risk_lover window 1 of 40" in long_band
+    v2 = next(c for c in text if c.startswith("PROTOCOL v2"))
+    assert "after v1 was seen" in v2 and "labels, not the outcomes" in v2
+    assert "170 window tickets" in v2
+    band = next(c for c in text if c.startswith("A band is a range"))
+    assert "mixed_else@risk_lover" in band                       # the shipped rule's multipliers
+    snap = next(c for c in text if c.startswith("The price snapshots differ"))
+    assert "0 window tickets mix them" in snap
+    assert not any(GENDERED.search(c) for c in text)
+
+
+def test_the_odds_cache_is_matched_on_the_utc_date_too(tmp_path):
+    from odds_cache import fight_key
+    cache = {"fights": {fight_key("Ann Alpha", "Bea Beta", "2026-09-27"): {"date": "2026-09-27"},
+                        fight_key("Cal Gamma", "Dee Delta", "2026-09-29"): {"date": "2026-09-29"}}}
+    path = tmp_path / "odds_cache.json"
+    path.write_text(json.dumps(cache))
+    frame = pd.DataFrame([
+        {"date": "2026-09-26", "red": "Bea Beta", "blue": "Ann Alpha", "price_source": "close"},
+        {"date": "2026-09-26", "red": "Cal Gamma", "blue": "Dee Delta", "price_source": "close"},
+    ])
+    hits, first = harness._cache_rows_in(frame, "2026-09-01", "2026-09-30", path)
+    assert hits == 1 and first == "2026-09-27"                   # a day on counts; three do not
+
+
+OUTPUT = ENGINE / "experiments" / "parlay_profiles.json"
+
+
+@pytest.mark.skipif(not OUTPUT.exists(), reason="the backtest has not been run")
+def test_the_published_record_is_v2_and_keeps_v1():
+    d = json.loads(OUTPUT.read_text())
+    assert d["protocol_version"] == 2 and d["protocol"] == harness.PROTOCOL
+    assert d["bands"] == {b: list(pp.BANDS[b]) for b in pp.ORDER}
+    v1 = d["v1"]
+    assert v1["protocol"].startswith("parlay-profiles-v1")
+    assert v1["bands"] == {b: list(pp.V1_BANDS[b]) for b in pp.ORDER}
+    assert {"results", "ship", "caveats", "by_snapshot"} <= set(v1)
+    assert set(d["ship"]) == set(pp.ORDER)
+    assert d["coverage"]["window_tickets_mixed_snapshot"] == 0
+    for p in harness.PERIODS:
+        for name in harness.NAMES:
+            m = d["multipliers"][p][name]
+            assert m["tickets"] == d["results"][p][name].get("tickets", 0)
+            if m["tickets"]:
+                lo, hi = harness.spec(name)[1] or pp.BANDS[
+                    "risk_lover" if name == "risk_lover_method" else name]
+                assert lo <= m["min"] <= m["median"] <= m["max"] <= hi
+    assert any("mixed_else@risk_lover" in c and c.startswith("The 50-100x band") for c in d["caveats"])
+    assert any(c.startswith("PROTOCOL v2") for c in d["caveats"])
+    assert any(c.startswith("A band is a range") for c in d["caveats"])

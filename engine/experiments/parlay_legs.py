@@ -10,12 +10,19 @@ something a bettor could have had before the fight:
             through model_compare.predictions(): that call re-hashes the
             feature matrix, and any archive change since the fit sends it
             into a sixteen-year refit. The cache IS the measured artefact.
-  prices    the CLOSING moneyline (odds.csv, price_source "close") first, the
-            OPENING line (opening_odds.csv, "open") only where odds.csv has no
-            usable pair - which is all of 2025, the year odds.csv skips. Both
-            are quoted before the fight; the snapshot is kept on the row so
-            the backtest can split by it, because they are not the same
-            price (an opening line is quoted days before the close).
+  prices    both snapshots, each fight: the CLOSING moneyline (odds.csv,
+            dec_red_close / dec_blue_close) and the OPENING line
+            (opening_odds.csv, dec_red_open / dec_blue_open), blank where the
+            snapshot has no usable pair - odds.csv skips all of 2025. Both
+            are quoted before the fight, but they are not the same price (an
+            opening line is quoted days before the close), and a ticket that
+            took one leg at the close and another at the open could never
+            have been bought. So each CARD is priced from ONE snapshot: the
+            one that prices more of its fights, ties to the close
+            (card_snapshot). dec_red / dec_blue / price_source are that
+            snapshot's price for every fight on the card; a fight priced only
+            in the other snapshot is left unpriced there ("off_snapshot" in
+            the coverage) - its price is never borrowed from the other one.
   method    the KO/TKO, submission and decision props (method_odds.csv,
             American -> decimal), matched the same way. Their history stops
             on 2024-12-07.
@@ -37,9 +44,8 @@ one row alone qualifies) the first initial plus surname - so a weaker
 match can never take a row a stronger one would have claimed. Each row is
 used once: one price cannot settle two fights. A pair the core module's
 devig refuses (an overround below 0 or above 15%: a stale or mistyped
-line) is rejected and counted, and the fight falls back to the next
-snapshot or goes unpriced. Unpriced is shown as unpriced - no price is
-ever interpolated.
+line) is rejected and counted, and that snapshot's columns are left blank.
+Unpriced is shown as unpriced - no price is ever interpolated.
 
 THE FIGHTS. The walk-forward set holds decided fights only: draws and no
 contests were never scored, so they are not in the cache, cannot be legs,
@@ -78,8 +84,12 @@ START = "2016-01-01"
 DATE_TOLERANCE_DAYS = 1
 _SUFFIXES = {"jr", "sr", "ii", "iii", "iv"}
 
+SNAPSHOTS = ("close", "open")        # in order of preference on a tie
+
 COLUMNS = ["fight_id", "date", "event", "number", "red", "blue", "p_model",
-           "price_source", "dec_red", "dec_blue", "ko_red", "ko_blue",
+           "price_source", "dec_red", "dec_blue",
+           "dec_red_close", "dec_blue_close", "dec_red_open", "dec_blue_open",
+           "ko_red", "ko_blue",
            "sub_red", "sub_blue", "decision_red", "decision_blue",
            "winner", "method", "facts_red", "facts_blue"]
 
@@ -261,6 +271,49 @@ def _american(x):
     return pp.decimal_from_american(x)
 
 
+def snapshot_pair(row, snap):
+    """(dec_red, dec_blue) a row carries for `snap`, or None when that
+    snapshot has no usable pair (missing, NaN after a CSV round trip, or one
+    devig refuses)."""
+    dr = pp._price(row.get(f"dec_red_{snap}"))
+    db = pp._price(row.get(f"dec_blue_{snap}"))
+    return (dr, db) if pp.devig(dr, db) is not None else None
+
+
+def card_snapshot(rows):
+    """The one snapshot a card is priced from: the one that prices more of
+    its fights, the close on a tie; None when neither prices any."""
+    counts = {s: sum(snapshot_pair(r, s) is not None for r in rows) for s in SNAPSHOTS}
+    best = max(SNAPSHOTS, key=lambda s: counts[s])      # max keeps the first on a tie
+    return best if counts[best] else None
+
+
+def price_cards(rows):
+    """Set price_source, dec_red and dec_blue on every row (in place) from
+    its card's snapshot, so no ticket can mix two. Cards are (event, date),
+    the backtest's grouping. Returns, row by row, "priced", "off_snapshot"
+    (a usable price only in the snapshot its card did not use) or
+    "unpriced"."""
+    groups = defaultdict(list)
+    for i, r in enumerate(rows):
+        groups[(r["event"], r["date"])].append(i)
+    status = [None] * len(rows)
+    for idx in groups.values():
+        snap = card_snapshot([rows[i] for i in idx])
+        for i in idx:
+            r = rows[i]
+            pair = snapshot_pair(r, snap) if snap else None
+            r["price_source"] = snap if pair else None
+            r["dec_red"], r["dec_blue"] = pair if pair else (None, None)
+            if pair:
+                status[i] = "priced"
+            elif any(snapshot_pair(r, s) for s in SNAPSHOTS):
+                status[i] = "off_snapshot"
+            else:
+                status[i] = "unpriced"
+    return status
+
+
 def build(cache_path=CACHE, odds_path=ODDS, opening_path=OPENING,
           method_path=METHOD_ODDS, archive_path=ARCHIVE, aliases_path=ALIASES,
           start=START):
@@ -314,8 +367,8 @@ def build(cache_path=CACHE, odds_path=ODDS, opening_path=OPENING,
         year = f["date"][:4]
         c = cov[year]
         c["fights"] += 1
-        source, dec_red, dec_blue = None, None, None
-        for label in ("close", "open"):
+        pairs = {}
+        for label in SNAPSHOTS:
             m = matched[label].get(i)
             if not m:
                 continue
@@ -326,9 +379,7 @@ def build(cache_path=CACHE, odds_path=ODDS, opening_path=OPENING,
             if pp.devig(dr, db) is None:
                 c[f"{label}_rejected"] += 1
                 continue
-            if source is None:
-                source, dec_red, dec_blue = label, dr, db
-        c[f"priced_{source}" if source else "unpriced"] += 1
+            pairs[label] = (dr, db)
 
         mprice = {}
         m = matched["method"].get(i)
@@ -357,8 +408,11 @@ def build(cache_path=CACHE, odds_path=ODDS, opening_path=OPENING,
         rows.append({
             "fight_id": f["fight_id"], "date": f["date"], "event": f["event"],
             "number": int(f["number"]), "red": f["red"], "blue": f["blue"],
-            "p_model": float(f["p_model"]), "price_source": source,
-            "dec_red": dec_red, "dec_blue": dec_blue,
+            "p_model": float(f["p_model"]),
+            # the card's snapshot, set by price_cards once every row is in
+            "price_source": None, "dec_red": None, "dec_blue": None,
+            **{f"dec_{side}_{snap}": (pairs[snap][k] if snap in pairs else None)
+               for snap in SNAPSHOTS for k, side in enumerate(("red", "blue"))},
             "ko_red": mprice.get("ko_red"), "ko_blue": mprice.get("ko_blue"),
             "sub_red": mprice.get("sub_red"), "sub_blue": mprice.get("sub_blue"),
             "decision_red": mprice.get("decision_red"),
@@ -367,6 +421,9 @@ def build(cache_path=CACHE, odds_path=ODDS, opening_path=OPENING,
             "facts_red": json.dumps(facts["red"], separators=(",", ":")),
             "facts_blue": json.dumps(facts["blue"], separators=(",", ":")),
         })
+
+    for r, state in zip(rows, price_cards(rows)):
+        cov[r["date"][:4]][f"priced_{r['price_source']}" if state == "priced" else state] += 1
 
     lo = pd.Timestamp(start).date() - timedelta(days=DATE_TOLERANCE_DAYS)
     hi = pd.Timestamp(end).date() + timedelta(days=DATE_TOLERANCE_DAYS)
@@ -398,21 +455,23 @@ def coverage_table(coverage):
     def pair(c, a, b):
         return f"{c.get(a, 0)}/{c.get(b, 0)}"
 
-    lines = [f"  {'year':<6}{'fights':>7}{'close':>7}{'open':>7}{'unpriced':>9}"
+    lines = [f"  {'year':<6}{'fights':>7}{'close':>7}{'open':>7}{'off-snap':>9}{'unpriced':>9}"
              f"{'rej c/o':>9}{'+-1 day':>8}{'initial':>8}{'method':>8}{'draw/NC':>8}"
              f"{'orphan c/o/m':>14}{'alias gap c/m':>15}"]
     for y, c in list(coverage["by_year"].items()) + [("total", coverage["total"])]:
         g = c.get
         lines.append(
             f"  {y:<6}{g('fights', 0):>7}{g('priced_close', 0):>7}{g('priced_open', 0):>7}"
-            f"{g('unpriced', 0):>9}{pair(c, 'close_rejected', 'open_rejected'):>9}"
+            f"{g('off_snapshot', 0):>9}{g('unpriced', 0):>9}{pair(c, 'close_rejected', 'open_rejected'):>9}"
             f"{g('close_shifted', 0) + g('open_shifted', 0):>8}"
             f"{g('close_initial', 0) + g('open_initial', 0):>8}{g('method_priced', 0):>8}"
             f"{g('excluded_fights', 0):>8}"
             f"{pair(c, 'close_rows_unmatched', 'open_rows_unmatched') + '/' + str(g('method_rows_unmatched', 0)):>14}"
             f"{pair(c, 'close_rows_alias_gap', 'method_rows_alias_gap'):>15}")
     lines += [
-        "  close/open = fights priced from that snapshot; rej c/o = matched pairs devig",
+        "  close/open = fights priced from that snapshot (each card uses one: the one",
+        "  pricing more of its fights, ties to the close); off-snap = fights priced only",
+        "  in the snapshot their card did not use (no leg); rej c/o = matched pairs devig",
         "  refused (overround < 0 or > 15%); +-1 day / initial = price rows matched on a",
         "  shifted date / on initial + surname; method = fights with all six method",
         "  props; draw/NC = archive fights the walk-forward never scored; orphan = price",

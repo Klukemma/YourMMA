@@ -418,6 +418,25 @@ def _band_text(band):
     return f"{lo:g}-{hi:g}x"
 
 
+def _x(m):
+    return f"x{m:.2f}" if m < 10 else f"x{m:.1f}"
+
+
+def _multiplier_spread(measured, period, rule):
+    """What `rule`'s tickets paid in `period` - the multiplier each settled
+    ticket carried, {"median", "min", "max"} - from the backtest's
+    "multipliers" block; None when the file carries none for it, so a band
+    is never quoted for a payout the tickets did not have."""
+    m = (((measured or {}).get("multipliers") or {}).get(period) or {}).get(rule)
+    if not isinstance(m, dict):
+        return None
+    try:
+        out = {k: float(m[k]) for k in ("median", "min", "max")}
+    except (KeyError, TypeError, ValueError):
+        return None
+    return out if all(math.isfinite(v) for v in out.values()) else None
+
+
 def parlay_profiles_caveat(measured):
     """The paragraph beside the three tickets, built from the backtest's own
     numbers. With no backtest it says so instead of quoting any."""
@@ -431,10 +450,15 @@ def parlay_profiles_caveat(measured):
         parts = []
         for band in pp.ORDER:
             rule = shipped_rule(measured, band)
-            s = _summary(measured, "window", rule) or {}
+            s = _summary(measured, "window", rule)
             name = pp.PROFILES[band]["target"] + (
                 f" (mixed, else {pp.PROFILES[band]['label'].lower()})" if rule != band else "")
-            if not s.get("tickets"):
+            # Absent from the file is not the same as measured at zero: only
+            # a rule the backtest ran and that built nothing "built no ticket".
+            if s is None or s.get("tickets") is None:
+                parts.append(f"{name}: not measured")
+                continue
+            if not s["tickets"]:
                 parts.append(f"{name}: no ticket was built")
                 continue
             part = f"{name}: {s['tickets']:,} tickets, {s.get('wins', 0):,} won"
@@ -442,6 +466,10 @@ def parlay_profiles_caveat(measured):
                 part += f", {_whole_pct(s['roi'])} a ticket"
                 if s.get("roi_low") is not None and s.get("roi_high") is not None:
                     part += f" ({_whole_pct(s['roi_low'])} to {_whole_pct(s['roi_high'])})"
+            spread = _multiplier_spread(measured, "window", rule)
+            if spread:
+                part += (f", paying {_x(spread['median'])} at the median "
+                         f"({_x(spread['min'])} to {_x(spread['max'])})")
             parts.append(part)
         text += (f" Backtested point in time, one ticket a card, from {start} to {end}: "
                  + "; ".join(parts) + ".")
@@ -608,36 +636,75 @@ def parlay_profiles_payload(fights, archive=None, measured=None, event_date=None
             "multiplier": _clean(ticket["multiplier"]) if ticket else None,
             "prob": _clean(ticket["p"]) if ticket else None,
             "market_prob": _clean(ticket["p_market"]) if ticket else None,
-            "measured": (None if measured is None else
-                         {"window": _summary(measured, "window", rule),
-                          "dev": _summary(measured, "dev", rule),
-                          "periods": measured.get("periods")}),
+            "measured": _measured_for(measured, rule),
             "missing_reason": missing,
         })
     return out
 
 
+def _measured_for(measured, rule):
+    """The record a ticket built by `rule` carries; None with no backtest."""
+    return (None if measured is None else
+            {"window": _summary(measured, "window", rule),
+             "dev": _summary(measured, "dev", rule),
+             "periods": measured.get("periods")})
+
+
+def parlay_profiles_unbuilt(measured, error):
+    """The three entries for a run whose parlay build raised: one a band, in
+    the same order and shape as parlay_profiles_payload's, with no legs, no
+    multiplier and the reason in a sentence - "Not built on this run
+    (<ErrorType>)." `error` is the exception (or its type's name).
+
+    THE RUN IS THE UNIT. The card still says, band by band, that this run
+    built nothing, and the log records it (parlay_records' "none" rows), so
+    a failure never leaves an earlier run's ticket standing as if this run
+    had built it."""
+    import parlay_profiles as pp
+    kind = error if isinstance(error, str) else type(error).__name__
+    out = []
+    for band in pp.ORDER:
+        profile = pp.PROFILES[band]
+        rule = shipped_rule(measured, band)
+        out.append({
+            "profile": band, "rule": rule, "built_by": None,
+            "label": profile["label"], "target": profile["target"],
+            "band": list(pp.BANDS[band]), "blurb": profile["blurb"],
+            "legs": [], "multiplier": None, "prob": None, "market_prob": None,
+            "measured": _measured_for(measured, rule),
+            "missing_reason": f"Not built on this run ({kind}).",
+        })
+    return out
+
+
 def parlay_records(entries, event_name, event_date, first_start=None, timestamp=None):
-    """prediction_history.json's "parlays" rows for one run of the card: one
-    per ticket (a band with no ticket logs nothing), each leg by both full
-    names and its corner so grade.grade_parlays can find the bout, at the
-    decimal the multiplier was built from. Stamped in UTC: the cutoff it is
-    graded against (grade.made_before_the_card) is a UTC instant."""
+    """prediction_history.json's "parlays" rows for one run of the card: ONE
+    PER BAND, each leg by both full names and its corner so
+    grade.grade_parlays can find the bout, at the decimal the multiplier was
+    built from. Stamped in UTC: the cutoff it is graded against
+    (grade.made_before_the_card) is a UTC instant.
+
+    The run is the unit, so a band this run built no ticket for still logs a
+    row - multiplier None, legs [], status "none", and the reason. It is
+    never graded or counted, but as the newest row for its card and profile
+    it supersedes an earlier run's ticket: a ticket the latest run before
+    the bell would not have built does not stand."""
     stamp = timestamp or datetime.now(timezone.utc).isoformat(timespec="seconds")
     out = []
     for entry in entries or []:
-        if entry.get("multiplier") is None or not entry.get("legs"):
-            continue
+        built = entry.get("multiplier") is not None and bool(entry.get("legs"))
         out.append({
             "event_name": event_name, "event_date": str(event_date)[:10],
             "first_start": first_start,
-            "profile": entry["profile"], "rule": entry["rule"], "band": entry["band"],
-            "multiplier": entry["multiplier"], "prob": entry["prob"],
-            "market_prob": entry.get("market_prob"),
+            "profile": entry["profile"], "rule": entry.get("rule"), "band": entry.get("band"),
+            "multiplier": entry["multiplier"] if built else None,
+            "prob": entry.get("prob") if built else None,
+            "market_prob": entry.get("market_prob") if built else None,
             "legs": [{"red": l["red"], "blue": l["blue"], "pick": l["pick"],
                       "side": l["corner"], "market": l["market"], "decimal": l["decimal"]}
-                     for l in entry["legs"]],
-            "timestamp": stamp, "status": "pending",
+                     for l in entry["legs"]] if built else [],
+            "timestamp": stamp, "status": "pending" if built else "none",
+            **({} if built else {"missing_reason": entry.get("missing_reason")}),
         })
     return out
 
@@ -679,13 +746,19 @@ def parlay_profiles_backtest(measured):
 def parlay_profiles_live(history, last=8):
     """The live record of the logged tickets, as grade.grade_parlays left
     them: per profile, how many settled, won, lost, were void or are still
-    pending, the units and the return a ticket; and the last `last` tickets.
+    pending, how many cards' latest run built no ticket, the units and the
+    return a ticket; and the last `last` tickets.
 
-    Counted by grading's rule - the newest ticket per card and profile made
+    Counted by grading's rule - the newest row per card and profile made
     before the card - so a re-run card counts once and a late ticket never.
+    The newest row may be a "none" row (that run built nothing): it is never
+    counted as a ticket, and the earlier run's ticket it supersedes is not
+    counted either. A card logged under two dates is collapsed by grading
+    (it marks the duplicate "superseded"), which needs the results this
+    function does not have, so it reads that mark.
     """
     import parlay_profiles as pp
-    from grade import made_before_the_card
+    from grade import is_no_ticket, made_before_the_card
     newest = {}
     for t in (history or {}).get("parlays") or []:
         if t.get("status") in ("superseded", "late") or not made_before_the_card(t):
@@ -693,7 +766,8 @@ def parlay_profiles_live(history, last=8):
         key = (str(t.get("event_date"))[:10], t.get("profile"))
         if key not in newest or str(t.get("timestamp") or "") > str(newest[key].get("timestamp") or ""):
             newest[key] = t
-    tickets = list(newest.values())
+    tickets = [t for t in newest.values() if not is_no_ticket(t)]
+    none = [t for t in newest.values() if is_no_ticket(t)]
     profiles = {}
     for band in pp.ORDER:
         rows = [t for t in tickets if t.get("profile") == band]
@@ -706,6 +780,7 @@ def parlay_profiles_live(history, last=8):
             "lost": sum(t["status"] == "lost" for t in done),
             "void": sum(t["status"] == "void" for t in done),
             "pending": len(rows) - len(done),
+            "none": sum(t.get("profile") == band for t in none),
             "units": _clean(round(units, 4)) if done else None,
             "roi": _clean(round(units / len(done), 4)) if done else None,
         }

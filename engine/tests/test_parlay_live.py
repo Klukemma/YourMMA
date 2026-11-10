@@ -9,7 +9,7 @@ none of it needs the twenty-minute engine.
 import json
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -165,8 +165,9 @@ def test_the_caveat_says_the_market_is_hard_to_beat_and_prices_are_best_of_books
         # Every figure is the file's: 41 tickets, 6 won, -12% (-45% to +30%).
         assert "41 tickets, 6 won, -12% a ticket (-45% to +30%)" in text
         assert "2023-11-01 to 2026-10-31" in text
-        assert "50-100x ticket landed 6 times in 41" in text
-        assert "~10x (mixed, else risker)" in text
+        assert f"{pp.PROFILES['risk_lover']['target']} ticket landed 6 times in 41" in text
+        assert (f"{pp.PROFILES['risker']['target']} (mixed, else "
+                f"{pp.PROFILES['risker']['label'].lower()})") in text
 
 
 def test_the_card_carries_both_prices_the_tickets_and_every_caveat(card):
@@ -208,10 +209,14 @@ def test_logged_ticket_records_are_well_formed(card):
     tickets.append(ax.parlay_profiles_payload(card[:1], None, None, event_date=DATE)[0])
     rows = ax.parlay_records(tickets, "UFC Test", DATE, first_start="2026-11-07T22:00:00Z",
                              timestamp="2026-11-07T12:00:00+00:00")
-    assert len(rows) == 3, "a band with no ticket logs nothing"
+    assert len(rows) == 4, "the run is the unit: a band with no ticket logs a row too"
+    none = rows[3]
+    assert (none["status"], none["multiplier"], none["prob"], none["legs"]) == ("none", None, None, [])
+    assert none["profile"] == "steady" and "No combination" in none["missing_reason"]
+    assert grade.is_no_ticket(none)
     keys = {"event_name", "event_date", "first_start", "profile", "rule", "band",
             "multiplier", "prob", "legs", "timestamp", "status"}
-    for row, ticket in zip(rows, tickets):
+    for row, ticket in zip(rows[:3], tickets):
         assert keys <= set(row)
         assert row["status"] == "pending" and row["event_date"] == DATE
         assert row["profile"] == ticket["profile"] and row["rule"] == ticket["rule"]
@@ -244,6 +249,45 @@ def test_the_engine_logs_tickets_only_under_the_picks_cutoff():
     assert "parlay_profiles=_parlay_tickets" in source
 
 
+def test_the_engine_logs_every_band_on_every_path():
+    """The run is the unit: a run that built no ticket, or whose build
+    raised, still logs one row a band, under the same before-the-bell gate."""
+    source = (ENGINE / "predict_card.py").read_text()
+    block = source[source.index("_profiles_measured = _app_export.load_parlay_profiles()"):
+                   source.index("_app_card = _app_export.card_payload(")]
+    failed = block[block.index("except Exception as _err:"):block.index('print("\\n" + "=" * 70)')]
+    assert "_app_export.parlay_profiles_unbuilt(_profiles_measured, _err)" in failed
+    call = block.index("    log_parlay_tickets(_parlay_tickets")
+    gate = block[block.rindex("if _may_log_parlays and", 0, call):call]
+    assert "_grade.picks_may_be_logged(" in gate
+    assert "_parlay_tickets and" not in gate, "a run with no ticket must log its none rows too"
+
+
+def test_a_build_that_raises_still_gives_one_entry_a_band(card):
+    measured = _measured({"steady": "steady", "risker": "mixed", "risk_lover": "risk_lover"})
+    out = ax.parlay_profiles_unbuilt(measured, KeyError("dec_red"))
+    assert [e["profile"] for e in out] == list(pp.ORDER)
+    built = ax.parlay_profiles_payload(card, None, measured, event_date=DATE)
+    for e, b in zip(out, built):
+        assert set(e) == set(b), "the same shape as a built entry, so the card reads it alike"
+        assert e["legs"] == [] and e["multiplier"] is None and e["prob"] is None
+        assert e["market_prob"] is None
+        assert e["missing_reason"] == "Not built on this run (KeyError)."
+        assert e["band"] == list(pp.BANDS[e["profile"]])
+        assert (e["label"], e["target"]) == (pp.PROFILES[e["profile"]]["label"],
+                                             pp.PROFILES[e["profile"]]["target"])
+        assert e["rule"] == b["rule"] and e["measured"] == b["measured"]
+    assert ax.parlay_profiles_unbuilt(None, ValueError())[0]["measured"] is None
+    rows = ax.parlay_records(out, "UFC Test", DATE, first_start="2026-11-07T22:00:00Z",
+                             timestamp="2026-11-07T12:00:00+00:00")
+    assert [r["status"] for r in rows] == ["none"] * len(pp.ORDER)
+    assert {r["missing_reason"] for r in rows} == {"Not built on this run (KeyError)."}
+    payload = ax.card_payload("E", DATE, card, parlay_profiles=out, profiles_measured=measured)
+    assert payload["parlay_profiles"] == out
+    json.dumps(payload, allow_nan=False)
+    json.dumps(rows, allow_nan=False)
+
+
 # ------------------------------------------------------------------ grading
 
 @pytest.fixture
@@ -257,6 +301,11 @@ def results(tmp_path):
         "method": ["KO/TKO", "U-DEC", "Decision - Split", "Submission"],
     }).to_csv(csv, index=False)
     return grade.load_results(csv)
+
+
+# A day after the fixture card's first bell (2026-11-07T22:00Z): old enough
+# for its results to be whole, so a bout with no record may be cancelled.
+COMPLETE = datetime(2026, 11, 9, tzinfo=timezone.utc)
 
 
 def _leg(red, blue, side, decimal, market="moneyline"):
@@ -294,7 +343,7 @@ def test_a_void_leg_counts_one_and_a_cancelled_bout_is_void_once_the_card_is_in(
                                _leg("Ann Three", "Bea Three", "blue", 3.0),
                                _leg("Gone One", "Gone Two", "red", 5.0)])
     history = {"predictions": [], "parlays": [t]}
-    grade.grade_parlays(history, results)
+    grade.grade_parlays(history, results, now=COMPLETE)
     assert t["status"] == "won"
     assert t["paid"] == pytest.approx(1.5), "void legs pay 1.0, not their price"
     assert t["legs"][2]["outcome"] == "void" and t["legs"][2]["void_reason"] == "cancelled"
@@ -360,6 +409,154 @@ def test_a_method_leg_settles_on_the_short_decision_labels(results):
     t = _ticket("risk_lover", [_leg("Ann Two", "Bea Two", "blue", 6.0, market="Decision")])
     grade.grade_parlays({"predictions": [], "parlays": [t]}, results)
     assert t["status"] == "won"
+
+
+# ---- a bout with no result is cancelled only when it plainly did not happen
+
+@pytest.fixture
+def respelled(tmp_path):
+    """The real case: logged "Zachary Reese vs Mickey Gall", archived as
+    "Mickey Gall vs Zach Reese" - the bout happened, the names do not match."""
+    csv = tmp_path / "r.csv"
+    pd.DataFrame({
+        "date": [DATE, DATE],
+        "r_name": ["Ann One", "Mickey Gall"], "b_name": ["Bea One", "Zach Reese"],
+        "winner": ["Ann One", "Zach Reese"], "method": ["KO/TKO", "U-DEC"],
+    }).to_csv(csv, index=False)
+    return grade.load_results(csv)
+
+
+def test_a_bout_archived_under_another_spelling_is_left_open_not_cancelled(respelled):
+    """Gall lost. Voided as cancelled, the leg paid 1.0 and the ticket graded
+    as won; it is open instead - shown as missing - because Gall has a result
+    on the card."""
+    t = _ticket("risker", [_leg("Ann One", "Bea One", "red", 1.5),
+                           _leg("Zachary Reese", "Mickey Gall", "blue", 4.0)])
+    history = {"predictions": [], "parlays": [t]}
+    graded = grade.grade_parlays(history, respelled, now=COMPLETE)
+    assert graded == [t]
+    assert t["status"] == "pending" and t["paid"] is None and t["profit"] is None
+    assert t["legs"][1]["outcome"] is None and "void_reason" not in t["legs"][1]
+    assert t["legs"][0]["outcome"] == "won"
+
+
+def test_a_missing_bout_is_cancelled_only_once_the_card_is_old_enough(results):
+    legs = [_leg("Ann One", "Bea One", "red", 1.5), _leg("Gone One", "Gone Two", "red", 5.0)]
+    # First bell 2026-11-07T22:00Z: complete a day later, not before.
+    for now, status in ((datetime(2026, 11, 8, 12, tzinfo=timezone.utc), "pending"),
+                        (datetime(2026, 11, 8, 22, tzinfo=timezone.utc), "won")):
+        t = _ticket("steady", [dict(l) for l in legs])
+        grade.grade_parlays({"predictions": [], "parlays": [t]}, results, now=now)
+        assert t["status"] == status, now
+    # No first bell on file: two days after the card's date.
+    for now, status in ((datetime(2026, 11, 8, 23, tzinfo=timezone.utc), "pending"),
+                        (datetime(2026, 11, 9, 0, tzinfo=timezone.utc), "won")):
+        t = _ticket("steady", [dict(l) for l in legs], first_start=None)
+        grade.grade_parlays({"predictions": [], "parlays": [t]}, results, now=now)
+        assert t["status"] == status, now
+        assert (t["legs"][1].get("void_reason") == "cancelled") == (status == "won")
+
+
+def test_a_fighter_with_a_result_near_the_card_keeps_the_leg_open(results):
+    """A late replacement: Ann One fought someone else on the night. The bout
+    as logged has no result, but it is not shown to have been called off."""
+    t = _ticket("steady", [_leg("Ann One", "Someone New", "red", 1.5)])
+    grade.grade_parlays({"predictions": [], "parlays": [t]}, results, now=COMPLETE)
+    assert t["status"] == "pending" and t["legs"][0]["outcome"] is None
+
+
+def test_card_is_complete_reads_the_first_bell_else_the_date():
+    t = {"event_date": DATE, "first_start": "2026-11-07T22:00:00Z"}
+    assert not grade.card_is_complete(t, datetime(2026, 11, 8, 21, 59, tzinfo=timezone.utc))
+    assert grade.card_is_complete(t, datetime(2026, 11, 8, 22, 0, tzinfo=timezone.utc))
+    t = {"event_date": DATE, "first_start": None}
+    assert not grade.card_is_complete(t, datetime(2026, 11, 8, 23, 59, tzinfo=timezone.utc))
+    assert grade.card_is_complete(t, datetime(2026, 11, 9, tzinfo=timezone.utc))
+    assert not grade.card_is_complete({"event_date": "not a date"}, COMPLETE)
+
+
+# ---- the run is the unit: a later run that built nothing supersedes
+
+def _none_row(profile, stamp, date=DATE, first_start="2026-11-07T22:00:00Z"):
+    entry = {"profile": profile, "rule": profile, "band": list(pp.BANDS[profile]),
+             "legs": [], "multiplier": None, "prob": None, "market_prob": None,
+             "missing_reason": "No combination of this card's 3 priced fights reaches it."}
+    return ax.parlay_records([entry], "UFC Test", date, first_start=first_start,
+                             timestamp=stamp)[0]
+
+
+def test_a_later_run_that_built_nothing_supersedes_the_earlier_ticket(results):
+    early = _ticket("steady", [_leg("Ann One", "Bea One", "red", 1.5)],
+                    stamp="2026-11-06T10:00:00+00:00")
+    later = _none_row("steady", "2026-11-07T20:00:00+00:00")
+    assert later["status"] == "none" and later["legs"] == [] and later["multiplier"] is None
+    kept = _ticket("risker", [_leg("Ann Two", "Bea Two", "blue", 2.0)])
+    history = {"predictions": [], "parlays": [early, later, kept]}
+    graded = grade.grade_parlays(history, results, now=COMPLETE)
+    assert graded == [kept], "a none row is never graded, and the ticket it replaced never counts"
+    assert early["status"] == "superseded" and "profit" not in early
+    assert later["status"] == "none" and "profit" not in later and "paid" not in later
+    live = ax.parlay_profiles_live(history)
+    steady = live["profiles"]["steady"]
+    assert (steady["settled"], steady["pending"], steady["none"]) == (0, 0, 1)
+    assert steady["units"] is None and steady["roi"] is None
+    assert live["profiles"]["risker"]["settled"] == 1
+    assert [t["profile"] for t in live["last"]] == ["risker"]
+    # The live record reads the log the same way before grading has run.
+    fresh = {"parlays": [_ticket("steady", [_leg("Ann One", "Bea One", "red", 1.5)],
+                                 stamp="2026-11-06T10:00:00+00:00"),
+                         _none_row("steady", "2026-11-07T20:00:00+00:00")]}
+    assert ax.parlay_profiles_live(fresh)["profiles"]["steady"]["pending"] == 0
+    assert ax.parlay_profiles_live(fresh)["profiles"]["steady"]["none"] == 1
+
+
+def test_an_earlier_none_row_does_not_hide_a_later_ticket(results):
+    none = _none_row("steady", "2026-11-06T10:00:00+00:00")
+    ticket = _ticket("steady", [_leg("Ann One", "Bea One", "red", 1.5)],
+                     stamp="2026-11-07T20:00:00+00:00")
+    history = {"predictions": [], "parlays": [none, ticket]}
+    assert grade.grade_parlays(history, results, now=COMPLETE) == [ticket]
+    assert ticket["status"] == "won" and none["status"] == "superseded"
+    assert ax.parlay_profiles_live(history)["profiles"]["steady"]["won"] == 1
+
+
+# ---- one card logged under two dates counts once
+
+def test_one_card_logged_under_two_dates_counts_once(results):
+    """UFC 325 was logged as 2026-01-31 and as 2026-02-08; both match the
+    same bouts within the date tolerance. Collapsed on the real card the legs
+    matched, the newest ticket counts and the other is superseded."""
+    first = _ticket("steady", [_leg("Ann One", "Bea One", "red", 1.5)],
+                    date="2026-11-01", first_start=None, stamp="2026-10-30T10:00:00+00:00")
+    second = _ticket("steady", [_leg("Ann Two", "Bea Two", "blue", 2.0)],
+                     stamp="2026-11-06T10:00:00+00:00")
+    other = _ticket("risker", [_leg("Ann Two", "Bea Two", "red", 3.0)],
+                    date="2026-11-01", first_start=None, stamp="2026-10-30T10:00:00+00:00")
+    history = {"predictions": [], "parlays": [first, second, other]}
+    graded = grade.grade_parlays(history, results, now=COMPLETE)
+    assert graded == [second, other], "collapsed per profile, not across profiles"
+    assert first["status"] == "superseded" and "profit" not in first
+    assert second["status"] == "won" and other["status"] == "lost"
+    live = ax.parlay_profiles_live(history)
+    assert live["profiles"]["steady"]["settled"] == 1
+    assert live["profiles"]["steady"]["units"] == pytest.approx(1.0)
+    # Graded again, nothing moves.
+    before = json.dumps(history, sort_keys=True)
+    grade.grade_parlays(history, results, now=COMPLETE)
+    assert json.dumps(history, sort_keys=True) == before
+
+
+def test_a_none_row_under_the_second_date_supersedes_the_first_dates_ticket(results):
+    """A run that built nothing has no legs to match, so it takes the card its
+    logged date's other bouts matched - here the picks logged under it."""
+    first = _ticket("steady", [_leg("Ann One", "Bea One", "red", 1.5)],
+                    date="2026-11-01", first_start=None, stamp="2026-10-30T10:00:00+00:00")
+    later = _none_row("steady", "2026-11-06T10:00:00+00:00")
+    pick = {"red_corner": "Ann Two", "blue_corner": "Bea Two", "event_date": DATE,
+            "predicted_winner": "Bea Two", "timestamp": "2026-11-06T10:00:00"}
+    history = {"predictions": [pick], "parlays": [first, later]}
+    assert grade.grade_parlays(history, results, now=COMPLETE) == []
+    assert first["status"] == "superseded" and later["status"] == "none"
 
 
 # ------------------------------------------------------------------ the record tab
