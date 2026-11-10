@@ -72,19 +72,6 @@ in both periods, but pooling the market with ITSELF (same form, model weight
 market's own recalibration, and the pooling weight on this model falls to ~0
 by 2025. Shots-based ratings carry nothing the Friday price lacks.
 
-EVERY LEAGUE (predict_leagues; experiments/leagues.py measured it). The same
-model over all 38 leagues football-data.co.uk carries, nothing re-tuned: one
-rating pool per country (England E0-E1 - adding E2-EC made the top five
-worse on DEV - and E2-EC its own; Scotland SC0-SC3; every one-league country
-its own), rated in three passes by calendar (the top five's countries; every
-other August-May league; the calendar-year leagues), goals alone where a
-season has no shots; one Poisson regression per league group (the top five
-exactly as before; the other 17 European divisions; the 16 extra leagues),
-a dummy per league. On the ten leagues with the top five predicted it is
-predict_walk_forward bit for bit. Measured against each league's base rate,
-the model alone beat it in every league in both periods; it never beat the
-market (the numbers are in experiments/leagues.py).
-
 CHOSEN ON DEV (2006-2015) ONLY, by grids on DEV log loss:
   proxy     w_sot {0,.3,.5,.65,.8,1} x w_shots {0,.2} x k {.02,.03,.045,.06} (w_g .35);
             then w_g {.25,.35,.45} x w_sot {.2,.3,.4} x w_shots {.1,.2,.3} x k {.017,.023};
@@ -732,20 +719,11 @@ def predict_leagues(matches, leagues=None, *, score_params=False, england="all",
     cols = ["p_h", "p_d", "p_a", "p_o25"] + (SCORE_PARAMS if score_params else [])
     out = pd.DataFrame(np.nan, index=matches.index, columns=cols)
     feats_all, ratings, steps, fits = [], {}, {}, {}
-    # A club rated in two passes (with England's pool split, one that moved
-    # between E1 and E2) shows the rating of the league it played in last.
-    seen = pd.DataFrame({"club": np.r_[matches["home"].to_numpy(), matches["away"].to_numpy()],
-                         "league": np.r_[matches["league"].to_numpy(), matches["league"].to_numpy()],
-                         "date": np.r_[matches["date"].to_numpy(), matches["date"].to_numpy()]})
-    last = dict(seen.sort_values("date", kind="stable").drop_duplicates("club", keep="last")[["club", "league"]]
-                .itertuples(index=False, name=None))
     for k, (group, pools) in enumerate(passes(present, england)):
         sub = matches[matches["league"].isin(group)]
         feats = rate(sub, **{**params, "pools": pools or None})
         feats_all.append(feats)
-        for club, r in (feats.attrs.get("ratings") or {}).items():
-            if club not in ratings or r["league"] == last.get(club):
-                ratings[club] = r
+        ratings.update(feats.attrs.get("ratings") or {})
         steps[k] = feats.attrs.get("steps")
     feats = pd.concat(feats_all).loc[matches.index]
     feats.attrs["channels"] = feats_all[0].attrs["channels"] if feats_all else 1
