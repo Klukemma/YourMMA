@@ -8,12 +8,16 @@ Everything else in the soccer engine reads the snapshot through the
 loaders below.
 
 THE TEN AND ALL. LEAGUES, TOP and COUNTRY_TOP are the ten divisions the
-model and the app run on today (the top five leagues and their second
+model and the app ran on first (the top five leagues and their second
 tiers), exactly as before. ALL_LEAGUES is every league this module knows
-(38). sync() fetches all 38, but load_matches() and load_fixtures() return
-the ten unless asked for leagues="all" (or a list of codes): the running
-pipeline sees what it saw before until a later step switches it over on
-purpose, league by league, once each is measured.
+(38), each measured (soccer_leagues). sync() fetches all 38;
+load_matches() and load_fixtures() return the ten unless asked for
+leagues="all" (or a list of codes), so code that asks for nothing sees
+what it saw before. The live pipeline asks for "all": the model trains on
+every measured league (soccer_leagues.MODEL_LEAGUES - RUS's matches train
+the extra leagues' regression even while RUS is not shown) and the pick's
+weights pool every league priced the same way, so a frame without one of
+the 38 would give numbers nobody measured (soccer_model refuses it).
 
 WHY THE SECOND TIERS. Three teams come up into each top league every
 summer. A rating that met them for the first time in August would have to
@@ -236,6 +240,41 @@ ARG "Colon Santa FE" / "Colon Santa Fe" and NOR "Ham-Kam" / "HamKam". The
 slug is the same (so are the ids); the names are kept as written - the
 club tables are where they are joined.
 
+CLUB NAMES, ONE PER CLUB. football-data.co.uk's newest midweek rows have
+spelled clubs differently from the rest of their season: the fixtures and
+results of 3-4 November 2026 (snapshot of 2026-11-05, commit f56e283) had
+"Sheffield Utd" in E1 (14 matches as "Sheffield United"), "Oxford Utd" in
+E2 (13 as "Oxford") and "KV Mechelen" in B1 (9 as "Mechelen"); the site
+put its usual names back a day later. A second spelling splits one club in
+two - two ratings, two table rows, two forms, a match id the feed does not
+share - so the loaders (load_matches, load_fixtures) put every club under
+one name per league: canonical_clubs. The snapshot keeps the site's own
+spelling (a sync compares what it downloads with what is on file, and a
+later correction by the site rewrites the season as usual).
+Conservative - only names PROVEN to be one club:
+  ALIASES    the spellings seen and checked (above), per league.
+  learned    (learned_aliases) in one league-season, a name with 1-4 matches
+             beside exactly one NAMESAKE with a season's worth (10 or more,
+             in a season whose median club has 10 or more): the same words
+             once "Utd" reads "United" and case, accents and punctuation go
+             ("Sheffield Utd" / "Sheffield United", "Ham-Kam" / "HamKam"),
+             or the namesake's words with a club-form word added to the
+             thin name ("Oxford Utd" / "Oxford", "KV Mechelen" /
+             "Mechelen"; never the other way round: a thin "Galway" is not
+             "Galway United"). Refused where the two ever meet (one club
+             cannot play itself), play on the same day in that season (one
+             club plays once a day), the thin name has a season's worth of
+             its own in the league (5 or more matches: a club of its own),
+             or two namesakes qualify.
+  Over the snapshot of 2026-11-10 the learned rule finds nothing in any
+  league-season (its 126 thin names are promotion play-off clubs and the
+  like, none beside a namesake), so no measured season changes; on the
+  snapshot of 2026-11-05 it finds the three above. The two same-slug
+  spellings of 2022-2023 (Colon, HamKam) are not thin in their seasons, so
+  they stay apart, as they were when every league was measured.
+A renamed match gets its id from the one name, so a fixture and its result
+share it again; the same match under both names is kept once (its result).
+
 THE SNAPSHOT. soccer/data/matches/{league}/{season}.csv.gz: one file per
 league and season, gzip with mtime 0, written only when its CSV text
 changes. A sync rewrites the seasons that changed and nothing else, so git
@@ -265,6 +304,24 @@ A failed or unreadable download (an HTML page, a body cut off part-way
 through a row), a file with no rows, or a season that comes back with
 fewer matches than are on file keeps what is on file and is listed under
 KEPT ON FILE; it never costs the run the other files.
+  new_league_fixtures.csv: a row whose Country/League is not a registered
+         league is logged with its label and count (sync_matches does the
+         same for the history files). Where the file holds such rows and a
+         league asked for gets none, the league was probably renamed: its
+         rows on file are kept and it is listed under KEPT ON FILE, rather
+         than its fixtures vanishing without a line in the log. (A league
+         with no fixtures while every label is placed is simply between
+         rounds or out of season.)
+THE FAILURE BUDGET. With 38 leagues a sync makes 40 requests, each allowed
+120 s: an outage that times every one out would hold a run for 80 minutes,
+past a posting day's kickoffs. So a sync stops asking after FAILS_IN_A_ROW
+(3) downloads failing in a row or DOWNLOAD_BUDGET (300 s) in all, as
+soccer_feed does (STRAIGHT_FAILS, FETCH_BUDGET): every file not yet asked
+for keeps what is on file and is listed under KEPT ON FILE. Both fixtures
+files are fetched first - they are what a posting day's run needs (its
+prices) - then the history files. A 404, an empty body or a page that is
+not the CSV is an answer, not a failure: only a download that raised (a
+timeout, a refused connection, a 5xx) counts towards the three.
 
 STALE OR THIN, AT THE PROBE. football-data's Russia file stops at
 2026-08-02 (round 2 of 2026-27) while ESPN lists rus.1 matches through
@@ -278,6 +335,8 @@ import gzip
 import io
 import re
 import sys
+import time
+import unicodedata
 from collections import Counter, defaultdict, namedtuple
 from datetime import datetime, timezone
 from pathlib import Path
@@ -299,6 +358,10 @@ EXTRA_FIXTURES_URL = SITE + "/new_league_fixtures.csv"
 UK = ZoneInfo("Europe/London")
 FIRST_SEASON = 2005          # 2005-06: the first season with market averages
 PINNACLE_STALE_FROM = "2025-07-23"   # ps_*/psc_* stale from this date (module notes)
+# The failure budget (module notes): a sync stops asking after this many
+# downloads failing in a row, or once it has spent this many seconds.
+FAILS_IN_A_ROW = 3
+DOWNLOAD_BUDGET = 300
 
 # code: (name, country, tier, The Odds API sport key)
 LEAGUES = {
@@ -374,6 +437,28 @@ EXTRA_BY_NAME = {(meta.country, name): code for code, meta in ALL_LEAGUES.items(
 # play-off is a tie or two); more would be a season of another division,
 # left out and counted (module notes, THE TWO OTHER LEAGUE VALUES).
 PLAY_OFF_ONLY = {("Switzerland", "Challenge League"): ("SWZ", 4)}
+
+# One name per club (module notes, CLUB NAMES): league -> {the site's other
+# spelling: the name it uses for the club the rest of the season}. Each seen
+# in the snapshot of 2026-11-05 (commit f56e283) on the fixtures and results
+# of 3-4 November 2026, beside a season's worth under the usual name, and
+# never meeting it.
+ALIASES = {
+    "E1": {"Sheffield Utd": "Sheffield United"},      # Preston v Sheffield Utd, 03/11/2026
+    "E2": {"Oxford Utd": "Oxford"},                   # Oxford Utd v Reading, 04/11/2026
+    "B1": {"KV Mechelen": "Mechelen"},                # Kortrijk v KV Mechelen, 04/11/2026
+}
+# The learned rule (learned_aliases): a thin name has 1-4 matches, a
+# namesake a season's worth, in a season whose median club has a season's
+# worth; a name with more than THIN matches in any season of the league is
+# a club of its own.
+THIN, SEASONS_WORTH = 4, 10
+# Abbreviations read as their word, and the words a club's name may carry
+# in front of or after the name the site usually writes ("KV Mechelen",
+# "Oxford Utd"): a namesake is the same words, or those words with these.
+NAME_WORDS = {"utd": "united"}
+CLUB_FORM_WORDS = frozenset({"fc", "afc", "cf", "sc", "kv", "krc", "kaa", "rsc", "sk", "fk", "bk",
+                             "if", "ac", "club", "united"})
 
 
 def league_codes(leagues=None):
@@ -474,9 +559,12 @@ def kickoff_utc(day, clock):
     return pd.Timestamp(local.astimezone(timezone.utc).replace(tzinfo=None))
 
 
+def _slug(name):
+    return "".join(ch for ch in str(name).lower() if ch.isalnum())
+
+
 def match_id(league, day, home, away):
-    slug = lambda s: "".join(ch for ch in str(s).lower() if ch.isalnum())
-    return f"{league}-{day:%Y%m%d}-{slug(home)}-{slug(away)}"
+    return f"{league}-{day:%Y%m%d}-{_slug(home)}-{_slug(away)}"
 
 
 def _number(text):
@@ -646,6 +734,134 @@ def order(df):
                           kind="mergesort").reset_index(drop=True)
 
 
+# ------------------------------------------------------------- club names
+
+def _words(name):
+    """A club name's words, for comparing two spellings: lower case, accents
+    and punctuation gone, abbreviations read as their word (NAME_WORDS)."""
+    text = unicodedata.normalize("NFKD", str(name)).encode("ascii", "ignore").decode().lower()
+    return [NAME_WORDS.get(w, w) for w in re.findall(r"[a-z0-9]+", text)]
+
+
+def namesake(thin, thick):
+    """How `thin` names the club `thick` names: "same" where the two are one
+    spelling apart (the same words, "Sheffield Utd" / "Sheffield United",
+    "Ham-Kam" / "HamKam"), "form" where `thin` is `thick`'s words with
+    club-form words added in front or after ("KV Mechelen" / "Mechelen",
+    "Oxford Utd" / "Oxford" - never the other way round), else None."""
+    a, b = _words(thin), _words(thick)
+    if not a or not b:
+        return None
+    if "".join(a) == "".join(b):
+        return "same"
+    k = len(a) - len(b)
+    if k > 0 and ((a[:len(b)] == b and set(a[len(b):]) <= CLUB_FORM_WORDS)
+                  or (a[k:] == b and set(a[:k]) <= CLUB_FORM_WORDS)):
+        return "form"
+    return None
+
+
+def _sides(df):
+    """One row per club per match: league, season, date, club."""
+    cols = ["league", "season", "date"]
+    return pd.concat([df[cols + ["home"]].rename(columns={"home": "club"}),
+                      df[cols + ["away"]].rename(columns={"away": "club"})], ignore_index=True)
+
+
+def learned_aliases(df):
+    """{(league, season): {thin name: its namesake}} - the second spellings
+    the rows of `df` prove (module notes, CLUB NAMES): in a league-season
+    whose median club has SEASONS_WORTH matches, a name with 1 to THIN
+    beside exactly one namesake with SEASONS_WORTH or more (a "same"
+    spelling preferred to a "form" one), the two never meeting in `df`,
+    never playing on one day that season, and the thin name never more
+    than THIN in any season of the league. Fixtures count as matches (the
+    site has listed them); a frame of one round proves nothing."""
+    if not len(df):
+        return {}
+    sides = _sides(df)
+    sides["season"] = pd.to_numeric(sides["season"], errors="coerce")
+    sides = sides.dropna(subset=["season"])
+    n = sides.groupby(["league", "season", "club"]).size()
+    most = n.groupby(level=["league", "club"]).max()
+    out = {}
+    for (lg, season), counts in n.groupby(level=["league", "season"]):
+        counts = counts.droplevel(["league", "season"])
+        if counts.median() < SEASONS_WORTH:
+            continue
+        thick = [c for c in counts.index[counts >= SEASONS_WORTH]]
+        for name in counts.index[counts <= THIN]:
+            if most[(lg, name)] > THIN:
+                continue                                 # a club of its own somewhere in the league
+            found = [(t, namesake(name, t)) for t in thick]
+            same = [t for t, how in found if how == "same"]
+            pool = same or [t for t, how in found if how]
+            if len(pool) != 1:
+                continue                                 # none, or two namesakes: not proven
+            club = pool[0]
+            pair = df["league"].eq(lg) & (df["home"].eq(name) & df["away"].eq(club)
+                                          | df["home"].eq(club) & df["away"].eq(name))
+            if pair.any():
+                continue                                 # they met: two clubs
+            here = sides[(sides["league"] == lg) & (sides["season"] == season)]
+            if set(here.loc[here["club"] == name, "date"]) & set(here.loc[here["club"] == club, "date"]):
+                continue                                 # both played that day: two clubs
+            out.setdefault((lg, int(season)), {})[name] = club
+    return out
+
+
+def canonical_clubs(df, learn_from=None, aliases=ALIASES):
+    """`df` with every club under one name per league (module notes, CLUB
+    NAMES): `aliases` (per league, every season) and the spellings
+    learned_aliases proves on `df` - with `learn_from` beside it, where
+    given (the results a fixtures frame is checked against). An alias whose
+    two names ever meet in `df` is refused (one club cannot play itself). A
+    renamed match gets its id from its names again; the same match under
+    both spellings is kept once, with its result where one row has it (the
+    other rows keep their index). Returned as it came where no name moves."""
+    if not len(df):
+        return df
+    cols = ["league", "season", "date", "home", "away"]
+    seen = df[cols] if learn_from is None or not len(learn_from) else pd.concat(
+        [learn_from[cols], df[cols]], ignore_index=True)
+    fixed = {}
+    for lg, names in (aliases or {}).items():
+        for name, club in names.items():
+            met = seen["league"].eq(lg) & (seen["home"].eq(name) & seen["away"].eq(club)
+                                           | seen["home"].eq(club) & seen["away"].eq(name))
+            if not met.any():
+                fixed[(lg, None, name)] = club
+    learned = {(lg, season, name): club for (lg, season), names in learned_aliases(seen).items()
+               for name, club in names.items()}
+    variants = {k[2] for k in fixed} | {k[2] for k in learned}
+    hit = df.index[df["home"].isin(variants) | df["away"].isin(variants)] if variants else []
+    if not len(hit):
+        return df
+    out = df.copy()
+    moved = []
+    for i in hit:
+        lg, season = out.at[i, "league"], out.at[i, "season"]
+        season = None if pd.isna(season) else int(season)
+        names = {}
+        for side in ("home", "away"):
+            name = out.at[i, side]
+            names[side] = learned.get((lg, season, name)) or fixed.get((lg, None, name)) or name
+        if names["home"] == names["away"] or (names["home"], names["away"]) == (out.at[i, "home"], out.at[i, "away"]):
+            continue
+        out.at[i, "home"], out.at[i, "away"] = names["home"], names["away"]
+        out.at[i, "match_id"] = f"{lg}-{str(out.at[i, 'date'])[:10].replace('-', '')}-{_slug(names['home'])}-{_slug(names['away'])}"
+        moved.append(i)
+    if not moved:
+        return df
+    ids = set(out.loc[moved, "match_id"])
+    twice = out["match_id"].isin(ids) & out["match_id"].duplicated(keep=False)
+    if twice.any():
+        rank = out.loc[twice, "result"].notna().astype(int)
+        keep = rank.groupby(out.loc[twice, "match_id"]).idxmax()     # the row with a result, else the first
+        out = out.drop(index=[i for i in out.index[twice] if i not in set(keep)])
+    return out
+
+
 # ------------------------------------------------------------- the snapshot
 
 def season_path(root, league, season):
@@ -707,7 +923,7 @@ def store_season(root, league, season, rows, log=print, problems=None):
 def migrate(legacy=LEGACY_MATCHES, root=MATCHES, log=print):
     """The single matches.csv.gz of before -> one file per league and season.
     Returns the frame it read."""
-    old = load_matches(legacy)
+    old = load_matches(legacy, aliases=False)        # the site's spelling, as on file
     for (league, season), g in old.groupby(["league", "season"], sort=True):
         store_season(root, league, int(season), g, log=log)
     log(f"   migrated {len(old)} matches into {old.groupby(['league', 'season']).ngroups} season files under {root}")
@@ -759,16 +975,46 @@ def cut_off(body):
     return width(last) < width(head)
 
 
-def _download(fetch, url, what, required, log, problems):
+class Budget:
+    """The failure budget of one sync (module notes, THE FAILURE BUDGET):
+    spent after `fails` downloads failing in a row or `seconds` since it
+    began, by `clock` (time.monotonic; a test passes its own)."""
+
+    def __init__(self, fails=FAILS_IN_A_ROW, seconds=DOWNLOAD_BUDGET, clock=time.monotonic):
+        self.fails, self.seconds, self.clock = fails, seconds, clock
+        self.start, self.in_a_row, self.told = clock(), 0, False
+
+    def spent(self):
+        """Why no more downloads start ("" while the budget lasts)."""
+        if self.in_a_row >= self.fails:
+            return f"{self.in_a_row} downloads failed in a row"
+        if self.clock() - self.start >= self.seconds:
+            return f"{self.seconds} s spent"
+        return ""
+
+
+def _download(fetch, url, what, required, log, problems, budget=None):
     """One file, or None: a failure (a 503, a timeout, a page that is not
     the CSV, a body cut off mid-row) is logged and listed and keeps what is
-    on file; a 404 or an empty body is "not published"."""
+    on file; a 404 or an empty body is "not published". Once `budget` is
+    spent, nothing is asked: the file keeps what is on file and is listed."""
+    why = budget.spent() if budget is not None else ""
+    if why:
+        problems.append(what)
+        if not budget.told:
+            budget.told = True
+            log(f"   football-data.co.uk: {why}; every file not yet asked for keeps what is on file")
+        return None
     try:
         body = fetch(url)
     except Exception as err:                  # noqa: BLE001 - logged, kept, run continues
         problems.append(what)
         log(f"   {what}: download failed ({err.__class__.__name__}); kept what is on file")
+        if budget is not None:
+            budget.in_a_row += 1
         return None
+    if budget is not None:
+        budget.in_a_row = 0
     if not body or not _text(body).strip():
         log(f"   {what}: not published")
         return None
@@ -784,8 +1030,9 @@ def _download(fetch, url, what, required, log, problems):
 
 
 def sync_matches(leagues="all", seasons=None, full=False, today=None, fetch=_fetch, log=print,
-                 root=MATCHES, problems=None):
-    """The results half of sync(). -> how many season files were written."""
+                 root=MATCHES, problems=None, budget=None):
+    """The results half of sync() (`budget`: its failure budget, shared with
+    the fixtures). -> how many season files were written."""
     problems = [] if problems is None else problems
     codes = league_codes(leagues)
     unknown = [c for c in codes if c not in ALL_LEAGUES]
@@ -806,7 +1053,7 @@ def sync_matches(leagues="all", seasons=None, full=False, today=None, fetch=_fet
             for season in main_seasons:
                 what = f"{code} {season}"
                 body = _download(fetch, SEASON_URL.format(code=season_code(season), league=meta.fd_code),
-                                 what, REQUIRED, log, problems)
+                                 what, REQUIRED, log, problems, budget)
                 if body is None:
                     continue
                 rows = parse(body, season, leagues=[code])
@@ -819,7 +1066,7 @@ def sync_matches(leagues="all", seasons=None, full=False, today=None, fetch=_fet
                 if done != "kept":
                     log(f"   {what}: {len(rows)} matches" + (" (unchanged)" if done == "unchanged" else ""))
             continue
-        body = _download(fetch, EXTRA_URL.format(code=meta.fd_code), code, EXTRA_REQUIRED, log, problems)
+        body = _download(fetch, EXTRA_URL.format(code=meta.fd_code), code, EXTRA_REQUIRED, log, problems, budget)
         if body is None:
             continue
         # Which seasons: every one with full=True or with none on file, the
@@ -848,16 +1095,19 @@ def sync_matches(leagues="all", seasons=None, full=False, today=None, fetch=_fet
     return written
 
 
-def sync_fixtures(leagues="all", fetch=_fetch, log=print, path=FIXTURES, problems=None):
+def sync_fixtures(leagues="all", fetch=_fetch, log=print, path=FIXTURES, problems=None, budget=None):
     """The fixtures half of sync(): fixtures.csv (main divisions) and
     new_league_fixtures.csv (extra leagues) into one file. A source that
     was fetched replaces the rows of the leagues asked for; every other
     league's rows, and those of a source that was not fetched (failed,
-    unreadable, not published), stay as they are on file.
+    unreadable, not published), stay as they are on file - and so do an
+    extra league's where the file holds rows of a League label it does not
+    place and none of that league's (module notes, SYNC: a renamed league).
+    The file keeps the site's own club names (the loader joins spellings).
     -> the fixtures written, or None when nothing was fetched."""
     problems = [] if problems is None else problems
     codes = league_codes(leagues)
-    old = load_fixtures(path, leagues="all")
+    old = load_fixtures(path, leagues="all", aliases=False)
     fresh, refreshed = [], set()
     for kind, url, what, required in (("main", FIXTURES_URL, "fixtures", REQUIRED),
                                       ("extra", EXTRA_FIXTURES_URL, "extra-league fixtures",
@@ -865,11 +1115,24 @@ def sync_fixtures(leagues="all", fetch=_fetch, log=print, path=FIXTURES, problem
         own = [c for c in codes if ALL_LEAGUES[c].kind == kind]
         if not own:
             continue
-        body = _download(fetch, url, what, required, log, problems)
+        body = _download(fetch, url, what, required, log, problems, budget)
         if body is None:
             continue
-        rows = parse(body, leagues=own) if kind == "main" else \
-            [r for r in parse_extra(body) if r["league"] in own]
+        if kind == "main":
+            rows = parse(body, leagues=own)
+        else:
+            skipped = Counter()
+            rows = [r for r in parse_extra(body, skipped=skipped) if r["league"] in own]
+            for label, n in sorted(skipped.items()):
+                log(f"   {what}: {n} rows of {label} left out (not a league on file)")
+            unplaced = [label for label in skipped if not label.endswith("(unreadable row)")]
+            got = {r["league"] for r in rows}
+            if unplaced:
+                for code in [c for c in own if c not in got]:
+                    own.remove(code)
+                    problems.append(f"{code} fixtures")
+                    log(f"   {code}: no fixtures while the file holds rows of {', '.join(sorted(unplaced))} "
+                        "(a renamed league?); kept what is on file")
         fresh.append(frame(rows))
         refreshed.update(own)
     if not refreshed:
@@ -886,20 +1149,23 @@ def sync_fixtures(leagues="all", fetch=_fetch, log=print, path=FIXTURES, problem
 
 
 def sync(seasons=None, full=False, today=None, fetch=_fetch, log=print,
-         matches_path=MATCHES, fixtures_path=FIXTURES, leagues="all"):
-    """Refresh the snapshot (the module's notes, SYNC): the given seasons of
-    the main divisions (default this one, plus last season in its first
-    weeks so late corrections land), or every season since FIRST_SEASON
-    with full=True; the extra leagues' files; both fixtures files. Seasons
-    not fetched are kept as they are on file; a league-season the site does
-    not have is skipped, never blanked. -> the leagues synced, as loaded."""
+         matches_path=MATCHES, fixtures_path=FIXTURES, leagues="all", clock=None):
+    """Refresh the snapshot (the module's notes, SYNC): both fixtures files
+    first, then the given seasons of the main divisions (default this one,
+    plus last season in its first weeks so late corrections land), or every
+    season since FIRST_SEASON with full=True, and the extra leagues' files -
+    within one failure budget (THE FAILURE BUDGET; `clock` for a test).
+    Seasons not fetched are kept as they are on file; a league-season the
+    site does not have is skipped, never blanked. -> the leagues synced, as
+    loaded."""
     problems = []
+    budget = Budget(clock=clock) if clock is not None else Budget()
+    sync_fixtures(leagues, fetch=fetch, log=log, path=fixtures_path, problems=problems, budget=budget)
     sync_matches(leagues, seasons=seasons, full=full, today=today, fetch=fetch, log=log,
-                 root=matches_path, problems=problems)
+                 root=matches_path, problems=problems, budget=budget)
     merged = load_matches(matches_path, leagues=leagues)
     log(f"   matches: {len(merged)} on file in {merged['league'].nunique()} leagues, "
         f"{merged['result'].notna().sum()} with a result")
-    sync_fixtures(leagues, fetch=fetch, log=log, path=fixtures_path, problems=problems)
     if problems:
         log(f"   KEPT ON FILE after a failed or unreadable download: {', '.join(problems)}")
     return merged

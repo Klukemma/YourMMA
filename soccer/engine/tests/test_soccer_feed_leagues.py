@@ -176,6 +176,61 @@ def test_a_fetch_of_every_league_asks_each_feed_where_it_covers_the_league():
     assert len(sf.requests_for(NOW)) == 80
 
 
+def test_the_app_asks_about_its_leagues_that_have_a_feed_and_never_rus():
+    """leagues_for(in_app()): the 37 leagues the app carries, less the seven
+    no feed covers - 30, in the registry's order (the five first, so a fetch
+    its budget cuts short loses the others first), 462 requests. RUS has a
+    feed and is out of the app: never asked, so its feed-only matches can
+    never be picked by the model alone."""
+    import soccer_leagues as slg
+    app = slg.in_app()
+    asked = sf.leagues_for(app)
+    assert len(app) == 37 and "RUS" not in app
+    assert len(asked) == 30 and "RUS" not in asked and asked[:5] == tuple(sd.TOP)
+    assert set(asked) == set(sf.FEED_LEAGUES) - {"RUS"}
+    assert list(asked) == [c for c in sf.FEED_LEAGUES if c in asked]            # the registry's order
+    assert set(app) - set(asked) == {"SC2", "SC3", "FIN", "IRL", "POL", "ROU", "SWZ"}
+    reqs = sf.requests_for(NOW, leagues=asked)
+    assert len(reqs) == 30 * 15 + 12 == 462
+    assert sum(r[3] == "fixturedownload" for r in reqs) == 12 and not any(r[2] == "RUS" for r in reqs)
+    # A league no feed covers asks nothing (the seven passed straight from in_app()).
+    assert sf.requests_for(NOW, leagues=app) == reqs
+    # Any order, any duplicates, any code no feed has: the registry's order back.
+    assert sf.leagues_for(["USA", "SC2", "E0", "USA", "XX"]) == ("E0", "USA")
+    assert sf.leagues_for([]) == ()
+
+
+def test_each_league_says_which_feed_covers_it_and_what_that_leaves_out():
+    """coverage(code): ESPN's code, fixturedownload's name, or why neither -
+    for every league (RUS too). In the app: both feeds 12, ESPN alone 18,
+    none 7. coverage_caveat adds what a league's cards can rest on (no
+    second source to confirm a time; no live check at all) beside its
+    measured caveats, never in place of one."""
+    import soccer_leagues as slg
+    for code in sd.ALL_LEAGUES:
+        c = sf.coverage(code)
+        assert set(c) == {"espn", "fixturedownload", "none_because"}, code
+        assert c["espn"] == sf.ESPN_SLUGS.get(code) and c["fixturedownload"] == sf.FD_SLUGS.get(code), code
+        assert (c["none_because"] is None) == bool(c["espn"] or c["fixturedownload"]), code
+    kind = {code: ("both" if c["espn"] and c["fixturedownload"] else "espn" if c["espn"] else
+                   "fixturedownload" if c["fixturedownload"] else "none")
+            for code, c in ((code, sf.coverage(code)) for code in slg.in_app())}
+    assert Counter(kind.values()) == {"both": 12, "espn": 18, "none": 7}
+    assert {c for c, k in kind.items() if k == "both"} == {"E0", "SP1", "I1", "D1", "F1", "E1", "F2", "SC0", "N1",
+                                                           "P1", "T1", "USA"}
+    assert {c for c, k in kind.items() if k == "none"} == {"SC2", "SC3", "FIN", "IRL", "POL", "ROU", "SWZ"}
+    assert sf.coverage("POL")["none_because"] == sf.NO_ESPN["POL"] and "404" in sf.NO_ESPN["POL"]
+    assert sf.coverage("SC2")["none_because"] == sf.ESPN_NOT_ASKED["SC2"]
+    assert sf.coverage("RUS") == {"espn": "rus.1", "fixturedownload": None, "none_because": None}
+    assert set(sf.FD_SLUGS) <= set(sf.ESPN_SLUGS)                 # no league has fixturedownload alone
+    for code, k in kind.items():
+        note = sf.coverage_caveat(code)
+        assert note == (None if k == "both" else sf.COVERAGE_CAVEATS[k]), code
+        assert note is None or note not in slg.caveats(code), code          # added, not already said
+    with pytest.raises(KeyError):
+        sf.coverage("XX")
+
+
 def test_each_feed_takes_football_datas_season_for_the_league():
     """football-data.co.uk names a season by the year it starts - a calendar
     year where the league plays one (soccer_data.season_for): MLS's January
@@ -621,6 +676,36 @@ def test_a_play_off_or_cup_tie_is_skipped_in_a_division_football_data_files_with
     assert sf.knockout_phase(dict(playoff, season={"slug": "championship-playoffs"}), "E1") == "championship-playoffs"
 
 
+def test_a_knock_out_phase_skipped_is_listed_in_the_snapshot_not_only_logged(tmp_path):
+    """A division's feed going quiet because ESPN names its phase a play-off
+    (Belgium's or Scotland's split, if ESPN labels it so - not measured)
+    must show: every phase skipped is in last_run.skipped_phase as
+    "league:slug", once, beside the board's league events read as before.
+    An extra league reads the same events, and lists nothing."""
+    knockout = [e for lg in ("usa.usl.1", "eng.fa") for e in json.loads(raw(f"espn_{lg}_boards.json"))][::20]
+    slugs = {e["season"]["slug"] for e in knockout}
+    league = board_events("B1")[:3]
+    split = [dict(e, season=dict(e["season"], slug="jupiler-pro-league-champions-play-offs")) for e in league[:1]]
+
+    def get(url):
+        if "/soccer/bel.1/" in url:
+            return json.dumps({"events": knockout + split + league[1:]}).encode()
+        raise ConnectionError(url)
+    snap = sf.sync(NOW, path=tmp_path / "feed.json", get=get, leagues=["B1"], days_back=0, days_ahead=1,
+                   log=lambda *_: None)
+    run = snap["last_run"]
+    assert run["skipped_phase"] == sorted({f"B1:{s}" for s in slugs} | {"B1:jupiler-pro-league-champions-play-offs"})
+    assert {r["source_id"] for r in snap["rows"]} == {e["id"] for e in league[1:]}
+    assert sf.load(tmp_path / "feed.json")["last_run"]["skipped_phase"] == run["skipped_phase"]
+    # Nothing skipped: an empty list, never a missing key.
+    got = sf.fetch(NOW, get=probe_getter(), leagues=["E2"], days_back=3, log=lambda *_: None)
+    assert got["skipped_phase"] == []
+    # An extra league's file keeps its play-offs: the same phase is read there.
+    phases = set()
+    usa = [dict(board_events("USA")[0], season={"slug": "mls-cup-playoffs---round-one", "type": 1, "year": 2026})]
+    assert len(sf.parse_espn({"events": usa}, "USA", log=lambda *_: None, phases=phases)) == 1 and not phases
+
+
 # ------------------------------------------------------------- a fetch of every league
 
 def probe_getter(calls=None):
@@ -672,6 +757,7 @@ def test_a_sync_of_every_new_league_from_the_probe(tmp_path):
                    log=lambda *_: None)
     run = snap["last_run"]
     assert len(calls) == run["answered"] == 26 * 14 + 7 and not run["failed"] and run["unmapped"] == []
+    assert run["skipped_phase"] == []                       # no play-off or cup tie on a league's board
     espn = [r for r in snap["rows"] if r["source"] == "espn"]
     assert len(espn) == 531
     matches = sf.reconciled(snap, log=lambda *_: None)
