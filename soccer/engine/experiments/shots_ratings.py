@@ -750,19 +750,15 @@ def predict_leagues(matches, leagues=None, *, score_params=False, england="all",
     feats = pd.concat(feats_all).loc[matches.index]
     feats.attrs["channels"] = feats_all[0].attrs["channels"] if feats_all else 1
     for name, group in CAL_GROUPS.items():
-        if not any(c in leagues for c in group):
+        own = [c for c in group if c in leagues]
+        if not own:
             continue
-        # A group's regression is fitted on every league of the group in the
-        # frame, whichever of them get numbers (as the top five's always was:
-        # its dummies are the five's whether or not each is in the frame).
-        own = [c for c in group if c in present]
         rows = matches["league"].isin(own)
         sub_f = feats.loc[rows]
         sub_f.attrs["channels"] = feats.attrs["channels"]
-        p = calibrate(matches[rows], sub_f, score_params=score_params, leagues=group if name == "top" else own,
+        p = calibrate(matches[rows], sub_f, score_params=score_params, leagues=own,
                       warm_start=name != "top", **params)
-        asked = matches.loc[rows, "league"].isin(leagues).to_numpy()
-        out.loc[matches.index[rows.to_numpy()][asked], cols] = p[cols].to_numpy()[asked]
+        out.loc[rows, cols] = p[cols].to_numpy()
         fits[name] = p.attrs.get("fits")
     out.attrs.update(ratings=ratings, steps=steps, fits=fits)
     return out
