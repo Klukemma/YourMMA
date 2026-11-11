@@ -10,6 +10,12 @@ and works with aeroplane mode on.
 Writes soccer/app/yoursoccer.html. ONE SOURCE OF TRUTH: index.html and
 app.js are read as they are and the data is injected as
 window.__YOURSOCCER_DATA__, which app.js already prefers over fetch.
+
+EVERY LEAGUE. The three payloads now carry every league in the app (37),
+each with its own decisions, caveats, table and record, so the page is
+several times the five-league one's size (about 1 MB on the snapshot of
+2026-11-10, more in a full week: each league's round adds its cards). Nothing
+here depends on which leagues are in it: the data is inlined as it is.
 """
 
 import json

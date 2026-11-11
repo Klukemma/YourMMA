@@ -3,7 +3,9 @@ league is picked on, the pick (recalibrated on matches dated before the
 league-season only, the raw price where its recalibration lost, the model's
 own or none where no price), the league's base rates walking forward on
 dates, the model over leagues of different calendars, what a card withholds
-- and the per-league decisions, held to the rules that made them."""
+and the over 2.5 beside it, the Record tab and the Method tab per league on
+its own periods and price - and the per-league decisions, held to the rules
+that made them."""
 
 import math
 
@@ -328,6 +330,9 @@ def test_the_pipeline_calls_read_the_measured_decisions(world, monkeypatch):
         seen["england"], seen["leagues"] = england, leagues
         return "preds"
     monkeypatch.setattr(sr, "predict_leagues", spy)
+    shipped = {c: dict(in_app=c != "SP1", pick="raw" if c == "B1" else "recalibrated", model_alone=c != "E0")
+               for c in ("E0", "SP1", "B1", "NOR")}
+    monkeypatch.setattr(sl, "SHIPPED", shipped)           # the world's four leagues, as if all measured
     for pool in ("all", "top-two"):
         monkeypatch.setattr(sl, "ENGLAND_POOL", pool)
         assert smod.predict(world, leagues=sl.MODEL_LEAGUES) == "preds" and seen["england"] == pool
@@ -339,8 +344,6 @@ def test_the_pipeline_calls_read_the_measured_decisions(world, monkeypatch):
 
     monkeypatch.setattr(smod, "MIN_TRAIN", 150)
     preds = _preds(world)
-    shipped = {c: dict(in_app=c != "SP1", pick="raw" if c == "B1" else "recalibrated", model_alone=c != "E0")
-               for c in ("E0", "SP1", "B1", "NOR")}
     monkeypatch.setattr(sl, "SHIPPED", shipped)
     monkeypatch.setattr(sl, "PICK_WEIGHTS", "per_price")
     got, w_got = smod.shipped_pick(world, preds)
@@ -359,6 +362,31 @@ def test_the_pipeline_calls_read_the_measured_decisions(world, monkeypatch):
     monkeypatch.setattr(sl, "PICK_WEIGHTS", None)
     with pytest.raises(ValueError):
         smod.shipped_pick(world, preds)
+
+
+def test_the_model_and_the_pick_refuse_a_frame_without_every_measured_league(world, monkeypatch):
+    # a league left out of the frame moves the numbers of the leagues it trains
+    # with (RUS's matches: the extra leagues' regression and closing-price weights)
+    monkeypatch.setattr(smod, "MIN_TRAIN", 150)
+    preds = _preds(world)
+    shipped = {c: dict(in_app=c != "SP1", pick="recalibrated", model_alone=True) for c in ("E0", "SP1", "B1", "NOR")}
+    monkeypatch.setattr(sl, "SHIPPED", shipped)
+    monkeypatch.setattr(sl, "PICK_WEIGHTS", "per_price")
+    smod.require_every_league(world)
+    without = world[world["league"] != "SP1"]                # SP1 is not in the app, but it was measured
+    for call in (lambda: smod.shipped_pick(without, preds.loc[without.index]),
+                 lambda: smod.predict(without, leagues=["E0", "B1", "NOR"])):
+        with pytest.raises(ValueError, match="SP1"):
+            call()
+    # and it is not a formality: the weights pooled over the European divisions move
+    _, w_all = smod.shipped_pick(world, preds)
+    _, w_without = smod.pick_leagues(without, preds.loc[without.index], ["E0", "B1", "NOR"], "per_price",
+                                     model_alone=["E0", "B1", "NOR"])
+    assert w_all[("E0", 2010)] != w_without[("E0", 2010)]
+    assert w_all[("NOR", 2010)] == w_without[("NOR", 2010)]          # the closing-price pool has no SP1
+    monkeypatch.undo()
+    with pytest.raises(ValueError):
+        smod.shipped_pick(world, preds)                     # the real decisions: 38 leagues, the world has 4
 
 
 # ------------------------------------------------------------- what a card withholds
@@ -497,3 +525,258 @@ def test_the_band_rates_ship_for_every_group_in_the_app():
             for band, _ in ssc.BANDS:
                 r = sl.band_rate(code, band, basis)
                 assert r is not None and r["picks"] > 0 and 0 < r["hit_rate"] < 1
+
+
+# ------------------------------------------------------------- goals: the over 2.5 beside the card
+
+def _with_numbers(monkeypatch, **numbers):
+    """sl.SHIPPED with `numbers` = {code: {source: [names]}} in place of the
+    measured ones (every other decision as shipped)."""
+    import copy
+    shipped = copy.deepcopy(sl.SHIPPED)
+    for code, by_source in numbers.items():
+        shipped[code]["numbers"].update(by_source)
+    monkeypatch.setattr(sl, "SHIPPED", shipped)
+
+
+def test_goals_is_the_over_under_price_or_the_models_and_never_a_number_its_league_withheld(world, monkeypatch):
+    f = world.copy()
+    e0 = f.index[f["league"] == "E0"]
+    f.loc[e0[:12], ["avg_o25", "avg_u25"]] = np.nan          # twelve E0 matches with no over/under posted
+    preds = _preds(f)
+    preds["p_o25"] = np.random.default_rng(3).uniform(0.3, 0.7, len(f))
+    q = bt.no_vig_total(f)
+    posted = q.notna()
+    got = smod.goals(f, preds, ["E0", "B1", "NOR"])
+    for lg in ("E0", "B1"):
+        rows = (f["league"] == lg) & posted
+        assert rows.sum() > 100 and np.array_equal(got[rows].to_numpy(), q[rows].to_numpy())
+    model_rows = (f["league"] == "E0") & ~posted
+    assert model_rows.sum() == 12 and np.array_equal(got[model_rows].to_numpy(), preds.loc[model_rows, "p_o25"].to_numpy())
+    assert got[f["league"] == "SP1"].isna().all()               # not asked for: nothing, not the model's
+    # NOR has no over/under price, and its model's over 2.5 did not beat its base rate in both periods
+    nor = f["league"] == "NOR"
+    assert "o25" in sl.withheld("NOR", "model") and not posted[nor].any() and got[nor].isna().all()
+
+    # where the model's over 2.5 ships, the extra league shows the model's own
+    _with_numbers(monkeypatch, NOR={"model": ["o15", "o25"]})
+    got = smod.goals(f, preds, ["E0", "B1", "NOR"])
+    assert np.array_equal(got[nor].to_numpy(), preds.loc[nor, "p_o25"].to_numpy())
+    # where the market's over 2.5 is withheld (SC2's on the run of 2026-11-02), the posted
+    # price is not shown - and the model's is not put in its place
+    _with_numbers(monkeypatch, B1={"market": ["btts", "o15"]})
+    got = smod.goals(f, preds, ["E0", "B1", "NOR"])
+    b1 = f["league"] == "B1"
+    assert posted[b1].all() and got[b1].isna().all()
+    assert np.array_equal(got[(f["league"] == "E0") & posted].to_numpy(), q[(f["league"] == "E0") & posted].to_numpy())
+    monkeypatch.undo()
+
+    # the default is the top five, every one shipping over 2.5 from both sources: as it was
+    for code in sd.TOP:
+        assert "o25" not in sl.withheld(code, "market") and "o25" not in sl.withheld(code, "model")
+    old = preds["p_o25"].copy()
+    top = f["league"].isin(sd.TOP)
+    old[posted & top] = q[posted & top]
+    got = smod.goals(f, preds)
+    assert np.array_equal(got[top].to_numpy(), old[top].to_numpy(), equal_nan=True)
+    assert got[~top].isna().all()
+
+
+# ------------------------------------------------------------- the Record tab, every league
+
+def _short_periods(monkeypatch):
+    """The world's seasons run 2005-2011: periods that fit, the extra
+    leagues' different from the European divisions'."""
+    monkeypatch.setattr(bt, "DEV", (2007, 2008))
+    monkeypatch.setattr(bt, "CONFIRM", (2009, 2011))
+    monkeypatch.setattr(bt, "EXTRA_DEV", (2008, 2009))
+    monkeypatch.setattr(bt, "EXTRA_CONFIRM", (2010, 2011))
+
+
+def test_each_league_is_scored_on_its_own_price_and_the_default_is_the_top_five(world):
+    assert bt.scored(world).equals(world["league"].isin(sd.TOP) & bt.no_vig(world, "pre").notna().all(axis=1)
+                                   & world["result"].isin(bt.RESULTS))
+    every = bt.scored(world, ["E0", "SP1", "B1", "NOR"])
+    nor = world["league"] == "NOR"
+    assert every[nor].all() and not bt.scored(world)[nor].any()       # priced at the close only
+    assert every.equals(world["result"].isin(bt.RESULTS))
+    assert smod.market_price is bt.market_price
+
+
+def test_the_record_is_the_measurement_that_decided_each_league(world, monkeypatch):
+    # record() on the matches experiments/leagues.py scored is its league_rows
+    # and group_rows, number for number: the Record tab shows what shipped
+    from experiments import leagues as L
+    _short_periods(monkeypatch)
+    monkeypatch.setattr(smod, "MIN_TRAIN", 150)
+    leagues = ["E0", "SP1", "B1", "NOR"]
+    preds = _preds(world)
+    preds.loc[preds.index[::17], ["p_h", "p_d", "p_a"]] = np.nan        # the model missing on some matches
+    pick, _ = smod.pick_leagues(world, preds, leagues, "per_price", raw=["B1"])
+    base = ssc.baseline(world, leagues)
+    rec = bt.record(world, pick, preds, leagues)
+    q, kind = smod.market_price(world)
+    want = L.league_rows(world, q, kind, preds, base, pick, pick, {c: None for c in L.ALL})
+    names = {"matches": "matches", "log_loss": "pick", "market_log_loss": "market", "model_log_loss": "model",
+             "base_log_loss": "base", "accuracy": "acc_pick", "market_accuracy": "acc_market",
+             "model_accuracy": "acc_model", "seasons": "seasons"}
+    assert [r["code"] for r in rec["by_league"]] == leagues
+    for r in rec["by_league"]:
+        w = want[r["code"]]
+        assert (r["name"], r["country"], r["group"], r["price"]) == (w["name"], w["country"], w["group"], w["price"])
+        for key in ("dev", "confirm"):
+            assert r[key]["matches"] > 50
+            assert {a: r[key][a] for a in names} == {a: w[key][b] for a, b in names.items()}
+            assert r["periods"][key] == w[key]["seasons"]
+    assert rec["by_league"][3]["periods"] == {"dev": [2008, 2009], "confirm": [2010, 2011]}    # NOR: its own
+    groups = L.group_rows(world, q, preds, base, pick, {c: {"in_app": c in leagues} for c in L.ALL})
+    for g, r in rec["by_group"].items():
+        for key in ("dev", "confirm"):
+            w = groups[g][key]
+            assert r[key]["matches"] == w["matches"] and r[key]["log_loss"] == w["pick"]
+            assert (r[key]["market_log_loss"], r[key]["model_log_loss"], r[key]["base_log_loss"]) == \
+                (w["market"], w["model"], w["base"])
+            assert (r[key]["accuracy"], r[key]["market_accuracy"], r[key]["model_accuracy"]) == \
+                (w["acc_pick"], w["acc_market"], w["acc_model"])
+    assert list(rec["by_group"]) == ["top", "europe", "extra"]
+    assert rec["by_group"]["top"]["codes"] == ["E0", "SP1"] and rec["by_group"]["extra"]["periods"]["dev"] == [2008, 2009]
+    for key in ("dev", "confirm"):           # pooled: every league on its own periods, each match once
+        assert rec["pooled"][key]["matches"] == sum(r[key]["matches"] for r in rec["by_league"])
+    # NOR's 2007 is in the European divisions' DEV but not in its own: never scored
+    nor07 = (world["league"] == "NOR") & (world["season"] == 2007)
+    moved = world.copy()
+    moved.loc[nor07, "result"] = "D"
+    again = bt.record(moved, pick, preds, leagues, base=base)
+    assert again == rec
+
+
+def test_a_league_with_nothing_to_score_in_a_period_shows_nothing(world, monkeypatch):
+    _short_periods(monkeypatch)
+    monkeypatch.setattr(bt, "EXTRA_CONFIRM", (2030, 2031))
+    preds = _preds(world)
+    rec = bt.record(world, preds, preds, ["E0", "NOR"])
+    nor = rec["by_league"][1]
+    assert nor["confirm"] == {"seasons": [2030, 2031], "matches": 0} and nor["dev"]["matches"] > 0
+    # a pick with no number where the league was priced is a caller's mistake, never a NaN on the tab
+    partial, _ = smod.pick_leagues(world, preds, ["E0"], "per_price")
+    with pytest.raises(ValueError, match="NOR"):
+        bt.record(world, partial, preds, ["E0", "NOR"])
+
+
+def test_report_scores_every_league_on_its_own_periods_and_price(world, monkeypatch):
+    _short_periods(monkeypatch)
+    preds = _preds(world)
+    preds["p_o25"] = 0.5
+    leagues = ["E0", "SP1", "B1", "NOR"]
+    rep = bt.report(world, preds, "model", leagues=leagues)["model"]
+    q, _ = bt.market_price(world)
+    for code in leagues:
+        for k, key in enumerate(("dev", "confirm")):
+            lo, hi = bt.periods_for(code)[k]
+            sel = (world["league"] == code) & world["season"].between(lo, hi)
+            got = rep["by_league"][code][key]
+            assert got["matches"] == sel.sum()
+            assert got["market_log_loss"] == bt.log_loss(q[sel], world.loc[sel, "result"])
+            assert got["log_loss"] == bt.log_loss(preds[sel], world.loc[sel, "result"])
+            assert ("over_2_5" in got) == (code != "NOR")            # no over/under price in an extra league
+    assert rep["by_league"]["NOR"]["price"] == "closing" and rep["by_league"]["B1"]["price"] == "pre-match"
+    assert set(rep["by_group"]) == {"top", "europe", "extra"}
+    assert rep["dev"]["matches"] == sum(rep["by_league"][c]["dev"]["matches"] for c in leagues)
+    # without leagues: the top five, on the periods given, as before
+    old = bt.report(world, preds, "model", periods=((2007, 2008),))["model"]["2007-2008"]
+    sel = world["league"].isin(sd.TOP) & world["season"].between(2007, 2008)
+    pre = bt.no_vig(world, "pre")
+    assert old["matches"] == sel.sum() and old["market_log_loss"] == bt.log_loss(pre[sel], world.loc[sel, "result"])
+    assert old["closing"]["matches"] == sel.sum() and "by_league" not in old
+
+
+def test_the_latest_weights_are_each_leagues_newest_season(world, monkeypatch):
+    monkeypatch.setattr(smod, "MIN_TRAIN", 150)
+    preds = _preds(world)
+    _, w = smod.pick_leagues(world, preds, ["E0", "B1", "NOR"], "per_price", raw=["B1"])
+    got = smod.latest_weights(w)
+    assert list(got) == ["E0", "B1", "NOR"] and got["B1"] is None          # the raw price: no weights
+    for c in ("E0", "NOR"):
+        assert got[c] == {"season": 2011, "w": [round(v, 4) for v in w[(c, 2011)]]}
+    assert smod.latest_weights(w, ["NOR", "SP1"]) == {"NOR": got["NOR"], "SP1": None}
+
+
+@pytest.mark.snapshot
+def test_the_shipped_weights_are_what_the_snapshot_fits():
+    # A snapshot check: the pick's weights need no model, and every in-app
+    # league's newest season reproduces what soccer_leagues stores beside it.
+    frame = sd.load_matches(leagues="all")
+    preds = pd.DataFrame(np.nan, index=frame.index, columns=["p_h", "p_d", "p_a"])
+    _, w = smod.shipped_pick(frame, preds)
+    got = smod.latest_weights(w, sl.in_app())
+    assert got == {c: sl.SHIPPED[c]["weights"] for c in sl.in_app()}
+
+
+# ------------------------------------------------------------- the cards and the Method tab, every league
+
+@pytest.fixture(scope="module")
+def modelled(world):
+    """The model over the world's four leagues, with its score parameters,
+    and the pick on its prices (weights pooled per price type)."""
+    preds = sr.predict_leagues(world, ["E0", "SP1", "B1", "NOR"], score_params=True, england="top-two", **SMALL)
+    keep = smod.MIN_TRAIN
+    smod.MIN_TRAIN = 150
+    try:
+        pick, _ = smod.pick_leagues(world, preds, ["E0", "SP1", "B1", "NOR"], "per_price", raw=["B1"])
+    finally:
+        smod.MIN_TRAIN = keep
+    return preds, pick
+
+
+def test_every_leagues_cards_come_from_the_source_it_has_and_withhold_what_it_did_not_ship(world, modelled):
+    preds, pick = modelled
+    idx, mats, info = ssc.walk(world, preds, pick, leagues=["B1", "NOR"])
+    lg = world.loc[idx, "league"].to_numpy()
+    assert set(lg) == {"B1", "NOR"} and len(idx) == int((world["league"].isin(["B1", "NOR"]) & preds["p_h"].notna()).sum())
+    nor = lg == "NOR"
+    # an extra league is priced 1X2 only (its history: the close): the model's matrix, said why
+    assert (info["source"][nor] == ssc.SOURCE_MODEL).all() and (info["reason"][nor] == ssc.NO_OVER_UNDER).all()
+    assert (info["source"][~nor] == ssc.SOURCE_MARKET).mean() > 0.9
+    shown = {"B1": 0, "NOR": 0}
+    for k in range(len(idx)):
+        code, src = lg[k], info["source"].iloc[k]
+        c = ssc.card(mats[k], src, info["reason"].iloc[k], info["miss"].iloc[k], info["miss_on"].iloc[k],
+                     withhold=sl.withheld(code, src))
+        if c is None:
+            continue
+        shown[code] += 1
+        for name in sl.NUMBERS:
+            gone = name in sl.withheld(code, src)
+            assert (name in c.get("withheld", [])) == gone
+            assert (c["scores"] is None if name == "exact" else c[name] is None) == gone
+    assert shown["B1"] > 100 and shown["NOR"] > 100
+    assert "o25" in sl.withheld("NOR", "model") and "btts" in sl.withheld("B1", "market")
+
+
+def test_the_method_tab_measures_every_league_on_its_own_periods(world, modelled, monkeypatch):
+    _short_periods(monkeypatch)
+    preds, pick = modelled
+    leagues = ["E0", "SP1", "B1", "NOR"]
+    walked = ssc.walk(world, preds, pick, leagues=leagues)
+    with pytest.raises(ValueError, match="different periods"):
+        ssc.measure(world, preds, pick, walked)                     # the extra league's years are not the others'
+    europe = ssc.measure(world, preds, pick, walked, leagues=["E0", "SP1", "B1"])
+    top = ssc.measure(world, preds, pick, walked, leagues=["E0", "SP1"])
+    assert list(europe["periods"]) == ["2007-2008", "2009-2011"]
+    for key in europe["periods"]:
+        assert europe["periods"][key]["matches"] > top["periods"][key]["matches"] > 50     # B1 is in, not dropped
+    # a walk over the top five alone, with no leagues said: as it always was
+    alone = ssc.walk(world, preds, pick)
+    assert ssc.measure(world, preds, pick, alone) == ssc.measure(world, preds, pick, alone, periods=(bt.DEV, bt.CONFIRM),
+                                                                 leagues=list(sd.TOP)) == top
+    nor = ssc.measure(world, preds, pick, walked, leagues=["NOR"])
+    assert list(nor["periods"]) == ["2008-2009", "2010-2011"]
+    for key, r in nor["periods"].items():
+        lo, hi = map(int, key.split("-"))
+        n = int(((world["league"] == "NOR") & world["season"].between(lo, hi)).sum())
+        assert 0 < r["matches"] <= n and r["market"] == 0 and r["model"][ssc.NO_OVER_UNDER] == r["matches"]
+        assert sum(nor["bands"]["pick"][key][b]["picks"] for b, _ in ssc.BANDS) == n     # priced at the close
+    groups = ssc.by_group(world, preds, pick, walked, leagues)
+    assert list(groups) == ["top", "europe", "extra"]
+    assert groups["top"] == top and groups["extra"] == nor
+    assert groups["europe"] == ssc.measure(world, preds, pick, walked, leagues=["B1"])

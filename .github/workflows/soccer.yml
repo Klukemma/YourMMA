@@ -16,20 +16,30 @@ name: Soccer predictions
 #   probe     save what the free fixture feeds return (probe_feeds.py) as
 #             test fixtures - the sandbox cannot reach them
 #
-# On a schedule it runs predict through the season (August to May).
-# football-data.co.uk posts the weekend's fixtures with prices on Friday
-# afternoon and the midweek's on Tuesday afternoon, and its results days
-# after each round; the free feeds have the next rounds all week and each
-# score the evening it is played. So: twice on Friday and Tuesday
-# afternoons for the priced picks (the early run beats a 16:30 UTC Friday
-# kickoff in Serie A; the later one catches prices posted after it),
-# Saturday and Sunday mornings to refresh before the day's games, Saturday
-# and Sunday evenings for the day's results (provisional) and the next
-# round, Monday, Wednesday and Thursday mornings for the round just played
-# and the next one (model-alone picks until its prices land), and every
-# morning over the Christmas and New Year fixtures. GitHub starts scheduled
-# runs late under load, and a match that kicks off before any run has
-# logged it gets no pick - it is never picked afterwards.
+# On a schedule it runs predict every month: the app carries every league
+# with a current season (soccer_leagues.in_app()), and the calendar-year
+# leagues (ARG BRA CHN FIN IRL NOR SWE USA) play through June and July, when
+# Europe's are between seasons - a run that skipped those months would leave
+# their picks silently missing. football-data.co.uk posts the fixtures with
+# prices on Friday afternoon (the weekend's) and Tuesday afternoon (the
+# midweek's), and its results days after each round; the free feeds have
+# the next rounds all week and each score the evening it is played. So:
+# twice on Friday and Tuesday afternoons for the priced picks (the early run
+# beats a 16:30 UTC Friday kickoff in Serie A; the later one catches prices
+# posted after it), Saturday and Sunday mornings to refresh before the day's
+# games, Saturday and Sunday evenings for the day's results (provisional)
+# and the next round, Monday, Wednesday and Thursday mornings for the round
+# just played and the next one (model-alone picks until its prices land),
+# and every morning over the Christmas and New Year fixtures. Two more every
+# day, for the leagues that do not kick off on Europe's clock (times UTC):
+# 11:37 for the Americas' evenings - MLS, Liga MX, Brazil and Argentina kick
+# off about 22:00-04:00 UTC on most days of the week - and 17:37 for Asia's
+# mornings - the J1 League and the Chinese Super League kick off about
+# 04:00-12:00 UTC the next day. GitHub starts scheduled runs late under load
+# (3 to 10 hours late on every run from Oct 26 to Nov 5), so each slot is set
+# that far ahead of the kickoffs it is for: a match that kicks off before any
+# run has logged it gets no pick - it is never picked afterwards. A predict
+# run over every league takes a few minutes (soccer/README.md, The runner).
 on:
   workflow_dispatch:
     inputs:
@@ -43,19 +53,21 @@ on:
         type: boolean
         default: false
   schedule:
-    - cron: "47 13 * 8-12,1-5 FRI"   # the weekend's fixtures and prices
-    - cron: "47 16 * 8-12,1-5 FRI"   # ...and prices posted later in the afternoon
-    - cron: "17 7 * 8-12,1-5 SAT"    # before Saturday's early games
-    - cron: "17 7 * 8-12,1-5 SUN"    # before Sunday's; grade Saturday
-    - cron: "17 22 * 8-12,1-5 SAT"   # Saturday's results the evening they happen (after a 21:00 CET full time); the next round
-    - cron: "17 22 * 8-12,1-5 SUN"   # Sunday's results; the next round
-    - cron: "17 9 * 8-12,1-5 MON"    # grade the weekend
-    - cron: "47 13 * 8-12,1-5 TUE"   # the midweek fixtures and prices
-    - cron: "47 16 * 8-12,1-5 TUE"   # ...and prices posted later in the afternoon
-    - cron: "17 7 * 8-12,1-5 WED"    # Tuesday's results; the weekend's round early
-    - cron: "17 9 * 8-12,1-5 THU"    # grade the midweek round
-    - cron: "17 8 20-31 12 *"        # the Christmas fixtures
-    - cron: "17 8 1-3 1 *"           # ...and New Year's
+    - cron: "47 13 * * FRI"   # the weekend's fixtures and prices
+    - cron: "47 16 * * FRI"   # ...and prices posted later in the afternoon
+    - cron: "17 7 * * SAT"    # before Saturday's early games
+    - cron: "17 7 * * SUN"    # before Sunday's; grade Saturday
+    - cron: "17 22 * * SAT"   # Saturday's results the evening they happen (after a 21:00 CET full time); the next round
+    - cron: "17 22 * * SUN"   # Sunday's results; the next round
+    - cron: "17 9 * * MON"    # grade the weekend
+    - cron: "47 13 * * TUE"   # the midweek fixtures and prices
+    - cron: "47 16 * * TUE"   # ...and prices posted later in the afternoon
+    - cron: "17 7 * * WED"    # Tuesday's results; the weekend's round early
+    - cron: "17 9 * * THU"    # grade the midweek round
+    - cron: "37 11 * * *"     # the Americas' evenings: before their 22:00-04:00 UTC kickoffs, however late it starts
+    - cron: "37 17 * * *"     # Asia's mornings: before the next day's 04:00-12:00 UTC kickoffs in Japan and China, however late it starts
+    - cron: "17 8 20-31 12 *" # the Christmas fixtures
+    - cron: "17 8 1-3 1 *"    # ...and New Year's
 
 permissions:
   contents: write

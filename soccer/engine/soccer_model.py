@@ -45,9 +45,16 @@ pooled per price type (PICK_WEIGHTS = "per_price": every European division's
 pre-match prices, every extra league's closing prices) - which changes the
 top five's weights too, and makes the Bundesliga's pick the raw market.
 shipped_pick() is pick_leagues with those decisions; predict(frame,
-leagues=...) takes England's pool from soccer_leagues by default. Called
-without leagues, predict and pick are what they were, bit for bit: the
-running app is unchanged until the pipeline switches to these.
+leagues=...) takes England's pool from soccer_leagues by default. Both
+refuse a frame without every measured league (require_every_league): the
+pools and regressions learn from leagues the app does not show (RUS), so a
+frame of the app's leagues alone gives numbers nobody measured, silently.
+goals(frame, preds, leagues) is the over 2.5 beside each card, NaN where
+the league did not ship it from that source (rule c) and outside `leagues`;
+latest_weights() is each league's newest weights, as the Record tab prints
+them. Called without leagues, predict, pick and goals are what they were,
+bit for bit: the running app is unchanged until the pipeline switches to
+these.
 """
 
 import numpy as np
@@ -63,18 +70,23 @@ MIN_TRAIN = 1000
 
 
 def predict(frame, leagues=None, england=None):
-    """The model's own p_h, p_d, p_a, p_o25 for every top-league row of
-    `frame` (finished matches and fixtures still to play), each from matches
-    on earlier days; club ratings in .attrs["ratings"]. Also each match's
-    expected goals lam, nu and the Dixon-Coles rho (score_params; p_h..p_o25
-    are bit for bit the same with them or without) - the whole score matrix,
-    which soccer_scores reads the goals and scores numbers from.
+    """The model's own p_h, p_d, p_a, p_o25 for every row of `leagues` in
+    `frame` (finished matches and fixtures still to play; NaN elsewhere),
+    each from matches on earlier days; club ratings in .attrs["ratings"].
+    Also each match's expected goals lam, nu and the Dixon-Coles rho
+    (score_params; p_h..p_o25 are bit for bit the same with them or without)
+    - the whole score matrix, which soccer_scores reads the goals and scores
+    numbers from.
 
     leagues: which leagues get numbers - None is the five top leagues on the
     frame as it is (the shipped model, one pass); a list runs every league in
     the frame by shots_ratings.predict_leagues, with England's pool `england`
     ("all": E0-EC; "top-two": E0-E1 as before; None, the default: the
-    measured choice, soccer_leagues.ENGLAND_POOL)."""
+    measured choice, soccer_leagues.ENGLAND_POOL). With a list, the frame
+    must hold every league that was measured (require_every_league): a
+    country's pool and a group's regression learn from every league of them
+    in the frame, so a league left out moves the others' numbers to ones
+    nobody measured."""
     if leagues is None:
         return shots_ratings.predict_walk_forward(frame, score_params=True)
     if england is None:
@@ -82,7 +94,25 @@ def predict(frame, leagues=None, england=None):
         england = soccer_leagues.ENGLAND_POOL
     if england not in ("all", "top-two"):
         raise ValueError(f"England's pool is not decided ({england!r}): soccer_leagues has no measured decisions")
+    require_every_league(frame)
     return shots_ratings.predict_leagues(frame, list(leagues), score_params=True, england=england)
+
+
+def require_every_league(frame):
+    """Raise unless `frame` holds a match of every league experiments/leagues.py
+    measured (soccer_leagues.SHIPPED) - those not shown included: RUS's
+    matches train the extra leagues' regression and, priced at the close,
+    their recalibration weights. Measured on the frame of all 38: without
+    RUS the 2026 weights of all twelve recalibrated extra leagues move (ARG
+    (1.106, 0.0297, -0.0015) became (1.1068, 0.0322, -0.0009)), with no
+    error - numbers that were never measured. Load every league
+    (soccer_data.load_matches(leagues="all"))."""
+    import soccer_leagues as sl
+    have = set(frame["league"].unique())
+    missing = [c for c in sl.SHIPPED if c not in have]
+    if missing:
+        raise ValueError(f"the frame lacks measured leagues {missing}: their matches train the model and the "
+                         "pick's weights, so without them neither is the one measured - load every league")
 
 
 # ------------------------------------------------------------- the pick
@@ -165,29 +195,12 @@ def pick(frame, preds):
 #   top5        the top five's weights (pick(), fitted on their earlier
 #               seasons), for every league
 WEIGHT_OPTIONS = ("per_league", "per_price", "top5")
-IDENTITY = (1.0, 0.0, 0.0)          # beta 1, no draw or away shift: the raw no-vig price
 
 
-def market_price(frame):
-    """Each row's no-vig home/draw/away from the price its league is picked
-    on: the pre-match average where all three were posted; for an extra
-    league (soccer_data.EXTRA), whose history has only the closing price,
-    the closing average where no pre-match price was. -> (frame p_h, p_d,
-    p_a - NaN where neither; Series "pre" / "close" / None)."""
-    pre = bt.no_vig(frame, "pre")
-    close = bt.no_vig(frame, "close")
-    has_pre = pre.notna().all(axis=1)
-    use_close = frame["league"].isin(sd.EXTRA) & ~has_pre & close.notna().all(axis=1)
-    q = pre.where(has_pre)
-    q[use_close] = close[use_close]
-    kind = pd.Series(np.where(has_pre, "pre", np.where(use_close, "close", None)), index=frame.index, dtype=object)
-    return q, kind
-
-
-def season_starts(frame):
-    """{(league, season): the date of its first match on file} - results and
-    fixtures alike (a fixture list is a fact before a ball is kicked)."""
-    return frame.groupby(["league", "season"])["date"].min().to_dict()
+# The price each league is picked on, and scored against: the pre-match
+# average, or for an extra league's history (closing prices only) the close.
+# It lives with the backtest, which scores every league against it.
+market_price = bt.market_price
 
 
 def _top5_fits(frame, q_pre):
@@ -311,7 +324,9 @@ def shipped_pick(frame, preds, leagues=None):
     measured): pick_leagues with the measured weight option, the raw price
     where rule (a) found the recalibration lost, and the model's own where
     no price was posted only in a league whose model beat its base rates in
-    both periods (rule b) - "unpriced" elsewhere."""
+    both periods (rule b) - "unpriced" elsewhere. The frame must hold every
+    measured league (require_every_league): the weights are pooled over
+    every league priced the same way, shown or not."""
     import soccer_leagues as sl
     if sl.PICK_WEIGHTS not in WEIGHT_OPTIONS:
         raise ValueError(f"the weight option is not decided ({sl.PICK_WEIGHTS!r}): "
@@ -320,20 +335,59 @@ def shipped_pick(frame, preds, leagues=None):
     unmeasured = [c for c in leagues if c not in sl.SHIPPED]
     if unmeasured:
         raise ValueError(f"not measured, so never picked: {unmeasured}")
+    require_every_league(frame)
     return pick_leagues(frame, preds, leagues, sl.PICK_WEIGHTS, raw=sl.raw_leagues(leagues),
                         model_alone=sl.model_alone(leagues))
+
+
+def latest_weights(weights, leagues=None):
+    """{code: {"season", "w"} or None} from pick_leagues' {(league, season):
+    weights or None}: each league's newest season with fitted weights, to 4
+    decimals - what the Record tab prints, and what soccer_leagues.SHIPPED
+    stores beside each league ("weights"). None for a league picked on the
+    raw price (rule a), or with no season fitted yet. pick()'s {season: w}
+    is a different shape: one set for the top five, keyed by season alone.
+    leagues: which codes (default every league in `weights`, in
+    soccer_data's order)."""
+    have = {lg for lg, _ in weights}
+    codes = [c for c in sd.ALL_LEAGUES if c in have] if leagues is None else list(leagues)
+    out = {}
+    for c in codes:
+        fitted = sorted((s, w) for (lg, s), w in weights.items() if lg == c and w is not None)
+        out[c] = {"season": int(fitted[-1][0]), "w": [round(float(v), 4) for v in fitted[-1][1]]} if fitted else None
+    return out
 
 
 # ------------------------------------------------------------- goals
 
 def goals(frame, preds, leagues=None):
-    """The over-2.5 chance the app shows: the over/under market with the
+    """The over-2.5 chance the app shows, for the rows of `leagues` (default
+    the top five; NaN for every other row): the over/under market with the
     cut removed - recalibrating it, as the pick is, did not improve it over
     the whole choosing period - and the model's own where no over/under
     price was posted (every match of the extra leagues, which have none).
-    leagues: whose rows (default the top five)."""
+
+    NaN, too, where the league did not ship over 2.5 from that source (rule
+    c, soccer_leagues.withheld(code, source): "market" where the over/under
+    is posted, "model" where the number is the model's): the card withholds
+    it, and a number shown beside the card must not bring it back - in the
+    run of 2026-11 that was ARG, NOR and POL's model number and SC2's
+    market one. NaN outside `leagues` rather than the model's own, so a
+    caller that forgets to pass the leagues shows nothing instead of the
+    model's number where the market's was posted. Neither changes the top
+    five: every one ships over 2.5 from both sources, and the model has no
+    numbers outside them when predict() runs without leagues."""
+    import soccer_leagues as sl
     q = bt.no_vig_total(frame)
+    mine = frame["league"].isin(sd.TOP if leagues is None else list(leagues))
+    posted = q.notna()
     out = preds["p_o25"].copy()
-    priced = q.notna() & frame["league"].isin(sd.TOP if leagues is None else list(leagues))
-    out[priced] = q[priced]
+    out[posted & mine] = q[posted & mine]
+    hide = ~mine
+    for code in frame.loc[mine, "league"].unique():
+        here = mine & (frame["league"] == code)
+        for source, rows in (("market", here & posted), ("model", here & ~posted)):
+            if "o25" in sl.withheld(code, source):
+                hide |= rows
+    out[hide] = np.nan
     return out

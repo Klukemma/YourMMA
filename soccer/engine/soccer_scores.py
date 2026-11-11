@@ -61,6 +61,15 @@ CAVEATS (never deleted): both teams to score runs LOW (2016-2025: K's mean
 0.511 against 0.537, low in every decile); exact scores are long shots (the
 likeliest happens about one match in eight); the numbers from M where no
 price is posted are the model's alone.
+
+EVERY LEAGUE (experiments/leagues.py measured the same rule on all 38;
+soccer_leagues holds what ships). walk(..., leagues=) gives every league's
+cards: the extra leagues have no over/under price, so theirs are always M
+(no_over_under where the 1X2 is priced). card(..., withhold=) drops the
+numbers a league's source did not ship (rule c). measure(..., leagues=)
+scores the leagues it is given on their own periods (soccer_backtest
+.periods_for) and refuses to pool leagues measured on different years;
+by_group() is the Method tab's table per league group.
 """
 
 import math
@@ -439,8 +448,13 @@ def baseline(matches, leagues=None):
 def walk(frame, preds, pick, q_o25=None, leagues=None, **rule):
     """The shown matrix for every row the model predicts (finished or still
     to play) of `leagues` (default the top five), each from the model's
-    walk-forward rates, the pick (recalibrated on earlier seasons) and the
-    match's own pre-match prices. preds: soccer_model.predict (lam, nu, rho
+    walk-forward rates, the pick (soccer_model.pick or shipped_pick: the
+    price the league is picked on, recalibrated on matches dated before its
+    season - in an extra league's history the close, the only price it has)
+    and the match's own over/under price (q_o25, default the no-vig
+    pre-match one; an extra league has none, so its matrix is the model's,
+    reason no_over_under). A row whose pick is the model's alone (model_only)
+    gets the model's matrix. preds: soccer_model.predict (lam, nu, rho
     columns; without them the model's matrix is missing). Returns (index,
     mats, info frame)."""
     q_o25 = bt.no_vig_total(frame) if q_o25 is None else q_o25
@@ -480,19 +494,48 @@ def _band_table(p_top, hit, bands=BANDS):
     return out
 
 
-def measure(frame, preds, pick, walked=None, periods=(bt.DEV, bt.CONFIRM), leagues=None):
+def measure(frame, preds, pick, walked=None, periods=None, leagues=None):
     """What the Method tab prints, from the same walk-forward the cards come
     from - the rule as shipped (`walked`, from walk()), the model's own
     matrix and each league's earlier-season rates, on the same matches of
-    each period (top-league matches with a result where all three have a
+    each period (matches of `leagues` with a result where all three have a
     number): log loss of both teams to score, over 1.5, over 3.5 and the
     exact score (37-way), how often the likeliest score and one of the three
     likeliest happened, the mean BTTS chance against the rate and by decile
     (the shown matrix's and the model's own), how often the side each BTTS
     chance favoured happened (against always "yes"), the matrix's own
     home/draw/away against the pick's where the matrix is the market's, and
-    the bands - the pick's and the model's own picks', same edges."""
-    idx, mats, info = walked if walked is not None else walk(frame, preds, pick, leagues=leagues)
+    the bands - the pick's and the model's own picks', same edges.
+
+    leagues: whose matches - default the leagues in `walked` where it is
+    given (it used to default to the top five, which silently dropped every
+    other league's rows from a walk over more), else the top five; rows of
+    `walked` outside `leagues` are left out. periods: default the leagues'
+    own (soccer_backtest.periods_for - an extra league is measured on
+    2013-2018 / 2019-2025, not on the European divisions' years). Leagues of
+    different periods are refused unless `periods` is given: pooled under
+    one name, "2016-2025" would mix years and prices the leagues were never
+    measured on together - measure each group (by_group). The bands pool
+    every league passed, so a group's are soccer_leagues.BANDS' own (the
+    numbers there are measured on experiments/leagues.py's rows: these are
+    the Method tab's, close but not the same matches)."""
+    if leagues is None:
+        leagues = (list(sd.TOP) if walked is None else
+                   [c for c in sd.ALL_LEAGUES if c in set(frame.loc[walked[0], "league"])])
+    leagues = list(leagues)
+    if periods is None:
+        own = {tuple(bt.periods_for(c)) for c in leagues}
+        if len(own) > 1:
+            raise ValueError(f"{leagues} are measured on different periods ({sorted(own)}): measure each group "
+                             "apart (by_group), or say which periods")
+        periods = own.pop() if own else (bt.DEV, bt.CONFIRM)
+    if walked is None:
+        walked = walk(frame, preds, pick, leagues=leagues)
+    else:
+        mine = frame.loc[walked[0], "league"].isin(leagues).to_numpy()
+        if not mine.all():
+            walked = (walked[0][mine], walked[1][mine], walked[2][mine])
+    idx, mats, info = walked
     if not len(idx):
         return None
     shown = markets(mats)
@@ -591,4 +634,22 @@ def measure(frame, preds, pick, walked=None, periods=(bt.DEV, bt.CONFIRM), leagu
         ok = sel & np.isfinite(model_p).all(axis=1)
         side = np.array(bt.RESULTS)[model_p[ok].argmax(axis=1)]
         out["bands"]["model"][key] = _band_table(model_p[ok].max(axis=1), side == result[ok])
+    return out
+
+
+def by_group(frame, preds, pick, walked, leagues):
+    """{group: measure(...)} for the groups of soccer_leagues.GROUPS among
+    `leagues` (each group's leagues share their periods; None for a group
+    with nothing measured) - the Method tab's table per group, beside
+    soccer_leagues.BANDS, which is per group too. walked: walk() over every
+    one of `leagues` (or None to walk them here)."""
+    import soccer_leagues as sl
+    leagues = list(leagues)
+    if walked is None:
+        walked = walk(frame, preds, pick, leagues=leagues)
+    out = {}
+    for g, codes in sl.GROUPS.items():
+        mine = [c for c in codes if c in leagues]
+        if mine:
+            out[g] = measure(frame, preds, pick, walked, leagues=mine)
     return out

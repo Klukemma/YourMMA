@@ -31,10 +31,11 @@ def test_the_picks_and_the_app_are_committed():
 
 def test_runs_follow_the_fixtures_and_the_results():
     """Fixtures with prices arrive Friday and Tuesday afternoons; results
-    after each round."""
+    after each round - in every month: the calendar-year leagues play in
+    June and July."""
     soccer = (WF / "soccer.yml").read_text()
     for day in ("FRI", "SAT", "SUN", "MON", "TUE", "WED", "THU"):
-        assert f"8-12,1-5 {day}" in soccer, day
+        assert f"* * {day}" in soccer, day
 
 
 def _crons(text):
@@ -44,22 +45,55 @@ def _crons(text):
 def test_the_feeds_bring_results_the_evening_they_happen_and_the_next_round_early():
     """The free feeds have each score that evening and the next rounds all
     week: a run on Saturday and Sunday evenings, and one on Wednesday
-    morning after Tuesday's games - in season months only, and every run
-    there was before is still there. The evening runs start at 22:17 UTC:
-    a 21:00 CET kickoff (20:00 UTC all winter) ends about 21:55."""
+    morning after Tuesday's games - and every run there was before is still
+    there, now in every month. The evening runs start at 22:17 UTC: a 21:00
+    CET kickoff (20:00 UTC all winter) ends about 21:55."""
     crons = _crons((WF / "soccer.yml").read_text())
-    for cron in ("17 22 * 8-12,1-5 SAT", "17 22 * 8-12,1-5 SUN", "17 7 * 8-12,1-5 WED"):
+    for cron in ("17 22 * * SAT", "17 22 * * SUN", "17 7 * * WED"):
         assert cron in crons, cron
     for cron in crons:
         minute, hour, *_ = cron.split()
         assert not (int(hour) == 21 or (int(hour) == 22 and int(minute) < 10)), cron   # never before full time
-    before = ["47 13 * 8-12,1-5 FRI", "47 16 * 8-12,1-5 FRI", "17 7 * 8-12,1-5 SAT", "17 7 * 8-12,1-5 SUN",
-              "17 9 * 8-12,1-5 MON", "47 13 * 8-12,1-5 TUE", "47 16 * 8-12,1-5 TUE", "17 9 * 8-12,1-5 THU",
-              "17 8 20-31 12 *", "17 8 1-3 1 *"]
+    before = ["47 13 * * FRI", "47 16 * * FRI", "17 7 * * SAT", "17 7 * * SUN", "17 9 * * MON", "47 13 * * TUE",
+              "47 16 * * TUE", "17 9 * * THU", "17 8 20-31 12 *", "17 8 1-3 1 *"]
     assert set(before) <= set(crons) and len(crons) == len(set(crons))
-    for cron in crons:
+
+
+def test_every_month_is_run_for_the_calendar_year_leagues():
+    """ARG BRA CHN FIN IRL NOR SWE USA play through June and July: no weekly
+    slot is limited to Europe's season (only the Christmas ones name a
+    month)."""
+    import soccer_data as sd
+    calendar = {c for c, m in sd.ALL_LEAGUES.items() if m.calendar == "calendar-year"}
+    assert calendar == {"ARG", "BRA", "CHN", "FIN", "IRL", "NOR", "SWE", "USA"}
+    for cron in _crons((WF / "soccer.yml").read_text()):
         minute, hour, dom, month, dow = cron.split()
-        assert month in ("8-12,1-5", "12", "1"), cron            # never in the summer break
+        assert month == "*" or (dom, month) in (("20-31", "12"), ("1-3", "1")), cron
+    assert "8-12,1-5" not in (WF / "soccer.yml").read_text()
+
+
+def _utc_hour(cron):
+    minute, hour, *_ = cron.split()
+    return int(hour) + int(minute) / 60
+
+
+# GitHub started every scheduled run from Oct 26 to Nov 5 between 3 and 10 h
+# late (soccer.yml's notes): a slot is for a kickoff only if it lands before
+# it even 10 h late.
+LATE_HOURS = 10
+
+
+def test_the_americas_evenings_and_asias_mornings_have_a_run_before_kickoff_every_day():
+    """MLS, Liga MX, Brazil and Argentina kick off about 22:00-04:00 UTC, the
+    J1 League and the Chinese Super League about 04:00-12:00 UTC the next
+    day, on most days of the week: a daily slot each that lands before those
+    kickoffs, however late GitHub starts it."""
+    daily = [c for c in _crons((WF / "soccer.yml").read_text()) if c.split()[2:] == ["*", "*", "*"]]
+    americas = [c for c in daily if _utc_hour(c) + LATE_HOURS <= 22]
+    asia = [c for c in daily if 12 <= _utc_hour(c) and _utc_hour(c) + LATE_HOURS - 24 <= 4]
+    assert americas == ["37 11 * * *"] and asia == ["37 17 * * *"]
+    text = (WF / "soccer.yml").read_text()
+    assert "Americas' evenings" in text and "Asia's mornings" in text
 
 
 def test_the_predict_run_syncs_the_feeds_and_commits_their_snapshot():
@@ -85,5 +119,5 @@ def test_the_predict_run_syncs_the_feeds_and_commits_their_snapshot():
 def test_a_friday_serie_a_kickoff_at_half_past_four_has_a_run_before_it():
     soccer = (WF / "soccer.yml").read_text()
     for day in ("FRI", "TUE"):
-        assert f'"47 13 * 8-12,1-5 {day}"' in soccer, day
+        assert f'"47 13 * * {day}"' in soccer, day
     assert '"17 8 20-31 12 *"' in soccer

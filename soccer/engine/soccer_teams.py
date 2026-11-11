@@ -21,6 +21,15 @@ word's first two letters and the second's initial), the first letter and
 the next two consonants, the first letter and any two later letters in
 order, and finally two letters and a digit. The colours stay neutral:
 extending TEAMS for the ~500 missing clubs is data work, from sources.
+
+Which clubs are "the league": every club on file in it, every season, results
+and fixtures (by_league) - not one season's. A club's code then stays put
+when another is promoted or relegated (on the snapshot of 2026-11-10 every
+league's codes are unique over all its seasons: 153 missing clubs moved off
+their first three letters, none clashes). It moves only if a club new to
+the league sorts before it and wants the same code - a new name, not a new
+season. display(key) without `taken` is what every caller saw before: the
+first three letters, unique within no league.
 """
 
 import itertools
@@ -281,4 +290,14 @@ def codes_for(keys):
         if k not in out:
             out[k] = display(k, taken)
             taken.add(out[k]["code"])
+    return out
+
+
+def by_league(frame):
+    """{league: codes_for(every club on file in it)} - home and away, every
+    season of `frame` (results and fixtures alike): the codes the app shows,
+    computed once per league and stable across its seasons (the notes)."""
+    out = {}
+    for league, g in frame.groupby("league", sort=False):
+        out[league] = codes_for(set(g["home"].dropna()) | set(g["away"].dropna()))
     return out
