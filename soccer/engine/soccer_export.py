@@ -20,19 +20,23 @@ them, is what the live feeds cover for it (soccer_feed.coverage /
 coverage_caveat): seven leagues have no feed, so no fixture before
 football-data.co.uk posts it and no provisional result. The global caveats
 keep their keys - the app shows them all - with their text scoped to what
-they were measured on: the pooled numbers are the top five's, and say so.
+they were measured on: the pooled numbers are the top five's, and say so. A
+measured league out of the app (not_in_app) carries its caveats and why it
+is out: rule (a)'s facts on the data of the day.
 
 FORM AND TABLES OVER EVERY LEAGUE. The frame the app's form lines and tables
 read holds about 228,000 matches with every league in it; soccer_form scans
 the frame it is given on every call (about 44 ms each, thousands of calls a
 run). View cuts it once by club and by league-season and hands each call
 only the rows it would have found - the same answer, bit for bit - and
-gives each league's clubs badge codes unique within the league
-(soccer_teams.codes_for: no "DUN v DUN").
+gives each league's clubs badge codes unique within the league over every
+season on file (soccer_teams.by_league: no "DUN v DUN", and a club's code
+stays put when a namesake is promoted or relegated).
 """
 
 import json
 import math
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -223,10 +227,35 @@ def band_floors():
     return {name: floor for name, floor in ssc.BANDS}
 
 
-def not_in_app(codes):
-    """The measured leagues the app does not carry (RUS), with why."""
-    return {c: {"name": sd.ALL_LEAGUES[c].name, "country": sd.ALL_LEAGUES[c].country, "caveats": slg.caveats(c)}
-            for c in slg.SHIPPED if c not in set(codes)}
+def not_in_app(codes, checks=None):
+    """The measured leagues the app does not carry (RUS), each with its
+    caveats and WHY it is out: rule (a)'s facts on the data of the day
+    (soccer_leagues.season_check, `checks` {code: facts}: its latest result,
+    how many days before the run, the matches to play posted for it) and
+    that sentence - its caveats alone never said, and a league can leave in
+    the middle of its season (a break with nothing posted)."""
+    checks = checks or {}
+    out = {}
+    for c in slg.SHIPPED:
+        if c in set(codes):
+            continue
+        entry = {"name": sd.ALL_LEAGUES[c].name, "country": sd.ALL_LEAGUES[c].country, "caveats": slg.caveats(c)}
+        if c in checks:
+            f = checks[c]
+            entry["season_check"] = {k: f.get(k) for k in ("last_result", "days_since", "fixtures_posted", "season")}
+            entry["why"] = why_out(f)
+        out[c] = entry
+    return out
+
+
+def why_out(facts):
+    """Rule (a)'s reason a league is out, from its season_check facts."""
+    last = facts.get("last_result")
+    res = (f"its latest result on file is from {_day(last)} {str(last)[:4]}, {facts.get('days_since')} days "
+           "before this run" if last else "it has no result on file")
+    return (f"Not in the app: no current season in the data - {res}, more than the {slg.RECENT_DAYS} days rule (a) "
+            "allows, and no match to play is posted for it, by football-data.co.uk or the live feeds. It comes back "
+            "when either lists one.")
 
 
 def pct(x, d=1):
@@ -284,11 +313,13 @@ def caveats(bt_summary, basis="blend", model_through=None, scores=None, leagues=
             "does, which is part of why the pick leans on it."),
     }
     through = f", through {_day(model_through)}" if model_through else ""
+    n_none = sum(1 for c in codes if not (sfeed.coverage(c)["espn"] or sfeed.coverage(c)["fixturedownload"]))
     out["feeds"] = (
         "Fixtures football-data.co.uk has not posted yet, and results it has not posted yet, come from two "
         "free, unofficial feeds - ESPN's public scoreboard and fixturedownload.com - which give dates, kickoff "
         "times and scores, never a price"
-        + (" (in the leagues they cover: each league says which, and seven have neither)" if others else "")
+        + (f" (in the leagues they cover: each league says which, and {_count(n_none)} have neither)"
+           if others and n_none else " (in the leagues they cover: each league says which)" if others else "")
         + ". Until football-data.co.uk posts a match with its prices (Tuesday and "
         "Friday afternoons) its chances are the model's alone, and say so. A result from the feeds is "
         "provisional, and marked so, until football-data.co.uk posts its own; a provisional grade it "
@@ -313,7 +344,12 @@ def scores_caveat(measured, scope=None):
     the likeliest scores: every number read from soccer_scores.measure (one
     group's: scope names it, e.g. "top five"). None without a measurement.
     A league shows only the numbers it shipped (soccer_leagues.withheld), so
-    a group's pooled measure never claims more than that."""
+    a group's pooled measure never claims more than that. Where no match
+    measured read its numbers off the market's matrix (each period's
+    "market" count is 0: the extra leagues, which have no over/under price)
+    every number is the model's own, and the caveat says that alone - no
+    market matrix, no model-against-shown comparison of a number with
+    itself."""
     periods = (measured or {}).get("periods") or {}
     if not periods:
         return None
@@ -331,6 +367,32 @@ def scores_caveat(measured, scope=None):
     names = " and ".join(sorted(periods))
     where = f" in the {scope}" if scope else ""
     pooled = f", pooled over the {scope}," if scope else ""
+    measured_periods = [p for p in periods.values() if p.get("matches")]
+    if all(p.get("market") == 0 for p in measured_periods):
+        # Not one measured match read its numbers off the market's matrix
+        # (the extra leagues: no over/under price on file), so the "shown"
+        # numbers ARE the model's own: a sentence about a matrix fitted to
+        # the market, or comparing the model with itself ("0.6856 against
+        # 0.6856"), would describe numbers these leagues do not have.
+        why = Counter()
+        for p in measured_periods:
+            why.update({k: v for k, v in (p.get("model") or {}).items() if isinstance(v, int)})
+        reason = {ssc.NO_OVER_UNDER: "no over/under 2.5 price is posted for them",
+                  ssc.NO_PRICE: "no price is posted for them"}.get(why.most_common(1)[0][0] if why else None,
+                                                                      "no market matrix was fitted")
+        return (
+            f"Every one of these numbers{where} is the model's own: both teams to score, over 1.5 and 3.5 goals "
+            f"and the likeliest scores are read off the model's score matrix for each match, never the market's - "
+            f"{reason}, so the card says so. "
+            + (f"Measured on {names}{pooled} each beat the leagues' own rates from earlier seasons. " if beat else
+               f"Measured on {names}{where}; not every one beat the leagues' own rates from earlier seasons "
+               "(Method). ")
+            + ("A league shows only the numbers that beat its own rates in both of its periods; the others are "
+               "withheld and shown as missing. " if scope else "")
+            + f"Both teams to score runs low: across {key}{where} its chance averaged {pct(b['shown']['mean_p'])} "
+            f"where both teams scored in {pct(b['rate'])} of matches, low in {b.get('deciles_low', '—')} of "
+            f"{b.get('deciles', '—')} deciles - read it as about {short:.0f} points short. Exact scores are long "
+            f"shots: the likeliest score happened in {pct(top1)} of matches{one_in}.")
     return (
         "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per "
         "match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under "
@@ -350,6 +412,11 @@ def scores_caveat(measured, scope=None):
         f"{b['base']['log_loss']:.4f}), and running {model_short:.0f} points low rather than {short:.0f}.")
 
 
+def _count(n):
+    """3 -> 'three' (to nine), else the digits."""
+    return ("zero one two three four five six seven eight nine".split()[n] if 0 <= n <= 9 else str(n))
+
+
 def _day(iso):
     """'2026-10-21' -> 'Oct 21' (the app's own dates are the phone's)."""
     try:
@@ -366,15 +433,16 @@ class View:
     cut once by club and by league-season (the module's notes): sf.form and
     sf.table read only the rows of `team`, and of the league-season, so each
     is handed those rows alone - the answer is the one the whole frame gives.
-    seasons {league: season}: the seasons whose clubs get badge codes unique
-    within their league (chip)."""
+    seasons {league: season}: each league's season on show, for callers
+    (soccer_predict). Badge codes (chip) do not read it: they are unique
+    over every season of the league, so they do not move with it."""
 
     def __init__(self, matches, seasons=None):
         self.matches = matches
         self._home = matches.groupby("home", sort=False).indices
         self._away = matches.groupby("away", sort=False).indices
         self._ls = {(lg, int(s)): pos for (lg, s), pos in matches.groupby(["league", "season"], sort=False).indices.items()}
-        self._clubs, self._positions, self._chips = {}, {}, {}
+        self._clubs, self._positions, self._chips, self._codes = {}, {}, {}, None
         self.seasons = dict(seasons or {})
 
     def club(self, team):
@@ -397,16 +465,24 @@ class View:
 
     def chip(self, league, key):
         """The club's badge (soccer_teams.display): its code unique within its
-        league's season on show (soccer_teams.codes_for), the same whatever
-        order the cards come in."""
-        if league not in self._chips:
-            season = self.seasons.get(league)
-            rows = self.league_season(league, season) if season is not None else self.matches.iloc[:0]
-            self._chips[league] = st.codes_for(set(rows["home"]) | set(rows["away"]))
-        chips = self._chips[league]
-        if key not in chips:
-            chips[key] = st.display(key, {d["code"] for d in chips.values()})
-        return chips[key]
+        league over EVERY season on file, results and fixtures alike
+        (soccer_teams.by_league, computed once) - the contract soccer_teams
+        documents. Codes made unique among one season's clubs moved 42 clubs'
+        codes between seasons since 2020 (Dundee United DUN/DUU as Dundee went
+        up and down; Barrow BRR/BAR) and depended on which season was on
+        show; over every season a code moves only when a club new to the
+        league takes it. A club not on file at all takes the first code free
+        of the league's (never of another such club's: the same whatever
+        order the cards come in)."""
+        if self._codes is None:
+            self._codes = st.by_league(self.matches)
+        chips = self._codes.get(league) or {}
+        if key in chips:
+            return chips[key]
+        k = (league, key)
+        if k not in self._chips:
+            self._chips[k] = st.display(key, {d["code"] for d in chips.values()})
+        return self._chips[k]
 
 
 def club(key, league=None, view=None):

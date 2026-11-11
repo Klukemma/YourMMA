@@ -77,23 +77,64 @@ def _utc_hour(cron):
     return int(hour) + int(minute) / 60
 
 
-# GitHub started every scheduled run from Oct 26 to Nov 5 between 3 and 10 h
-# late (soccer.yml's notes): a slot is for a kickoff only if it lands before
-# it even 10 h late.
-LATE_HOURS = 10
+# GitHub's start delays (hours) of the soccer runner's scheduled runs, Oct 26 -
+# Nov 11 2026 (gh run list --workflow soccer.yml --event schedule: the 26 runs,
+# each against its slot, in order) - every one late. By slot ("minute hour").
+OBSERVED_LATE = {"17 7": [6.7, 6.3, 7.0, 8.1, 6.7, 7.1, 7.9], "17 9": [6.9, 7.0, 10.2, 8.2, 10.6],
+                 "47 13": [5.2, 5.1, 6.5, 6.3, 6.8], "47 16": [4.2, 4.4, 5.3, 5.0, 5.2], "17 22": [3.0, 3.2, 3.2, 3.4]}
+WORST = max(max(v) for v in OBSERVED_LATE.values())
+# When a pick closes (soccer_schedule CLOSE): at kickoff where the time is
+# confirmed (both feeds agree, or football-data.co.uk's own fixture), else at
+# 00:00 UK on match day - every match of a league only ESPN covers is listed
+# ten days ahead unconfirmed and picked by the model alone, so it closes then.
+AMERICAS_KICKOFF = 22.0         # UTC: the earliest of MLS's, Liga MX's, Brazil's and Argentina's evening kickoffs
+UK_MIDNIGHT = {"winter": 24.0, "summer": 23.0}   # 00:00 UK on match day, in UTC hours of the day before
 
 
-def test_the_americas_evenings_and_asias_mornings_have_a_run_before_kickoff_every_day():
-    """MLS, Liga MX, Brazil and Argentina kick off about 22:00-04:00 UTC, the
-    J1 League and the Chinese Super League about 04:00-12:00 UTC the next
-    day, on most days of the week: a daily slot each that lands before those
-    kickoffs, however late GitHub starts it."""
-    daily = [c for c in _crons((WF / "soccer.yml").read_text()) if c.split()[2:] == ["*", "*", "*"]]
-    americas = [c for c in daily if _utc_hour(c) + LATE_HOURS <= 22]
-    asia = [c for c in daily if 12 <= _utc_hour(c) and _utc_hour(c) + LATE_HOURS - 24 <= 4]
-    assert americas == ["37 11 * * *"] and asia == ["37 17 * * *"]
+def _neighbours(cron):
+    """The observed delays of the slots either side of a daily one."""
+    t = _utc_hour(cron)
+    seen = sorted(OBSERVED_LATE, key=_utc_hour)
+    before = [k for k in seen if _utc_hour(k + " * * *") < t][-1:]
+    after = [k for k in seen if _utc_hour(k + " * * *") > t][:1]
+    return [d for k in before + after for d in OBSERVED_LATE[k]]
+
+
+def test_the_daily_slots_add_margin_and_the_comments_say_no_slot_can_guarantee_a_deadline():
+    """The real deadlines, against GitHub's measured delays: the Americas'
+    slot starts before a 22:00 UTC kickoff at its neighbours' usual delays,
+    Asia's before 00:00 UK in winter - but neither under the worst delay
+    seen (10.6 h, Mon Nov 9's 09:17 slot), so the workflow must not claim
+    "however late it starts", and says so."""
     text = (WF / "soccer.yml").read_text()
-    assert "Americas' evenings" in text and "Asia's mornings" in text
+    daily = [c for c in _crons(text) if c.split()[2:] == ["*", "*", "*"]]
+    assert daily == ["37 11 * * *", "37 17 * * *"]
+    assert WORST == 10.6 and min(min(v) for v in OBSERVED_LATE.values()) == 3.0
+    americas, asia = (_utc_hour(c) for c in daily)
+    # margin: at the median delay of the slots either side, each is in time
+    assert americas + sorted(_neighbours(daily[0]))[len(_neighbours(daily[0])) // 2] < AMERICAS_KICKOFF
+    assert asia + sorted(_neighbours(daily[1]))[len(_neighbours(daily[1])) // 2] < UK_MIDNIGHT["winter"]
+    # no guarantee: at the worst delay seen, neither is
+    assert americas + WORST > AMERICAS_KICKOFF and asia + WORST > UK_MIDNIGHT["winter"]
+    # ... and the workflow says so, with the measured numbers, never "however late"
+    assert "however late" not in text and "no slot can guarantee" in text.lower()
+    for said in ("3.0 to 10.6 hours", "Mon Nov 9's started at", "00:00 UK time on", "18 leagues only ESPN covers",
+                 "Americas' evenings", "Asia's mornings"):
+        assert said in " ".join(line.lstrip("# ").strip() for line in text.splitlines()), said
+
+
+def test_a_run_where_only_the_stamps_changed_commits_nothing():
+    """only_stamps.py puts back the files whose only change is when the run
+    happened, before the commit step looks at git status - and over the
+    same paths the step commits."""
+    soccer = (WF / "soccer.yml").read_text()
+    commit = soccer.split("- name: Commit")[1]
+    assert "python soccer/engine/only_stamps.py $PATHS" in commit
+    assert commit.index("only_stamps.py") < commit.index("git status --porcelain")
+    import only_stamps
+    assert only_stamps.PAGE == "soccer/app/yoursoccer.html" and only_stamps.ROOT == WF.parents[1]
+    for p in only_stamps.STAMPED:
+        assert any(p.startswith(d) for d in re.search(r'PATHS="([^"]+)"', soccer).group(1).split()), p
 
 
 def test_the_predict_run_syncs_the_feeds_and_commits_their_snapshot():
@@ -116,8 +157,12 @@ def test_the_predict_run_syncs_the_feeds_and_commits_their_snapshot():
     assert "python soccer/engine/soccer_predict.py 2>&1" in run and "--no-sync" not in run
 
 
-def test_a_friday_serie_a_kickoff_at_half_past_four_has_a_run_before_it():
+def test_the_friday_and_tuesday_slots_are_set_for_a_half_past_four_kickoff():
+    """Set for a 16:30 UTC Friday kickoff in Serie A - which GitHub's delays
+    (13:47 started 5.1-6.8 h late) have made it miss so far, as the
+    workflow says."""
     soccer = (WF / "soccer.yml").read_text()
+    assert min(OBSERVED_LATE["47 13"]) + 13 + 47 / 60 > 16.5 and "made it miss so far" in soccer
     for day in ("FRI", "TUE"):
         assert f'"47 13 * * {day}"' in soccer, day
     assert '"17 8 20-31 12 *"' in soccer

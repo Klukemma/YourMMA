@@ -232,14 +232,19 @@ def test_a_repeated_pairing_is_picked_and_graded_on_its_own_meeting(run):
 def test_the_record_tab_scores_every_league_on_its_own_periods(run):
     _, _, perf, _, out = run()
     b = perf["backtest"]
-    assert [r["code"] for r in b["by_league"]] == ["E0", "FIN", "NOR"]
+    # every league decided for the app (soccer_leagues.in_app()) and the day's: SWE, between seasons
+    # here, keeps its measured row, marked out of the app (soccer_predict.measured_leagues)
+    assert [r["code"] for r in b["by_league"]] == ["E0", "FIN", "NOR", "SWE"] == out["on_record"]
+    assert {r["code"]: r["in_app"] for r in b["by_league"]} == {"E0": True, "FIN": True, "NOR": True, "SWE": False}
     nor = next(r for r in b["by_league"] if r["code"] == "NOR")
     assert nor["periods"] == {"dev": [2013, 2018], "confirm": [2019, 2025]} and nor["price"] == "closing"
     assert nor["matches"] == nor["confirm"]["matches"] > 0 and nor["accuracy"] == nor["confirm"]["accuracy"]
     assert b["result"]["scope"] == b["over_2_5"]["scope"] == b["value"]["scope"] == b["calibration_scope"] == "top five"
     assert set(b["by_group"]) == {"top", "extra"}
-    assert set(b["weights"]) == {"E0", "NOR", "FIN"} and b["weights"]["FIN"]["w"] is None      # FIN's pick is raw
+    # FIN's pick is the raw price: None, as soccer_leagues.SHIPPED stores it - never {season, w: None}
+    assert set(b["weights"]) == {"E0", "NOR", "FIN", "SWE"} and b["weights"]["FIN"] is None
     assert b["weights"]["E0"]["season"] == 2026
+    assert b["weights"] == smod.latest_weights(out["weights"], ["E0", "FIN", "NOR", "SWE"])
 
 
 def test_the_sync_asks_the_feeds_about_the_apps_leagues_a_feed_covers_and_never_rus(monkeypatch):

@@ -212,3 +212,99 @@ def test_a_split_whose_groups_show_only_after_more_rounds_is_still_found():
     assert {r["played"] for r in two_in} == {32}
     three_in = sf.table(m, "POL", 2018, before=days[33])
     assert {r["played"] for r in three_in} == {30}
+
+
+def _late_joiner_frame():
+    """10 clubs, 9 rounds played and round 10 posted (the median club: 9
+    results, 10 with the fixtures); Club 09's last two results filed under a
+    second spelling, 'Club 09 FC' - a club with 2 results."""
+    clubs = CLUBS[:10]
+    m = pd.DataFrame(_rows("ROU", 2026, _double(clubs)[:10], STRENGTH))
+    posted = m["date"] == m["date"].max()
+    m.loc[posted, ["hg", "ag"]] = np.nan
+    m.loc[posted, "result"] = None
+    mine = m.index[~posted & ((m["home"] == "Club 09") | (m["away"] == "Club 09"))][-2:]
+    for side in ("home", "away"):
+        m.loc[mine, side] = m.loc[mine, side].replace("Club 09", "Club 09 FC")
+    return m, m.loc[posted, "date"].iloc[0]
+
+
+def test_a_club_left_out_of_the_table_is_left_out_of_its_sums_on_the_same_rows():
+    # Decided twice - on the results alone for the sums, with the fixtures for
+    # the listing - 'Club 09 FC' was summed into a table that did not list it:
+    # KeyError, and the unattended run stopped. One set now does both.
+    m, day = _late_joiner_frame()
+    for before in (day, None):
+        t = sf.table(m, "ROU", 2026, before=before)
+        played = {r["team"]: r["played"] for r in t}
+        assert "Club 09 FC" not in played and len(played) == 10
+        assert played["Club 09"] == 7 and sum(played.values()) == 2 * (9 * 5 - 2)
+    # on its results alone (no fixtures) the median is 9: nobody is from outside
+    done = m[m["result"].notna()]
+    assert {r["team"] for r in sf.table(done, "ROU", 2026)} == set(CLUBS[:10]) | {"Club 09 FC"}
+
+
+@pytest.mark.snapshot
+def test_g1_2011_12_before_the_replacement_clubs_reach_five_matches_has_a_table():
+    # The real case: G1 2011-12's results before 2011-11-27 with that week's
+    # fixtures - the median club 9 results, 10 with the fixtures; Doxa Dramas
+    # (1 result) and Levadeiakos (2) read as clubs from outside (the notes).
+    import soccer_data as sd
+    g = sd.load_matches(leagues=["G1"])
+    g = g[g["season"] == 2011]
+    day = "2011-11-27"
+    week = g[(g["date"] >= day) & (g["date"] < "2011-12-04")].copy()
+    week[["hg", "ag"]] = np.nan
+    week["result"] = None
+    frame = pd.concat([g[g["date"] < day], week], ignore_index=True)
+    for before in (day, None):
+        t = sf.table(frame, "G1", 2011, before=before)
+        listed = {r["team"] for r in t}
+        assert len(t) == 14 and not listed & {"Doxa Dramas", "Levadeiakos"}
+        among = frame[frame["result"].notna() & frame["home"].isin(listed) & frame["away"].isin(listed)]
+        assert sum(r["played"] for r in t) == 2 * len(among)
+
+
+def _last_round_pair(m, clubs):
+    """A match of the last regular round between two clubs outside the top
+    eight (no knock-outs for either), and the knock-outs' first day."""
+    regular = m.iloc[:len(_double(clubs)) * len(clubs) // 2]
+    last = regular["date"].max()
+    low = set(clubs[8:])
+    i = regular.index[(regular["date"] == last) & regular["home"].isin(low) & regular["away"].isin(low)][0]
+    return i, last
+
+
+def test_a_final_regular_match_played_alone_before_the_knock_outs_stays_in_the_table():
+    # ARG 2025: on 2025-05-04 every club but River Plate and Velez Sarsfield had
+    # played 16; they met on 2025-05-05 and the knock-outs began on 2025-05-10.
+    # That match is their last regular one: cut with the knock-outs, both showed
+    # 15 played and River three points short.
+    usa, clubs = _knock_outs("USA")
+    i, last = _last_round_pair(usa, clubs)
+    usa.loc[i, "date"] = (pd.Timestamp(last) + pd.Timedelta(days=3)).strftime("%Y-%m-%d")
+    keep = sf.regular_season(usa)
+    assert keep[usa.index.get_loc(i)] and (~keep).sum() == 7       # the knock-outs only
+    t = sf.table(usa, "USA", 2025)
+    assert all(r["played"] == 30 for r in t) and len(t) == 16
+    # and the run still starts with two clubs a match short whose match is never
+    # played (ARG 2026's Lanus v Estudiantes): the knock-outs are cut all the same
+    usa, clubs = _knock_outs("USA")
+    i, _ = _last_round_pair(usa, clubs)
+    usa = usa.drop(index=i)
+    assert (~sf.regular_season(usa)).sum() == 7
+    assert sorted(r["played"] for r in sf.table(usa, "USA", 2025)) == [29, 29] + [30] * 14
+
+
+@pytest.mark.snapshot
+def test_arg_2025_keeps_river_v_velez_and_arg_2026_still_cuts_its_knock_outs():
+    import soccer_data as sd
+    m = sd.load_matches(leagues=["ARG"])
+    done = m[m["result"].isin(("H", "D", "A"))]
+    g = done[done["season"] == 2025]
+    keep = sf.regular_season(g)
+    late = ((g["date"] == "2025-05-05") & (g["home"] == "River Plate") & (g["away"] == "Velez Sarsfield")).to_numpy()
+    assert late.sum() == 1 and keep[late].all() and (~keep).sum() == 30   # the two halves' knock-outs
+    apertura = sf.table(m[m["date"] < "2025-07-01"], "ARG", 2025)
+    assert {r["played"] for r in apertura} == {16}
+    assert (~sf.regular_season(done[done["season"] == 2026])).sum() == 15

@@ -321,6 +321,60 @@ def test_a_club_past_a_double_round_robin_has_nothing_at_stake():
     assert feats.loc[last_round, "rem_h"].notna().all()
 
 
+def _with_play_offs(f, code):
+    """Each season of `code` followed by a two-legged play-off of its last
+    club against one from outside the league, filed under the same season
+    after its regular season (as the extra leagues' files have them)."""
+    extra = []
+    for s, g in f[f["league"] == code].groupby("season"):
+        last = pd.Timestamp(g["date"].max())
+        bottom = g["home"].iloc[0]
+        for k, (h, a) in enumerate([(f"Outsider {s}", bottom), (bottom, f"Outsider {s}")]):
+            day = (last + pd.Timedelta(days=4 * (k + 1))).strftime("%Y-%m-%d")
+            extra.append(dict(g.iloc[0], match_id=f"po{s}{k}", date=day, home=h, away=a,
+                              kickoff=pd.Timestamp(day) + pd.Timedelta(hours=15)))
+    return pd.concat([f, pd.DataFrame(extra)]).sort_values(["date", "league", "home"]).reset_index(drop=True)
+
+
+def test_a_play_off_club_filed_after_the_season_is_unknown_to_the_earlier_matches():
+    # FIN 2026: a play-off side with two matches in Oct / Nov was in the roster
+    # of every match of the season, so the late-season stakes (games left, the
+    # drop and place boundaries of a 13-club division) moved the predictions of
+    # July-September with rows that did not exist then. Cut before the play-off,
+    # nothing earlier may move; the play-off club reads nothing at stake.
+    f = _with_play_offs(_frame([("FIN", range(2005, 2012), "04-10", CLUBS[:12], "close", False),
+                                ("NOR", range(2005, 2012), "03-20", CLUBS[:10], "close", False)]), "FIN")
+    po = f["match_id"].str.startswith("po")
+    cut = f.loc[po & (f["season"] == 2011), "date"].min()
+    before = f["date"] < cut
+    feats, upto_feats = sr.rate(f), sr.rate(f[before])
+    cols = ["up_h", "up_a", "rel_h", "rel_a", "dead_h", "dead_a", "rem_h", "rem_a", "eta_h_0", "eta_a_0"]
+    assert np.array_equal(feats.loc[before, cols].to_numpy(), upto_feats[cols].to_numpy(), equal_nan=True)
+    assert (feats.loc[po, ["up_h", "rel_h", "dead_h", "up_a", "rel_a", "dead_a"]] == 0).all().all()
+    late = (f["league"] == "FIN") & (f["season"] == 2011) & ~po
+    assert (feats.loc[late, "up_h"] > 0).any()                 # the stakes are read, on the 12 clubs
+    full = sr.predict_leagues(f, ["FIN", "NOR"], **SMALL)
+    upto = sr.predict_leagues(f[before], ["FIN", "NOR"], **SMALL)
+    a = full.loc[before, ["p_h", "p_d", "p_a", "p_o25"]].to_numpy()
+    assert np.isfinite(a[late[before].to_numpy()]).all()
+    assert np.array_equal(a, upto[["p_h", "p_d", "p_a", "p_o25"]].to_numpy(), equal_nan=True)
+    # A second spelling that reaches 5 matches only later (NOR 2023's HamKam):
+    # cut at its 4th, it is from outside on the day - and so, read on the day,
+    # it is in the full frame too. Read from the whole season it was in the
+    # roster all along (a 13-club division from the first day).
+    f = _frame([("FIN", range(2005, 2012), "04-10", CLUBS[:12], "close", False),
+                ("NOR", range(2005, 2012), "03-20", CLUBS[:10], "close", False)])
+    mine = f.index[(f["league"] == "FIN") & (f["season"] == 2011)
+                   & ((f["home"] == CLUBS[3]) | (f["away"] == CLUBS[3]))][-6:]
+    for side in ("home", "away"):
+        f.loc[mine, side] = f.loc[mine, side].replace(CLUBS[3], "Club 3 FC")
+    before = f["date"] < f.loc[mine[3], "date"]
+    full = sr.predict_leagues(f, ["FIN", "NOR"], **SMALL)
+    upto = sr.predict_leagues(f[before], ["FIN", "NOR"], **SMALL)
+    assert np.array_equal(full.loc[before, ["p_h", "p_d", "p_a", "p_o25"]].to_numpy(),
+                          upto[["p_h", "p_d", "p_a", "p_o25"]].to_numpy(), equal_nan=True)
+
+
 # ------------------------------------------------------------- the pipeline reads the decisions
 
 def test_the_pipeline_calls_read_the_measured_decisions(world, monkeypatch):
@@ -465,6 +519,7 @@ def test_the_experiments_point_in_time_check_passes_and_bites(world, monkeypatch
     for r in out["point_in_time"]:
         assert r["rows_on_cut_day"] > 0 and r["numbers_compared"] > 10000
         assert r["unmoved_on_or_before_cut"] and r["unmoved_before_cut_prices_from_cut_scrambled"]
+        assert r["unmoved_before_cut_rows_from_cut_dropped"]
     # every decision is its rule on the numbers beside it, and the block the module ships is that
     for code in ("E0", "SP1", "B1", "NOR"):
         r, d = out["leagues"][code], out["decisions"][code]
@@ -491,6 +546,31 @@ def test_the_experiments_point_in_time_check_passes_and_bites(world, monkeypatch
     ref = sr.predict_leagues(world, list(sd.ALL_LEAGUES), score_params=True, england="top-two")
     caught = L.point_in_time(world, cuts[0], "top-two", out["protocol"]["weights"], [], reference=ref)
     assert not caught["unmoved_on_or_before_cut"]
+
+
+def test_the_experiments_point_in_time_check_catches_a_roster_that_knows_later_clubs(world, monkeypatch):
+    # Scrambling results and prices leaves every row in place, so it cannot see
+    # a fact read from the rows themselves; the run on the frame cut at the cut
+    # day can. A model whose stakes read the clubs of the whole league-season
+    # (as the roster did until 2026-11-11) is caught by that run alone.
+    L = _small_experiment(monkeypatch)
+    f = _with_play_offs(world, "NOR")
+    cut = f.loc[f["match_id"].str.startswith("po") & (f["season"] == 2011), "date"].min()
+    honest = L.point_in_time(f, cut, "top-two", "per_price", [])
+    assert honest["unmoved_before_cut_rows_from_cut_dropped"] and honest["unmoved_on_or_before_cut"]
+    rate = sr.rate
+
+    def whole_season(matches, **params):
+        out = rate(matches, **params)
+        clubs = pd.concat([matches[["league", "season", "home"]].set_axis(["l", "s", "c"], axis=1),
+                           matches[["league", "season", "away"]].set_axis(["l", "s", "c"], axis=1)])
+        n = clubs.groupby(["l", "s"])["c"].nunique()
+        out["up_h"] = out["up_h"] + 1e-6 * n.reindex(pd.MultiIndex.from_frame(matches[["league", "season"]])).to_numpy()
+        return out
+    monkeypatch.setattr(sr, "rate", whole_season)
+    caught = L.point_in_time(f, cut, "top-two", "per_price", [])
+    assert caught["unmoved_on_or_before_cut"] and caught["unmoved_before_cut_prices_from_cut_scrambled"]
+    assert not caught["unmoved_before_cut_rows_from_cut_dropped"]
 
 
 # ------------------------------------------------------------- the decisions as shipped

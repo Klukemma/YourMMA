@@ -50,19 +50,29 @@ matches dated strictly before the block, maps ratings to expected goals:
 
 The stakes come from the league table on the morning of the match (points
 and goal difference from earlier days; the division's roster is a fixture
-fact): for each side, how close it is to a boundary it can still cross in
-the games left - title / top 4 / top 6 ("up") and the drop ("rel") - as
-max(0, 1 - points gap / (3 games left + 1)), and "dead" when no boundary can
-be crossed; all scaled by lateness max(0, 1 - games left / late_rounds).
+fact read from the rows dated up to that day, less the clubs from outside
+the league - soccer_form.outside_of, the app's tables' rule: a play-off
+club is not counted in the division and reads nothing at stake): for each
+side, how close it is to a boundary it can still cross in the games left -
+title / top 4 / top 6 ("up") and the drop ("rel") - as max(0, 1 - points
+gap / (3 games left + 1)), and "dead" when no boundary can be crossed; all
+scaled by lateness max(0, 1 - games left / late_rounds).
 Then P(x, y) = tau_rho(x, y) Pois(x; lambda) Pois(y; nu), Dixon-Coles rho
 fitted on the same rows; p_o25 from the same 0-10 x 0-10 matrix.
 
 POINT IN TIME. Every number for a match on day D comes from matches on days
 strictly before D: a day's features are taken before any of that day's
 results enter the ratings or the table; regressions and the tier step see
-only earlier rows. Second tiers are rated, never predicted; the first season
-passed (2005-06 on the full file) only warms up, and a refit block with fewer
-than `min_train` earlier top-tier matches gets no number (only on a slice of
+only earlier rows. The table's roster too is read from the rows dated up
+to the day (its fixtures that day included): until 2026-11-11 it was read
+from the whole league-season, so the extra leagues' late-season stakes knew
+of the play-off clubs filed after their seasons, and of second spellings
+that only later reached 5 matches (rate's notes; experiments/leagues.py,
+the re-run). Nothing earlier moves when later rows are not in the frame at
+all - not only when they are scrambled (the tests; leagues.point_in_time).
+Second tiers are rated, never predicted; the first season passed (2005-06
+on the full file) only warms up, and a refit block with fewer than
+`min_train` earlier top-tier matches gets no number (only on a slice of
 history). Deterministic (no randomness).
 
 MEASURED (full walk-forward, ~14 s). Raw: DEV 0.9878 vs market 0.9816,
@@ -118,9 +128,12 @@ if str(ENGINE) not in sys.path:
     sys.path.insert(0, str(ENGINE))
 
 import soccer_data as sd  # noqa: E402
+import soccer_form as sf  # noqa: E402
 
 MAX_GOALS = 10
 MU = math.log(1.3)
+# The stakes a club reads when the table cannot say (up, rel, dead, games left).
+NOTHING = (0.0, 0.0, 0.0, float("nan"))
 # Every league soccer_data knows (the ten were all there was until the league
 # probe); a frame holds whichever of them it holds.
 LEAGUES = list(sd.ALL_LEAGUES)
@@ -244,11 +257,31 @@ def rate(matches, **params):
     s_sh = np.full(L, 50.0)
 
     members = {}                       # (league, season) -> list of teams
-    # the league table, top tiers only: rosters are fixture facts (who is in
-    # the division), points and goal difference come from earlier days only
-    roster = {}
-    for key, grp in pd.DataFrame({"l": lg, "s": season, "h": hi, "a": ai}).groupby(["l", "s"]):
-        roster[key] = np.unique(np.r_[grp["h"].to_numpy(), grp["a"].to_numpy()])
+    # The league table: points and goal difference from earlier days only;
+    # the roster - who is in the division - a fixture fact, read on each day
+    # from the league-season's rows dated up to that day (its fixtures that
+    # day included), LESS the clubs from outside the league
+    # (soccer_form.outside_of: 1-4 matches beside a median of 10 or more,
+    # the rule the app's tables use). Read from the whole league-season, as
+    # it was until 2026-11-11, it knew of clubs that entered only later: the
+    # extra leagues' files put the promotion / relegation play-offs under the
+    # top flight's season, after its regular season, so every earlier match's
+    # stakes (games left, the drop and place boundaries) were read on a
+    # division with those clubs in it (FIN 2026's play-off side, two matches
+    # in Oct / Nov, moved predictions from July on by up to 0.08); and a
+    # club's second spelling with 5 or more matches over the season (NOR
+    # 2023's HamKam, POL 2022-23's Gornik Zabrze, ROU 2020-21's Univ.
+    # Craiova, ROU 2025-26's Dinamo Bucuresti) was in the late-season roster
+    # weeks before its 5th match. A club outside the roster reads nothing at
+    # stake (NOTHING). In a season's first rounds the roster holds only the
+    # clubs that have played: no number moves for it, because the stakes are
+    # scaled by lateness, 0 until 8 games are left.
+    seen = {}                          # (league, season) -> {club: rows dated up to today}
+
+    def roster(key):
+        cnt = seen[key]
+        out = sf.outside_of(cnt)
+        return np.array(sorted(t for t in cnt if t not in out), dtype=int)
     pts = np.zeros(T)
     gdf = np.zeros(T)
     gp = np.zeros(T)
@@ -352,16 +385,20 @@ def rate(matches, **params):
                 if t_season[t] < s:
                     start_season(t, l, s)
         # -- the table before today, for every league playing today
+        for i in range(d0, d1):
+            cnt = seen.setdefault((lg[i], season[i]), {})
+            cnt[hi[i]] = cnt.get(hi[i], 0) + 1
+            cnt[ai[i]] = cnt.get(ai[i], 0) + 1
         stake = {}
         for key in {(lg[i], season[i]) for i in range(d0, d1)}:
-            teams = roster[key]
+            teams = roster(key)
             n = len(teams)
             # A league whose roster is not yet whole - the new season's file
             # not posted, only this weekend's fixtures known - has no table to
             # read stakes from (and too few places to index): nothing at stake.
             if n <= max(P["eur_place"], P["n_rel"]):
                 for t in teams:
-                    stake[t] = (0.0, 0.0, 0.0, float("nan"))
+                    stake[t] = NOTHING
                 continue
             total = 2 * (n - 1)
             order_t = np.lexsort((-gdf[teams], -pts[teams]))
@@ -387,7 +424,7 @@ def rate(matches, **params):
             # at stake is read for it (never true of the five top leagues).
             beyond = gp[teams] >= total
             for t, a1, a2, a3, r_, b_ in zip(teams, c_up, c_rel, dead, rem, beyond):
-                stake[t] = (0.0, 0.0, 0.0, float("nan")) if b_ else (a1, a2, a3, float(r_))
+                stake[t] = NOTHING if b_ else (a1, a2, a3, float(r_))
         # -- features, before any of today's results
         for i in range(d0, d1):
             h, a, l = hi[i], ai[i], lg[i]
@@ -398,8 +435,8 @@ def rate(matches, **params):
             f_pa[i] = float(promoted_season[a] == season[i])
             f_play_h[i], f_play_a[i] = played[h], played[a]
             f_gp_h[i], f_gp_a[i] = gp[h], gp[a]
-            f_up_h[i], f_rel_h[i], f_dead_h[i], f_rem_h[i] = stake[h]
-            f_up_a[i], f_rel_a[i], f_dead_a[i], f_rem_a[i] = stake[a]
+            f_up_h[i], f_rel_h[i], f_dead_h[i], f_rem_h[i] = stake.get(h, NOTHING)    # not in the roster: from
+            f_up_a[i], f_rel_a[i], f_dead_a[i], f_rem_a[i] = stake.get(a, NOTHING)    # outside the league
         # -- today's results into the ratings
         for i in range(d0, d1):
             if hg[i] != hg[i] or ag[i] != ag[i]:

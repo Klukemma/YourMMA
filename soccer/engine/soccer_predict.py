@@ -13,10 +13,12 @@ One run:
      that fails keeps the snapshot on file;
   2. loads every league (38: the model and the pick's weights learn from
      every league that was measured, RUS's matches included) and takes the
-     app's leagues from the data now (soccer_leagues.in_app(matches,
-     fixtures, now): rule (a), a current season - 37 today, RUS out); joins
-     football-data.co.uk's fixtures of those leagues with the feeds'
-     matches it has not posted yet, with no price (soccer_schedule); runs
+     app's leagues from the data now (app_leagues: soccer_leagues.in_app
+     with the feeds' matches to play counted as posted - rule (a), a current
+     season, which a winter break does not end - 37 today, RUS out; each
+     league out says why); joins football-data.co.uk's fixtures of those
+     leagues with the feeds' matches it has not posted yet, with no price
+     (soccer_schedule); runs
      the model over every match since 2005-06 of every league, finished or
      not, each predicted only from matches on earlier days, and picks each
      league as experiments/leagues.py decided (soccer_model.shipped_pick:
@@ -28,14 +30,19 @@ One run:
      score, over 1.5 / 2.5 / 3.5, the likeliest scores - each only where
      its league shipped it from that source (soccer_leagues.withheld; a
      number withheld is null, and listed as withheld) - and the pick's band
-     (soccer_scores), read against its league's group's measured rates;
+     (soccer_scores), read against its league's group's measured rates.
+     The pick, the score matrices and the Record are computed over the
+     decided leagues and the day's (measured_leagues): the top five's
+     pooled Record blocks and the global caveats do not empty in summer;
   3. logs a pick for every match of the app's leagues in the next ten days
      that has not frozen (prediction_history.json, with its basis and the
      price it was read from) and grades every logged pick whose result is
      in - provisionally on the feeds' result until football-data.co.uk
      posts its own;
   4. writes soccer/app/data/{matches,tables,performance}.json - every league
-     with its own season, dates, decisions, caveats and record - and the
+     with its own season, dates, decisions, caveats and record, and
+     football-data.co.uk's download problems of this run per league
+     (feeds.data_problems: that league's data may be stale) - and the
      standalone page.
 
 WHERE A PAIRING REPEATS (soccer_feed.REPEATS) a pairing is not a match: the
@@ -51,7 +58,10 @@ USA: in January to June the August-May label would be last season's); its
 "model_through" is its own latest football-data.co.uk result (CHN's file
 lags BRA's by two weeks); its latest results are its own last round. The
 window of kicked-off picks runs from the latest result in any league - never
-the earliest, or a league between seasons would drag it back months.
+the earliest, or a league between seasons would drag it back months - and,
+for each league, from its own last round too, so a league whose results come
+later keeps its picks on screen until they are graded; a result is hidden
+only behind its pick on screen.
 
 A PICK IS LOGGED ONLY BEFORE IT FREEZES: at kickoff, or at 00:00 UK time on
 match day where the kickoff time is not confirmed - or earlier, at any
@@ -67,6 +77,7 @@ the run: football-data.co.uk alone, said so in the log.
 """
 
 import argparse
+import re
 import sys
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
@@ -150,6 +161,59 @@ def league_seasons(frame, leagues, now):
     return out
 
 
+# ------------------------------------------------------------- the leagues
+
+def feed_to_play(feed, now):
+    """The feeds' matches still to play (status "scheduled", on a UK day no
+    earlier than today's), as fixture rows {league, date}: what rule (a)
+    counts beside football-data.co.uk's posted fixtures (app_leagues)."""
+    today = pd.Timestamp(now).strftime("%Y-%m-%d")
+    rows = [{"league": m["league"], "date": m.get("uk_date") or m.get("date_hint")} for m in feed or ()
+            if m.get("status") == "scheduled" and (m.get("uk_date") or m.get("date_hint") or "") >= today]
+    return pd.DataFrame(rows, columns=["league", "date"])
+
+
+def app_leagues(matches, fixtures, feed, now):
+    """(leagues, out): the app's leagues by rule (a) on the data of the day
+    (soccer_leagues.in_app) - with the feeds' matches still to play counted
+    as fixtures posted, beside football-data.co.uk's - and {code:
+    soccer_leagues.season_check facts} for each measured league out of it,
+    which not_in_app shows as the reason.
+
+    WHY THE FEEDS COUNT: football-data.co.uk posts a round's fixtures only
+    days before it, so a winter or mid-year break longer than RECENT_DAYS
+    (45) would drop a league in the middle of its season - DNK (Dec 8 to
+    Feb 8), AUT (54 days), POL (47), ARG (60 in mid-2026) - and with it its
+    card, table and Record row, and its first round back, which the feeds
+    list ten days ahead, would get no pick. A league the feeds list a match
+    to play for has a current season."""
+    listed = feed_to_play(feed, now)
+    posted = fixtures[["league", "date"]] if len(fixtures) else pd.DataFrame(columns=["league", "date"])
+    if len(listed):
+        posted = pd.concat([posted, listed], ignore_index=True)
+    leagues = slg.in_app(matches, posted, now)
+    out = {c: slg.season_check(matches, posted, c, now) for c in slg.SHIPPED if c not in leagues}
+    return leagues, out
+
+
+def measured_leagues(leagues):
+    """The leagues the pick, the score matrices and the Record are computed
+    over: the decided list (soccer_leagues.in_app()) and the app's leagues of
+    the day, in soccer_data's order.
+
+    WHY NOT THE DAY'S ALONE: every summer the top five leave the app for
+    weeks (no result in 45 days, no fixture posted: D1 and F1 from about Jul
+    1 until their fixtures appear), and the Record tab's pooled top-five
+    blocks, the calibration and the global scores caveat are measured on the
+    top five - over the day's leagues they went empty (18,259 matches to 0)
+    and a caveat was deleted, and while only some of the five were back they
+    were measured on that subset under the "top five" label. What was
+    measured does not change with the calendar; what is shown does (the
+    upcoming entries, the log and the schedule keep the day's leagues)."""
+    keep = set(slg.in_app()) | set(leagues)
+    return [c for c in sd.ALL_LEAGUES if c in keep]
+
+
 # ------------------------------------------------------------- the record
 
 def _row(frame, p, sel):
@@ -183,26 +247,23 @@ def by_league(frame, preds, blended, leagues):
 
 
 def latest_weights(weights, leagues):
-    """{league: {season, w}} - each league's recalibration for its latest
-    season (shipped_pick's weights are keyed (league, season)); None where
-    its pick is the raw price."""
-    out = {}
-    for c in leagues:
-        mine = sorted(s for (lg, s) in weights if lg == c)
-        if mine:
-            w = weights[(c, mine[-1])]
-            out[c] = {"season": mine[-1], "w": None if w is None else [float(x) for x in w]}
-        else:
-            out[c] = None
-    return out
+    """{league: {season, w} or None} - each league's recalibration for its
+    latest season: soccer_model.latest_weights, the one function that makes
+    this shape, so the Record tab prints what soccer_leagues.SHIPPED stores
+    ("weights": None for a league picked on the raw price, never {season, w:
+    None}) - a reader comparing the two sees the same thing."""
+    return smod.latest_weights(weights, leagues)
 
 
-def backtest_summary(frame, preds, blended, weights, goals_used, leagues=None):
+def backtest_summary(frame, preds, blended, weights, goals_used, leagues=None, in_app=None):
     """What the Record tab shows: the model alone and the pick against the
     market, DEV and CONFIRM never pooled, plus goals, betting the
     disagreements and calibration - those over the top five, as measured,
     and labelled so ("scope") - and by league (by_league), group and pooled
-    for every league in the app, each on its own periods."""
+    for every league of `leagues` (run: measured_leagues - the decided ones
+    and the day's), each on its own periods. in_app: the app's leagues of the
+    day (default `leagues`): each by_league row says whether it is one, so a
+    league between seasons keeps its measured row, marked out of the app."""
     leagues = list(sd.TOP) if leagues is None else list(leagues)
     periods = {"dev": list(bt.DEV), "confirm": list(bt.CONFIRM)}
     has = bt.scored(frame) & preds[["p_h", "p_d", "p_a"]].notna().all(axis=1) & ~blended["model_only"]
@@ -215,6 +276,9 @@ def backtest_summary(frame, preds, blended, weights, goals_used, leagues=None):
     result["scope"] = TOP_FIVE
     conf = has & frame["season"].between(*bt.CONFIRM)
     leagues_rows, by_group, pooled = by_league(frame, preds, blended, leagues)
+    app = set(leagues if in_app is None else in_app)
+    for r in leagues_rows:
+        r["in_app"] = r["code"] in app
     total = frame["hg"] + frame["ag"]
     over = {}
     for lo, hi in (bt.DEV, bt.CONFIRM):
@@ -539,7 +603,91 @@ def tbc_entry(t, matches, now):
 
 # ------------------------------------------------------------- the run
 
-def sync_all(now, feed_path, log=print, leagues=None):
+# football-data.co.uk's download problems, as soccer_data.sync logs them. Its
+# sync keeps its problems list to itself and returns the frame; its log lines
+# are the record, so they are read here (this module does not change
+# soccer_data) - and a test runs the real sync against a made-up site failing
+# in each way, so a changed message fails a test, never the app silently.
+_PROBLEM_LINES = (
+    (re.compile(r"^ {3}(?P<what>.+?): download failed \((?P<err>[^)]*)\); kept what is on file$"),
+     lambda m: f"download failed ({m['err']})"),
+    (re.compile(r"^ {3}(?P<what>.+?): NOT A football-data\.co\.uk CSV; kept what is on file$"),
+     lambda m: "not a football-data.co.uk CSV"),
+    (re.compile(r"^ {3}(?P<what>.+?): CUT OFF PART-WAY THROUGH ITS LAST ROW; kept what is on file$"),
+     lambda m: "cut off part-way through its last row"),
+    (re.compile(r"^ {3}(?P<what>.+?): NO ROWS PARSED \(format change\?\); kept what is on file$"),
+     lambda m: "no rows parsed (format change?)"),
+    (re.compile(r"^ {3}(?P<what>.+?): \d+ matches, FEWER than the \d+ on file; kept what is on file$"),
+     lambda m: "fewer matches than on file"),
+    (re.compile(r"^ {3}(?P<code>[A-Z0-9]+): no fixtures while the file holds rows of .+ \(a renamed league\?\); "
+                r"kept what is on file$"), lambda m: "no fixtures for it in the file (a renamed league?)"),
+)
+_BUDGET_LINE = re.compile(r"^ {3}football-data\.co\.uk: (?P<why>.+); every file not yet asked for keeps what is "
+                          r"on file$")
+_KEPT_LINE = re.compile(r"^ {3}KEPT ON FILE after a failed or unreadable download: (?P<items>.+)$")
+_NOT_PUBLISHED = re.compile(r"^ {3}(?P<what>.+?): not published$")
+
+
+def _leagues_of(what, asked):
+    """The leagues a football-data.co.uk file holds, by the name sync gives
+    it: "fixtures" (every main division's), "extra-league fixtures" (every
+    extra league's), "SC0 fixtures", "E0 2026", "ARG"."""
+    if what == "fixtures":
+        return [c for c in asked if sd.ALL_LEAGUES[c].kind == "main"]
+    if what == "extra-league fixtures":
+        return [c for c in asked if sd.ALL_LEAGUES[c].kind != "main"]
+    code = what.split(" ")[0]
+    return [code] if code in sd.ALL_LEAGUES else []
+
+
+def data_problems(lines, at, asked="all", root=None):
+    """[{league, what, why, at}] from one football-data.co.uk sync's log
+    lines: every file it kept on file after a failed, unreadable, cut-off or
+    short download, or because its failure budget was spent before asking
+    (why: the budget's reason), and every file the site no longer publishes
+    that is on file (a 404 or an empty body: "not published") - one entry
+    per league the file holds, so the app can say that league's data may be
+    stale. A season the site has not started publishing (no file on file
+    yet, as in July) is not a problem. `asked`: the leagues synced; root:
+    the results snapshot (soccer_data.MATCHES)."""
+    root = sd.MATCHES if root is None else root
+    asked = sd.league_codes(asked)
+    why, kept, budget = {}, [], None
+    gone = []
+    for line in lines:
+        line = str(line)
+        for rx, reason in _PROBLEM_LINES:
+            m = rx.match(line)
+            if m:
+                what = m.groupdict().get("what") or f"{m['code']} fixtures"
+                why.setdefault(what, reason(m))
+                break
+        else:
+            if (m := _BUDGET_LINE.match(line)):
+                budget = m["why"]
+            elif (m := _KEPT_LINE.match(line)):
+                kept += [w.strip() for w in m["items"].split(",") if w.strip()]
+            elif (m := _NOT_PUBLISHED.match(line)):
+                gone.append(m["what"])
+    out = []
+    for what in dict.fromkeys(kept):
+        reason = why.get(what) or (f"not asked: {budget}" if budget else "kept on file")
+        out += [{"league": c, "what": what, "why": reason, "at": at} for c in _leagues_of(what, asked)]
+    for what in dict.fromkeys(gone):
+        parts = what.split(" ")
+        if what.endswith("fixtures"):
+            on_file = True                        # the fixtures file keeps the rows it had
+        elif len(parts) == 2 and parts[1].isdigit():
+            on_file = int(parts[1]) in sd.seasons_on_file(root, parts[0])
+        else:
+            on_file = bool(sd.seasons_on_file(root, parts[0]))
+        if on_file:
+            out += [{"league": c, "what": what, "why": "not published (kept what is on file)", "at": at}
+                    for c in _leagues_of(what, asked)]
+    return out
+
+
+def sync_all(now, feed_path, log=print, leagues=None, data=None):
     """football-data.co.uk (all 38 leagues), then the feeds (`now` None: a
     real run, each feed row stamped when its own request answered) for the
     leagues of `leagues` - default every league the app may carry,
@@ -549,13 +697,28 @@ def sync_all(now, feed_path, log=print, leagues=None):
     data is read, so it asks about the leagues as decided rather than as
     the data will say after it; the schedule keeps the run's own (run). A
     feed sync that fails outright (it catches each request's failure itself)
-    keeps the snapshot on file: the run goes on."""
-    sd.sync(log=lambda m: log(m))
+    keeps the snapshot on file: the run goes on.
+
+    -> football-data.co.uk's download problems (data_problems): a run that
+    stays green on files kept on file says so in matches.json, not only in
+    the Actions log - a budget that ran out every run would otherwise starve
+    the same leagues (asked last) unseen. data: soccer_data.sync's own
+    arguments (a test's made-up site and folders)."""
+    data = dict(data or {})
+    lines = []
+
+    def heard(m):
+        lines.append(m)
+        log(m)
+    sd.sync(log=heard, **data)
+    # at: `now`'s; a real run (now None) stamps them when it reads the clock again (run)
+    problems = data_problems(lines, stamp(now), data.get("leagues", "all"), data.get("matches_path"))
     try:
         sfeed.sync(now=now, path=feed_path, log=log,
                    leagues=sfeed.leagues_for(slg.in_app() if leagues is None else leagues))
     except Exception as err:                       # noqa: BLE001 - logged; the snapshot on file is used
         log(f"   feeds: sync failed ({err.__class__.__name__}: {err}); the snapshot on file is used")
+    return problems
 
 
 def measure_groups(frame, preds, pick, walked, leagues):
@@ -586,20 +749,27 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
     real = now is None
     now = pd.Timestamp(now) if now is not None else now_utc()
     feed_path = feed_path if feed_path is not None else sfeed.FEED
+    problems, synced_at = [], None
     if sync:
         log("1. sync")
-        sync_all(None if real else now, feed_path, log)
+        problems = sync_all(None if real else now, feed_path, log)
         if real:
             now = now_utc()
+        synced_at = stamp(now)
+        problems = [dict(p, at=p.get("at") or synced_at) for p in problems]
     # Every league: the model and the pick's weights learn from every league
     # that was measured, shown or not (soccer_model refuses a frame without
-    # one); the app's leagues are rule (a)'s on the data as it is now.
+    # one); the app's leagues are rule (a)'s on the data as it is now - the
+    # feeds' matches to play counted as posted (app_leagues) - and the pick,
+    # the score matrices and the Record are computed over those and the
+    # decided ones (measured_leagues).
     matches = sd.load_matches(leagues="all")
     fixtures = sd.load_fixtures(leagues="all")
-    leagues = slg.in_app(matches, fixtures, now)
-    log(f"   leagues: {len(leagues)} in the app ({' '.join(leagues)}); not in it: "
-        f"{' '.join(c for c in slg.SHIPPED if c not in leagues) or 'none'}")
     snap, feed = ssch.feed_matches(feed_path, log=log)
+    leagues, out_of_app = app_leagues(matches, fixtures, feed, now)
+    on_record = measured_leagues(leagues)
+    log(f"   leagues: {len(leagues)} in the app ({' '.join(leagues)}); not in it: "
+        f"{' '.join(out_of_app) or 'none'}; measured and recorded: {len(on_record)}")
     fetched_at = fixtures["fetched_at"].max() if len(fixtures) else None
     priced_at = dict(zip(fixtures["match_id"], fixtures["fetched_at"])) if len(fixtures) else {}
     try:
@@ -622,14 +792,14 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
             f"{feed_run.get('skipped_phase') or []}")
     log(f"2. model ({smod.MODEL}) over {len(frame):,} matches of {frame['league'].nunique()} leagues")
     preds = smod.predict(frame, leagues=slg.MODEL_LEAGUES)
-    blended, weights = smod.shipped_pick(frame, preds, leagues)
+    blended, weights = smod.shipped_pick(frame, preds, on_record)
     goals_used = smod.goals(frame, preds, leagues)
     ratings = {team: r["egd"] for team, r in (preds.attrs.get("ratings") or {}).items()}
     mkt_o25 = bt.no_vig_total(frame)
-    # The score matrix behind every match of the app's leagues the model
+    # The score matrix behind every match of the measured leagues the model
     # predicts - by the rule soccer_scores ships - and the tables it is
-    # measured by, one per group.
-    walked = ssc.walk(frame, preds, blended, mkt_o25, leagues=leagues)
+    # measured by, one per group (the day's cards read their own rows).
+    walked = ssc.walk(frame, preds, blended, mkt_o25, leagues=on_record)
     row_of = {i: k for k, i in enumerate(walked[0])}
 
     def card(i):
@@ -640,7 +810,7 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
         src = r["source"] if isinstance(r["source"], str) else None
         return ssc.card(walked[1][k], src, r["reason"], r["miss"], r["miss_on"],
                         withhold=slg.withheld(frame.at[i, "league"], src) if src else ())
-    measured = measure_groups(frame, preds, blended, walked, leagues)
+    measured = measure_groups(frame, preds, blended, walked, on_record)
     # What the app's form lines and tables read: the results with the
     # provisional ones, flagged - cut by club and league-season once (View).
     shown = ssch.shown(frame, sched.provisional)
@@ -706,15 +876,26 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
     results_through_of = {c: max([d for d in (through.get(c), prov_through.get(c)) if isinstance(d, str)],
                                  default=None) for c in leagues}
     # The window runs from the latest result in any league - never the
-    # earliest: a league between seasons would drag it back months.
+    # earliest: a league between seasons would drag it back months - and,
+    # for each league, from its own latest round (`since`: its results
+    # through, less BEHIND - the same bound its results list uses).
     data_through = max(through.values()) if through else None
     results_through = max([d for d in results_through_of.values() if d], default=None)
     window = min(now - BEHIND, pd.Timestamp(data_through) - BEHIND) if isinstance(data_through, str) else now - BEHIND
-    # Every logged pick that has kicked off in the window - by its logged
-    # time, or because it is graded or the feeds say it is under way or over
-    # (a match brought forward): graded beside its result, or "started"
-    # (postponed, ...) until the result is in. A match on the list to play
-    # is shown there, never twice - the same meeting, where pairings repeat.
+    since = {c: (pd.Timestamp(d) - BEHIND).strftime("%Y-%m-%d") for c, d in results_through_of.items() if d}
+    # Every logged pick that has kicked off in the window, or in its league's
+    # own latest round - by its logged time, or because it is graded or the
+    # feeds say it is under way or over (a match brought forward): graded
+    # beside its result, or "started" (postponed, ...) until the result is
+    # in. A match on the list to play is shown there, never twice - the same
+    # meeting, where pairings repeat.
+    #   WHY PER LEAGUE: the main leagues' results land within a day, so the
+    # global window moves on while a league whose results come later (POL's
+    # Nov 6-8 round was not on football-data.co.uk on Nov 9; seven leagues
+    # have no feed to grade provisionally) still has its round to come: its
+    # picks dropped off the Matches tab, and when the result landed the pick
+    # was graded out of sight. Its own round keeps them, by the UK day the
+    # results list reads.
     started = ByKey((k for k, s in sched.status.items() if s in ssch.STARTED), key=lambda k: k)
     to_play = ByKey(entries, key=entry_key)
     kicked = []
@@ -722,7 +903,10 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
         if p.get("void") or not p.get("kickoff"):
             continue
         kick = sl.naive_utc(p["kickoff"])
-        if kick < window or kick > now + AHEAD:
+        own = since.get(p.get("league"))
+        # (a day's margin before the UK-day test: the log holds thousands of old picks)
+        mine = own and kick >= pd.Timestamp(own) - pd.Timedelta(days=1) and ssch.uk_day(kick) >= own
+        if (kick < window and not mine) or kick > now + AHEAD:
             continue
         k = ssch.key_of(p)
         if k in to_play or not (kick <= now or p.get("final") or k in started):
@@ -754,7 +938,9 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
         f"{len(shown_picks)} kicked off or over, {len(off)} postponed/cancelled/abandoned, {len(tbc)} date to come")
 
     log("4. write the app data")
-    bts = backtest_summary(frame, preds, blended, weights, goals_used, leagues)
+    # The Record over the measured leagues (measured_leagues says why), each
+    # league's row flagged in_app or not.
+    bts = backtest_summary(frame, preds, blended, weights, goals_used, on_record, in_app=leagues)
     # The top-level season and label are the August-May one, the five's, as
     # before; each league has its own in `leagues`.
     season = sd.current_season(now)
@@ -762,29 +948,30 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
     # The pick is the market (soccer_model says why); the model's own view is
     # shown beside it.
     basis = "market"
-    caveats = sx.caveats(bts, basis, model_through=data_through, scores=measured.get("top"), leagues=leagues)
+    # The global caveats over the measured leagues too: their numbers are the
+    # top five's whatever the day's league set is, and are never deleted.
+    caveats = sx.caveats(bts, basis, model_through=data_through, scores=measured.get("top"), leagues=on_record)
     # The latest round's results, as facts, so the tab is never empty between
     # rounds: each league's own latest round (its results_through less
-    # BEHIND), only matches with no pick in the record (a logged one is shown
-    # with its pick above, whatever its id became; one whose only pick is
-    # void - logged after kickoff - is a fact like any other) - the same
-    # meeting, where pairings repeat. football-data.co.uk's, and the feeds'
-    # provisional ones it has not posted yet, flagged.
-    logged_keys = ByKey(p for p in history["picks"].values() if not p.get("void"))
-    since = {c: (pd.Timestamp(d) - BEHIND).strftime("%Y-%m-%d") for c, d in results_through_of.items() if d}
+    # BEHIND), only matches with no pick ON SCREEN (a logged one is shown with
+    # its pick above, whatever its id became; one whose pick is void - logged
+    # after kickoff - or is not on screen is a fact like any other: a result
+    # is never hidden behind a pick nobody can see) - the same meeting, where
+    # pairings repeat. football-data.co.uk's, and the feeds' provisional ones
+    # it has not posted yet, flagged.
     first = min(since.values(), default=None)
     last = matches[done & (matches["date"] >= first)] if first else matches.iloc[:0]
     results = [{"match_id": r.match_id, "league": r.league, "date": r.date, "kickoff": stamp(r.kickoff),
                 "home": view.chip(r.league, r.home), "away": view.chip(r.league, r.away), "hg": int(r.hg),
                 "ag": int(r.ag), "provisional": False}
                for r in last.itertuples() if r.date >= since.get(r.league, "9999")
-               and ssch.key(r.league, r.season, r.home, r.away, r.date) not in logged_keys]
+               and ssch.key(r.league, r.season, r.home, r.away, r.date) not in on_screen]
     recent = prov[prov["date"] >= first] if first and len(prov) else prov.iloc[:0]
     results += [{"match_id": r.match_id, "league": r.league, "date": r.date, "kickoff": stamp(r.kickoff),
                  "home": view.chip(r.league, r.home), "away": view.chip(r.league, r.away), "hg": int(r.hg),
                  "ag": int(r.ag), "provisional": True, "source": r.source}
                 for r in recent.itertuples() if r.league in set(leagues) and r.date >= since.get(r.league, "9999")
-                and ssch.key(r.league, r.season, r.home, r.away, r.date) not in logged_keys]
+                and ssch.key(r.league, r.season, r.home, r.away, r.date) not in on_screen]
     cards = shown_picks + entries + off + tbc
     # Every league in the app, and any measured league a card or a result is
     # of (a league that has just left the app still has picks on screen).
@@ -801,7 +988,7 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
         "leagues": sx.leagues(listed_leagues, seasons_all, through, results_through_of, in_app=leagues),
         # every league in the app, in soccer_data's order, even one with no match on screen
         "league_order": list(leagues), "groups": groups,
-        "bands": sx.bands_payload(), "band_floors": sx.band_floors(), "not_in_app": sx.not_in_app(leagues),
+        "bands": sx.bands_payload(), "band_floors": sx.band_floors(), "not_in_app": sx.not_in_app(leagues, out_of_app),
         "matches": cards, "results": results, "data_through": data_through,
         # The date of football-data.co.uk's latest result in any of the app's
         # leagues: the last the model's ratings include (each league's own is
@@ -809,8 +996,13 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
         "model_through": data_through, "results_through": results_through,
         "provisional_results": int(len(prov)),
         "feeds_at": feed_run.get("at"), "prices_at": stamp(fetched_at),
+        # data_problems: football-data.co.uk's files this run's sync kept on
+        # file (failed, short, unreadable, budget spent) or found no longer
+        # published, per league - that league's data may be stale
+        # (sync_all); data_synced_at None: this run did not sync.
         "feeds": {"at": feed_run.get("at"), "unmapped": feed_run.get("unmapped") or [],
-                  "skipped_phase": feed_run.get("skipped_phase") or []},
+                  "skipped_phase": feed_run.get("skipped_phase") or [],
+                  "data_problems": problems, "data_synced_at": synced_at},
         "caveats": caveats, "basis": basis, "generated": sx.now_stamp(now),
         # How the goals and scores numbers and the pick's bands were measured,
         # by this run's own walk-forward, per group (the Method tab's table);
@@ -828,7 +1020,8 @@ def run(sync=True, now=None, out_dir=sx.APP_DATA, log_path=sl.LOG, log=print, fe
                              "model_through": data_through, "generated": sx.now_stamp(now)}, out_dir)
     return {"entries": entries, "shown": shown_picks, "off": off, "tbc": tbc, "results": results,
             "backtest": bts, "weights": weights, "frame": frame, "schedule": sched,
-            "scores_measured": measured, "leagues": leagues, "pick": blended, "preds": preds}
+            "scores_measured": measured, "leagues": leagues, "on_record": on_record, "out_of_app": out_of_app,
+            "data_problems": problems, "pick": blended, "preds": preds}
 
 
 def main(argv=None):

@@ -20,7 +20,9 @@ the regular season only, which regular_season() tells from the results
 alone, on the rows known before the day asked:
   play-off clubs  a club with 1-4 matches while the league-season's median
                   club has 10 or more is from outside the league: its rows
-                  are a play-off, and it is not listed.
+                  are a play-off, and it is not listed. table() counts the
+                  fixtures posted too, and decides this once: the one set
+                  lists the table and leaves the rows out of its sums.
   post-season     in ARG, MEX and USA (POST_SEASON), after a day on which
                   every club has played the same number of matches (5 or
                   more; one match apart allowed: a match postponed, or one
@@ -30,7 +32,12 @@ alone, on the rows known before the day asked:
                   liguilla, the knock-outs of ARG's halves and of its Copa
                   de la Liga (2020-2024). The run ends when an idle club
                   plays again or at a three-week break (Liga MX's and ARG's
-                  second half).
+                  second half). A match postponed is regular, in the run
+                  too: the first meeting of the two clubs one match short
+                  when the run began is kept (ARG 2025's River Plate v
+                  Velez Sarsfield, played alone five days before the
+                  knock-outs; ten such matches on the snapshot, in ARG,
+                  MEX and USA).
   split           once every pair of clubs has met c times, c 2 or more
                   (SPLIT_AFTER), each pair's meetings beyond its first c -
                   in date order, so a regular match postponed into the split
@@ -69,8 +76,9 @@ What cannot be told apart, and so is summed (or left out):
     ARG 2016's promoted Talleres Cordoba, its calendar-year season holding
     one championship and the start of the next);
   - a post-season's first week (the sign has not lasted yet), a knock-out
-    phase entered before every club finished the regular phase (a
-    postponed regular match played during the knock-outs), and any
+    phase entered before every club finished the regular phase (two or
+    more regular matches postponed: more than two clubs a match short -
+    one such match is kept, wherever in the run it is played), and any
     knock-out outside ARG, MEX and USA (J1's championship of 2015-2016,
     CHN's group stages of 2020-2021): elsewhere a third of the clubs idle
     for a week while others play twice is a cup week, so it is not looked
@@ -140,13 +148,24 @@ def form(matches, team, before, n=LAST):
     return out
 
 
-def _outside(home, away):
+def outside_of(counts):
     """The clubs from outside the league: 1 to OUTSIDE matches while the
-    median club has SEASONS_WORTH or more (none otherwise)."""
-    n = pd.Series(np.r_[home, away]).value_counts()
-    if not len(n) or n.median() < SEASONS_WORTH:
+    median club has SEASONS_WORTH or more (none otherwise). counts: {club:
+    its rows in one league-season}, any hashable club keys. The one place
+    the rule is written: the app's tables read it (outside_clubs) and so
+    does the model's, for the roster its stakes are read on
+    (experiments/shots_ratings.rate, from the rows known on each day) - a
+    play-off club is from outside for both, on the same rows."""
+    if not counts:
         return set()
-    return set(n.index[n <= OUTSIDE])
+    if np.median(np.fromiter(counts.values(), float, len(counts))) < SEASONS_WORTH:
+        return set()
+    return {c for c, k in counts.items() if k <= OUTSIDE}
+
+
+def outside_clubs(home, away):
+    """outside_of, from one league-season's home and away columns."""
+    return outside_of(Counter(np.r_[home, away].tolist()))
 
 
 def _post_season(home, away, days, rows, keep):
@@ -165,9 +184,19 @@ def _post_season(home, away, days, rows, keep):
                 count[away[i]] += 1
         vals = [count[c] for c in clubs]
         low, high = (min(vals), max(vals)) if vals else (0, 0)
-        if (low >= EVEN_FROM and high <= low + 1
-                and min(sum(v > low for v in vals), sum(v < high for v in vals)) <= 2):
-            played, twice, j = set(), Counter(), k + 1
+        behind = sum(v < high for v in vals)
+        if low >= EVEN_FROM and high <= low + 1 and min(sum(v > low for v in vals), behind) <= 2:
+            # The clubs one match short (at most two: a match postponed) still
+            # have it to play. Their first meeting in the run is that match,
+            # regular, and kept: cut with the knock-outs, it left both a match
+            # and its points short (ARG 2025's River Plate 4-1 Velez Sarsfield,
+            # played alone on 2025-05-05, the knock-outs from 2025-05-10). A
+            # run still starts on such a day - waiting for every club to be
+            # level would never start ARG 2026's, whose Lanus v Estudiantes was
+            # never played - and the catch-up still counts in the run's tests
+            # below as it always did: only its row is kept.
+            short = {c for c in clubs if count[c] < high} if behind <= 2 else set()
+            played, twice, j, caught_up = set(), Counter(), k + 1, set()
             while j < len(days):
                 on = [i for i in rows[days[j]] if keep[i]]
                 today = {c for i in on for c in (home[i], away[i])}
@@ -177,12 +206,19 @@ def _post_season(home, away, days, rows, keep):
                 for i in on:
                     twice[home[i]] += 1
                     twice[away[i]] += 1
+                    if home[i] in short and away[i] in short:
+                        caught_up.add(i)
+                        short -= {home[i], away[i]}
                 j += 1
             if (j > k + 1 and 3 * sum(v >= 2 for v in twice.values()) >= len(played)
                     and (stamp[j - 1] - stamp[k]).days >= POST_SEASON_DAYS):
                 for d in days[k + 1:j]:
                     for i in rows[d]:
-                        keep[i] = False
+                        if i not in caught_up:
+                            keep[i] = False
+                for i in caught_up:              # regular: counted, as the days the run skips are not
+                    count[home[i]] += 1
+                    count[away[i]] += 1
                 k = j
                 continue
         k += 1
@@ -250,15 +286,24 @@ def _split(home, away, hg, ag, days, rows, keep):
             return                               # one group: more rows only join it further
 
 
-def regular_season(m):
+def regular_season(m, outside=None):
     """For one league-season's results (any order), whether each row is of
     its regular season (the notes: play-off clubs, post-season runs and a
-    split are not) - a boolean array in `m`'s order."""
+    split are not) - a boolean array in `m`'s order.
+
+    outside: the play-off clubs, when the caller decided them on more rows
+    than `m` holds (table: the results AND the fixtures posted). The caller
+    passes the set it lists the table by, so that a club is either listed
+    and summed or neither: decided twice, on different rows, a club with 1-4
+    results could be summed but not listed (G1 2011-12 before 2011-11-27:
+    the median club 9 results, 10 with that week's fixtures - Doxa Dramas,
+    with 1 result, was summed into a table that did not list it, and the
+    whole run stopped on it). None: decided on `m` itself."""
     keep = np.ones(len(m), bool)
     if not len(m):
         return keep
     home, away = m["home"].astype(str).to_numpy(), m["away"].astype(str).to_numpy()
-    out = _outside(home, away)
+    out = outside_clubs(home, away) if outside is None else set(outside)
     if out:
         keep &= ~(np.isin(home, list(out)) | np.isin(away, list(out)))
     dates = m["date"].astype(str).to_numpy()
@@ -283,9 +328,13 @@ def table(matches, league, season, before=None):
     m = season_rows[season_rows["result"].isin(("H", "D", "A"))]
     if day is not None:
         m = m[m["date"] < day]
-    m = m[regular_season(m)]
+    # The play-off clubs are decided ONCE, on the rows known before the day
+    # with the fixtures posted (a club whose first fixture is posted is
+    # listed, a play-off club's is not), and that one set both lists the
+    # table and leaves rows out of its sums (regular_season's `outside`).
     listed = season_rows if day is None else season_rows[(season_rows["date"] < day) | season_rows["result"].isna()]
-    outside = _outside(listed["home"].astype(str).to_numpy(), listed["away"].astype(str).to_numpy())
+    outside = outside_clubs(listed["home"].astype(str).to_numpy(), listed["away"].astype(str).to_numpy())
+    m = m[regular_season(m, outside)]
     teams = sorted((set(season_rows["home"]) | set(season_rows["away"])) - outside)
     rows = {t: {"team": t, "played": 0, "won": 0, "drawn": 0, "lost": 0, "gf": 0, "ga": 0, "points": 0,
                 "provisional": 0} for t in teams}

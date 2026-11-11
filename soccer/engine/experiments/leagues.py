@@ -832,10 +832,15 @@ def point_in_time(frame, cut, england, option, raw, reference=None):
     """The whole pipeline re-run with the future scrambled (module notes):
     nothing on or before the cut moves with results from the cut on and
     prices after it scrambled; nothing before the cut with prices from the
-    cut on scrambled as well. Score matrices are compared for the rows up to
-    the cut (a matrix is row-local: soccer_scores' notes). reference: the
-    model's predictions on the unscrambled frame, when already computed by
-    the same call."""
+    cut on scrambled as well - nor when every row from the cut on is not in
+    the frame at all. That last run is the one a scramble cannot stand in
+    for: a fact read from the rows themselves (which clubs a league-season
+    has: shots_ratings' roster) is the same in a scrambled frame, and the
+    play-off clubs filed after the extra leagues' seasons were known to
+    their earlier matches until the re-run of 2026-11-11 (module notes).
+    Score matrices are compared for the rows up to the cut (a matrix is
+    row-local: soccer_scores' notes). reference: the model's predictions on
+    the unscrambled frame, when already computed by the same call."""
     upto = (frame["date"] <= cut).to_numpy()
     before = (frame["date"] < cut).to_numpy()
     ref = pipeline(frame, england, option, raw, score_rows=upto, preds=reference)
@@ -844,12 +849,15 @@ def point_in_time(frame, cut, england, option, raw, reference=None):
     c_run = pipeline(scramble(frame, cut, prices_from_cut=True), england, option, raw, score_rows=before)
     c = _flat(c_run, before)
     a_before = _flat(ref, before)
+    d_run = pipeline(frame[before], england, option, raw)
+    d = _flat(d_run, np.ones(int(before.sum()), bool))
     on_day = (frame["date"] == cut).to_numpy()
     return {"cut": cut, "rows_on_or_before": int(upto.sum()), "rows_on_cut_day": int(on_day.sum()),
             "leagues_on_cut_day": sorted(set(frame.loc[on_day, "league"])),
             "numbers_compared": int(np.isfinite(a).sum()),
             "unmoved_on_or_before_cut": bool(np.array_equal(a, b, equal_nan=True)),
-            "unmoved_before_cut_prices_from_cut_scrambled": bool(np.array_equal(a_before, c, equal_nan=True))}
+            "unmoved_before_cut_prices_from_cut_scrambled": bool(np.array_equal(a_before, c, equal_nan=True)),
+            "unmoved_before_cut_rows_from_cut_dropped": bool(np.array_equal(a_before, d, equal_nan=True))}
 
 
 # ----------------------------------------------------------- the run
