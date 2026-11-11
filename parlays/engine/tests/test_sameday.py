@@ -142,3 +142,13 @@ def test_grading_reads_each_sport_and_leaves_unknown_results_open():
     assert bs.leg_result(soc_void, res) == {"winner": None}
     assert bs.leg_result(soc_open, res) is None
     assert bs.leg_result(ufc, res) is None
+
+
+def test_soccer_legs_come_only_from_the_leagues_the_rule_was_measured_on():
+    """The soccer app shows 37 leagues; the same-day rule was measured on the
+    top five, so a Norwegian match is never a leg."""
+    m = {"match_id": "x", "kickoff": "2026-11-08T19:00:00Z", "status": "upcoming", "pick": "H",
+         "pick_prob": 0.7, "price_status": "posted", "market": {"p_h": 0.68},
+         "prices": {"avg": {"h": 1.40}}, "home": {"name": "A"}, "away": {"name": "B"}}
+    assert len(bs.soccer_legs({"matches": [dict(m, league="E0")]}, NOW)) == 1
+    assert bs.soccer_legs({"matches": [dict(m, league="NOR")]}, NOW) == []

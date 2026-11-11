@@ -35,9 +35,12 @@ pick_leagues(frame, preds, in_app(), PICK_WEIGHTS, raw=raw_leagues(),
 model_alone=model_alone()); smod.goals(frame, preds, in_app()) and
 ssc.walk(frame, preds, pick, leagues=in_app()); ssc.card(...,
 withhold=withheld(code, source)); band_rate(code, band, basis);
-caveats(code) on every card and on the Method tab. Until the pipeline
-switches (soccer_predict.py still runs the five top leagues as before),
-none of this changes what the app shows.
+caveats(code) on every card and on the Method tab. soccer_predict.run does
+exactly this, over in_app(matches, fixtures, now) - rule (a) applied to the
+data of the day - with bt.record for the Record tab (each league on its own
+periods and the price it was measured on), ssc.by_group for the score
+numbers' measure per group, and smod.latest_weights for each league's
+current weights.
 """
 
 import soccer_data as sd

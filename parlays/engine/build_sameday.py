@@ -153,11 +153,20 @@ def nfl_legs(week, now):
     return out
 
 
+# The soccer legs the rule was measured on: the top five leagues
+# (legs_history.py builds them from main's top-five engine). The soccer app
+# now shows 37 leagues; their picks stay out of the same-day ticket until a
+# backtest of the rule includes them.
+SOCCER_MEASURED = ("E0", "SP1", "I1", "D1", "F1")
+
+
 def soccer_legs(data, now):
     out = []
     for m in (data or {}).get("matches", []):
         k = _parse(m.get("kickoff"))
         pick = m.get("pick")
+        if m.get("league") not in SOCCER_MEASURED:
+            continue
         if k is None or k <= now or pick not in ("H", "D", "A") or m.get("price_status") != "posted":
             continue
         avg = ((m.get("prices") or {}).get("avg") or {})
