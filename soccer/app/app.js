@@ -1,6 +1,6 @@
 // YourSoccer: the matches still to play in every league the engine carries
 // (soccer_leagues.in_app(): the top five, the other European divisions and
-// the rest of the world), each club's form, the league tables and the
+// the extra leagues), each club's form, the league tables and the
 // model's own measured record. The engine (soccer/engine) writes
 // data/*.json; this only draws it.
 //
@@ -558,8 +558,11 @@ const ordinal = (n) => {
 const LEAGUES_KEY = "yoursoccer.leagues";
 const DEFAULT_CHOICE = "g:top";
 const GROUP_ORDER = ["top", "europe", "extra"];
-const GROUP_LABEL = { top: "Top five", europe: "Other European", extra: "Rest of the world" };
-const GROUP_PROSE = { top: "the top five", europe: "the other European divisions", extra: "the rest of the world" };
+// "extra": the leagues football-data.co.uk files apart (soccer_leagues
+// GROUP_NAMES: "extra leagues") - nine of its fifteen are European, so it is
+// not called the rest of the world.
+const GROUP_LABEL = { top: "Top five", europe: "Other European", extra: "More leagues" };
+const GROUP_PROSE = { top: "the top five", europe: "the other European divisions", extra: "the extra leagues" };
 
 // Every league the files name, in the engine's order (league_order:
 // soccer_data's), with what matches.json says about each, merged over what
@@ -638,7 +641,7 @@ function picker(w, choice, tab, counts) {
   const groups = [opt("all", `All leagues${n(w.order)}`),
     ...Object.entries(w.groups).map(([g, x]) => opt(`g:${g}`, `${x.name}${n(x.codes)}`))].join("");
   const countries = [...byCountry].map(([k, codes]) => `<optgroup label="${esc(k)}">${
-    codes.map((c) => opt(c, `${w.meta[c].name || c}${n([c])}`)).join("")}</optgroup>`).join("");
+    codes.map((c) => opt(c, `${leagueLabel(c, w)}${n([c])}`)).join("")}</optgroup>`).join("");
   return `<div class="field" data-picker style="margin:14px 0 10px"><label for="${id}">Leagues</label>
     <select id="${id}" data-league-pick><optgroup label="Several leagues">${groups}</optgroup>${countries}</select></div>`;
 }
@@ -857,7 +860,7 @@ const REASON = {
   fit: "the prices fit no score matrix closely enough",
   no_model: "no numbers for this match",
 };
-function scoreSource(m, d) {
+function scoreSource(m, d, w) {
   const s = m.scores || {};
   const ms = measured(d);
   if (m.score_source === "market") return s.flagged
@@ -870,14 +873,21 @@ function scoreSource(m, d) {
     : s.reason === "fit" ? `the prices fit no score matrix within ${esc(ms ? Math.round(ms.sm.fit_max_miss * 100) : "—")} points (the closest missed the ${
       esc(s.miss_on || "")} by ${esc(s.miss != null ? (s.miss * 100).toFixed(1) : "—")})`
     : REASON[s.reason] || "";
-  return `the model alone <span class="mini">- ${why}. Measured too, a little less accurate than the market's (Method)</span>`;
+  // The comparison with the market's matrix was measured only where the
+  // card's group has over/under prices; elsewhere the model's numbers were
+  // measured against the league's own rates alone.
+  const mg = measured(d, m.league, w);
+  const vsMarket = mg && ((mg.sm.periods[mg.conf] || {}).market || 0) > 0;
+  return `the model alone <span class="mini">- ${why}. ${vsMarket ? "Measured too, a little less accurate than the market's (Method)"
+    : "Measured against the league's own rates (Every league, on Method)"}</span>`;
 }
 // A number a league did not earn (soccer_leagues.withheld: it did not beat
 // the league's own base rates in both of its periods, from the source the
 // card reads it from) is shown as missing, and says why - never filled in
 // from the other source or from another league.
-const WITHHELD_WHY = (src) => `not shown: in this league ${src === "both" ? "neither the market's number nor the model's own"
-  : src === "model" ? "the model's own number" : src === "market" ? "the market's number" : "it"
+const WITHHELD_WHY = (src) => src === "both"
+  ? "not shown: in this league neither the market's number nor the model's own beat the league's own rates in both of its periods"
+  : `not shown: in this league ${src === "model" ? "the model's own number" : src === "market" ? "the market's number" : "it"
   } did not beat the league's own rates in both of its periods`;
 const withheldCell = (src) => `— <span class="mini">${esc(WITHHELD_WHY(src))}</span>`;
 function goalsPanel(m, d, w) {
@@ -889,7 +899,12 @@ function goalsPanel(m, d, w) {
   // Over 2.5 is the over/under market's where it is posted, else the
   // model's own; the entry nulls the one its league withholds and lists it
   // (scores.withheld). Which source that was is the league's to say.
-  const o25mk = (lw.market || []).includes("o25"), o25md = (lw.model || []).includes("o25");
+  // A league with no over/under price in its history has no market number
+  // to withhold (numbers.market is null; withheld.market lists all five
+  // only because none was measured): its over 2.5 is the model's or nothing.
+  const lx = (w && w.meta[m.league]) || {};
+  const hasMarket = lx.numbers ? lx.numbers.market != null : true;
+  const o25mk = hasMarket && (lw.market || []).includes("o25"), o25md = (lw.model || []).includes("o25");
   const o25src = o25mk && o25md ? "both" : o25mk ? "market" : o25md ? "model" : null;
   const o25held = m.p_o25 == null && (held.has("o25") || (o25mk && o25md));
   const modelO25held = m.model_o25 == null && o25md;
@@ -914,7 +929,7 @@ function goalsPanel(m, d, w) {
     if (s.matrix && !(m.score_source === "model" && !m.market)) rows.push(["Results",
       `<span class="nowrap">${esc(m.home.code)} ${pct(s.matrix.p_h, 1)}</span> · <span class="nowrap">draw ${pct(s.matrix.p_d, 1)}</span> · <span class="nowrap">${
         esc(m.away.code)} ${pct(s.matrix.p_a, 1)}</span> <span class="mini">home/draw/away by ${m.score_source === "model" ? "the model's own score chances" : "these score chances"}; the pick's stays as above</span>`]);
-    rows.push(["From", scoreSource(m, d)]);
+    rows.push(["From", scoreSource(m, d, w)]);
   } else if (m.pick) {
     rows.push(["Both score", `— <span class="mini">${m.status === "upcoming" || !m.logged_at ? "no score numbers for this match"
       : "not logged with this pick - it was logged before these numbers were"}</span>`]);
@@ -1124,7 +1139,13 @@ function renderMatches(el, d) {
   // country's short name, in the engine's order, as before.
   const present = new Set(Object.keys(counts));
   const pick = `${picker(w, choice, "matches", counts)}${quick(w, choice, present)}`;
-  const notes = Object.values(d.caveats || {}).filter(Boolean).map((t) => `<p style="margin:0">${esc(t)}</p>`).join("");
+  // The global caveats (the scores one is the top five's), then each other
+  // group's own scores caveat (groups[g].scores_caveat, from its own measure)
+  // for the groups on screen.
+  const onScreen = [...new Set((kind === "league" ? codes : shownLeagues).map((c) => w.group[c]))];
+  const groupCaveats = onScreen.filter((g) => g && g !== "top").map((g) => ((d.groups || {})[g] || {}).scores_caveat);
+  const notes = [...Object.values(d.caveats || {}), ...groupCaveats].filter(Boolean)
+    .map((t) => `<p style="margin:0">${esc(t)}</p>`).join("");
   // The latest round's results: facts, with no pick (none was logged).
   // football-data.co.uk's, and the free feeds' it has not posted yet - those
   // in a list of their own, called provisional.
@@ -1374,7 +1395,7 @@ function renderRecord(d, md) {
     : kind === "group" ? (T.by_group ? T.by_group[g] || {} : (!split && g === "top" ? T : null))
     : (T.by_league ? T.by_league[choice] || {} : null);
   const W = b.result || {};
-  const scoped = split ? " · top five" : "";
+  const scoped = split || kind === "league" ? " · top five" : "";
   let hero, winners;
   if (topScope || (kind === "all" && !b.pooled)) {
     const bl = (W.blend || {})[conf] || {};
@@ -1421,7 +1442,8 @@ function renderRecord(d, md) {
 
   // Each league's row on its own periods; for every league, under its group.
   const inScope = (r) => kind === "all" || (kind === "group" && (w.group[r.code] || r.group || "top") === g);
-  const lrow = (r) => `<tr><td>${esc(r.label || r.name)}${r.periods && split ? `<span class="mini" style="display:block">${esc(`${r.periods.confirm[0]}-${r.periods.confirm[1]}`)}</span>` : ""}</td><td class="n">${esc(r.matches)}</td>
+  const lrow = (r) => `<tr><td>${esc(r.label || r.name)}${r.periods && split ? `<span class="mini" style="display:block">${esc(`${r.periods.confirm[0]}-${r.periods.confirm[1]}`)}${
+    r.price === "closing" ? " · closing prices" : ""}</span>` : ""}</td><td class="n">${esc(r.matches)}</td>
       <td class="n">${pct(r.accuracy, 1)}</td><td class="n">${pct(r.market_accuracy, 1)}</td><td class="n">${num(r.log_loss, 3)}<span class="mini">market ${num(r.market_log_loss, 3)}</span></td></tr>`;
   const mine = kind === "league" ? [] : (b.by_league || []).filter(inScope);
   const lgroups = kind === "all" && split ? Object.keys(w.groups) : [null];
@@ -1466,15 +1488,21 @@ function renderRecord(d, md) {
   const topOnly = withTop || !split ? "" : `<div class="note">The over/under, betting-the-disagreements and calibration tables
     were measured on the top five only. They are not ${esc(choiceName(choice, w, true))}'s numbers, so they are not shown here.</div>`;
 
-  // Week by week is every league pooled: shown with every league, or with
-  // a file from before every league (the five).
-  const tw = kind === "all" || (!split && g === "top") ? T : {};
+  // Week by week: every league pooled under "All leagues", a group's own
+  // where the file has it (track_record.by_group[g].by_week), the five's in
+  // a file from before every league - never the pool under a group's or a
+  // league's name.
+  const gw = kind === "group" && T.by_group && T.by_group[g] && T.by_group[g].by_week ? T.by_group[g] : null;
+  const tw = kind === "all" || (!split && kind === "group" && g === "top") ? T : gw || {};
+  const weekScope = !split ? "" : kind === "all" ? " · every league" : gw ? ` · ${choiceName(choice, w, true)}` : "";
   const weeks = (tw.by_week || []).slice(-8).reverse().map((wk) =>
     `<li><span><b>${esc(wk.label)}</b>${wk.provisional ? ` <span class="mini">${esc(wk.provisional)} provisional</span>` : ""}</span><span class="num ${wk.correct / wk.settled >= 0.5 ? "good" : "warn"}">${esc(wk.correct)}/${esc(wk.settled)}</span></li>`).join("");
-  const weekCard = weeks ? `<div class="card"><h2>Live, week by week${split ? " · every league" : ""}</h2><ul class="rank">${weeks}</ul>
+  const weekCard = weeks ? `<div class="card"><h2>Live, week by week${esc(weekScope)}</h2><ul class="rank">${weeks}</ul>
     <div class="mini">Picks logged before each kickoff, graded against the full-time result. A provisional grade uses the free
       feeds' result until football-data.co.uk posts its own, which confirms or corrects it${
       tw.corrected ? ` (${esc(plural(tw.corrected, "pick", "picks"))} corrected so far)` : ""}.</div></div>` : "";
+  const weekNote = weeks || kind === "all" || !(T.by_week || []).length ? "" : `<div class="note">Week by week is counted ${
+    kind === "league" ? "over a group or every league, not one league" : "over every league"}: choose All leagues to see it.</div>`;
   const liveNote = t && t.settled ? "" : `<div class="note">No settled picks yet${kind === "all" ? "" : ` in ${esc(choiceName(choice, w, true))}`}: the live record starts with the first matches
     picked before kickoff, and grows every weekend. The tables below are the walk-forward backtest.</div>`;
   const bandGroups = kind === "all" ? Object.keys(w.groups) : g ? [g] : [];
@@ -1487,7 +1515,8 @@ function renderRecord(d, md) {
   return `<div class="hero"><div class="eyebrow">Measured, not claimed</div><h1>Track record</h1>
       <p class="lede">Live picks are graded against full-time results; the backtest replays every season since ${esc(first)}.</p></div>
     ${picker(w, choice, "record")}${quick(w, choice, new Set(w.order))}
-    ${tiles}${liveNote}${winners}${weekCard}${leagueCard}${bands}${ouCard}${valueCard}${calCard}${topOnly}`;
+    ${tiles}${liveNote}${winners}${weekCard}${weekNote}${leagueCard}${bands}${ouCard}${valueCard}${calCard}${topOnly}
+    ${kind === "league" ? leagueNotes([choice], w) : ""}`;
 }
 
 // ---------------------------------------------------------------- method
