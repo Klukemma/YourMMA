@@ -587,6 +587,7 @@ def caveats(results, extra, ends, end, legs):
 def dog_caveats(dog, legs, dogs, rows):
     lv = dog["results"]["live"]["all"]
     sl = dog["results"]["salts"]["all"]
+    fs, l3 = dog["results"]["salts"]["first"], dog["results"]["salts"]["last_3_years"]
     em = {s: equal_margin(legs, dogs, s) for s in ("UFC", "NFL")}
     live = [t for t in rows["live"] if in_period(t["day"], DOG_PERIODS["all"])]
     ufc = [dog_leg(t) for t in live if dog_leg(t)["sport"] == "UFC"]
@@ -623,6 +624,12 @@ def dog_caveats(dog, legs, dogs, rows):
         f"UFC cards of 2025 are priced at their opening lines (no closing line is on file for them): "
         f"{len(ufc25)} of the live salt's UFC dogs that year, {opened} of its {len(ufc)} UFC dogs in all priced "
         f"at an opening line.",
+        f"The live salt drew well: over all days its record is above {sl['live_rank']['roi_below']:,} of the "
+        f"1,000 simulation salts' on the same games (the first years {fs['live_rank']['roi_below']:,}, the last 3 "
+        f"years {l3['live_rank']['roi_below']:,}), at the same prices (price-implied {_pct(lv['implied_roi'], 1)} "
+        f"against {_pct(sl['implied_roi'], 1)}). Its past draw is no forecast: the salts averaged "
+        f"{_pct(sl['roi'], 1)} a ticket ({_pct(sl['roi_low'], 1)} to {_pct(sl['roi_high'], 1)}), and the prices "
+        f"imply {_pct(lv['implied_roi'], 1)}.",
         f"The 5th-95th percentile across the 1,000 simulation salts ({_pct(sl['spread']['roi']['p5'], 1)} to "
         f"{_pct(sl['spread']['roi']['p95'], 1)} a ticket over all days) is how much the draw alone moves the "
         f"record over the same games; it is not a confidence interval. The interval over days is "
@@ -679,7 +686,7 @@ def main():
     likeliest_by_day = {t["day"]: t for t in built["same_day"]}
     dres, dsplits, drows, _ = dog_measure(days_out, likeliest_by_day)
     dsplits["dogs_by_price"] = dogs_by_price(dogs)
-    lv = dres["live"]["all"]
+    lv, sl = dres["live"]["all"], dres["salts"]["all"]
     dog = {
         "version": sdy.DOG_VERSION, "salt": sdy.DOG_SALT,
         "rule": {"price": list(sdy.DOG_PRICE), "floor": sdy.DOG_FLOOR, "band": list(sdy.BAND),
@@ -689,7 +696,12 @@ def main():
         "headline": (f"At the live salt, {DOG_PERIODS['all'][0]} to {DOG_PERIODS['all'][1]}: {lv['tickets']} "
                      f"underdog tickets, {lv['wins']} won ({lv['hit_rate']:.1%}; the prices said "
                      f"{lv['market_hit_rate']:.1%}), {_pct(lv['roi'], 1)} a ticket ({_pct(lv['roi_low'], 1)} "
-                     f"to {_pct(lv['roi_high'], 1)}), price-implied {_pct(lv['implied_roi'], 1)}."),
+                     f"to {_pct(lv['roi_high'], 1)}), price-implied {_pct(lv['implied_roi'], 1)}. The same games "
+                     f"drawn with the 1,000 simulation salts returned {_pct(sl['roi'], 1)} a ticket on average "
+                     f"({_pct(sl['roi_low'], 1)} to {_pct(sl['roi_high'], 1)}), price-implied "
+                     f"{_pct(sl['implied_roi'], 1)}; the live salt's record is above "
+                     f"{sl['live_rank']['roi_below']:,} of the {sl['live_rank']['of']:,} - with the same prices, "
+                     f"so the gap is which dogs happened to win."),
         "results": dres, "splits": dsplits,
     }
     if DOG_PERIODS["all"][1] > end:

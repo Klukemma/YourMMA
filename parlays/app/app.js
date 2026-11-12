@@ -572,55 +572,59 @@ const PERIODS = [["last_3_years", "Last 3 years"], ["first", "First years"], ["a
 const notMeasured = (why) => `<div><span class="tag warn">Not measured yet</span></div>${why ? `<div class="mini">${esc(why)}</div>` : ""}`;
 
 // The underdog's live-salt record: the headline, each period on its own line.
-function dogLines(dog) {
+function dogLines(dog, keys = PERIODS.map(([k]) => k)) {
   const live = (dog && dog.live) || {};
   const per = (dog && dog.periods) || {};
-  return PERIODS.filter(([k]) => live[k]).map(([k, label]) =>
+  return PERIODS.filter(([k]) => live[k] && keys.includes(k)).map(([k, label]) =>
     `<div class="mini num">${esc(recordLine(live[k], `${label}${per[k] ? `, ${yearsLabel(per[k])}` : ""}`))}</div>`).join("");
 }
 
-// One salt summary: the mean over the 1,000 simulation draws with its
-// interval, and the draws' spread - which is NOT a confidence interval.
+// One period over the 1,000 simulation draws (sameday_backtest's salt
+// stats): the mean with its day-bootstrap interval, the price-implied
+// return, and the draws' 5th-95th percentile - which is NOT a confidence
+// interval: the games and results are the same, only the lot changes.
 function saltLine(s, label) {
-  if (!s || typeof s !== "object") return "";
-  const mean = first(s, ["roi_mean", "mean_roi", "mean"]);
-  const lo = first(s, ["roi_mean_low", "mean_roi_low", "mean_low"]);
-  const hi = first(s, ["roi_mean_high", "mean_roi_high", "mean_high"]);
-  const p5 = first(s, ["roi_p5", "p5"]);
-  const p50 = first(s, ["roi_p50", "p50", "median"]);
-  const p95 = first(s, ["roi_p95", "p95"]);
-  const rank = first(s, ["live_rank", "rank"]);
-  const n = first(s, ["n_salts", "salts", "draws"]) || 1000;
-  const bits = [];
-  bits.push(`mean over ${n.toLocaleString()} draws ${pc(mean)} a ticket${lo != null && hi != null ? ` (${pc(lo)} to ${pc(hi)})` : ""}`);
-  bits.push(`how much the draw alone moves it, same games: ${pc(p5)} to ${pc(p95)}${p50 == null ? "" : ` (middle ${pc(p50)})`}`);
-  if (rank != null) bits.push(`the live draw ranks ${Math.round(rank).toLocaleString()} of ${n.toLocaleString()}`);
-  return `<li><span><b>${esc(label)}</b><br><span class="mini">${esc(bits.join("; "))}</span></span></li>`;
+  if (!s || typeof s !== "object" || !s.tickets_per_salt) return "";
+  const n = num(s.salts) || 1000;
+  const sp = (s.spread && s.spread.roi) || {};
+  const rk = s.live_rank || {};
+  const bits = [`mean over ${n.toLocaleString()} draws ${pc(s.roi)} a ticket${
+    num(s.roi_low) != null && num(s.roi_high) != null ? ` (${pc(s.roi_low)} to ${pc(s.roi_high)})` : ""}; by the prices ${pc(implied(s))}`,
+    `how much the draw alone moves it, same games: ${pc(sp.p5)} to ${pc(sp.p95)}${num(sp.p50) == null ? "" : ` (middle ${pc(sp.p50)})`}`];
+  if (num(rk.roi_below) != null && num(rk.of)) bits.push(`the live draw did better than ${rk.roi_below.toLocaleString()} of ${rk.of.toLocaleString()}`);
+  return `<li><span><b>${esc(label)}</b><br><span class="mini num">${esc(bits.join(". "))}.</span></span></li>`;
 }
+
+// A paired difference, underdog minus likeliest (or lottery minus
+// market-only), with its interval.
+const diffLine = (s, what) => !s || num(s.roi_diff) == null ? "not measured" : `${(s.days || 0).toLocaleString()} days: ${what} ${
+  pc(s.roi_diff)} a ticket${num(s.roi_diff_low) != null && num(s.roi_diff_high) != null ? ` (${pc(s.roi_diff_low)} to ${pc(s.roi_diff_high)})` : ""}`;
 
 // The report-only rows beside the lottery: none of them can replace it in v1.
 const REPORT = [
-  ["gap", "Largest model gap first", "The underdog the model rates furthest above the market. In soccer that gap is the recalibration curve, not a model opinion - never a sign of value."],
-  ["likeliest_dog", "Likeliest underdog first", "The underdog with the highest chance, no lottery."],
-  ["market_only", "Market-only lottery", "The same draw with the market's chances alone: what the ticket would be with no model."],
-  ["paired", "Beside the likeliest ticket", "Both on the days both exist."],
-  ["both", "Both tickets held", "2 units a day on the days both exist."],
+  ["gap", "Largest model gap first", "The underdog the model rates furthest above the market. In soccer that gap is the recalibration curve, not a model opinion - never a sign of value.",
+    (r) => [recordLine(r.all, "All")]],
+  ["likeliest_dog", "Likeliest underdog first", "The underdog with the highest chance, no lottery.",
+    (r) => [recordLine(r.all, "All")]],
+  ["market_only", "Market-only lottery", "The same draw with the market's chances alone: what the ticket would be with no model.",
+    (r) => [recordLine(r.live && r.live.all, "All"), diffLine(r.paired_with_lottery && r.paired_with_lottery.all, "the lottery minus this, over the draws,")]],
+  ["paired", "Beside the likeliest ticket", "The two on the days both exist, paired by day.",
+    (r) => [diffLine(r.all, "the underdog minus the likeliest")]],
+  ["both", "Both tickets held", "1 unit on each, on the days both exist.",
+    (r) => { const b = r.all; return [!b || !b.days ? "not measured" : `${b.days.toLocaleString()} days: ${pc(b.roi)} a unit${
+      num(b.roi_low) != null && num(b.roi_high) != null ? ` (${pc(b.roi_low)} to ${pc(b.roi_high)})` : ""}; both won on ${
+      (b.both_won || 0).toLocaleString()}, and on ${(b.cannot_both_win || 0).toLocaleString()} they could not both win`]; }],
 ];
 
-function reportRow([key, label, note], r) {
-  const s = r && (r.all || r);
-  let line;
-  if (s && s.tickets) line = recordLine(s, "All");
-  else if (s && typeof s === "object") {
-    const diff = first(s, ["roi_diff", "diff_roi", "diff", "delta_roi"]);
-    const lo = first(s, ["roi_diff_low", "diff_low", "delta_low"]);
-    const hi = first(s, ["roi_diff_high", "diff_high", "delta_high"]);
-    const days = first(s, ["days", "tickets", "n"]);
-    line = diff == null ? "not measured" : `${days ? `${days.toLocaleString()} days: ` : ""}the underdog minus the likeliest ${
-      pc(diff)} a ticket${lo != null && hi != null ? ` (${pc(lo)} to ${pc(hi)})` : ""}`;
-  } else line = "not measured";
-  return `<li><span><b>${esc(label)}</b><br><span class="mini">${esc(note)}</span><br><span class="mini num">${esc(line)}</span></span></li>`;
-}
+const reportRow = ([key, label, note, lines], r) => `<li><span><b>${esc(label)}</b><br><span class="mini">${esc(note)}</span>${
+  (r && typeof r === "object" ? lines(r) : ["not measured"]).map((l) => `<br><span class="mini num">${esc(l)}</span>`).join("")}</span></li>`;
+
+// The underdog's descriptive splits, titled.
+const DOG_SPLITS = {
+  by_sport: "Underdog ticket by the underdog's sport", by_price: "Underdog ticket by the underdog's price",
+  by_year: "Underdog ticket by year", by_legs: "Underdog ticket by legs",
+  dogs_by_price: "Every market underdog as a single bet, by price",
+};
 
 const BOOT = {
   async today() {
@@ -638,7 +642,7 @@ const BOOT = {
          <div class="mini num">${esc(recordLine(lk.rule.all, `All, ${yearsLabel(lk.periods && lk.periods.all)}`))}</div>`
         : notMeasured()}
       <div class="mini"><b>Underdog ticket</b>, at the live draw</div>
-      ${dog ? dogLines(dog) : notMeasured(lk ? dogWhy : null)}`;
+      ${dog ? dogLines(dog, ["last_3_years", "all"]) : notMeasured(lk ? dogWhy : null)}`;
     el.innerHTML = `
       ${DESK.banner()}
       <div class="note"><b>The market is hard to beat.</b> Two tickets a day from the day's picks: the likeliest one paying
@@ -673,10 +677,10 @@ const BOOT = {
         <li><span><b>${esc(name)}</b><br><span class="mini">${esc(recordLine(s.all, yearsLabel(lk.periods.all)))}</span><br>
           <span class="mini">${esc(recordLine(s.last_3_years, "last 3 years"))}</span></span></li>`).join("") : "";
     const mm = lk && lk.multipliers && lk.multipliers.all;
-    const salts = dog && dog.salts;
-    const saltRows = salts ? (PERIODS.some(([k]) => salts[k])
-      ? PERIODS.filter(([k]) => salts[k]).map(([k, label]) => saltLine(salts[k], label)).join("")
-      : saltLine(salts, "All")) : "";
+    const salts = (dog && dog.salts) || {};
+    const per = (dog && dog.periods) || {};
+    const saltRows = PERIODS.filter(([k]) => salts[k])
+      .map(([k, label]) => saltLine(salts[k], `${label}${per[k] ? `, ${yearsLabel(per[k])}` : ""}`)).join("");
     el.innerHTML = `
       <div class="note"><b>The market is hard to beat.</b> Each ticket is logged before its first leg starts and graded
         from each sport's own results; the two kinds are kept apart, each on its own days.</div>
@@ -691,13 +695,15 @@ const BOOT = {
       <div class="card"><h2>Backtest: the underdog ticket</h2>
         ${dog ? `<div class="mini">The headline is the live draw - the one this page makes - on every day since August 2016,
           point in time. It ships beside the likeliest ticket whatever this shows.</div>
+          <div class="eyebrow">At the live draw</div>
           ${dogLines(dog)}
           ${saltRows ? `<div class="eyebrow">The same games, other draws</div>
             <div class="mini">A spread over draws is not a confidence interval: the games and results are the same, only the lot changes.</div>
             <ul class="list">${saltRows}</ul>` : ""}
           <div class="eyebrow">Report only</div>
           <div class="mini">For comparison. None of these can replace the lottery in this version of the rule.</div>
-          <ul class="list">${REPORT.map((r) => reportRow(r, (dog.report_only || {})[r[0]])).join("")}</ul>`
+          <ul class="list">${REPORT.map((r) => reportRow(r, (dog.report_only || {})[r[0]])).join("")}</ul>
+          ${dog.missing ? `<div class="mini">Missing: ${esc(dog.missing)}.</div>` : ""}`
           : notMeasured(dogWhy || "The backtest has not been run.")}
       </div>`;
   },
@@ -712,12 +718,14 @@ const BOOT = {
     if (!sp) { el.innerHTML = `<div class="card">${notMeasured()}</div>`; return; }
     const block = (title, rows, note) => !rows || typeof rows !== "object" ? "" : `<div class="card"><h2>${esc(title)}</h2>${note ? `<div class="mini">${esc(note)}</div>` : ""}
       <ul class="list">${Object.entries(rows).filter(([, s]) => s && s.tickets).map(([k, s]) => `<li><span><b>${esc(k)}</b><br>
-        <span class="mini">${s.tickets} tickets, ${s.wins} won (${pct(s.hit_rate)}${num(s.expected_hit_rate) != null ? `; the picks said ${pct(s.expected_hit_rate)}` : ""})</span></span>
+        <span class="mini">${s.tickets} tickets, ${s.wins} won (${pct(s.hit_rate)}${num(s.expected_hit_rate) != null ? `; the picks said ${pct(s.expected_hit_rate)}` : ""})${
+          implied(s) != null ? `; by the prices ${pc(implied(s))}` : ""}</span></span>
         <span class="end num">${pc(s.roi)}<br><span class="mini">${pc(s.roi_low)} to ${pc(s.roi_high)}</span></span></li>`).join("")}</ul></div>`;
     const ds = dog && dog.splits;
-    const dogBlocks = ds && typeof ds === "object" ? Object.entries(ds).map(([k, rows]) =>
-      block(`Underdog ticket by ${k.replace(/^by_/, "").replace(/_/g, " ")}`, rows,
-        "Descriptive: none of these can move the price band, the floor, the weight or the sports in this version.")).join("") : "";
+    const dogBlocks = ds && typeof ds === "object" ? Object.entries(ds).filter(([, rows]) => rows && typeof rows === "object")
+      .map(([k, rows]) => block(DOG_SPLITS[k] || `Underdog ticket ${k.replace(/_/g, " ")}`, rows,
+        `Descriptive: none of these can move the price band, the floor, the weight or the sports in this version${
+          k === "dogs_by_price" ? "; single bets on every underdog, in and out of the band, not tickets" : ""}.`)).join("") : "";
     el.innerHTML = `<div class="note">Splits of the same backtests, 2016 onward. Small groups swing widely:
         an interval that spans zero is no evidence of anything.</div>
       ${block("By sports on the ticket", sp.by_mix)}

@@ -797,7 +797,8 @@ def dog_measured(bt):
         return None, "Not measured yet: the underdog backtest on file has no record at the live salt."
     return _json_safe({
         "version": blk.get("version"), "salt": blk.get("salt"), "rule": blk.get("rule"),
-        "periods": blk.get("periods"), "live": live, "salts": res.get("salts"),
+        "periods": blk.get("periods"), "headline": blk.get("headline"), "missing": blk.get("missing"),
+        "live": live, "salts": res.get("salts"),
         "report_only": {k: res.get(k) for k in ("gap", "likeliest_dog", "market_only", "paired", "both")},
         "splits": blk.get("splits")}), None
 
