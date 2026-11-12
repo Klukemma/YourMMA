@@ -598,7 +598,7 @@ def dog_caveats(dog, legs, dogs, rows):
     out = [
         f"The market is hard to beat, and a draw cannot create an edge: every 3-5x ticket pays the bookmaker's "
         f"margin on every leg. This ticket is for variety and a bigger payout, never the better bet. At the "
-        f"live salt it won {lv['wins']} of {lv['tickets']} ({_pct(lv['roi'])} a ticket, {_pct(lv['roi_low'])} "
+        f"live salt it won {lv['wins']} of {lv['tickets']:,} ({_pct(lv['roi'])} a ticket, {_pct(lv['roi_low'])} "
         f"to {_pct(lv['roi_high'])}); an interval that spans zero is no evidence of an edge.",
         f"Expected before any result was seen (sameday.py): by the prices it lands about 1 time in 4 (a market "
         f"chance of about 0.25 at about 3.8x), the likeliest about 2 in 7 at about 3.1x, price-implied about -8% "
@@ -619,7 +619,7 @@ def dog_caveats(dog, legs, dogs, rows):
         f"{_pct(em['NFL']['return_equal_margin'], 1)} against {_pct(em['NFL']['return_proportional'], 1)}. "
         f"Soccer's split is missing: these files keep the two teams' prices, not the draw's.",
         f"NFL underdogs are chosen and priced at the closing moneyline ({nfl} of the live salt's "
-        f"{lv['tickets']} dogs): the close knows the day's news, and whether a dog is priced 2.00-4.00 is "
+        f"{lv['tickets']:,} dogs): the close knows the day's news, and whether a dog is priced 2.00-4.00 is "
         f"decided at it; live, both are decided at the consensus price when the ticket is built.",
         f"UFC cards of 2025 are priced at their opening lines (no closing line is on file for them): "
         f"{len(ufc25)} of the live salt's UFC dogs that year, {opened} of its {len(ufc)} UFC dogs in all priced "
@@ -637,7 +637,7 @@ def dog_caveats(dog, legs, dogs, rows):
         "Live, a UFC leg is priced from the card the UFC app carries (the best price across books, or a "
         "median of books where the card has one); this history prices each fight at one line per card. "
         "A live UFC dog's price, and whether it falls in 2.00-4.00, can differ from what this record assumes.",
-        f"Same days and events as the likeliest ticket: on the {p['days']} days both exist, the two cannot "
+        f"Same days and events as the likeliest ticket: on the {p['days']:,} days both exist, the two cannot "
         f"both win on {dog['results']['both']['all']['cannot_both_win']} (the dog is the other side of one of "
         f"the likeliest ticket's legs).",
     ]
@@ -693,7 +693,7 @@ def main():
                  "max_legs": sdy.MAX_LEGS, "pool": sdy.POOL, "weight": "shipped chance",
                  "sim_salts": len(sdy.DOG_SIM_SALTS)},
         "periods": {k: list(v) for k, v in DOG_PERIODS.items()},
-        "headline": (f"At the live salt, {DOG_PERIODS['all'][0]} to {DOG_PERIODS['all'][1]}: {lv['tickets']} "
+        "headline": (f"At the live salt, {DOG_PERIODS['all'][0]} to {DOG_PERIODS['all'][1]}: {lv['tickets']:,} "
                      f"underdog tickets, {lv['wins']} won ({lv['hit_rate']:.1%}; the prices said "
                      f"{lv['market_hit_rate']:.1%}), {_pct(lv['roi'], 1)} a ticket ({_pct(lv['roi_low'], 1)} "
                      f"to {_pct(lv['roi_high'], 1)}), price-implied {_pct(lv['implied_roi'], 1)}. The same games "

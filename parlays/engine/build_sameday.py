@@ -111,6 +111,7 @@ import sameday as sdy  # noqa: E402
 OUT = ROOT / "parlays" / "app" / "data" / "sameday.json"
 HISTORY = ROOT / "parlays" / "data" / "history.json"
 BACKTEST = ROOT / "parlays" / "data" / "sameday_backtest.json"
+BACKTEST_TICKETS = ROOT / "parlays" / "data" / "sameday_tickets.csv.gz"
 UFC_CARD = ROOT / "app" / "data" / "card.json"
 UFC_LOG = ROOT / "engine" / "data" / "prediction_history.json"
 UFC_ARCHIVE = ROOT / "engine" / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
@@ -778,6 +779,37 @@ def _json_safe(x):
     return x
 
 
+def implied_from_tickets(bt, path=None):
+    """{rule: {period: price-implied return}} for the likeliest ticket and its
+    market-only control, from the backtest's own ticket list: the mean of
+    each ticket's market chance times its multiplier, less 1 - outcome-free,
+    what the prices expected of the same tickets. WHY HERE: the backtest's
+    json carries it for the underdog ticket but not for these two, and the
+    page shows it beside every realised return. A period whose ticket count
+    does not match the json's (the two files out of step) is left missing."""
+    import csv
+    import gzip
+    path = Path(BACKTEST_TICKETS if path is None else path)
+    try:
+        with gzip.open(path, "rt", newline="") as fh:
+            rows = list(csv.DictReader(fh))
+    except (OSError, EOFError, csv.Error):
+        return {}
+    out = {}
+    for rule, res in (bt.get("results") or {}).items():
+        for period, span in (bt.get("periods") or {}).items():
+            s = (res or {}).get(period) or {}
+            vals = []
+            for r in rows:
+                if r.get("rule") != rule or not (span[0] <= str(r.get("day")) <= span[1]):
+                    continue
+                q, m = _num(r.get("p_market")), _num(r.get("multiplier"))
+                vals.append(None if q is None or m is None else q * m - 1)
+            if vals and None not in vals and len(vals) == s.get("tickets"):
+                out.setdefault(rule, {})[period] = round(sum(vals) / len(vals), 4)
+    return out
+
+
 def dog_measured(bt):
     """(measured underdog block, None) from sameday_backtest.json's "dog"
     block, or (None, the reason it is not shown). Read defensively: the
@@ -830,6 +862,9 @@ def payload(history, show, now, graded, why=None):
     caveats = []
     if bt:
         sp = bt["splits"]["same_day"]
+        for rule, per in implied_from_tickets(bt).items():
+            for period, x in per.items():
+                bt["results"][rule][period].setdefault("implied_roi", x)
         likeliest = {"rule": bt["results"]["same_day"], "market_only": bt["results"]["market_only"],
                      "periods": bt["periods"], "multipliers": sp["multipliers"],
                      "splits": {k: sp[k] for k in ("by_sports", "by_mix", "by_weekday", "by_year")},

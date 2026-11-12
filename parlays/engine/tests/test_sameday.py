@@ -547,3 +547,24 @@ def test_the_underdog_record_is_not_measured_until_the_backtest_writes_this_rule
     assert set(u["report_only"]) == {"gap", "likeliest_dog", "market_only", "paired", "both"}
     assert "Dog caveat." in out["caveats"] and "The market is hard to beat." in out["caveats"]
     json.dumps(out, allow_nan=False)
+
+
+def test_the_likeliest_tickets_price_implied_return_comes_from_the_backtests_own_tickets(tmp_path):
+    """Outcome-free: each ticket's market chance times its multiplier, less
+    1, averaged; left missing when the ticket list and the json disagree."""
+    import csv
+    import gzip
+    path = tmp_path / "t.csv.gz"
+    with gzip.open(path, "wt", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["rule", "day", "multiplier", "p_market", "status", "profit"])
+        w.writerow(["same_day", "2020-01-01", 3.0, 0.30, "won", 2.0])
+        w.writerow(["same_day", "2025-01-01", 4.0, 0.20, "lost", -1.0])
+        w.writerow(["market_only", "2025-01-01", 3.5, 0.25, "lost", -1.0])
+    bt = {"periods": {"all": ["2016-08-01", "2026-08-08"], "last_3_years": ["2023-08-09", "2026-08-08"]},
+          "results": {"same_day": {"all": {"tickets": 2}, "last_3_years": {"tickets": 1}},
+                      "market_only": {"all": {"tickets": 2}, "last_3_years": {"tickets": 1}}}}
+    got = bs.implied_from_tickets(bt, path)
+    assert got["same_day"] == {"all": pytest.approx((0.9 - 1 + 0.8 - 1) / 2), "last_3_years": pytest.approx(-0.2)}
+    assert got["market_only"] == {"last_3_years": pytest.approx(-0.125)}          # "all" counts 1, not 2
+    assert bs.implied_from_tickets(bt, tmp_path / "missing.csv.gz") == {}

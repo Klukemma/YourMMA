@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-12T13:02:33Z",
+ "generated": "2026-11-12T13:10:08Z",
  "rule": {
   "day_tz": "America/New_York",
   "band": [
@@ -973,7 +973,7 @@
     "2026-08-08"
    ]
   },
-  "headline": "At the live salt, 2016-08-01 to 2026-08-08: 1487 underdog tickets, 397 won (26.7%; the prices said 24.4%), -1.6% a ticket (-9.9% to +7.0%), price-implied -8.5%.",
+  "headline": "At the live salt, 2016-08-01 to 2026-08-08: 1,487 underdog tickets, 397 won (26.7%; the prices said 24.4%), -1.6% a ticket (-9.9% to +7.0%), price-implied -8.5%. The same games drawn with the 1,000 simulation salts returned -9.9% a ticket on average (-14.7% to -4.7%), price-implied -8.5%; the live salt's record is above 992 of the 1,000 - with the same prices, so the gap is which dogs happened to win.",
   "results": {
    "live": {
     "all": {
@@ -2393,16 +2393,17 @@
    }
   },
   "caveats": [
-   "The market is hard to beat, and a draw cannot create an edge: every 3-5x ticket pays the bookmaker's margin on every leg. This ticket is for variety and a bigger payout, never the better bet. At the live salt it won 397 of 1487 (-2% a ticket, -10% to +7%); an interval that spans zero is no evidence of an edge.",
+   "The market is hard to beat, and a draw cannot create an edge: every 3-5x ticket pays the bookmaker's margin on every leg. This ticket is for variety and a bigger payout, never the better bet. At the live salt it won 397 of 1,487 (-2% a ticket, -10% to +7%); an interval that spans zero is no evidence of an edge.",
    "Expected before any result was seen (sameday.py): by the prices it lands about 1 time in 4 (a market chance of about 0.25 at about 3.8x), the likeliest about 2 in 7 at about 3.1x, price-implied about -8% a ticket, and somewhat worse than its prices imply. The prices on file give it a market chance of 0.244 at 3.83x, price-implied -8.5%.",
    "Prior exposure: the rule's own results were not seen before it was fixed, but underdog results over the same years had been - the UFC profiles' risker and risk-lover tickets and the NFL and soccer edge-betting checks. Its record is not an out-of-sample test of underdogs.",
    "Bookmakers load more margin on underdogs (about 5% on a dog leg against 3% on a favourite, as written before the results), so a dog ticket pays the heavier margin once on its dog and a lighter one on each favourite that fills it; the fill adds payout, not safety or value.",
    "The market chances here take the margin off in proportion, which reads a dog's chance generously. Taking it equally off each side (Shin's reading for two sides), the 3,316 UFC dogs priced 2.00-4.00 average a chance of 0.363 against 0.368 and return -5.6% at their price against -4.0%; the 2,157 NFL dogs 0.364 against 0.368, -4.3% against -3.0%. Soccer's split is missing: these files keep the two teams' prices, not the draw's.",
-   "NFL underdogs are chosen and priced at the closing moneyline (197 of the live salt's 1487 dogs): the close knows the day's news, and whether a dog is priced 2.00-4.00 is decided at it; live, both are decided at the consensus price when the ticket is built.",
+   "NFL underdogs are chosen and priced at the closing moneyline (197 of the live salt's 1,487 dogs): the close knows the day's news, and whether a dog is priced 2.00-4.00 is decided at it; live, both are decided at the consensus price when the ticket is built.",
    "UFC cards of 2025 are priced at their opening lines (no closing line is on file for them): 24 of the live salt's UFC dogs that year, 36 of its 266 UFC dogs in all priced at an opening line.",
+   "The live salt drew well: over all days its record is above 992 of the 1,000 simulation salts' on the same games (the first years 948, the last 3 years 977), at the same prices (price-implied -8.5% against -8.5%). Its past draw is no forecast: the salts averaged -9.9% a ticket (-14.7% to -4.7%), and the prices imply -8.5%.",
    "The 5th-95th percentile across the 1,000 simulation salts (-15.6% to -4.3% a ticket over all days) is how much the draw alone moves the record over the same games; it is not a confidence interval. The interval over days is (-9.9% to +7.0% at the live salt).",
    "Live, a UFC leg is priced from the card the UFC app carries (the best price across books, or a median of books where the card has one); this history prices each fight at one line per card. A live UFC dog's price, and whether it falls in 2.00-4.00, can differ from what this record assumes.",
-   "Same days and events as the likeliest ticket: on the 1132 days both exist, the two cannot both win on 102 (the dog is the other side of one of the likeliest ticket's legs)."
+   "Same days and events as the likeliest ticket: on the 1,132 days both exist, the two cannot both win on 102 (the dog is the other side of one of the likeliest ticket's legs)."
   ]
  }
 }

@@ -588,11 +588,11 @@ function saltLine(s, label) {
   const n = num(s.salts) || 1000;
   const sp = (s.spread && s.spread.roi) || {};
   const rk = s.live_rank || {};
-  const bits = [`mean over ${n.toLocaleString()} draws ${pc(s.roi)} a ticket${
-    num(s.roi_low) != null && num(s.roi_high) != null ? ` (${pc(s.roi_low)} to ${pc(s.roi_high)})` : ""}; by the prices ${pc(implied(s))}`,
-    `how much the draw alone moves it, same games: ${pc(sp.p5)} to ${pc(sp.p95)}${num(sp.p50) == null ? "" : ` (middle ${pc(sp.p50)})`}`];
-  if (num(rk.roi_below) != null && num(rk.of)) bits.push(`the live draw did better than ${rk.roi_below.toLocaleString()} of ${rk.of.toLocaleString()}`);
-  return `<li><span><b>${esc(label)}</b><br><span class="mini num">${esc(bits.join(". "))}.</span></span></li>`;
+  const bits = [`Mean over ${n.toLocaleString()} draws ${pc(s.roi)} a ticket${
+    num(s.roi_low) != null && num(s.roi_high) != null ? ` (${pc(s.roi_low)} to ${pc(s.roi_high)})` : ""}; by the prices ${pc(implied(s))}.`,
+    `5th to 95th draw - how much the draw alone moves it, same games: ${pc(sp.p5)} to ${pc(sp.p95)}${num(sp.p50) == null ? "" : `, middle ${pc(sp.p50)}`}.`];
+  if (num(rk.roi_below) != null && num(rk.of)) bits.push(`The live draw did better than ${rk.roi_below.toLocaleString()} of ${rk.of.toLocaleString()}.`);
+  return `<li><span><b>${esc(label)}</b>${bits.map((x) => `<br><span class="mini num">${esc(x)}</span>`).join("")}</span></li>`;
 }
 
 // A paired difference, underdog minus likeliest (or lottery minus
