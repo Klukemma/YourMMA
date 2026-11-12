@@ -183,9 +183,14 @@ def test_each_entry_carries_its_basis_and_withholds_what_its_league_did_not_ship
     e0, nor, fin, bare = ups["Arsenal"], ups["Bodo/Glimt"], ups["HJK"], ups["KuPS"]
     assert e0["basis"] == "recalibrated" and e0["price_kind"] == "pre" and e0["p_o25"] is not None
     assert fin["basis"] == "raw" and fin["pick"] and fin["price_kind"] == "pre"
-    # NOR's model did not ship both teams to score or over 2.5: null, and listed
-    assert nor["score_source"] == "model" and nor["p_btts"] is None and nor["p_o25"] is None
-    assert nor["model_o25"] is None and set(nor["scores"]["withheld"]) == {"btts", "o25"}
+    # NOR's model did not ship over 2.5 (SHIPPED, re-measured 2026-11-12: it
+    # ships both teams to score since the roster fix): null, and listed;
+    # every number it ships is there
+    held = set(slg.withheld("NOR", "model"))
+    assert "o25" in held and "o15" not in held
+    assert nor["score_source"] == "model" and nor["p_o25"] is None and nor["model_o25"] is None
+    assert set(nor["scores"]["withheld"]) == held
+    assert (nor["p_btts"] is None) == ("btts" in held)
     assert nor["p_o15"] is not None and nor["scores"]["top"]
     assert "withheld" not in e0["scores"]
     # FIN gives no model-alone pick (as decided here): no price, no pick, said so
