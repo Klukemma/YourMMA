@@ -8,11 +8,24 @@ Each row is that sport's SHIPPED pick, point in time, at the price on file:
   NFL     nfl_model.walk_forward over nfl_model.feature_frame - each season
           fitted on earlier seasons; the pick is the blend's (home at 0.5 or
           more), priced at the pick side's closing moneyline (nflverse).
-  Soccer  soccer_model.pick over the top five leagues - the market
-          recalibrated with weights fitted on earlier seasons only - priced
-          at the pre-match average for the pick (never the closing price).
-          Built from main's soccer engine (`--soccer-engine`), because this
-          branch carries unfinished soccer work that main does not ship.
+  Soccer  soccer_model.shipped_pick over the decided leagues
+          (soccer_leagues.in_app(), as soccer_predict's measured_leagues),
+          kept for the top five only (build_sameday.SOCCER_MEASURED) - each
+          league-season's pick from matches dated before its first match:
+          the pre-match market recalibrated with the weights pooled over
+          every European division (PICK_WEIGHTS "per_price"), the raw
+          no-vig price for a league whose recalibration lost to it (D1).
+          The pick, its chance and its price are the app's (soccer_predict.
+          match_entry): the likeliest of the three, at the pre-match average
+          for it (never the closing price), the market the no-vig pre-match
+          price. A match with no pre-match price is no leg (the live
+          builder takes only "posted" ones).
+          WHY THIS ENGINE: the live soccer legs come from it. The legs were
+          first built from main's soccer_model.pick (one recalibration for
+          the five, D1 included), and once the pipeline switched the live
+          leg chances moved (D1 2-3 points on six of eight matches), so the
+          record shown was no longer this procedure's. `--soccer-engine`
+          builds from another soccer/engine (e.g. main's, to compare).
 
 Writes parlays/data/legs_{ufc,nfl,soccer}.csv.gz with: day (ET), key, event,
 pick, opponent, p, p_model, p_market, decimal, price_source, result
@@ -24,6 +37,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
@@ -32,6 +46,20 @@ ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "parlays" / "data"
 COLS = ["day", "key", "event", "pick", "opponent", "p", "p_model", "p_market",
         "decimal", "price_source", "result"]
+
+
+# build_sameday.SOCCER_MEASURED (a test holds them equal): not imported, since
+# sameday puts the UFC engine on the path and it has a package named
+# experiments, as the soccer engine does.
+SOCCER_MEASURED = ("E0", "SP1", "I1", "D1", "F1")
+DAY_TZ = ZoneInfo("America/New_York")      # sameday.DAY_TZ
+
+
+def _et_day(kickoff):
+    """sameday.et_day of a naive-UTC kickoff: the live builder's day."""
+    t = pd.Timestamp(kickoff)
+    t = t.tz_localize("UTC") if t.tzinfo is None else t
+    return t.tz_convert(DAY_TZ).strftime("%Y-%m-%d")
 
 
 def _devig(a, b):
@@ -96,42 +124,56 @@ def nfl():
 
 
 def soccer(engine_dir):
-    """Main's soccer engine at `engine_dir` (its own soccer_data reads the
-    data directory beside it)."""
+    """The top five's legs by the shipped pick of the soccer engine at
+    `engine_dir` (its own soccer_data reads the data directory beside it):
+    soccer_model.shipped_pick over every league the app carries by decision
+    (soccer_leagues.in_app(), the leagues soccer_predict computes the pick
+    over), on a frame of every measured league (the weights are pooled
+    over the leagues priced the same way, shown or not), kept for the top
+    five. The model's own chances are not needed: a leg is a priced match,
+    and a priced match's pick never reads them (pick_leagues), so they are
+    NaN here as in main's build. The day is the live builder's: the ET day
+    of the kickoff."""
     sys.path.insert(0, str(engine_dir))
     import soccer_backtest as bt
     import soccer_data as sd
+    import soccer_leagues as slg
     import soccer_model as smod
-    m = sd.load_matches()
-    m = m[m["league"].isin(sd.TOP)].reset_index(drop=True)
-    nan = pd.DataFrame(np.nan, index=m.index, columns=["p_h", "p_d", "p_a"])
-    p, _ = smod.pick(m, nan)
+    m = sd.load_matches(leagues="all")
+    nan = pd.DataFrame(np.nan, index=m.index, columns=["p_h", "p_d", "p_a", "p_o25"])
+    leagues = slg.in_app()
+    p, _ = smod.shipped_pick(m, nan, leagues)
     q = bt.no_vig(m, "pre")
+    keep = m["league"].isin(SOCCER_MEASURED) & ~p["model_only"].astype(bool) & m["result"].notna() \
+        & (m["season"] >= 2016)
     rows = []
-    for i, r in m.iterrows():
-        if bool(p.at[i, "model_only"]) or pd.isna(r["result"]) or r["season"] < 2016:
-            continue
+    for i in m.index[keep]:
+        r = m.loc[i]
         probs = {"H": p.at[i, "p_h"], "D": p.at[i, "p_d"], "A": p.at[i, "p_a"]}
-        if any(pd.isna(v) for v in probs.values()):
+        if any(pd.isna(v) for v in probs.values()) or p.at[i, "price"] != "pre":
             continue
         k = max(probs, key=probs.get)
         dec = r[f"avg_{k.lower()}"]
         if pd.isna(dec):
             continue
-        rows.append({"day": str(r["date"])[:10], "key": r["match_id"], "event": f"{r['home']} v {r['away']}",
+        day = _et_day(r["kickoff"]) if pd.notna(r["kickoff"]) else str(r["date"])[:10]
+        rows.append({"day": day, "key": r["match_id"], "event": f"{r['home']} v {r['away']}",
                      "pick": {"H": r["home"], "D": "Draw", "A": r["away"]}[k],
                      "opponent": {"H": r["away"], "D": f"{r['home']} v {r['away']}", "A": r["home"]}[k],
                      "p": probs[k], "p_model": np.nan,
-                     "p_market": q.at[i, f"p_{k.lower()}"] if f"p_{k.lower()}" in q else np.nan,
+                     "p_market": q.at[i, f"p_{k.lower()}"],
                      "decimal": float(dec), "price_source": "pre",
                      "result": "won" if r["result"] == k else "lost"})
+    basis = p.loc[keep, "basis"].groupby(m.loc[keep, "league"]).agg(lambda b: ",".join(sorted(set(b))))
+    print("soccer  basis by league:", dict(basis))
     return pd.DataFrame(rows, columns=COLS)
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--soccer-engine", required=True,
-                    help="main's soccer/engine (e.g. from git archive origin/main soccer)")
+    ap.add_argument("--soccer-engine", default=str(ROOT / "soccer" / "engine"),
+                    help="the soccer/engine to build the soccer legs from (default this checkout's, "
+                         "whose pick the live legs take)")
     ap.add_argument("--only", choices=("ufc", "nfl", "soccer"),
                     help="build one sport in this process (each sport runs in its own process: "
                          "the UFC and soccer engines both have a package named experiments)")

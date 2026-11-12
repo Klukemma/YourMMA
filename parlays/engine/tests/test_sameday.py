@@ -152,3 +152,118 @@ def test_soccer_legs_come_only_from_the_leagues_the_rule_was_measured_on():
          "prices": {"avg": {"h": 1.40}}, "home": {"name": "A"}, "away": {"name": "B"}}
     assert len(bs.soccer_legs({"matches": [dict(m, league="E0")]}, NOW)) == 1
     assert bs.soccer_legs({"matches": [dict(m, league="NOR")]}, NOW) == []
+
+
+# ---------------------------------------------------------------- the soccer log, whole
+
+SOCCER_ENGINE = ENGINE.parents[1] / "soccer" / "engine"
+
+
+def _soccer_pick(mid, kickoff, **kw):
+    p = {"match_id": mid, "league": "E0", "season": 2026, "kickoff": kickoff, "home": "Arsenal",
+         "away": "Chelsea", "pick": "H", "pick_prob": 0.6}
+    p.update(kw)
+    return p
+
+
+def _save_with_soccer_log(log, path):
+    """Write `log` with soccer_log.save itself, in its own process on a clean
+    import path (the soccer and UFC engines share package names), so the
+    split is the one the soccer runner writes."""
+    import os
+    import subprocess
+    src = path.parent / "log_in.json"
+    src.write_text(json.dumps(log))
+    code = ("import json, sys; sys.path.insert(0, sys.argv[1]); import soccer_log as sl; "
+            "sl.save(json.loads(open(sys.argv[2]).read()), sys.argv[3]); "
+            "print(json.dumps({'picks': sorted(sl.load(sys.argv[3])['picks']), 'late': sl.LATE, "
+            "'record': sl.FD, 'schema': sl.SCHEMA}))")
+    env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", SOCCER_PREDICTIONS_LOG=str(path))
+    env.pop("PYTHONPATH", None)
+    out = subprocess.run([sys.executable, "-c", code, str(SOCCER_ENGINE), str(src), str(path)],
+                         capture_output=True, text=True, env=env, cwd=path.parent, check=True)
+    return json.loads(out.stdout)
+
+
+def test_a_settled_ticket_stays_settled_once_its_soccer_leg_is_archived(tmp_path, monkeypatch):
+    """soccer_log.save moves a pick settled for good to prediction_history/
+    YYYY-MM.json once its kickoff is 28 days before the newest pick's, and
+    every run grades every ticket again: the grader reads the whole log."""
+    path = tmp_path / "prediction_history.json"
+    old = _soccer_pick("E0-20261101-arsenal-chelsea", "2026-11-01T15:00:00Z",
+                       final={"home": 2, "away": 0, "result": "H"}, correct=True)
+    gone = _soccer_pick("E0-20261102-leeds-stoke", "2026-11-02T15:00:00Z", home="Leeds", away="Stoke",
+                        void="no result")
+    new = _soccer_pick("E0-20261210-everton-fulham", "2026-12-10T20:00:00Z", home="Everton", away="Fulham")
+    log = {"schema": 1, "picks": {p["match_id"]: p for p in (old, gone, new)}}
+    saved = _save_with_soccer_log(log, path)
+    # the names this reader mirrors are soccer_log's own
+    assert (saved["late"], saved["record"], saved["schema"]) == (bs.SOCCER_LATE, bs.SOCCER_RECORD,
+                                                                 bs.SOCCER_LOG_SCHEMA)
+    main = json.loads(path.read_text())["picks"]
+    assert sorted(main) == [new["match_id"]]                         # the split did happen
+    assert (tmp_path / "prediction_history" / "2026-11.json").exists()
+    assert sorted(bs.soccer_picks(path)) == saved["picks"]           # what soccer_log.load reads
+    assert bs.soccer_results(path) == {old["match_id"]: "H", gone["match_id"]: "void"}
+
+    leg = {"sport": "Soccer", "key": "Soccer:" + old["match_id"], "pick": "Arsenal", "decimal": 3.2,
+           "names": {"match_id": old["match_id"], "pick": "H"}}
+    history = {"tickets": [{"day": "2026-11-01", "status": "won", "multiplier": 3.2, "paid": 3.2, "profit": 2.2,
+                            "first_start": "2026-11-01T15:00:00Z", "legs": [leg]}]}
+    monkeypatch.setattr(bs, "SOCCER_LOG", path)
+    monkeypatch.setattr(bs, "UFC_ARCHIVE", tmp_path / "none.csv")
+    monkeypatch.setattr(bs, "NFL_GAMES", tmp_path / "none.csv.gz")
+    graded = bs.grade_all(history)
+    assert graded[0]["status"] == "won" and graded[0]["profit"] == pytest.approx(2.2)
+    assert bs.record(graded)["settled"] == 1 and bs.record(graded)["pending"] == 0
+
+
+def test_a_soccer_log_file_that_does_not_read_stops_the_run(tmp_path):
+    """Read as empty, it would send every ticket with a leg in it back to
+    pending and write that down."""
+    path = tmp_path / "prediction_history.json"
+    path.write_text('{"picks": {}, "schema": 1}')
+    (tmp_path / "prediction_history").mkdir()
+    (tmp_path / "prediction_history" / "2026-10.json").write_text('{"picks": {')
+    with pytest.raises(ValueError):
+        bs.soccer_picks(path)
+    assert bs.soccer_picks(tmp_path / "missing.json") == {}           # no soccer yet: no picks
+
+
+def test_a_void_soccer_pick_is_a_void_leg_unless_football_data_may_restore_it(tmp_path):
+    """soccer_log writes "void" (it never writes "status"); a pick voided as
+    logged after kickoff on the feeds' time waits for football-data.co.uk's."""
+    k = "2026-11-08T15:00:00Z"
+    picks = {
+        "off": _soccer_pick("off", k, void="no result"),
+        "moved": _soccer_pick("moved", k, void="rescheduled"),
+        "dup": _soccer_pick("dup", k, void="duplicate"),
+        "late_fd": _soccer_pick("late_fd", k, void="logged after kickoff", void_by="football-data.co.uk"),
+        "late_feed": _soccer_pick("late_feed", k, void="logged after kickoff", void_by="ESPN"),
+        "open": _soccer_pick("open", k),
+        "prov": _soccer_pick("prov", k, final={"home": 1, "away": 1, "result": "D", "provisional": True}),
+    }
+    path = tmp_path / "prediction_history.json"
+    path.write_text(json.dumps({"schema": 1, "picks": picks}))
+    res = bs.soccer_results(path)
+    assert res == {"off": "void", "moved": "void", "dup": "void", "late_fd": "void", "prov": "D"}
+    leg = {"sport": "Soccer", "pick": "A", "names": {"match_id": "off", "pick": "A"}}
+    assert bs.leg_result(leg, {"soccer": res}) == {"winner": None}
+    late = dict(leg, names={"match_id": "late_feed", "pick": "A"})
+    assert bs.leg_result(late, {"soccer": res}) is None
+    # and a ticket whose other leg won settles on it, the void leg at 1.0
+    t = sdy.settle({"legs": [L("NFL", "a", 0.6, 2.0, result={"winner": "pick"}),
+                             L("Soccer", "off", 0.6, 1.8, result=bs.leg_result(leg, {"soccer": res}))]})
+    assert t == {"status": "won", "paid": 2.0, "profit": 1.0}
+
+
+def test_a_moved_soccer_match_is_graded_under_its_new_id(tmp_path):
+    """soccer_log moves a pick to the id its match changed to ("id_was" the
+    first): a leg keyed by the old id reads the result there."""
+    picks = {"F1-20261101-lyon-angers": _soccer_pick(
+        "F1-20261101-lyon-angers", "2026-11-01T16:15:00Z", league="F1", id_was="F1-20261031-lyon-angers",
+        final={"home": 2, "away": 0, "result": "H"})}
+    path = tmp_path / "prediction_history.json"
+    path.write_text(json.dumps({"schema": 1, "picks": picks}))
+    res = bs.soccer_results(path)
+    assert res == {"F1-20261101-lyon-angers": "H", "F1-20261031-lyon-angers": "H"}

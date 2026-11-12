@@ -20,7 +20,9 @@ the morning is the one that is graded.
 GRADING reads each sport's own results: UFC through engine/grade.py's
 name-tolerant match on the archive (a bout with no result stays open), NFL
 the schedule's played games (a tie is void), soccer the prediction log's
-finals (postponed, cancelled or abandoned is void).
+finals - the WHOLE log, archived months included (soccer_picks), because
+every run settles every day's ticket again - and its voids for good (a
+match that never produced a result, or was rescheduled: soccer_results).
 """
 
 from __future__ import annotations
@@ -46,7 +48,11 @@ NFL_WEEK = ROOT / "nfl" / "app" / "data" / "week.json"
 NFL_GAMES = ROOT / "nfl" / "data" / "games.csv.gz"
 SOCCER_MATCHES = ROOT / "soccer" / "app" / "data" / "matches.json"
 SOCCER_LOG = ROOT / "soccer" / "data" / "prediction_history.json"
-VOID_STATUSES = {"postponed", "cancelled", "canceled", "abandoned", "void", "suspended"}
+SOCCER_LOG_SCHEMA = 1          # soccer_log.SCHEMA
+# soccer_log's void reasons that football-data.co.uk's result may still take
+# back (soccer_log.LATE on the feeds' kickoff, "void_by" not it): open, not void.
+SOCCER_LATE = "logged after kickoff"
+SOCCER_RECORD = "football-data.co.uk"
 
 
 def _iso(t):
@@ -254,12 +260,91 @@ def _results():
                 out["nfl"][r.game_id] = float(hs) - float(as_)
     except Exception:
         pass
-    for mid, p in ((_load(SOCCER_LOG, {}) or {}).get("picks") or {}).items():
+    out["soccer"] = soccer_results()
+    return out
+
+
+def _soccer_file(path):
+    """One soccer log file's picks. A file that is there but does not read
+    as the log stops the run: read as empty, it would turn every ticket
+    with a leg in it back to pending and write that to history.json."""
+    try:
+        log = json.loads(Path(path).read_text())
+    except (OSError, ValueError) as err:
+        raise ValueError(f"soccer log {path} does not read ({err})") from err
+    if log.get("schema") != SOCCER_LOG_SCHEMA:
+        raise ValueError(f"soccer log {path} is schema {log.get('schema')}, expected {SOCCER_LOG_SCHEMA}")
+    return log.get("picks") or {}
+
+
+def soccer_picks(path=None):
+    """Every pick of the soccer log, as soccer_log.load reads it: the main
+    file and every archived month (prediction_history/YYYY-MM.json beside
+    it), a pick in both being the main file's.
+
+    WHY THE ARCHIVE: soccer_log.save moves a pick settled for good to its
+    kickoff's month once that kickoff is ARCHIVE_DAYS (28) before the newest
+    pick's - about three to four weeks after the match - and grade_all
+    settles every day's ticket again on every run. Read from the main file
+    alone, a won or lost ticket went back to pending, paid and profit None,
+    once its soccer leg aged out, and left the record.
+
+    WHY NOT IMPORT soccer_log: its modules and the UFC engine's (put on the
+    path by _results for grade.py) both have a package named experiments,
+    and the parlays runner installs only the UFC engine's requirements. The
+    test writes a split log with soccer_log.save itself and reads it here,
+    so a change to the layout fails it. No main file (no soccer yet): no
+    picks."""
+    path = Path(SOCCER_LOG if path is None else path)
+    picks = _soccer_file(path) if path.exists() else {}
+    folder = path.with_suffix("")
+    old = {}
+    if folder.is_dir():
+        for f in sorted(folder.glob("*.json")):
+            old.update(_soccer_file(f))
+    return dict(old, **picks)
+
+
+def _void_for_good(p):
+    """Whether a soccer pick is void for a reason no later run takes back
+    (soccer_log.settled_for_good): every void but "logged after kickoff" on
+    the feeds' time, which football-data.co.uk's kickoff may restore - that
+    leg stays open until it does or confirms it."""
+    v = p.get("void")
+    return bool(v) and not (v == SOCCER_LATE and p.get("void_by") not in (None, SOCCER_RECORD))
+
+
+def soccer_results(path=None):
+    """{match_id: "H" / "D" / "A" / "void"} for every soccer pick with a
+    result or void for good; a match with neither is left out (its leg
+    stays open).
+
+    VOID is read off soccer_log's own key, "void" (it never writes a
+    "status"): "no result" (no result STALE_DAYS after kickoff: postponed
+    and never played), "rescheduled" (off, back under a new id),
+    "duplicate", and "logged after kickoff" on football-data.co.uk's time -
+    a leg on a match that started before it was listed to is void too, as a
+    bet taken after kickoff is, never a win or a loss. Before this a
+    postponed match's leg kept its ticket pending for good.
+
+    A MOVED MATCH (soccer_log: the same match under an id that changed,
+    "id_was" the first one) is graded under the id it moved to, so a leg
+    keyed by the old id reads its result there; a pick still under the old
+    id wins."""
+    picks = soccer_picks(path)
+    out = {}
+    for mid, p in picks.items():
         fin = p.get("final") or {}
-        if fin.get("result") in ("H", "D", "A"):
-            out["soccer"][mid] = fin["result"]
-        elif str(p.get("status", "")).lower() in VOID_STATUSES:
-            out["soccer"][mid] = "void"
+        if fin.get("result") in ("H", "D", "A") and not p.get("void"):
+            r = fin["result"]
+        elif _void_for_good(p):
+            r = "void"
+        else:
+            continue
+        out[mid] = r
+        was = p.get("id_was")
+        if was and was != mid and was not in picks:
+            out.setdefault(was, r)
     return out
 
 
