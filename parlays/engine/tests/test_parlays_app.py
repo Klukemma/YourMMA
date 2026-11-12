@@ -69,3 +69,22 @@ def test_the_page_data_on_file_is_well_formed():
     assert d["day_tz"] == "America/New_York" and d["rule"]["band"] == [3.0, 5.0]
     assert any("hard to beat" in c for c in d["caveats"])
     json.dumps(d, allow_nan=False)
+
+
+def test_the_cache_was_bumped_for_the_underdog_ticket_and_the_page_reads_it():
+    """sameday.json gained `days` and the underdog ticket (v2 of its shape):
+    the worker's cache name moved on with it, so an installed app does not
+    keep an app.js that cannot read the new file."""
+    sw = (APP / "sw.js").read_text()
+    version = int(re.search(r'const CACHE = "yourparlays-v(\d+)"', sw).group(1))
+    assert version >= 2
+    js = (APP / "app.js").read_text()
+    assert "d.days" in js and '"underdog"' in js and "cannot_both_win" in js
+    # the one plain line on the lottery, and the market chance in words
+    assert ("One underdog drawn by lot - likelier ones a little more often - plus favourites to 3-5x. "
+            "The draw is fixed for the day.") in js
+    assert "by the prices" in js and "Only one underdog fit" in js
+    assert "how much the draw alone moves it, same games" in js
+    assert "The market is hard to beat." in js
+    # an older sameday.json (one ticket a day, no `days`) still reads
+    assert "d.tickets || []" in js

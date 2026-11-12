@@ -3608,6 +3608,62 @@ print("\n" + "="*80)
 # ENHANCED VALUE BET ANALYSIS (with odds)
 # ============================================================================
 
+def median_price(odds_match):
+    """The typical book's price for one side: {'american', 'decimal', 'books'},
+    or None when the side has no usable price.
+
+    WHY: the card's odds/odds_other are each side's BEST price across books,
+    often from two different books, and a parlay is bought at one book. The
+    best of each side flatters an underdog's multiplier most (dog prices
+    spread wider across books than favourites'), so the same-day underdog
+    ticket prices its dog at this median pair instead when there is one.
+
+    The median is taken over the decimal prices (a median of American odds
+    is meaningless across +100/-100: -105 and +105 would give 0), the mean of
+    the two middle ones for an even count, then written back as American,
+    rounded as books quote it. `books` is how many prices it is the median
+    of. When the card is served from odds_cache, each side's 'odds' list
+    holds one entry - the best price the cache kept - so books is 1 and the
+    "median" IS the best price: a reader must not take books=1 for a typical
+    book."""
+    if not odds_match:
+        return None
+    decimals = []
+    for offer in odds_match.get('odds') or []:
+        try:
+            a = float(offer.get('odds'))
+        except (TypeError, ValueError, AttributeError):
+            continue
+        if a != a or a in (float('inf'), float('-inf')) or a == 0:
+            continue
+        decimals.append(1.0 + (a / 100.0 if a > 0 else 100.0 / -a))
+    if not decimals:
+        return None
+    decimals.sort()
+    n, mid = len(decimals), len(decimals) // 2
+    dec = decimals[mid] if n % 2 else (decimals[mid - 1] + decimals[mid]) / 2.0
+    if dec <= 1.0:
+        return None
+    american = round((dec - 1.0) * 100.0) if dec >= 2.0 else round(-100.0 / (dec - 1.0))
+    return {'american': int(american), 'decimal': dec, 'books': n}
+
+
+def with_median_prices(pick, other):
+    """The card fields for one fight from median_price() of the pick's side
+    and the other side's: odds_median / odds_other_median (American),
+    decimal_median / decimal_other_median, and books_median - the fewer of
+    the two sides' book counts, so it says how thin the pair is. All None
+    unless BOTH sides have a median: half a pair cannot take the margin out,
+    and a missing price must read as missing."""
+    if not pick or not other:
+        return {'odds_median': None, 'odds_other_median': None, 'decimal_median': None,
+                'decimal_other_median': None, 'books_median': None}
+    return {'odds_median': pick['american'], 'odds_other_median': other['american'],
+            'decimal_median': round(pick['decimal'], 6),
+            'decimal_other_median': round(other['decimal'], 6),
+            'books_median': min(pick['books'], other['books'])}
+
+
 def analyze_fight_value(pred, fighter_name, odds_data):
     """
     Analyze betting value for a predicted winner.
@@ -3977,6 +4033,7 @@ def _form_of(name):
         return None
 
 _app_fights = []
+_card_medians = []
 for _ba in bet_analysis:
     _pred = _ba['pred_full']
     _vi = _ba.get('value_info') or {}
@@ -3986,6 +4043,11 @@ for _ba in bet_analysis:
     _other_name = _pred['blue'] if _pred['winner'] == _pred['red'] else _pred['red']
     _other_vi = (analyze_fight_value(_pred, _other_name, CURRENT_ODDS)
                  if CURRENT_ODDS else None) or {}
+    # The typical book's pair beside the best one (median_price), from the
+    # same matcher records; written onto the card below, after card_payload.
+    _card_medians.append((
+        median_price(match_fighter_to_odds(_pred['winner'], CURRENT_ODDS) if CURRENT_ODDS else None),
+        median_price(match_fighter_to_odds(_other_name, CURRENT_ODDS) if CURRENT_ODDS else None)))
     _sim = None
     for _label, _summary in _card_simulations:
         if _label == f"{_pred['red']} vs {_pred['blue']}":
@@ -4215,6 +4277,15 @@ _app_card = _app_export.card_payload(
     trained_on=int(len(X_train_full)),
     parlay_profiles=_parlay_tickets,
     profiles_measured=_profiles_measured)
+
+# THE TYPICAL BOOK'S PAIR, beside the best one and changing nothing else:
+# odds/odds_other stay the best price across books (the pick, the edge and
+# the three parlays read them); odds_median/odds_other_median are each
+# side's median across the books on file (median_price), which the same-day
+# underdog ticket prices its dog at, because a best-of-books pair flatters
+# an underdog. card_payload emits one fight per _app_fights entry, in order.
+for _card_fight, (_med, _med_other) in zip(_app_card['fights'], _card_medians):
+    _card_fight.update(with_median_prices(_med, _med_other))
 
 for _path in _app_export.write_all(APP_DATA_DIR, {'card': _app_card}):
     print(f"\nApp data: {_path}")
