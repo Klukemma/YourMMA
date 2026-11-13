@@ -90,8 +90,37 @@ def _best(outcomes):
     return best_price, best_book
 
 
+def _book_prices(outcomes):
+    """{book: price} for one side, every book that quoted a finite number.
+
+    WHY: the best price of each side, often from two different books, is a
+    price no single book offers, and it flatters an underdog most (dog prices
+    spread wider across books than favourites'). A parlay is bought at one
+    book, so the card also exports the typical book's pair (predict_card's
+    median_price), which needs every book's price, not only the best one. A
+    dict because the cache file is indented JSON: one line a book. A book
+    with no name cannot be told apart from another, so it is left out (and
+    the side then falls back to its best price alone when served); a book
+    named twice keeps its higher price, the one _best would pick.
+    """
+    prices = {}
+    for book, price in outcomes:
+        if not book or isinstance(price, bool) or not isinstance(price, (int, float)):
+            continue
+        if price != price or price in (float("inf"), float("-inf")):
+            continue
+        book = str(book)
+        if book not in prices or price > prices[book]:
+            prices[book] = price
+    return prices
+
+
 def parse_events(events):
-    """Turn an API response into {key: entry}, keeping the best price a side.
+    """Turn an API response into {key: entry}, keeping the best price a side
+    (odds_a/odds_b, book_a/book_b) and every book's price beside it
+    (prices_a/prices_b, see _book_prices). The best price is what every
+    pick, edge, blend and parlay reads; the per-book prices only feed the
+    card's median pair.
 
     An event with no usable h2h market is skipped rather than stored empty: a
     fight recorded with no price would satisfy the "already have it" test and
@@ -128,9 +157,15 @@ def parse_events(events):
 
         # Stored in the same sorted order fight_key uses, so a and b always
         # mean the same fighter however the API happened to label the corners.
-        pairs = sorted(((norm_name(home), home, home_price, home_book),
-                        (norm_name(away), away, away_price, away_book)))
-        (_, name_a, odds_a, book_a), (_, name_b, odds_b, book_b) = pairs
+        # Ordered on the first four fields alone, exactly as before the
+        # per-book prices rode along (a dict cannot be compared).
+        pairs = sorted(((norm_name(home), home, home_price, home_book,
+                         _book_prices(offers[home])),
+                        (norm_name(away), away, away_price, away_book,
+                         _book_prices(offers[away]))),
+                       key=lambda side: side[:4])
+        ((_, name_a, odds_a, book_a, prices_a),
+         (_, name_b, odds_b, book_b, prices_b)) = pairs
         out[fight_key(home, away, when)] = {
             "date": when,
             "commence_time": event.get("commence_time"),
@@ -140,6 +175,8 @@ def parse_events(events):
             "odds_b": odds_b,
             "book_a": book_a,
             "book_b": book_b,
+            "prices_a": prices_a,
+            "prices_b": prices_b,
         }
     return out
 
@@ -154,6 +191,9 @@ def merge(cache, parsed, now=None):
     price on offer when it was made; grading keeps the newest pick for a bout,
     and settlement uses the newest line (settled_rows), so the two agree. The
     first-seen price is never overwritten, so how far the line moved is kept.
+    Each line keeps the per-book prices of the fetch it came from beside it:
+    prices_a/prices_b with the first, latest_prices_a/latest_prices_b with
+    the latest (_entry_odds serves whichever matches the served line).
     """
     now = now or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     added, refreshed = 0, 0
@@ -181,6 +221,14 @@ def merge(cache, parsed, now=None):
             existing["latest_b"] = entry["odds_b"]
             existing["latest_book_a"] = entry.get("book_a")
             existing["latest_book_b"] = entry.get("book_b")
+            # Every book's price as of this fetch, beside the latest best -
+            # or none at all: a list from an earlier fetch must never sit
+            # beside a newer best price and be served as its books.
+            for side in ("a", "b"):
+                if entry.get(f"prices_{side}"):
+                    existing[f"latest_prices_{side}"] = entry[f"prices_{side}"]
+                else:
+                    existing.pop(f"latest_prices_{side}", None)
             existing["latest_seen"] = now
             if entry.get("commence_time"):
                 existing["commence_time"] = entry["commence_time"]
@@ -417,27 +465,66 @@ def for_card(cache, fights, existing=None):
     return out
 
 
+def _offers(price, book, prices):
+    """The matcher record's 'odds' list for one side: [{book, odds}].
+
+    The served best price comes FIRST, under the book it has always been
+    shown under, so predict_card's book_with_best (the first offer at the
+    best price) names the same book as before. Every other book that quoted
+    this side in the same fetch follows, which is what the card's median
+    pair (predict_card.median_price) is taken over.
+
+    The per-book prices are used only when they belong to this best price:
+    the best book is among them at exactly this price and no book beats it.
+    Anything else - an entry cached before per-book prices were kept, a
+    nameless best book, a hand-edited file - is served as the best price
+    alone, as it always was, so its median is the best price over 1 book
+    and reads as such (books_median 1) rather than as a typical book.
+    """
+    first = {"book": book or "cached", "odds": price}
+    if not isinstance(prices, dict) or not book or book not in prices:
+        return [first]
+    try:
+        consistent = (prices[book] == price
+                      and all(p <= price for p in prices.values()))
+    except TypeError:
+        consistent = False
+    if not consistent:
+        return [first]
+    return [first] + [{"book": b, "odds": p}
+                      for b, p in sorted(prices.items()) if b != book]
+
+
 def _entry_odds(entry):
-    """{lowercased name: matcher record} for both sides of one cached fight."""
+    """{lowercased name: matcher record} for both sides of one cached fight.
+
+    Each side's 'odds' list carries every book's price from the fetch the
+    served line came from (_offers), the best one first; best_odds is that
+    best price, as before.
+    """
     out = {}
     price_a, price_b = _served(entry)
     latest = (entry.get("latest_a") is not None
               and entry.get("latest_b") is not None)
     book_a = entry.get("latest_book_a") if latest else None
     book_b = entry.get("latest_book_b") if latest else None
+    # The books of the line being served: the latest fetch's when the latest
+    # line is served (never the first fetch's, which priced another line).
+    prices_a = entry.get("latest_prices_a" if latest else "prices_a")
+    prices_b = entry.get("latest_prices_b" if latest else "prices_b")
     seen = ((entry.get("latest_seen") or entry.get("last_seen"))
             if latest else entry.get("first_seen"))
-    for name, price, book, opponent in (
+    for name, price, book, prices, opponent in (
             (entry["fighter_a"], price_a, book_a or entry.get("book_a"),
-             entry["fighter_b"]),
+             prices_a, entry["fighter_b"]),
             (entry["fighter_b"], price_b, book_b or entry.get("book_b"),
-             entry["fighter_a"])):
+             prices_b, entry["fighter_a"])):
         if price is None:
             continue
         out[name.lower()] = {
             "name": name,
             "opponent": opponent,
-            "odds": [{"book": book or "cached", "odds": price}],
+            "odds": _offers(price, book, prices),
             "best_odds": price,
             "event": "",
             "time": entry["date"],
