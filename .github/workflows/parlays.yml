@@ -1,8 +1,9 @@
 name: Same-day parlays
 
-# The 4th page (parlays/app): one same-day ticket a day from the three apps'
-# picks. It owns no data of its own - it reads what the UFC, NFL and soccer
-# runners last committed (app/data/card.json, nfl/app/data/week.json,
+# The 4th page (parlays/app): two same-day tickets a day (the likeliest and
+# the underdog ticket) from the three apps' picks, for today and the next
+# days that have them. It owns no data of its own - it reads what the UFC,
+# NFL and soccer runners last committed (app/data/card.json, nfl/app/data/week.json,
 # soccer/app/data/matches.json) - so it runs right after any of them, plus
 # on a schedule that rolls the US-Eastern day and grades yesterday's ticket
 # even when no sport ran. It needs no network: everything it reads is in the
@@ -13,6 +14,17 @@ on:
     workflows: ["Update UFC dataset", "NFL predictions", "Soccer predictions"]
     types: [completed]
     branches: [main]
+  # A change to the builder or the page reaches main: rebuild the page's file
+  # at once, so the page never reads a file in an older shape until the next
+  # sport run or the schedule. Its own commits (data only, pushed with the
+  # workflow token) never trigger it.
+  push:
+    branches: [main]
+    paths:
+      - "parlays/engine/**"
+      - "parlays/app/**"
+      - "!parlays/app/data/**"
+      - ".github/workflows/parlays.yml"
   schedule:
     - cron: "23 5 * * *"      # 00:23 EST / 01:23 EDT: a new Eastern day, and yesterday graded
     - cron: "41 15 * * 6,0"   # Saturday and Sunday late morning Eastern, before the day's first starts
@@ -58,7 +70,9 @@ jobs:
           for p in $PATHS; do
             if [ -e "$p" ]; then git add -- "$p"; fi
           done
-          git commit -m "Same-day parlays: $(python -c "import json;d=json.load(open('parlays/app/data/sameday.json'));t=(d.get('tickets') or [{}])[0];print(t.get('day'), t.get('status'), t.get('multiplier') or '')")"
+          # Today's two tickets in the message: days in play (before today) come
+          # first in the file, so today is found by its flag, not taken first.
+          git commit -m "Same-day parlays: $(python -c "import json;d=json.load(open('parlays/app/data/sameday.json'));x=next((y for y in d.get('days') or [] if y.get('today')),{});s=lambda k:' '.join(str(v) for v in ((x.get(k) or {}).get('status'),(x.get(k) or {}).get('multiplier')) if v);print(x.get('day'),'likeliest',s('likeliest'),'| underdog',s('underdog'))")"
           pushed=0
           for attempt in 1 2 3; do
             git push && { pushed=1; break; }

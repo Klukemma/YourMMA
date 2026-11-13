@@ -20,6 +20,7 @@ import pytest
 import soccer_backtest as bt
 import soccer_data as sd
 import soccer_feed as sfeed
+import soccer_leagues as slg
 import soccer_log as sl
 import soccer_model as smod
 import soccer_predict as sp
@@ -87,6 +88,10 @@ def run(tmp_path, monkeypatch):
     always this test's own: never soccer/data/feed.json."""
     state = {"matches": _league(), "fixtures": _fixtures()}
     frames = []
+    # The made-up league is the only one measured: shipped_pick and predict
+    # refuse a frame without every measured league (RUS's matches train the
+    # extra leagues' numbers), so the test's world is E0 with E0's decisions.
+    monkeypatch.setattr(slg, "SHIPPED", {"E0": slg.SHIPPED["E0"]})
     monkeypatch.setattr(sd, "load_matches", lambda *a, **k: state["matches"].copy())
     monkeypatch.setattr(sd, "load_fixtures", lambda *a, **k: state["fixtures"].copy())
 
@@ -124,7 +129,7 @@ def test_the_week_is_picked_logged_and_written_for_the_app(run):
     # No price: the model's own chances, said so - never a market of zeros.
     bare = next(e for e in ups.values() if e["home"]["name"].startswith("Leeds"))
     assert bare["market"] is None and bare["p_h"] == pytest.approx(0.47)
-    assert m["league_order"] == list(sd.TOP) and "E0" in m["leagues"]
+    assert m["league_order"] == ["E0"] == slg.in_app() and "E0" in m["leagues"]
     assert tables["leagues"][0]["rows"][0]["club"]["code"]
     assert perf["backtest"]["periods"]["confirm"] == list(bt.CONFIRM)
     assert perf["track_record"]["pending"] == 2
@@ -579,7 +584,9 @@ def test_a_feed_that_is_down_keeps_its_snapshot_and_never_stops_the_run(run, mon
     m, _, _, log = run("2026-10-27 09:00", sync=True)
     snap = sfeed.load(run.feed_path)
     assert calls and snap["rows"] == rows                        # asked, failed, nothing lost
-    assert snap["last_run"]["answered"] == 0 and len(snap["last_run"]["failed"]) == 80
+    # every request for the app's leagues that a feed covers (sfeed.leagues_for(in_app()))
+    asked = sfeed.requests_for(pd.Timestamp("2026-10-27 09:00"), leagues=sfeed.leagues_for(slg.in_app()))
+    assert snap["last_run"]["answered"] == 0 and len(snap["last_run"]["failed"]) == len(asked) == 16
     assert {AC, LS} <= set(by_id(m)) and set(log["picks"]) == {AC, LS}
     # A snapshot that cannot be read, and nothing answered to rebuild it
     # from: football-data.co.uk alone, and the file left as it is (one that

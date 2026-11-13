@@ -6,8 +6,14 @@
 // "yournfl-" one, so this one uses neither, and it clears only "yourparlays-"
 // caches. A worker's scope is its own directory, so none controls another.
 //
-// Bump CACHE when the shape of what is cached changes.
-const CACHE = "yourparlays-v1";
+// Bump CACHE when the shape of what is cached changes. v2: sameday.json gained
+// the days ahead and the underdog ticket, and app.js reads them - an old
+// cached app.js must not outlive the new data's shape. v3: app.js reads the
+// underdog's measured block more widely (each period's mean over the draws,
+// both tickets held and the paired difference over the draws and by the
+// prices, days in play) and words the lottery as the rule has it - an
+// installed app must not keep the v2 page, which shows the live draw alone.
+const CACHE = "yourparlays-v3";
 // How long the page waits for the network before opening from the cache.
 const SHELL_WAIT = 2500;
 
