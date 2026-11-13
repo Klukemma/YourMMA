@@ -1,9 +1,8 @@
 name: Same-day parlays
 
-# The 4th page (parlays/app): two same-day tickets a day (the likeliest and
-# the underdog ticket) from the three apps' picks, for today and the next
-# days that have them. It owns no data of its own - it reads what the UFC,
-# NFL and soccer runners last committed (app/data/card.json, nfl/app/data/week.json,
+# The 4th page (parlays/app): one same-day ticket a day from the three apps'
+# picks. It owns no data of its own - it reads what the UFC, NFL and soccer
+# runners last committed (app/data/card.json, nfl/app/data/week.json,
 # soccer/app/data/matches.json) - so it runs right after any of them, plus
 # on a schedule that rolls the US-Eastern day and grades yesterday's ticket
 # even when no sport ran. It needs no network: everything it reads is in the
@@ -59,7 +58,7 @@ jobs:
           for p in $PATHS; do
             if [ -e "$p" ]; then git add -- "$p"; fi
           done
-          git commit -m "Same-day parlays: $(python -c "import json;d=json.load(open('parlays/app/data/sameday.json'));x=(d.get('days') or [{}])[0];s=lambda k:' '.join(str(v) for v in ((x.get(k) or {}).get('status'),(x.get(k) or {}).get('multiplier')) if v);print(x.get('day'),'likeliest',s('likeliest'),'| underdog',s('underdog'))")"
+          git commit -m "Same-day parlays: $(python -c "import json;d=json.load(open('parlays/app/data/sameday.json'));t=(d.get('tickets') or [{}])[0];print(t.get('day'), t.get('status'), t.get('multiplier') or '')")"
           pushed=0
           for attempt in 1 2 3; do
             git push && { pushed=1; break; }

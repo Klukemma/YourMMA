@@ -1,11 +1,9 @@
 # YourSoccer
 
-Predictions for every league football-data.co.uk carries that has a current season - 37 of its
-38 today, from the Premier League to MLS and the J1 League (Russia's file stopped in August) -
-built the way the MMA and NFL apps are: every number point-in-time, measured walk-forward against
-the betting market before it ships, league by league, picks logged before kickoff and graded
-afterwards, and a phone app that shows the numbers with their measured record beside them. A
-number a league did not earn on its own seasons is withheld, and shown as missing.
+Predictions for Europe's top five leagues, built the way the MMA and NFL apps are: every
+number point-in-time, measured walk-forward against the betting market before it ships,
+picks logged before kickoff and graded afterwards, and a phone app that shows the numbers
+with their measured record beside them.
 
 The phone app is at **https://klukemma.github.io/YourMMA/soccer/app/**. Open it on a phone and
 use Add to Home Screen. `soccer/app/yoursoccer.html` is a single offline copy of the same app.
@@ -41,57 +39,7 @@ the app would fall back to football-data.co.uk alone. What the probe of 2026-10-
 against football-data.co.uk (every id, kickoff and score of the matches both had) is in
 `soccer_feed.py`'s docstring.
 
-## Every league: what the run does with each
-
-`soccer_leagues.py` holds what `experiments/leagues.py` measured and decided for each of
-football-data.co.uk's 38 leagues (its docstring has the rules, decided before any number was
-seen); the run reads those decisions and never re-decides them:
-
-- **Which leagues.** The model is run over all 38 (`soccer_data.load_matches(leagues="all")`):
-  a country's rating pool and a group's regression learn from every league of them, and the
-  pick's weights are pooled over every league priced the same way, so a frame missing one - even
-  Russia's, which the app does not show - would give numbers nobody measured (`soccer_model`
-  refuses it). The app carries the leagues with a current season in the data now
-  (`soccer_leagues.in_app(matches, fixtures, now)`: a result in the last 45 days or a fixture
-  posted) - 37 today. The league picker lists them in `league_order`, every one, even with no
-  match on screen; Russia is under `not_in_app`, with why.
-- **The pick** of each league is its own market's price (the pre-match average; an extra league's
-  history has only the close, which it was measured on), recalibrated on earlier matches - or the
-  raw price with the bookmakers' cut removed in the nine leagues where recalibrating scored worse
-  on their development period (D1 E1 E3 SC0 SC1 SC3 AUT FIN POL). With no price posted yet, the
-  model's own pick only where the model beat the league's base rates in both periods (every league
-  in the app, today); elsewhere "No pick until the price is posted". Every match entry and every
-  logged pick carries its `basis` (`recalibrated` / `raw` / `model` / `unpriced`) and the price it
-  was read from (`price_kind`: `pre` / `close`).
-- **The numbers beside it** (both teams to score, over 1.5 / 2.5 / 3.5, the likeliest scores) are
-  shown for a league only from a source - the market-implied matrix or the model's own - that beat
-  the league's own rates in both of its periods (`soccer_leagues.withheld`). A withheld number is
-  null and listed in `scores.withheld`; over 2.5 beside the card follows the same rule. The extra
-  leagues have no over/under price, so their numbers are the model's own, where it earned them.
-- **Bands** are read against the league's group's measured hit rates (`matches.json` `bands`, by
-  `leagues[code].group` and the card's `band_basis`), never the top five's for another league.
-- **Each league on its own dates**: its season and label on its own calendar ("2026 season" in
-  ARG BRA CHN FIN IRL NOR SWE USA, "2026-27 season" elsewhere), its own latest football-data.co.uk
-  result (`model_through` - the last its ratings include), its own latest round in the results, its
-  own table (`tables.json`, with what the table is not where its format splits or has play-offs:
-  `table_note`), its own periods (2013-2018 / 2019-2025 for the extra leagues) and its own record
-  (`performance.json` `backtest.by_league`, which reproduces `soccer_leagues.SHIPPED`'s measured
-  numbers; the live `track_record.by_league`, `by_group` and `by_basis`). The pooled backtest
-  blocks (`result`, `over_2_5`, `value`, `calibration`) are the top five's, and say so (`scope`).
-- **Caveats are never deleted.** Each league carries every caveat `soccer_leagues` holds for it,
-  and beside them - never instead - what the live feeds cover for it (`coverage`,
-  `coverage_caveat`): seven leagues (SC2 SC3 FIN IRL POL ROU SWZ) have no feed, so their matches
-  appear only when football-data.co.uk posts them, with no provisional results.
-- **Where a pairing repeats in a season** (a split, a third round robin, play-offs: the 15 leagues
-  in `soccer_feed.REPEATS`), a pairing is not a match: the schedule, the log and the cards look a
-  match up by its pairing and its day (`soccer_schedule.key`), and a pick is never graded against,
-  moved onto or hidden behind another meeting of the same clubs.
-
 ## What the app shows, and why
-
-What follows is how the model and the pick were chosen, on the top five (the numbers in this
-section are theirs); every other league was then measured on its own seasons by the same
-procedure, and ships only what it earned there (above).
 
 Three models were built and measured (`experiments/`), choosing on 2006-2015 and confirming
 once on 2016-2025, against the pre-match market with the bookmakers' cut removed:
@@ -110,12 +58,9 @@ with a negative weight - betting against themselves - which was not there on 200
 was not shipped.) So:
 
 - **The pick** is the market's home/draw/away chances, recalibrated: p is proportional to
-  q^beta * exp(c), each league-season's weights fitted on the matches dated before it of every
-  league priced the same way - the European divisions' pre-match prices together, the extra
-  leagues' closing prices together (`soccer_model.shipped_pick`, `soccer_leagues.PICK_WEIGHTS`) -
-  or the raw price where recalibrating lost (the Bundesliga among them). The market's favourites
-  win slightly more often than its prices say and the draw is priced slightly short; for the
-  Premier League's 2026-27, beta = 1.131 and the draw gets +0.043.
+  q^beta * exp(c), each season fitted on every earlier season (`soccer_model.pick`). The market's
+  favourites win slightly more often than its prices say and the draw is priced slightly short;
+  for 2026-27, beta = 1.11 and the draw gets +0.04.
 - **The model's own view** - the shots-based ratings, the best of the three - is shown beside
   every pick, labelled "Model alone", and drives the club ratings on the Tables tab. It is never
   blended into the pick. Where no price was posted it is all there is, and the app says so.
@@ -124,9 +69,8 @@ was not shipped.) So:
 - **No match is labelled a bet.** Betting the model wherever it disagreed with the price, at the
   best price any book posted, made money on 2006-2015 and lost 5-7% on 2016-2025.
 
-The 2016-2025 pick log loss by league, as shipped (`soccer_leagues.SHIPPED`): Premier League
-0.9522 (market 0.9520), La Liga 0.9659 (0.9673), Serie A 0.9466 (0.9491), Bundesliga 0.9788 (the
-raw market), Ligue 1 0.9822 (0.9828). Every league's are on the Record tab.
+The 2016-2025 pick log loss by league: Premier League 0.9520 (market 0.9520), La Liga 0.9660
+(0.9673), Serie A 0.9471 (0.9491), Bundesliga 0.9794 (0.9788), Ligue 1 0.9823 (0.9828).
 
 ## Goals, scores and how sure the pick is
 
@@ -307,16 +251,7 @@ was answered.
   The app marks them (a dashed edge in the last five, an asterisk in the table, "Provisional" on
   the card and in the live record) and a provisional grade can still change.
 - **The model's ratings include results through the date shown** ("ratings include results
-  through ...") - football-data.co.uk's latest in that league (each league's own: its file can lag
-  another's by weeks) - not the provisional ones after it.
-- **An extra league's live pick uses the pre-match price; its record was measured on the close**,
-  the only price its history has. The close scored 0.0035 better in log loss on the European
-  divisions' 2019-2025, so its live picks should do about that much worse than measured; every
-  such league says so in its own caveats.
-- **A league's table is the regular season's.** Play-off rounds, MLS Cup, the liguilla and the rounds
-  after a split are left out (`soccer_form`), so where a league splits (and in Belgium, Austria and
-  Romania halves the points) or has play-offs, the table is not the official standings - its
-  `table_note` says how.
+  through ...") - football-data.co.uk's latest - not the provisional ones after it.
 - **Prices come only from football-data.co.uk**, so between rounds the next matches are picked by
   the model alone until Friday (weekend) or Tuesday (midweek) afternoon. Those picks count in the
   live record like any other, and the model alone is measured to pick worse than the market
@@ -356,8 +291,7 @@ was answered.
 
 ## The runner
 
-`.github/workflows/soccer.yml` runs `soccer_predict.py` every month - the calendar-year leagues
-(ARG BRA CHN FIN IRL NOR SWE USA) play through June and July:
+`.github/workflows/soccer.yml` runs `soccer_predict.py` through the season (August to May):
 
 | When (UTC) | Why |
 |---|---|
@@ -368,27 +302,15 @@ was answered.
 | Tuesday 13:47 and 16:47 | the midweek fixtures and prices |
 | Wednesday 07:17 | Tuesday's results; the weekend's round early (the model alone until Friday) |
 | Thursday 09:17 | grade the midweek round |
-| every day 11:37 | the Americas' evenings: MLS, Liga MX, Brazil and Argentina kick off about 22:00-04:00 UTC |
-| every day 17:37 | Asia's mornings: the J1 League and the Chinese Super League kick off about 04:00-12:00 UTC the next day |
 | every morning 08:17, Dec 20 - Jan 3 | the Christmas and New Year fixtures |
 
-GitHub starts scheduled runs late under load - 3 to 10 hours late on every run from Oct 26 to
-Nov 5 - so the daily slots are set that far ahead of the kickoffs they are for; a match that kicks
-off before any run has logged it gets no pick. One run: sync this season of all 38 leagues from
-football-data.co.uk and the feeds for the 30 app leagues they cover (462 requests), run the model
-over every match of every league since 2005-06, pick each league as decided, fit every match's
-score matrix and measure the goals and scores numbers per group, log the picks that have not
-frozen, grade the finished ones, and write `soccer/app/data/`, the standalone page and
+GitHub starts scheduled runs late under load; a match that kicks off before any run has logged
+it gets no pick. One run: sync this season from football-data.co.uk and the feeds, run the model
+over every match since 2005-06 (about 15 seconds), recalibrate the market, fit every match's score
+matrix and measure the goals and scores numbers on 2006-2025 (about 6 seconds), log the picks that
+have not frozen, grade the finished ones, and write `soccer/app/data/`, the standalone page and
 `soccer/data/` (football-data.co.uk's snapshot, the feeds' snapshot and the prediction log),
-then commit. Measured offline on the snapshot of 2026-11-10 (228,665 matches of 38 leagues, a replay of
-Friday 2026-11-06 19:30 with 250 matches to pick): about 2.5 minutes - the model 78 s, the pick 24 s, the score
-matrices 16 s, the Record tab 11 s, the scores measure 7 s, everything else under 20 s - on a quiet
-4-core machine (up to 4 minutes under load), before the sync.
-
-The prediction log stays small enough to commit on every run: one pick per line, compact, and a
-pick that can never change again (settled on football-data.co.uk's result, or void for good) moves
-four weeks after the newest pick's kickoff to `soccer/data/prediction_history/YYYY-MM.json`.
-`soccer_log.load` reads them all back as one log.
+then commit.
 
     python soccer/engine/soccer_predict.py --no-sync   # locally, on the snapshot as it is
     python -m pytest soccer/engine/tests -q

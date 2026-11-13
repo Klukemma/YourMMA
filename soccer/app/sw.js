@@ -6,10 +6,8 @@
 // "yournfl-" one, so this one uses neither, and it clears only "yoursoccer-"
 // caches. A worker's scope is its own directory, so none controls another.
 //
-// Bump CACHE when the shape of what is cached changes. v2: every league in
-// the app, with the league picker - app.js reads the new leagues, groups and
-// bands blocks, so an installed copy must not keep the five-league script.
-const CACHE = "yoursoccer-v2";
+// Bump CACHE when the shape of what is cached changes.
+const CACHE = "yoursoccer-v1";
 // How long the page waits for the network before opening from the cache.
 const SHELL_WAIT = 2500;
 

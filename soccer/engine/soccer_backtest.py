@@ -7,9 +7,8 @@ periods are reported and never pooled:
   DEV      2006-2015   what choices were made on (model, parameters)
   CONFIRM  2016-2025   untouched while choosing; the honest number
 
-2005-06 only warms the ratings up. Called without `leagues`, scored() and
-report() score the five top leagues, as every experiment that chose the
-model did; the second tiers are rated there, never predicted.
+2005-06 only warms the ratings up. Only the five top leagues are scored;
+the second tiers are rated, never predicted.
 
 THE MARKET is football-data.co.uk's PRE-MATCH average price - collected on
 Friday afternoon for weekend games, Tuesday afternoon for midweek ones -
@@ -17,23 +16,6 @@ with the bookmakers' margin removed. That is the price the app will have
 when it picks (the fixtures file is published at the same moment), so it is
 the fair bar. The closing price, which knows two more days of team news, is
 reported beside it to show how much the market still moved.
-
-EVERY LEAGUE IN THE APP (experiments/leagues.py measured them; soccer_leagues
-holds what it decided). Each league is scored on its OWN periods
-(periods_for: the European divisions 2006-2015 / 2016-2025, the extra
-leagues 2013-2018 / 2019-2025, 2012 a warm-up) and against the price it was
-measured on (market_price: the pre-match average; for an extra league,
-whose history has only the close, the closing average). The close is the
-better price (0.0035 lower log loss on the European divisions' 2019-2025),
-so an extra league's record is measured against a harder bar than its live
-picks, which use the pre-match price - its caveat says so. Periods of
-different leagues are never pooled under one name: per league, per group
-(soccer_leagues.GROUPS - leagues of one group share their periods) and
-pooled over every league ("dev": each league's own DEV, "confirm" likewise),
-each match once (scored(matches, leagues), report(..., leagues=...),
-record()). record() is the Record tab's table: on the matches
-experiments/leagues.py scored, it reproduces soccer_leagues.SHIPPED's
-measured numbers to the digit.
 
 A soccer match has three results. Every score here is three-way: log loss
 over home/draw/away, the three-way Brier score, and accuracy of the most
@@ -50,27 +32,7 @@ import soccer_data as sd
 
 DEV = (2006, 2015)
 CONFIRM = (2016, 2025)
-# The extra leagues (soccer_data.EXTRA) start in 2012 with closing prices
-# only: 2012 warms the ratings up, then their own two periods
-# (experiments/leagues.py). Season 2026 is live and never measured.
-EXTRA_WARMUP = 2012
-EXTRA_DEV = (2013, 2018)
-EXTRA_CONFIRM = (2019, 2025)
 RESULTS = ("H", "D", "A")
-
-
-PERIOD_KEYS = ("dev", "confirm")
-
-
-def periods_for(league):
-    """(DEV, CONFIRM) for a league: 2006-2015 / 2016-2025 for the European
-    divisions, 2013-2018 / 2019-2025 for the extra leagues (EXTRA_WARMUP,
-    2012, their first season on file, only warms the ratings and the base
-    rates up). Read at call time, so a test that shortens the periods
-    shortens every caller's."""
-    return (EXTRA_DEV, EXTRA_CONFIRM) if league in sd.EXTRA else (DEV, CONFIRM)
-
-
 PRICE_SETS = {
     "pre": ("avg_h", "avg_d", "avg_a"),
     "pinnacle": ("ps_h", "ps_d", "ps_a"),
@@ -90,26 +52,6 @@ def no_vig(df, prices="pre"):
     out = inv.div(total, axis=0)
     out.columns = ["p_h", "p_d", "p_a"]
     return out
-
-
-def market_price(frame):
-    """Each row's no-vig home/draw/away from the price its league is picked
-    on and scored against: the pre-match average where all three were
-    posted; for an extra league (soccer_data.EXTRA), whose history has only
-    the closing price, the closing average where no pre-match price was
-    (its live fixtures do carry the pre-match one). A European division's
-    match with only a close has no price: its history always has the
-    pre-match one, and mixing the two would score it on a better price
-    than it is picked on. -> (frame p_h, p_d, p_a - NaN where neither;
-    Series "pre" / "close" / None)."""
-    pre = no_vig(frame, "pre")
-    close = no_vig(frame, "close")
-    has_pre = pre.notna().all(axis=1)
-    use_close = frame["league"].isin(sd.EXTRA) & ~has_pre & close.notna().all(axis=1)
-    q = pre.where(has_pre)
-    q[use_close] = close[use_close]
-    kind = pd.Series(np.where(has_pre, "pre", np.where(use_close, "close", None)), index=frame.index, dtype=object)
-    return q, kind
 
 
 def no_vig_total(df, over="avg_o25", under="avg_u25"):
@@ -148,73 +90,17 @@ def binary_log_loss(p, y):
     return float(-np.mean(y * np.log(p) + (1 - y) * np.log(1 - p)))
 
 
-def scored(matches, leagues=None, q=None):
-    """The matches a forecast is scored on: a result and the price it is
-    scored against. Without `leagues`, the top-league matches with a full
-    pre-match price (what every experiment scored, bit for bit). With
-    `leagues`, those leagues' matches with their own measurement price
-    (market_price: the close for an extra league's history) - every season;
-    league_period() cuts each league's own periods. q: market_price's
-    prices, where already computed."""
-    if leagues is None:
-        top = matches["league"].isin(sd.TOP) & matches["result"].isin(RESULTS)
-        mkt = no_vig(matches, "pre").notna().all(axis=1)
-        return top & mkt
-    q = market_price(matches)[0] if q is None else q
-    return matches["league"].isin(list(leagues)) & matches["result"].isin(RESULTS) & q.notna().all(axis=1)
+def scored(matches):
+    """Top-league matches with a result and a full pre-match price."""
+    top = matches["league"].isin(sd.TOP) & matches["result"].isin(RESULTS)
+    mkt = no_vig(matches, "pre").notna().all(axis=1)
+    return top & mkt
 
 
-def league_period(matches, leagues, k):
-    """Rows of `leagues` whose season lies in the league's own k-th period
-    (0: DEV, 1: CONFIRM; periods_for) - so a match is never scored in a
-    period its league was not measured on."""
-    league = matches["league"]
-    sel = pd.Series(False, index=matches.index)
-    for code in leagues:
-        lo, hi = periods_for(code)[k]
-        sel |= (league == code) & matches["season"].between(lo, hi)
-    return sel
-
-
-def _scores(m, p, q):
-    """The old report's columns for forecast p against the market q on
-    matches m (all three aligned)."""
-    return {"matches": int(len(m)),
-            "log_loss": log_loss(p, m["result"]), "market_log_loss": log_loss(q, m["result"]),
-            "brier": brier(p, m["result"]), "market_brier": brier(q, m["result"]),
-            "accuracy": accuracy(p, m["result"]), "market_accuracy": accuracy(q, m["result"]),
-            "mean_draw": float(p["p_d"].mean()), "draw_rate": float((m["result"] == "D").mean())}
-
-
-def _over(matches, preds, sel, skip_empty=False):
-    """Over 2.5: `preds`' p_o25 against the no-vig over/under, where posted.
-    skip_empty: None where nothing is (the top five's report kept its empty
-    row, NaN and all)."""
-    ou = sel & preds["p_o25"].notna() & matches["avg_o25"].notna() & matches["avg_u25"].notna()
-    if skip_empty and not ou.any():
-        return None
-    y = (matches.loc[ou, "hg"] + matches.loc[ou, "ag"] > 2.5).astype(float)
-    return {"matches": int(ou.sum()),
-            "log_loss": binary_log_loss(preds.loc[ou, "p_o25"], y),
-            "market_log_loss": binary_log_loss(no_vig_total(matches[ou]), y)}
-
-
-def report(matches, preds, label="model", periods=(DEV, CONFIRM), leagues=None):
+def report(matches, preds, label="model", periods=(DEV, CONFIRM)):
     """Three-way scores of `preds` (indexed like `matches`, columns p_h, p_d,
     p_a, optionally p_o25) beside the pre-match and closing markets ON THE
-    SAME MATCHES, per period - the top five's, without `leagues`.
-
-    With `leagues`: every one of them on its own periods (periods_for, not
-    `periods`) against the price it was measured on (market_price), as
-    {label: {"dev": pooled, "confirm": pooled, "by_group": {group: {"codes",
-    "periods", "dev", "confirm"}}, "by_league": {code: {"periods", "price",
-    "dev", "confirm"}}}} - pooled over every league, each match once, under
-    "dev" / "confirm" because the leagues' periods differ; a group's leagues
-    share theirs. "over_2_5" where the over/under was posted (never an extra
-    league's); no "closing" column, since an extra league's market already
-    is the close."""
-    if leagues is not None:
-        return {label: _report_leagues(matches, preds, list(leagues))}
+    SAME MATCHES, per period."""
     mkt = no_vig(matches, "pre")
     out = {}
     for lo, hi in periods:
@@ -222,7 +108,13 @@ def report(matches, preds, label="model", periods=(DEV, CONFIRM), leagues=None):
         if not sel.any():
             continue
         m, p, q = matches[sel], preds[sel], mkt[sel]
-        row = _scores(m, p, q)
+        row = {
+            "matches": int(sel.sum()),
+            "log_loss": log_loss(p, m["result"]), "market_log_loss": log_loss(q, m["result"]),
+            "brier": brier(p, m["result"]), "market_brier": brier(q, m["result"]),
+            "accuracy": accuracy(p, m["result"]), "market_accuracy": accuracy(q, m["result"]),
+            "mean_draw": float(p["p_d"].mean()), "draw_rate": float((m["result"] == "D").mean()),
+        }
         close = no_vig(m, "close")
         has_close = close.notna().all(axis=1)
         if has_close.sum() >= 200:
@@ -231,118 +123,13 @@ def report(matches, preds, label="model", periods=(DEV, CONFIRM), leagues=None):
                               "market_pre": log_loss(q[has_close], m.loc[has_close, "result"]),
                               "market_close": log_loss(close[has_close], m.loc[has_close, "result"])}
         if "p_o25" in preds:
-            row["over_2_5"] = _over(matches, preds, sel)
+            ou = sel & preds["p_o25"].notna() & matches["avg_o25"].notna() & matches["avg_u25"].notna()
+            y = (matches.loc[ou, "hg"] + matches.loc[ou, "ag"] > 2.5).astype(float)
+            row["over_2_5"] = {"matches": int(ou.sum()),
+                               "log_loss": binary_log_loss(preds.loc[ou, "p_o25"], y),
+                               "market_log_loss": binary_log_loss(no_vig_total(matches[ou]), y)}
         out[f"{lo}-{hi}"] = row
     return {label: out}
-
-
-def _groups(leagues):
-    """[(group, its codes among `leagues`)] in soccer_leagues.GROUPS order."""
-    import soccer_leagues as sl
-    return [(g, [c for c in codes if c in leagues]) for g, codes in sl.GROUPS.items()
-            if any(c in leagues for c in codes)]
-
-
-def _report_leagues(matches, preds, leagues):
-    q, _ = market_price(matches)
-    ok = scored(matches, leagues, q) & preds[["p_h", "p_d", "p_a"]].notna().all(axis=1)
-
-    def block(codes):
-        out = {}
-        for k, key in enumerate(PERIOD_KEYS):
-            sel = ok & league_period(matches, codes, k)
-            if sel.any():
-                out[key] = _scores(matches[sel], preds[sel], q[sel])
-                over = _over(matches, preds, sel, skip_empty=True) if "p_o25" in preds else None
-                if over is not None:
-                    out[key]["over_2_5"] = over
-        return out
-    rep = block(leagues)
-    rep["by_group"] = {g: dict(codes=codes, periods={key: list(periods_for(codes[0])[k])
-                                                     for k, key in enumerate(PERIOD_KEYS)}, **block(codes))
-                       for g, codes in _groups(leagues)}
-    rep["by_league"] = {c: dict(periods={key: list(periods_for(c)[k]) for k, key in enumerate(PERIOD_KEYS)},
-                                price="closing" if c in sd.EXTRA else "pre-match", **block([c]))
-                        for c in leagues}
-    return rep
-
-
-# ------------------------------------------------------------- the Record tab, every league
-
-RECORD_SOURCES = ("pick", "market", "model", "base")
-
-
-def _mean(x, digits):
-    return round(float(np.mean(x)), digits) if len(x) else None
-
-
-def record(frame, pick, preds, leagues, base=None):
-    """The Record tab for every league in `leagues`: for each, on its own
-    periods (periods_for) and against the price it was measured on
-    (market_price), the three-way log loss and accuracy of the pick (`pick`:
-    soccer_model.shipped_pick's), the raw no-vig market, the model's own
-    (`preds`) and the league's base rate (its home / draw / away frequencies
-    over earlier seasons: soccer_scores.baseline; `base` where computed) -
-    all on the SAME matches: a result, the price, a model number and a base
-    rate (experiments/leagues.py's `common` rows). So a league's row is
-    soccer_leagues.SHIPPED[code]["measured"] to the digit (log loss to 5
-    decimals, accuracy to 4, as it stores them): the record shown is the
-    record that decided the league ships. A league with no such match in a
-    period has {"matches": 0} there, and nothing else - a missing number is
-    shown as missing.
-
-    Returns {"by_league": [{code, name, country, group, price, periods, dev,
-    confirm}] in `leagues` order, "by_group": {group: {name, codes, periods,
-    dev, confirm}}, "pooled": {codes, dev, confirm}} - a group's leagues share
-    their periods; "pooled" is every league on its own periods, each match
-    once. Each period: {seasons (league and group only), matches, log_loss,
-    market_log_loss, model_log_loss, base_log_loss, accuracy,
-    market_accuracy, model_accuracy}."""
-    import soccer_leagues as sl
-    leagues = list(leagues)
-    if base is None:
-        import soccer_scores as ssc
-        base = ssc.baseline(frame, leagues)
-    q, _ = market_price(frame)
-    res = frame["result"].to_numpy()
-    lab = outcome_index(frame["result"]).to_numpy()
-    probs = {"pick": pick, "market": q, "model": preds, "base": base}
-    probs = {k: v[["p_h", "p_d", "p_a"]].to_numpy(float) for k, v in probs.items()}
-    ok = (scored(frame, leagues, q) & preds["p_h"].notna() & base["p_h"].notna()).to_numpy()
-    blank = ok & ~np.isfinite(probs["pick"]).all(axis=1)
-    if blank.any():
-        raise ValueError(f"the pick has no number on {int(blank.sum())} priced matches of "
-                         f"{sorted(set(frame['league'].to_numpy()[blank]))}: pass the pick of every league scored")
-    loss, hit = {}, {}
-    for k, p in probs.items():
-        loss[k] = np.full(len(frame), np.nan)
-        loss[k][ok] = -np.log(np.clip(p[ok][np.arange(ok.sum()), lab[ok].astype(int)], 1e-12, 1))
-        hit[k] = (np.array(RESULTS)[np.nan_to_num(p).argmax(axis=1)] == res).astype(float)
-    names = {"pick": "log_loss", "market": "market_log_loss", "model": "model_log_loss", "base": "base_log_loss"}
-    accs = {"pick": "accuracy", "market": "market_accuracy", "model": "model_accuracy"}
-
-    def period(codes, k, seasons=True):
-        sel = ok & league_period(frame, codes, k).to_numpy()
-        out = {"seasons": list(periods_for(codes[0])[k])} if seasons else {}
-        out["matches"] = int(sel.sum())
-        if sel.any():
-            out.update({names[s]: _mean(loss[s][sel], 5) for s in RECORD_SOURCES})
-            out.update({accs[s]: round(float(hit[s][sel].mean()), 4) for s in accs})
-        return out
-
-    def periods(codes):
-        return {key: list(periods_for(codes[0])[k]) for k, key in enumerate(PERIOD_KEYS)}
-    by_league = []
-    for c in leagues:
-        info = sd.ALL_LEAGUES[c]
-        by_league.append(dict(code=c, name=info.name, country=info.country, group=sl.group_of(c),
-                              price="closing" if c in sd.EXTRA else "pre-match", periods=periods([c]),
-                              **{key: period([c], k) for k, key in enumerate(PERIOD_KEYS)}))
-    by_group = {g: dict(name=sl.GROUP_NAMES[g], codes=codes, periods=periods(codes),
-                        **{key: period(codes, k) for k, key in enumerate(PERIOD_KEYS)})
-                for g, codes in _groups(leagues)}
-    pooled = dict(codes=leagues, **{key: period(leagues, k, seasons=False) for k, key in enumerate(PERIOD_KEYS)})
-    return {"by_league": by_league, "by_group": by_group, "pooled": pooled}
 
 
 # ------------------------------------------------------------- the blend
