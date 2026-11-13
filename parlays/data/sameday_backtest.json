@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-12T13:10:08Z",
+ "generated": "2026-11-13T22:01:43Z",
  "rule": {
   "day_tz": "America/New_York",
   "band": [
@@ -936,9 +936,10 @@
   "The market is hard to beat. Over the last 3 years the rule's tickets won 126 of 369 (+5% a ticket, -10% to +20%); the market-only control's won 110 of 346 (-3%). An interval that spans zero is no evidence of an edge.",
   "Measured to 2026-08-08, the last day all three sports' leg tables cover (UFC 2026-08-08, NFL 2026-11-08, soccer 2026-11-08); the UFC walk-forward needs a runner refit to go further.",
   "Prices: UFC at each card's closing (or, where only that exists, opening) line, NFL at the closing moneyline, soccer at the pre-match average posted on Friday or Tuesday afternoon. A ticket built earlier in the day gets different prices; NFL closing lines know the day's news.",
-  "Payouts: these files' margins are lower than a single sportsbook's live prices (NFL closing 2.8% a game, the median here, against 4.0% on the 45 games the NFL app logged live), so a live ticket pays a little less than the record assumes.",
+  "Payouts: these files' margins are lower than those of the consensus moneylines the NFL app logged live (NFL closing 2.8% a game, the median here, against 4.0% on the 45 games logged live), so a live NFL leg at the same chance pays less than the record assumes: 1.2% a leg, 3.3% on a ticket of the record's 2.87 legs on average were every leg priced so.",
   "Soccer here is the top five leagues only, which play no matches on international-break weekends and in June-July; on those days a ticket comes from UFC and NFL alone, or there is none.",
   "UFC days are the event date; a card held outside the Americas can fall on another ET date.",
+  "UFC draws and no contests: 92 of the 5,050 UFC fights from 2016-08-01 to 2026-08-08 (1.8%) ended without a winner - 40 draws, 52 no contests or overturned results, counted from the UFC archive - and none of them is in the history's legs (engine/experiments/parlay_legs.csv.gz keeps decided fights only), so here they are neither legs nor underdogs and a ticket that day is drawn and filled from the other fights. Live the rule cannot know them beforehand: such a fight stays in the draw and the fill, and its leg voids (pays 1.0).",
   "The likeliest ticket in 3-5x is mostly favourites, and every leg is the same model's opinion; the legs are different events, so their outcomes are close to independent."
  ],
  "dog": {
@@ -973,7 +974,7 @@
     "2026-08-08"
    ]
   },
-  "headline": "At the live salt, 2016-08-01 to 2026-08-08: 1,487 underdog tickets, 397 won (26.7%; the prices said 24.4%), -1.6% a ticket (-9.9% to +7.0%), price-implied -8.5%. The same games drawn with the 1,000 simulation salts returned -9.9% a ticket on average (-14.7% to -4.7%), price-implied -8.5%; the live salt's record is above 992 of the 1,000 - with the same prices, so the gap is which dogs happened to win.",
+  "headline": "At the live salt, 2016-08-01 to 2026-08-08: 1,487 underdog tickets, 397 won (26.7%; the prices said 24.4%), -1.6% a ticket (-9.9% to +7.0%), price-implied -8.5%. The same games drawn with the 1,000 simulation salts returned -9.9% a ticket on average (-14.7% to -4.7%), price-implied -8.5%; the live salt's record is above 992 of the 1,000 - at about the same prices, so the gap is which dogs happened to win.",
   "results": {
    "live": {
     "all": {
@@ -1787,10 +1788,12 @@
      "roi_diff": -0.0492,
      "roi_diff_low": -0.1771,
      "roi_diff_high": 0.0772,
+     "implied_roi_diff": 0.0346,
      "salts_roi_diff": -0.1668,
      "salts_roi_diff_low": -0.2642,
      "salts_roi_diff_high": -0.072,
-     "note": "underdog ticket minus likeliest ticket, paired by day (bootstrap 4,000, seed 7)"
+     "salts_implied_roi_diff": 0.0346,
+     "note": "underdog ticket minus likeliest ticket, paired by day (bootstrap 4,000, seed 7): roi_diff and hit_rate_diff at the live salt; implied_roi_diff the same two tickets by their prices; salts_roi_diff each day's mean over the 1,000 simulation salts of the dog's profit, less the likeliest's, day-bootstrapped; salts_implied_roi_diff the salts' tickets by their prices"
     },
     "first": {
      "days": 798,
@@ -1830,10 +1833,12 @@
      "roi_diff": -0.054,
      "roi_diff_low": -0.1982,
      "roi_diff_high": 0.0959,
+     "implied_roi_diff": 0.0356,
      "salts_roi_diff": -0.1465,
      "salts_roi_diff_low": -0.2574,
      "salts_roi_diff_high": -0.033,
-     "note": "underdog ticket minus likeliest ticket, paired by day (bootstrap 4,000, seed 7)"
+     "salts_implied_roi_diff": 0.0354,
+     "note": "underdog ticket minus likeliest ticket, paired by day (bootstrap 4,000, seed 7): roi_diff and hit_rate_diff at the live salt; implied_roi_diff the same two tickets by their prices; salts_roi_diff each day's mean over the 1,000 simulation salts of the dog's profit, less the likeliest's, day-bootstrapped; salts_implied_roi_diff the salts' tickets by their prices"
     },
     "last_3_years": {
      "days": 334,
@@ -1873,10 +1878,12 @@
      "roi_diff": -0.0379,
      "roi_diff_low": -0.2697,
      "roi_diff_high": 0.1919,
+     "implied_roi_diff": 0.0323,
      "salts_roi_diff": -0.2153,
      "salts_roi_diff_low": -0.3892,
      "salts_roi_diff_high": -0.0394,
-     "note": "underdog ticket minus likeliest ticket, paired by day (bootstrap 4,000, seed 7)"
+     "salts_implied_roi_diff": 0.0325,
+     "note": "underdog ticket minus likeliest ticket, paired by day (bootstrap 4,000, seed 7): roi_diff and hit_rate_diff at the live salt; implied_roi_diff the same two tickets by their prices; salts_roi_diff each day's mean over the 1,000 simulation salts of the dog's profit, less the likeliest's, day-bootstrapped; salts_implied_roi_diff the salts' tickets by their prices"
     }
    },
    "both": {
@@ -1887,11 +1894,16 @@
      "roi": 0.04,
      "roi_low": -0.0251,
      "roi_high": 0.1074,
+     "implied_roi": -0.1019,
+     "salts_roi": -0.0188,
+     "salts_roi_low": -0.067,
+     "salts_roi_high": 0.0317,
+     "salts_implied_roi": -0.1019,
      "both_won": 122,
      "one_won": 469,
      "neither_won": 541,
      "cannot_both_win": 102,
-     "note": "both tickets held, 1 unit each a day; cannot_both_win counts the days the dog is the other side of one of the likeliest ticket's legs (sameday.opposes)"
+     "note": "both tickets held, 1 unit each a day: roi at the live salt; implied_roi the same two tickets by their prices; salts_roi each day's mean over the 1,000 simulation salts of the dog's profit, plus the likeliest's, halved, day-bootstrapped (4,000, seed 7); salts_implied_roi the salts' tickets by their prices; cannot_both_win counts the days the dog is the other side of one of the likeliest ticket's legs (sameday.opposes)"
     },
     "first": {
      "days": 798,
@@ -1900,11 +1912,16 @@
      "roi": 0.0404,
      "roi_low": -0.0356,
      "roi_high": 0.1177,
+     "implied_roi": -0.0986,
+     "salts_roi": -0.0058,
+     "salts_roi_low": -0.0646,
+     "salts_roi_high": 0.0545,
+     "salts_implied_roi": -0.0986,
      "both_won": 83,
      "one_won": 336,
      "neither_won": 379,
      "cannot_both_win": 73,
-     "note": "both tickets held, 1 unit each a day; cannot_both_win counts the days the dog is the other side of one of the likeliest ticket's legs (sameday.opposes)"
+     "note": "both tickets held, 1 unit each a day: roi at the live salt; implied_roi the same two tickets by their prices; salts_roi each day's mean over the 1,000 simulation salts of the dog's profit, plus the likeliest's, halved, day-bootstrapped (4,000, seed 7); salts_implied_roi the salts' tickets by their prices; cannot_both_win counts the days the dog is the other side of one of the likeliest ticket's legs (sameday.opposes)"
     },
     "last_3_years": {
      "days": 334,
@@ -1913,11 +1930,16 @@
      "roi": 0.0388,
      "roi_low": -0.0846,
      "roi_high": 0.1635,
+     "implied_roi": -0.1098,
+     "salts_roi": -0.0499,
+     "salts_roi_low": -0.14,
+     "salts_roi_high": 0.044,
+     "salts_implied_roi": -0.1097,
      "both_won": 39,
      "one_won": 133,
      "neither_won": 162,
      "cannot_both_win": 29,
-     "note": "both tickets held, 1 unit each a day; cannot_both_win counts the days the dog is the other side of one of the likeliest ticket's legs (sameday.opposes)"
+     "note": "both tickets held, 1 unit each a day: roi at the live salt; implied_roi the same two tickets by their prices; salts_roi each day's mean over the 1,000 simulation salts of the dog's profit, plus the likeliest's, halved, day-bootstrapped (4,000, seed 7); salts_implied_roi the salts' tickets by their prices; cannot_both_win counts the days the dog is the other side of one of the likeliest ticket's legs (sameday.opposes)"
     }
    }
   },
@@ -2393,17 +2415,18 @@
    }
   },
   "caveats": [
-   "The market is hard to beat, and a draw cannot create an edge: every 3-5x ticket pays the bookmaker's margin on every leg. This ticket is for variety and a bigger payout, never the better bet. At the live salt it won 397 of 1,487 (-2% a ticket, -10% to +7%); an interval that spans zero is no evidence of an edge.",
-   "Expected before any result was seen (sameday.py): by the prices it lands about 1 time in 4 (a market chance of about 0.25 at about 3.8x), the likeliest about 2 in 7 at about 3.1x, price-implied about -8% a ticket, and somewhat worse than its prices imply. The prices on file give it a market chance of 0.244 at 3.83x, price-implied -8.5%.",
+   "The market is hard to beat, and a draw cannot create an edge: every 3-5x ticket pays the bookmaker's margin on every leg. This ticket is for variety and a bigger payout, never the better bet. At the live draw it won 397 of 1,487 (-1.6% a ticket, -9.9% to +7.0%; over the 1,000 simulation draws -9.9% (-14.7% to -4.7%), by the prices -8.5%); an interval that spans zero is no evidence of an edge.",
+   "Expected before any result was seen (sameday.py): by the prices it lands about 1 time in 4 (a market chance of about 0.25 at about 3.8x), the likeliest about 2 in 7 at about 3.1x, price-implied about -8% a ticket, and somewhat worse than its prices imply. The prices on file give the live draw's tickets a market chance of 0.244 at 3.83x, price-implied -8.5%, and the 1,000 simulation draws' 0.244 at 3.83x, -8.5%.",
    "Prior exposure: the rule's own results were not seen before it was fixed, but underdog results over the same years had been - the UFC profiles' risker and risk-lover tickets and the NFL and soccer edge-betting checks. Its record is not an out-of-sample test of underdogs.",
    "Bookmakers load more margin on underdogs (about 5% on a dog leg against 3% on a favourite, as written before the results), so a dog ticket pays the heavier margin once on its dog and a lighter one on each favourite that fills it; the fill adds payout, not safety or value.",
-   "The market chances here take the margin off in proportion, which reads a dog's chance generously. Taking it equally off each side (Shin's reading for two sides), the 3,316 UFC dogs priced 2.00-4.00 average a chance of 0.363 against 0.368 and return -5.6% at their price against -4.0%; the 2,157 NFL dogs 0.364 against 0.368, -4.3% against -3.0%. Soccer's split is missing: these files keep the two teams' prices, not the draw's.",
-   "NFL underdogs are chosen and priced at the closing moneyline (197 of the live salt's 1,487 dogs): the close knows the day's news, and whether a dog is priced 2.00-4.00 is decided at it; live, both are decided at the consensus price when the ticket is built.",
-   "UFC cards of 2025 are priced at their opening lines (no closing line is on file for them): 24 of the live salt's UFC dogs that year, 36 of its 266 UFC dogs in all priced at an opening line.",
-   "The live salt drew well: over all days its record is above 992 of the 1,000 simulation salts' on the same games (the first years 948, the last 3 years 977), at the same prices (price-implied -8.5% against -8.5%). Its past draw is no forecast: the salts averaged -9.9% a ticket (-14.7% to -4.7%), and the prices imply -8.5%.",
-   "The 5th-95th percentile across the 1,000 simulation salts (-15.6% to -4.3% a ticket over all days) is how much the draw alone moves the record over the same games; it is not a confidence interval. The interval over days is (-9.9% to +7.0% at the live salt).",
-   "Live, a UFC leg is priced from the card the UFC app carries (the best price across books, or a median of books where the card has one); this history prices each fight at one line per card. A live UFC dog's price, and whether it falls in 2.00-4.00, can differ from what this record assumes.",
-   "Same days and events as the likeliest ticket: on the 1,132 days both exist, the two cannot both win on 102 (the dog is the other side of one of the likeliest ticket's legs)."
+   "The market chances here take the margin off in proportion. Taking it equally off each outcome instead (Shin's reading for a fight's or a game's two sides; for soccer's three outcomes the equal margin - Shin's three-way reading needs the draw's price, which the dog files do not keep), the 3,316 UFC dogs priced 2.00-4.00 average a chance of 0.363 against 0.368 and return -5.6% at their price against -4.0%; the 2,157 NFL dogs 0.364 against 0.368, -4.3% against -3.0%; the 8,628 soccer dogs 0.296 against 0.298, -5.3% against -4.7% - so the proportional reading these files use reads every sport's dogs generously.",
+   "NFL underdogs are chosen and priced at the closing moneyline (197 of the live draw's 1,487 dogs): the close knows the day's news, and whether a dog is priced 2.00-4.00 is decided at it; live, both are decided at the consensus price when the ticket is built.",
+   "UFC cards of 2025 are priced at their opening lines (no closing line is on file for them): 24 of the live draw's UFC dogs that year, 36 of its 266 UFC dogs in all priced at an opening line.",
+   "The live draw is the lottery with the live salt (sameday-dog-v1, its seed); the simulation draws are the same lottery with 1,000 other salts. The live draw drew well: over all days its record is above 992 of the 1,000 simulation draws' on the same games (the first years 948, the last 3 years 977), at prices implying -8.5% against -8.5%. Its past draw is no forecast: the simulation draws averaged -9.9% a ticket (-14.7% to -4.7%), and the prices imply -8.5%.",
+   "The 5th-95th percentile across the 1,000 simulation draws (-15.6% to -4.3% a ticket over all days) is how much the draw alone moves the record over the same games; it is not a confidence interval. The interval over days is (-9.9% to +7.0% at the live draw; over the 1,000 simulation draws -9.9% (-14.7% to -4.7%), by the prices -8.5%).",
+   "Live, a UFC leg is priced from the card the UFC app carries - the best price across books unless the card carries a median from two books or more - and this history prices each fight at one line per card. A best price pays at least a typical book's, so a live UFC dog's price, and whether it falls in 2.00-4.00, can differ from what this record assumes.",
+   "Same days and events as the likeliest ticket: on the 1,132 days both exist, the two cannot both win on 102 (the dog is the other side of one of the likeliest ticket's legs). Held together, 1 unit each, they returned +4.0% a unit at the live draw (-2.5% to +10.7%), -1.9% over the 1,000 simulation draws (-6.7% to +3.2%), and -10.2% by the prices; the underdog ticket minus the likeliest was -4.9% a ticket at the live draw, -16.7% over the draws (-26.4% to -7.2%), and +3.5% by the prices.",
+   "UFC draws and no contests: 92 of the 5,050 UFC fights from 2016-08-01 to 2026-08-08 (1.8%) ended without a winner - 40 draws, 52 no contests or overturned results, counted from the UFC archive - and none of them is in the history's legs (engine/experiments/parlay_legs.csv.gz keeps decided fights only), so here they are neither legs nor underdogs and a ticket that day is drawn and filled from the other fights. Live the rule cannot know them beforehand: such a fight stays in the draw and the fill, and its leg voids (pays 1.0)."
   ]
  }
 }

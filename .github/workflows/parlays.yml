@@ -14,6 +14,17 @@ on:
     workflows: ["Update UFC dataset", "NFL predictions", "Soccer predictions"]
     types: [completed]
     branches: [main]
+  # A change to the builder or the page reaches main: rebuild the page's file
+  # at once, so the page never reads a file in an older shape until the next
+  # sport run or the schedule. Its own commits (data only, pushed with the
+  # workflow token) never trigger it.
+  push:
+    branches: [main]
+    paths:
+      - "parlays/engine/**"
+      - "parlays/app/**"
+      - "!parlays/app/data/**"
+      - ".github/workflows/parlays.yml"
   schedule:
     - cron: "23 5 * * *"      # 00:23 EST / 01:23 EDT: a new Eastern day, and yesterday graded
     - cron: "41 15 * * 6,0"   # Saturday and Sunday late morning Eastern, before the day's first starts
@@ -59,7 +70,9 @@ jobs:
           for p in $PATHS; do
             if [ -e "$p" ]; then git add -- "$p"; fi
           done
-          git commit -m "Same-day parlays: $(python -c "import json;d=json.load(open('parlays/app/data/sameday.json'));x=(d.get('days') or [{}])[0];s=lambda k:' '.join(str(v) for v in ((x.get(k) or {}).get('status'),(x.get(k) or {}).get('multiplier')) if v);print(x.get('day'),'likeliest',s('likeliest'),'| underdog',s('underdog'))")"
+          # Today's two tickets in the message: days in play (before today) come
+          # first in the file, so today is found by its flag, not taken first.
+          git commit -m "Same-day parlays: $(python -c "import json;d=json.load(open('parlays/app/data/sameday.json'));x=next((y for y in d.get('days') or [] if y.get('today')),{});s=lambda k:' '.join(str(v) for v in ((x.get(k) or {}).get('status'),(x.get(k) or {}).get('multiplier')) if v);print(x.get('day'),'likeliest',s('likeliest'),'| underdog',s('underdog'))")"
           pushed=0
           for attempt in 1 2 3; do
             git push && { pushed=1; break; }

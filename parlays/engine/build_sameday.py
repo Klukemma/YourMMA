@@ -19,6 +19,15 @@ Thursday may have one NFL game and no ticket while Saturday has a UFC card -
 and the page should always show the next tickets, not an empty today.
 Today's "none" names the next day that has a ticket of its kind.
 
+IN PLAY: before today, the last IN_PLAY_DAYS (2) days whose newest row of
+either kind is a ticket still pending and locked are shown too, in date
+order, flagged past and in_play. WHY: the day rolls at midnight ET, and the
+05:23 UTC run comes while a Saturday main event or a late Monday game can
+still be on - and UFC results arrive later, with the dataset sync. Shown
+from today only, the ticket a reader saw that evening would vanish until it
+settled, reduced to a "pending" count. Those days are shown, never rebuilt:
+every event on a past day has started.
+
 TWO KINDS, EACH ON ITS OWN. history.json rows carry "kind": "likeliest" or
 "underdog"; a row with no kind was written before the underdog ticket
 existed and is read as "likeliest" (old rows are never rewritten). Each kind
@@ -31,7 +40,19 @@ rebuilds it at the latest prices and logs the new one (or a "none" row, with
 its reason, when nothing fits any more), and the newest logged row of that
 day and kind is the ticket. From its first start on it is locked: no run
 replaces it with one built from the games still to come - the ticket a
-reader saw in the morning is the one that is graded.
+reader saw in the morning is the one that is graded. Its first start is the
+earlier of the one logged and, by the files as they are now
+(starts_on_file), any of its legs' events: a kickoff moved earlier locks the
+ticket at the new time even if no run logged it. A row is logged again when
+any leg's event, side, price or start changes (or, for the underdog, the
+dog's event, side or the candidate count): the side is compared because
+both sides of an event share its key.
+
+THE APP FILES ARE READ STRICTLY (_app_file): a missing file is a sport with
+no events, but a file that is there and does not parse, or has lost its
+list, stops the run before history.json is written - read as "no events" it
+would supersede every unstarted ticket with a leg in it. history.json itself
+likewise (load_history).
 
 THE UNDERDOG CANDIDATES (sameday.py's DOG, built by sameday.dog() - the
 rule is never re-implemented here) come from the same three files as the
@@ -65,17 +86,20 @@ underdog priced 2.00-4.00 with at least a 20% chance) or "no_fill" (no
 favourites on other events bring any of them to 3-5x).
 
 THE PAYLOAD (parlays/app/data/sameday.json):
-  days     [{day, today, likeliest: T, underdog: T, cannot_both_win}], today
-           first; T is one ticket (ticket_payload): status none / open /
-           locked / won / lost / void, legs, multiplier, p, p_market,
+  days     [{day, today, past, in_play, likeliest: T, underdog: T,
+           cannot_both_win}], in date order: the days in play (past, before
+           today), today, the days ahead; T is one ticket (ticket_payload):
+           status none / open / locked / won / lost / void, legs (each with
+           its outcome and, when void, void_reason), multiplier, p, p_market,
            missing_reason (None unless status is none) and none_reason; the
            underdog's T adds dog {pick, rank, candidates, salt, version},
            lands_1_in (1 / its market chance, rounded), only_one (a single
            candidate fit), best_of_books (its dog leg priced at the best
            price) and price_note. cannot_both_win: the dog is the other
            side of a likeliest leg (sameday.opposes).
-  tickets  the likeliest T of each day, in the shape the page read before
-           the underdog ticket (kept so an older cached page still works).
+  tickets  the likeliest T of each day from today on, today first, in the
+           shape the page read before the underdog ticket (kept so an older
+           cached page, which takes the first as today, still works).
   records  {likeliest, underdog}: the live record per kind; `record` is the
            likeliest's, as before.
   measured None until the backtest has run; else the likeliest's block as
@@ -91,8 +115,12 @@ THE PAYLOAD (parlays/app/data/sameday.json):
            builder's (prices, what the underdog ticket is not).
 
 GRADING reads each sport's own results: UFC through engine/grade.py's
-name-tolerant match on the archive (a bout with no result stays open), NFL
-the schedule's played games (a tie is void), soccer the prediction log's
+name-tolerant match on the archive (a draw or no contest is void; a bout
+with no result stays open, unless engine/grade.py's own rule for parlays
+says it never happened - the card has results in, it is a day past its
+first bell, and neither fighter has a result near it: void as "cancelled"),
+NFL the schedule's played games (a tie is void; a game with no score stays
+open), soccer the prediction log's
 finals - the WHOLE log, archived months included (soccer_picks), because
 every run settles every day's ticket again - and its voids for good (a
 match that never produced a result, or was rescheduled: soccer_results).
@@ -130,6 +158,7 @@ SOCCER_RECORD = "football-data.co.uk"
 
 KINDS = ("likeliest", "underdog")
 WINDOW_DAYS = 7
+IN_PLAY_DAYS = 2
 # The fewest books a UFC median pair must come from to count as the typical
 # book's price (one book's "median" is the best price odds_cache kept).
 MEDIAN_MIN_BOOKS = 2
@@ -274,9 +303,68 @@ def soccer_legs(data, now):
     return out
 
 
-def live_legs(now):
-    return (ufc_legs(_load(UFC_CARD), now) + nfl_legs(_load(NFL_WEEK), now)
-            + soccer_legs(_load(SOCCER_MATCHES), now))
+def _app_file(path, list_key):
+    """One sport's app file, read strictly: None when it is not there (that
+    sport has nothing on file: no events), else the parsed file - and a file
+    that is there but does not parse, or has lost its list (`list_key`),
+    stops the run with an error.
+
+    WHY STRICT: read as "no events", a truncated or renamed file would turn
+    every unstarted ticket with a leg from that sport into another ticket or
+    a "none" row with the wrong reason ("no combination fits"), and once the
+    first start passes, the ticket a reader saw is gone for good. Stopping
+    before history.json is written leaves the log as it was until the file
+    is fixed - as _soccer_file does for the soccer log."""
+    path = Path(path)
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text())
+    except (OSError, ValueError) as err:
+        raise ValueError(f"{path} does not read ({err}); nothing written") from err
+    if not isinstance(data, dict) or not isinstance(data.get(list_key), list):
+        raise ValueError(f"{path} has no {list_key!r} list; nothing written")
+    return data
+
+
+def load_app_files():
+    """The three app files the tickets are built from, each read once and
+    strictly (_app_file): {"card": UFC, "week": NFL, "matches": soccer}."""
+    return {"card": _app_file(UFC_CARD, "fights"), "week": _app_file(NFL_WEEK, "games"),
+            "matches": _app_file(SOCCER_MATCHES, "matches")}
+
+
+def starts_on_file(files):
+    """{event key (as leg() keys it): its start as the files have it NOW},
+    started events included - the legs leave them out. WHY: a ticket locks
+    at its first start, and a start can move earlier after the ticket was
+    logged (a corrected soccer kickoff, an earlier UFC bout added to the
+    log). locked() reads this beside the logged first_start, so a ticket
+    already in play is never rebuilt because the run came after the moved
+    start."""
+    out = {}
+    card = files.get("card")
+    if card:
+        ev = card.get("event") or {}
+        start = ufc_first_start(card)
+        if start is not None:
+            for f in card.get("fights", []):
+                out[f"UFC:{ev.get('date')}:{f.get('red')}:{f.get('blue')}"] = start
+    for g in (files.get("week") or {}).get("games", []):
+        k = _parse(g.get("kickoff"))
+        if k is not None and g.get("game_id"):
+            out[f"NFL:{g['game_id']}"] = k
+    for m in (files.get("matches") or {}).get("matches", []):
+        k = _parse(m.get("kickoff"))
+        if k is not None and m.get("match_id"):
+            out[f"Soccer:{m['match_id']}"] = k
+    return out
+
+
+def live_legs(now, files=None):
+    files = load_app_files() if files is None else files
+    return (ufc_legs(files.get("card"), now) + nfl_legs(files.get("week"), now)
+            + soccer_legs(files.get("matches"), now))
 
 
 # ---------------------------------------------------------------- live underdog candidates
@@ -401,9 +489,10 @@ def soccer_dogs(data, now):
     return out
 
 
-def live_dogs(now):
-    return (ufc_dogs(_load(UFC_CARD), now) + nfl_dogs(_load(NFL_WEEK), now)
-            + soccer_dogs(_load(SOCCER_MATCHES), now))
+def live_dogs(now, files=None):
+    files = load_app_files() if files is None else files
+    return (ufc_dogs(files.get("card"), now) + nfl_dogs(files.get("week"), now)
+            + soccer_dogs(files.get("matches"), now))
 
 
 # ---------------------------------------------------------------- logging
@@ -458,48 +547,93 @@ def latest(history, day, kind="likeliest"):
     return rows[-1] if rows else None
 
 
-def locked(row, now):
-    start = _parse((row or {}).get("first_start"))
-    return row is not None and row.get("status") != "none" and start is not None and start <= now
+def locked(row, now, starts=None):
+    """Whether a logged ticket is in play: its logged first_start has
+    passed, or - by the files as they are now (starts_on_file) - any of its
+    legs' events has started. The second is for a start moved earlier after
+    the row was logged: the row's first_start is then later than the real
+    one, and reading it alone would rebuild a ticket already under way. A
+    "none" row is never locked (there is nothing to keep)."""
+    if row is None or row.get("status") == "none":
+        return False
+    start = _parse(row.get("first_start"))
+    if start is not None and start <= now:
+        return True
+    starts = starts or {}
+    return any(starts.get(l.get("key")) is not None and starts[l.get("key")] <= now
+               for l in row.get("legs") or [])
+
+
+def _leg_sig(l):
+    """What a logged leg commits to: its event, its SIDE, its price and its
+    start. WHY THE SIDE: the event key is the same for both sides, so a pick
+    (or the market's underdog) that flips to the other side at an equal
+    price would read as unchanged and the old side would be shown and
+    graded. WHY THE START: the lock reads the logged first_start, so a
+    kickoff moved earlier must be logged, or the ticket would stay open
+    past its real first start."""
+    return (l.get("key"), l.get("pick"), l.get("decimal"), l.get("kickoff"))
 
 
 def _same(prev, row):
     """Whether a rebuilt row says what the newest logged one does: the same
-    status, legs and prices - and for the underdog the same draw (dog and
-    candidate count) - so an unchanged ticket is not logged again."""
+    status, legs (event, side, price, start) - and for the underdog the same
+    draw (the dog's event and side, and the candidate count) - so an
+    unchanged ticket is not logged again."""
     if prev is None or prev.get("status") != row["status"]:
         return False
-    if [(l["key"], l["decimal"]) for l in prev.get("legs", [])] != [(l["key"], l["decimal"]) for l in row["legs"]]:
+    if [_leg_sig(l) for l in prev.get("legs", [])] != [_leg_sig(l) for l in row["legs"]]:
         return False
     if row["status"] == "none":
         return prev.get("none_reason") == row.get("none_reason")
     if row.get("kind") == "underdog":
         a, b = prev.get("dog") or {}, row.get("dog") or {}
-        return (a.get("key"), a.get("candidates")) == (b.get("key"), b.get("candidates"))
+        return ((a.get("key"), a.get("pick"), a.get("candidates"))
+                == (b.get("key"), b.get("pick"), b.get("candidates")))
     return True
 
 
-def days_shown(history, now, legs, dogs=()):
-    """Today, then every day of the next WINDOW_DAYS with a leg or a
-    candidate - or with a ticket logged and not started, so it is rebuilt
-    (to "none" when its games have left the files) - in order."""
+def in_play_days(history, now, starts=None):
+    """The last IN_PLAY_DAYS days before today whose newest row of either
+    kind is a ticket still pending (not settled by the last grading) and
+    locked - a ticket in play, or played and not graded yet - in order."""
+    t0 = datetime.strptime(sdy.et_day(now), "%Y-%m-%d")
+    out = []
+    for back in range(IN_PLAY_DAYS, 0, -1):
+        d = (t0 - timedelta(days=back)).strftime("%Y-%m-%d")
+        rows = [latest(history, d, k) for k in KINDS]
+        if any(r is not None and r.get("status") == "pending" and locked(r, now, starts) for r in rows):
+            out.append(d)
+    return out
+
+
+def days_shown(history, now, legs, dogs=(), starts=None):
+    """The days in play before today (in_play_days), today, then every day
+    of the next WINDOW_DAYS with a leg or a candidate - or with a ticket
+    logged and not started, so it is rebuilt (to "none" when its games have
+    left the files) - in order."""
     today = sdy.et_day(now)
     end = (datetime.strptime(today, "%Y-%m-%d") + timedelta(days=WINDOW_DAYS)).strftime("%Y-%m-%d")
     ahead = {x["day"] for x in list(legs) + list(dogs) if x and x.get("day") and today < x["day"] <= end}
     ahead |= {r["day"] for r in history.get("tickets", [])
-              if r.get("day") and today < r["day"] <= end and r.get("status") != "none" and not locked(r, now)}
-    return [today] + sorted(ahead)
+              if r.get("day") and today < r["day"] <= end and r.get("status") != "none" and not locked(r, now, starts)}
+    return in_play_days(history, now, starts) + [today] + sorted(ahead)
 
 
-def update(history, now, legs, dogs=(), why=None):
+def update(history, now, legs, dogs=(), why=None, starts=None):
     """Build and log both kinds of ticket for every day shown; returns the
     days. A kind whose newest row is locked is left alone; a kind with no row
     and nothing built logs nothing (there was never a ticket to supersede).
     `why`, when given a dict, gets {(day, kind): none_reason} and
     {(day, "candidates"): n} for this run, so the page can say why a day
-    without a logged row has no ticket."""
-    show = days_shown(history, now, legs, dogs)
+    without a logged row has no ticket. A day before today (in play) is
+    shown, never built: its events have all started, so a rebuild could only
+    log a wrong "none" over what was there."""
+    show = days_shown(history, now, legs, dogs, starts)
+    today = sdy.et_day(now)
     for day in show:
+        if day < today:
+            continue
         built = build_day(day, legs, dogs)
         if why is not None:
             why[(day, "candidates")] = built["candidates"]
@@ -508,7 +642,7 @@ def update(history, now, legs, dogs=(), why=None):
             if why is not None:
                 why[(day, kind)] = reason_
             prev = latest(history, day, kind)
-            if locked(prev, now):
+            if locked(prev, now, starts):
                 continue
             if prev is None and t is None:
                 continue
@@ -626,13 +760,44 @@ def soccer_results(path=None):
     return out
 
 
-def leg_result(l, res):
+def ufc_cancel_index(history, ufc, log=None):
+    """What engine/grade.py's rule for a bout that never happened needs:
+    {"ufc_cards": {card date: result dates its bouts matched}, "ufc_fighters":
+    {name: dates}} - grade._logged_cards over every bout the UFC log holds
+    and every UFC leg logged here, and grade._fighter_dates. The rule is
+    grade_parlays', reused, never re-written here."""
+    grade, index = ufc
+    if log is None:
+        log = _load(UFC_LOG, {}) or {}
+    legs = [{"event_date": (l.get("names") or {}).get("event_date"),
+             "legs": [{"red": (l.get("names") or {}).get("red"), "blue": (l.get("names") or {}).get("blue")}]}
+            for r in history.get("tickets", []) for l in r.get("legs") or [] if l.get("sport") == "UFC"]
+    return {"ufc_cards": grade._logged_cards({"predictions": log.get("predictions") or [], "parlays": legs}, index),
+            "ufc_fighters": grade._fighter_dates(index)}
+
+
+def leg_result(l, res, now=None):
+    """A leg's result as parlay_profiles settles it: {"winner": "pick" /
+    "other"}, {"winner": None, "void_reason": ...} (void: books return the
+    leg at 1.0), or None (not known yet - the leg stays open).
+
+    A UFC BOUT THAT NEVER HAPPENED (called off on fight night, after the
+    ticket locked) has no archive row, so "not found" alone would keep its
+    ticket open for good - and a ticket with an open leg still loses the
+    moment another leg loses, so the record would keep the losses and never
+    the wins. It is void as "cancelled" exactly when engine/grade.py's
+    grade_parlays voids it: the card has results in (res["ufc_cards"]), the
+    card is old enough to be complete at `now` (grade.card_is_complete on
+    the leg's first bell) and neither fighter has a result within the date
+    tolerance (grade._cancelled). Otherwise it stays open."""
     n = l.get("names") or {}
     if l["sport"] == "NFL":
         m = res["nfl"].get(n.get("game_id"))
         if m is None:
             return None
-        return {"winner": None} if m == 0 else {"winner": "pick" if (m > 0) == bool(n.get("home")) else "other"}
+        if m == 0:
+            return {"winner": None, "void_reason": "tie"}
+        return {"winner": "pick" if (m > 0) == bool(n.get("home")) else "other"}
     if l["sport"] == "Soccer":
         r = res["soccer"].get(n.get("match_id"))
         if r is None:
@@ -644,10 +809,17 @@ def leg_result(l, res):
     found = grade.find_result({"red_corner": n.get("red"), "blue_corner": n.get("blue"),
                                "event_date": n.get("event_date")}, index)
     if found is None:
+        cards, fighters, day = res.get("ufc_cards"), res.get("ufc_fighters"), n.get("event_date")
+        if now is None or cards is None or fighters is None or not day:
+            return None
+        card = {"first_start": l.get("kickoff"), "event_date": day}
+        if (day in cards and grade.card_is_complete(card, now)
+                and grade._cancelled({"red": n.get("red"), "blue": n.get("blue")}, day, fighters)):
+            return {"winner": None, "void_reason": "cancelled"}
         return None
     _, winner, _ = found
     if not isinstance(winner, str) or not winner.strip():
-        return {"winner": None}
+        return {"winner": None, "void_reason": "draw or no contest"}
     corner = grade._corner(winner, n.get("red"), n.get("blue"))
     if corner is None:
         return None
@@ -655,12 +827,17 @@ def leg_result(l, res):
     return {"winner": "pick" if corner == picked else "other"}
 
 
-def grade_all(history):
+def grade_all(history, now=None):
     """Settle each day's ticket of each kind (the newest row of that day and
     kind) in place; every older row of the same day and kind that was a
     ticket is "superseded". Returns the settled-or-pending rows, both kinds
-    (kind_of tells them apart)."""
+    (kind_of tells them apart). `now` (default: the clock) decides whether a
+    UFC card is complete, so a bout missing from it can be void as
+    cancelled (leg_result); a void leg carries its void_reason."""
+    now = now or datetime.now(timezone.utc)
     res = _results()
+    if res.get("ufc") is not None and "ufc_cards" not in res:
+        res = dict(res, **ufc_cancel_index(history, res["ufc"]))
     days = {}
     for r in history.get("tickets", []):
         days[(r["day"], kind_of(r))] = r
@@ -670,8 +847,13 @@ def grade_all(history):
             continue
         legs = []
         for l in r["legs"]:
-            result = leg_result(l, res)
+            result = leg_result(l, res, now)
             l["outcome"] = sdy.pp.leg_outcome({"side": "pick", "market": "moneyline", "result": result})
+            why = (result or {}).get("void_reason")
+            if why and l["outcome"] == "void":
+                l["void_reason"] = why
+            else:
+                l.pop("void_reason", None)
             legs.append({"side": "pick", "market": "moneyline", "decimal": float(l["decimal"]), "result": result})
         s = sdy.settle({"legs": legs})
         r["status"] = "pending" if s["status"] == "open" else s["status"]
@@ -730,7 +912,7 @@ def _day_name(day):
     return f"{d:%A}, {d:%b} {d.day}"
 
 
-def ticket_payload(day, row, now, kind="likeliest", none_reason=None, candidates=None):
+def ticket_payload(day, row, now, kind="likeliest", none_reason=None, candidates=None, starts=None):
     """One ticket for the page. A day with no ticket says why: the reason
     logged on its "none" row, else this run's (update's `why`)."""
     if row is None or row.get("status") == "none":
@@ -743,10 +925,10 @@ def ticket_payload(day, row, now, kind="likeliest", none_reason=None, candidates
         legs.append(dict({k: l.get(k) for k in ("sport", "event", "pick", "opponent", "kickoff", "decimal",
                                                  "p", "p_model", "p_market", "price_source")},
                          american=sdy.american(l["decimal"]), reason=sdy.reason(l), outcome=l.get("outcome"),
-                         dog=bool(l.get("dog"))))
+                         void_reason=l.get("void_reason"), dog=bool(l.get("dog"))))
     status = row.get("status", "pending")
     if status == "pending":
-        status = "locked" if locked(row, now) else "open"
+        status = "locked" if locked(row, now, starts) else "open"
     out = {"day": day, "kind": kind, "status": status, "legs": legs, "multiplier": row.get("multiplier"),
            "p": row.get("p"), "p_market": row.get("p_market"), "sports": row.get("sports"),
            "first_start": row.get("first_start"), "last_start": row.get("last_start"),
@@ -817,19 +999,24 @@ def dog_measured(bt):
     """(measured underdog block, None) from sameday_backtest.json's "dog"
     block, or (None, the reason it is not shown). Read defensively: the
     block is written by the backtest, separately, and a block for another
-    version or salt is another rule's record - never shown as this one's."""
+    version or salt is another rule's record - never shown as this one's.
+
+    The reasons are reader-facing text, shown on the page: no file path
+    (an unbreakable token that runs past a phone's card) and no "salt" (the
+    page calls it the draw). The block is written by parlays/engine/
+    experiments/sameday_backtest.py."""
     blk = (bt or {}).get("dog")
     if not isinstance(blk, dict):
-        return None, ("Not measured yet: the underdog ticket's backtest (the \"dog\" block of "
-                      "parlays/engine/experiments/sameday_backtest.py) has not been run, so no record "
+        return None, ("Not measured yet: the underdog ticket's backtest has not been run, so no record "
                       "is shown for it.")
     if blk.get("version") != sdy.DOG_VERSION or blk.get("salt") != sdy.DOG_SALT:
-        return None, (f"Not shown: the underdog backtest on file is for rule v{blk.get('version')} "
-                      f"(salt {blk.get('salt')!r}), not the live v{sdy.DOG_VERSION} ({sdy.DOG_SALT!r}).")
+        return None, (f"Not shown: the underdog record on file was measured for another version of the "
+                      f"rule (v{blk.get('version')}), not the live v{sdy.DOG_VERSION}, so it is not this "
+                      f"ticket's record.")
     res = blk.get("results") if isinstance(blk.get("results"), dict) else {}
     live = res.get("live") if isinstance(res.get("live"), dict) else {}
     if not any(isinstance(v, dict) and v.get("tickets") for v in live.values()):
-        return None, "Not measured yet: the underdog backtest on file has no record at the live salt."
+        return None, "Not measured yet: the underdog record on file has no tickets at the live draw."
     return _json_safe({
         "version": blk.get("version"), "salt": blk.get("salt"), "rule": blk.get("rule"),
         "periods": blk.get("periods"), "headline": blk.get("headline"), "missing": blk.get("missing"),
@@ -859,7 +1046,7 @@ DOG_CAVEATS = [
 ]
 
 
-def payload(history, show, now, graded, why=None):
+def payload(history, show, now, graded, why=None, starts=None):
     why = why or {}
     bt = _load(BACKTEST)
     measured = None
@@ -881,8 +1068,10 @@ def payload(history, show, now, graded, why=None):
         else:
             caveats += [c for c in (bt["dog"].get("caveats") or []) if isinstance(c, str) and c not in caveats]
     else:
-        caveats = ["Not measured yet: the backtest (parlays/engine/experiments/sameday_backtest.py) "
-                   "has not been run, so no record is shown. The market is hard to beat."]
+        # (the backtest is parlays/engine/experiments/sameday_backtest.py; no
+        # path in the reader's text - see dog_measured)
+        caveats = ["Not measured yet: the backtest of these tickets has not been run, so no record is "
+                   "shown. The market is hard to beat."]
     caveats.append("Prices are the ones on file when the sports' runners last ran: UFC the best price seen "
                    "across books, NFL the consensus moneyline, soccer the average posted price. One book "
                    "may pay less. Check every price before betting; a leg whose game has started is never used.")
@@ -895,16 +1084,21 @@ def payload(history, show, now, graded, why=None):
     days = []
     for d in show:
         rl, ru = latest(history, d, "likeliest"), latest(history, d, "underdog")
-        lk = ticket_payload(d, rl, now, "likeliest", why.get((d, "likeliest")))
-        dg = ticket_payload(d, ru, now, "underdog", why.get((d, "underdog")), why.get((d, "candidates")))
-        days.append({"day": d, "today": d == today, "likeliest": lk, "underdog": dg,
+        lk = ticket_payload(d, rl, now, "likeliest", why.get((d, "likeliest")), starts=starts)
+        dg = ticket_payload(d, ru, now, "underdog", why.get((d, "underdog")), why.get((d, "candidates")), starts)
+        past = d < today
+        days.append({"day": d, "today": d == today, "past": past,
+                     "in_play": past and any(t["status"] == "locked" for t in (lk, dg)),
+                     "likeliest": lk, "underdog": dg,
                      "cannot_both_win": lk["status"] != "none" and dg["status"] != "none" and sdy.opposes(ru, rl)})
-    # Today's "none" names the next day with a ticket of its kind.
+    # Today's "none" names the next day with a ticket of its kind (days in
+    # play come before today, so today is found, not assumed first).
+    at = next((i for i, x in enumerate(days) if x["today"]), None)
     for kind, label in (("likeliest", "likeliest"), ("underdog", "underdog")):
-        first = days[0][kind] if days and days[0]["today"] else None
+        first = days[at][kind] if at is not None else None
         if first is None or first["status"] != "none":
             continue
-        nxt = next((x["day"] for x in days[1:] if x[kind]["status"] != "none"), None)
+        nxt = next((x["day"] for x in days[at + 1:] if x[kind]["status"] != "none"), None)
         first["next_day"] = nxt
         first["missing_reason"] += (f" The next {label} ticket is on {_day_name(nxt)}." if nxt else
                                     f" No {label} ticket in the next {WINDOW_DAYS} days yet.")
@@ -915,9 +1109,26 @@ def payload(history, show, now, graded, why=None):
                      "dog": {"version": sdy.DOG_VERSION, "salt": sdy.DOG_SALT, "price": list(sdy.DOG_PRICE),
                              "floor": sdy.DOG_FLOOR, "sim_salts": len(sdy.DOG_SIM_SALTS)}},
             "days": days,
-            "tickets": [x["likeliest"] for x in days],
+            "tickets": [x["likeliest"] for x in days if not x["past"]],
             "record": records["likeliest"], "records": records,
             "measured": measured, "caveats": caveats}
+
+
+def load_history(path=None):
+    """history.json, or a fresh log when there is none yet. A file that is
+    there but does not read, or has no "tickets" list, stops the run: read
+    as empty, the run would write an empty log over every ticket logged so
+    far - the live record, gone."""
+    path = Path(HISTORY if path is None else path)
+    if not path.exists():
+        return {"schema": 1, "tickets": []}
+    try:
+        history = json.loads(path.read_text())
+    except (OSError, ValueError) as err:
+        raise ValueError(f"{path} does not read ({err}); nothing written") from err
+    if not isinstance(history, dict) or not isinstance(history.get("tickets"), list):
+        raise ValueError(f"{path} has no 'tickets' list; nothing written")
+    return history
 
 
 def main():
@@ -926,11 +1137,15 @@ def main():
     ap.add_argument("--no-write", action="store_true")
     args = ap.parse_args()
     now = _parse(args.now) if args.now else datetime.now(timezone.utc)
-    history = _load(HISTORY, None) or {"schema": 1, "tickets": []}
-    legs, dogs, why = live_legs(now), live_dogs(now), {}
-    show = update(history, now, legs, dogs, why)
-    graded = grade_all(history)
-    out = payload(history, show, now, graded, why)
+    history = load_history()
+    # The app files are read (strictly) before anything is written: a file
+    # that is there but unreadable stops the run here, history.json untouched.
+    files = load_app_files()
+    starts = starts_on_file(files)
+    legs, dogs, why = live_legs(now, files), live_dogs(now, files), {}
+    show = update(history, now, legs, dogs, why, starts)
+    graded = grade_all(history, now)
+    out = payload(history, show, now, graded, why, starts)
     text = json.dumps(out, indent=1, allow_nan=False)
     if args.no_write:
         print(text)

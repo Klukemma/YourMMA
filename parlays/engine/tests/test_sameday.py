@@ -137,7 +137,7 @@ def test_grading_reads_each_sport_and_leaves_unknown_results_open():
     soc_open = {"sport": "Soccer", "pick": "A", "names": {"match_id": "m9", "pick": "H"}}
     ufc = {"sport": "UFC", "pick": "A", "names": {"red": "A", "blue": "B", "event_date": "2026-11-07"}}
     assert bs.leg_result(nfl_home, res) == {"winner": "pick"}
-    assert bs.leg_result(nfl_tie, res) == {"winner": None}
+    assert bs.leg_result(nfl_tie, res) == {"winner": None, "void_reason": "tie"}
     assert bs.leg_result(soc, res) == {"winner": "pick"}
     assert bs.leg_result(soc_void, res) == {"winner": None}
     assert bs.leg_result(soc_open, res) is None
@@ -588,3 +588,234 @@ def test_a_ufc_underdog_is_graded_as_its_own_corner():
     lost = {"ufc": (grade, {("Ciryl Gané", "Josh Hokit"): "Ciryl Gane"})}
     assert bs.leg_result(d, won) == {"winner": "pick"}
     assert bs.leg_result(d, lost) == {"winner": "other"}
+
+
+# ---------------------------------------------------------------- live mechanics (review fixes)
+
+def _flip_week(flipped):
+    """NFL games on Saturday. Unflipped: d is home +100 / away -120 and
+    the blend picks the away favourite; flipped, the line mirrors (home -120
+    / away +100) and the blend picks home. Every price is the same, only
+    the sides move."""
+    if not flipped:
+        d = _game("d", "2026-11-14T18:00:00Z", "NYG", "WAS", "WAS", 0.55, 100, -120)
+    else:
+        d = _game("d", "2026-11-14T18:00:00Z", "NYG", "WAS", "NYG", 0.55, -120, 100)
+    favs = [_game(f"f{i}", "2026-11-14T21:00:00Z", f"H{i}", f"A{i}", f"H{i}", 0.85, -600, 450) for i in range(4)]
+    return {"games": [d] + favs}                 # the favourites' dogs, at 5.50, are out of the band
+
+
+def test_a_pick_or_dog_that_flips_sides_at_the_same_price_is_logged_again():
+    """The event key is the same for both sides: a flip at an equal price
+    must not read as the same ticket, or the old side is shown and graded."""
+    history = {"tickets": []}
+    for flipped in (False, True):
+        week = _flip_week(flipped)
+        bs.update(history, THU, bs.nfl_legs(week, THU), bs.nfl_dogs(week, THU))
+    lk = [r for r in history["tickets"] if r["kind"] == "likeliest" and r["day"] == "2026-11-14"]
+    ud = [r for r in history["tickets"] if r["kind"] == "underdog" and r["day"] == "2026-11-14"]
+    assert len(lk) == 2 and len(ud) == 2
+    assert [l["decimal"] for l in lk[0]["legs"]] == [l["decimal"] for l in lk[1]["legs"]]     # same prices
+    assert "WAS" in {l["pick"] for l in lk[0]["legs"]} and "NYG" in {l["pick"] for l in lk[1]["legs"]}
+    assert (ud[0]["dog"]["pick"], ud[1]["dog"]["pick"]) == ("NYG", "WAS")
+    assert ud[0]["legs"][0]["decimal"] == ud[1]["legs"][0]["decimal"] == pytest.approx(2.0)
+    # and nothing new when nothing moved
+    week = _flip_week(True)
+    n = len(history["tickets"])
+    bs.update(history, THU, bs.nfl_legs(week, THU), bs.nfl_dogs(week, THU))
+    assert len(history["tickets"]) == n
+
+
+def _moved_files(kickoff):
+    """Saturday: Hull City (home, 3.20) the only underdog in the band, and
+    NFL favourites at 1.17 to fill it (their dogs, at 5.50, are out)."""
+    favs = [_game(f"f{i}", "2026-11-14T21:00:00Z", f"H{i}", f"A{i}", f"H{i}", 0.85, -600, 450) for i in range(2)]
+    return {"card": None, "week": {"games": favs}, "matches": {"matches": [_match("m1", kickoff=kickoff)]}}
+
+
+def _run(history, now, files):
+    now = datetime.fromisoformat(now.replace("Z", "+00:00"))
+    starts = bs.starts_on_file(files)
+    bs.update(history, now, bs.live_legs(now, files), bs.live_dogs(now, files), starts=starts)
+    return now, starts
+
+
+def test_a_kickoff_moved_earlier_is_logged_and_locks_the_ticket_at_the_new_start():
+    history = {"tickets": []}
+    _run(history, "2026-11-14T09:00:00Z", _moved_files("2026-11-14T15:00:00Z"))
+    (first,) = [r for r in history["tickets"] if r["kind"] == "underdog"]
+    assert first["first_start"] == "2026-11-14T15:00:00Z" and first["dog"]["pick"] == "Hull City"
+    # 11:00: the match is moved to 12:30 at the same prices - a new row, with the new first start
+    _run(history, "2026-11-14T11:00:00Z", _moved_files("2026-11-14T12:30:00Z"))
+    now = bs.latest(history, "2026-11-14", "underdog")
+    assert now is not first and now["first_start"] == "2026-11-14T12:30:00Z"
+    # 13:00: under way - locked, never rebuilt without its dog
+    n = len(history["tickets"])
+    _run(history, "2026-11-14T13:00:00Z", _moved_files("2026-11-14T12:30:00Z"))
+    assert len(history["tickets"]) == n
+
+
+def test_a_ticket_is_locked_when_the_files_say_a_leg_has_started_whatever_its_logged_start(monkeypatch):
+    """No run between the move and the new kickoff: the row still says
+    15:00, the files say 12:30, and at 13:00 the ticket is in play."""
+    monkeypatch.setattr(bs, "_results", lambda: {"ufc": None, "nfl": {}, "soccer": {}})
+    history = {"tickets": []}
+    _run(history, "2026-11-14T09:00:00Z", _moved_files("2026-11-14T15:00:00Z"))
+    row = bs.latest(history, "2026-11-14", "underdog")
+    files = _moved_files("2026-11-14T12:30:00Z")
+    now, starts = _run(history, "2026-11-14T13:00:00Z", files)
+    assert bs.latest(history, "2026-11-14", "underdog") is row             # not superseded by a "none"
+    assert bs.locked(row, now, starts) and not bs.locked(row, now)        # the files decide it
+    out = bs.payload(history, ["2026-11-14"], now, bs.grade_all(history), starts=starts)
+    assert out["days"][0]["underdog"]["status"] == "locked"
+    # without the files' start it would have been rebuilt (here: to "none", its dog gone)
+    h2 = {"tickets": [dict(row)]}
+    bs.update(h2, now, bs.live_legs(now, files), bs.live_dogs(now, files))
+    assert bs.latest(h2, "2026-11-14", "underdog")["status"] == "none"
+
+
+def test_a_corrupt_app_file_stops_the_run_and_a_missing_one_is_no_events(tmp_path, monkeypatch):
+    week = tmp_path / "week.json"
+    monkeypatch.setattr(bs, "UFC_CARD", tmp_path / "card.json")              # missing: no UFC events
+    monkeypatch.setattr(bs, "NFL_WEEK", week)
+    monkeypatch.setattr(bs, "SOCCER_MATCHES", tmp_path / "matches.json")
+    assert bs.load_app_files() == {"card": None, "week": None, "matches": None}
+    week.write_text('{"games": [{"game_id": "2026_11_KC_BUF"')               # committed truncated
+    with pytest.raises(ValueError):
+        bs.load_app_files()
+    week.write_text('{"fixtures": []}')                                     # its list renamed
+    with pytest.raises(ValueError):
+        bs.load_app_files()
+    week.write_text('{"games": []}')                                        # an empty week reads
+    assert bs.load_app_files()["week"] == {"games": []}
+
+
+def test_main_writes_nothing_when_an_app_file_does_not_read(tmp_path, monkeypatch):
+    """A logged, unstarted ticket survives a corrupt week.json: the run
+    stops before history.json or the page's file is written."""
+    hist, out = tmp_path / "history.json", tmp_path / "sameday.json"
+    logged = {"schema": 1, "tickets": [_row("2026-11-15", "2026-11-15T18:00:00Z")]}
+    hist.write_text(json.dumps(logged))
+    (tmp_path / "week.json").write_text("{not json")
+    for name, path in (("HISTORY", hist), ("OUT", out), ("NFL_WEEK", tmp_path / "week.json"),
+                       ("UFC_CARD", tmp_path / "card.json"), ("SOCCER_MATCHES", tmp_path / "matches.json")):
+        monkeypatch.setattr(bs, name, path)
+    monkeypatch.setattr(sys, "argv", ["build_sameday.py", "--now", "2026-11-15T12:00:00Z"])
+    with pytest.raises(ValueError):
+        bs.main()
+    assert json.loads(hist.read_text()) == logged and not out.exists()
+
+
+def test_a_history_file_that_does_not_read_stops_the_run(tmp_path):
+    """Read as empty, the run would write an empty log over the record."""
+    path = tmp_path / "history.json"
+    assert bs.load_history(path) == {"schema": 1, "tickets": []}            # none yet: a fresh log
+    path.write_text('{"schema": 1, "tickets": [')
+    with pytest.raises(ValueError):
+        bs.load_history(path)
+    path.write_text('{"schema": 1}')
+    with pytest.raises(ValueError):
+        bs.load_history(path)
+
+
+def _ufc_archive(path, rows):
+    """A results archive in the columns engine/grade.py's load_results reads."""
+    import csv
+    with open(path, "w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["date", "r_name", "b_name", "winner", "method"])
+        w.writerows(rows)
+    return path
+
+
+def _cancel_history():
+    def leg(red, blue, pick, dec, dog=False):
+        return {"sport": "UFC", "key": f"UFC:2026-11-14:{red}:{blue}", "event": f"{red} vs {blue}", "pick": pick,
+                "decimal": dec, "kickoff": "2026-11-14T23:00:00Z", "dog": dog or None,
+                "names": {"red": red, "blue": blue, "event_date": "2026-11-14"}}
+    return {"tickets": [{"day": "2026-11-14", "kind": "underdog", "status": "pending", "multiplier": 4.0,
+                         "p_market": 0.25, "first_start": "2026-11-14T23:00:00Z",
+                         "legs": [leg("Ciryl Gane", "Josh Hokit", "Josh Hokit", 3.2, dog=True),
+                                  leg("Ed Echo", "Tom Trot", "Ed Echo", 1.25)]}]}
+
+
+def _grade_ufc(tmp_path, monkeypatch, rows, now):
+    monkeypatch.setattr(bs, "UFC_ARCHIVE", _ufc_archive(tmp_path / "ufc.csv", rows))
+    monkeypatch.setattr(bs, "UFC_LOG", tmp_path / "no_log.json")
+    monkeypatch.setattr(bs, "NFL_GAMES", tmp_path / "none.csv.gz")
+    monkeypatch.setattr(bs, "SOCCER_LOG", tmp_path / "none.json")
+    history = _cancel_history()
+    graded = bs.grade_all(history, datetime.fromisoformat(now.replace("Z", "+00:00")))
+    return history["tickets"][0], graded
+
+
+CARD = [("2026-11-14", "Ciryl Gane", "Josh Hokit", "Josh Hokit", "KO/TKO"),
+        ("2026-11-14", "Al Alpha", "Bo Bravo", "Al Alpha", "Decision - Unanimous"),
+        ("2026-11-14", "Cy Charlie", "Dee Delta", "Dee Delta", "Submission")]
+
+
+def test_a_ufc_bout_that_never_happened_is_void_once_its_card_is_complete(tmp_path, monkeypatch):
+    """engine/grade.py's rule, reused: the card has results in, it is a day
+    past its first bell, and neither fighter has a result near it - the leg
+    is void (books return it), never open for good."""
+    row, _ = _grade_ufc(tmp_path, monkeypatch, CARD, "2026-11-15T05:00:00Z")      # card not complete yet
+    assert row["status"] == "pending" and row["legs"][1]["outcome"] is None
+    row, graded = _grade_ufc(tmp_path, monkeypatch, CARD, "2026-11-16T05:00:00Z")
+    assert row["status"] == "won" and row["paid"] == pytest.approx(3.2)             # the void leg at 1.0
+    assert row["legs"][1]["outcome"] == "void" and row["legs"][1]["void_reason"] == "cancelled"
+    assert bs.record(graded, "underdog")["settled"] == 1
+
+
+def test_a_missing_bout_stays_open_when_a_fighter_fought_near_the_card_or_no_results_are_in(tmp_path, monkeypatch):
+    # Ed Echo has a result on the card under another spelling of the bout: not cancelled, a name to reconcile
+    renamed = CARD + [("2026-11-14", "Edward Echo", "Tom Trot", "Edward Echo", "KO/TKO"),
+                      ("2026-11-14", "Ed Echo", "Thomas Trot", "Ed Echo", "KO/TKO")]
+    row, _ = _grade_ufc(tmp_path, monkeypatch, renamed, "2026-12-30T05:00:00Z")
+    assert row["legs"][1]["outcome"] is None and row["status"] == "pending"
+    # the card's results are not in yet: a missing bout means only "not yet"
+    row, _ = _grade_ufc(tmp_path, monkeypatch, [("2026-10-01", "X Ray", "Zed Zulu", "X Ray", "KO/TKO")],
+                        "2026-12-30T05:00:00Z")
+    assert [l["outcome"] for l in row["legs"]] == [None, None] and row["status"] == "pending"
+
+
+def test_a_ticket_still_in_play_after_midnight_stays_on_the_page(monkeypatch):
+    """The 05:23 UTC run is 00:23 ET Sunday, with Saturday's main event on:
+    Saturday is shown before today, flagged in play, and never rebuilt."""
+    monkeypatch.setattr(bs, "_results", lambda: {"ufc": None, "nfl": {}, "soccer": {}})
+    sat = dict(_row("2026-11-14", "2026-11-14T23:00:00Z"), kind="likeliest")
+    sat["legs"][0].update(p=0.6, p_market=0.58)
+    sat_none = {"day": "2026-11-14", "kind": "underdog", "built_at": "2026-11-14T22:00:00Z", "status": "none",
+                "multiplier": None, "legs": [], "none_reason": "no_fill"}
+    fri = dict(_row("2026-11-13", "2026-11-13T23:00:00Z"), kind="likeliest", status="won")      # settled: gone
+    thu = dict(_row("2026-11-12", "2026-11-12T23:00:00Z"), kind="likeliest")                   # 3 days back
+    history = {"tickets": [thu, fri, sat, sat_none]}
+    now = datetime(2026, 11, 15, 5, 23, tzinfo=timezone.utc)
+    show = bs.update(history, now, [], [])
+    assert show == ["2026-11-14", "2026-11-15"]
+    assert history["tickets"] == [thu, fri, sat, sat_none]              # nothing logged for a past day
+    out = bs.payload(history, show, now, bs.grade_all(history, now))
+    past, today = out["days"]
+    assert past["past"] and past["in_play"] and not past["today"]
+    assert past["likeliest"]["status"] == "locked" and past["underdog"]["none_reason"] == "no_fill"
+    assert today["today"] and not today["past"] and not today["in_play"]
+    assert "No likeliest ticket in the next 7 days" in today["likeliest"]["missing_reason"]
+    assert [t["day"] for t in out["tickets"]] == ["2026-11-15"]           # the old shape: today first
+    # once graded it leaves the days shown (it is in the record's last tickets instead)
+    sat["status"] = fri["status"] = "won"                 # (grade_all regraded fri, legs unknown here)
+    assert bs.days_shown(history, now, []) == ["2026-11-15"]
+
+
+def test_the_not_measured_reasons_carry_no_file_path(monkeypatch, tmp_path):
+    """Reader-facing text: a path is an unbreakable token that runs past a
+    phone's card; "salt" is a word the page never defines."""
+    import re
+    monkeypatch.setattr(bs, "_results", lambda: {"ufc": None, "nfl": {}, "soccer": {}})
+    reasons = [bs.dog_measured({})[1], bs.dog_measured({"dog": {"version": 2, "salt": "x"}})[1],
+               bs.dog_measured({"dog": {"version": 1, "salt": sdy.DOG_SALT, "results": {"live": {}}}})[1]]
+    monkeypatch.setattr(bs, "BACKTEST", tmp_path / "none.json")
+    history = {"tickets": []}
+    out = bs.payload(history, bs.update(history, NOW, []), NOW, [])
+    for text in reasons + out["caveats"]:
+        assert not re.search(r"\w/\w|\.py\b|\.json\b", text), text
+        assert "salt" not in text.lower(), text
+    assert all(r.startswith(("Not measured yet", "Not shown")) for r in reasons)

@@ -4,8 +4,13 @@ THE LIKELIEST TICKET. Every ET day from 2016-08-01 to the last day all three
 leg tables cover (the UFC walk-forward cache ends 2026-08-08), the rule
 builds at most one ticket from that day's legs (parlays/data/legs_*.csv.gz,
 written by legs_history.py), and the market-only control builds its own.
-Each is settled at the legs' prices on file, a void leg (NFL tie, UFC draw or
-no contest) paying 1.0. Reported for ALL days, the FIRST years and the LAST 3
+Each is settled at the legs' prices on file, a void leg (an NFL tie) paying
+1.0. UFC draws and no contests are not void legs here but absent: the UFC
+history (engine/experiments/parlay_legs.csv.gz) keeps decided fights only,
+so such a fight is never a leg or an underdog, and the day's ticket comes
+from its other events - an outcome the rule could not know live, where the
+fight would stay in and its leg void. Both blocks carry a caveat that
+counts them from the UFC archive (ufc_no_winner). Reported for ALL days, the FIRST years and the LAST 3
 YEARS before the end, and split by how many sports a ticket mixes, by
 weekday and by year. Nothing here was tuned: the rule was fixed before this
 ran.
@@ -19,9 +24,13 @@ mean with an interval over days, and their 5th/50th/95th percentiles,
 which only say how much the draw alone moves the record over the same games
 (not a confidence interval); and, report-only, the largest model gap first,
 the likeliest underdog first, the market-only lottery, the likeliest ticket
-paired with it and both tickets held. Every row beside its price-implied
+paired with it and both tickets held (each also as its mean over the 1,000
+salts, since the live salt is one draw). Every row beside its price-implied
 return (the product of its legs' no-vig chances times its multiplier, less
-1), because the prices expected a loss before any result was seen. The
+1), because the prices expected a loss before any result was seen. Every
+word in the caveats that depends on a result (how the live salt drew,
+whether live payouts are lower, whether a reading is generous) is chosen
+from the numbers beside it, never typed. The
 splits are descriptive: none can move the band, the floor, the weight or
 the sports in v1. Its periods are the registered dates (DOG_PERIODS), not
 the moving end the likeliest ticket's use.
@@ -456,7 +465,19 @@ def paired(live, likeliest_by_day, M, period):
     """The likeliest ticket beside the underdog ticket on the days both
     exist: the difference (dog minus likeliest) in hit rate and ROI with a
     paired day bootstrap, at the live salt and as each day's mean over the
-    salts; and both tickets held, 2 units a day."""
+    salts; and both tickets held, 2 units a day - each beside its
+    price-implied return and its mean over the 1,000 salts.
+
+    WHY BOTH THE SALTS AND THE PRICES BESIDE THE LIVE SALT: one salt is
+    one draw, and its luck is not the rule's. When these were added
+    (2026-11-13) the live salt ranked above 992 of the 1,000 and the page
+    showed both held at +4% a unit alone - about -2% over the salts and
+    -10% by the prices. A row with only the live salt's number lets the
+    lottery's luck stand for the rule, and sameday.py's MEASURED puts
+    every row beside its price-implied return.
+    The salts' rows use every simulation salt's ticket on the same days:
+    each salt has a ticket on exactly the live salt's days (dog_measure
+    checks it), so the pairing is the same."""
     pairs = [(t, likeliest_by_day[t["day"]]) for t in live
              if in_period(t["day"], period) and t["day"] in likeliest_by_day]
     if not pairs:
@@ -465,27 +486,43 @@ def paired(live, likeliest_by_day, M, period):
     pl = np.array([profit(l) for _, l in pairs])
     wd = np.array([sdy.settle(d)["status"] == "won" for d, _ in pairs], float)
     wl = np.array([sdy.settle(l)["status"] == "won" for _, l in pairs], float)
+    id_ = np.array([implied(d) for d, _ in pairs])
+    il = np.array([implied(l) for _, l in pairs])
     lo, hi = boot(pd_ - pl)
     hlo, hhi = boot(wd - wl)
     days, chosen, cands = M["p"]
     k = {d: i for i, d in enumerate(days)}
-    salt_mean = np.array([profit(c["ticket"]) for c in cands])[chosen[1:, [k[d["day"]] for d, _ in pairs]]].mean(axis=0)
+    C = chosen[1:, [k[d["day"]] for d, _ in pairs]]
+    salt_mean = np.array([profit(c["ticket"]) for c in cands])[C].mean(axis=0)
+    salt_imp = np.array([implied(c["ticket"]) for c in cands])[C].mean(axis=0)
     slo, shi = boot(salt_mean - pl)
     p = {"days": len(pairs),
          "dog": record([d for d, _ in pairs]), "likeliest": record([l for _, l in pairs]),
          "hit_rate_diff": round(float((wd - wl).mean()), 4), "hit_diff_low": hlo, "hit_diff_high": hhi,
          "roi_diff": round(float((pd_ - pl).mean()), 4), "roi_diff_low": lo, "roi_diff_high": hi,
+         "implied_roi_diff": round(float((id_ - il).mean()), 4),
          "salts_roi_diff": round(float((salt_mean - pl).mean()), 4), "salts_roi_diff_low": slo,
-         "salts_roi_diff_high": shi,
-         "note": "underdog ticket minus likeliest ticket, paired by day (bootstrap 4,000, seed 7)"}
+         "salts_roi_diff_high": shi, "salts_implied_roi_diff": round(float((salt_imp - il).mean()), 4),
+         "note": "underdog ticket minus likeliest ticket, paired by day (bootstrap 4,000, seed 7): roi_diff "
+                 "and hit_rate_diff at the live salt; implied_roi_diff the same two tickets by their prices; "
+                 "salts_roi_diff each day's mean over the 1,000 simulation salts of the dog's profit, less the "
+                 "likeliest's, day-bootstrapped; salts_implied_roi_diff the salts' tickets by their prices"}
     tot = pd_ + pl
     blo, bhi = boot(tot / 2.0)
+    both_salts = (salt_mean + pl) / 2.0
+    bslo, bshi = boot(both_salts)
     opp = sum(sdy.opposes(d, l) for d, l in pairs)
     b = {"days": len(pairs), "units": 2 * len(pairs), "profit": round(float(tot.sum()), 2),
          "roi": round(float(tot.sum() / (2 * len(pairs))), 4), "roi_low": blo, "roi_high": bhi,
+         "implied_roi": round(float(((id_ + il) / 2.0).mean()), 4),
+         "salts_roi": round(float(both_salts.mean()), 4), "salts_roi_low": bslo, "salts_roi_high": bshi,
+         "salts_implied_roi": round(float(((salt_imp + il) / 2.0).mean()), 4),
          "both_won": int((wd * wl).sum()), "one_won": int(((wd + wl) == 1).sum()),
          "neither_won": int(((wd + wl) == 0).sum()), "cannot_both_win": int(opp),
-         "note": "both tickets held, 1 unit each a day; cannot_both_win counts the days the dog is the other "
+         "note": "both tickets held, 1 unit each a day: roi at the live salt; implied_roi the same two tickets "
+                 "by their prices; salts_roi each day's mean over the 1,000 simulation salts of the dog's "
+                 "profit, plus the likeliest's, halved, day-bootstrapped (4,000, seed 7); salts_implied_roi "
+                 "the salts' tickets by their prices; cannot_both_win counts the days the dog is the other "
                  "side of one of the likeliest ticket's legs (sameday.opposes)"}
     return p, b
 
@@ -536,19 +573,131 @@ def nfl_live_overround():
     return (float(np.median(o)) if o else None), len(o)
 
 
-def equal_margin(legs, dogs, sport):
-    """In-band dogs of a two-sided market: the mean return at the price if
-    the margin is taken equally from each side (Shin's reading, for two
-    sides) against the proportional reading these files use, and the mean
-    chance each gives."""
+OUTCOMES = {"UFC": 2, "NFL": 2, "Soccer": 3}
+
+
+def equal_margin(legs, dogs, sport, lo=None, hi=None):
+    """In-band dogs (2.00-4.00, between lo and hi when given): the mean
+    return at the price if the margin is taken equally from each of the
+    market's n outcomes (n = 2 for a fight or an NFL game, Shin's reading
+    for two sides; n = 3 for soccer's home / draw / away) against the
+    proportional reading these files use, and the mean chance each gives.
+
+    WHY SOCCER CAN BE READ FROM THE DOG ROW ALONE: its p_market is the
+    team's share of all THREE inverse prices, so 1 / (decimal x p_market)
+    is the whole book (1 + overround), draw included, and the equal-margin
+    chance is 1 / decimal - overround / 3. Shin's three-way reading is not
+    the equal margin (it needs each price, the draw's too, which the dog
+    files do not keep), so for soccer only the equal margin is given."""
     d = dogs[(dogs["sport"] == sport) & (dogs["decimal"] >= sdy.DOG_PRICE[0]) & (dogs["decimal"] <= sdy.DOG_PRICE[1])
              & (dogs["p_market"] < 0.5)]
+    if lo is not None:
+        d = d[(d["day"] >= lo) & (d["day"] <= hi)]
+    n = OUTCOMES[sport]
     over = 1.0 / (d["decimal"] * d["p_market"]) - 1.0
-    q_eq = 1.0 / d["decimal"] - over / 2.0
-    return {"dogs": int(len(d)), "chance_proportional": float(d["p_market"].mean()),
+    q_eq = 1.0 / d["decimal"] - over / n
+    return {"dogs": int(len(d)), "outcomes": n, "chance_proportional": float(d["p_market"].mean()),
             "chance_equal_margin": float(q_eq.mean()),
             "return_proportional": float((d["decimal"] * d["p_market"] - 1).mean()),
             "return_equal_margin": float((d["decimal"] * q_eq - 1).mean())}
+
+
+def generous_words(em):
+    """Whether the proportional reading reads the dogs' chances generously,
+    sport by sport, from the numbers: generous where the equal-margin
+    chance comes out lower. WHY computed: for two sides it is so whenever
+    there is a margin (the gap is overround x (1/2 - q)), but for three it
+    is so only for a dog under 1/3 (overround x (1/3 - q)), and soccer's
+    less likely team is above it in about 1 in 5 in-band matches (counted
+    2026-11-13) - so the word is the data's."""
+    name = lambda s: "soccer" if s == "Soccer" else s
+    gen = [name(s) for s, e in em.items() if e["dogs"] and e["chance_equal_margin"] < e["chance_proportional"]]
+    rest = [name(s) for s, e in em.items() if e["dogs"] and name(s) not in gen]
+    join = lambda xs: xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and " + xs[-1]
+    if gen and not rest:
+        return "so the proportional reading these files use reads every sport's dogs generously"
+    if gen:
+        return (f"so the proportional reading these files use reads the {join(gen)} dogs generously and the "
+                f"{join(rest)} dogs no more generously than the equal margin")
+    return "so here the proportional reading does not read the dogs generously"
+
+
+def draw_word(rank):
+    """How the live salt drew, from its rank among the simulation salts
+    (salt_stats' live_rank): its share of salts it beat, ties half. WHY
+    bands, not above / below the middle: a draw in the middle half of the
+    salts is a typical draw, and calling rank 510 of 1,000 "well" would be
+    a verdict the number does not carry. The rank is always printed
+    beside the word."""
+    share = (rank["roi_below"] + rank["roi_equal"] / 2.0) / rank["of"]
+    if share >= 0.75:
+        return "drew well"
+    if share <= 0.25:
+        return "drew badly"
+    return "drew about average"
+
+
+def payout_words(close, live):
+    """(the files' margins against live: "lower than" / "higher than" /
+    "about the same as", a live leg pays: "less" / "more" / "about the
+    same") from the two overrounds; None when the live one is missing.
+    WHY computed: whether a live ticket pays less than the record depends
+    on which way the logged live margins fall, and that can change as the
+    NFL log grows. Within 0.1 point they are called the same."""
+    if live is None:
+        return None
+    if abs(live - close) < 0.001:
+        return "about the same as", "about the same"
+    return ("lower than", "less") if live > close else ("higher than", "more")
+
+
+ARCHIVE = ROOT / "engine" / "data" / "UFC_with_mmr_rebuilt_dedup.csv"
+UFC_LEGS = ROOT / "engine" / "experiments" / "parlay_legs.csv.gz"
+
+
+def ufc_no_winner(lo, hi):
+    """The UFC fights in lo..hi that ended without a winner, counted from
+    the UFC archive: how many of how many, how many were draws (a decision
+    with no winner) and how many no contests or overturned results, and how
+    many of them are in the history's legs (parlay_legs) at all. None and
+    the reason when either file cannot be read.
+
+    WHY: parlay_legs keeps decided fights only, so these fights are never
+    legs or underdogs here - the backtest draws and fills from the day's
+    other fights - while live the rule cannot know them beforehand and such
+    a leg voids. Which events a ticket can hold then depends on the
+    outcome, against point in time; the count says how much."""
+    try:
+        a = pd.read_csv(ARCHIVE, usecols=["date", "fight_id", "method", "winner"], low_memory=False)
+        legs = pd.read_csv(UFC_LEGS, usecols=["fight_id"])
+    except (OSError, ValueError) as e:
+        return None, f"the UFC archive or the history's legs could not be read ({type(e).__name__})"
+    w = a[(a["date"] >= lo) & (a["date"] <= hi)]
+    nw = w[w["winner"].isna() | (w["winner"].astype(str).str.strip() == "")]
+    draws = nw["method"].fillna("").str.contains("dec", case=False)
+    return {"fights": int(len(w)), "no_winner": int(len(nw)), "draws": int(draws.sum()),
+            "no_contests": int((~draws).sum()), "in_legs": int(nw["fight_id"].isin(legs["fight_id"]).sum()),
+            "lo": lo, "hi": hi}, None
+
+
+def no_winner_caveat(lo, hi):
+    """The caveat both blocks carry about UFC fights with no winner, its
+    numbers counted by ufc_no_winner; a missing count is said with its
+    reason."""
+    c, why = ufc_no_winner(lo, hi)
+    if c is None:
+        return (f"UFC draws and no contests: the count is missing - {why}. The history's UFC legs hold decided "
+                f"fights only, so such fights are neither legs nor underdogs here; live, such a fight voids its leg.")
+    legs_txt = ("none of them is in the history's legs (engine/experiments/parlay_legs.csv.gz keeps decided "
+                "fights only)" if c["in_legs"] == 0 else
+                f"{c['in_legs']} of them are in the history's legs as void legs and {c['no_winner'] - c['in_legs']} "
+                f"are not")
+    share = c["no_winner"] / c["fights"] if c["fights"] else 0.0
+    return (f"UFC draws and no contests: {c['no_winner']} of the {c['fights']:,} UFC fights from {c['lo']} to "
+            f"{c['hi']} ({share:.1%}) ended without a winner - {c['draws']} draws, {c['no_contests']} no contests "
+            f"or overturned results, counted from the UFC archive - and {legs_txt}, so here they are neither legs "
+            f"nor underdogs and a ticket that day is drawn and filled from the other fights. Live the rule cannot "
+            f"know them beforehand: such a fight stays in the draw and the fill, and its leg voids (pays 1.0).")
 
 
 def _pct(x, digits=0):
@@ -560,8 +709,20 @@ def caveats(results, extra, ends, end, legs):
     mo = results["market_only"]["last_3_years"]
     close = float(np.median(_overround(legs, "NFL")))
     live, n_live = nfl_live_overround()
-    live_txt = (f"{live:.1%} on the {n_live} games the NFL app logged live" if live is not None
-                else "a live figure that is missing: the NFL app has logged no game with a moneyline yet")
+    words = payout_words(close, live)
+    if words is None:
+        payouts = (f"Payouts: these files' margins (NFL closing {close:.1%} a game, the median here) cannot be "
+                   f"set against live prices yet - the live figure is missing: the NFL app has logged no game with "
+                   f"a moneyline. A live ticket can pay more or less than the record assumes.")
+    else:
+        ratio = (1.0 + close) / (1.0 + live)
+        n_legs = results["same_day"]["all"].get("mean_legs") or 0
+        payouts = (f"Payouts: these files' margins are {words[0]} those of the consensus moneylines the NFL app logged live "
+                   f"(NFL closing {close:.1%} a game, the median here, against {live:.1%} on the {n_live} games "
+                   f"logged live), so a live NFL leg at the same chance pays {words[1]}"
+                   + ("" if words[1] == "about the same" else " than the record assumes")
+                   + f": {abs(ratio - 1):.1%} a leg, {abs(ratio ** n_legs - 1):.1%} on a ticket of the record's "
+                   f"{n_legs:.2f} legs on average were every leg priced so.")
     out = [
         f"The market is hard to beat. Over the last 3 years the rule's tickets won {r3.get('wins', 0)} of "
         f"{r3.get('tickets', 0)} ({_pct(r3.get('roi', 0))} a ticket, {_pct(r3.get('roi_low', 0))} to "
@@ -572,12 +733,11 @@ def caveats(results, extra, ends, end, legs):
         "Prices: UFC at each card's closing (or, where only that exists, opening) line, NFL at the closing "
         "moneyline, soccer at the pre-match average posted on Friday or Tuesday afternoon. A ticket built "
         "earlier in the day gets different prices; NFL closing lines know the day's news.",
-        f"Payouts: these files' margins are lower than a single sportsbook's live prices (NFL closing "
-        f"{close:.1%} a game, the median here, against {live_txt}), so a live ticket pays a little less "
-        f"than the record assumes.",
+        payouts,
         "Soccer here is the top five leagues only, which play no matches on international-break weekends "
         "and in June-July; on those days a ticket comes from UFC and NFL alone, or there is none.",
         "UFC days are the event date; a card held outside the Americas can fall on another ET date.",
+        no_winner_caveat(START, end),
         "The likeliest ticket in 3-5x is mostly favourites, and every leg is the same model's opinion; "
         "the legs are different events, so their outcomes are close to independent.",
     ]
@@ -585,61 +745,85 @@ def caveats(results, extra, ends, end, legs):
 
 
 def dog_caveats(dog, legs, dogs, rows):
+    """The underdog block's caveats, every number and every word that
+    depends on one computed here. WHY the live draw is never alone: the
+    live salt is one draw of the lottery, and when this was written it had
+    drawn above 992 of the 1,000 simulation salts; so every line that shows
+    the live draw's record shows beside it the 1,000 draws' mean and the
+    price-implied return. The page calls the salt the draw, so these say
+    "draw" and define the salt once."""
     lv = dog["results"]["live"]["all"]
     sl = dog["results"]["salts"]["all"]
     fs, l3 = dog["results"]["salts"]["first"], dog["results"]["salts"]["last_3_years"]
-    em = {s: equal_margin(legs, dogs, s) for s in ("UFC", "NFL")}
+    em = {s: equal_margin(legs, dogs, s, *DOG_PERIODS["all"]) for s in ("UFC", "NFL", "Soccer")}
     live = [t for t in rows["live"] if in_period(t["day"], DOG_PERIODS["all"])]
     ufc = [dog_leg(t) for t in live if dog_leg(t)["sport"] == "UFC"]
     ufc25 = [l for t, l in ((t, dog_leg(t)) for t in live) if l["sport"] == "UFC" and t["day"][:4] == "2025"]
     nfl = sum(dog_leg(t)["sport"] == "NFL" for t in live)
     opened = sum(l["price_source"] == "open" for l in ufc)
-    p = dog["results"]["paired"]["all"]
+    p, b = dog["results"]["paired"]["all"], dog["results"]["both"]["all"]
+    beside = (f"over the 1,000 simulation draws {_pct(sl['roi'], 1)} ({_pct(sl['roi_low'], 1)} to "
+              f"{_pct(sl['roi_high'], 1)}), by the prices {_pct(lv['implied_roi'], 1)}")
+    e_txt = lambda s: (f"the {em[s]['dogs']:,} {s.replace('Soccer', 'soccer')} dogs {em[s]['chance_equal_margin']:.3f} against "
+                       f"{em[s]['chance_proportional']:.3f}, {_pct(em[s]['return_equal_margin'], 1)} against "
+                       f"{_pct(em[s]['return_proportional'], 1)}")
     out = [
         f"The market is hard to beat, and a draw cannot create an edge: every 3-5x ticket pays the bookmaker's "
         f"margin on every leg. This ticket is for variety and a bigger payout, never the better bet. At the "
-        f"live salt it won {lv['wins']} of {lv['tickets']:,} ({_pct(lv['roi'])} a ticket, {_pct(lv['roi_low'])} "
-        f"to {_pct(lv['roi_high'])}); an interval that spans zero is no evidence of an edge.",
+        f"live draw it won {lv['wins']} of {lv['tickets']:,} ({_pct(lv['roi'], 1)} a ticket, "
+        f"{_pct(lv['roi_low'], 1)} to {_pct(lv['roi_high'], 1)}; {beside}); an interval that spans zero is no "
+        f"evidence of an edge.",
         f"Expected before any result was seen (sameday.py): by the prices it lands about 1 time in 4 (a market "
         f"chance of about 0.25 at about 3.8x), the likeliest about 2 in 7 at about 3.1x, price-implied about -8% "
-        f"a ticket, and somewhat worse than its prices imply. The prices on file give it a market chance of "
-        f"{lv['market_hit_rate']:.3f} at {lv['mean_multiplier']:.2f}x, price-implied {_pct(lv['implied_roi'], 1)}.",
+        f"a ticket, and somewhat worse than its prices imply. The prices on file give the live draw's tickets a "
+        f"market chance of {lv['market_hit_rate']:.3f} at {lv['mean_multiplier']:.2f}x, price-implied "
+        f"{_pct(lv['implied_roi'], 1)}, and the 1,000 simulation draws' {sl['market_hit_rate']:.3f} at "
+        f"{sl['mean_multiplier']:.2f}x, {_pct(sl['implied_roi'], 1)}.",
         "Prior exposure: the rule's own results were not seen before it was fixed, but underdog results over the "
         "same years had been - the UFC profiles' risker and risk-lover tickets and the NFL and soccer "
         "edge-betting checks. Its record is not an out-of-sample test of underdogs.",
         "Bookmakers load more margin on underdogs (about 5% on a dog leg against 3% on a favourite, as written "
         "before the results), so a dog ticket pays the heavier margin once on its dog and a lighter one on each "
         "favourite that fills it; the fill adds payout, not safety or value.",
-        f"The market chances here take the margin off in proportion, which reads a dog's chance generously. "
-        f"Taking it equally off each side (Shin's reading for two sides), the {em['UFC']['dogs']:,} UFC dogs "
-        f"priced 2.00-4.00 average a chance of {em['UFC']['chance_equal_margin']:.3f} against "
-        f"{em['UFC']['chance_proportional']:.3f} and return {_pct(em['UFC']['return_equal_margin'], 1)} at their "
-        f"price against {_pct(em['UFC']['return_proportional'], 1)}; the {em['NFL']['dogs']:,} NFL dogs "
-        f"{em['NFL']['chance_equal_margin']:.3f} against {em['NFL']['chance_proportional']:.3f}, "
-        f"{_pct(em['NFL']['return_equal_margin'], 1)} against {_pct(em['NFL']['return_proportional'], 1)}. "
-        f"Soccer's split is missing: these files keep the two teams' prices, not the draw's.",
-        f"NFL underdogs are chosen and priced at the closing moneyline ({nfl} of the live salt's "
+        f"The market chances here take the margin off in proportion. Taking it equally off each outcome instead "
+        f"(Shin's reading for a fight's or a game's two sides; for soccer's three outcomes the equal margin - "
+        f"Shin's three-way reading needs the draw's price, which the dog files do not keep), the "
+        f"{em['UFC']['dogs']:,} UFC dogs priced 2.00-4.00 average a chance of {em['UFC']['chance_equal_margin']:.3f} "
+        f"against {em['UFC']['chance_proportional']:.3f} and return {_pct(em['UFC']['return_equal_margin'], 1)} "
+        f"at their price against {_pct(em['UFC']['return_proportional'], 1)}; {e_txt('NFL')}; {e_txt('Soccer')} - "
+        f"{generous_words(em)}.",
+        f"NFL underdogs are chosen and priced at the closing moneyline ({nfl} of the live draw's "
         f"{lv['tickets']:,} dogs): the close knows the day's news, and whether a dog is priced 2.00-4.00 is "
         f"decided at it; live, both are decided at the consensus price when the ticket is built.",
         f"UFC cards of 2025 are priced at their opening lines (no closing line is on file for them): "
-        f"{len(ufc25)} of the live salt's UFC dogs that year, {opened} of its {len(ufc)} UFC dogs in all priced "
+        f"{len(ufc25)} of the live draw's UFC dogs that year, {opened} of its {len(ufc)} UFC dogs in all priced "
         f"at an opening line.",
-        f"The live salt drew well: over all days its record is above {sl['live_rank']['roi_below']:,} of the "
-        f"1,000 simulation salts' on the same games (the first years {fs['live_rank']['roi_below']:,}, the last 3 "
-        f"years {l3['live_rank']['roi_below']:,}), at the same prices (price-implied {_pct(lv['implied_roi'], 1)} "
-        f"against {_pct(sl['implied_roi'], 1)}). Its past draw is no forecast: the salts averaged "
+        f"The live draw is the lottery with the live salt ({dog['salt']}, its seed); the simulation draws are "
+        f"the same lottery with 1,000 other salts. The live draw {draw_word(sl['live_rank'])}: over all days its "
+        f"record is above {sl['live_rank']['roi_below']:,} of the {sl['live_rank']['of']:,} simulation draws' on "
+        f"the same games (the first years {fs['live_rank']['roi_below']:,}, the last 3 years "
+        f"{l3['live_rank']['roi_below']:,}), at prices implying {_pct(lv['implied_roi'], 1)} against "
+        f"{_pct(sl['implied_roi'], 1)}. Its past draw is no forecast: the simulation draws averaged "
         f"{_pct(sl['roi'], 1)} a ticket ({_pct(sl['roi_low'], 1)} to {_pct(sl['roi_high'], 1)}), and the prices "
         f"imply {_pct(lv['implied_roi'], 1)}.",
-        f"The 5th-95th percentile across the 1,000 simulation salts ({_pct(sl['spread']['roi']['p5'], 1)} to "
+        f"The 5th-95th percentile across the 1,000 simulation draws ({_pct(sl['spread']['roi']['p5'], 1)} to "
         f"{_pct(sl['spread']['roi']['p95'], 1)} a ticket over all days) is how much the draw alone moves the "
         f"record over the same games; it is not a confidence interval. The interval over days is "
-        f"({_pct(lv['roi_low'], 1)} to {_pct(lv['roi_high'], 1)} at the live salt).",
-        "Live, a UFC leg is priced from the card the UFC app carries (the best price across books, or a "
-        "median of books where the card has one); this history prices each fight at one line per card. "
-        "A live UFC dog's price, and whether it falls in 2.00-4.00, can differ from what this record assumes.",
+        f"({_pct(lv['roi_low'], 1)} to {_pct(lv['roi_high'], 1)} at the live draw; {beside}).",
+        "Live, a UFC leg is priced from the card the UFC app carries - the best price across books unless the "
+        "card carries a median from two books or more - and this history prices each fight at one line per "
+        "card. A best price pays at least a typical book's, so a live UFC dog's price, and whether it falls in "
+        "2.00-4.00, can differ from what this record assumes.",
         f"Same days and events as the likeliest ticket: on the {p['days']:,} days both exist, the two cannot "
-        f"both win on {dog['results']['both']['all']['cannot_both_win']} (the dog is the other side of one of "
-        f"the likeliest ticket's legs).",
+        f"both win on {b['cannot_both_win']} (the dog is the other side of one of the likeliest ticket's legs). "
+        f"Held together, 1 unit each, they returned {_pct(b['roi'], 1)} a unit at the live draw "
+        f"({_pct(b['roi_low'], 1)} to {_pct(b['roi_high'], 1)}), {_pct(b['salts_roi'], 1)} over the 1,000 "
+        f"simulation draws ({_pct(b['salts_roi_low'], 1)} to {_pct(b['salts_roi_high'], 1)}), and "
+        f"{_pct(b['implied_roi'], 1)} by the prices; the underdog ticket minus the likeliest was "
+        f"{_pct(p['roi_diff'], 1)} a ticket at the live draw, {_pct(p['salts_roi_diff'], 1)} over the draws "
+        f"({_pct(p['salts_roi_diff_low'], 1)} to {_pct(p['salts_roi_diff_high'], 1)}), and "
+        f"{_pct(p['implied_roi_diff'], 1)} by the prices.",
+        no_winner_caveat(*DOG_PERIODS["all"]),
     ]
     return out
 
@@ -700,8 +884,11 @@ def main():
                      f"drawn with the 1,000 simulation salts returned {_pct(sl['roi'], 1)} a ticket on average "
                      f"({_pct(sl['roi_low'], 1)} to {_pct(sl['roi_high'], 1)}), price-implied "
                      f"{_pct(sl['implied_roi'], 1)}; the live salt's record is above "
-                     f"{sl['live_rank']['roi_below']:,} of the {sl['live_rank']['of']:,} - with the same prices, "
-                     f"so the gap is which dogs happened to win."),
+                     f"{sl['live_rank']['roi_below']:,} of the {sl['live_rank']['of']:,} - "
+                     + (f"at about the same prices, so the gap is which dogs happened to win."
+                        if abs(lv["implied_roi"] - sl["implied_roi"]) < 0.005 else
+                        f"at prices implying {_pct(lv['implied_roi'], 1)} against {_pct(sl['implied_roi'], 1)}, "
+                        f"so part of the gap is the prices and the rest which dogs happened to win.")),
         "results": dres, "splits": dsplits,
     }
     if DOG_PERIODS["all"][1] > end:
@@ -804,10 +991,13 @@ def table(payload):
         if p.get("days"):
             print(f"  paired with the likeliest ({p['days']} days): hit diff {p['hit_rate_diff']:+.3f} "
                   f"[{p['hit_diff_low']:+.3f}, {p['hit_diff_high']:+.3f}], ROI diff {p['roi_diff']:+.3f} "
-                  f"[{p['roi_diff_low']:+.3f}, {p['roi_diff_high']:+.3f}]; salts mean {p['salts_roi_diff']:+.3f}")
+                  f"[{p['roi_diff_low']:+.3f}, {p['roi_diff_high']:+.3f}], implied {p['implied_roi_diff']:+.3f}; "
+                  f"salts mean {p['salts_roi_diff']:+.3f} [{p['salts_roi_diff_low']:+.3f}, "
+                  f"{p['salts_roi_diff_high']:+.3f}], implied {p['salts_implied_roi_diff']:+.3f}")
             print(f"  both held: {b['units']} units, ROI {b['roi']:+.3f} [{b['roi_low']:+.3f}, {b['roi_high']:+.3f}],"
-                  f" both won {b['both_won']}, one {b['one_won']}, neither {b['neither_won']}, cannot both win "
-                  f"{b['cannot_both_win']}")
+                  f" implied {b['implied_roi']:+.3f}; salts mean {b['salts_roi']:+.3f} [{b['salts_roi_low']:+.3f}, "
+                  f"{b['salts_roi_high']:+.3f}], implied {b['salts_implied_roi']:+.3f}; both won {b['both_won']}, "
+                  f"one {b['one_won']}, neither {b['neither_won']}, cannot both win {b['cannot_both_win']}")
         print()
     for k in ("by_sport", "by_price", "by_year", "by_legs"):
         print(f"  dog {k} ({SPLIT_NOTE}):")

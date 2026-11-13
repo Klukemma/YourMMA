@@ -5,6 +5,11 @@ Each row is that sport's SHIPPED pick, point in time, at the price on file:
   UFC     engine/experiments/parlay_legs.csv.gz - the walk-forward model
           (the shipped recipe) and each card's single price snapshot; the
           pick is the blended side (market_blend at the shipped weight).
+          That file holds decided fights only: a draw, a no contest or an
+          overturned result has no row there, so it is no leg and no
+          underdog here (no UFC row is "void"), although live such a fight
+          is on the card and its leg voids. The backtest counts them from
+          the UFC archive in a caveat (sameday_backtest.ufc_no_winner).
   NFL     nfl_model.walk_forward over nfl_model.feature_frame - each season
           fitted on earlier seasons; the pick is the blend's (home at 0.5 or
           more), priced at the pick side's closing moneyline (nflverse).
@@ -29,7 +34,7 @@ Each row is that sport's SHIPPED pick, point in time, at the price on file:
 
 Writes parlays/data/legs_{ufc,nfl,soccer}.csv.gz with: day (ET), key, event,
 pick, opponent, p, p_model, p_market, decimal, price_source, result
-(won / lost / void).
+(won / lost / void - void is an NFL tie; UFC has none, see above).
 
 THE UNDERDOG SIDE (sameday.py's underdog ticket, v1) goes in its own files,
 parlays/data/legs_dogs_{ufc,nfl,soccer}.csv.gz, so the pick-side files and
@@ -133,6 +138,8 @@ def ufc():
         pb_red = market_blend.blend(r.p_model, mk_red)
         red = pb_red >= 0.5
         pick, opp = (r.red, r.blue) if red else (r.blue, r.red)
+        # never None today (parlay_legs keeps decided fights), kept so a
+        # file that does carry a fight without a winner voids its leg
         winner = None if pd.isna(r.winner) else r.winner
         result = "void" if winner is None else ("won" if winner == ("red" if red else "blue") else "lost")
         rows.append({"day": r.date, "key": r.fight_id, "event": r.event, "pick": pick, "opponent": opp,
