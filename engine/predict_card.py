@@ -3622,10 +3622,13 @@ def median_price(odds_match):
     is meaningless across +100/-100: -105 and +105 would give 0), the mean of
     the two middle ones for an even count, then written back as American,
     rounded as books quote it. `books` is how many prices it is the median
-    of. When the card is served from odds_cache, each side's 'odds' list
-    holds one entry - the best price the cache kept - so books is 1 and the
-    "median" IS the best price: a reader must not take books=1 for a typical
-    book."""
+    of. A card served from odds_cache (every run: for_card replaces each
+    card bout's live record) carries every book's price from the fetch its
+    line came from, the best first (odds_cache._offers), so a fetched run
+    and a cache-only run give the same median. A bout cached before the
+    per-book prices were kept serves its best price alone: books is 1 and
+    the "median" IS the best price, and a reader must not take books=1 for
+    a typical book."""
     if not odds_match:
         return None
     decimals = []
