@@ -1,122 +1,2202 @@
 {
  "backtest": {
+  "by_group": {
+   "europe": {
+    "codes": [
+     "E1",
+     "SP2",
+     "I2",
+     "D2",
+     "F2",
+     "E2",
+     "E3",
+     "EC",
+     "SC0",
+     "SC1",
+     "SC2",
+     "SC3",
+     "N1",
+     "B1",
+     "P1",
+     "T1",
+     "G1"
+    ],
+    "confirm": {
+     "accuracy": 0.4929,
+     "base_log_loss": 1.0755,
+     "log_loss": 1.01076,
+     "market_accuracy": 0.4929,
+     "market_log_loss": 1.01165,
+     "matches": 58622,
+     "model_accuracy": 0.4827,
+     "model_log_loss": 1.02329,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "dev": {
+     "accuracy": 0.4892,
+     "base_log_loss": 1.06943,
+     "log_loss": 1.01712,
+     "market_accuracy": 0.4891,
+     "market_log_loss": 1.01797,
+     "matches": 59411,
+     "model_accuracy": 0.4816,
+     "model_log_loss": 1.02744,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "name": "other European divisions",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    }
+   },
+   "extra": {
+    "codes": [
+     "ARG",
+     "AUT",
+     "BRA",
+     "CHN",
+     "DNK",
+     "FIN",
+     "IRL",
+     "JPN",
+     "MEX",
+     "NOR",
+     "POL",
+     "ROU",
+     "SWE",
+     "SWZ",
+     "USA"
+    ],
+    "confirm": {
+     "accuracy": 0.4991,
+     "base_log_loss": 1.07275,
+     "log_loss": 1.00664,
+     "market_accuracy": 0.4988,
+     "market_log_loss": 1.00714,
+     "matches": 29541,
+     "model_accuracy": 0.4849,
+     "model_log_loss": 1.02736,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "dev": {
+     "accuracy": 0.5066,
+     "base_log_loss": 1.06394,
+     "log_loss": 1.00418,
+     "market_accuracy": 0.5064,
+     "market_log_loss": 1.00502,
+     "matches": 24006,
+     "model_accuracy": 0.4929,
+     "model_log_loss": 1.02329,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "name": "extra leagues",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    }
+   },
+   "top": {
+    "codes": [
+     "E0",
+     "SP1",
+     "I1",
+     "D1",
+     "F1"
+    ],
+    "confirm": {
+     "accuracy": 0.5409,
+     "base_log_loss": 1.07276,
+     "log_loss": 0.96426,
+     "market_accuracy": 0.5409,
+     "market_log_loss": 0.96516,
+     "matches": 17936,
+     "model_accuracy": 0.5335,
+     "model_log_loss": 0.97536,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "dev": {
+     "accuracy": 0.5259,
+     "base_log_loss": 1.0629,
+     "log_loss": 0.98082,
+     "market_accuracy": 0.5263,
+     "market_log_loss": 0.98163,
+     "matches": 18259,
+     "model_accuracy": 0.5206,
+     "model_log_loss": 0.98783,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "name": "top five",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    }
+   }
+  },
   "by_league": [
    {
-    "accuracy": 0.5568421052631579,
-    "brier": 0.5635400776629856,
+    "accuracy": 0.5558,
     "code": "E0",
-    "log_loss": 0.9519620873897621,
-    "market_accuracy": 0.5563157894736842,
-    "market_log_loss": 0.9520181247112498,
+    "confirm": {
+     "accuracy": 0.5558,
+     "base_log_loss": 1.06635,
+     "log_loss": 0.95222,
+     "market_accuracy": 0.5563,
+     "market_log_loss": 0.95202,
+     "matches": 3800,
+     "model_accuracy": 0.5439,
+     "model_log_loss": 0.96092,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "England",
+    "dev": {
+     "accuracy": 0.5361,
+     "base_log_loss": 1.06562,
+     "log_loss": 0.96757,
+     "market_accuracy": 0.5361,
+     "market_log_loss": 0.96793,
+     "matches": 3800,
+     "model_accuracy": 0.5332,
+     "model_log_loss": 0.97038,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "top",
+    "in_app": true,
+    "label": "Premier League",
+    "log_loss": 0.95222,
+    "market_accuracy": 0.5563,
+    "market_log_loss": 0.95202,
     "matches": 3800,
-    "name": "Premier League"
+    "name": "Premier League",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "ENG"
    },
    {
-    "accuracy": 0.5376315789473685,
-    "brier": 0.5739664273029437,
+    "accuracy": 0.5371,
     "code": "SP1",
-    "log_loss": 0.9660309756311066,
-    "market_accuracy": 0.5381578947368421,
-    "market_log_loss": 0.9673390666699235,
+    "confirm": {
+     "accuracy": 0.5371,
+     "base_log_loss": 1.0676,
+     "log_loss": 0.96591,
+     "market_accuracy": 0.5382,
+     "market_log_loss": 0.96734,
+     "matches": 3800,
+     "model_accuracy": 0.5292,
+     "model_log_loss": 0.97618,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Spain",
+    "dev": {
+     "accuracy": 0.5511,
+     "base_log_loss": 1.04942,
+     "log_loss": 0.95141,
+     "market_accuracy": 0.5503,
+     "market_log_loss": 0.95256,
+     "matches": 3800,
+     "model_accuracy": 0.5416,
+     "model_log_loss": 0.95871,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "top",
+    "in_app": true,
+    "label": "La Liga",
+    "log_loss": 0.96591,
+    "market_accuracy": 0.5382,
+    "market_log_loss": 0.96734,
     "matches": 3800,
-    "name": "La Liga"
+    "name": "La Liga",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "ESP"
    },
    {
-    "accuracy": 0.555672545406686,
-    "brier": 0.5610230602526848,
+    "accuracy": 0.5575,
     "code": "I1",
-    "log_loss": 0.9471247098835073,
-    "market_accuracy": 0.5561989997367728,
-    "market_log_loss": 0.9490795065894699,
+    "confirm": {
+     "accuracy": 0.5575,
+     "base_log_loss": 1.08385,
+     "log_loss": 0.94657,
+     "market_accuracy": 0.5562,
+     "market_log_loss": 0.94908,
+     "matches": 3799,
+     "model_accuracy": 0.5554,
+     "model_log_loss": 0.95863,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Italy",
+    "dev": {
+     "accuracy": 0.532,
+     "base_log_loss": 1.06265,
+     "log_loss": 0.97498,
+     "market_accuracy": 0.532,
+     "market_log_loss": 0.97703,
+     "matches": 3799,
+     "model_accuracy": 0.5265,
+     "model_log_loss": 0.98707,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "top",
+    "in_app": true,
+    "label": "Serie A",
+    "log_loss": 0.94657,
+    "market_accuracy": 0.5562,
+    "market_log_loss": 0.94908,
     "matches": 3799,
-    "name": "Serie A"
+    "name": "Serie A",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "ITA"
    },
    {
-    "accuracy": 0.5235294117647059,
-    "brier": 0.5829526065117626,
+    "accuracy": 0.5248,
     "code": "D1",
-    "log_loss": 0.9794493585193217,
-    "market_accuracy": 0.5248366013071896,
-    "market_log_loss": 0.9787510285629077,
+    "confirm": {
+     "accuracy": 0.5248,
+     "base_log_loss": 1.07017,
+     "log_loss": 0.97875,
+     "market_accuracy": 0.5248,
+     "market_log_loss": 0.97875,
+     "matches": 3060,
+     "model_accuracy": 0.5147,
+     "model_log_loss": 0.99151,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Germany",
+    "dev": {
+     "accuracy": 0.5078,
+     "base_log_loss": 1.06769,
+     "log_loss": 1.00062,
+     "market_accuracy": 0.5078,
+     "market_log_loss": 1.00062,
+     "matches": 3060,
+     "model_accuracy": 0.5085,
+     "model_log_loss": 1.00578,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "top",
+    "in_app": true,
+    "label": "Bundesliga",
+    "log_loss": 0.97875,
+    "market_accuracy": 0.5248,
+    "market_log_loss": 0.97875,
     "matches": 3060,
-    "name": "Bundesliga"
+    "name": "Bundesliga",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "GER"
    },
    {
-    "accuracy": 0.5231521426517113,
-    "brier": 0.5853731410872365,
+    "accuracy": 0.5246,
     "code": "F1",
-    "log_loss": 0.9822978930385612,
-    "market_accuracy": 0.5243025596778832,
-    "market_log_loss": 0.9827597939815056,
+    "confirm": {
+     "accuracy": 0.5246,
+     "base_log_loss": 1.07558,
+     "log_loss": 0.9822,
+     "market_accuracy": 0.5243,
+     "market_log_loss": 0.98276,
+     "matches": 3477,
+     "model_accuracy": 0.5191,
+     "model_log_loss": 0.99429,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "France",
+    "dev": {
+     "accuracy": 0.4992,
+     "base_log_loss": 1.07007,
+     "log_loss": 1.01337,
+     "market_accuracy": 0.5016,
+     "market_log_loss": 1.01371,
+     "matches": 3800,
+     "model_accuracy": 0.4908,
+     "model_log_loss": 1.0207,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "top",
+    "in_app": true,
+    "label": "Ligue 1",
+    "log_loss": 0.9822,
+    "market_accuracy": 0.5243,
+    "market_log_loss": 0.98276,
     "matches": 3477,
-    "name": "Ligue 1"
+    "name": "Ligue 1",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "FRA"
+   },
+   {
+    "accuracy": 0.4754,
+    "code": "E1",
+    "confirm": {
+     "accuracy": 0.4754,
+     "base_log_loss": 1.07595,
+     "log_loss": 1.03365,
+     "market_accuracy": 0.4754,
+     "market_log_loss": 1.03365,
+     "matches": 5520,
+     "model_accuracy": 0.4678,
+     "model_log_loss": 1.04387,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "England",
+    "dev": {
+     "accuracy": 0.4553,
+     "base_log_loss": 1.07792,
+     "log_loss": 1.04851,
+     "market_accuracy": 0.4553,
+     "market_log_loss": 1.04851,
+     "matches": 5520,
+     "model_accuracy": 0.4487,
+     "model_log_loss": 1.05345,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "Championship",
+    "log_loss": 1.03365,
+    "market_accuracy": 0.4754,
+    "market_log_loss": 1.03365,
+    "matches": 5520,
+    "name": "Championship",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "ENG2"
+   },
+   {
+    "accuracy": 0.4705,
+    "code": "SP2",
+    "confirm": {
+     "accuracy": 0.4705,
+     "base_log_loss": 1.06785,
+     "log_loss": 1.03699,
+     "market_accuracy": 0.4686,
+     "market_log_loss": 1.03816,
+     "matches": 4599,
+     "model_accuracy": 0.4594,
+     "model_log_loss": 1.04782,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Spain",
+    "dev": {
+     "accuracy": 0.4694,
+     "base_log_loss": 1.06464,
+     "log_loss": 1.03715,
+     "market_accuracy": 0.4701,
+     "market_log_loss": 1.03801,
+     "matches": 4610,
+     "model_accuracy": 0.4638,
+     "model_log_loss": 1.04879,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "Segunda Divisi\u00f3n",
+    "log_loss": 1.03699,
+    "market_accuracy": 0.4686,
+    "market_log_loss": 1.03816,
+    "matches": 4599,
+    "name": "Segunda Divisi\u00f3n",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "ESP2"
+   },
+   {
+    "accuracy": 0.448,
+    "code": "I2",
+    "confirm": {
+     "accuracy": 0.448,
+     "base_log_loss": 1.08139,
+     "log_loss": 1.0452,
+     "market_accuracy": 0.4478,
+     "market_log_loss": 1.04659,
+     "matches": 3917,
+     "model_accuracy": 0.4381,
+     "model_log_loss": 1.05985,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Italy",
+    "dev": {
+     "accuracy": 0.4642,
+     "base_log_loss": 1.07321,
+     "log_loss": 1.03042,
+     "market_accuracy": 0.4651,
+     "market_log_loss": 1.03145,
+     "matches": 4610,
+     "model_accuracy": 0.4518,
+     "model_log_loss": 1.05185,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "Serie B",
+    "log_loss": 1.0452,
+    "market_accuracy": 0.4478,
+    "market_log_loss": 1.04659,
+    "matches": 3917,
+    "name": "Serie B",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "ITA2"
+   },
+   {
+    "accuracy": 0.4618,
+    "code": "D2",
+    "confirm": {
+     "accuracy": 0.4618,
+     "base_log_loss": 1.07755,
+     "log_loss": 1.04966,
+     "market_accuracy": 0.4647,
+     "market_log_loss": 1.04923,
+     "matches": 3060,
+     "model_accuracy": 0.449,
+     "model_log_loss": 1.05494,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Germany",
+    "dev": {
+     "accuracy": 0.4768,
+     "base_log_loss": 1.07358,
+     "log_loss": 1.03428,
+     "market_accuracy": 0.4771,
+     "market_log_loss": 1.03431,
+     "matches": 3056,
+     "model_accuracy": 0.462,
+     "model_log_loss": 1.04606,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "2. Bundesliga",
+    "log_loss": 1.04966,
+    "market_accuracy": 0.4647,
+    "market_log_loss": 1.04923,
+    "matches": 3060,
+    "name": "2. Bundesliga",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "GER2"
+   },
+   {
+    "accuracy": 0.4606,
+    "code": "F2",
+    "confirm": {
+     "accuracy": 0.4606,
+     "base_log_loss": 1.08876,
+     "log_loss": 1.04406,
+     "market_accuracy": 0.4603,
+     "market_log_loss": 1.0446,
+     "matches": 3550,
+     "model_accuracy": 0.4518,
+     "model_log_loss": 1.05524,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "France",
+    "dev": {
+     "accuracy": 0.4612,
+     "base_log_loss": 1.06212,
+     "log_loss": 1.03894,
+     "market_accuracy": 0.4639,
+     "market_log_loss": 1.04015,
+     "matches": 3790,
+     "model_accuracy": 0.4607,
+     "model_log_loss": 1.05203,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "Ligue 2",
+    "log_loss": 1.04406,
+    "market_accuracy": 0.4603,
+    "market_log_loss": 1.0446,
+    "matches": 3550,
+    "name": "Ligue 2",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "FRA2"
+   },
+   {
+    "accuracy": 0.4919,
+    "code": "E2",
+    "confirm": {
+     "accuracy": 0.4919,
+     "base_log_loss": 1.07456,
+     "log_loss": 1.02333,
+     "market_accuracy": 0.4917,
+     "market_log_loss": 1.02469,
+     "matches": 5367,
+     "model_accuracy": 0.4761,
+     "model_log_loss": 1.0398,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "England",
+    "dev": {
+     "accuracy": 0.4722,
+     "base_log_loss": 1.07583,
+     "log_loss": 1.03944,
+     "market_accuracy": 0.4702,
+     "market_log_loss": 1.04,
+     "matches": 5519,
+     "model_accuracy": 0.4657,
+     "model_log_loss": 1.04826,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "League One (England)",
+    "log_loss": 1.02333,
+    "market_accuracy": 0.4917,
+    "market_log_loss": 1.02469,
+    "matches": 5367,
+    "name": "League One",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "ENG3"
+   },
+   {
+    "accuracy": 0.4603,
+    "code": "E3",
+    "confirm": {
+     "accuracy": 0.4603,
+     "base_log_loss": 1.07982,
+     "log_loss": 1.04907,
+     "market_accuracy": 0.4603,
+     "market_log_loss": 1.04907,
+     "matches": 5403,
+     "model_accuracy": 0.446,
+     "model_log_loss": 1.05834,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "England",
+    "dev": {
+     "accuracy": 0.4535,
+     "base_log_loss": 1.08417,
+     "log_loss": 1.05727,
+     "market_accuracy": 0.4535,
+     "market_log_loss": 1.05727,
+     "matches": 5519,
+     "model_accuracy": 0.4446,
+     "model_log_loss": 1.0609,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "League Two (England)",
+    "log_loss": 1.04907,
+    "market_accuracy": 0.4603,
+    "market_log_loss": 1.04907,
+    "matches": 5403,
+    "name": "League Two",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "ENG4"
+   },
+   {
+    "accuracy": 0.482,
+    "code": "EC",
+    "confirm": {
+     "accuracy": 0.482,
+     "base_log_loss": 1.07727,
+     "log_loss": 1.02432,
+     "market_accuracy": 0.4839,
+     "market_log_loss": 1.02476,
+     "matches": 5284,
+     "model_accuracy": 0.4748,
+     "model_log_loss": 1.03343,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "England",
+    "dev": {
+     "accuracy": 0.4922,
+     "base_log_loss": 1.07308,
+     "log_loss": 1.02552,
+     "market_accuracy": 0.4909,
+     "market_log_loss": 1.02601,
+     "matches": 5437,
+     "model_accuracy": 0.4828,
+     "model_log_loss": 1.03353,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "National League",
+    "log_loss": 1.02432,
+    "market_accuracy": 0.4839,
+    "market_log_loss": 1.02476,
+    "matches": 5284,
+    "name": "National League",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "ENG5"
+   },
+   {
+    "accuracy": 0.5522,
+    "code": "SC0",
+    "confirm": {
+     "accuracy": 0.5522,
+     "base_log_loss": 1.06902,
+     "log_loss": 0.93839,
+     "market_accuracy": 0.5522,
+     "market_log_loss": 0.93839,
+     "matches": 2231,
+     "model_accuracy": 0.5459,
+     "model_log_loss": 0.95171,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Scotland",
+    "dev": {
+     "accuracy": 0.513,
+     "base_log_loss": 1.07318,
+     "log_loss": 0.98436,
+     "market_accuracy": 0.513,
+     "market_log_loss": 0.98436,
+     "matches": 2275,
+     "model_accuracy": 0.5112,
+     "model_log_loss": 0.99403,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "Premiership",
+    "log_loss": 0.93839,
+    "market_accuracy": 0.5522,
+    "market_log_loss": 0.93839,
+    "matches": 2231,
+    "name": "Premiership",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "SCO"
+   },
+   {
+    "accuracy": 0.4562,
+    "code": "SC1",
+    "confirm": {
+     "accuracy": 0.4562,
+     "base_log_loss": 1.08854,
+     "log_loss": 1.04189,
+     "market_accuracy": 0.4562,
+     "market_log_loss": 1.04189,
+     "matches": 1712,
+     "model_accuracy": 0.4504,
+     "model_log_loss": 1.05173,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Scotland",
+    "dev": {
+     "accuracy": 0.4964,
+     "base_log_loss": 1.07925,
+     "log_loss": 1.02068,
+     "market_accuracy": 0.4964,
+     "market_log_loss": 1.02068,
+     "matches": 1799,
+     "model_accuracy": 0.483,
+     "model_log_loss": 1.02758,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "Championship (Scotland)",
+    "log_loss": 1.04189,
+    "market_accuracy": 0.4562,
+    "market_log_loss": 1.04189,
+    "matches": 1712,
+    "name": "Championship",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "SCO2"
+   },
+   {
+    "accuracy": 0.5074,
+    "code": "SC2",
+    "confirm": {
+     "accuracy": 0.5074,
+     "base_log_loss": 1.07198,
+     "log_loss": 1.01058,
+     "market_accuracy": 0.5068,
+     "market_log_loss": 1.01129,
+     "matches": 1689,
+     "model_accuracy": 0.5003,
+     "model_log_loss": 1.01764,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Scotland",
+    "dev": {
+     "accuracy": 0.5089,
+     "base_log_loss": 1.06059,
+     "log_loss": 1.00137,
+     "market_accuracy": 0.5067,
+     "market_log_loss": 1.00363,
+     "matches": 1798,
+     "model_accuracy": 0.495,
+     "model_log_loss": 1.01626,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "League One (Scotland)",
+    "log_loss": 1.01058,
+    "market_accuracy": 0.5068,
+    "market_log_loss": 1.01129,
+    "matches": 1689,
+    "name": "League One",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "SCO3"
+   },
+   {
+    "accuracy": 0.4849,
+    "code": "SC3",
+    "confirm": {
+     "accuracy": 0.4849,
+     "base_log_loss": 1.07575,
+     "log_loss": 1.02194,
+     "market_accuracy": 0.4849,
+     "market_log_loss": 1.02194,
+     "matches": 1687,
+     "model_accuracy": 0.4707,
+     "model_log_loss": 1.04096,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Scotland",
+    "dev": {
+     "accuracy": 0.4925,
+     "base_log_loss": 1.05535,
+     "log_loss": 1.02682,
+     "market_accuracy": 0.4925,
+     "market_log_loss": 1.02682,
+     "matches": 1797,
+     "model_accuracy": 0.4891,
+     "model_log_loss": 1.02987,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "League Two (Scotland)",
+    "log_loss": 1.02194,
+    "market_accuracy": 0.4849,
+    "market_log_loss": 1.02194,
+    "matches": 1687,
+    "name": "League Two",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "SCO4"
+   },
+   {
+    "accuracy": 0.564,
+    "code": "N1",
+    "confirm": {
+     "accuracy": 0.564,
+     "base_log_loss": 1.06376,
+     "log_loss": 0.93471,
+     "market_accuracy": 0.5636,
+     "market_log_loss": 0.93488,
+     "matches": 2986,
+     "model_accuracy": 0.5539,
+     "model_log_loss": 0.94399,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Netherlands",
+    "dev": {
+     "accuracy": 0.5575,
+     "base_log_loss": 1.05165,
+     "log_loss": 0.94841,
+     "market_accuracy": 0.5565,
+     "market_log_loss": 0.94895,
+     "matches": 3060,
+     "model_accuracy": 0.5493,
+     "model_log_loss": 0.9567,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "Eredivisie",
+    "log_loss": 0.93471,
+    "market_accuracy": 0.5636,
+    "market_log_loss": 0.93488,
+    "matches": 2986,
+    "name": "Eredivisie",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "NED"
+   },
+   {
+    "accuracy": 0.5205,
+    "code": "B1",
+    "confirm": {
+     "accuracy": 0.5205,
+     "base_log_loss": 1.07315,
+     "log_loss": 0.99036,
+     "market_accuracy": 0.5201,
+     "market_log_loss": 0.99101,
+     "matches": 2805,
+     "model_accuracy": 0.5105,
+     "model_log_loss": 1.00371,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Belgium",
+    "dev": {
+     "accuracy": 0.53,
+     "base_log_loss": 1.05703,
+     "log_loss": 0.97913,
+     "market_accuracy": 0.5319,
+     "market_log_loss": 0.9807,
+     "matches": 2568,
+     "model_accuracy": 0.5257,
+     "model_log_loss": 0.98791,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "Pro League",
+    "log_loss": 0.99036,
+    "market_accuracy": 0.5201,
+    "market_log_loss": 0.99101,
+    "matches": 2805,
+    "name": "Pro League",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "BEL"
+   },
+   {
+    "accuracy": 0.5667,
+    "code": "P1",
+    "confirm": {
+     "accuracy": 0.5667,
+     "base_log_loss": 1.06951,
+     "log_loss": 0.91652,
+     "market_accuracy": 0.5657,
+     "market_log_loss": 0.9205,
+     "matches": 3060,
+     "model_accuracy": 0.5542,
+     "model_log_loss": 0.93485,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Portugal",
+    "dev": {
+     "accuracy": 0.5411,
+     "base_log_loss": 1.07318,
+     "log_loss": 0.944,
+     "market_accuracy": 0.54,
+     "market_log_loss": 0.94777,
+     "matches": 2528,
+     "model_accuracy": 0.536,
+     "model_log_loss": 0.95509,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "Primeira Liga",
+    "log_loss": 0.91652,
+    "market_accuracy": 0.5657,
+    "market_log_loss": 0.9205,
+    "matches": 3060,
+    "name": "Primeira Liga",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "POR"
+   },
+   {
+    "accuracy": 0.5311,
+    "code": "T1",
+    "confirm": {
+     "accuracy": 0.5311,
+     "base_log_loss": 1.06724,
+     "log_loss": 0.97777,
+     "market_accuracy": 0.5314,
+     "market_log_loss": 0.98065,
+     "matches": 3365,
+     "model_accuracy": 0.5224,
+     "model_log_loss": 0.99636,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Turkey",
+    "dev": {
+     "accuracy": 0.5207,
+     "base_log_loss": 1.06414,
+     "log_loss": 0.99756,
+     "market_accuracy": 0.5197,
+     "market_log_loss": 0.99828,
+     "matches": 3023,
+     "model_accuracy": 0.5114,
+     "model_log_loss": 1.00952,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "S\u00fcper Lig",
+    "log_loss": 0.97777,
+    "market_accuracy": 0.5314,
+    "market_log_loss": 0.98065,
+    "matches": 3365,
+    "name": "S\u00fcper Lig",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "TUR"
+   },
+   {
+    "accuracy": 0.5337,
+    "code": "G1",
+    "confirm": {
+     "accuracy": 0.5337,
+     "base_log_loss": 1.08139,
+     "log_loss": 0.93029,
+     "market_accuracy": 0.5341,
+     "market_log_loss": 0.93277,
+     "matches": 2387,
+     "model_accuracy": 0.5291,
+     "model_log_loss": 0.95299,
+     "seasons": [
+      2016,
+      2025
+     ]
+    },
+    "country": "Greece",
+    "dev": {
+     "accuracy": 0.5544,
+     "base_log_loss": 1.04712,
+     "log_loss": 0.92854,
+     "market_accuracy": 0.5548,
+     "market_log_loss": 0.93252,
+     "matches": 2502,
+     "model_accuracy": 0.5504,
+     "model_log_loss": 0.95113,
+     "seasons": [
+      2006,
+      2015
+     ]
+    },
+    "group": "europe",
+    "in_app": true,
+    "label": "Super League (Greece)",
+    "log_loss": 0.93029,
+    "market_accuracy": 0.5341,
+    "market_log_loss": 0.93277,
+    "matches": 2387,
+    "name": "Super League",
+    "periods": {
+     "confirm": [
+      2016,
+      2025
+     ],
+     "dev": [
+      2006,
+      2015
+     ]
+    },
+    "price": "pre-match",
+    "short": "GRE"
+   },
+   {
+    "accuracy": 0.4468,
+    "code": "ARG",
+    "confirm": {
+     "accuracy": 0.4468,
+     "base_log_loss": 1.08069,
+     "log_loss": 1.05382,
+     "market_accuracy": 0.4455,
+     "market_log_loss": 1.05287,
+     "matches": 3165,
+     "model_accuracy": 0.4306,
+     "model_log_loss": 1.0684,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Argentina",
+    "dev": {
+     "accuracy": 0.4854,
+     "base_log_loss": 1.07323,
+     "log_loss": 1.02132,
+     "market_accuracy": 0.485,
+     "market_log_loss": 1.02248,
+     "matches": 2435,
+     "model_accuracy": 0.4698,
+     "model_log_loss": 1.04385,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Liga Profesional",
+    "log_loss": 1.05382,
+    "market_accuracy": 0.4455,
+    "market_log_loss": 1.05287,
+    "matches": 3165,
+    "name": "Liga Profesional",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "ARG"
+   },
+   {
+    "accuracy": 0.5004,
+    "code": "AUT",
+    "confirm": {
+     "accuracy": 0.5004,
+     "base_log_loss": 1.0919,
+     "log_loss": 1.00263,
+     "market_accuracy": 0.5004,
+     "market_log_loss": 1.00263,
+     "matches": 1361,
+     "model_accuracy": 0.4967,
+     "model_log_loss": 1.01998,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Austria",
+    "dev": {
+     "accuracy": 0.5242,
+     "base_log_loss": 1.06265,
+     "log_loss": 0.99689,
+     "market_accuracy": 0.5242,
+     "market_log_loss": 0.99689,
+     "matches": 1097,
+     "model_accuracy": 0.5114,
+     "model_log_loss": 1.01294,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Bundesliga (Austria)",
+    "log_loss": 1.00263,
+    "market_accuracy": 0.5004,
+    "market_log_loss": 1.00263,
+    "matches": 1361,
+    "name": "Bundesliga",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "AUT"
+   },
+   {
+    "accuracy": 0.5102,
+    "code": "BRA",
+    "confirm": {
+     "accuracy": 0.5102,
+     "base_log_loss": 1.06101,
+     "log_loss": 1.00008,
+     "market_accuracy": 0.5109,
+     "market_log_loss": 1.00068,
+     "matches": 2660,
+     "model_accuracy": 0.488,
+     "model_log_loss": 1.01916,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Brazil",
+    "dev": {
+     "accuracy": 0.5208,
+     "base_log_loss": 1.03611,
+     "log_loss": 0.9933,
+     "market_accuracy": 0.5204,
+     "market_log_loss": 0.99459,
+     "matches": 2279,
+     "model_accuracy": 0.5147,
+     "model_log_loss": 1.01214,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "S\u00e9rie A",
+    "log_loss": 1.00008,
+    "market_accuracy": 0.5109,
+    "market_log_loss": 1.00068,
+    "matches": 2660,
+    "name": "S\u00e9rie A",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "BRA"
+   },
+   {
+    "accuracy": 0.5787,
+    "code": "CHN",
+    "confirm": {
+     "accuracy": 0.5787,
+     "base_log_loss": 1.06851,
+     "log_loss": 0.89773,
+     "market_accuracy": 0.5787,
+     "market_log_loss": 0.90209,
+     "matches": 1602,
+     "model_accuracy": 0.5543,
+     "model_log_loss": 0.95426,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "China",
+    "dev": {
+     "accuracy": 0.5271,
+     "base_log_loss": 1.06083,
+     "log_loss": 0.96759,
+     "market_accuracy": 0.5271,
+     "market_log_loss": 0.96873,
+     "matches": 960,
+     "model_accuracy": 0.5062,
+     "model_log_loss": 1.00251,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Super League (China)",
+    "log_loss": 0.89773,
+    "market_accuracy": 0.5787,
+    "market_log_loss": 0.90209,
+    "matches": 1602,
+    "name": "Super League",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "CHN"
+   },
+   {
+    "accuracy": 0.5139,
+    "code": "DNK",
+    "confirm": {
+     "accuracy": 0.5139,
+     "base_log_loss": 1.07803,
+     "log_loss": 1.01032,
+     "market_accuracy": 0.5139,
+     "market_log_loss": 1.01109,
+     "matches": 1399,
+     "model_accuracy": 0.4925,
+     "model_log_loss": 1.02991,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Denmark",
+    "dev": {
+     "accuracy": 0.4967,
+     "base_log_loss": 1.07559,
+     "log_loss": 1.00516,
+     "market_accuracy": 0.4989,
+     "market_log_loss": 1.0062,
+     "matches": 1355,
+     "model_accuracy": 0.4871,
+     "model_log_loss": 1.02472,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Superliga",
+    "log_loss": 1.01032,
+    "market_accuracy": 0.5139,
+    "market_log_loss": 1.01109,
+    "matches": 1399,
+    "name": "Superliga",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "DEN"
+   },
+   {
+    "accuracy": 0.54,
+    "code": "FIN",
+    "confirm": {
+     "accuracy": 0.54,
+     "base_log_loss": 1.0787,
+     "log_loss": 0.98514,
+     "market_accuracy": 0.54,
+     "market_log_loss": 0.98514,
+     "matches": 1150,
+     "model_accuracy": 0.513,
+     "model_log_loss": 1.0103,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Finland",
+    "dev": {
+     "accuracy": 0.4875,
+     "base_log_loss": 1.07808,
+     "log_loss": 1.0156,
+     "market_accuracy": 0.4875,
+     "market_log_loss": 1.0156,
+     "matches": 1196,
+     "model_accuracy": 0.4707,
+     "model_log_loss": 1.03306,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Veikkausliiga",
+    "log_loss": 0.98514,
+    "market_accuracy": 0.54,
+    "market_log_loss": 0.98514,
+    "matches": 1150,
+    "name": "Veikkausliiga",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "FIN"
+   },
+   {
+    "accuracy": 0.5156,
+    "code": "IRL",
+    "confirm": {
+     "accuracy": 0.5156,
+     "base_log_loss": 1.07743,
+     "log_loss": 0.98355,
+     "market_accuracy": 0.5156,
+     "market_log_loss": 0.98323,
+     "matches": 1189,
+     "model_accuracy": 0.5029,
+     "model_log_loss": 1.00255,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Ireland",
+    "dev": {
+     "accuracy": 0.5676,
+     "base_log_loss": 1.06541,
+     "log_loss": 0.9329,
+     "market_accuracy": 0.5684,
+     "market_log_loss": 0.93458,
+     "matches": 1191,
+     "model_accuracy": 0.5516,
+     "model_log_loss": 0.96056,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Premier Division",
+    "log_loss": 0.98355,
+    "market_accuracy": 0.5156,
+    "market_log_loss": 0.98323,
+    "matches": 1189,
+    "name": "Premier Division",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "IRL"
+   },
+   {
+    "accuracy": 0.4718,
+    "code": "JPN",
+    "confirm": {
+     "accuracy": 0.4718,
+     "base_log_loss": 1.08279,
+     "log_loss": 1.0338,
+     "market_accuracy": 0.4701,
+     "market_log_loss": 1.03441,
+     "matches": 2372,
+     "model_accuracy": 0.4709,
+     "model_log_loss": 1.0476,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Japan",
+    "dev": {
+     "accuracy": 0.4959,
+     "base_log_loss": 1.07473,
+     "log_loss": 1.02857,
+     "market_accuracy": 0.4959,
+     "market_log_loss": 1.02859,
+     "matches": 1845,
+     "model_accuracy": 0.4715,
+     "model_log_loss": 1.03938,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "J1 League",
+    "log_loss": 1.0338,
+    "market_accuracy": 0.4701,
+    "market_log_loss": 1.03441,
+    "matches": 2372,
+    "name": "J1 League",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "JPN"
+   },
+   {
+    "accuracy": 0.5037,
+    "code": "MEX",
+    "confirm": {
+     "accuracy": 0.5037,
+     "base_log_loss": 1.06829,
+     "log_loss": 1.00527,
+     "market_accuracy": 0.5041,
+     "market_log_loss": 1.00667,
+     "matches": 2317,
+     "model_accuracy": 0.4989,
+     "model_log_loss": 1.02232,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Mexico",
+    "dev": {
+     "accuracy": 0.4716,
+     "base_log_loss": 1.07379,
+     "log_loss": 1.0365,
+     "market_accuracy": 0.4706,
+     "market_log_loss": 1.03694,
+     "matches": 2004,
+     "model_accuracy": 0.4501,
+     "model_log_loss": 1.04929,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Liga MX",
+    "log_loss": 1.00527,
+    "market_accuracy": 0.5041,
+    "market_log_loss": 1.00667,
+    "matches": 2317,
+    "name": "Liga MX",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "MEX"
+   },
+   {
+    "accuracy": 0.5263,
+    "code": "NOR",
+    "confirm": {
+     "accuracy": 0.5263,
+     "base_log_loss": 1.06036,
+     "log_loss": 0.97512,
+     "market_accuracy": 0.5258,
+     "market_log_loss": 0.97608,
+     "matches": 1689,
+     "model_accuracy": 0.5163,
+     "model_log_loss": 0.99395,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Norway",
+    "dev": {
+     "accuracy": 0.5217,
+     "base_log_loss": 1.05512,
+     "log_loss": 0.99818,
+     "market_accuracy": 0.5231,
+     "market_log_loss": 0.9986,
+     "matches": 1451,
+     "model_accuracy": 0.519,
+     "model_log_loss": 1.01148,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Eliteserien",
+    "log_loss": 0.97512,
+    "market_accuracy": 0.5258,
+    "market_log_loss": 0.97608,
+    "matches": 1689,
+    "name": "Eliteserien",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "NOR"
+   },
+   {
+    "accuracy": 0.4656,
+    "code": "POL",
+    "confirm": {
+     "accuracy": 0.4656,
+     "base_log_loss": 1.07329,
+     "log_loss": 1.03429,
+     "market_accuracy": 0.4656,
+     "market_log_loss": 1.03429,
+     "matches": 2066,
+     "model_accuracy": 0.4579,
+     "model_log_loss": 1.0498,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Poland",
+    "dev": {
+     "accuracy": 0.4634,
+     "base_log_loss": 1.07575,
+     "log_loss": 1.04505,
+     "market_accuracy": 0.4634,
+     "market_log_loss": 1.04505,
+     "matches": 1776,
+     "model_accuracy": 0.4583,
+     "model_log_loss": 1.0582,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Ekstraklasa",
+    "log_loss": 1.03429,
+    "market_accuracy": 0.4656,
+    "market_log_loss": 1.03429,
+    "matches": 2066,
+    "name": "Ekstraklasa",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "POL"
+   },
+   {
+    "accuracy": 0.5002,
+    "code": "ROU",
+    "confirm": {
+     "accuracy": 0.5002,
+     "base_log_loss": 1.07958,
+     "log_loss": 1.00093,
+     "market_accuracy": 0.4979,
+     "market_log_loss": 1.00212,
+     "matches": 2181,
+     "model_accuracy": 0.4732,
+     "model_log_loss": 1.02785,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Romania",
+    "dev": {
+     "accuracy": 0.503,
+     "base_log_loss": 1.0821,
+     "log_loss": 0.99998,
+     "market_accuracy": 0.5018,
+     "market_log_loss": 1.00079,
+     "matches": 1694,
+     "model_accuracy": 0.487,
+     "model_log_loss": 1.02817,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "SuperLiga",
+    "log_loss": 1.00093,
+    "market_accuracy": 0.4979,
+    "market_log_loss": 1.00212,
+    "matches": 2181,
+    "name": "SuperLiga",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "ROU"
+   },
+   {
+    "accuracy": 0.5189,
+    "code": "SWE",
+    "confirm": {
+     "accuracy": 0.5189,
+     "base_log_loss": 1.07207,
+     "log_loss": 0.98381,
+     "market_accuracy": 0.5189,
+     "market_log_loss": 0.98464,
+     "matches": 1690,
+     "model_accuracy": 0.5012,
+     "model_log_loss": 1.00805,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Sweden",
+    "dev": {
+     "accuracy": 0.5296,
+     "base_log_loss": 1.07211,
+     "log_loss": 0.97593,
+     "market_accuracy": 0.5296,
+     "market_log_loss": 0.97703,
+     "matches": 1452,
+     "model_accuracy": 0.5028,
+     "model_log_loss": 1.00373,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Allsvenskan",
+    "log_loss": 0.98381,
+    "market_accuracy": 0.5189,
+    "market_log_loss": 0.98464,
+    "matches": 1690,
+    "name": "Allsvenskan",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "SWE"
+   },
+   {
+    "accuracy": 0.4894,
+    "code": "SWZ",
+    "confirm": {
+     "accuracy": 0.4894,
+     "base_log_loss": 1.07714,
+     "log_loss": 1.02598,
+     "market_accuracy": 0.4887,
+     "market_log_loss": 1.02556,
+     "matches": 1412,
+     "model_accuracy": 0.461,
+     "model_log_loss": 1.04646,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "Switzerland",
+    "dev": {
+     "accuracy": 0.5259,
+     "base_log_loss": 1.07355,
+     "log_loss": 0.99572,
+     "market_accuracy": 0.5259,
+     "market_log_loss": 0.99687,
+     "matches": 1082,
+     "model_accuracy": 0.5055,
+     "model_log_loss": 1.01249,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "Super League (Switzerland)",
+    "log_loss": 1.02598,
+    "market_accuracy": 0.4887,
+    "market_log_loss": 1.02556,
+    "matches": 1412,
+    "name": "Super League",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "SUI"
+   },
+   {
+    "accuracy": 0.4918,
+    "code": "USA",
+    "confirm": {
+     "accuracy": 0.4918,
+     "base_log_loss": 1.05859,
+     "log_loss": 1.02299,
+     "market_accuracy": 0.4921,
+     "market_log_loss": 1.02261,
+     "matches": 3288,
+     "model_accuracy": 0.4872,
+     "model_log_loss": 1.04042,
+     "seasons": [
+      2019,
+      2025
+     ]
+    },
+    "country": "USA",
+    "dev": {
+     "accuracy": 0.5254,
+     "base_log_loss": 1.02281,
+     "log_loss": 0.99494,
+     "market_accuracy": 0.5231,
+     "market_log_loss": 0.99681,
+     "matches": 2189,
+     "model_accuracy": 0.5244,
+     "model_log_loss": 1.0109,
+     "seasons": [
+      2013,
+      2018
+     ]
+    },
+    "group": "extra",
+    "in_app": true,
+    "label": "MLS",
+    "log_loss": 1.02299,
+    "market_accuracy": 0.4921,
+    "market_log_loss": 1.02261,
+    "matches": 3288,
+    "name": "MLS",
+    "periods": {
+     "confirm": [
+      2019,
+      2025
+     ],
+     "dev": [
+      2013,
+      2018
+     ]
+    },
+    "price": "closing",
+    "short": "USA"
    }
   ],
   "calibration": [
    {
     "hi": 0.4,
     "lo": 0.0,
-    "observed": 0.36834782608695654,
-    "picks": 2875,
-    "predicted": 0.37671748046726006
+    "observed": 0.37227520435967304,
+    "picks": 2936,
+    "predicted": 0.3766190084460108
    },
    {
     "hi": 0.45,
     "lo": 0.4,
-    "observed": 0.4334924965893588,
-    "picks": 2932,
-    "predicted": 0.42429587180771855
+    "observed": 0.4341880341880342,
+    "picks": 2925,
+    "predicted": 0.42413369609470153
    },
    {
     "hi": 0.5,
     "lo": 0.45,
-    "observed": 0.46637485077596497,
-    "picks": 2513,
-    "predicted": 0.47418931142702586
+    "observed": 0.4700277888050814,
+    "picks": 2519,
+    "predicted": 0.4738179859425386
    },
    {
     "hi": 0.55,
     "lo": 0.5,
-    "observed": 0.5301810865191147,
-    "picks": 1988,
-    "predicted": 0.5246640148567345
+    "observed": 0.527033855482567,
+    "picks": 1979,
+    "predicted": 0.5248036891252945
    },
    {
     "hi": 0.6,
     "lo": 0.55,
-    "observed": 0.5693245302183849,
-    "picks": 1969,
-    "predicted": 0.5746857283127736
+    "observed": 0.5660964230171073,
+    "picks": 1929,
+    "predicted": 0.5746284281935784
    },
    {
     "hi": 0.65,
     "lo": 0.6,
-    "observed": 0.6009389671361502,
-    "picks": 1491,
-    "predicted": 0.6234524896419618
+    "observed": 0.6030283080974326,
+    "picks": 1519,
+    "predicted": 0.6235130413058868
    },
    {
     "hi": 0.7,
     "lo": 0.65,
-    "observed": 0.6900858704137393,
-    "picks": 1281,
-    "predicted": 0.6747993601325705
+    "observed": 0.7071600965406275,
+    "picks": 1243,
+    "predicted": 0.6742430100592307
    },
    {
     "hi": 0.8,
     "lo": 0.7,
-    "observed": 0.7483836206896551,
-    "picks": 1856,
-    "predicted": 0.7452334907105216
+    "observed": 0.7425373134328358,
+    "picks": 1876,
+    "predicted": 0.745520255444086
    },
    {
     "hi": 1.0,
     "lo": 0.8,
-    "observed": 0.8195926285160039,
-    "picks": 1031,
-    "predicted": 0.8455394033714446
+    "observed": 0.8227722772277227,
+    "picks": 1010,
+    "predicted": 0.8455434544418786
    }
   ],
+  "calibration_scope": "top five",
   "model": "shots_ratings",
   "over_2_5": {
    "2006-2015": {
@@ -128,7 +2208,8 @@
     "log_loss": 0.6752235342369107,
     "market_log_loss": 0.6706596806217283,
     "matches": 17935
-   }
+   },
+   "scope": "top five"
   },
   "periods": {
    "confirm": [
@@ -140,20 +2221,81 @@
     2015
    ]
   },
+  "pooled": {
+   "codes": [
+    "E0",
+    "SP1",
+    "I1",
+    "D1",
+    "F1",
+    "E1",
+    "SP2",
+    "I2",
+    "D2",
+    "F2",
+    "E2",
+    "E3",
+    "EC",
+    "SC0",
+    "SC1",
+    "SC2",
+    "SC3",
+    "N1",
+    "B1",
+    "P1",
+    "T1",
+    "G1",
+    "ARG",
+    "AUT",
+    "BRA",
+    "CHN",
+    "DNK",
+    "FIN",
+    "IRL",
+    "JPN",
+    "MEX",
+    "NOR",
+    "POL",
+    "ROU",
+    "SWE",
+    "SWZ",
+    "USA"
+   ],
+   "confirm": {
+    "accuracy": 0.5027,
+    "base_log_loss": 1.07427,
+    "log_loss": 1.00175,
+    "market_accuracy": 0.5026,
+    "market_log_loss": 1.00254,
+    "matches": 106099,
+    "model_accuracy": 0.4919,
+    "model_log_loss": 1.01632
+   },
+   "dev": {
+    "accuracy": 0.4999,
+    "base_log_loss": 1.06696,
+    "log_loss": 1.00755,
+    "market_accuracy": 0.4998,
+    "market_log_loss": 1.00839,
+    "matches": 101676,
+    "model_accuracy": 0.4913,
+    "model_log_loss": 1.01934
+   }
+  },
   "result": {
    "blend": {
     "2006-2015": {
-     "accuracy": 0.5257133468426529,
-     "brier": 0.5852198188242704,
-     "log_loss": 0.9813326808506676,
+     "accuracy": 0.5259324168903007,
+     "brier": 0.5849145214414093,
+     "log_loss": 0.9808168979709372,
      "market_accuracy": 0.5262610219617723,
      "market_log_loss": 0.9816301022089897,
      "matches": 18259
     },
     "2016-2025": {
-     "accuracy": 0.5403099910793934,
-     "brier": 0.5727602984086082,
-     "log_loss": 0.9644884714256772,
+     "accuracy": 0.5408675289919714,
+     "brier": 0.5725982616332854,
+     "log_loss": 0.9642612170474147,
      "market_accuracy": 0.5408675289919714,
      "market_log_loss": 0.9651619270661266,
      "matches": 17936
@@ -162,21 +2304,22 @@
    "model": {
     "2006-2015": {
      "accuracy": 0.5205652007229311,
-     "brier": 0.5897579969695496,
-     "log_loss": 0.9878265555926677,
+     "brier": 0.5897579969695463,
+     "log_loss": 0.9878265555926603,
      "market_accuracy": 0.5262610219617723,
      "market_log_loss": 0.9816301022089897,
      "matches": 18259
     },
     "2016-2025": {
      "accuracy": 0.5334522747546833,
-     "brier": 0.5800638617302333,
-     "log_loss": 0.9753568321809263,
+     "brier": 0.5800638617302322,
+     "log_loss": 0.9753568321809251,
      "market_accuracy": 0.5408675289919714,
      "market_log_loss": 0.9651619270661266,
      "matches": 17936
     }
-   }
+   },
+   "scope": "top five"
   },
   "value": {
    "edges": {
@@ -211,24 +2354,665 @@
      }
     }
    },
-   "enabled_at": null
+   "enabled_at": null,
+   "scope": "top five"
   },
   "weights": {
-   "season": 2026,
-   "w": [
-    1.1101909011803373,
-    0.03906617098046607,
-    0.002790309816008452
-   ]
+   "ARG": {
+    "season": 2026,
+    "w": [
+     1.106,
+     0.0297,
+     -0.0015
+    ]
+   },
+   "AUT": null,
+   "B1": {
+    "season": 2026,
+    "w": [
+     1.1311,
+     0.0426,
+     0.0107
+    ]
+   },
+   "BRA": {
+    "season": 2026,
+    "w": [
+     1.1064,
+     0.0298,
+     -0.0009
+    ]
+   },
+   "CHN": {
+    "season": 2026,
+    "w": [
+     1.1071,
+     0.0293,
+     -0.003
+    ]
+   },
+   "D1": null,
+   "D2": {
+    "season": 2026,
+    "w": [
+     1.1311,
+     0.0426,
+     0.0107
+    ]
+   },
+   "DNK": {
+    "season": 2026,
+    "w": [
+     1.1039,
+     0.0289,
+     -0.0044
+    ]
+   },
+   "E0": {
+    "season": 2026,
+    "w": [
+     1.131,
+     0.0426,
+     0.0107
+    ]
+   },
+   "E1": null,
+   "E2": {
+    "season": 2026,
+    "w": [
+     1.1308,
+     0.0426,
+     0.0105
+    ]
+   },
+   "E3": null,
+   "EC": {
+    "season": 2026,
+    "w": [
+     1.1311,
+     0.0426,
+     0.0107
+    ]
+   },
+   "F1": {
+    "season": 2026,
+    "w": [
+     1.131,
+     0.0426,
+     0.0107
+    ]
+   },
+   "F2": {
+    "season": 2026,
+    "w": [
+     1.1311,
+     0.0426,
+     0.0107
+    ]
+   },
+   "FIN": null,
+   "G1": {
+    "season": 2026,
+    "w": [
+     1.131,
+     0.0426,
+     0.0106
+    ]
+   },
+   "I1": {
+    "season": 2026,
+    "w": [
+     1.131,
+     0.0426,
+     0.0106
+    ]
+   },
+   "I2": {
+    "season": 2026,
+    "w": [
+     1.131,
+     0.0426,
+     0.0107
+    ]
+   },
+   "IRL": {
+    "season": 2026,
+    "w": [
+     1.1063,
+     0.0299,
+     -0.0011
+    ]
+   },
+   "JPN": {
+    "season": 2026,
+    "w": [
+     1.1029,
+     0.0281,
+     -0.0058
+    ]
+   },
+   "MEX": {
+    "season": 2026,
+    "w": [
+     1.1037,
+     0.0288,
+     -0.0047
+    ]
+   },
+   "N1": {
+    "season": 2026,
+    "w": [
+     1.1311,
+     0.0426,
+     0.0107
+    ]
+   },
+   "NOR": {
+    "season": 2026,
+    "w": [
+     1.1069,
+     0.0291,
+     -0.0025
+    ]
+   },
+   "P1": {
+    "season": 2026,
+    "w": [
+     1.1311,
+     0.0426,
+     0.0107
+    ]
+   },
+   "POL": null,
+   "ROU": {
+    "season": 2026,
+    "w": [
+     1.1037,
+     0.0288,
+     -0.0047
+    ]
+   },
+   "SC0": null,
+   "SC1": null,
+   "SC2": {
+    "season": 2026,
+    "w": [
+     1.1311,
+     0.0426,
+     0.0106
+    ]
+   },
+   "SC3": null,
+   "SP1": {
+    "season": 2026,
+    "w": [
+     1.1308,
+     0.0426,
+     0.0105
+    ]
+   },
+   "SP2": {
+    "season": 2026,
+    "w": [
+     1.1308,
+     0.0425,
+     0.0105
+    ]
+   },
+   "SWE": {
+    "season": 2026,
+    "w": [
+     1.1054,
+     0.027,
+     -0.0046
+    ]
+   },
+   "SWZ": {
+    "season": 2026,
+    "w": [
+     1.104,
+     0.0287,
+     -0.0046
+    ]
+   },
+   "T1": {
+    "season": 2026,
+    "w": [
+     1.1308,
+     0.0425,
+     0.0105
+    ]
+   },
+   "USA": {
+    "season": 2026,
+    "w": [
+     1.1064,
+     0.0301,
+     -0.0019
+    ]
+   }
   }
  },
  "basis": "market",
- "generated": "2026-11-13T22:17:07Z",
- "model_through": "2026-11-08",
+ "generated": "2026-11-13T22:36:08Z",
+ "model_through": "2026-11-09",
  "schema": 1,
  "track_record": {
   "btts_correct": 54,
   "btts_settled": 106,
+  "by_basis": {
+   "before every league": {
+    "btts_correct": 54,
+    "btts_settled": 106,
+    "correct": 66,
+    "corrected": 0,
+    "ou_correct": 60,
+    "ou_settled": 108,
+    "pending": 0,
+    "provisional": 0,
+    "settled": 108
+   },
+   "model": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 256,
+    "provisional": 0,
+    "settled": 0
+   },
+   "raw": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 19,
+    "provisional": 0,
+    "settled": 0
+   },
+   "recalibrated": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 34,
+    "provisional": 0,
+    "settled": 0
+   }
+  },
+  "by_group": {
+   "europe": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 182,
+    "provisional": 0,
+    "settled": 0
+   },
+   "extra": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 79,
+    "provisional": 0,
+    "settled": 0
+   },
+   "top": {
+    "btts_correct": 54,
+    "btts_settled": 106,
+    "correct": 66,
+    "corrected": 0,
+    "ou_correct": 60,
+    "ou_settled": 108,
+    "pending": 48,
+    "provisional": 0,
+    "settled": 108
+   }
+  },
+  "by_league": {
+   "ARG": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 7,
+    "provisional": 0,
+    "settled": 0
+   },
+   "AUT": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 6,
+    "provisional": 0,
+    "settled": 0
+   },
+   "B1": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 9,
+    "provisional": 0,
+    "settled": 0
+   },
+   "BRA": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 18,
+    "provisional": 0,
+    "settled": 0
+   },
+   "D1": {
+    "btts_correct": 13,
+    "btts_settled": 18,
+    "correct": 11,
+    "corrected": 0,
+    "ou_correct": 12,
+    "ou_settled": 18,
+    "pending": 9,
+    "provisional": 0,
+    "settled": 18
+   },
+   "D2": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 9,
+    "provisional": 0,
+    "settled": 0
+   },
+   "DNK": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 6,
+    "provisional": 0,
+    "settled": 0
+   },
+   "E0": {
+    "btts_correct": 10,
+    "btts_settled": 20,
+    "correct": 10,
+    "corrected": 0,
+    "ou_correct": 7,
+    "ou_settled": 20,
+    "pending": 10,
+    "provisional": 0,
+    "settled": 20
+   },
+   "E1": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 12,
+    "provisional": 0,
+    "settled": 0
+   },
+   "E2": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 17,
+    "provisional": 0,
+    "settled": 0
+   },
+   "E3": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 22,
+    "provisional": 0,
+    "settled": 0
+   },
+   "EC": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 23,
+    "provisional": 0,
+    "settled": 0
+   },
+   "F1": {
+    "btts_correct": 9,
+    "btts_settled": 18,
+    "correct": 12,
+    "corrected": 0,
+    "ou_correct": 9,
+    "ou_settled": 19,
+    "pending": 9,
+    "provisional": 0,
+    "settled": 19
+   },
+   "F2": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 9,
+    "provisional": 0,
+    "settled": 0
+   },
+   "G1": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 7,
+    "provisional": 0,
+    "settled": 0
+   },
+   "I1": {
+    "btts_correct": 15,
+    "btts_settled": 30,
+    "correct": 20,
+    "corrected": 0,
+    "ou_correct": 19,
+    "ou_settled": 30,
+    "pending": 10,
+    "provisional": 0,
+    "settled": 30
+   },
+   "I2": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 10,
+    "provisional": 0,
+    "settled": 0
+   },
+   "JPN": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 10,
+    "provisional": 0,
+    "settled": 0
+   },
+   "MEX": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 10,
+    "provisional": 0,
+    "settled": 0
+   },
+   "N1": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 9,
+    "provisional": 0,
+    "settled": 0
+   },
+   "NOR": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 8,
+    "provisional": 0,
+    "settled": 0
+   },
+   "SC0": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 6,
+    "provisional": 0,
+    "settled": 0
+   },
+   "SC1": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 9,
+    "provisional": 0,
+    "settled": 0
+   },
+   "SC2": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 5,
+    "provisional": 0,
+    "settled": 0
+   },
+   "SC3": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 5,
+    "provisional": 0,
+    "settled": 0
+   },
+   "SP1": {
+    "btts_correct": 7,
+    "btts_settled": 20,
+    "correct": 13,
+    "corrected": 0,
+    "ou_correct": 13,
+    "ou_settled": 21,
+    "pending": 10,
+    "provisional": 0,
+    "settled": 21
+   },
+   "SP2": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 21,
+    "provisional": 0,
+    "settled": 0
+   },
+   "SWE": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 8,
+    "provisional": 0,
+    "settled": 0
+   },
+   "T1": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 9,
+    "provisional": 0,
+    "settled": 0
+   },
+   "USA": {
+    "btts_correct": 0,
+    "btts_settled": 0,
+    "correct": 0,
+    "corrected": 0,
+    "ou_correct": 0,
+    "ou_settled": 0,
+    "pending": 6,
+    "provisional": 0,
+    "settled": 0
+   }
+  },
   "by_week": [
    {
     "correct": 35,
@@ -247,7 +3031,7 @@
   "corrected": 0,
   "ou_correct": 60,
   "ou_settled": 108,
-  "pending": 48,
+  "pending": 309,
   "provisional": 0,
   "settled": 108
  }
