@@ -83,7 +83,10 @@ THE PAYLOAD (parlays/app/data/sameday.json):
            measured.likeliest - plus measured.underdog, read from
            sameday_backtest.json's "dog" block (None, with
            measured.underdog_missing_reason, until that block exists and is
-           this rule's: version and salt must match sameday.py's).
+           this rule's: version and salt must match sameday.py's). Every
+           record carries implied_roi, the price-implied return of the same
+           tickets, beside the realised one (the likeliest's from the
+           backtest's ticket list, implied_from_tickets).
   caveats  every caveat the backtest carries, the dog block's, and this
            builder's (prices, what the underdog ticket is not).
 
@@ -835,6 +838,7 @@ def dog_measured(bt):
         "splits": blk.get("splits")}), None
 
 
+# Shown until the backtest's dog block (with its own, measured caveats) exists.
 DOG_CAVEATS = [
     "The underdog ticket is for variety and a bigger payout, not a better bet: drawing an underdog "
     "cannot create an edge, and every 3-5x ticket pays the bookmaker's margin on each leg. Written "
@@ -865,10 +869,10 @@ def payload(history, show, now, graded, why=None):
         for rule, per in implied_from_tickets(bt).items():
             for period, x in per.items():
                 bt["results"][rule][period].setdefault("implied_roi", x)
-        likeliest = {"rule": bt["results"]["same_day"], "market_only": bt["results"]["market_only"],
-                     "periods": bt["periods"], "multipliers": sp["multipliers"],
-                     "splits": {k: sp[k] for k in ("by_sports", "by_mix", "by_weekday", "by_year")},
-                     "legs_used": sp.get("legs_used")}
+        likeliest = _json_safe({"rule": bt["results"]["same_day"], "market_only": bt["results"]["market_only"],
+                                "periods": bt["periods"], "multipliers": sp["multipliers"],
+                                "splits": {k: sp[k] for k in ("by_sports", "by_mix", "by_weekday", "by_year")},
+                                "legs_used": sp.get("legs_used")})
         underdog, missing = dog_measured(bt)
         measured = dict(likeliest, likeliest=likeliest, underdog=underdog, underdog_missing_reason=missing)
         caveats = list(bt.get("caveats") or [])
@@ -882,7 +886,10 @@ def payload(history, show, now, graded, why=None):
     caveats.append("Prices are the ones on file when the sports' runners last ran: UFC the best price seen "
                    "across books, NFL the consensus moneyline, soccer the average posted price. One book "
                    "may pay less. Check every price before betting; a leg whose game has started is never used.")
-    caveats += [c for c in DOG_CAVEATS if c not in caveats]
+    # This builder's underdog caveats stand in for the backtest's own until its
+    # dog block exists; once it does, its caveats say the same with numbers.
+    if not (measured or {}).get("underdog"):
+        caveats += [c for c in DOG_CAVEATS if c not in caveats]
 
     today = sdy.et_day(now)
     days = []

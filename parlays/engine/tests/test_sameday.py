@@ -528,8 +528,10 @@ def test_the_underdog_record_is_not_measured_until_the_backtest_writes_this_rule
     show = bs.update(history, NOW, [])
 
     path.write_text(json.dumps(base))
-    m = bs.payload(history, show, NOW, [])["measured"]
+    out = bs.payload(history, show, NOW, [])
+    m = out["measured"]
     assert m["underdog"] is None and "Not measured yet" in m["underdog_missing_reason"]
+    assert m["underdog_missing_reason"] in out["caveats"] and set(bs.DOG_CAVEATS) <= set(out["caveats"])
     assert m["likeliest"]["rule"] == {} and "rule" in m                 # as before, and for an older page
 
     other = dict(base, dog={"version": 2, "salt": "sameday-dog-v2", "results": {"live": {"all": {"tickets": 9}}}})
@@ -546,6 +548,7 @@ def test_the_underdog_record_is_not_measured_until_the_backtest_writes_this_rule
     assert u["live"]["all"]["tickets"] == 1465 and u["live"]["all"]["roi"] is None
     assert set(u["report_only"]) == {"gap", "likeliest_dog", "market_only", "paired", "both"}
     assert "Dog caveat." in out["caveats"] and "The market is hard to beat." in out["caveats"]
+    assert not set(bs.DOG_CAVEATS) & set(out["caveats"])            # the block's own caveats say it
     json.dumps(out, allow_nan=False)
 
 
@@ -568,3 +571,20 @@ def test_the_likeliest_tickets_price_implied_return_comes_from_the_backtests_own
     assert got["same_day"] == {"all": pytest.approx((0.9 - 1 + 0.8 - 1) / 2), "last_3_years": pytest.approx(-0.2)}
     assert got["market_only"] == {"last_3_years": pytest.approx(-0.125)}          # "all" counts 1, not 2
     assert bs.implied_from_tickets(bt, tmp_path / "missing.csv.gz") == {}
+
+
+def test_a_ufc_underdog_is_graded_as_its_own_corner():
+    """The dog's names are the bout's corners and its pick the dog's name, so
+    leg_result grades the dog's side - not the app's pick."""
+    import types
+    fav = _fight("Ciryl Gané", "Josh Hokit", "Ciryl Gané", 0.67, -195, 185)
+    (d,) = bs.ufc_dogs(_card(fights=[fav]), THU)
+    norm = sdy._norm_name
+    grade = types.SimpleNamespace(
+        norm_name=norm,
+        find_result=lambda bout, index: (None, index[(bout["red_corner"], bout["blue_corner"])], None),
+        _corner=lambda w, red, blue: "red" if norm(w) == norm(red) else "blue" if norm(w) == norm(blue) else None)
+    won = {"ufc": (grade, {("Ciryl Gané", "Josh Hokit"): "Josh Hokit"})}
+    lost = {"ufc": (grade, {("Ciryl Gané", "Josh Hokit"): "Ciryl Gane"})}
+    assert bs.leg_result(d, won) == {"winner": "pick"}
+    assert bs.leg_result(d, lost) == {"winner": "other"}

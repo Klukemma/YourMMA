@@ -579,6 +579,16 @@ function dogLines(dog, keys = PERIODS.map(([k]) => k)) {
     `<div class="mini num">${esc(recordLine(live[k], `${label}${per[k] ? `, ${yearsLabel(per[k])}` : ""}`))}</div>`).join("");
 }
 
+// Beside the live draw's record, always: the same games over the other
+// draws, so a lucky (or unlucky) lot is never read as the rule's worth.
+function drawsLine(dog) {
+  const s = dog && dog.salts && dog.salts.all;
+  if (!s || num(s.roi) == null) return "";
+  const rk = s.live_rank || {};
+  return `<div class="mini num">${esc(`The same games over ${(num(s.salts) || 1000).toLocaleString()} other draws: ${pc(s.roi)} a ticket on average${
+    num(rk.roi_below) != null && num(rk.of) ? `; the live draw did better than ${rk.roi_below.toLocaleString()} of them` : ""}.`)}</div>`;
+}
+
 // One period over the 1,000 simulation draws (sameday_backtest's salt
 // stats): the mean with its day-bootstrap interval, the price-implied
 // return, and the draws' 5th-95th percentile - which is NOT a confidence
@@ -642,7 +652,7 @@ const BOOT = {
          <div class="mini num">${esc(recordLine(lk.rule.all, `All, ${yearsLabel(lk.periods && lk.periods.all)}`))}</div>`
         : notMeasured()}
       <div class="mini"><b>Underdog ticket</b>, at the live draw</div>
-      ${dog ? dogLines(dog, ["last_3_years", "all"]) : notMeasured(lk ? dogWhy : null)}`;
+      ${dog ? `${dogLines(dog, ["last_3_years", "all"])}${drawsLine(dog)}` : notMeasured(lk ? dogWhy : null)}`;
     el.innerHTML = `
       ${DESK.banner()}
       <div class="note"><b>The market is hard to beat.</b> Two tickets a day from the day's picks: the likeliest one paying
