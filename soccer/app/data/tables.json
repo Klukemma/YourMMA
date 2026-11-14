@@ -8,7 +8,7 @@
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, pooled over the top five, each beat the leagues' own rates from earlier seasons. A league shows only the numbers that beat its own rates in both of its periods; the others are withheld and shown as missing. Both teams to score runs low: across 2016-2025 in the top five its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-14T14:17:49Z",
+ "generated": "2026-11-14T17:20:04Z",
  "leagues": [
   {
    "caveats": [
@@ -8172,9 +8172,77 @@
    "label": "Segunda Divisi\u00f3n",
    "model_through": "2026-11-09",
    "name": "Segunda Divisi\u00f3n",
-   "provisional": 1,
-   "results_through": "2026-11-13",
+   "provisional": 3,
+   "results_through": "2026-11-14",
    "rows": [
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "CAS",
+      "fg": "#FFFFFF",
+      "name": "Castellon"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Valladolid",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Burgos",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 0,
+       "gf": 4,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Sp Gijon",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 0,
+       "gf": 3,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Las Palmas",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-11",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Andorra",
+       "result": "L"
+      }
+     ],
+     "ga": 5,
+     "gd": 19,
+     "gf": 24,
+     "lost": 1,
+     "played": 13,
+     "points": 30,
+     "position": 1,
+     "provisional": 1,
+     "rating": 0.42413888322146975,
+     "team": "Castellon",
+     "won": 9
+    },
     {
      "club": {
       "bg": "#EE1119",
@@ -8236,78 +8304,11 @@
      "lost": 2,
      "played": 13,
      "points": 29,
-     "position": 1,
+     "position": 2,
      "provisional": 0,
      "rating": 0.29985046508248514,
      "team": "Almeria",
      "won": 9
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "CAS",
-      "fg": "#FFFFFF",
-      "name": "Castellon"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-01",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Burgos",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 0,
-       "gf": 4,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Sp Gijon",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 3,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Las Palmas",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Andorra",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-04",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Ceuta",
-       "result": "D"
-      }
-     ],
-     "ga": 5,
-     "gd": 18,
-     "gf": 23,
-     "lost": 1,
-     "played": 12,
-     "points": 27,
-     "position": 2,
-     "provisional": 0,
-     "rating": 0.42413888322146975,
-     "team": "Castellon",
-     "won": 8
     },
     {
      "club": {
@@ -8513,6 +8514,74 @@
     },
     {
      "club": {
+      "bg": "#D31F26",
+      "code": "SPO",
+      "fg": "#FFFFFF",
+      "name": "Sporting Gij\u00f3n"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Sociedad B",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Valladolid",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 0,
+       "gf": 2,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Ceuta",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 4,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Castellon",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Albacete",
+       "result": "W"
+      }
+     ],
+     "ga": 17,
+     "gd": -1,
+     "gf": 16,
+     "lost": 5,
+     "played": 14,
+     "points": 23,
+     "position": 6,
+     "provisional": 1,
+     "rating": 0.03328340405571173,
+     "team": "Sp Gijon",
+     "won": 7
+    },
+    {
+     "club": {
       "bg": "#E20613",
       "code": "MLL",
       "fg": "#000000",
@@ -8572,78 +8641,11 @@
      "lost": 2,
      "played": 12,
      "points": 22,
-     "position": 6,
+     "position": 7,
      "provisional": 0,
      "rating": 0.3060386535632367,
      "team": "Mallorca",
      "won": 6
-    },
-    {
-     "club": {
-      "bg": "#D31F26",
-      "code": "SPO",
-      "fg": "#FFFFFF",
-      "name": "Sporting Gij\u00f3n"
-     },
-     "drawn": 1,
-     "form": [
-      {
-       "date": "2026-11-08",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Valladolid",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Ceuta",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 4,
-       "gf": 0,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Castellon",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Albacete",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Cadiz",
-       "result": "W"
-      }
-     ],
-     "ga": 15,
-     "gd": -1,
-     "gf": 14,
-     "lost": 5,
-     "played": 13,
-     "points": 22,
-     "position": 7,
-     "provisional": 0,
-     "rating": 0.03328340405571173,
-     "team": "Sp Gijon",
-     "won": 7
     },
     {
      "club": {
@@ -8923,6 +8925,16 @@
      "drawn": 3,
      "form": [
       {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Castellon",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-08",
        "ga": 1,
        "gf": 2,
@@ -8957,25 +8969,16 @@
        "league": "SP2",
        "opponent": "Eldense",
        "result": "L"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 0,
-       "gf": 5,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Albacete",
-       "result": "W"
       }
      ],
-     "ga": 20,
-     "gd": 2,
+     "ga": 21,
+     "gd": 1,
      "gf": 22,
-     "lost": 5,
-     "played": 13,
+     "lost": 6,
+     "played": 14,
      "points": 18,
      "position": 12,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.024348716147221117,
      "team": "Valladolid",
      "won": 5
@@ -9323,8 +9326,18 @@
       "fg": "#FFFFFF",
       "name": "Sociedad B"
      },
-     "drawn": 3,
+     "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Sp Gijon",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-09",
        "ga": 0,
@@ -9360,25 +9373,16 @@
        "league": "SP2",
        "opponent": "Almeria",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 4,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Celta B",
-       "result": "L"
       }
      ],
-     "ga": 22,
+     "ga": 24,
      "gd": -7,
-     "gf": 15,
+     "gf": 17,
      "lost": 7,
-     "played": 13,
-     "points": 12,
+     "played": 14,
+     "points": 13,
      "position": 18,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.16008296127532873,
      "team": "Sociedad B",
      "won": 3
@@ -13479,8 +13483,8 @@
    "label": "League One (England)",
    "model_through": "2026-11-04",
    "name": "League One",
-   "provisional": 0,
-   "results_through": "2026-11-04",
+   "provisional": 5,
+   "results_through": "2026-11-14",
    "rows": [
     {
      "club": {
@@ -13559,6 +13563,16 @@
      "drawn": 2,
      "form": [
       {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 3,
+       "home": true,
+       "league": "E2",
+       "opponent": "Reading",
+       "provisional": true,
+       "result": "W"
+      },
+      {
        "date": "2026-10-31",
        "ga": 1,
        "gf": 2,
@@ -13593,28 +13607,19 @@
        "league": "E2",
        "opponent": "Doncaster",
        "result": "W"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "E2",
-       "opponent": "Bromley",
-       "result": "W"
       }
      ],
-     "ga": 14,
-     "gd": 12,
-     "gf": 26,
+     "ga": 15,
+     "gd": 14,
+     "gf": 29,
      "lost": 4,
-     "played": 14,
-     "points": 26,
+     "played": 15,
+     "points": 29,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.3680488099118502,
      "team": "Stockport",
-     "won": 8
+     "won": 9
     },
     {
      "club": {
@@ -13753,12 +13758,90 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "SHE",
+      "fg": "#FFFFFF",
+      "name": "Sheffield Weds"
+     },
+     "drawn": 5,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "E2",
+       "opponent": "Plymouth",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "E2",
+       "opponent": "Blackpool",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "E2",
+       "opponent": "Cambridge",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "E2",
+       "opponent": "Doncaster",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "E2",
+       "opponent": "Notts County",
+       "result": "L"
+      }
+     ],
+     "ga": 14,
+     "gd": 11,
+     "gf": 25,
+     "lost": 3,
+     "played": 14,
+     "points": 23,
+     "position": 5,
+     "provisional": 1,
+     "rating": 0.049706825536666166,
+     "team": "Sheffield Weds",
+     "won": 6
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "PLY",
       "fg": "#FFFFFF",
       "name": "Plymouth"
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 3,
+       "gf": 0,
+       "home": false,
+       "league": "E2",
+       "opponent": "Sheffield Weds",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-10-31",
        "ga": 0,
@@ -13794,25 +13877,16 @@
        "league": "E2",
        "opponent": "Huddersfield",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "E2",
-       "opponent": "AFC Wimbledon",
-       "result": "W"
       }
      ],
-     "ga": 19,
-     "gd": 2,
+     "ga": 22,
+     "gd": -1,
      "gf": 21,
-     "lost": 5,
-     "played": 14,
+     "lost": 6,
+     "played": 15,
      "points": 23,
-     "position": 5,
-     "provisional": 0,
+     "position": 6,
+     "provisional": 1,
      "rating": 0.1718968848832585,
      "team": "Plymouth",
      "won": 7
@@ -13826,6 +13900,16 @@
      },
      "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 3,
+       "gf": 1,
+       "home": false,
+       "league": "E2",
+       "opponent": "Stockport",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-04",
        "ga": 2,
@@ -13861,25 +13945,16 @@
        "league": "E2",
        "opponent": "Leyton Orient",
        "result": "W"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "E2",
-       "opponent": "Wigan",
-       "result": "L"
       }
      ],
-     "ga": 15,
-     "gd": 10,
-     "gf": 25,
-     "lost": 4,
-     "played": 14,
+     "ga": 18,
+     "gd": 8,
+     "gf": 26,
+     "lost": 5,
+     "played": 15,
      "points": 22,
-     "position": 6,
-     "provisional": 0,
+     "position": 7,
+     "provisional": 1,
      "rating": 0.10111985917929234,
      "team": "Reading",
      "won": 6
@@ -13945,11 +14020,79 @@
      "lost": 3,
      "played": 13,
      "points": 22,
-     "position": 7,
+     "position": 8,
      "provisional": 0,
      "rating": 0.09763007008616131,
      "team": "Bradford",
      "won": 6
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "MKD",
+      "fg": "#FFFFFF",
+      "name": "Milton Keynes Dons"
+     },
+     "drawn": 6,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 6,
+       "home": true,
+       "league": "E2",
+       "opponent": "Burton",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 1,
+       "gf": 6,
+       "home": true,
+       "league": "E2",
+       "opponent": "Doncaster",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 1,
+       "gf": 4,
+       "home": true,
+       "league": "E2",
+       "opponent": "Bromley",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "E2",
+       "opponent": "Stevenage",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "E2",
+       "opponent": "Blackpool",
+       "result": "L"
+      }
+     ],
+     "ga": 22,
+     "gd": 6,
+     "gf": 28,
+     "lost": 3,
+     "played": 14,
+     "points": 21,
+     "position": 9,
+     "provisional": 1,
+     "rating": -0.15557395760029102,
+     "team": "Milton Keynes Dons",
+     "won": 5
     },
     {
      "club": {
@@ -14012,77 +14155,10 @@
      "lost": 3,
      "played": 14,
      "points": 21,
-     "position": 8,
+     "position": 10,
      "provisional": 0,
      "rating": -0.02239011183272943,
      "team": "Cambridge",
-     "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "SHE",
-      "fg": "#FFFFFF",
-      "name": "Sheffield Weds"
-     },
-     "drawn": 5,
-     "form": [
-      {
-       "date": "2026-11-01",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "E2",
-       "opponent": "Blackpool",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "E2",
-       "opponent": "Cambridge",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "E2",
-       "opponent": "Doncaster",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "E2",
-       "opponent": "Notts County",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 5,
-       "home": true,
-       "league": "E2",
-       "opponent": "AFC Wimbledon",
-       "result": "W"
-      }
-     ],
-     "ga": 14,
-     "gd": 8,
-     "gf": 22,
-     "lost": 3,
-     "played": 13,
-     "points": 20,
-     "position": 9,
-     "provisional": 0,
-     "rating": 0.049706825536666166,
-     "team": "Sheffield Weds",
      "won": 5
     },
     {
@@ -14146,7 +14222,7 @@
      "lost": 4,
      "played": 13,
      "points": 19,
-     "position": 10,
+     "position": 11,
      "provisional": 0,
      "rating": -0.027249782088697883,
      "team": "Leicester",
@@ -14213,78 +14289,11 @@
      "lost": 4,
      "played": 13,
      "points": 19,
-     "position": 11,
+     "position": 12,
      "provisional": 0,
      "rating": 0.05085861027946392,
      "team": "Mansfield",
      "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "MKD",
-      "fg": "#FFFFFF",
-      "name": "Milton Keynes Dons"
-     },
-     "drawn": 6,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 1,
-       "gf": 6,
-       "home": true,
-       "league": "E2",
-       "opponent": "Doncaster",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 1,
-       "gf": 4,
-       "home": true,
-       "league": "E2",
-       "opponent": "Bromley",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "E2",
-       "opponent": "Stevenage",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "E2",
-       "opponent": "Blackpool",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "E2",
-       "opponent": "Luton",
-       "result": "W"
-      }
-     ],
-     "ga": 20,
-     "gd": 2,
-     "gf": 22,
-     "lost": 3,
-     "played": 13,
-     "points": 18,
-     "position": 12,
-     "provisional": 0,
-     "rating": -0.15557395760029102,
-     "team": "Milton Keynes Dons",
-     "won": 4
     },
     {
      "club": {
@@ -14430,6 +14439,16 @@
      "drawn": 5,
      "form": [
       {
+       "date": "2026-11-14",
+       "ga": 6,
+       "gf": 2,
+       "home": false,
+       "league": "E2",
+       "opponent": "Milton Keynes Dons",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-10-31",
        "ga": 2,
        "gf": 0,
@@ -14464,25 +14483,16 @@
        "league": "E2",
        "opponent": "Peterboro",
        "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "E2",
-       "opponent": "Doncaster",
-       "result": "L"
       }
      ],
-     "ga": 21,
-     "gd": -3,
-     "gf": 18,
-     "lost": 5,
-     "played": 14,
+     "ga": 27,
+     "gd": -7,
+     "gf": 20,
+     "lost": 6,
+     "played": 15,
      "points": 17,
      "position": 15,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.15353552979593799,
      "team": "Burton",
      "won": 4
@@ -14557,6 +14567,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "AFC",
+      "fg": "#FFFFFF",
+      "name": "AFC Wimbledon"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "E2",
+       "opponent": "Blackpool",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "E2",
+       "opponent": "Stockport",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "E2",
+       "opponent": "Wycombe",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "E2",
+       "opponent": "Mansfield",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 5,
+       "gf": 0,
+       "home": false,
+       "league": "E2",
+       "opponent": "Sheffield Weds",
+       "result": "L"
+      }
+     ],
+     "ga": 21,
+     "gd": -11,
+     "gf": 10,
+     "lost": 6,
+     "played": 14,
+     "points": 16,
+     "position": 17,
+     "provisional": 1,
+     "rating": -0.4616493407305875,
+     "team": "AFC Wimbledon",
+     "won": 4
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "NOT",
       "fg": "#FFFFFF",
       "name": "Notts County"
@@ -14615,7 +14693,7 @@
      "lost": 4,
      "played": 12,
      "points": 14,
-     "position": 17,
+     "position": 18,
      "provisional": 0,
      "rating": -0.1434505364563028,
      "team": "Notts County",
@@ -14624,69 +14702,70 @@
     {
      "club": {
       "bg": "#5B6170",
-      "code": "AFC",
+      "code": "WIG",
       "fg": "#FFFFFF",
-      "name": "AFC Wimbledon"
+      "name": "Wigan"
      },
-     "drawn": 4,
+     "drawn": 2,
      "form": [
       {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "E2",
-       "opponent": "Stockport",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
+       "date": "2026-11-14",
        "ga": 1,
-       "gf": 1,
+       "gf": 2,
        "home": true,
        "league": "E2",
-       "opponent": "Wycombe",
-       "result": "D"
+       "opponent": "Barnsley",
+       "provisional": true,
+       "result": "W"
       },
       {
-       "date": "2026-10-20",
-       "ga": 3,
+       "date": "2026-11-03",
+       "ga": 0,
        "gf": 0,
        "home": true,
        "league": "E2",
        "opponent": "Mansfield",
-       "result": "L"
+       "result": "D"
       },
       {
-       "date": "2026-10-17",
-       "ga": 5,
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 3,
+       "home": true,
+       "league": "E2",
+       "opponent": "Bromley",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 3,
        "gf": 0,
        "home": false,
        "league": "E2",
-       "opponent": "Sheffield Weds",
+       "opponent": "Leicester",
        "result": "L"
       },
       {
-       "date": "2026-10-10",
+       "date": "2026-10-24",
        "ga": 2,
        "gf": 1,
        "home": false,
        "league": "E2",
-       "opponent": "Plymouth",
+       "opponent": "Huddersfield",
        "result": "L"
       }
      ],
-     "ga": 21,
-     "gd": -12,
-     "gf": 9,
-     "lost": 6,
-     "played": 13,
-     "points": 13,
-     "position": 18,
-     "provisional": 0,
-     "rating": -0.4616493407305875,
-     "team": "AFC Wimbledon",
-     "won": 3
+     "ga": 23,
+     "gd": -10,
+     "gf": 13,
+     "lost": 9,
+     "played": 15,
+     "points": 14,
+     "position": 19,
+     "provisional": 1,
+     "rating": -0.2556731250122193,
+     "team": "Wigan",
+     "won": 4
     },
     {
      "club": {
@@ -14697,6 +14776,16 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "E2",
+       "opponent": "AFC Wimbledon",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-01",
        "ga": 1,
@@ -14732,25 +14821,16 @@
        "league": "E2",
        "opponent": "Leyton Orient",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "E2",
-       "opponent": "Cambridge",
-       "result": "L"
       }
      ],
-     "ga": 21,
-     "gd": -4,
+     "ga": 22,
+     "gd": -5,
      "gf": 17,
-     "lost": 6,
-     "played": 12,
+     "lost": 7,
+     "played": 13,
      "points": 12,
-     "position": 19,
-     "provisional": 0,
+     "position": 20,
+     "provisional": 1,
      "rating": -0.2338601194287493,
      "team": "Blackpool",
      "won": 3
@@ -14816,77 +14896,10 @@
      "lost": 7,
      "played": 13,
      "points": 12,
-     "position": 20,
+     "position": 21,
      "provisional": 0,
      "rating": -0.26987764533516523,
      "team": "Doncaster",
-     "won": 3
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "WIG",
-      "fg": "#FFFFFF",
-      "name": "Wigan"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-11-03",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "E2",
-       "opponent": "Mansfield",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 3,
-       "home": true,
-       "league": "E2",
-       "opponent": "Bromley",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 3,
-       "gf": 0,
-       "home": false,
-       "league": "E2",
-       "opponent": "Leicester",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "E2",
-       "opponent": "Huddersfield",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "E2",
-       "opponent": "Oxford",
-       "result": "L"
-      }
-     ],
-     "ga": 22,
-     "gd": -11,
-     "gf": 11,
-     "lost": 9,
-     "played": 14,
-     "points": 11,
-     "position": 21,
-     "provisional": 0,
-     "rating": -0.2556731250122193,
-     "team": "Wigan",
      "won": 3
     },
     {
@@ -14966,6 +14979,16 @@
      "drawn": 3,
      "form": [
       {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "E2",
+       "opponent": "Wigan",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-10-31",
        "ga": 1,
        "gf": 1,
@@ -15000,25 +15023,16 @@
        "league": "E2",
        "opponent": "Cambridge",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "E2",
-       "opponent": "Stockport",
-       "result": "L"
       }
      ],
-     "ga": 22,
-     "gd": -10,
-     "gf": 12,
-     "lost": 7,
-     "played": 12,
+     "ga": 24,
+     "gd": -11,
+     "gf": 13,
+     "lost": 8,
+     "played": 13,
      "points": 9,
      "position": 23,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.14351817574086567,
      "team": "Barnsley",
      "won": 2
@@ -15106,8 +15120,8 @@
    "label": "League Two (England)",
    "model_through": "2026-11-03",
    "name": "League Two",
-   "provisional": 0,
-   "results_through": "2026-11-03",
+   "provisional": 9,
+   "results_through": "2026-11-14",
    "rows": [
     {
      "club": {
@@ -15116,8 +15130,18 @@
       "fg": "#FFFFFF",
       "name": "Salford"
      },
-     "drawn": 1,
+     "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Northampton",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-10-31",
        "ga": 1,
@@ -15153,25 +15177,16 @@
        "league": "E3",
        "opponent": "Crawley Town",
        "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "E3",
-       "opponent": "Cheltenham",
-       "result": "W"
       }
      ],
-     "ga": 15,
+     "ga": 16,
      "gd": 10,
-     "gf": 25,
+     "gf": 26,
      "lost": 3,
-     "played": 14,
-     "points": 31,
+     "played": 15,
+     "points": 32,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.2780411856270606,
      "team": "Salford",
      "won": 10
@@ -15246,6 +15261,210 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "GRI",
+      "fg": "#FFFFFF",
+      "name": "Grimsby"
+     },
+     "drawn": 5,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 4,
+       "home": false,
+       "league": "E3",
+       "opponent": "Swindon",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 5,
+       "home": true,
+       "league": "E3",
+       "opponent": "York",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 4,
+       "home": false,
+       "league": "E3",
+       "opponent": "Gillingham",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "E3",
+       "opponent": "Rochdale",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 2,
+       "gf": 0,
+       "home": true,
+       "league": "E3",
+       "opponent": "Northampton",
+       "result": "L"
+      }
+     ],
+     "ga": 19,
+     "gd": 9,
+     "gf": 28,
+     "lost": 4,
+     "played": 15,
+     "points": 23,
+     "position": 3,
+     "provisional": 1,
+     "rating": 0.35588707145334686,
+     "team": "Grimsby",
+     "won": 6
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "YOR",
+      "fg": "#FFFFFF",
+      "name": "York"
+     },
+     "drawn": 5,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Rochdale",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 5,
+       "gf": 2,
+       "home": false,
+       "league": "E3",
+       "opponent": "Grimsby",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 3,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Barnet",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "E3",
+       "opponent": "Port Vale",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Accrington",
+       "result": "D"
+      }
+     ],
+     "ga": 21,
+     "gd": 4,
+     "gf": 25,
+     "lost": 4,
+     "played": 15,
+     "points": 23,
+     "position": 4,
+     "provisional": 1,
+     "rating": 0.1942376979314866,
+     "team": "York",
+     "won": 6
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "CRE",
+      "fg": "#FFFFFF",
+      "name": "Crewe"
+     },
+     "drawn": 8,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "E3",
+       "opponent": "Newport County",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Barnet",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 5,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Chesterfield",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "E3",
+       "opponent": "Exeter",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 2,
+       "gf": 3,
+       "home": true,
+       "league": "E3",
+       "opponent": "Rochdale",
+       "result": "W"
+      }
+     ],
+     "ga": 19,
+     "gd": 0,
+     "gf": 19,
+     "lost": 2,
+     "played": 15,
+     "points": 23,
+     "position": 5,
+     "provisional": 1,
+     "rating": -0.10027891788128418,
+     "team": "Crewe",
+     "won": 5
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "WAL",
       "fg": "#FFFFFF",
       "name": "Walsall"
@@ -15304,413 +15523,11 @@
      "lost": 1,
      "played": 13,
      "points": 22,
-     "position": 3,
+     "position": 6,
      "provisional": 0,
      "rating": 0.05965877156667676,
      "team": "Walsall",
      "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "CRE",
-      "fg": "#FFFFFF",
-      "name": "Crewe"
-     },
-     "drawn": 7,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Barnet",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 5,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Chesterfield",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "E3",
-       "opponent": "Exeter",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 2,
-       "gf": 3,
-       "home": true,
-       "league": "E3",
-       "opponent": "Rochdale",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Swindon",
-       "result": "W"
-      }
-     ],
-     "ga": 17,
-     "gd": 0,
-     "gf": 17,
-     "lost": 2,
-     "played": 14,
-     "points": 22,
-     "position": 4,
-     "provisional": 0,
-     "rating": -0.10027891788128418,
-     "team": "Crewe",
-     "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "CHE",
-      "fg": "#FFFFFF",
-      "name": "Cheltenham"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Tranmere",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Newport County",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 2,
-       "gf": 4,
-       "home": true,
-       "league": "E3",
-       "opponent": "Fleetwood Town",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 4,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Oldham",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 2,
-       "gf": 0,
-       "home": true,
-       "league": "E3",
-       "opponent": "Salford",
-       "result": "L"
-      }
-     ],
-     "ga": 25,
-     "gd": -2,
-     "gf": 23,
-     "lost": 5,
-     "played": 14,
-     "points": 21,
-     "position": 5,
-     "provisional": 0,
-     "rating": -0.33187355144497666,
-     "team": "Cheltenham",
-     "won": 6
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "GRI",
-      "fg": "#FFFFFF",
-      "name": "Grimsby"
-     },
-     "drawn": 5,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 5,
-       "home": true,
-       "league": "E3",
-       "opponent": "York",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 4,
-       "home": false,
-       "league": "E3",
-       "opponent": "Gillingham",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "E3",
-       "opponent": "Rochdale",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 2,
-       "gf": 0,
-       "home": true,
-       "league": "E3",
-       "opponent": "Northampton",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "E3",
-       "opponent": "Port Vale",
-       "result": "L"
-      }
-     ],
-     "ga": 18,
-     "gd": 6,
-     "gf": 24,
-     "lost": 4,
-     "played": 14,
-     "points": 20,
-     "position": 6,
-     "provisional": 0,
-     "rating": 0.35588707145334686,
-     "team": "Grimsby",
-     "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "YOR",
-      "fg": "#FFFFFF",
-      "name": "York"
-     },
-     "drawn": 5,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 5,
-       "gf": 2,
-       "home": false,
-       "league": "E3",
-       "opponent": "Grimsby",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Barnet",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "E3",
-       "opponent": "Port Vale",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Accrington",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Newport County",
-       "result": "D"
-      }
-     ],
-     "ga": 21,
-     "gd": 3,
-     "gf": 24,
-     "lost": 4,
-     "played": 14,
-     "points": 20,
-     "position": 7,
-     "provisional": 0,
-     "rating": 0.1942376979314866,
-     "team": "York",
-     "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "GIL",
-      "fg": "#FFFFFF",
-      "name": "Gillingham"
-     },
-     "drawn": 5,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "E3",
-       "opponent": "Shrewsbury",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 4,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Grimsby",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Port Vale",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Accrington",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 4,
-       "home": false,
-       "league": "E3",
-       "opponent": "Rotherham",
-       "result": "W"
-      }
-     ],
-     "ga": 19,
-     "gd": 1,
-     "gf": 20,
-     "lost": 4,
-     "played": 14,
-     "points": 20,
-     "position": 8,
-     "provisional": 0,
-     "rating": -0.22355969604730208,
-     "team": "Gillingham",
-     "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "ACC",
-      "fg": "#FFFFFF",
-      "name": "Accrington"
-     },
-     "drawn": 7,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Northampton",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 0,
-       "gf": 5,
-       "home": false,
-       "league": "E3",
-       "opponent": "Rochdale",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "York",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "E3",
-       "opponent": "Gillingham",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "E3",
-       "opponent": "Oldham",
-       "result": "D"
-      }
-     ],
-     "ga": 17,
-     "gd": 6,
-     "gf": 23,
-     "lost": 3,
-     "played": 14,
-     "points": 19,
-     "position": 9,
-     "provisional": 0,
-     "rating": 0.04529634973766172,
-     "team": "Accrington",
-     "won": 4
     },
     {
      "club": {
@@ -15721,6 +15538,16 @@
      },
      "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 2,
+       "home": false,
+       "league": "E3",
+       "opponent": "Bristol Rvs",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-10-30",
        "ga": 4,
@@ -15756,28 +15583,427 @@
        "league": "E3",
        "opponent": "Port Vale",
        "result": "L"
+      }
+     ],
+     "ga": 21,
+     "gd": 5,
+     "gf": 26,
+     "lost": 5,
+     "played": 15,
+     "points": 22,
+     "position": 7,
+     "provisional": 1,
+     "rating": 0.29184514609101986,
+     "team": "Chesterfield",
+     "won": 6
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "EXE",
+      "fg": "#FFFFFF",
+      "name": "Exeter"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Cheltenham",
+       "provisional": true,
+       "result": "W"
       },
       {
-       "date": "2026-10-10",
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Salford",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "E3",
+       "opponent": "Fleetwood Town",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "E3",
+       "opponent": "Crewe",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 0,
+       "gf": 0,
+       "home": false,
+       "league": "E3",
+       "opponent": "Colchester",
+       "result": "D"
+      }
+     ],
+     "ga": 9,
+     "gd": 3,
+     "gf": 12,
+     "lost": 5,
+     "played": 15,
+     "points": 22,
+     "position": 8,
+     "provisional": 1,
+     "rating": 0.1251263557247434,
+     "team": "Exeter",
+     "won": 6
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "CHE",
+      "fg": "#FFFFFF",
+      "name": "Cheltenham"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "E3",
+       "opponent": "Exeter",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 3,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Tranmere",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Newport County",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 2,
+       "gf": 4,
+       "home": true,
+       "league": "E3",
+       "opponent": "Fleetwood Town",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 4,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Oldham",
+       "result": "L"
+      }
+     ],
+     "ga": 26,
+     "gd": -3,
+     "gf": 23,
+     "lost": 6,
+     "played": 15,
+     "points": 21,
+     "position": 9,
+     "provisional": 1,
+     "rating": -0.33187355144497666,
+     "team": "Cheltenham",
+     "won": 6
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "SHR",
+      "fg": "#FFFFFF",
+      "name": "Shrewsbury"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "E3",
+       "opponent": "Oldham",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Gillingham",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 3,
+       "gf": 3,
+       "home": false,
+       "league": "E3",
+       "opponent": "Rotherham",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 2,
+       "gf": 3,
+       "home": false,
+       "league": "E3",
+       "opponent": "Crawley Town",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Bristol Rvs",
+       "result": "W"
+      }
+     ],
+     "ga": 23,
+     "gd": -4,
+     "gf": 19,
+     "lost": 6,
+     "played": 15,
+     "points": 21,
+     "position": 10,
+     "provisional": 1,
+     "rating": -0.14369604805381653,
+     "team": "Shrewsbury",
+     "won": 6
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "GIL",
+      "fg": "#FFFFFF",
+      "name": "Gillingham"
+     },
+     "drawn": 5,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "E3",
+       "opponent": "Colchester",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "E3",
+       "opponent": "Shrewsbury",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 4,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Grimsby",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Port Vale",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 3,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Accrington",
+       "result": "L"
+      }
+     ],
+     "ga": 21,
+     "gd": -1,
+     "gf": 20,
+     "lost": 5,
+     "played": 15,
+     "points": 20,
+     "position": 11,
+     "provisional": 1,
+     "rating": -0.22355969604730208,
+     "team": "Gillingham",
+     "won": 5
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "ACC",
+      "fg": "#FFFFFF",
+      "name": "Accrington"
+     },
+     "drawn": 7,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 4,
+       "gf": 2,
+       "home": false,
+       "league": "E3",
+       "opponent": "Port Vale",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Northampton",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 0,
+       "gf": 5,
+       "home": false,
+       "league": "E3",
+       "opponent": "Rochdale",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "York",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 1,
+       "gf": 3,
+       "home": true,
+       "league": "E3",
+       "opponent": "Gillingham",
+       "result": "W"
+      }
+     ],
+     "ga": 21,
+     "gd": 4,
+     "gf": 25,
+     "lost": 4,
+     "played": 15,
+     "points": 19,
+     "position": 12,
+     "provisional": 1,
+     "rating": 0.04529634973766172,
+     "team": "Accrington",
+     "won": 4
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "NEW",
+      "fg": "#FFFFFF",
+      "name": "Newport County"
+     },
+     "drawn": 7,
+     "form": [
+      {
+       "date": "2026-11-14",
        "ga": 2,
        "gf": 2,
        "home": false,
        "league": "E3",
-       "opponent": "Crawley Town",
+       "opponent": "Crewe",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-10-30",
+       "ga": 1,
+       "gf": 4,
+       "home": true,
+       "league": "E3",
+       "opponent": "Chesterfield",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "E3",
+       "opponent": "Cheltenham",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "E3",
+       "opponent": "Rotherham",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "York",
        "result": "D"
       }
      ],
-     "ga": 21,
+     "ga": 19,
      "gd": 3,
-     "gf": 24,
-     "lost": 5,
-     "played": 14,
+     "gf": 22,
+     "lost": 4,
+     "played": 15,
      "points": 19,
-     "position": 10,
-     "provisional": 0,
-     "rating": 0.29184514609101986,
-     "team": "Chesterfield",
-     "won": 5
+     "position": 13,
+     "provisional": 1,
+     "rating": -0.20645530465306372,
+     "team": "Newport County",
+     "won": 4
     },
     {
      "club": {
@@ -15840,78 +16066,11 @@
      "lost": 3,
      "played": 14,
      "points": 19,
-     "position": 11,
+     "position": 14,
      "provisional": 0,
      "rating": -0.16220249705334022,
      "team": "Tranmere",
      "won": 4
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "EXE",
-      "fg": "#FFFFFF",
-      "name": "Exeter"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Salford",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "E3",
-       "opponent": "Fleetwood Town",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "E3",
-       "opponent": "Crewe",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "E3",
-       "opponent": "Colchester",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Shrewsbury",
-       "result": "W"
-      }
-     ],
-     "ga": 9,
-     "gd": 2,
-     "gf": 11,
-     "lost": 5,
-     "played": 14,
-     "points": 19,
-     "position": 12,
-     "provisional": 0,
-     "rating": 0.1251263557247434,
-     "team": "Exeter",
-     "won": 5
     },
     {
      "club": {
@@ -15922,6 +16081,16 @@
      },
      "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 4,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Grimsby",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-10-31",
        "ga": 1,
@@ -15957,25 +16126,16 @@
        "league": "E3",
        "opponent": "Walsall",
        "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "E3",
-       "opponent": "Crewe",
-       "result": "L"
       }
      ],
-     "ga": 17,
-     "gd": -2,
-     "gf": 15,
-     "lost": 5,
-     "played": 14,
+     "ga": 21,
+     "gd": -5,
+     "gf": 16,
+     "lost": 6,
+     "played": 15,
      "points": 19,
-     "position": 13,
-     "provisional": 0,
+     "position": 15,
+     "provisional": 1,
      "rating": -0.11286283217876747,
      "team": "Swindon",
      "won": 5
@@ -15983,105 +16143,48 @@
     {
      "club": {
       "bg": "#5B6170",
-      "code": "NEW",
+      "code": "POR",
       "fg": "#FFFFFF",
-      "name": "Newport County"
-     },
-     "drawn": 6,
-     "form": [
-      {
-       "date": "2026-10-30",
-       "ga": 1,
-       "gf": 4,
-       "home": true,
-       "league": "E3",
-       "opponent": "Chesterfield",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "E3",
-       "opponent": "Cheltenham",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "E3",
-       "opponent": "Rotherham",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "York",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Colchester",
-       "result": "W"
-      }
-     ],
-     "ga": 17,
-     "gd": 3,
-     "gf": 20,
-     "lost": 4,
-     "played": 14,
-     "points": 18,
-     "position": 14,
-     "provisional": 0,
-     "rating": -0.20645530465306372,
-     "team": "Newport County",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "SHR",
-      "fg": "#FFFFFF",
-      "name": "Shrewsbury"
+      "name": "Port Vale"
      },
      "drawn": 3,
      "form": [
       {
-       "date": "2026-10-31",
+       "date": "2026-11-14",
        "ga": 2,
-       "gf": 1,
+       "gf": 4,
        "home": true,
        "league": "E3",
-       "opponent": "Gillingham",
-       "result": "L"
+       "opponent": "Accrington",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 4,
+       "home": true,
+       "league": "E3",
+       "opponent": "Rochdale",
+       "result": "W"
       },
       {
        "date": "2026-10-24",
-       "ga": 3,
-       "gf": 3,
+       "ga": 2,
+       "gf": 0,
        "home": false,
        "league": "E3",
-       "opponent": "Rotherham",
-       "result": "D"
+       "opponent": "York",
+       "result": "L"
       },
       {
        "date": "2026-10-20",
-       "ga": 2,
-       "gf": 3,
+       "ga": 1,
+       "gf": 1,
        "home": false,
        "league": "E3",
-       "opponent": "Crawley Town",
-       "result": "W"
+       "opponent": "Gillingham",
+       "result": "D"
       },
       {
        "date": "2026-10-17",
@@ -16089,29 +16192,20 @@
        "gf": 1,
        "home": true,
        "league": "E3",
-       "opponent": "Bristol Rvs",
+       "opponent": "Chesterfield",
        "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "E3",
-       "opponent": "Exeter",
-       "result": "L"
       }
      ],
-     "ga": 22,
-     "gd": -5,
-     "gf": 17,
-     "lost": 6,
-     "played": 14,
+     "ga": 16,
+     "gd": -2,
+     "gf": 14,
+     "lost": 5,
+     "played": 13,
      "points": 18,
-     "position": 15,
-     "provisional": 0,
-     "rating": -0.14369604805381653,
-     "team": "Shrewsbury",
+     "position": 16,
+     "provisional": 1,
+     "rating": 0.07979239703109786,
+     "team": "Port Vale",
      "won": 5
     },
     {
@@ -16175,7 +16269,7 @@
      "lost": 5,
      "played": 14,
      "points": 17,
-     "position": 16,
+     "position": 17,
      "provisional": 0,
      "rating": 0.10281369338481339,
      "team": "Fleetwood Town",
@@ -16190,6 +16284,16 @@
      },
      "drawn": 1,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 0,
+       "home": true,
+       "league": "E3",
+       "opponent": "Chesterfield",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-10-31",
        "ga": 3,
@@ -16225,229 +16329,19 @@
        "league": "E3",
        "opponent": "Shrewsbury",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 3,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Barnet",
-       "result": "L"
       }
      ],
-     "ga": 23,
-     "gd": -6,
+     "ga": 25,
+     "gd": -8,
      "gf": 17,
-     "lost": 8,
-     "played": 14,
+     "lost": 9,
+     "played": 15,
      "points": 16,
-     "position": 17,
-     "provisional": 0,
+     "position": 18,
+     "provisional": 1,
      "rating": 0.022277047409990924,
      "team": "Bristol Rvs",
      "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "OLD",
-      "fg": "#FFFFFF",
-      "name": "Oldham"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-03",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Northampton",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "E3",
-       "opponent": "Crawley Town",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Barnet",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 3,
-       "gf": 0,
-       "home": false,
-       "league": "E3",
-       "opponent": "Walsall",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 4,
-       "home": true,
-       "league": "E3",
-       "opponent": "Cheltenham",
-       "result": "W"
-      }
-     ],
-     "ga": 19,
-     "gd": -4,
-     "gf": 15,
-     "lost": 7,
-     "played": 14,
-     "points": 15,
-     "position": 18,
-     "provisional": 0,
-     "rating": 0.07395097589781408,
-     "team": "Oldham",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "POR",
-      "fg": "#FFFFFF",
-      "name": "Port Vale"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 4,
-       "home": true,
-       "league": "E3",
-       "opponent": "Rochdale",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "E3",
-       "opponent": "York",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Gillingham",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Chesterfield",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Grimsby",
-       "result": "W"
-      }
-     ],
-     "ga": 14,
-     "gd": -4,
-     "gf": 10,
-     "lost": 5,
-     "played": 12,
-     "points": 15,
-     "position": 19,
-     "provisional": 0,
-     "rating": 0.07979239703109786,
-     "team": "Port Vale",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "ROC",
-      "fg": "#FFFFFF",
-      "name": "Rochdale"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 4,
-       "gf": 2,
-       "home": false,
-       "league": "E3",
-       "opponent": "Port Vale",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 5,
-       "gf": 0,
-       "home": true,
-       "league": "E3",
-       "opponent": "Accrington",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "E3",
-       "opponent": "Grimsby",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 3,
-       "gf": 2,
-       "home": false,
-       "league": "E3",
-       "opponent": "Crewe",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Tranmere",
-       "result": "D"
-      }
-     ],
-     "ga": 26,
-     "gd": -9,
-     "gf": 17,
-     "lost": 7,
-     "played": 14,
-     "points": 15,
-     "position": 20,
-     "provisional": 0,
-     "rating": -0.2456788346088683,
-     "team": "Rochdale",
-     "won": 4
     },
     {
      "club": {
@@ -16456,8 +16350,18 @@
       "fg": "#FFFFFF",
       "name": "Northampton"
      },
-     "drawn": 5,
+     "drawn": 6,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Salford",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-03",
        "ga": 1,
@@ -16493,28 +16397,223 @@
        "league": "E3",
        "opponent": "Tranmere",
        "result": "L"
+      }
+     ],
+     "ga": 11,
+     "gd": -1,
+     "gf": 10,
+     "lost": 5,
+     "played": 14,
+     "points": 15,
+     "position": 19,
+     "provisional": 1,
+     "rating": 0.014927274951931357,
+     "team": "Northampton",
+     "won": 3
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "OLD",
+      "fg": "#FFFFFF",
+      "name": "Oldham"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Shrewsbury",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-11-03",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Northampton",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "E3",
+       "opponent": "Crawley Town",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Barnet",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 3,
+       "gf": 0,
+       "home": false,
+       "league": "E3",
+       "opponent": "Walsall",
+       "result": "L"
+      }
+     ],
+     "ga": 21,
+     "gd": -5,
+     "gf": 16,
+     "lost": 8,
+     "played": 15,
+     "points": 15,
+     "position": 20,
+     "provisional": 1,
+     "rating": 0.07395097589781408,
+     "team": "Oldham",
+     "won": 4
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "COL",
+      "fg": "#FFFFFF",
+      "name": "Colchester"
+     },
+     "drawn": 6,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "E3",
+       "opponent": "Gillingham",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 3,
+       "gf": 1,
+       "home": true,
+       "league": "E3",
+       "opponent": "Walsall",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "E3",
+       "opponent": "Northampton",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "E3",
+       "opponent": "Chesterfield",
+       "result": "D"
       },
       {
        "date": "2026-10-17",
        "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "E3",
+       "opponent": "Exeter",
+       "result": "D"
+      }
+     ],
+     "ga": 19,
+     "gd": -5,
+     "gf": 14,
+     "lost": 5,
+     "played": 14,
+     "points": 15,
+     "position": 21,
+     "provisional": 1,
+     "rating": -0.07091608316350517,
+     "team": "Colchester",
+     "won": 3
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "ROC",
+      "fg": "#FFFFFF",
+      "name": "Rochdale"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "E3",
+       "opponent": "York",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 4,
        "gf": 2,
        "home": false,
        "league": "E3",
+       "opponent": "Port Vale",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 5,
+       "gf": 0,
+       "home": true,
+       "league": "E3",
+       "opponent": "Accrington",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "E3",
        "opponent": "Grimsby",
-       "result": "W"
+       "result": "D"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 3,
+       "gf": 2,
+       "home": false,
+       "league": "E3",
+       "opponent": "Crewe",
+       "result": "L"
       }
      ],
-     "ga": 10,
-     "gd": -1,
-     "gf": 9,
-     "lost": 5,
-     "played": 13,
-     "points": 14,
-     "position": 21,
-     "provisional": 0,
-     "rating": 0.014927274951931357,
-     "team": "Northampton",
-     "won": 3
+     "ga": 27,
+     "gd": -10,
+     "gf": 17,
+     "lost": 8,
+     "played": 15,
+     "points": 15,
+     "position": 22,
+     "provisional": 1,
+     "rating": -0.2456788346088683,
+     "team": "Rochdale",
+     "won": 4
     },
     {
      "club": {
@@ -16577,77 +16676,10 @@
      "lost": 6,
      "played": 14,
      "points": 12,
-     "position": 22,
+     "position": 23,
      "provisional": 0,
      "rating": -0.05831440085165229,
      "team": "Rotherham",
-     "won": 2
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "COL",
-      "fg": "#FFFFFF",
-      "name": "Colchester"
-     },
-     "drawn": 6,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 3,
-       "gf": 1,
-       "home": true,
-       "league": "E3",
-       "opponent": "Walsall",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "E3",
-       "opponent": "Northampton",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "E3",
-       "opponent": "Chesterfield",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "E3",
-       "opponent": "Exeter",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "E3",
-       "opponent": "Newport County",
-       "result": "L"
-      }
-     ],
-     "ga": 19,
-     "gd": -7,
-     "gf": 12,
-     "lost": 5,
-     "played": 13,
-     "points": 12,
-     "position": 23,
-     "provisional": 0,
-     "rating": -0.07091608316350517,
-     "team": "Colchester",
      "won": 2
     },
     {
@@ -16733,8 +16765,8 @@
    "label": "National League",
    "model_through": "2026-10-31",
    "name": "National League",
-   "provisional": 0,
-   "results_through": "2026-10-31",
+   "provisional": 11,
+   "results_through": "2026-11-14",
    "rows": [
     {
      "club": {
@@ -16743,8 +16775,18 @@
       "fg": "#FFFFFF",
       "name": "Boreham Wood"
      },
-     "drawn": 2,
+     "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "EC",
+       "opponent": "Yeovil",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-10-31",
        "ga": 3,
@@ -16780,25 +16822,16 @@
        "league": "EC",
        "opponent": "Sutton",
        "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "EC",
-       "opponent": "Altrincham",
-       "result": "W"
       }
      ],
-     "ga": 17,
+     "ga": 19,
      "gd": 27,
-     "gf": 44,
+     "gf": 46,
      "lost": 0,
-     "played": 16,
-     "points": 44,
+     "played": 17,
+     "points": 45,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.7273727952466278,
      "team": "Boreham Wood",
      "won": 14
@@ -16812,6 +16845,16 @@
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 4,
+       "home": true,
+       "league": "EC",
+       "opponent": "Altrincham",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-10-31",
        "ga": 2,
@@ -16847,28 +16890,19 @@
        "league": "EC",
        "opponent": "Woking",
        "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "EC",
-       "opponent": "Hornchurch",
-       "result": "W"
       }
      ],
      "ga": 23,
-     "gd": 11,
-     "gf": 34,
+     "gd": 15,
+     "gf": 38,
      "lost": 4,
-     "played": 16,
-     "points": 32,
+     "played": 17,
+     "points": 35,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.4880577251599063,
      "team": "Harrogate",
-     "won": 10
+     "won": 11
     },
     {
      "club": {
@@ -16879,6 +16913,16 @@
      },
      "drawn": 5,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "EC",
+       "opponent": "Aldershot",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-10-31",
        "ga": 3,
@@ -16914,28 +16958,19 @@
        "league": "EC",
        "opponent": "Boston Utd",
        "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "EC",
-       "opponent": "Fylde",
-       "result": "W"
       }
      ],
-     "ga": 27,
-     "gd": 11,
-     "gf": 38,
+     "ga": 28,
+     "gd": 12,
+     "gf": 40,
      "lost": 3,
-     "played": 16,
-     "points": 29,
+     "played": 17,
+     "points": 32,
      "position": 3,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.5896793610488309,
      "team": "Southend",
-     "won": 8
+     "won": 9
     },
     {
      "club": {
@@ -16946,6 +16981,16 @@
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "EC",
+       "opponent": "Eastleigh",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-10-30",
        "ga": 1,
@@ -16981,28 +17026,19 @@
        "league": "EC",
        "opponent": "Scunthorpe",
        "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "EC",
-       "opponent": "Southend",
-       "result": "L"
       }
      ],
-     "ga": 24,
-     "gd": 6,
-     "gf": 30,
+     "ga": 25,
+     "gd": 7,
+     "gf": 32,
      "lost": 5,
-     "played": 16,
-     "points": 29,
+     "played": 17,
+     "points": 32,
      "position": 4,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.054051899904640655,
      "team": "Fylde",
-     "won": 9
+     "won": 10
     },
     {
      "club": {
@@ -17011,8 +17047,18 @@
       "fg": "#FFFFFF",
       "name": "Yeovil"
      },
-     "drawn": 4,
+     "drawn": 5,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "EC",
+       "opponent": "Boreham Wood",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-10-31",
        "ga": 2,
@@ -17048,162 +17094,19 @@
        "league": "EC",
        "opponent": "Wealdstone",
        "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 0,
-       "gf": 6,
-       "home": true,
-       "league": "EC",
-       "opponent": "Boston Utd",
-       "result": "W"
       }
      ],
-     "ga": 20,
+     "ga": 22,
      "gd": 15,
-     "gf": 35,
+     "gf": 37,
      "lost": 4,
-     "played": 16,
-     "points": 28,
+     "played": 17,
+     "points": 29,
      "position": 5,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.08901888062041685,
      "team": "Yeovil",
      "won": 8
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "WOR",
-      "fg": "#FFFFFF",
-      "name": "Worthing"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 3,
-       "gf": 0,
-       "home": true,
-       "league": "EC",
-       "opponent": "Sutton",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 3,
-       "gf": 3,
-       "home": true,
-       "league": "EC",
-       "opponent": "Southend",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "EC",
-       "opponent": "Kidderminster",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 5,
-       "home": true,
-       "league": "EC",
-       "opponent": "Solihull",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "EC",
-       "opponent": "Gateshead",
-       "result": "W"
-      }
-     ],
-     "ga": 25,
-     "gd": 7,
-     "gf": 32,
-     "lost": 4,
-     "played": 16,
-     "points": 28,
-     "position": 6,
-     "provisional": 0,
-     "rating": -0.04025393795797738,
-     "team": "Worthing",
-     "won": 8
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "ALT",
-      "fg": "#FFFFFF",
-      "name": "Altrincham"
-     },
-     "drawn": 1,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 4,
-       "gf": 2,
-       "home": true,
-       "league": "EC",
-       "opponent": "Carlisle",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "EC",
-       "opponent": "Kidderminster",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "EC",
-       "opponent": "Yeovil",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "EC",
-       "opponent": "Aldershot",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "EC",
-       "opponent": "Boreham Wood",
-       "result": "L"
-      }
-     ],
-     "ga": 24,
-     "gd": 0,
-     "gf": 24,
-     "lost": 6,
-     "played": 16,
-     "points": 28,
-     "position": 7,
-     "provisional": 0,
-     "rating": -0.07734347815291676,
-     "team": "Altrincham",
-     "won": 9
     },
     {
      "club": {
@@ -17214,6 +17117,16 @@
      },
      "drawn": 5,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "EC",
+       "opponent": "Boston Utd",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-10-31",
        "ga": 2,
@@ -17249,28 +17162,87 @@
        "league": "EC",
        "opponent": "Kidderminster",
        "result": "D"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 1,
-       "gf": 3,
-       "home": false,
-       "league": "EC",
-       "opponent": "Aldershot",
-       "result": "W"
       }
      ],
      "ga": 23,
-     "gd": 9,
-     "gf": 32,
+     "gd": 11,
+     "gf": 34,
      "lost": 4,
-     "played": 16,
-     "points": 26,
-     "position": 8,
-     "provisional": 0,
+     "played": 17,
+     "points": 29,
+     "position": 6,
+     "provisional": 1,
      "rating": 0.5780624662636118,
      "team": "Carlisle",
-     "won": 7
+     "won": 8
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "WOR",
+      "fg": "#FFFFFF",
+      "name": "Worthing"
+     },
+     "drawn": 5,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "EC",
+       "opponent": "Scunthorpe",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "EC",
+       "opponent": "Sutton",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 3,
+       "gf": 3,
+       "home": true,
+       "league": "EC",
+       "opponent": "Southend",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "EC",
+       "opponent": "Kidderminster",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-10",
+       "ga": 0,
+       "gf": 5,
+       "home": true,
+       "league": "EC",
+       "opponent": "Solihull",
+       "result": "W"
+      }
+     ],
+     "ga": 26,
+     "gd": 7,
+     "gf": 33,
+     "lost": 4,
+     "played": 17,
+     "points": 29,
+     "position": 7,
+     "provisional": 1,
+     "rating": -0.04025393795797738,
+     "team": "Worthing",
+     "won": 8
     },
     {
      "club": {
@@ -17281,6 +17253,16 @@
      },
      "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 3,
+       "home": false,
+       "league": "EC",
+       "opponent": "Gateshead",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-10-31",
        "ga": 1,
@@ -17316,28 +17298,87 @@
        "league": "EC",
        "opponent": "Wealdstone",
        "result": "W"
-      },
-      {
-       "date": "2026-09-29",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "EC",
-       "opponent": "Scunthorpe",
-       "result": "W"
       }
      ],
      "ga": 19,
-     "gd": 7,
-     "gf": 26,
+     "gd": 10,
+     "gf": 29,
      "lost": 4,
-     "played": 15,
-     "points": 25,
-     "position": 9,
-     "provisional": 0,
+     "played": 16,
+     "points": 28,
+     "position": 8,
+     "provisional": 1,
      "rating": 0.2027925214975006,
      "team": "Barrow",
-     "won": 7
+     "won": 8
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "ALT",
+      "fg": "#FFFFFF",
+      "name": "Altrincham"
+     },
+     "drawn": 1,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 4,
+       "gf": 0,
+       "home": false,
+       "league": "EC",
+       "opponent": "Harrogate",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 4,
+       "gf": 2,
+       "home": true,
+       "league": "EC",
+       "opponent": "Carlisle",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "EC",
+       "opponent": "Kidderminster",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "EC",
+       "opponent": "Yeovil",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-10",
+       "ga": 1,
+       "gf": 3,
+       "home": true,
+       "league": "EC",
+       "opponent": "Aldershot",
+       "result": "W"
+      }
+     ],
+     "ga": 28,
+     "gd": -4,
+     "gf": 24,
+     "lost": 7,
+     "played": 17,
+     "points": 28,
+     "position": 9,
+     "provisional": 1,
+     "rating": -0.07734347815291676,
+     "team": "Altrincham",
+     "won": 9
     },
     {
      "club": {
@@ -17346,8 +17387,18 @@
       "fg": "#FFFFFF",
       "name": "Halifax"
      },
-     "drawn": 3,
+     "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "EC",
+       "opponent": "Kidderminster",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-10-31",
        "ga": 0,
@@ -17383,25 +17434,16 @@
        "league": "EC",
        "opponent": "Gateshead",
        "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "EC",
-       "opponent": "Solihull",
-       "result": "W"
       }
      ],
-     "ga": 20,
+     "ga": 21,
      "gd": 8,
-     "gf": 28,
+     "gf": 29,
      "lost": 6,
-     "played": 16,
-     "points": 24,
+     "played": 17,
+     "points": 25,
      "position": 10,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.22725439137142045,
      "team": "Halifax",
      "won": 7
@@ -17415,6 +17457,16 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 0,
+       "home": true,
+       "league": "EC",
+       "opponent": "Solihull",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-10-31",
        "ga": 0,
@@ -17450,28 +17502,155 @@
        "league": "EC",
        "opponent": "Boreham Wood",
        "result": "L"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "EC",
-       "opponent": "Kidderminster",
-       "result": "D"
       }
      ],
-     "ga": 21,
-     "gd": -1,
+     "ga": 23,
+     "gd": -3,
      "gf": 20,
-     "lost": 6,
-     "played": 16,
+     "lost": 7,
+     "played": 17,
      "points": 24,
      "position": 11,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.16738111853951998,
      "team": "Sutton",
      "won": 7
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "HOR",
+      "fg": "#FFFFFF",
+      "name": "Hornchurch"
+     },
+     "drawn": 0,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "EC",
+       "opponent": "Tamworth",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-10-30",
+       "ga": 3,
+       "gf": 1,
+       "home": false,
+       "league": "EC",
+       "opponent": "Fylde",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "EC",
+       "opponent": "Yeovil",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "EC",
+       "opponent": "Hartlepool",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-10",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "EC",
+       "opponent": "Eastleigh",
+       "result": "W"
+      }
+     ],
+     "ga": 27,
+     "gd": -7,
+     "gf": 20,
+     "lost": 9,
+     "played": 17,
+     "points": 24,
+     "position": 12,
+     "provisional": 1,
+     "rating": -0.3777129228350593,
+     "team": "Hornchurch",
+     "won": 8
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "KID",
+      "fg": "#FFFFFF",
+      "name": "Kidderminster"
+     },
+     "drawn": 7,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "EC",
+       "opponent": "Halifax",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "EC",
+       "opponent": "Solihull",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 0,
+       "gf": 0,
+       "home": false,
+       "league": "EC",
+       "opponent": "Altrincham",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "EC",
+       "opponent": "Worthing",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-10",
+       "ga": 0,
+       "gf": 0,
+       "home": false,
+       "league": "EC",
+       "opponent": "Carlisle",
+       "result": "D"
+      }
+     ],
+     "ga": 17,
+     "gd": 1,
+     "gf": 18,
+     "lost": 5,
+     "played": 17,
+     "points": 22,
+     "position": 13,
+     "provisional": 1,
+     "rating": -0.1570028710894944,
+     "team": "Kidderminster",
+     "won": 5
     },
     {
      "club": {
@@ -17534,78 +17713,11 @@
      "lost": 7,
      "played": 16,
      "points": 21,
-     "position": 12,
+     "position": 14,
      "provisional": 0,
      "rating": 0.20476688791897013,
      "team": "Woking",
      "won": 6
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "KID",
-      "fg": "#FFFFFF",
-      "name": "Kidderminster"
-     },
-     "drawn": 6,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "EC",
-       "opponent": "Solihull",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "EC",
-       "opponent": "Altrincham",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "EC",
-       "opponent": "Worthing",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "EC",
-       "opponent": "Carlisle",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "EC",
-       "opponent": "Sutton",
-       "result": "D"
-      }
-     ],
-     "ga": 16,
-     "gd": 1,
-     "gf": 17,
-     "lost": 5,
-     "played": 16,
-     "points": 21,
-     "position": 13,
-     "provisional": 0,
-     "rating": -0.1570028710894944,
-     "team": "Kidderminster",
-     "won": 5
     },
     {
      "club": {
@@ -17616,6 +17728,16 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "EC",
+       "opponent": "Southend",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-10-31",
        "ga": 0,
@@ -17651,95 +17773,19 @@
        "league": "EC",
        "opponent": "Altrincham",
        "result": "L"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 3,
-       "gf": 1,
-       "home": true,
-       "league": "EC",
-       "opponent": "Carlisle",
-       "result": "L"
       }
      ],
-     "ga": 19,
-     "gd": 0,
-     "gf": 19,
-     "lost": 7,
-     "played": 16,
+     "ga": 21,
+     "gd": -1,
+     "gf": 20,
+     "lost": 8,
+     "played": 17,
      "points": 21,
-     "position": 14,
-     "provisional": 0,
+     "position": 15,
+     "provisional": 1,
      "rating": -0.25722136817991137,
      "team": "Aldershot",
      "won": 6
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "HOR",
-      "fg": "#FFFFFF",
-      "name": "Hornchurch"
-     },
-     "drawn": 0,
-     "form": [
-      {
-       "date": "2026-10-30",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "EC",
-       "opponent": "Fylde",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "EC",
-       "opponent": "Yeovil",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "EC",
-       "opponent": "Hartlepool",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "EC",
-       "opponent": "Eastleigh",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 3,
-       "gf": 0,
-       "home": false,
-       "league": "EC",
-       "opponent": "Harrogate",
-       "result": "L"
-      }
-     ],
-     "ga": 26,
-     "gd": -8,
-     "gf": 18,
-     "lost": 9,
-     "played": 16,
-     "points": 21,
-     "position": 15,
-     "provisional": 0,
-     "rating": -0.3777129228350593,
-     "team": "Hornchurch",
-     "won": 7
     },
     {
      "club": {
@@ -17811,79 +17857,22 @@
     {
      "club": {
       "bg": "#5B6170",
-      "code": "EST",
-      "fg": "#FFFFFF",
-      "name": "Eastleigh"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "EC",
-       "opponent": "Barrow",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-28",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "EC",
-       "opponent": "Forest Green",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 4,
-       "home": true,
-       "league": "EC",
-       "opponent": "Boston Utd",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "EC",
-       "opponent": "Hornchurch",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 3,
-       "gf": 1,
-       "home": true,
-       "league": "EC",
-       "opponent": "Woking",
-       "result": "L"
-      }
-     ],
-     "ga": 25,
-     "gd": -6,
-     "gf": 19,
-     "lost": 7,
-     "played": 16,
-     "points": 19,
-     "position": 17,
-     "provisional": 0,
-     "rating": -0.35089337219078165,
-     "team": "Eastleigh",
-     "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
       "code": "WEA",
       "fg": "#FFFFFF",
       "name": "Wealdstone"
      },
-     "drawn": 3,
+     "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "EC",
+       "opponent": "Hartlepool",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-10-31",
        "ga": 2,
@@ -17919,27 +17908,86 @@
        "league": "EC",
        "opponent": "Yeovil",
        "result": "L"
+      }
+     ],
+     "ga": 30,
+     "gd": -6,
+     "gf": 24,
+     "lost": 8,
+     "played": 17,
+     "points": 19,
+     "position": 17,
+     "provisional": 1,
+     "rating": -0.13602398401889415,
+     "team": "Wealdstone",
+     "won": 5
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "EST",
+      "fg": "#FFFFFF",
+      "name": "Eastleigh"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "EC",
+       "opponent": "Fylde",
+       "provisional": true,
+       "result": "L"
       },
       {
-       "date": "2026-10-03",
-       "ga": 2,
+       "date": "2026-10-31",
+       "ga": 1,
        "gf": 1,
        "home": false,
        "league": "EC",
        "opponent": "Barrow",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-28",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "EC",
+       "opponent": "Forest Green",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 4,
+       "home": true,
+       "league": "EC",
+       "opponent": "Boston Utd",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-10",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "EC",
+       "opponent": "Hornchurch",
        "result": "L"
       }
      ],
-     "ga": 29,
-     "gd": -6,
-     "gf": 23,
+     "ga": 27,
+     "gd": -7,
+     "gf": 20,
      "lost": 8,
-     "played": 16,
-     "points": 18,
+     "played": 17,
+     "points": 19,
      "position": 18,
-     "provisional": 0,
-     "rating": -0.13602398401889415,
-     "team": "Wealdstone",
+     "provisional": 1,
+     "rating": -0.35089337219078165,
+     "team": "Eastleigh",
      "won": 5
     },
     {
@@ -17951,6 +17999,16 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "EC",
+       "opponent": "Carlisle",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-10-31",
        "ga": 1,
@@ -17986,25 +18044,16 @@
        "league": "EC",
        "opponent": "Southend",
        "result": "L"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 6,
-       "gf": 0,
-       "home": false,
-       "league": "EC",
-       "opponent": "Yeovil",
-       "result": "L"
       }
      ],
-     "ga": 29,
-     "gd": -8,
+     "ga": 31,
+     "gd": -10,
      "gf": 21,
-     "lost": 8,
-     "played": 16,
+     "lost": 9,
+     "played": 17,
      "points": 18,
      "position": 19,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.12653221132476777,
      "team": "Boston Utd",
      "won": 5
@@ -18018,6 +18067,16 @@
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "EC",
+       "opponent": "Hornchurch",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-10-31",
        "ga": 1,
@@ -18053,25 +18112,16 @@
        "league": "EC",
        "opponent": "Hartlepool",
        "result": "W"
-      },
-      {
-       "date": "2026-09-30",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "EC",
-       "opponent": "Sutton",
-       "result": "W"
       }
      ],
-     "ga": 32,
-     "gd": -7,
-     "gf": 25,
-     "lost": 8,
-     "played": 15,
+     "ga": 34,
+     "gd": -8,
+     "gf": 26,
+     "lost": 9,
+     "played": 16,
      "points": 17,
      "position": 20,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.09065270852839569,
      "team": "Tamworth",
      "won": 5
@@ -18083,8 +18133,18 @@
       "fg": "#FFFFFF",
       "name": "Hartlepool"
      },
-     "drawn": 0,
+     "drawn": 1,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "EC",
+       "opponent": "Wealdstone",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-10-31",
        "ga": 4,
@@ -18120,25 +18180,16 @@
        "league": "EC",
        "opponent": "Forest Green",
        "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "EC",
-       "opponent": "Tamworth",
-       "result": "L"
       }
      ],
-     "ga": 27,
+     "ga": 28,
      "gd": -9,
-     "gf": 18,
+     "gf": 19,
      "lost": 11,
-     "played": 16,
-     "points": 15,
+     "played": 17,
+     "points": 16,
      "position": 21,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.191807890593799,
      "team": "Hartlepool",
      "won": 5
@@ -18152,6 +18203,16 @@
      },
      "drawn": 1,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 2,
+       "home": false,
+       "league": "EC",
+       "opponent": "Sutton",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-10-31",
        "ga": 1,
@@ -18187,28 +18248,19 @@
        "league": "EC",
        "opponent": "Worthing",
        "result": "L"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 2,
-       "gf": 0,
-       "home": true,
-       "league": "EC",
-       "opponent": "Halifax",
-       "result": "L"
       }
      ],
      "ga": 40,
-     "gd": -21,
-     "gf": 19,
+     "gd": -19,
+     "gf": 21,
      "lost": 11,
-     "played": 16,
-     "points": 13,
+     "played": 17,
+     "points": 16,
      "position": 22,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.4141542549349846,
      "team": "Solihull",
-     "won": 4
+     "won": 5
     },
     {
      "club": {
@@ -18217,8 +18269,18 @@
       "fg": "#FFFFFF",
       "name": "Scunthorpe"
      },
-     "drawn": 1,
+     "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "EC",
+       "opponent": "Worthing",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-10-31",
        "ga": 2,
@@ -18254,25 +18316,16 @@
        "league": "EC",
        "opponent": "Fylde",
        "result": "L"
-      },
-      {
-       "date": "2026-09-29",
-       "ga": 3,
-       "gf": 0,
-       "home": false,
-       "league": "EC",
-       "opponent": "Barrow",
-       "result": "L"
       }
      ],
-     "ga": 30,
+     "ga": 31,
      "gd": -11,
-     "gf": 19,
+     "gf": 20,
      "lost": 11,
-     "played": 15,
-     "points": 10,
+     "played": 16,
+     "points": 11,
      "position": 23,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.08296481262696065,
      "team": "Scunthorpe",
      "won": 3
@@ -18286,6 +18339,16 @@
      },
      "drawn": 1,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "EC",
+       "opponent": "Barrow",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-10-31",
        "ga": 1,
@@ -18321,25 +18384,16 @@
        "league": "EC",
        "opponent": "Worthing",
        "result": "L"
-      },
-      {
-       "date": "2026-09-29",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "EC",
-       "opponent": "Altrincham",
-       "result": "L"
       }
      ],
-     "ga": 34,
-     "gd": -25,
+     "ga": 37,
+     "gd": -28,
      "gf": 9,
-     "lost": 13,
-     "played": 15,
+     "lost": 14,
+     "played": 16,
      "points": 4,
      "position": 24,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.660919035245272,
      "team": "Gateshead",
      "won": 1
@@ -19185,8 +19239,8 @@
    "label": "Championship (Scotland)",
    "model_through": "2026-11-07",
    "name": "Championship",
-   "provisional": 0,
-   "results_through": "2026-11-07",
+   "provisional": 4,
+   "results_through": "2026-11-14",
    "rows": [
     {
      "club": {
@@ -19197,6 +19251,16 @@
      },
      "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 3,
+       "home": true,
+       "league": "SC1",
+       "opponent": "Inverness C",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-07",
        "ga": 0,
@@ -19232,27 +19296,86 @@
        "league": "SC1",
        "opponent": "Dunfermline",
        "result": "D"
-      },
-      {
-       "date": "2026-10-16",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "SC1",
-       "opponent": "Ayr",
-       "result": "W"
       }
      ],
-     "ga": 7,
-     "gd": 11,
-     "gf": 18,
+     "ga": 9,
+     "gd": 12,
+     "gf": 21,
      "lost": 2,
-     "played": 14,
-     "points": 28,
+     "played": 15,
+     "points": 31,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.38207938367182914,
      "team": "Partick",
+     "won": 9
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "STE",
+      "fg": "#FFFFFF",
+      "name": "Stenhousemuir"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "SC1",
+       "opponent": "Queens Park",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 4,
+       "gf": 3,
+       "home": false,
+       "league": "SC1",
+       "opponent": "Morton",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-30",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "SC1",
+       "opponent": "Livingston",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "SC1",
+       "opponent": "Dunfermline",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 3,
+       "gf": 0,
+       "home": false,
+       "league": "SC1",
+       "opponent": "Partick",
+       "result": "L"
+      }
+     ],
+     "ga": 16,
+     "gd": 2,
+     "gf": 18,
+     "lost": 5,
+     "played": 15,
+     "points": 26,
+     "position": 2,
+     "provisional": 1,
+     "rating": -0.21302748036110064,
+     "team": "Stenhousemuir",
      "won": 8
     },
     {
@@ -19264,6 +19387,16 @@
      },
      "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 3,
+       "gf": 1,
+       "home": false,
+       "league": "SC1",
+       "opponent": "Ayr",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-06",
        "ga": 0,
@@ -19299,25 +19432,16 @@
        "league": "SC1",
        "opponent": "Stenhousemuir",
        "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "SC1",
-       "opponent": "Queens Park",
-       "result": "W"
       }
      ],
-     "ga": 9,
-     "gd": 11,
-     "gf": 20,
-     "lost": 3,
-     "played": 14,
+     "ga": 12,
+     "gd": 9,
+     "gf": 21,
+     "lost": 4,
+     "played": 15,
      "points": 25,
-     "position": 2,
-     "provisional": 0,
+     "position": 3,
+     "provisional": 1,
      "rating": 0.12682139729565445,
      "team": "Raith Rvs",
      "won": 7
@@ -19383,78 +19507,11 @@
      "lost": 1,
      "played": 14,
      "points": 25,
-     "position": 3,
+     "position": 4,
      "provisional": 0,
      "rating": 0.2384360323723842,
      "team": "Dunfermline",
      "won": 6
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "STE",
-      "fg": "#FFFFFF",
-      "name": "Stenhousemuir"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 4,
-       "gf": 3,
-       "home": false,
-       "league": "SC1",
-       "opponent": "Morton",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-30",
-       "ga": 3,
-       "gf": 0,
-       "home": true,
-       "league": "SC1",
-       "opponent": "Livingston",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "SC1",
-       "opponent": "Dunfermline",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 3,
-       "gf": 0,
-       "home": false,
-       "league": "SC1",
-       "opponent": "Partick",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "SC1",
-       "opponent": "Raith Rvs",
-       "result": "D"
-      }
-     ],
-     "ga": 16,
-     "gd": 0,
-     "gf": 16,
-     "lost": 5,
-     "played": 14,
-     "points": 23,
-     "position": 4,
-     "provisional": 0,
-     "rating": -0.21302748036110064,
-     "team": "Stenhousemuir",
-     "won": 7
     },
     {
      "club": {
@@ -19465,6 +19522,16 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "SC1",
+       "opponent": "Morton",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-07",
        "ga": 1,
@@ -19500,28 +19567,19 @@
        "league": "SC1",
        "opponent": "Dunfermline",
        "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "SC1",
-       "opponent": "Partick",
-       "result": "L"
       }
      ],
      "ga": 12,
-     "gd": 7,
-     "gf": 19,
+     "gd": 9,
+     "gf": 21,
      "lost": 5,
-     "played": 14,
-     "points": 21,
+     "played": 15,
+     "points": 24,
      "position": 5,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.11638336936641624,
      "team": "Livingston",
-     "won": 6
+     "won": 7
     },
     {
      "club": {
@@ -19532,6 +19590,16 @@
      },
      "drawn": 5,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 3,
+       "gf": 2,
+       "home": false,
+       "league": "SC1",
+       "opponent": "Partick",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-07",
        "ga": 1,
@@ -19567,25 +19635,16 @@
        "league": "SC1",
        "opponent": "Arbroath",
        "result": "W"
-      },
-      {
-       "date": "2026-10-13",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "SC1",
-       "opponent": "Queens Park",
-       "result": "L"
       }
      ],
-     "ga": 17,
-     "gd": 1,
-     "gf": 18,
-     "lost": 4,
-     "played": 14,
+     "ga": 20,
+     "gd": 0,
+     "gf": 20,
+     "lost": 5,
+     "played": 15,
      "points": 20,
      "position": 6,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.14404115969579068,
      "team": "Inverness C",
      "won": 5
@@ -19599,6 +19658,16 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 1,
+       "gf": 3,
+       "home": true,
+       "league": "SC1",
+       "opponent": "Raith Rvs",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-07",
        "ga": 4,
@@ -19634,28 +19703,19 @@
        "league": "SC1",
        "opponent": "Dunfermline",
        "result": "D"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "SC1",
-       "opponent": "Livingston",
-       "result": "W"
       }
      ],
-     "ga": 18,
-     "gd": -4,
-     "gf": 14,
+     "ga": 19,
+     "gd": -2,
+     "gf": 17,
      "lost": 6,
-     "played": 13,
-     "points": 15,
+     "played": 14,
+     "points": 18,
      "position": 7,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.12653838518160643,
      "team": "Ayr",
-     "won": 4
+     "won": 5
     },
     {
      "club": {
@@ -19734,6 +19794,16 @@
      "drawn": 1,
      "form": [
       {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "SC1",
+       "opponent": "Livingston",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 3,
        "gf": 4,
@@ -19768,25 +19838,16 @@
        "league": "SC1",
        "opponent": "Arbroath",
        "result": "W"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "SC1",
-       "opponent": "Raith Rvs",
-       "result": "L"
       }
      ],
-     "ga": 23,
-     "gd": -7,
+     "ga": 25,
+     "gd": -9,
      "gf": 16,
-     "lost": 8,
-     "played": 13,
+     "lost": 9,
+     "played": 14,
      "points": 13,
      "position": 9,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.416723428374254,
      "team": "Morton",
      "won": 4
@@ -19800,6 +19861,16 @@
      },
      "drawn": 1,
      "form": [
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "SC1",
+       "opponent": "Stenhousemuir",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-07",
        "ga": 1,
@@ -19835,25 +19906,16 @@
        "league": "SC1",
        "opponent": "Morton",
        "result": "L"
-      },
-      {
-       "date": "2026-10-13",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "SC1",
-       "opponent": "Inverness C",
-       "result": "W"
       }
      ],
-     "ga": 23,
-     "gd": -15,
+     "ga": 25,
+     "gd": -17,
      "gf": 8,
-     "lost": 11,
-     "played": 14,
+     "lost": 12,
+     "played": 15,
      "points": 7,
      "position": 10,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.488965384074153,
      "team": "Queens Park",
      "won": 2
