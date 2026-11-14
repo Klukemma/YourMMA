@@ -111,6 +111,106 @@ changed after any of them is seen:
            parlay_profiles.json) and the NFL and soccer edge-betting checks.
            Its record is not an out-of-sample test of underdogs.
 
+TICKETS v2 - fixed here on 2026-11-14, before any of their results was
+computed. Asked for by the user ("the builder barely builds; no KO/sub/
+decision picks; pure moneyline - make it more active and more diverse").
+Only outcome-free numbers (coverage, counts, prices, overrounds, price-
+implied returns, an estimator's error against real PRICES) were computed to
+write it: three scouts' reports, scratchpad scout_*/. v1's rules and records
+stay as they are (kept on the page as v1); v2 is measured on its own.
+
+  LEGS v2  - the pool every v2 ticket draws from, one leg per event (key =
+           the event, so a match, game or fight gives at most one leg to a
+           ticket), each priced at the snapshot named here and live at the
+           price the app files carry:
+    1X2    soccer: the shipped pick of EVERY league in the app
+           (soccer_leagues.in_app at the time), at the pre-match average
+           (history avg_*; live prices.avg). The 15 extra leagues' history
+           has closing prices only, so their legs are measured at the close
+           while live pays the pre-match price; every record also reports
+           itself without them.
+    OU25   soccer over/under 2.5 goals, in each league that ships over 2.5
+           from the market (soccer_leagues.withheld): the side the
+           pre-match no-vig over/under price favours (level: no leg), its
+           chance that no-vig chance (the market's - what the app ships; the
+           model was measured worse), its price the pre-match average
+           (history avg_o25/avg_u25; live prices.avg.o25/u25). Graded on the
+           total goals.
+    SPREAD / TOTAL  NFL: the side whose no-vig chance at the spread (total)
+           prices is at least 0.5 - level prices: the shipped model's side,
+           chance 0.5; a zero spread gives no leg - its chance that no-vig
+           chance (the model was measured not to beat the line), its price
+           the closing price in history (nflverse home/away_spread_odds,
+           over/under_odds) and live the consensus price at the consensus
+           line. A push voids the leg.
+    METHOD UFC: for each corner, "wins by KO/TKO", "wins by submission" and
+           "wins by decision" - the props history prices (engine/data/
+           method_odds.csv; no real price exists for "goes the distance" or
+           "inside the distance", so neither is offered). Chance: the
+           corner's shipped win chance (the blend, as the UFC moneyline leg)
+           times the share of that corner's wins going that way - by the
+           six-way no-vig market in history, by METHOD ESTIMATOR live. Price:
+           in history the real prop; LIVE THERE IS NO PROP PRICE on our feed
+           (the odds api prices no method market), so the leg carries the
+           estimator's price, shown as an estimate with its measured error,
+           and a ticket holding one shows its multiplier as an estimate.
+           METHOD ESTIMATOR: the scouts' market-only ridge (the moneyline's
+           no-vig chance with square and cube terms, men's/women's division,
+           five rounds, each corner's UFC record before the fight, shrunk to
+           a prior) with the price 1 / (chance x (1 + loading(chance))), the
+           loading fitted from prices; frozen for live use from 2016-2024
+           with a hash of its coefficients; in the backtest refitted each
+           year on earlier years only.
+    plus the v1 legs: each sport's shipped moneyline/1X2 pick (UFC, NFL).
+
+  KINDS v2 - four tickets a day, each built, locked at its own first start,
+           logged and graded on its own; each 3-5x (BAND), 2-6 legs unless
+           said, ties to fewer legs:
+    LIKELIEST v2  the v1 rule over the v2 moneyline/1X2 legs (soccer from
+           every league; UFC and NFL as v1).
+    UNDERDOG v2   the v1 underdog rule, salt "sameday-dog-v2", over the v2
+           moneyline/1X2 events (dogs from every soccer league).
+    MIXED  the combination with the highest product of chances among the
+           POOL (12) likeliest moneyline/1X2 legs and the 6 likeliest
+           non-moneyline legs (OU25, SPREAD, TOTAL, METHOD), each at least a
+           0.50 chance except METHOD (no floor), that holds at least one
+           non-moneyline leg; 1-6 legs.
+    PROPS  on days with a UFC card only: exactly one METHOD leg, drawn by
+           the v1 lottery (weights its chance, salt "sameday-props-v1", lot
+           key dog_lot_key's corners plus the leg type), among METHOD legs
+           priced 1.50-4.00 (live: the estimate), plus the likeliest fill
+           from the LIKELIEST v2 pool on other events (other fights and
+           other sports) to the band. Live, the search reads the estimated
+           price and uses the band 3.6-4.2x, the scouts' measured choice
+           that lands the real price in 3-5x most often (82% for any method
+           leg, 69% for a single prop on 2021-24 cards); the backtest
+           reports both "as priced" (chosen and paid at the real props, band
+           3-5x) and "as live" (chosen by the yearly-refitted estimator in
+           3.6-4.2x, paid at the real props) - the headline is "as live".
+           Measured 2016-08-01 to 2024-12-07 only: history has no prop
+           after that.
+
+  MEASURED as v1's MEASURED (periods all/FIRST/LAST3, a day bootstrap of
+           4,000 resamples with seed 7, price-implied return beside every
+           record, the 1,000 simulation salts for each lottery, the live
+           salt's rank), plus per kind: tickets per day, the share of days
+           with a ticket, and splits by leg type and sport (descriptive:
+           none can move a rule in v2).
+  SHIP     all four kinds ship with their records, whatever the records
+           show; none is presented as an edge.
+  EXPECTED (written before the results, from prices only) tickets on about
+           70-80% of days instead of about a third; price-implied returns
+           about -15% (LIKELIEST v2 and MIXED) and -16% to -20% (PROPS) a
+           ticket - a prop carries about 22% margin across its six outcomes
+           against about 4% for a moneyline pair.
+  PRIOR EXPOSURE v1's likeliest and underdog records had been seen when v2
+           was asked for; the soccer over/under market-against-model
+           measure, the NFL spread/total measure (no configuration beat
+           -110 in both periods) and the UFC prop flat-bet results (underdog
+           KO props -24%, submission props -52%: parlay_profiles' docstring)
+           had been seen. The extra leagues and the new markets were chosen
+           on the scouts' outcome-free counts, not on any result.
+
 Legs are dicts parlay_profiles' search and settlement read (engine/
 parlay_profiles.py): key (sport-prefixed, so one leg per event holds across
 sports), decimal, p, p_market, side "pick", market "moneyline" and result
@@ -148,6 +248,19 @@ DOG_SIM_SALTS = tuple(f"sameday-dog-sim{i}" for i in range(1000))
 DOG_PRICE = (2.00, 4.00)
 DOG_FLOOR = 0.20
 DOG_ORDERS = ("lottery", "gap", "likeliest")
+
+# Tickets v2: see the module docstring.
+V2_VERSION = 2
+DOG_SALT_V2 = "sameday-dog-v2"
+PROPS_SALT = "sameday-props-v1"
+PROPS_SIM_SALTS = tuple(f"sameday-props-sim{i}" for i in range(1000))
+DOG_SIM_SALTS_V2 = tuple(f"sameday-dog-v2-sim{i}" for i in range(1000))
+PROPS_PRICE = (1.50, 4.00)
+PROPS_LIVE_BAND = (3.6, 4.2)
+PROPS_HISTORY_END = "2024-12-07"
+MIXED_POOL_OTHER = 6
+LEG_MARKETS = ("1X2", "OU25", "SPREAD", "TOTAL", "METHOD")
+METHOD_TYPES = ("KO/TKO", "Submission", "Decision")
 
 
 def et_day(when):
