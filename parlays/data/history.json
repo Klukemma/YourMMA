@@ -429,7 +429,7 @@
    "day": "2026-11-15",
    "kind": "underdog",
    "built_at": "2026-11-15T14:01:44Z",
-   "status": "pending",
+   "status": "superseded",
    "multiplier": 3.0,
    "p": 0.310347,
    "p_market": 0.307483,
@@ -484,6 +484,71 @@
     "lot_key": "2026_10_KC_ATL",
     "rank": 0,
     "candidates": 8,
+    "salt": "sameday-dog-v1",
+    "version": 1
+   },
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-15",
+   "kind": "underdog",
+   "built_at": "2026-11-15T14:56:45Z",
+   "status": "pending",
+   "multiplier": 3.0,
+   "p": 0.310347,
+   "p_market": 0.307483,
+   "first_start": "2026-11-15T18:00:00Z",
+   "last_start": "2026-11-15T21:05:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_10_KC_ATL",
+     "event": "KC @ ATL",
+     "pick": "ATL",
+     "opponent": "KC",
+     "kickoff": "2026-11-15T18:00:00Z",
+     "decimal": 2.5,
+     "p": 0.377433,
+     "p_model": 0.390476,
+     "p_market": 0.38356164383561653,
+     "names": {
+      "game_id": "2026_10_KC_ATL",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": true,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_10_LA_ARI",
+     "event": "LA @ ARI",
+     "pick": "LA",
+     "opponent": "ARI",
+     "kickoff": "2026-11-15T21:05:00Z",
+     "decimal": 1.2,
+     "p": 0.822257,
+     "p_model": 0.780017,
+     "p_market": 0.801653,
+     "names": {
+      "game_id": "2026_10_LA_ARI",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "NFL:2026_10_KC_ATL",
+    "pick": "ATL",
+    "lot_key": "2026_10_KC_ATL",
+    "rank": 0,
+    "candidates": 7,
     "salt": "sameday-dog-v1",
     "version": 1
    },
