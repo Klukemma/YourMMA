@@ -1,10 +1,12 @@
-// YourMulti: two same-day parlays a day from the three apps' picks - UFC,
-// NFL and top-five soccer - the likeliest ticket paying 3-5x and the
-// underdog ticket (one underdog drawn by lot, plus favourites to 3-5x),
-// every leg played that day (US Eastern), for today and the next days with
-// tickets, each with its measured record. The engine
+// YourMulti: same-day parlays from the three apps' picks - UFC, NFL and
+// soccer - every leg played that day (US Eastern), for today and the next
+// days with tickets, each kind with its own record. Tickets v2 (four a day:
+// the likeliest, an underdog drawn by lot, a mixed ticket with an
+// over/under, spread, total or method leg, and on UFC days a props ticket)
+// lead; v1's two (the likeliest and the underdog, top-five soccer, winners
+// only) are kept beside them, labelled v1. The engine
 // (parlays/engine/build_sameday.py) writes data/sameday.json; this only
-// draws it, and still reads an older file with one ticket a day.
+// draws it, and still reads an older file - one ticket a day, or v1's two.
 
 // desk.js:begin - copied from shared/desk.js by scripts/sync_desk.py; edit that file
 // The Desk app chrome, shared by YourMMA, YourNFL and YourSoccer: install,
@@ -496,7 +498,15 @@ const WHY = {
   noDog: "No underdog record in this data file.",
   noLikeliest: "No likeliest-ticket record in this data file.",
   notLoaded: "The data file has not loaded yet.",
+  // sameday.json from before tickets v2: v1's two tickets only.
+  noV2: "This data file was written before tickets v2; the next run of the page's builder adds them.",
 };
+
+// The ticket kinds: v2's four lead, v1's two are kept beside them.
+const KINDS_V1 = ["likeliest", "underdog"];
+const KINDS_V2 = ["likeliest_v2", "underdog_v2", "mixed", "props"];
+// The kinds whose ticket is drawn by lot (one leg drawn, the rest filled).
+const LOTTERIES = ["underdog", "underdog_v2", "props"];
 
 // The data's shape, read once when it loads. `absent` is what a number the
 // file does not carry is shown as: in an older file, the reason it is not
@@ -508,6 +518,11 @@ function shapeOf(d) {
   const lk = !m ? null : m.likeliest && typeof m.likeliest === "object" ? m.likeliest : m.rule ? m : null;
   const dog = !old && m && m.underdog && typeof m.underdog === "object" ? m.underdog : null;
   const why = m && typeof m.underdog_missing_reason === "string" && m.underdog_missing_reason;
+  // Tickets v2's measured blocks, one per kind, each None until the
+  // backtest writes it - and then the reason, from the file.
+  const mv = d.measured_v2 && typeof d.measured_v2 === "object" ? d.measured_v2 : null;
+  const v2 = mv && mv.kinds && typeof mv.kinds === "object" ? mv.kinds : {};
+  const v2why = mv && mv.missing_reason && typeof mv.missing_reason === "object" ? mv.missing_reason : {};
   return {
     old, lk, dog,
     lkWhy: lk ? null : m ? WHY.noLikeliest : WHY.noBacktest,
@@ -515,11 +530,16 @@ function shapeOf(d) {
     absent: old ? "not in this data file, written before the underdog ticket" : "not in this data file",
     // how many simulation draws: the measured block's, else the rule's
     draws: num(dog && dog.rule && dog.rule.sim_salts) || num(d.rule && d.rule.dog && d.rule.dog.sim_salts),
+    hasV2: !!mv,
+    v2: Object.fromEntries(KINDS_V2.map((k) => [k, v2[k] && typeof v2[k] === "object" ? v2[k] : null])),
+    v2Why: Object.fromEntries(KINDS_V2.map((k) => [k, v2[k] && typeof v2[k] === "object" ? null
+      : (typeof v2why[k] === "string" && v2why[k]) || (old ? WHY.old : mv ? WHY.noBacktest : WHY.noV2)])),
   };
 }
 // Before the data has loaded (the Method tab opened first), nothing is
 // "not measured": it is not read yet, and the tab redraws once it is.
-const S = () => SHAPE || { old: false, lk: null, dog: null, lkWhy: WHY.notLoaded, dogWhy: WHY.notLoaded, absent: "not loaded yet", draws: null };
+const S = () => SHAPE || { old: false, lk: null, dog: null, lkWhy: WHY.notLoaded, dogWhy: WHY.notLoaded, absent: "not loaded yet", draws: null,
+  hasV2: false, v2: {}, v2Why: Object.fromEntries(KINDS_V2.map((k) => [k, WHY.notLoaded])) };
 const drawsName = () => (S().draws ? `the ${S().draws.toLocaleString()} draws` : "the simulation draws");
 const byPrices = (s) => (implied(s) == null ? `by the prices: ${S().absent}` : `by the prices ${pc(implied(s))}`);
 // What the prices expect a ticket to return, in words computed from the
@@ -571,53 +591,119 @@ const OUTCOME = { won: "won", lost: "lost", void: "void" };
 // price band and the fill take the prices and the other events, so until the
 // ticket locks a moved price can change which underdog is drawn.
 const LOTTERY = "One underdog drawn by lot - likelier ones a little more often - plus favourites to 3-5x. Each underdog's lot number is fixed for the day; until the ticket locks, a price move can still change which underdog is drawn.";
-const NAME = { likeliest: "Likeliest ticket", underdog: "Underdog ticket" };
+const NAME = { likeliest: "Likeliest ticket", underdog: "Underdog ticket", likeliest_v2: "Likeliest ticket",
+  underdog_v2: "Underdog ticket", mixed: "Mixed ticket", props: "Props ticket" };
+// v1's tickets are labelled v1 wherever they show beside v2's.
+const kindName = (kind) => `${NAME[kind] || kind}${KINDS_V1.includes(kind) ? " (v1)" : ""}`;
+const RULE = () => (DATA && DATA.rule) || {};
+// A band as the rule has it ("3-5x"), read from the data, never typed.
+const bandX = (b) => (Array.isArray(b) && b.length === 2 ? `${b[0]}-${b[1]}x` : "the band");
 
-const legRow = (l) => `<li><span><span class="tag">${esc(l.sport)}</span>${l.dog ? ` <span class="tag accent">Underdog</span>` : ""}
-    <b>${esc(l.pick)}</b> <span class="mini">${esc(l.event)}</span><br>
-    <span class="mini">${esc(kickTime(l.kickoff))}${l.outcome && OUTCOME[l.outcome] ? ` · ${OUTCOME[l.outcome]}` : ""} · ${esc(l.reason)}${
-      l.dog && l.price_source ? ` · priced at the ${esc(l.price_source)}` : ""}</span></span>
-    <span class="end num">${odds(l.american)}<br><span class="mini">${pct(l.p)}</span></span></li>`;
+// One plain line per kind on how it is built (sameday.py's TICKETS v2),
+// every number read from the rule in the data file.
+function howBuilt(kind) {
+  const r = RULE(), v = r.v2 || {};
+  const band = bandX(r.band), legs = num(r.max_legs) ? `, 1 to ${r.max_legs} legs` : "";
+  return {
+    likeliest_v2: `The likeliest combination of the day's winner picks - UFC, NFL and soccer from every league in the app - paying ${band}${legs}.`,
+    underdog_v2: LOTTERY,
+    mixed: `The likeliest ${band} ticket that holds at least one over/under, spread, total or method leg.`,
+    props: `One UFC method prop drawn by lot - likelier ones more often - plus favourites, searched to ${bandX(v.props_live_band)} at the estimated prices.`,
+    likeliest: `The likeliest combination of the day's winner picks paying ${band}, soccer from Europe's top five leagues only.`,
+    underdog: LOTTERY,
+  }[kind] || "";
+}
 
-function ticketPanel(t, kind, today) {
+// An estimated price (a UFC prop: no book on the feeds prices one) says so,
+// with the error it was measured to miss real props of its kind by.
+const estNote = (l) => (!l.estimated ? "" : num(l.error_pct) != null
+  ? `estimated price, measured to miss real props of its kind by a median ${Math.round(l.error_pct)}%`
+  : "estimated price; its measured error is not in this data file");
+const EST_TICKET = "Its multiplier is an estimate: a prop on it is priced by the estimator, not a book. A real book may pay less, or more - check before betting.";
+
+const legRow = (l) => `<li><span><span class="tag">${esc(l.sport)}</span>${l.market ? ` <span class="tag flat">${esc(l.market)}</span>` : ""}${
+    l.dog ? ` <span class="tag accent">Underdog</span>` : ""}
+    <b>${esc(l.label || l.pick)}</b> <span class="mini">${esc(l.event)}</span><br>
+    <span class="mini">${esc(kickTime(l.kickoff))}${l.outcome && OUTCOME[l.outcome] ? ` · ${OUTCOME[l.outcome]}${
+      l.outcome === "void" && l.void_reason ? ` (${esc(l.void_reason)})` : ""}` : ""} · ${esc(l.reason)}${
+      l.dog && l.price_source ? ` · priced at the ${esc(l.price_source)}` : ""}${l.estimated ? ` · ${esc(estNote(l))}` : ""}</span></span>
+    <span class="end num">${l.estimated ? `<span class="mini">est.</span> ` : ""}${odds(l.american)}<br><span class="mini">${pct(l.p)}</span></span></li>`;
+
+// `labelV1`: v1's tickets are labelled v1 beside v2's; in a file from
+// before v2 they are the only tickets and keep their own names.
+function ticketPanel(t, kind, today, labelV1 = true) {
   if (!t) return "";
-  const name = NAME[kind];
+  const name = labelV1 ? kindName(kind) : NAME[kind];
+  const v2 = KINDS_V2.includes(kind);
+  const how = v2 ? howBuilt(kind) : "";
   if (!t.legs || !t.legs.length) {
     const tag = t.status === "absent" ? "Not in this file" : "None";
-    return `<div class="panel"><div class="eyebrow">${name} · <span class="tag flat">${tag}</span></div>
+    return `<div class="panel"><div class="eyebrow">${esc(name)} · <span class="tag flat">${tag}</span></div>
+      ${how && t.status !== "absent" ? `<div class="mini">${esc(how)}</div>` : ""}
       <div class="mini">${brk(t.missing_reason || "No ticket for this day.")}</div></div>`;
   }
   const [word, line] = STATUS[t.status] || [t.status, ""];
   const settled = t.status === "won" || t.status === "lost" || t.status === "void";
-  const dog = kind === "underdog";
+  const dog = kind === "underdog" || kind === "underdog_v2";
   return `<div class="panel">
-      <div class="eyebrow">${name} · ${esc((t.sports || []).join(" + "))} · ${t.legs.length} leg${t.legs.length === 1 ? "" : "s"} ·
+      <div class="eyebrow">${esc(name)} · ${esc((t.sports || []).join(" + "))} · ${t.legs.length} leg${t.legs.length === 1 ? "" : "s"} ·
         <span class="tag${t.status === "lost" ? " warn" : ""}">${esc(word)}</span></div>
-      ${dog ? `<div class="mini">${esc(LOTTERY)}</div>` : ""}
+      ${how || dog ? `<div class="mini">${esc(how || LOTTERY)}</div>` : ""}
       <div class="stat3">
-        <div><div class="k">Pays</div><div class="v">${mult(t.multiplier)}</div></div>
+        <div><div class="k">${t.estimated ? "Pays, est." : "Pays"}</div><div class="v">${mult(t.multiplier)}</div></div>
         <div title="The chance every leg lands: each pick's chance, multiplied"><div class="k">Chance</div><div class="v">${chance(t.p)}</div></div>
         <div title="The same from the market's prices, the bookmaker's cut removed"><div class="k">Market</div><div class="v">${chance(t.p_market)}</div></div>
       </div>
+      ${t.estimated ? `<div class="alert doubtful">${esc(EST_TICKET)}</div>` : ""}
       ${dog && t.lands_1_in ? `<div class="mini num">Lands about 1 in ${esc(String(t.lands_1_in))} by the prices.</div>` : ""}
       <ul class="list">${t.legs.map(legRow).join("")}</ul>
       ${dog && t.only_one ? `<div class="mini">Only one underdog fit ${today ? "today" : "on this day"}.</div>` : ""}
+      ${kind === "props" && t.only_one ? `<div class="mini">Only one prop fit ${today ? "today" : "on this day"}.</div>` : ""}
       ${dog && t.price_note ? `<div class="alert doubtful">${brk(t.price_note)}</div>` : ""}
-      ${settled && t.profit != null ? `<div class="mini num">Paid ${mult(t.paid)} · ${signed(t.profit, 2)} units on 1</div>` : ""}
+      ${settled && t.profit != null ? `<div class="mini num">Paid ${mult(t.paid)}${t.estimated ? " (at the estimated prices)" : ""} · ${signed(t.profit, 2)} units on 1</div>` : ""}
       ${line ? `<div class="mini">${esc(line)}</div>` : ""}
     </div>`;
 }
 
-const takeOf = (x) => ["likeliest", "underdog"].filter((k) => x[k])
-  .map((k) => `${k === "likeliest" ? "Likeliest" : "Underdog"} ${x[k].legs && x[k].legs.length ? mult(x[k].multiplier)
+// Whether a day carries tickets v2 (a file from before them has v1's only).
+const hasV2 = (x) => !!x && KINDS_V2.some((k) => x[k] && typeof x[k] === "object");
+const SHORT = { likeliest: "Likeliest", underdog: "Underdog", likeliest_v2: "Likeliest", underdog_v2: "Underdog", mixed: "Mixed", props: "Props" };
+const takeOf = (x) => (hasV2(x) ? KINDS_V2 : KINDS_V1).filter((k) => x[k])
+  .map((k) => `${SHORT[k]} ${x[k].legs && x[k].legs.length ? `${mult(x[k].multiplier)}${x[k].estimated ? " est." : ""}`
     : x[k].status === "absent" ? "not in this file" : "none"}`).join(" · ");
 
+// The legs a day could not offer, by market, each count with its reason
+// (the builder counts them): a missing price is shown missing, and why.
+const MARKET_OF = { OU25: "Over/under 2.5", SPREAD: "Spread", TOTAL: "Total", METHOD: "Method props" };
+const UNIT_OF = { OU25: ["match", "matches"], SPREAD: ["game", "games"], TOTAL: ["game", "games"], METHOD: ["prop", "props"] };
+function notOffered(missing) {
+  const xs = Object.entries(missing && typeof missing === "object" ? missing : {})
+    .filter(([, per]) => per && typeof per === "object" && Object.keys(per).length);
+  if (!xs.length) return null;
+  const count = (per) => Object.values(per).reduce((a, n) => a + (num(n) || 0), 0);
+  const unit = (bet, n) => (UNIT_OF[bet] || ["leg", "legs"])[n === 1 ? 0 : 1];
+  const head = `Not offered this day: ${xs.map(([bet, per]) => `${MARKET_OF[bet] || bet} on ${count(per)} ${unit(bet, count(per))}`).join("; ")}.`;
+  const body = xs.flatMap(([bet, per]) => Object.entries(per).map(([why, n]) => `${MARKET_OF[bet] || bet}, ${n} ${unit(bet, n)}: ${why}.`));
+  return { head, body };
+}
+
+const v1Body = (x) => `${ticketPanel(x.likeliest, "likeliest", x.today, hasV2(x))}${ticketPanel(x.underdog, "underdog", x.today, hasV2(x))}
+    ${x.cannot_both_win ? `<div class="alert doubtful"><b>These two cannot both win.</b> The underdog is the other side of a leg on the likeliest ticket.</div>` : ""}`;
+
 // A day still in play (before today ET, a locked ticket not yet settled) is
-// titled so: it is the ticket a reader saw that evening, not today's.
+// titled so: it is the ticket a reader saw that evening, not today's. With
+// tickets v2 on file, the day's four (the props ticket on a UFC day) lead and
+// v1's two sit folded beneath them, labelled v1.
 function dayCard(x, open) {
   const title = x.today ? `Today · ${dayName(x.day)}` : x.in_play ? `In play · ${dayName(x.day)}` : dayName(x.day);
-  const body = `${ticketPanel(x.likeliest, "likeliest", x.today)}${ticketPanel(x.underdog, "underdog", x.today)}
-    ${x.cannot_both_win ? `<div class="alert doubtful"><b>These two cannot both win.</b> The underdog is the other side of a leg on the likeliest ticket.</div>` : ""}`;
+  let body = v1Body(x);
+  if (hasV2(x)) {
+    const off = notOffered(x.missing);
+    body = `${KINDS_V2.map((k) => ticketPanel(x[k], k, x.today)).join("")}
+      ${x.v2_cannot_both_win ? `<div class="alert doubtful"><b>The likeliest and the underdog ticket cannot both win.</b> The underdog is the other side of a leg on the likeliest ticket.</div>` : ""}
+      ${off ? fold(off.head, off.body.map((b) => `<p style="margin:0">${brk(b)}</p>`).join("")) : ""}
+      ${DESK.sub("v1 tickets, the earlier rules", v1Body(x))}`;
+  }
   if (open) return `<div class="card"><h2>${esc(title)}</h2>${body}</div>`;
   return DESK.cardFold(esc(title), esc(takeOf(x)), body);
 }
@@ -733,6 +819,88 @@ const DOG_SPLITS = {
   dogs_by_price: "Every market underdog as a single bet, by price",
 };
 
+// ---------------------------------------------------------------- tickets v2: records
+
+// How often a kind builds a ticket - the point of v2 - from the measured
+// record when it carries it; nothing when it does not.
+function activityLine(s) {
+  if (!s || typeof s !== "object") return null;
+  if (num(s.days_with_ticket) != null && num(s.days)) {
+    return `A ticket on ${s.days_with_ticket.toLocaleString()} of ${s.days.toLocaleString()} days (${pct(s.days_with_ticket / s.days)}).`;
+  }
+  if (num(s.share_days) != null) return `A ticket on ${pct(s.share_days)} of days.`;
+  if (num(s.tickets_per_day) != null) return `${s.tickets_per_day.toFixed(2)} tickets a day.`;
+  return null;
+}
+
+// A v2 kind's measured record, per period: the headline (a lottery's live
+// draw beside the mean over its simulation draws; the props ticket "as
+// live": chosen at the estimated price, paid at the real props), each with
+// what the prices expected. null when the kind is not measured - the
+// caller shows why. `brief` (the Today tab): the last 3 years and all, the
+// headline only, how often it builds over all; the Record tab shows the rest.
+function v2Lines(kind, brief = false) {
+  const m = S().v2[kind];
+  if (!m || !m.headline || typeof m.headline !== "object") return null;
+  const per = m.periods || {}, head = m.headline;
+  const props = kind === "props";
+  const out = [];
+  if (brief) {
+    for (const [k] of PERIODS.filter(([p]) => head[p] && p !== "first")) {
+      const label = `${periodLabel(k, per)}${props ? ", as live" : ""}`;
+      out.push(...(LOTTERIES.includes(kind) ? drawLines(head[k], m.salts && m.salts[k], label) : [recordLine(head[k], label)]));
+    }
+    const act = activityLine(head.all);
+    if (act) out.push(act);
+    return out;
+  }
+  for (const [k] of PERIODS.filter(([p]) => head[p])) {
+    const label = `${periodLabel(k, per)}${props ? ", as live (chosen at the estimate, paid at the real props)" : ""}`;
+    if (LOTTERIES.includes(kind)) out.push(...drawLines(head[k], m.salts && m.salts[k], label));
+    else out.push(recordLine(head[k], label));
+    const act = activityLine(head[k]);
+    if (act) out.push(act);
+  }
+  const ap = props && m.as_priced && typeof m.as_priced === "object" ? m.as_priced : null;
+  if (ap) for (const [k] of PERIODS.filter(([p]) => ap[p])) out.push(recordLine(ap[k], `${periodLabel(k, per)}, as priced (chosen and paid at the real props)`));
+  const wx = m.without_extra && typeof m.without_extra === "object" ? m.without_extra : null;
+  if (wx && wx.all) out.push(recordLine(wx.all, "Without the extra leagues (their history is priced at the close), all"));
+  const mo = m.market_only && typeof m.market_only === "object" ? m.market_only : null;
+  if (mo && mo.all) out.push(recordLine(mo.all, "Market only (no model), all"));
+  return out;
+}
+
+// How active the four kinds are together, measured, beside v1's two - the
+// reason v2 exists - or nothing until the backtest says.
+function activitySummary() {
+  const a = DATA && DATA.measured_v2 && DATA.measured_v2.activity;
+  const v = a && a.v2 && a.v2.all, w = a && a.v1 && a.v1.all;
+  if (!v || num(v.tickets_per_day) == null) return null;
+  return `Measured, every day of the backtest: ${v.tickets_per_day.toFixed(2)} tickets a day${
+    num(v.share_of_days) != null ? `, a ticket on ${pct(v.share_of_days)} of days` : ""}${
+    w && num(w.tickets_per_day) != null ? `; v1's two kinds ${w.tickets_per_day.toFixed(2)} a day` : ""}.`;
+}
+
+// The live record of one kind, in one line, with what the prices expected
+// of the same tickets; a props ticket's is at the estimated prices.
+function liveLine(r) {
+  if (!r || typeof r !== "object") return "Live: no record of this ticket in this data file.";
+  if (!r.settled) return `Live: no ticket settled yet${r.pending ? ` (${r.pending} waiting on results)` : ""}.`;
+  return `Live: ${r.settled} settled, ${r.won} won, ${signed(r.units, 2)} units, ${pc(r.roi)} a ticket; ${byPrices(r)}${
+    num(r.estimated) ? `; ${r.estimated} of them paid at estimated prop prices, so these figures are estimates too` : ""}.`;
+}
+
+// What the prices expect of each v2 kind over the backtest's tickets,
+// computed - "" until at least one is measured (each card says why).
+function pricesSentenceV2() {
+  const xs = KINDS_V2.map((k) => {
+    const m = S().v2[k], all = m && m.headline && m.headline.all;
+    return [k, all ? implied(all) : null];
+  }).filter(([, x]) => x != null);
+  if (!xs.length) return "";
+  return `By the prices, over the backtest's tickets: ${xs.map(([k, x]) => `the ${NAME[k].toLowerCase()} ${expects(x)}`).join("; ")} of the stake on average.`;
+}
+
 // What the prices expect of each ticket, from the backtest's tickets over
 // all its days - computed, so it can never disagree with the Record tab.
 // `need`: return "" unless at least one of the two is there (the Today note
@@ -768,26 +936,43 @@ const BOOT = {
     el.innerHTML = DESK.skeleton(3);
     let d;
     try { d = await data(); } catch (e) { return fail(el, e, "today's tickets", () => BOOT.today()); }
-    const { lk, dog, lkWhy, dogWhy } = S();
+    const { lk, dog, lkWhy, dogWhy, v2Why } = S();
     const days = daysOf(d);
     const band = (d.rule && Array.isArray(d.rule.band) && d.rule.band) || [3, 5];
+    const v2 = days.some(hasV2);
     // Today, any day still in play and the next day with a ticket open;
     // later days folded to their payouts.
-    const next = days.find((x) => !x.today && !x.past && ["likeliest", "underdog"].some((k) => x[k] && x[k].legs && x[k].legs.length));
+    const kinds = v2 ? KINDS_V2 : KINDS_V1;
+    const next = days.find((x) => !x.today && !x.past && kinds.some((k) => x[k] && x[k].legs && x[k].legs.length));
     const per = (dog && dog.periods) || {};
-    const measured = `
-      <div class="mini"><b>Likeliest ticket</b></div>
+    const recs = d.records || {};
+    const v1 = `
+      <div class="mini"><b>Likeliest ticket${v2 ? " (v1)" : ""}</b></div>
       ${lk ? lines([recordLine(lk.rule && lk.rule.last_3_years, "Last 3 years"), recordLine(lk.rule && lk.rule.all, `All, ${yearsLabel(lk.periods && lk.periods.all)}`)])
         : notMeasured(lkWhy)}
-      <div class="mini"><b>Underdog ticket</b>, at the live draw and over the other draws</div>
+      <div class="mini"><b>Underdog ticket${v2 ? " (v1)" : ""}</b>, at the live draw and over the other draws</div>
       ${dog ? lines(["last_3_years", "all"].flatMap((k) => drawLines(dog.live && dog.live[k], dog.salts && dog.salts[k], periodLabel(k, per))))
         : notMeasured(dogWhy)}`;
+    // Each v2 kind: its backtest (or why there is none yet) and its live
+    // record, both beside what the prices expected.
+    const v2rec = KINDS_V2.map((k) => {
+      const xs = v2Lines(k, true);
+      return `<div class="mini"><b>${esc(NAME[k])}</b></div>${xs ? lines(xs) : notMeasured(v2Why[k])}${lines([liveLine(recs[k])])}`;
+    }).join("");
+    const act = activitySummary();
+    const measured = v2 ? `${act ? lines([act]) : ""}${v2rec}<div class="eyebrow">v1, the earlier rules</div>
+      <div class="mini">${brk(pricesSentence(true) || "")}</div>${v1}` : v1;
     const cs = caveatsOf(d.caveats);
+    const lead = v2
+      ? `Up to four tickets a day, each paying ${band[0]}-${band[1]}x: the likeliest, an underdog drawn by lot, a mixed ticket
+        holding an over/under, spread, total or method leg, and on a UFC day a props ticket. None is a bet expected to profit:
+        every leg pays the bookmaker's margin, a prop most of all. ${brk(pricesSentenceV2())}`
+      : `Two tickets a day: the likeliest one from the day's picks paying
+        ${band[0]}-${band[1]}x, and an underdog ticket - the market's underdog, usually against the app's pick, plus favourites -
+        for a bigger payout. Neither is a bet expected to profit: every leg pays the bookmaker's margin. ${brk(pricesSentence(true))}`;
     el.innerHTML = `
       ${DESK.banner()}
-      <div class="note"><b>The market is hard to beat.</b> Two tickets a day: the likeliest one from the day's picks paying
-        ${band[0]}-${band[1]}x, and an underdog ticket - the market's underdog, usually against the app's pick, plus favourites -
-        for a bigger payout. Neither is a bet expected to profit: every leg pays the bookmaker's margin. ${brk(pricesSentence(true))}</div>
+      <div class="note"><b>The market is hard to beat.</b> ${lead}</div>
       ${days.map((x) => dayCard(x, x.today || x.in_play || x === next)).join("") || `<div class="card"><div class="mini">No ticket yet.</div></div>`}
       <div class="card"><h2>What tickets like these returned</h2>${measured}
         ${fold(cs[0], cs.slice(1).map((c) => `<p style="margin:0">${brk(c)}</p>`).join(""))}</div>`;
@@ -798,21 +983,23 @@ const BOOT = {
     el.innerHTML = DESK.skeleton(3);
     let d;
     try { d = await data(); } catch (e) { return fail(el, e, "the record", () => BOOT.record()); }
-    const { old, lk, dog, lkWhy, dogWhy } = S();
+    const { old, lk, dog, lkWhy, dogWhy, v2Why } = S();
     const recs = d.records || { likeliest: d.record || {} };
+    const v2 = daysOf(d).some(hasV2) || KINDS_V2.some((k) => recs[k]);
     const liveBlock = (kind) => {
       const r = recs[kind];
-      const head = `<div class="panel"><div class="eyebrow">${NAME[kind]}</div>`;
+      const head = `<div class="panel"><div class="eyebrow">${esc(v2 ? kindName(kind) : NAME[kind])}</div>`;
       if (!r || typeof r !== "object") return `${head}<div class="mini">${brk(kind === "underdog" && old ? WHY.old : `No live record of this ticket in this data file.`)}</div></div>`;
       // The underdog's live tickets are its live draw; no other draw is
       // graded live, so the mean over the draws is the backtest's, below.
-      const drawNote = kind === "underdog" ? `<div class="mini">At the live draw: only the ticket shown is logged and graded, so over the other draws there is no live record; the backtest's is below.</div>` : "";
+      const drawNote = LOTTERIES.includes(kind) ? `<div class="mini">At the live draw: only the ticket shown is logged and graded, so over the other draws there is no live record; the backtest's is below.</div>` : "";
+      const estNote_ = num(r.estimated) ? `<div class="mini">${esc(`${r.estimated} of these tickets paid at estimated prop prices: their units are estimates too.`)}</div>` : "";
       return `${head}${r.settled
         ? `<div class="stat3">
             <div><div class="k">Settled</div><div class="v">${r.settled}</div></div>
             <div><div class="k">Won</div><div class="v">${r.won}</div></div>
-            <div><div class="k">Units</div><div class="v">${signed(r.units, 2)}</div></div></div>
-           <div class="mini num">${esc(`${pc(r.roi)} a ticket; ${byPrices(r)}`)}</div>${drawNote}
+            <div><div class="k">${num(r.estimated) ? "Units, est." : "Units"}</div><div class="v">${signed(r.units, 2)}</div></div></div>
+           <div class="mini num">${esc(`${pc(r.roi)} a ticket; ${byPrices(r)}`)}</div>${drawNote}${estNote_}
            <ul class="list">${(r.last || []).slice().reverse().map((t) => `<li><span>${esc(dayName(t.day))}<br>
              <span class="mini">${esc((t.sports || []).join(" + "))}</span></span>
              <span class="end num">${mult(t.multiplier)}<br><span class="mini">${esc(t.status)}</span></span></li>`).join("")}</ul>`
@@ -836,18 +1023,28 @@ const BOOT = {
       }
       return `<li><span>${xs.map((x, i) => `${i ? "<br>" : ""}<span class="mini num">${esc(x)}</span>`).join("")}</span></li>`;
     }).join("") : "";
+    // Tickets v2's backtest, kind by kind: each headline beside what the
+    // prices expected, or why it is not measured yet.
+    const v2Card = !v2 ? "" : `<div class="card"><h2>Backtest: tickets v2</h2>
+        <div class="mini">Each kind measured on its own, point in time, at the prices history carries; fixed before any of
+          its results was computed, and shipped whatever this shows.</div>
+        ${KINDS_V2.map((k) => {
+          const xs = v2Lines(k);
+          return `<div class="panel"><div class="eyebrow">${esc(NAME[k])}</div>${xs ? lines(xs) : notMeasured(v2Why[k])}</div>`;
+        }).join("")}</div>`;
     el.innerHTML = `
       <div class="note"><b>The market is hard to beat.</b> Each ticket is logged before its first leg starts and graded
-        from each sport's own results; the two kinds are kept apart, each on its own days.</div>
-      <div class="card"><h2>Live record</h2>${liveBlock("likeliest")}${liveBlock("underdog")}</div>
-      <div class="card"><h2>Backtest: the likeliest ticket</h2>
+        from each sport's own results; every kind is kept apart, each on its own days.</div>
+      <div class="card"><h2>Live record</h2>${v2 ? KINDS_V2.map(liveBlock).join("") : ""}${liveBlock("likeliest")}${liveBlock("underdog")}</div>
+      ${v2Card}
+      <div class="card"><h2>Backtest${v2 ? " v1" : ""}: the likeliest ticket</h2>
         ${lk ? `<div class="mini">One ticket a day, point in time, at the prices on file; the market-only
           control picks by the market's chances alone and says whether the models add anything.</div>
           <ul class="list">${rows}</ul>
           <div class="mini num">Typical payout ${mult(mm && mm.median)} (from ${mult(mm && mm.min)} to ${mult(mm && mm.max)})</div>`
           : notMeasured(lkWhy)}
       </div>
-      <div class="card"><h2>Backtest: the underdog ticket</h2>
+      <div class="card"><h2>Backtest${v2 ? " v1" : ""}: the underdog ticket</h2>
         ${dog ? `<div class="mini">The headline is the live draw - the one this page makes - on every day${since ? ` since ${esc(since)}` : ""},
           point in time. Beside it, always, the mean over ${esc(drawsName())} of the same games and what the prices expected:
           the live draw is one draw of many. It ships beside the likeliest ticket whatever this shows.</div>
@@ -898,11 +1095,39 @@ const BOOT = {
           { said: "the apps' chances said", at: "At the live draw: " }))).join("")
       : `<div class="card"><h2>The underdog ticket</h2>${notMeasured(dogWhy)}</div>`;
     const years = (lk && lk.periods && lk.periods.all) || (dog && dog.periods && dog.periods.all);
+    // Tickets v2's splits (by leg type, by sport...), as the measurement
+    // writes them: a table of records, or one level of tables under a name.
+    const v2 = daysOf(d).some(hasV2);
+    // A table of legs (the backtest's legs_by_bet, legs_by_sport): each group's
+    // legs as single bets at their prices, beside what the prices expected.
+    const isLegTable = (rows) => rows && typeof rows === "object" && Object.values(rows).some((r) => r && typeof r === "object" && "legs" in r);
+    const legBlock = (title, rows) => {
+      const xs = Object.entries(rows).filter(([, r]) => r && typeof r === "object" && r.legs);
+      return `<div class="card"><h2>${esc(title)}</h2><div class="mini">Each leg the tickets held, as a single bet at its price. Descriptive.</div>
+        <ul class="list">${xs.map(([k, r]) => `<li><span><b>${esc(MARKET_OF[k] || k)}</b><br><span class="mini">${esc(
+          `${r.legs.toLocaleString()} legs, ${(r.won || 0).toLocaleString()} won (${pct(r.hit_rate)}; their chances said ${pct(r.mean_p)}, the prices ${pct(r.mean_p_market)}); ${
+            num(r.single_implied_roi) == null ? `by the prices: ${S().absent}` : `by the prices ${pc(r.single_implied_roi)}`}`)}</span></span>
+          <span class="end num">${pc(r.single_roi)}<br><span class="mini">a bet</span></span></li>`).join("")}</ul></div>`;
+    };
+    const isTable = (rows) => rows && typeof rows === "object" && Object.values(rows).some((r) => r && typeof r === "object" && "tickets" in r);
+    const v2Blocks = !v2 ? "" : KINDS_V2.map((k) => {
+      const sp2 = S().v2[k] && S().v2[k].splits;
+      if (!sp2 || typeof sp2 !== "object") return `<div class="card"><h2>${esc(NAME[k])}</h2>${notMeasured(S().v2Why[k] || `No splits of this ticket in this data file.`)}</div>`;
+      const tables = Object.entries(sp2).flatMap(([name, rows]) => (isTable(rows) ? [[name, rows]]
+        : rows && typeof rows === "object" ? Object.entries(rows).filter(([, r]) => isTable(r)).map(([sub, r]) => [`${name} ${sub}`, r]) : []));
+      const legTables = Object.entries(sp2).filter(([, rows]) => isLegTable(rows));
+      return tables.map(([name, rows]) => block(`${NAME[k]} ${name.replace(/_/g, " ")}`, rows,
+        "Descriptive: none of these can move a rule in this version.")).join("")
+        + legTables.map(([name, rows]) => legBlock(`${NAME[k]}: its ${name.replace(/_/g, " ")}`, rows)).join("")
+        || `<div class="card"><h2>${esc(NAME[k])}</h2><div class="mini">No splits of this ticket in this data file.</div></div>`;
+    }).join("");
+    const t1 = (x) => (v2 ? `v1 likeliest ticket, ${x}` : `${x[0].toUpperCase()}${x.slice(1)}`);
     el.innerHTML = `<div class="note">Splits of the same backtests${years ? `, ${esc(yearsLabel(years))}` : ""}. Small groups swing widely:
         an interval that spans zero is no evidence of anything.</div>
-      ${sp ? `${block("By sports on the ticket", sp.by_mix)}
-      ${block("By weekday", sp.by_weekday, "The day in US Eastern time.")}
-      ${block("By year", sp.by_year)}` : `<div class="card"><h2>The likeliest ticket</h2>${notMeasured(lkWhy)}</div>`}
+      ${v2Blocks}
+      ${sp ? `${block(t1("by sports on the ticket"), sp.by_mix)}
+      ${block(t1("by weekday"), sp.by_weekday, "The day in US Eastern time.")}
+      ${block(t1("by year"), sp.by_year)}` : `<div class="card"><h2>The likeliest ticket${v2 ? " (v1)" : ""}</h2>${notMeasured(lkWhy)}</div>`}
       ${dogBlocks}`;
   },
 
@@ -915,7 +1140,32 @@ const BOOT = {
     const { lk, dog, dogWhy } = S();
     const since = monthYear(lk && lk.periods && lk.periods.all && lk.periods.all[0]);
     const lo = american(g.price[0]), hi = american(g.price[1]);
-    $("view-method").innerHTML = `<div class="card"><h2>The likeliest ticket</h2>
+    // Tickets v2, from the rule in the data file (sameday.py's TICKETS v2).
+    const v = r.v2;
+    const pp = v && Array.isArray(v.props_price) ? v.props_price : null;
+    const v2Card = !v ? "" : `<div class="card"><h2>Tickets v2</h2>
+      <ul class="plain">
+        <li><b>Why.</b> Asked for: more tickets, and more kinds of bet than who wins. Up to four tickets a day, each
+          ${bandX(r.band)}, every leg played that day, one leg per game, fight or match.</li>
+        <li><b>The legs.</b> Each app's winner pick (soccer from every league in the app); soccer over or under 2.5 goals at
+          the average posted price, the side the market favours, in the leagues whose over 2.5 the app ships from the market;
+          NFL spreads and totals, the side the market favours at the consensus price at the consensus line (a push is void);
+          and UFC method props, each corner by KO/TKO, by submission or by decision.</li>
+        <li><b>A prop's price is an estimate.</b> No book on the feeds prices a method prop, so each is priced by a
+          market-only estimator, frozen before use and shown with the median error it was measured to miss real props by.
+          A ticket holding one shows its multiplier as an estimate; its record is at the estimated prices.</li>
+        <li><b>Likeliest:</b> ${esc(howBuilt("likeliest_v2"))}</li>
+        <li><b>Underdog:</b> the v1 underdog rule with its own lot numbers, the underdogs and the fill from every league.</li>
+        <li><b>Mixed:</b> ${esc(howBuilt("mixed"))} Up to ${esc(String(v.mixed_pool_other))} of the day's other-market legs
+          are tried, each at least a ${pct(r.min_p)} chance but a prop.</li>
+        <li><b>Props</b>, on a UFC day: ${esc(howBuilt("props"))}${pp ? ` A prop counts if its estimated price is
+          ${Number(pp[0]).toFixed(2)}-${Number(pp[1]).toFixed(2)}.` : ""} The search band is the one measured to land the real
+          price in ${bandX(r.band)} most often.</li>
+        <li><b>Locked, logged and graded on its own</b>, each kind at its own first start: over/under on the goals, spreads
+          and totals on the score, a prop only when that corner wins that way (void with no winner, or if the bout is off).</li>
+        <li><b>Fixed before it was measured</b>, and shipped whatever its record shows. None is presented as an edge.</li>
+      </ul></div>`;
+    $("view-method").innerHTML = `${v2Card}<div class="card"><h2>${v ? "v1: the likeliest ticket" : "The likeliest ticket"}</h2>
       <ul class="plain">
         <li><b>One ticket a day</b>, every leg played that day - the US Eastern calendar day of each game's start.</li>
         <li><b>Legs</b> are the three apps' own picks: the UFC fight desk's pick, the NFL pick, the soccer pick
@@ -927,7 +1177,7 @@ const BOOT = {
         <li><b>Fixed before it was measured.</b> The rule was written down, then backtested on every day${since ? ` since ${esc(since)}` : ""},
           beside a market-only control.</li>
       </ul></div>
-      <div class="card"><h2>The underdog ticket</h2>
+      <div class="card"><h2>${v ? "v1: the underdog ticket" : "The underdog ticket"}</h2>
       <ul class="plain">
         <li><b>Why.</b> The likeliest ticket is favourites by construction. This one takes an underdog - for variety and a
           bigger payout, never as the better bet: a draw cannot create an edge.</li>

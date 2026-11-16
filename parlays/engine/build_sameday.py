@@ -1552,15 +1552,20 @@ def dog_measured(bt):
 # ---------------------------------------------------------------- tickets v2: measured
 
 # Where a v2 kind's record may sit in the "v2" block, by the names the
-# measurement could give it (the history kinds first), and which of its
-# readings is the headline: a lottery's live draw, the props ticket "as
-# live" (chosen at the estimate, paid at the real props - sameday.py).
-V2_BLOCK_NAMES = {"likeliest_v2": ("likeliest_v2", "likeliest", "same_day_v2"),
-                  "underdog_v2": ("underdog_v2", "underdog", "dog", "same_day_dog_v2"),
+# measurement gives it (the backtest's kinds, then the history's), and which
+# of its readings is the headline: the rule's tickets ("live" - for a lottery
+# its live draw); the props ticket "as live" (chosen at the estimate, paid at
+# the real props - sameday.py), with "as priced" beside it. A reading may be
+# split by league set ("all_leagues", "without_extra_leagues": the extra
+# leagues' history is priced at the close): the headline is every league's,
+# the other shown beside it.
+V2_BLOCK_NAMES = {"likeliest_v2": ("likeliest", "likeliest_v2", "same_day_v2"),
+                  "underdog_v2": ("underdog", "underdog_v2", "same_day_dog_v2"),
                   "mixed": ("mixed", "same_day_mixed"),
-                  "props": ("props", "same_day_props")}
-V2_HEADLINE = {"likeliest_v2": ("rule", "results", "live"), "underdog_v2": ("live", "results"),
-               "mixed": ("rule", "results", "live"), "props": ("as_live", "live", "results")}
+                  "props": ("props_as_live", "props", "same_day_props")}
+V2_AS_PRICED = ("props_as_priced",)
+V2_HEADLINE = ("live", "rule", "results")
+V2_VARIANT, V2_WITHOUT_EXTRA = "all_leagues", "without_extra_leagues"
 V2_SALTS = {"underdog_v2": sdy.DOG_SALT_V2, "props": sdy.PROPS_SALT}
 
 
@@ -1572,31 +1577,49 @@ def _periods(x):
     return recs if any(v.get("tickets") for v in recs.values()) else None
 
 
-def _reading(kb, keys):
-    """(the first of kb's readings named `keys` that is {period: record},
-    its name), looked for at the top of the block and under "results"."""
+def _variant(x, variant=V2_VARIANT):
+    """{period: record} from a reading that is one, or is split by league
+    set ({variant: {period: record}}): `variant`'s, else None."""
+    if _periods(x):
+        return _periods(x) if variant == V2_VARIANT else None
+    return _periods(x.get(variant)) if isinstance(x, dict) else None
+
+
+def _reading(kb, keys, variant=V2_VARIANT):
+    """(the first of kb's readings named `keys` that holds records, its
+    name), looked for at the top of the block and under "results"."""
     res = kb.get("results") if isinstance(kb.get("results"), dict) else {}
     for k in keys:
         for src in (kb, res):
-            p = _periods(src.get(k))
+            p = _variant(src.get(k), variant)
             if p:
                 return p, k
-    p = _periods(res) or _periods(kb)
-    return (p, "results") if p else (None, None)
+    return None, None
+
+
+def _salts(x, variant=V2_VARIANT):
+    """A lottery's means over its simulation draws, {period: stats}, split
+    by league set or not."""
+    if not isinstance(x, dict):
+        return None
+    if isinstance(x.get(variant), dict):
+        return x[variant]
+    return x if any(isinstance(v, dict) and "roi" in v for v in x.values()) else None
 
 
 def v2_measured(bt):
     """({kind: measured block or None}, {kind: why it is None, or None}) for
     the four v2 kinds, from sameday_backtest.json's "v2" block - read
-    defensively: the measurement writes it separately, in its own shape, and
-    may not have yet. A block for another version, or a lottery measured at
-    another draw, is another rule's record and is never shown as this one's.
-    Each block: headline {period: record} (the reading named in
-    headline_from), periods, and what the block carries beside it - the
-    lottery's mean over its simulation draws (salts), the props ticket "as
-    priced", the market-only control, splits, activity (tickets per day,
-    days with a ticket) and caveats - each passed through as written, NaN
-    as missing. The reasons are reader-facing (no path, no "salt")."""
+    defensively: the measurement writes it separately and may not have yet.
+    A block for another version, or a lottery measured at another draw, is
+    another rule's record and is never shown as this one's.
+
+    Each block: headline {period: record} (every league; headline_from names
+    the reading), without_extra (the same without the extra leagues), periods,
+    the lottery's mean over its simulation draws (salts), the props ticket
+    "as priced" beside "as live", the market-only control, splits and
+    caveats - each passed through as written, NaN as missing. The reasons
+    are reader-facing (no path, no "salt")."""
     blk = (bt or {}).get("v2")
     if not isinstance(blk, dict):
         why = ("Not measured yet: the v2 tickets' backtest has not been run, so no record is shown for them."
@@ -1618,22 +1641,38 @@ def v2_measured(bt):
             out[kind], why[kind] = None, ("Not shown: the record on file was measured at another draw, not "
                                           "this ticket's live one.")
             continue
-        head, name = _reading(kb, V2_HEADLINE[kind])
+        head, name = _reading(kb, V2_HEADLINE)
         if head is None:
             out[kind], why[kind] = None, "Not measured yet: the v2 record on file for this ticket has no tickets."
             continue
         res = kb.get("results") if isinstance(kb.get("results"), dict) else {}
-        extra = {k: kb.get(k, res.get(k)) for k in ("salts", "as_priced", "market_only", "splits", "missing",
-                                                    "rule", "activity", "per_day")}
-        out[kind] = _json_safe(dict({k: v for k, v in extra.items() if v is not None},
-                                    headline=head, headline_from=name,
-                                    periods=kb.get("periods") or blk.get("periods") or (bt or {}).get("periods"),
-                                    activity_rows={p: {k: r.get(k) for k in ("days", "days_with_ticket",
-                                                                             "share_days", "tickets_per_day")
-                                                       if k in r} for p, r in head.items()},
-                                    caveats=[c for c in kb.get("caveats") or [] if isinstance(c, str)]))
+        priced = next((kinds[n] for n in V2_AS_PRICED if isinstance(kinds.get(n), dict)), None) \
+            if kind == "props" else None
+        x = {"headline": head, "headline_from": name,
+             "without_extra": _reading(kb, (name,), V2_WITHOUT_EXTRA)[0],
+             "periods": kb.get("periods") or blk.get("periods") or (bt or {}).get("periods"),
+             "salts": _salts(kb.get("salts", res.get("salts"))) if kind in V2_SALTS else None,
+             "as_priced": _reading(priced, V2_HEADLINE)[0] if priced else kb.get("as_priced"),
+             "market_only": _variant(kb.get("market_only", res.get("market_only"))),
+             "splits": kb.get("splits"), "label": kb.get("label"),
+             "caveats": [c for c in kb.get("caveats") or [] if isinstance(c, str)]}
+        out[kind] = _json_safe({k: v for k, v in x.items() if v is not None})
         why[kind] = None
     return out, why
+
+
+def v2_activity(bt):
+    """The measured activity of the four kinds together - tickets per day,
+    the share of days with a ticket - every league's, beside v1's, from the
+    "v2" block (None until it carries one)."""
+    act = ((bt or {}).get("v2") or {}).get("activity") if isinstance((bt or {}).get("v2"), dict) else None
+    if not isinstance(act, dict):
+        return None
+    v2 = act.get(V2_VARIANT) if isinstance(act.get(V2_VARIANT), dict) else None
+    if not v2:
+        return None
+    return _json_safe({"v2": v2, "v1": act.get("v1") if isinstance(act.get("v1"), dict) else None,
+                       "note": act.get("note") if isinstance(act.get("note"), str) else None})
 
 
 # The builder's own v2 caveats: what the new markets are priced at, what an
@@ -1779,7 +1818,8 @@ def payload(history, show, now, graded, why=None, starts=None):
             "tickets": [x["likeliest"] for x in days if not x["past"]],
             "record": records["likeliest"], "records": records,
             "measured": measured,
-            "measured_v2": {"kinds": v2m, "missing_reason": v2why},
+            "measured_v2": {"kinds": v2m, "missing_reason": v2why, "activity": v2_activity(bt),
+                            "headline": v2blk.get("headline") if isinstance(v2blk.get("headline"), str) else None},
             "caveats": caveats}
 
 

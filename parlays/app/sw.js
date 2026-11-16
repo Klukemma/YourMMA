@@ -13,7 +13,11 @@
 // both tickets held and the paired difference over the draws and by the
 // prices, days in play) and words the lottery as the rule has it - an
 // installed app must not keep the v2 page, which shows the live draw alone.
-const CACHE = "yourparlays-v3";
+// v4: tickets v2 - sameday.json gained four kinds a day (likeliest_v2,
+// underdog_v2, mixed, props), legs of other markets with estimated prices,
+// the legs a day could not offer and measured_v2; app.js draws them and
+// labels v1's two. A cached v3 page would show v1's tickets only.
+const CACHE = "yourparlays-v4";
 // How long the page waits for the network before opening from the cache.
 const SHELL_WAIT = 2500;
 

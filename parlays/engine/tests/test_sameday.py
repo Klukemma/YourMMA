@@ -819,3 +819,402 @@ def test_the_not_measured_reasons_carry_no_file_path(monkeypatch, tmp_path):
         assert not re.search(r"\w/\w|\.py\b|\.json\b", text), text
         assert "salt" not in text.lower(), text
     assert all(r.startswith(("Not measured yet", "Not shown")) for r in reasons)
+
+
+# ---------------------------------------------------------------- tickets v2, live
+
+SAT = datetime(2026, 11, 14, 12, 0, tzinfo=timezone.utc)
+
+
+def _ou_match(mid, league="E0", o25=1.80, u25=2.05, market_o25=0.53, kickoff="2026-11-14T15:00:00Z", **kw):
+    m = _match(mid, league=league, kickoff=kickoff)
+    m["prices"]["avg"].update(o25=o25, u25=u25)
+    m["market_o25"] = market_o25
+    m.update(kw)
+    return m
+
+
+def test_an_over_under_leg_is_the_side_the_average_pair_favours_and_only_where_the_app_ships_it():
+    missing = {}
+    old = _match("old")                                          # written before the O/U prices were kept
+    data = {"matches": [_ou_match("over"), _ou_match("under", o25=2.20, u25=1.68, market_o25=0.43),
+                        _ou_match("held", league="SC2", market_o25=None),
+                        _ou_match("level", o25=1.90, u25=1.90), old,
+                        _ou_match("gone", kickoff="2026-11-14T11:00:00Z")]}
+    over, under = bs.soccer_ou_legs(data, SAT, missing)
+    ia, ib = 1 / 1.80, 1 / 2.05
+    assert (over["pick"], over["bet"], over["decimal"]) == ("Over 2.5 goals", "OU25", 1.80)
+    assert over["p"] == pytest.approx(ia / (ia + ib)) == over["p_market"]
+    assert over["key"] == "Soccer:over" and over["market"] == "moneyline"      # one leg per match, any market
+    assert (under["pick"], under["decimal"], under["names"]["over"]) == ("Under 2.5 goals", 1.68, False)
+    assert missing[("2026-11-14", "OU25")] == {bs.OU_WITHHELD: 1, bs.LEVEL: 1, bs.OU_NOT_POSTED: 1}
+
+
+def test_nfl_spread_and_total_legs_are_the_no_vig_side_at_the_consensus_line():
+    def game(gid, market, **kw):
+        g = _game(gid, "2026-11-15T18:00:00Z", "NYG", "BUF", "BUF", 0.6, 150, -170)
+        g["market"].update(market)
+        g.update(kw)
+        return g
+    priced = {"spread": -3.5, "spread_price_home": 100, "spread_price_away": -120, "spread_price_missing": None,
+              "total": 44.5, "total_price_over": -105, "total_price_under": -115, "total_price_missing": None}
+    missing = {}
+    week = {"games": [
+        game("g1", priced),
+        game("g2", dict(priced, spread=0.0, total_price_over=None, total_price_under=None,
+                        total_price_missing="no book priced both sides at the line")),
+        game("g3", dict(priced, spread=2.0, spread_price_home=-110, spread_price_away=-110, total_price_over=-110,
+                        total_price_under=-110), spread_pick={"team": "NYG", "line": -2.0},
+             total_pick={"side": "OVER", "line": 44.5}),
+        game("g4", {"spread": 1.0, "total": 40.0})]}               # a file from before the prices were kept
+    legs = {(l["names"]["game_id"], l["bet"]): l for l in bs.nfl_line_legs(week, THU, missing)}
+    s, t = legs[("g1", "SPREAD")], legs[("g1", "TOTAL")]
+    ia, ib = 1 / 2.0, 1 / (1 + 100 / 120)
+    assert (s["pick"], s["decimal"], s["names"]["home"]) == ("BUF -3.5", pytest.approx(1 + 100 / 120), False)
+    assert s["p"] == pytest.approx(ib / (ia + ib)) and s["key"] == "NFL:g1"
+    assert (t["pick"], t["names"]["over"]) == ("Under 44.5", False)
+    # level prices: the shipped model's side at 0.5
+    assert (legs[("g3", "SPREAD")]["pick"], legs[("g3", "SPREAD")]["p"]) == ("NYG -2", 0.5)
+    assert legs[("g3", "TOTAL")]["pick"] == "Over 44.5"
+    assert ("g2", "SPREAD") not in legs and ("g2", "TOTAL") not in legs and ("g4", "SPREAD") not in legs
+    assert missing[("2026-11-15", "SPREAD")] == {bs.NFL_ZERO_SPREAD: 1, bs.NFL_NOT_IN_FILE: 1}
+    assert missing[("2026-11-15", "TOTAL")] == {"no book priced both sides at the line": 1, bs.NFL_NOT_IN_FILE: 1}
+
+
+def _method_card(est=2.6, chance=0.30, reason=None):
+    f = _fight("Ciryl Gané", "Josh Hokit", "Ciryl Gané", 0.67, -195, 185)
+    f["method_legs"] = [{"corner": c, "fighter": n, "type": t, "chance": None if reason else chance * (i + 1) / 3,
+                         "market_chance": None if reason else 0.9 * chance, "est_decimal": None if reason else est + i,
+                         "est_american": None, "error_pct": None if reason else 21.4, "source": "estimated",
+                         "moneyline_source": None if reason else "median of 4 books", "missing_reason": reason}
+                        for c, n in (("red", "Ciryl Gané"), ("blue", "Josh Hokit"))
+                        for i, t in enumerate(sdy.METHOD_TYPES)]
+    return _card(fights=[f])
+
+
+def test_a_method_leg_is_the_cards_estimate_on_the_fights_own_key():
+    missing = {}
+    legs = bs.ufc_method_legs(_method_card(), THU, missing)
+    assert len(legs) == 6 and not missing
+    ko = legs[0]
+    assert (ko["pick"], ko["bet"], ko["bet_detail"]) == ("Ciryl Gané by KO/TKO", "METHOD", "KO/TKO")
+    assert ko["key"] == "UFC:2026-11-14:Ciryl Gané:Josh Hokit"            # the winner leg's: one leg per fight
+    assert ko["estimated"] and ko["decimal"] == ko["est_decimal"] == 2.6 and ko["error_pct"] == 21.4
+    assert ko["lot_key"] == sdy.method_lot_key(["Ciryl Gané", "Josh Hokit"], "Ciryl Gané", "KO/TKO")
+    assert ko["names"] == {"red": "Ciryl Gané", "blue": "Josh Hokit", "event_date": "2026-11-14",
+                           "corner": "red", "type": "KO/TKO"}
+    assert ko["p_market"] == pytest.approx(0.27) and ko["day"] == "2026-11-14"
+    missing = {}
+    assert bs.ufc_method_legs(_method_card(reason="No division named for this bout."), THU, missing) == []
+    assert missing == {("2026-11-14", "METHOD"): {"No division named for this bout.": 6}}
+    missing = {}
+    assert bs.ufc_method_legs(_card(fights=[_fight("A", "B", "A", 0.7, -250, 210)]), THU, missing) == []
+    assert missing == {("2026-11-14", "METHOD"): {bs.METHOD_NOT_IN_FILE: 6}}
+    assert bs.ufc_method_legs(_method_card(), datetime(2026, 11, 15, tzinfo=timezone.utc)) == []   # started
+
+
+def test_the_v2_winner_legs_take_every_soccer_league_and_v1_still_the_top_five():
+    files = {"card": None, "week": None, "matches": {"matches": [_match("e0"), _match("nor", league="NOR")]}}
+    v2 = bs.live_v2(THU, files)
+    assert sorted(l["key"] for l in v2["legs"] if l["bet"] == "1X2") == ["Soccer:e0", "Soccer:nor"]
+    assert sorted(d["key"] for d in v2["dogs"]) == ["Soccer:e0", "Soccer:nor"]
+    assert [l["key"] for l in bs.live_legs(THU, files)] == ["Soccer:e0"]
+    assert all(l["market"] == "moneyline" for l in v2["legs"])
+
+
+def _v2_files():
+    """Saturday: a UFC card with four favourites and their props, NFL
+    favourites on Sunday with spreads, and soccer matches with over/under."""
+    fights = []
+    for i in range(4):
+        f = _fight(f"R{i}", f"B{i}", f"R{i}", 0.75, -300, 250, median=(-320, 240), books=3)
+        f["number"] = i + 1
+        f["method_legs"] = [{"corner": c, "fighter": n, "type": t, "chance": 0.75 * s if c == "red" else 0.25 * s,
+                             "market_chance": 0.7 * s if c == "red" else 0.23 * s,
+                             "est_decimal": 1 / (0.7 * s if c == "red" else 0.23 * s) / 1.2,
+                             "est_american": None, "error_pct": 20.0, "source": "estimated",
+                             "moneyline_source": "median of 3 books", "missing_reason": None}
+                            for c, n in (("red", f"R{i}"), ("blue", f"B{i}"))
+                            for t, s in zip(sdy.METHOD_TYPES, (0.45, 0.15, 0.40))]
+        fights.append(f)
+    matches = [_ou_match(f"m{i}", o25=1.55, u25=2.45, market_o25=0.61) for i in range(3)]
+    return {"card": _card(fights=fights), "week": None, "matches": {"matches": matches}}
+
+
+def _v2_run(history, now, files, why=None):
+    starts = bs.starts_on_file(files)
+    return bs.update(history, now, bs.live_legs(now, files), bs.live_dogs(now, files), why, starts,
+                     v2=bs.live_v2(now, files))
+
+
+def test_the_four_v2_kinds_are_built_and_logged_beside_v1_which_is_unchanged():
+    files = _v2_files()
+    history, why = {"tickets": []}, {}
+    _v2_run(history, THU, files, why)
+    sat = {r["kind"]: r for r in history["tickets"] if r["day"] == "2026-11-14"}
+    assert set(sat) == set(bs.KINDS)
+    for kind in bs.KINDS_V2:
+        assert sat[kind]["version"] == sdy.V2_VERSION and sat[kind]["status"] == "pending"
+        assert 3.0 <= sat[kind]["multiplier"] <= 5.0
+    assert any(l["bet"] != "1X2" for l in sat["mixed"]["legs"])
+    props = sat["props"]
+    assert sum(l["bet"] == "METHOD" for l in props["legs"]) == 1 and props["estimated"]
+    assert props["props"]["salt"] == sdy.PROPS_SALT and props["props"]["band"] == list(sdy.PROPS_LIVE_BAND)
+    assert sdy.PROPS_LIVE_BAND[0] <= props["multiplier"] <= sdy.PROPS_LIVE_BAND[1]
+    assert sat["underdog_v2"]["dog"]["salt"] == sdy.DOG_SALT_V2 and sat["underdog_v2"]["dog"]["version"] == 2
+    assert all(l["bet"] in sdy.LEG_MARKETS for r in sat.values() if r["kind"] in bs.KINDS_V2 for l in r["legs"])
+    # v1 rows are what they were with no v2 pool at all
+    h1 = {"tickets": []}
+    bs.update(h1, THU, bs.live_legs(THU, files), bs.live_dogs(THU, files), starts=bs.starts_on_file(files))
+    v1 = [r for r in history["tickets"] if r["kind"] in bs.KINDS_V1]
+    assert [dict(r, built_at=None) for r in v1] == [dict(r, built_at=None) for r in h1["tickets"]]
+    assert "bet" not in v1[0]["legs"][0]                              # v1 rows keep their shape
+    # nothing moved: nothing logged again
+    n = len(history["tickets"])
+    _v2_run(history, THU, files)
+    assert len(history["tickets"]) == n
+    # the props draw is recomputable from the logged lot keys
+    legs = [l for l in bs.live_v2(THU, files)["legs"] if l["day"] == "2026-11-14"]
+    cands = [m for m in legs if m["bet"] == "METHOD" and sdy.PROPS_PRICE[0] <= m["decimal"] <= sdy.PROPS_PRICE[1]]
+    assert sdy.dog_order(cands, sdy.PROPS_SALT)[props["props"]["rank"]]["lot_key"] == props["props"]["lot_key"]
+
+
+def test_each_v2_kind_is_locked_at_its_own_first_start_and_a_none_supersedes_only_its_kind():
+    files = _v2_files()
+    history = {"tickets": []}
+    _v2_run(history, THU, files)
+    before = {k: bs.latest(history, "2026-11-14", k) for k in bs.KINDS}
+    # the soccer matches start at 15:00; the card at 23:00. At 16:00 a mixed
+    # ticket with a soccer leg is locked; the props ticket (all UFC here) not
+    at = datetime(2026, 11, 14, 16, 0, tzinfo=timezone.utc)
+    files["card"]["fights"] = files["card"]["fights"][:1]             # three bouts gone
+    _v2_run(history, at, files)
+    after = {k: bs.latest(history, "2026-11-14", k) for k in bs.KINDS}
+    for k in bs.KINDS:
+        if bs.locked(before[k], at, bs.starts_on_file(files)):
+            assert after[k] is before[k], k
+        else:
+            assert after[k] is not before[k], k
+    assert after["props"]["kind"] == "props" and after["props"]["status"] in ("none", "pending")
+    graded = bs.grade_all(history)
+    assert {bs.kind_of(r) for r in graded} <= set(bs.KINDS)
+    assert all(r["status"] == "superseded" for r in history["tickets"]
+               if r is not after[bs.kind_of(r)] and r["day"] == "2026-11-14" and r["status"] != "none")
+
+
+def test_without_a_v2_pool_no_v2_row_is_touched():
+    files = _v2_files()
+    history = {"tickets": []}
+    _v2_run(history, THU, files)
+    rows = list(history["tickets"])
+    bs.update(history, THU, [], [])                                  # every v1 kind to none, v2 left alone
+    for k in bs.KINDS_V2:
+        assert bs.latest(history, "2026-11-14", k) in rows
+
+
+def test_the_props_ticket_is_on_a_ufc_day_only():
+    files = {"card": None, "week": None, "matches": {"matches": [_ou_match(f"m{i}") for i in range(6)]}}
+    history, why = {"tickets": []}, {}
+    _v2_run(history, THU, files, why)
+    assert bs.latest(history, "2026-11-14", "props") is None and why[("2026-11-14", "props")] == "no_card"
+    out = bs.payload(history, bs.days_shown(history, THU, bs.live_v2(THU, files)["legs"]), THU, [], why)
+    assert all(x["props"] is None for x in out["days"]) and not any(x["ufc_day"] for x in out["days"])
+
+
+def test_grading_per_market():
+    res = {"ufc": None, "nfl": {"g": 3.0}, "nfl_total": {"g": 44.0}, "soccer": {"m": "H", "v": "void"},
+           "soccer_goals": {"m": (2.0, 1.0), "v": "void", "n": None}}
+    ou = lambda mid, over: {"sport": "Soccer", "bet": "OU25", "names": {"match_id": mid, "over": over, "line": 2.5}}
+    assert bs.leg_result(ou("m", True), res) == {"winner": "pick"}
+    assert bs.leg_result(ou("m", False), res) == {"winner": "other"}
+    assert bs.leg_result(ou("v", True), res) == {"winner": None}
+    assert bs.leg_result(ou("n", True), res) is None and bs.leg_result(ou("x", True), res) is None
+    sp = lambda line, home: {"sport": "NFL", "bet": "SPREAD", "names": {"game_id": "g", "home": home, "line": line}}
+    assert bs.leg_result(sp(2.5, True), res) == {"winner": "pick"}            # home won by 3, laid 2.5
+    assert bs.leg_result(sp(3.5, True), res) == {"winner": "other"}
+    assert bs.leg_result(sp(3.5, False), res) == {"winner": "pick"}           # away +3.5 covers
+    assert bs.leg_result(sp(3.0, False), res) == {"winner": None, "void_reason": "push"}
+    to = lambda line, over: {"sport": "NFL", "bet": "TOTAL", "names": {"game_id": "g", "over": over, "line": line}}
+    assert bs.leg_result(to(43.5, True), res) == {"winner": "pick"}
+    assert bs.leg_result(to(44.5, True), res) == {"winner": "other"}
+    assert bs.leg_result(to(44.0, False), res) == {"winner": None, "void_reason": "push"}
+    assert bs.leg_result(to(44.5, True), {"nfl": {}, "nfl_total": {}}) is None
+    # a v1 leg and a v2 winner leg grade alike
+    w = {"sport": "Soccer", "pick": "A", "names": {"match_id": "m", "pick": "H"}}
+    assert bs.leg_result(w, res) == bs.leg_result(dict(w, bet="1X2"), res) == {"winner": "pick"}
+
+
+def test_a_method_leg_wins_only_by_its_type_for_its_corner(tmp_path, monkeypatch):
+    rows = [("2026-11-14", "Ciryl Gane", "Josh Hokit", "Josh Hokit", "KO/TKO"),
+            ("2026-11-14", "Al Alpha", "Bo Bravo", "Al Alpha", "Decision - Unanimous"),
+            ("2026-11-14", "Cy Charlie", "Dee Delta", "Dee Delta", "Submission"),
+            ("2026-11-14", "Ed Echo", "Fy Fox", "", "Decision - Split"),
+            ("2026-11-14", "Gus Golf", "Hal Hotel", "Gus Golf", "DQ")]
+    monkeypatch.setattr(bs, "UFC_ARCHIVE", _ufc_archive(tmp_path / "ufc.csv", rows))
+    for name in ("NFL_GAMES", "SOCCER_LOG", "UFC_LOG"):
+        monkeypatch.setattr(bs, name, tmp_path / "none")
+    def m(red, blue, corner, mtype):
+        return {"sport": "UFC", "bet": "METHOD", "kickoff": "2026-11-14T23:00:00Z",
+                "names": {"red": red, "blue": blue, "event_date": "2026-11-14", "corner": corner, "type": mtype}}
+    res = bs._results()
+    logged = {"tickets": [{"legs": [m("Ciryl Gane", "Josh Hokit", "red", "KO/TKO"),
+                                    m("Ivy India", "Jo Juliet", "red", "KO/TKO")]}]}
+    res = dict(res, **bs.ufc_cancel_index(logged, res["ufc"], log={}))
+    assert bs.leg_result(m("Ciryl Gané", "Josh Hokit", "blue", "KO/TKO"), res) == {"winner": "pick"}
+    assert bs.leg_result(m("Ciryl Gané", "Josh Hokit", "blue", "Decision"), res) == {"winner": "other"}
+    assert bs.leg_result(m("Ciryl Gané", "Josh Hokit", "red", "KO/TKO"), res) == {"winner": "other"}
+    assert bs.leg_result(m("Al Alpha", "Bo Bravo", "red", "Decision"), res) == {"winner": "pick"}
+    assert bs.leg_result(m("Cy Charlie", "Dee Delta", "blue", "Submission"), res) == {"winner": "pick"}
+    assert bs.leg_result(m("Ed Echo", "Fy Fox", "red", "Decision"), res) == {"winner": None,
+                                                                         "void_reason": "draw or no contest"}
+    assert bs.leg_result(m("Gus Golf", "Hal Hotel", "red", "KO/TKO"), res) == {"winner": "other"}   # a DQ
+    gone = m("Ivy India", "Jo Juliet", "red", "KO/TKO")                      # never fought
+    assert bs.leg_result(gone, res, datetime(2026, 11, 14, 23, 30, tzinfo=timezone.utc)) is None
+    assert bs.leg_result(gone, res, datetime(2026, 11, 16, 5, tzinfo=timezone.utc)) == {
+        "winner": None, "void_reason": "cancelled"}
+
+
+def test_soccer_results_can_carry_the_finals_goals(tmp_path):
+    picks = {"a": _soccer_pick("a", "2026-11-08T15:00:00Z", final={"home": 3, "away": 1, "result": "H"}),
+             "b": _soccer_pick("b", "2026-11-08T15:00:00Z", void="no result"),
+             "c": _soccer_pick("c", "2026-11-08T15:00:00Z", final={"result": "D"})}
+    path = tmp_path / "prediction_history.json"
+    path.write_text(json.dumps({"schema": 1, "picks": picks}))
+    assert bs.soccer_results(path) == {"a": "H", "b": "void", "c": "D"}
+    assert bs.soccer_results(path, with_goals=True) == {"a": {"result": "H", "goals": (3.0, 1.0)}, "b": "void",
+                                                         "c": {"result": "D", "goals": None}}
+
+
+def test_the_v2_page_payload(monkeypatch, tmp_path):
+    monkeypatch.setattr(bs, "_results", lambda: {"ufc": None, "nfl": {}, "soccer": {}})
+    monkeypatch.setattr(bs, "BACKTEST", tmp_path / "none.json")
+    files = _v2_files()
+    files["week"] = {"games": [_game("g1", "2026-11-15T18:00:00Z", "NYG", "BUF", "BUF", 0.6, 150, -170)]}
+    history, why = {"tickets": []}, {}
+    show = _v2_run(history, THU, files, why)
+    out = bs.payload(history, show, THU, bs.grade_all(history), why)
+    text = json.dumps(out, allow_nan=False)
+    sat = next(x for x in out["days"] if x["day"] == "2026-11-14")
+    sun = next(x for x in out["days"] if x["day"] == "2026-11-15")
+    assert sat["ufc_day"] and sat["props"]["status"] == "open" and sun["props"] is None
+    p = sat["props"]
+    assert p["estimated"] and p["props"]["candidates"] >= 1
+    leg = next(l for l in p["legs"] if l["bet"] == "METHOD")
+    assert leg["estimated"] and leg["error_pct"] == 20.0 and leg["market"] == "Method"
+    assert leg["label"].endswith(("by KO/TKO", "by Submission", "by Decision"))
+    assert "estimator" in leg["reason"]
+    win = next(l for l in sat["likeliest_v2"]["legs"])
+    assert win["label"].endswith(" to win") and win["market"] == "Moneyline" and not win["estimated"]
+    mixed_bets = {l["bet"] for l in sat["mixed"]["legs"]}
+    assert mixed_bets - {"1X2"}
+    assert sun["missing"] == {"SPREAD": {bs.NFL_NOT_IN_FILE: 1}, "TOTAL": {bs.NFL_NOT_IN_FILE: 1}}
+    assert set(out["records"]) == set(bs.KINDS) and out["rule"]["v2"]["props_live_band"] == [3.6, 4.2]
+    m = out["measured_v2"]
+    assert m["kinds"] == {k: None for k in bs.KINDS_V2}
+    assert all(r.startswith("Not measured yet") for r in m["missing_reason"].values())
+    assert set(bs.V2_CAVEATS) <= set(out["caveats"]) and "hard to beat" in text
+    # the v1 shape the older page reads is all still there
+    assert {"likeliest", "underdog", "cannot_both_win"} <= set(sat) and out["tickets"][0]["kind"] == "likeliest"
+
+
+def test_the_v2_measured_block_is_read_defensively():
+    assert all(v is None for v in bs.v2_measured({})[0].values())
+    rec = {"all": {"tickets": 2400, "wins": 700, "roi": -0.1, "implied_roi": -0.15},
+           "last_3_years": {"tickets": 0}}
+    bt = {"periods": {"all": ["2016-08-01", "2026-08-08"]},
+          "v2": {"version": 2, "kinds": {
+              "likeliest_v2": {"results": rec},
+              "underdog_v2": {"salt": sdy.DOG_SALT_V2, "results": {"live": rec, "salts": {"all": {"roi": -0.12}}}},
+              "props": {"salt": "another", "as_live": rec},
+              "mixed": {"results": {"all": {"tickets": 0}}}},
+              "caveats": ["V2 caveat."]}}
+    got, why = bs.v2_measured(bt)
+    assert got["likeliest_v2"]["headline"]["all"]["tickets"] == 2400 and why["likeliest_v2"] is None
+    assert got["underdog_v2"]["headline_from"] == "live" and got["underdog_v2"]["salts"]["all"]["roi"] == -0.12
+    assert got["props"] is None and why["props"].startswith("Not shown")
+    assert got["mixed"] is None and why["mixed"].startswith("Not measured yet")
+    assert got["likeliest_v2"]["periods"] == bt["periods"]
+    got, why = bs.v2_measured(dict(bt, v2=dict(bt["v2"], version=3)))
+    assert all(v is None for v in got.values()) and all(w.startswith("Not shown") for w in why.values())
+    import re
+    for w in list(why.values()) + list(bs.v2_measured({})[1].values()) + list(bs.v2_measured(bt)[1].values()):
+        if w:
+            assert not re.search(r"\w/\w|\.py\b|\.json\b", w) and "salt" not in w.lower(), w
+
+
+def test_the_method_estimate_reads_the_median_pair_when_the_card_has_one():
+    """The estimator was fitted on one book's closing pair; live, the card's
+    median pair across books is the closest match to it, and each leg says
+    which pair it read."""
+    sys.path.insert(0, str(ENGINE.parents[1] / "engine"))
+    import pandas as pd
+    import app_export as ax
+    import method_price as mp
+    est = ax.method_estimator()
+    if est["model"] is None:
+        pytest.skip(est["missing"])
+    archive = pd.DataFrame([("A One", "B Two", "2026-01-10", "A One", "KO/TKO")],
+                           columns=["r_name", "b_name", "date", "winner", "method"])
+    fight = {"red": "A One", "blue": "B Two", "pick": "A One", "win_prob": 0.66, "market_prob": 0.62,
+             "rounds_scheduled": 3, "decimal": 1.55, "decimal_other": 2.75,
+             "decimal_median": 1.50, "decimal_other_median": 2.60, "books_median": 5}
+
+    def p_red_of(legs):
+        """The p_red an estimate was built from: the one whose prediction it equals."""
+        for p in (0.62, 1 / 1.50 / (1 / 1.50 + 1 / 2.60), 1 / 1.55 / (1 / 1.55 + 1 / 2.75)):
+            e = mp.predict({"p_red": p, "division": "lightweight", "rounds_scheduled": 3,
+                            "facts_red": sdy.pp.facts(archive, "A One", "2026-11-14"),
+                            "facts_blue": sdy.pp.facts(archive, "B Two", "2026-11-14")}, est["model"])
+            if all(abs(l["est_decimal"] - e[l["corner"]][l["type"]]["decimal"]) < 1e-5 for l in legs):
+                return p
+        return None
+    median = ax.method_legs_payload(fight, "lightweight", archive, "2026-11-14", est)
+    assert p_red_of(median) == pytest.approx(1 / 1.50 / (1 / 1.50 + 1 / 2.60))
+    assert {l["moneyline_source"] for l in median} == {"median of 5 books"}
+    best = ax.method_legs_payload({k: v for k, v in fight.items() if "median" not in k}, "lightweight", archive,
+                                  "2026-11-14", est)
+    assert p_red_of(best) == pytest.approx(1 / 1.55 / (1 / 1.55 + 1 / 2.75))
+    assert {l["moneyline_source"] for l in best} == {"best of books"}
+    bare = {k: v for k, v in fight.items() if "decimal" not in k and "median" not in k}
+    assert {l["moneyline_source"] for l in ax.method_legs_payload(bare, "lightweight", archive, "2026-11-14", est)} \
+        == {"card market chance"}
+
+
+def test_the_v2_measured_block_in_the_backtests_shape():
+    """sameday_backtest.measure_v2's block: kinds likeliest / underdog /
+    mixed / props_as_live / props_as_priced, each reading split by league
+    set; the headline is every league's, the other beside it."""
+    rec = lambda n, roi: {"tickets": n, "wins": n // 3, "roi": roi, "implied_roi": -0.15, "days": 3660,
+                          "days_with_ticket": n, "share_of_days": round(n / 3660, 4)}
+    per = lambda n, roi: {"all": rec(n, roi), "first": rec(n // 2, roi), "last_3_years": rec(n // 2, roi)}
+    split = lambda a, b: {"all_leagues": a, "without_extra_leagues": b}
+    salts = {"all": {"roi": -0.11, "roi_low": -0.15, "roi_high": -0.07, "implied_roi": -0.14, "salts": 1000}}
+    bt = {"v2": {"version": 2, "periods": {"all": ["2016-08-01", "2026-08-08"]}, "headline": "Tickets v2: ...",
+                 "activity": {"all_leagues": {"all": {"tickets": 7000, "tickets_per_day": 1.9, "share_of_days": 0.74}},
+                              "v1": {"all": {"tickets": 2700, "tickets_per_day": 0.74}}, "note": "n"},
+                 "kinds": {"likeliest": {"live": split(per(2400, -0.1), per(2000, -0.08)),
+                                         "market_only": split(per(2400, -0.12), per(2000, -0.1)),
+                                         "splits": {"by_bets": {"note": "d", "1X2": rec(2400, -0.1)}}},
+                           "underdog": {"salt": sdy.DOG_SALT_V2, "live": split(per(2500, -0.05), per(2100, -0.06)),
+                                        "salts": split(salts, salts)},
+                           "mixed": {"live": split(per(2300, -0.14), per(2000, -0.13))},
+                           "props_as_live": {"salt": sdy.PROPS_SALT, "label": "as live",
+                                             "periods": {"all": ["2016-08-01", "2024-12-07"]},
+                                             "live": split(per(1200, -0.2), per(1200, -0.2)),
+                                             "salts": split(salts, salts)},
+                           "props_as_priced": {"salt": sdy.PROPS_SALT, "live": split(per(1100, -0.25), per(1100, -0.25))}},
+                 "caveats": ["V2 caveat."]}}
+    got, why = bs.v2_measured(bt)
+    assert all(w is None for w in why.values())
+    assert got["likeliest_v2"]["headline"]["all"]["tickets"] == 2400
+    assert got["likeliest_v2"]["without_extra"]["all"]["tickets"] == 2000
+    assert got["likeliest_v2"]["market_only"]["all"]["roi"] == -0.12
+    assert got["underdog_v2"]["salts"]["all"]["roi"] == -0.11 and "salts" not in got["mixed"]
+    assert got["props"]["headline"]["all"]["tickets"] == 1200 and got["props"]["as_priced"]["all"]["tickets"] == 1100
+    assert got["props"]["periods"]["all"][1] == "2024-12-07" and got["props"]["label"] == "as live"
+    act = bs.v2_activity(bt)
+    assert act["v2"]["all"]["tickets_per_day"] == 1.9 and act["v1"]["all"]["tickets_per_day"] == 0.74
+    assert bs.v2_activity({}) is None
+    other = json.loads(json.dumps(bt))
+    other["v2"]["kinds"]["underdog"]["salt"] = "sameday-dog-v9"
+    assert bs.v2_measured(other)[0]["underdog_v2"] is None

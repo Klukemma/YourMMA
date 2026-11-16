@@ -56,6 +56,7 @@ from __future__ import annotations
 import json
 import math
 import multiprocessing as mp
+import re
 import sys
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
@@ -904,6 +905,7 @@ def main():
         "caveats": caveats(results, extra, ends, end, legs),
         "dog": dog,
     }
+    payload["v2"] = measure_v2(payload)
     DATA.mkdir(parents=True, exist_ok=True)
     (DATA / "sameday_backtest.json").write_text(json.dumps(payload, indent=1, default=_json, allow_nan=False))
     gz = {"method": "gzip", "mtime": 0}
@@ -930,6 +932,7 @@ def main():
                 "legs": "|".join(f"{l['sport']}:{l['pick']}@{l['decimal']:.3f}" for l in t["legs"])})
     pd.DataFrame(drows_out).to_csv(DATA / "sameday_dog_tickets.csv.gz", index=False, compression=gz)
     table(payload)
+    table_v2(payload["v2"])
 
 
 def _json(x):
@@ -1219,9 +1222,7 @@ def v2_lotteries(days_out):
     very ticket build_underdog_v2 / build_props gave over all of the day's
     candidates, on exactly the days it gave one - or the run stops."""
     out = {}
-    for kind, (live, sims) in V2_LOTTERIES.items():
-        if kind == "props_as_priced":
-            continue                       # drawn with props_as_live below: the same salts
+    # the two props readings share their salts, so one matrix draws both
     groups = {"underdog": ("underdog",), "props": ("props_as_live", "props_as_priced")}
     for group, kinds in groups.items():
         live, sims = V2_LOTTERIES[kinds[0]]
@@ -1254,7 +1255,8 @@ def v2_record(tickets, period, days_with_legs=None):
     s = record(ts)
     s.setdefault("implied_roi", None)
     cal = calendar_days(period)
-    s.update({"days": cal, "days_with_ticket": len(ts), "share_of_days": round(len(ts) / cal, 4)})
+    s.update({"days": cal, "days_with_ticket": len(ts), "share_of_days": round(len(ts) / cal, 4),
+              "tickets_per_day": round(len(ts) / cal, 4)})
     if days_with_legs is not None:
         n = sum(in_period(d, period) for d in days_with_legs)
         s["days_with_legs"] = n
@@ -1419,6 +1421,7 @@ def measure_v2(payload):
                         "PROPS as live) per calendar day; PROPS has history to " + sdy.PROPS_HISTORY_END + " only")
 
     legs_info = v2_legs_info(frames)
+    margins = v2_margins(frames)
     v2 = {
         "version": sdy.V2_VERSION,
         "rule": {"band": list(sdy.BAND), "max_legs": sdy.MAX_LEGS, "pool": sdy.POOL, "min_p": sdy.MIN_P,
@@ -1433,7 +1436,9 @@ def measure_v2(payload):
                      "without_extra_leagues": "the same days without the extra leagues' legs and underdogs "
                                               "(their history is priced at the close)"},
         "v1_files_sha256": v1_hashes(),
+        "v1_sha256": v1_fingerprint(payload),
         "legs": legs_info,
+        "margins": margins,
         "kinds": kinds,
         "activity": activity,
     }
@@ -1441,6 +1446,45 @@ def measure_v2(payload):
     v2["caveats"] = v2_caveats(v2, frames, tickets)
     write_v2_tickets(tickets)
     return v2
+
+
+def v2_margins(frames):
+    """Outcome-free: the median overround of the six props' book on the
+    fights with props, against the same fights' moneyline pair (each from
+    its row: 1 / (decimal x no-vig chance) - 1), and the estimator file's
+    own medians (engine/data/method_price.json coverage) beside them."""
+    me = frames["others"][frames["others"]["file"] == "legs_v2_ufc_method"]
+    ufc = frames["winners"][frames["winners"]["file"] == "legs_ufc"]
+    ufc = ufc[ufc["key"].isin(set(me["key"]))]
+    out = {"fights": int(me["key"].nunique()),
+           "six_way_median": round(float(me.drop_duplicates("key")["method_overround"].median()), 4)
+           if len(me) else None,
+           "moneyline_median": round(float((1.0 / (ufc["decimal"] * ufc["p_market"]) - 1.0).median()), 4)
+           if len(ufc) else None}
+    try:
+        cov = json.loads(METHOD_JSON.read_text())["coverage"]
+        out["method_price_json"] = {"six_way_median": round(float(cov["six_way_overround_median"]), 4),
+                                    "moneyline_median": round(float(cov["moneyline_overround_median"]), 4),
+                                    "first": cov["first"], "last": cov["last"]}
+    except (OSError, ValueError, KeyError) as e:
+        out["method_price_json"] = {"missing": f"engine/data/method_price.json could not be read ({type(e).__name__})"}
+    lo, hi = PROPS_PERIODS["all"]
+    w = frames["winners"]
+    card_days = set(w.loc[(w["file"] == "legs_ufc") & w["day"].between(lo, hi), "day"])
+    props_days = set(me["day"])
+    out["ufc_card_days"] = len(card_days)
+    out["card_days_with_props"] = len(card_days & props_days)
+    return out
+
+
+def v1_fingerprint(payload):
+    """sha256 of every key of the json but "v2" (canonical JSON): v2 is
+    measured beside v1's published numbers and must leave them as they are;
+    a test recomputes it from the published file."""
+    import hashlib
+    v1 = {k: v for k, v in payload.items() if k != "v2"}
+    text = json.dumps(v1, sort_keys=True, separators=(",", ":"), default=_json, allow_nan=False)
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
 def v1_hashes():
@@ -1524,6 +1568,7 @@ def v2_caveats(v2, frames, tickets):
     K = v2["kinds"]
     li = lambda k, v="all_leagues", p="all": K[k]["live"][v][p]
     pc = lambda x: "missing" if x is None else _pct(x, 1)
+    sh = lambda x: "missing" if x is None else f"{x:.1%}"
     L, U, X, PL, PP = li("likeliest"), li("underdog"), li("mixed"), li("props_as_live"), li("props_as_priced")
     US, PLS = K["underdog"]["salts"]["all_leagues"]["all"], K["props_as_live"]["salts"]["all_leagues"]["all"]
     out = []
@@ -1538,9 +1583,9 @@ def v2_caveats(v2, frames, tickets):
         f"{v2['periods']['all'][0]} to {v2['periods']['all'][1]}, " + rec("LIKELIEST v2", L) + "; "
         + rec("UNDERDOG v2 at the live draw", U)
         + f", over the 1,000 simulation draws {pc(US.get('roi'))} ({pc(US.get('roi_low'))} to {pc(US.get('roi_high'))})"
-        + "; " + rec("MIXED", X) + f"; and to {sdy.PROPS_HISTORY_END}, " + rec("PROPS as live", PL)
+        + "; " + rec("MIXED", X) + f"; and to {PROPS_PERIODS['all'][1]}, " + rec("PROPS as live", PL)
         + f", over the 1,000 simulation draws {pc(PLS.get('roi'))} ({pc(PLS.get('roi_low'))} to "
-        f"{pc(PLS.get('roi_high'))}). An interval that spans zero is no evidence of an edge.")
+        f"{pc(PLS.get('roi_high'))}). " + edge_words(K) + " An interval that spans zero is no evidence of an edge.")
 
     doc, err = _method_error_text()
     me = frames["others"][frames["others"]["file"] == "legs_v2_ufc_method"]
@@ -1548,26 +1593,28 @@ def v2_caveats(v2, frames, tickets):
     own = float(((e["est_decimal"] - e["decimal"]).abs() / e["decimal"]).median()) if len(e) else None
     drawn = PL.get("prop_est_error_median")
     out.append(
-        "Live there is no prop price on the odds feed: a live props ticket - and a live mixed ticket holding a prop - "
+        "Live there is no prop price on the odds feed: a live props ticket - and a live mixed ticket holding a prop "
+        f"(here {sh((X.get('holds') or {}).get('METHOD', 0.0))} of MIXED's tickets held one, at the real price) - "
         "is chosen and shown at the METHOD ESTIMATOR's price, an estimate. " + (err[0].upper() + err[1:] if doc is None
                                                                                  else "Measured in engine/data/method_price.json: " + err)
         + (f". Refitted each year on earlier years only, as here, it missed the real price by a median "
            f"{own:.1%} over the history's {len(e):,} estimated props" if own is not None else "")
         + (f" and {drawn:.1%} on the props the as-live tickets drew" if drawn is not None else "")
         + f". Chosen by the estimate in {sdy.PROPS_LIVE_BAND[0]}-{sdy.PROPS_LIVE_BAND[1]}x, the as-live tickets' real "
-        f"multiplier lay in {sdy.BAND[0]:g}-{sdy.BAND[1]:g}x on {pc(PL.get('real_in_band'))} of them (searched "
+        f"multiplier lay in {sdy.BAND[0]:g}-{sdy.BAND[1]:g}x on {sh(PL.get('real_in_band'))} of them (searched "
         f"{PL.get('searched_multiplier')}x on average, paid {PL.get('mean_multiplier')}x); a live ticket's multiplier is an "
         "estimate until a book prices the prop.")
 
-    ufc = pd.read_csv(DATA / "legs_ufc.csv.gz")
-    ufc = ufc[ufc["key"].isin(set(me["key"]))]
-    ml_over = float((1.0 / (ufc["decimal"] * ufc["p_market"]) - 1.0).median()) if len(ufc) else None
-    six = float(me.drop_duplicates("key")["method_overround"].median()) if len(me) else None
+    mg = v2["margins"]
     out.append(
-        f"A prop costs more than a moneyline: on the {me['key'].nunique():,} fights with props here the six props' "
-        f"book runs a median {pc(six)} over across its six outcomes against {pc(ml_over)} for the same fights' "
-        f"moneyline pair, so a ticket holding a prop pays the heavier margin; PROPS as live is price-implied "
-        f"{pc(PL.get('implied_roi'))} a ticket against LIKELIEST v2's {pc(L.get('implied_roi'))}.")
+        f"A prop costs more than a moneyline: on the {mg['fights']:,} fights with props here the six props' "
+        f"book runs a median {sh(mg['six_way_median'])} over across its six outcomes against "
+        f"{sh(mg['moneyline_median'])} for the same fights' moneyline pair, so a ticket holding a prop pays the "
+        f"heavier margin; PROPS as live is price-implied {pc(PL.get('implied_roi'))} a ticket against LIKELIEST "
+        f"v2's {pc(L.get('implied_roi'))}. In history a card has props only where all six were priced and make a "
+        f"believable book ({mg['card_days_with_props']:,} of {mg['ufc_card_days']:,} UFC card days "
+        f"{PROPS_PERIODS['all'][0]} to {PROPS_PERIODS['all'][1]}); live every fight on a card is priced by the "
+        f"estimate, so live PROPS can come on more card days than here.")
 
     wl = frames["winners"]
     soc = wl[wl["file"] == "legs_v2_soccer"]
@@ -1581,18 +1628,23 @@ def v2_caveats(v2, frames, tickets):
         f"priced at the closing average while live they are priced pre-match ({with_extra:,} of LIKELIEST v2's "
         f"{len(lt):,} tickets hold one); NFL moneyline, spread and total legs are chosen and priced at the close, "
         f"which knows the day's news, while live they are priced when the ticket is built. Without the extra leagues "
-        + rec("LIKELIEST v2", Lx) + f", on {pc(Lx.get('share_of_days'))} of days against {pc(L.get('share_of_days'))}.")
+        + rec("LIKELIEST v2", Lx) + f", on {sh(Lx.get('share_of_days'))} of days against {sh(L.get('share_of_days'))}.")
 
     lv = v2["legs"]["legs_v2_ufc_method"]
     no_est = sum(lv.get("est_missing", {}).values())
     first_live = min((t["day"] for t in tickets[("props_as_live", "all_leagues")]), default=None)
+    me_all = frames["others"][frames["others"]["file"] == "legs_v2_ufc_method"]
+    years = sorted(y for y, g in me_all.groupby(me_all["day"].str[:4]) if g["est_decimal"].isna().all())
+    missing = (f"{no_est:,} props have no estimate ("
+               + "; ".join(f"{n:,}: {why}" for why, n in lv.get("est_missing", {}).items())
+               + f"), so PROPS as live has its first ticket on {first_live}"
+               + (f" and as priced is the only reading of {', '.join(years)}" if years else "") + "."
+               if no_est else f"Every prop has an estimate; PROPS as live has its first ticket on {first_live}.")
     out.append(
         f"Props history ends {sdy.PROPS_HISTORY_END} (engine/data/method_odds.csv), so PROPS is measured "
         f"{PROPS_PERIODS['all'][0]} to {PROPS_PERIODS['all'][1]} and its last-3-years period is "
         f"{PROPS_PERIODS['last_3_years'][0]} to {PROPS_PERIODS['last_3_years'][1]}; after it no history ticket "
-        f"holds a prop (MIXED included), while live MIXED can take one at the estimate. {no_est:,} props have no "
-        f"estimate ({'; '.join(f'{n:,}: {why}' for why, n in lv.get('est_missing', {}).items())}), so PROPS as live "
-        f"has its first ticket on {first_live} and as priced is the only reading of 2016.")
+        f"holds a prop (MIXED included), while live MIXED can take one at the estimate. " + missing)
 
     nl = frames["others"][frames["others"]["file"] == "legs_v2_nfl_lines"]
     ss = nfl_lines.get("side_source", {})
@@ -1611,10 +1663,18 @@ def v2_caveats(v2, frames, tickets):
         f"prop lost (some books void such a prop). " + no_winner_caveat(*V2_PERIODS["all"]))
 
     day_src = v2["legs"]["legs_v2_soccer"].get("day_source", {})
+    timed = soc[(soc["day_source"] == "kickoff") & soc["group"].ne("extra")]
+    listed = timed["key"].str.split("-").str[1].str.replace(r"^(\d{4})(\d{2})(\d{2})$", r"\1-\2-\3", regex=True)
+    same = float((listed == timed["day"]).mean()) if len(timed) else None
+    undated = soc[soc["day_source"] == "date"]
     out.append(
         f"Soccer days: {day_src.get('kickoff', 0):,} of the {sum(day_src.values()):,} soccer winner legs take the ET "
-        f"day of their kickoff and {day_src.get('date', 0):,} (European divisions before kickoff times were kept) "
-        f"their listed date, which for a European kickoff is the ET date.")
+        f"day of their kickoff and {day_src.get('date', 0):,} ("
+        + ", ".join(f"{g} {n:,}" for g, n in undated["group"].value_counts().sort_index().items())
+        + (f", {undated['day'].min()} to {undated['day'].max()}" if len(undated) else "")
+        + ") their listed date, the kickoff time not being on file"
+        + (f"; where it is, a European division's kickoff falls on its listed date in ET for {sh(same)} of "
+           f"{len(timed):,} legs." if len(timed) else "."))
 
     rank = US.get("live_rank")
     prank = PLS.get("live_rank")
@@ -1630,11 +1690,12 @@ def v2_caveats(v2, frames, tickets):
 
     a, a1 = v2["activity"]["all_leagues"]["all"], v2["activity"]["v1"]["all"]
     out.append(
-        "Expected (sameday.py, written before the results): " + _doc_block("EXPECTED") + f" Measured: the four "
+        "Expected (sameday.py) " + _doc_block("EXPECTED") + f" Measured: the four "
         f"kinds that ship made {a['tickets']:,} tickets ({a['tickets_per_day']:.2f} a day, a ticket on "
-        f"{pc(a['share_of_days'])} of days) against v1's {a1['tickets']:,} ({a1['tickets_per_day']:.2f} a day); "
-        f"LIKELIEST v2 on {pc(L.get('share_of_days'))} of days, MIXED on {pc(X.get('share_of_days'))}, UNDERDOG v2 on "
-        f"{pc(U.get('share_of_days'))}, PROPS as live on {pc(PL.get('share_of_days'))} of its days; by the prices "
+        f"{sh(a['share_of_days'])} of days) against v1's {a1['tickets']:,} ({a1['tickets_per_day']:.2f} a day); "
+        f"LIKELIEST v2 on {sh(L.get('share_of_days'))} of days, MIXED on {sh(X.get('share_of_days'))}, UNDERDOG v2 on "
+        f"{sh(U.get('share_of_days'))}, PROPS as live on {sh(PL.get('share_of_days_with_legs'))} of the days with "
+        f"props ({sh(PL.get('share_of_days'))} of all its days); by the prices "
         f"LIKELIEST v2 {pc(L.get('implied_roi'))}, MIXED {pc(X.get('implied_roi'))}, UNDERDOG v2 "
         f"{pc(U.get('implied_roi'))}, PROPS as live {pc(PL.get('implied_roi'))} and as priced "
         f"{pc(PP.get('implied_roi'))} a ticket.")
@@ -1642,6 +1703,25 @@ def v2_caveats(v2, frames, tickets):
                + " The v2 records are not an out-of-sample test of these markets.")
     out.append("The splits by market, sport and legs are descriptive: none can move a rule in v2.")
     return out
+
+
+def edge_words(K):
+    """Whether any shipped kind's 95% interval over days lies wholly above
+    zero (all leagues, all days) - the sentence is the numbers', never
+    typed: "None of ..." only when none does."""
+    names = {"likeliest": "LIKELIEST v2", "underdog": "UNDERDOG v2", "mixed": "MIXED", "props_as_live": "PROPS as live"}
+    above, below = [], []
+    for k in V2_SHIPPED:
+        s = K[k]["live"]["all_leagues"]["all"]
+        if s.get("tickets") and s["roi_low"] > 0:
+            above.append(names[k])
+        if s.get("tickets") and s["roi_high"] < 0:
+            below.append(names[k])
+    join = lambda xs: xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and " + xs[-1]
+    head = ("None of the four kinds' 95% intervals lies above zero" if not above else
+            f"{join(above)}'s 95% interval lies above zero over these days; with the caveats below that is not "
+            f"an established edge")
+    return head + (f"; {join(below)}'s lies wholly below it." if below else ".")
 
 
 def v2_headline(v2):
@@ -1699,8 +1779,10 @@ def table_v2(v2):
             for p in b["live"][v]:
                 s = b["live"][v][p]
                 lbl = f"{k} {'all' if v == 'all_leagues' else 'no-extra'} {p}"
-                print(_line(lbl, s).replace("  implied", "  implied") + f"  {s['share_of_days']:.1%}" if s.get("tickets")
-                      else f"  {lbl:<44}     0")
+                if s.get("tickets"):
+                    print(_line(lbl, s) + f"  {s['share_of_days']:.1%}")
+                else:
+                    print(f"  {lbl:<44}     0")
                 if k in V2_LOTTERIES and b["salts"][v][p].get("tickets_per_salt"):
                     st = b["salts"][v][p]
                     sp = st["spread"]
