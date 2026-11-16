@@ -55,12 +55,74 @@ applies the 2.00-4.00 band and build_dog the floor, and the backtest's
 descriptive splits can then show what the band leaves out.
 
 Runs offline in under a minute a sport (each in its own process: --only).
+
+TICKETS v2 (sameday.py's "TICKETS v2", LEGS v2) - `--v2` writes NEW files
+only and never touches the v1 files above, which stay byte for byte what v1
+was measured on (rebuilding them now would move them: the NFL schedule has
+grown since). One row per event and market side, key the event's (the same
+key the v1 files give that match, game or fight, so a ticket holds at most
+one leg per event across markets), each with bet (sameday.LEG_MARKETS) and
+bet_detail:
+
+  legs_v2_soccer      1X2: the shipped pick of EVERY league in the app
+                      (soccer_leagues.in_app()), by the same procedure as the
+                      v1 soccer file - whose top-five rows these reproduce (a
+                      test holds them equal) - priced where the pick is
+                      priced: the pre-match average for the European
+                      divisions ("pre"), the CLOSING average for the 15 extra
+                      leagues in the app, whose history has no pre-match
+                      price ("close"; live they pay the pre-match price).
+  legs_dogs_v2_soccer the market's underdog of every such match, as the v1
+                      dog file (the less likely TEAM, never the draw; none
+                      when level) at the same snapshot that prices the pick.
+  legs_v2_ou25        OU25: over/under 2.5 goals in each league that ships
+                      over 2.5 from the market (soccer_leagues.withheld(code,
+                      "market") leaves o25 in) - the side the pre-match
+                      no-vig over/under price favours, its chance that no-vig
+                      chance, its price the pre-match average (avg_o25 /
+                      avg_u25); level prices give no leg. Graded on the total
+                      goals.
+  legs_v2_nfl_lines   SPREAD and TOTAL from nfl/data/games.csv.gz read raw:
+                      the closing line and its closing prices (nflverse
+                      home/away_spread_odds, over/under_odds). The side is
+                      the one whose no-vig chance at those prices is at least
+                      0.5; at level prices the shipped model's side (nfl_
+                      predict.predict_game: home when the walk-forward margin
+                      exceeds the line, over when the walk-forward total
+                      does) at chance 0.5 - side_source "model" - and no leg
+                      where that model number is missing (counted). A zero
+                      spread gives no spread leg (a pick'em is the moneyline).
+                      A push voids the leg.
+  legs_v2_ufc_method  METHOD: each corner's "wins by KO/TKO", "by submission"
+                      and "by decision" on the fights of the v1 UFC file
+                      (same believable moneyline) whose six props are all
+                      priced and make a believable book (parlay_profiles.
+                      _method_market, overround 0-40%), 2016-08-01 to
+                      sameday.PROPS_HISTORY_END. Price: the real prop
+                      (parlay_legs.csv.gz's method columns). Chance: the
+                      corner's shipped win chance (the blend, as the v1 leg)
+                      times the six-way no-vig share of that corner's wins by
+                      that type (parlay_profiles._as_method's reading);
+                      p_market the six-way no-vig chance itself. est_decimal:
+                      the METHOD ESTIMATOR's price (engine/method_price.py)
+                      refitted on fights dated before the card's year only
+                      (fit_before) - missing for 2016, which has no earlier
+                      props to fit on, with the reason in est_missing.
+                      Result from the archive's method class (parlay_
+                      profiles.method_class of the archive's method): won
+                      only when the corner won by that type - a win by DQ
+                      wins no prop - and void when the fight had no winner.
+
+WHY THE DAY IS THE V1 FILES' DAY: a v2 leg sits on the day its event's v1 leg
+does (soccer the ET day of the kickoff, else the date; NFL the schedule day;
+UFC the event date), so every market of one event falls on one day.
 """
 
 from __future__ import annotations
 
 import argparse
 import sys
+from collections import Counter
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -265,6 +327,250 @@ def soccer(engine_dir):
     return pd.DataFrame(rows, columns=COLS), pd.DataFrame(dogs, columns=DOG_COLS)
 
 
+# ---------------------------------------------------------------- tickets v2
+
+V2_COLS = ["day", "key", "lot_key", "event", "bet", "bet_detail", "pick", "opponent", "p", "p_model",
+           "p_market", "decimal", "price_source", "result"]
+SOCCER_V2_COLS = V2_COLS + ["league", "group", "day_source"]
+NFL_LINE_COLS = V2_COLS + ["line", "side_source", "overround"]
+METHOD_COLS = V2_COLS + ["corner", "p_win", "share", "est_decimal", "est_missing", "est_fit_last",
+                         "method_overround"]
+# The 2016 cards have no earlier props in the fit rows (method_price.fit_before):
+# said on every such row rather than left blank.
+NO_FIT_2016 = ("no earlier props to fit the estimator on: the fit rows start 2016-01-02, so "
+               "method_price.fit_before(2016) is None")
+
+
+def _goal_result(side, goals, line=2.5):
+    """"won" / "lost" for an over or under at a half line (no push at 2.5)."""
+    over = goals > line
+    return "won" if over == (side == "Over") else "lost"
+
+
+def soccer_v2(engine_dir):
+    """The three soccer v2 files (module docstring): 1X2 picks of every
+    league in the app, their underdogs, and the over/under 2.5 legs."""
+    sys.path.insert(0, str(engine_dir))
+    import soccer_backtest as bt
+    import soccer_data as sd
+    import soccer_leagues as slg
+    import soccer_model as smod
+    m = sd.load_matches(leagues="all")
+    nan = pd.DataFrame(np.nan, index=m.index, columns=["p_h", "p_d", "p_a", "p_o25"])
+    leagues = slg.in_app()
+    p, _ = smod.shipped_pick(m, nan, leagues)
+    q = {"pre": bt.no_vig(m, "pre"), "close": bt.no_vig(m, "close")}
+    cols = {"pre": "avg_", "close": "avgc_"}
+    keep = m["league"].isin(leagues) & ~p["model_only"].astype(bool) & m["result"].notna() \
+        & (m["season"] >= 2016)
+    ou_leagues = [c for c in leagues if "o25" not in slg.withheld(c, "market")]
+    qo = bt.no_vig_total(m)
+    sdy = _sameday()
+    rows, dogs, ous = [], [], []
+    for i in m.index[keep]:
+        r = m.loc[i]
+        src = p.at[i, "price"]
+        probs = {"H": p.at[i, "p_h"], "D": p.at[i, "p_d"], "A": p.at[i, "p_a"]}
+        if any(pd.isna(v) for v in probs.values()) or src not in cols:
+            continue
+        k = max(probs, key=probs.get)
+        dec = r[f"{cols[src]}{k.lower()}"]
+        if pd.isna(dec):
+            continue
+        timed = pd.notna(r["kickoff"])
+        day = _et_day(r["kickoff"]) if timed else str(r["date"])[:10]
+        base = {"day": day, "key": r["match_id"], "event": f"{r['home']} v {r['away']}", "league": r["league"],
+                "group": slg.group_of(r["league"]), "day_source": "kickoff" if timed else "date"}
+        rows.append(dict(base, lot_key=None, bet="1X2", bet_detail=k,
+                         pick={"H": r["home"], "D": "Draw", "A": r["away"]}[k],
+                         opponent={"H": r["away"], "D": f"{r['home']} v {r['away']}", "A": r["home"]}[k],
+                         p=probs[k], p_model=np.nan, p_market=q[src].at[i, f"p_{k.lower()}"], decimal=float(dec),
+                         price_source=src, result="won" if r["result"] == k else "lost"))
+        # the less likely of the two TEAMS at the snapshot that prices the pick
+        side = _side(q[src].at[i, "p_h"], q[src].at[i, "p_a"])
+        if side is not None:
+            j = "H" if side == "a" else "A"
+            dogs.append(dict(base, lot_key=sdy.dog_lot_key("Soccer", match_id=r["match_id"]),
+                             pick=r["home"] if j == "H" else r["away"],
+                             opponent=r["away"] if j == "H" else r["home"],
+                             p=probs[j], p_model=np.nan, p_market=q[src].at[i, f"p_{j.lower()}"],
+                             decimal=float(r[f"{cols[src]}{j.lower()}"]), price_source=src,
+                             result="won" if r["result"] == j else "lost"))
+        # over/under 2.5 where the league ships it from the market, at the pre-match average
+        qo_i = qo.at[i]
+        if r["league"] in ou_leagues and pd.notna(qo_i) and qo_i != 0.5 \
+                and pd.notna(r["hg"]) and pd.notna(r["ag"]):
+            o = "Over" if qo_i > 0.5 else "Under"
+            ous.append(dict(base, lot_key=None, bet="OU25", bet_detail=f"{o} 2.5", pick=o,
+                            opponent="Under" if o == "Over" else "Over",
+                            p=qo_i if o == "Over" else 1 - qo_i, p_model=np.nan,
+                            p_market=qo_i if o == "Over" else 1 - qo_i,
+                            decimal=float(r["avg_o25" if o == "Over" else "avg_u25"]), price_source="pre",
+                            result=_goal_result(o, float(r["hg"]) + float(r["ag"]))))
+    legs = pd.DataFrame(rows, columns=SOCCER_V2_COLS)
+    dog_cols = [c for c in SOCCER_V2_COLS if c not in ("bet", "bet_detail")]
+    print("soccer v2  leagues:", len(leagues), " over/under 2.5 from the market:", len(ou_leagues),
+          " priced by:", dict(legs["price_source"].value_counts()),
+          " day from:", dict(legs["day_source"].value_counts()))
+    return {"legs_v2_soccer": legs, "legs_dogs_v2_soccer": pd.DataFrame(dogs, columns=dog_cols),
+            "legs_v2_ou25": pd.DataFrame(ous, columns=SOCCER_V2_COLS)}
+
+
+def nfl_v2():
+    """legs_v2_nfl_lines (module docstring): the closing spread and total,
+    read raw from nfl/data/games.csv.gz, the side by the no-vig prices and at
+    level prices the shipped model's side from the walk-forward (each season
+    fitted on earlier seasons) - point in time."""
+    sys.path.insert(0, str(ROOT / "nfl" / "engine"))
+    import nfl_data as nd
+    import nfl_model as nm
+    frame = nm.feature_frame()
+    wf = frame[["game_id"]].join(nm.walk_forward(frame)).set_index("game_id")
+    g = pd.read_csv(ROOT / "nfl" / "data" / "games.csv.gz", low_memory=False)
+    g = g[(g["season"] >= 2016) & g["result"].notna() & g["total"].notna()]
+    rows, counts = [], Counter()
+    for r in g.itertuples():
+        home, away = nd.franchise(r.home_team), nd.franchise(r.away_team)
+        day = nd.eastern_day(nd.kickoff_utc(r.gameday, r.gametime))
+        base = {"day": day, "key": r.game_id, "lot_key": None, "event": f"{away} @ {home}",
+                "p_model": np.nan, "price_source": "close"}
+        model = wf.loc[r.game_id] if r.game_id in wf.index else None
+        for bet in ("SPREAD", "TOTAL"):
+            if bet == "SPREAD":
+                line, a_odds, b_odds = r.spread_line, r.home_spread_odds, r.away_spread_odds
+                if pd.isna(line) or float(line) == 0.0:
+                    counts["spread: zero or no line"] += 1
+                    continue
+            else:
+                line, a_odds, b_odds = r.total_line, r.over_odds, r.under_odds
+                if pd.isna(line):
+                    counts["total: no line"] += 1
+                    continue
+            if pd.isna(a_odds) or pd.isna(b_odds):
+                counts[f"{bet.lower()}: no price"] += 1
+                continue
+            da, db = _dec(a_odds), _dec(b_odds)
+            qa = _devig(da, db)
+            if da == db:
+                # level prices: the shipped model's side at chance 0.5, where it exists
+                if bet == "SPREAD":
+                    m_ = None if model is None or pd.isna(model["margin"]) else float(model["margin"])
+                    first = None if m_ is None else (m_ - float(line) > 0)
+                else:
+                    m_ = None if model is None or pd.isna(model["total_pred"]) else float(model["total_pred"])
+                    first = None if m_ is None else (m_ - float(line) > 0)
+                if first is None:
+                    counts[f"{bet.lower()}: level, no model number"] += 1
+                    continue
+                counts[f"{bet.lower()}: level, model side"] += 1
+                chance, source = 0.5, "model"
+            else:
+                first, chance, source = qa > 0.5, max(qa, 1 - qa), "market"
+                counts[f"{bet.lower()}: market side"] += 1
+            if bet == "SPREAD":
+                margin = float(r.result) - float(line)              # > 0: home covered
+                team, opp = (home, away) if first else (away, home)
+                hcap = -float(line) if first else float(line)
+                pick, detail = team, f"{team} {hcap:+g}"
+                result = "void" if margin == 0 else ("won" if (margin > 0) == first else "lost")
+            else:
+                over = float(r.total) - float(line)
+                pick, opp = ("Over", "Under") if first else ("Under", "Over")
+                detail = f"{pick} {float(line):g}"
+                result = "void" if over == 0 else ("won" if (over > 0) == first else "lost")
+            rows.append(dict(base, bet=bet, bet_detail=detail, pick=pick, opponent=opp, p=chance,
+                             p_market=chance, decimal=da if first else db, result=result,
+                             line=float(line) if bet == "TOTAL" else hcap, side_source=source,
+                             overround=1 / da + 1 / db - 1))
+    print("nfl v2 lines:", dict(sorted(counts.items())))
+    return {"legs_v2_nfl_lines": pd.DataFrame(rows, columns=NFL_LINE_COLS)}
+
+
+def ufc_v2():
+    """legs_v2_ufc_method (module docstring): six props a fight, on the v1
+    UFC file's fights, priced, chanced and graded as the docstring says; the
+    estimate from method_price.fit_before(year) - one refit per year, on
+    earlier years' fights only."""
+    sys.path.insert(0, str(ROOT / "engine"))
+    import market_blend
+    import method_price as mpr
+    import parlay_profiles as pp
+    sdy = _sameday()
+    d = pd.read_csv(ROOT / "engine" / "experiments" / "parlay_legs.csv.gz")
+    d = d[d["dec_red"].notna() & d["dec_blue"].notna() & d["winner"].ne("unresolved")
+          & (d["date"] >= "2016-08-01") & (d["date"] <= sdy.PROPS_HISTORY_END)]
+    arch = pd.read_csv(ROOT / "engine" / "data" / "UFC_with_mmr_rebuilt_dedup.csv",
+                       usecols=["fight_id", "method"], low_memory=False).drop_duplicates("fight_id")
+    # a plain dict comprehension: Series.map turns method_class's None into NaN
+    method_of = {f: pp.method_class(t) for f, t in zip(arch["fight_id"], arch["method"])}
+    fit = {r["fight_id"]: r for r in mpr.fit_rows()}
+    rows_all = list(fit.values())
+    models = {}
+    rows, counts = [], Counter()
+    for r in d.itertuples():
+        over = 1.0 / r.dec_red + 1.0 / r.dec_blue - 1.0
+        if over < 0 or over > 0.15:            # the v1 UFC file's believable-book check
+            continue
+        mm = pp._method_market({c: getattr(r, c) for c in ("ko_red", "ko_blue", "sub_red", "sub_blue",
+                                                            "decision_red", "decision_blue")})
+        if mm is None:
+            counts["fights without a believable six-way book"] += 1
+            continue
+        counts["fights with props"] += 1
+        mk_red = _devig(r.dec_red, r.dec_blue)
+        pb_red = market_blend.blend(r.p_model, mk_red)
+        year = int(str(r.date)[:4])
+        if year not in models:
+            models[year] = mpr.fit_before(year, rows_all)
+        model, est, why = models[year], None, None
+        if model is None:
+            why = NO_FIT_2016 if year == 2016 else f"method_price.fit_before({year}) is None"
+        elif r.fight_id not in fit:
+            why = "no closing moneyline pair or six-way book in method_price.fit_rows for this fight"
+        else:
+            est = mpr.predict(mpr.features_of(fit[r.fight_id]), model)
+        winner = None if pd.isna(r.winner) else r.winner
+        how = method_of.get(r.fight_id)
+        if winner is not None and how is None:
+            counts["wins by DQ or another unclassed method (every prop of the fight lost)"] += 1
+        book = sum(1.0 / getattr(r, f"{c}_{s}") for c in ("ko", "sub", "decision") for s in ("red", "blue")) - 1
+        for side, other in (("red", "blue"), ("blue", "red")):
+            p_win = pb_red if side == "red" else 1 - pb_red
+            pm_win = r.p_model if side == "red" else 1 - r.p_model
+            tot = sum(mm[side].values())
+            for t, col in (("KO/TKO", "ko"), ("Submission", "sub"), ("Decision", "decision")):
+                share = mm[side][t] / tot
+                result = "void" if winner is None else (
+                    "won" if winner == side and how == t else "lost")
+                rows.append({"day": r.date, "key": r.fight_id,
+                             "lot_key": sdy.method_lot_key([r.red, r.blue], getattr(r, side), t),
+                             "event": r.event, "bet": "METHOD", "bet_detail": t,
+                             "pick": getattr(r, side), "opponent": getattr(r, other),
+                             "p": p_win * share, "p_model": pm_win * share, "p_market": mm[side][t],
+                             "decimal": float(getattr(r, f"{col}_{side}")), "price_source": "close",
+                             "result": result, "corner": side, "p_win": p_win, "share": share,
+                             "est_decimal": None if est is None else est[side][t]["decimal"],
+                             "est_missing": why, "est_fit_last": None if model is None else model["fit_last"],
+                             "method_overround": book})
+    out = pd.DataFrame(rows, columns=METHOD_COLS)
+    counts["props without an estimate"] = int(out["est_decimal"].isna().sum())
+    print("ufc v2 method:", dict(counts))
+    return {"legs_v2_ufc_method": out}
+
+
+def write_v2(frames):
+    """Each v2 frame sorted and gzipped with mtime 0 (the same rows give the
+    same bytes)."""
+    for name, df in frames.items():
+        sort = ["day", "key"] + [c for c in ("bet", "corner", "bet_detail") if c in df.columns]
+        df = df.sort_values(sort, kind="mergesort").reset_index(drop=True)
+        df.to_csv(DATA / f"{name}.csv.gz", index=False, float_format="%.6f",
+                  compression={"method": "gzip", "mtime": 0})
+        won = np.mean(df["result"] == "won") if len(df) else float("nan")
+        print(f"{name:20s} {len(df):7,d} rows  {df['day'].min()} .. {df['day'].max()}  won {won:.3f}  "
+              f"mean p {df['p'].mean():.3f}  mean p_market {df['p_market'].mean():.3f}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--soccer-engine", default=str(ROOT / "soccer" / "engine"),
@@ -273,13 +579,20 @@ def main():
     ap.add_argument("--only", choices=("ufc", "nfl", "soccer"),
                     help="build one sport in this process (each sport runs in its own process: "
                          "the UFC and soccer engines both have a package named experiments)")
+    ap.add_argument("--v2", action="store_true",
+                    help="write the tickets v2 files (legs_v2_*, legs_dogs_v2_soccer) only; the v1 files "
+                         "are left untouched")
     args = ap.parse_args()
     DATA.mkdir(parents=True, exist_ok=True)
     if args.only is None:
         import subprocess
         for name in ("ufc", "nfl", "soccer"):
             subprocess.run([sys.executable, __file__, "--soccer-engine", args.soccer_engine,
-                            "--only", name], check=True)
+                            "--only", name] + (["--v2"] if args.v2 else []), check=True)
+        return
+    if args.v2:
+        build = {"ufc": ufc_v2, "nfl": nfl_v2, "soccer": lambda: soccer_v2(Path(args.soccer_engine))}[args.only]
+        write_v2(build())
         return
     build = {"ufc": ufc, "nfl": nfl, "soccer": lambda: soccer(Path(args.soccer_engine))}[args.only]
     picks, dogs = build()

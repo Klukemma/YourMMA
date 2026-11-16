@@ -733,11 +733,48 @@ def _method_error_pct(measured, method_type, side):
     return None if value is None else round(100.0 * value, 1)
 
 
+def _method_moneyline(fight):
+    """(the pick's no-vig moneyline chance, where it was read) for the
+    method estimate, or (None, None).
+
+    THE MEDIAN PAIR FIRST. The estimator was fitted on history's moneyline,
+    one book's closing pair (method_odds.csv / odds.csv); live, the card's
+    median pair across books (decimal_median / decimal_other_median, which
+    predict_card.with_median_prices writes before the method legs) is the
+    closest match to it - the typical book near the bell. The best pair
+    takes each side's best price, often from two books: it under-counts the
+    margin and leans to whichever book is generous on one side. So the
+    median pair, de-vigged in proportion, when the card has both sides of
+    it ("median of N books", N the thinner side's count); else the best
+    pair (decimal / decimal_other: "best of books"); else the card's
+    market_prob, the blend's own no-vig chance for the pick, for a fight
+    carrying no pair at all ("card market chance")."""
+    pairs = (("decimal_median", "decimal_other_median"), ("decimal", "decimal_other"))
+    for a, b in pairs:
+        pa, pb = _number(fight.get(a)), _number(fight.get(b))
+        if pa is None or pb is None or pa <= 1.0 or pb <= 1.0:
+            continue
+        ia, ib = 1.0 / pa, 1.0 / pb
+        if a == "decimal_median":
+            books = _number(fight.get("books_median"))
+            source = f"median of {int(books)} books" if books else "median of books"
+        else:
+            source = "best of books"
+        return ia / (ia + ib), source
+    m = _number(fight.get("market_prob"))
+    return (m, "card market chance") if m is not None else (None, None)
+
+
 def method_legs_payload(fight, division, archive, event_date, estimator):
     """A card fight's six method legs - for each corner, each type in
     method_price.METHOD_TYPES - as {corner, fighter, type, chance,
     market_chance, est_decimal, est_american, error_pct, source,
-    missing_reason}.
+    moneyline_source, missing_reason}.
+
+    The estimate's moneyline input is the card's median pair when it has
+    one, else its best pair, else its market_prob (_method_moneyline says
+    why); moneyline_source names which one each estimated leg was built
+    from (None on a leg that was not estimated).
 
     fight: the card's fight (red, blue, pick, win_prob and market_prob for
     the pick, rounds_scheduled). division: the weight class FIGHT_CONTEXTS
@@ -774,12 +811,14 @@ def method_legs_payload(fight, division, archive, event_date, estimator):
                     "error_pct": (_method_error_pct((estimator or {}).get("measured"), method_type,
                                                     mpx.side_of(market[corner])) if e else None),
                     "source": METHOD_LEG_SOURCE,
+                    "moneyline_source": ml_source if e else None,
                     "missing_reason": None if e else reason,
                 })
         return out
 
     model = (estimator or {}).get("model")
-    p_pick, m_pick = _number(fight.get("win_prob")), _number(fight.get("market_prob"))
+    p_pick = _number(fight.get("win_prob"))
+    m_pick, ml_source = _method_moneyline(fight)
     if model is None:
         return legs((estimator or {}).get("missing") or "The method estimator is not loaded.")
     if not red or not blue or pick not in (red, blue) or p_pick is None:
