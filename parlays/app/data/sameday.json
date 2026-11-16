@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-16T21:20:10Z",
+ "generated": "2026-11-16T23:51:27Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -26,11 +26,11 @@
    "day": "2026-11-15",
    "today": false,
    "past": true,
-   "in_play": true,
+   "in_play": false,
    "likeliest": {
     "day": "2026-11-15",
     "kind": "likeliest",
-    "status": "locked",
+    "status": "lost",
     "legs": [
      {
       "sport": "NFL",
@@ -45,7 +45,7 @@
       "price_source": "consensus moneyline",
       "american": -225,
       "reason": "NFL: chance 67%, model 66%, market 66%",
-      "outcome": null,
+      "outcome": "lost",
       "void_reason": null,
       "dog": false
      },
@@ -62,7 +62,7 @@
       "price_source": "consensus moneyline",
       "american": -180,
       "reason": "NFL: chance 62%, model 61%, market 62%",
-      "outcome": null,
+      "outcome": "won",
       "void_reason": null,
       "dog": false
      },
@@ -79,7 +79,7 @@
       "price_source": "consensus moneyline",
       "american": -290,
       "reason": "NFL: chance 74%, model 77%, market 71%",
-      "outcome": null,
+      "outcome": "won",
       "void_reason": null,
       "dog": false
      }
@@ -93,15 +93,15 @@
     "first_start": "2026-11-15T18:00:00Z",
     "last_start": "2026-11-15T21:05:00Z",
     "built_at": "2026-11-15T14:01:44Z",
-    "paid": null,
-    "profit": null,
+    "paid": 0.0,
+    "profit": -1.0,
     "missing_reason": null,
     "none_reason": null
    },
    "underdog": {
     "day": "2026-11-15",
     "kind": "underdog",
-    "status": "locked",
+    "status": "lost",
     "legs": [
      {
       "sport": "NFL",
@@ -116,7 +116,7 @@
       "price_source": "consensus moneyline",
       "american": 150,
       "reason": "NFL: chance 38%, model 39%, market 38%",
-      "outcome": null,
+      "outcome": "lost",
       "void_reason": null,
       "dog": true
      },
@@ -133,7 +133,7 @@
       "price_source": "consensus moneyline",
       "american": -500,
       "reason": "NFL: chance 82%, model 78%, market 80%",
-      "outcome": null,
+      "outcome": "won",
       "void_reason": null,
       "dog": false
      }
@@ -147,8 +147,8 @@
     "first_start": "2026-11-15T18:00:00Z",
     "last_start": "2026-11-15T21:05:00Z",
     "built_at": "2026-11-15T14:56:45Z",
-    "paid": null,
-    "profit": null,
+    "paid": 0.0,
+    "profit": -1.0,
     "missing_reason": null,
     "none_reason": null,
     "dog": {
@@ -214,12 +214,12 @@
   }
  ],
  "record": {
-  "settled": 1,
+  "settled": 2,
   "won": 0,
-  "units": -1.0,
+  "units": -2.0,
   "roi": -1.0,
-  "implied_roi": -0.063,
-  "pending": 1,
+  "implied_roi": -0.0888,
+  "pending": 0,
   "last": [
    {
     "day": "2026-11-14",
@@ -230,17 +230,27 @@
     "sports": [
      "UFC"
     ]
+   },
+   {
+    "day": "2026-11-15",
+    "status": "lost",
+    "multiplier": 3.0217,
+    "paid": 0.0,
+    "profit": -1.0,
+    "sports": [
+     "NFL"
+    ]
    }
   ]
  },
  "records": {
   "likeliest": {
-   "settled": 1,
+   "settled": 2,
    "won": 0,
-   "units": -1.0,
+   "units": -2.0,
    "roi": -1.0,
-   "implied_roi": -0.063,
-   "pending": 1,
+   "implied_roi": -0.0888,
+   "pending": 0,
    "last": [
     {
      "day": "2026-11-14",
@@ -251,16 +261,26 @@
      "sports": [
       "UFC"
      ]
+    },
+    {
+     "day": "2026-11-15",
+     "status": "lost",
+     "multiplier": 3.0217,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
+      "NFL"
+     ]
     }
    ]
   },
   "underdog": {
-   "settled": 1,
+   "settled": 2,
    "won": 0,
-   "units": -1.0,
+   "units": -2.0,
    "roi": -1.0,
-   "implied_roi": -0.0597,
-   "pending": 1,
+   "implied_roi": -0.0686,
+   "pending": 0,
    "last": [
     {
      "day": "2026-11-14",
@@ -270,6 +290,16 @@
      "profit": -1.0,
      "sports": [
       "UFC"
+     ]
+    },
+    {
+     "day": "2026-11-15",
+     "status": "lost",
+     "multiplier": 3.0,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
+      "NFL"
      ]
     }
    ]

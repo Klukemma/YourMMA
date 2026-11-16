@@ -354,7 +354,7 @@
    "day": "2026-11-15",
    "kind": "likeliest",
    "built_at": "2026-11-15T14:01:44Z",
-   "status": "pending",
+   "status": "lost",
    "multiplier": 3.0217,
    "p": 0.307803,
    "p_market": 0.292997,
@@ -381,7 +381,7 @@
      },
      "price_source": "consensus moneyline",
      "dog": null,
-     "outcome": null
+     "outcome": "lost"
     },
     {
      "sport": "NFL",
@@ -400,7 +400,7 @@
      },
      "price_source": "consensus moneyline",
      "dog": null,
-     "outcome": null
+     "outcome": "won"
     },
     {
      "sport": "NFL",
@@ -419,11 +419,11 @@
      },
      "price_source": "consensus moneyline",
      "dog": null,
-     "outcome": null
+     "outcome": "won"
     }
    ],
-   "paid": null,
-   "profit": null
+   "paid": 0.0,
+   "profit": -1.0
   },
   {
    "day": "2026-11-15",
@@ -494,7 +494,7 @@
    "day": "2026-11-15",
    "kind": "underdog",
    "built_at": "2026-11-15T14:56:45Z",
-   "status": "pending",
+   "status": "lost",
    "multiplier": 3.0,
    "p": 0.310347,
    "p_market": 0.307483,
@@ -521,7 +521,7 @@
      },
      "price_source": "consensus moneyline",
      "dog": true,
-     "outcome": null
+     "outcome": "lost"
     },
     {
      "sport": "NFL",
@@ -540,7 +540,7 @@
      },
      "price_source": "consensus moneyline",
      "dog": null,
-     "outcome": null
+     "outcome": "won"
     }
    ],
    "dog": {
@@ -552,8 +552,8 @@
     "salt": "sameday-dog-v1",
     "version": 1
    },
-   "paid": null,
-   "profit": null
+   "paid": 0.0,
+   "profit": -1.0
   }
  ]
 }
