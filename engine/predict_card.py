@@ -4290,6 +4290,30 @@ _app_card = _app_export.card_payload(
 for _card_fight, (_med, _med_other) in zip(_app_card['fights'], _card_medians):
     _card_fight.update(with_median_prices(_med, _med_other))
 
+# THE METHOD LEGS, beside each fight and changing nothing else: each corner's
+# "wins by KO/TKO / submission / decision" for tickets v2, priced by the
+# frozen METHOD ESTIMATOR (engine/method_price.py) because no live feed
+# prices a method prop, each carrying the error it was measured to miss real
+# props by. Read from what is known before the bell only: the card's own
+# chances and pair, the division FIGHT_CONTEXTS names (a card fight's number
+# is its FIGHT_CARD index plus one), the scheduled rounds and each corner's
+# UFC record strictly before the event. A reader's aid like the parlays: a
+# failure here must never cost the card, so each fight's six legs degrade to
+# "Not estimated on this run (<ErrorType>)." and say so.
+_method_estimator = _app_export.method_estimator()
+for _card_fight in _app_card['fights']:
+    try:
+        _card_fight['method_legs'] = _app_export.method_legs_payload(
+            _card_fight,
+            _live_rows.division_of((FIGHT_CONTEXTS or {}).get((_card_fight.get('number') or 0) - 1)),
+            _form_archive if _form_ready else None, str(EVENT_DATE), _method_estimator)
+    except Exception as _err:                                  # noqa: BLE001
+        print(f"::warning::method legs not estimated: {type(_err).__name__}: {_err}")
+        _card_fight['method_legs'] = _app_export.method_legs_unbuilt(_card_fight, _err)
+if _method_estimator['missing']:
+    print(f"   [method legs] {_method_estimator['missing']}")
+# END OF THE METHOD LEGS
+
 for _path in _app_export.write_all(APP_DATA_DIR, {'card': _app_card}):
     print(f"\nApp data: {_path}")
 

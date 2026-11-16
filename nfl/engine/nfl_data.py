@@ -325,7 +325,8 @@ def load_games(path=GAMES):
     Columns: game_id, season, week, game_type, kickoff, home, away,
     home_then, away_then (the codes used that season), home_score,
     away_score, result (home margin), total, played, spread_line,
-    total_line, home_ml, away_ml, div_game, neutral, roof, surface,
+    total_line, home_ml, away_ml, home_spread_odds, away_spread_odds,
+    over_odds, under_odds, div_game, neutral, roof, surface,
     home_rest, away_rest, home_qb_id, away_qb_id, home_qb, away_qb,
     home_coach, away_coach, stadium.
     """
@@ -346,6 +347,15 @@ def load_games(path=GAMES):
         "total_line": g["total_line"],
         "home_ml": g.get("home_moneyline"),
         "away_ml": g.get("away_moneyline"),
+        # The prices at spread_line and total_line (American odds; the
+        # closing price for a game played, the latest posted for one to
+        # come): nfl_odds.market_for's fallback prices a spread or total leg
+        # with them (the same-day parlays, parlays/engine/sameday.py TICKETS
+        # v2). Read by no model and no pick.
+        "home_spread_odds": g.get("home_spread_odds"),
+        "away_spread_odds": g.get("away_spread_odds"),
+        "over_odds": g.get("over_odds"),
+        "under_odds": g.get("under_odds"),
         "div_game": g.get("div_game", 0).fillna(0).astype(int),
         "neutral": (g.get("location") == "Neutral").astype(int),
         "roof": g.get("roof"),

@@ -1,0 +1,543 @@
+{
+ "version": 1,
+ "written_by": "engine/experiments/method_price_fit.py",
+ "method_types": [
+  "KO/TKO",
+  "Submission",
+  "Decision"
+ ],
+ "features": [
+  "p",
+  "p2",
+  "p3",
+  "div:flyweight",
+  "div:bantamweight",
+  "div:featherweight",
+  "div:lightweight",
+  "div:welterweight",
+  "div:middleweight",
+  "div:light heavyweight",
+  "div:heavyweight",
+  "div:women's strawweight",
+  "div:women's flyweight",
+  "div:women's bantamweight",
+  "div:women's featherweight",
+  "five_rounds",
+  "ko_win",
+  "sub_win",
+  "opp_ko_loss",
+  "opp_sub_loss",
+  "opp_ko_win",
+  "opp_sub_win",
+  "log_fights",
+  "opp_log_fights"
+ ],
+ "coverage": {
+  "source": "experiments/parlay_legs.csv.gz (props, closing moneyline, records) + the archive's division and total_rounds",
+  "first": "2016-01-02",
+  "last": "2024-12-07",
+  "fights_by_year": {
+   "2016": 438,
+   "2017": 405,
+   "2018": 417,
+   "2019": 451,
+   "2020": 399,
+   "2021": 451,
+   "2022": 429,
+   "2023": 369,
+   "2024": 321
+  },
+  "no_division": 56,
+  "five_rounds": 377,
+  "six_way_overround_median": 0.22510471412155686,
+  "moneyline_overround_median": 0.039584608630758744
+ },
+ "dev_choice": {
+  "fit": [
+   "2016-01-01",
+   "2019-12-31"
+  ],
+  "check": [
+   "2020-01-01",
+   "2020-12-31"
+  ],
+  "fit_fights": 1711,
+  "check_fights": 399,
+  "alpha": 10.0,
+  "prior_fights": 3.0,
+  "all_single_props": 0.21842281329926277,
+  "grid": [
+   {
+    "alpha": 0.1,
+    "prior_fights": 1.0,
+    "all_single_props": 0.22111063897545977
+   },
+   {
+    "alpha": 0.1,
+    "prior_fights": 3.0,
+    "all_single_props": 0.21890735196604647
+   },
+   {
+    "alpha": 0.1,
+    "prior_fights": 5.0,
+    "all_single_props": 0.2204254391909355
+   },
+   {
+    "alpha": 0.1,
+    "prior_fights": 10.0,
+    "all_single_props": 0.22222332069392375
+   },
+   {
+    "alpha": 0.1,
+    "prior_fights": 20.0,
+    "all_single_props": 0.22533013345032432
+   },
+   {
+    "alpha": 1.0,
+    "prior_fights": 1.0,
+    "all_single_props": 0.22114888454488799
+   },
+   {
+    "alpha": 1.0,
+    "prior_fights": 3.0,
+    "all_single_props": 0.2187844104807626
+   },
+   {
+    "alpha": 1.0,
+    "prior_fights": 5.0,
+    "all_single_props": 0.2204182069433424
+   },
+   {
+    "alpha": 1.0,
+    "prior_fights": 10.0,
+    "all_single_props": 0.22279750251862346
+   },
+   {
+    "alpha": 1.0,
+    "prior_fights": 20.0,
+    "all_single_props": 0.22601465486212557
+   },
+   {
+    "alpha": 10.0,
+    "prior_fights": 1.0,
+    "all_single_props": 0.22113631171889225
+   },
+   {
+    "alpha": 10.0,
+    "prior_fights": 3.0,
+    "all_single_props": 0.21842281329926277
+   },
+   {
+    "alpha": 10.0,
+    "prior_fights": 5.0,
+    "all_single_props": 0.2195921702825435
+   },
+   {
+    "alpha": 10.0,
+    "prior_fights": 10.0,
+    "all_single_props": 0.22347734248088516
+   },
+   {
+    "alpha": 10.0,
+    "prior_fights": 20.0,
+    "all_single_props": 0.22635015808371944
+   },
+   {
+    "alpha": 100.0,
+    "prior_fights": 1.0,
+    "all_single_props": 0.22074116731690596
+   },
+   {
+    "alpha": 100.0,
+    "prior_fights": 3.0,
+    "all_single_props": 0.21917485646664023
+   },
+   {
+    "alpha": 100.0,
+    "prior_fights": 5.0,
+    "all_single_props": 0.2186294063419673
+   },
+   {
+    "alpha": 100.0,
+    "prior_fights": 10.0,
+    "all_single_props": 0.22299994374771354
+   },
+   {
+    "alpha": 100.0,
+    "prior_fights": 20.0,
+    "all_single_props": 0.22345883250553514
+   },
+   {
+    "alpha": 1000.0,
+    "prior_fights": 1.0,
+    "all_single_props": 0.22647207467171937
+   },
+   {
+    "alpha": 1000.0,
+    "prior_fights": 3.0,
+    "all_single_props": 0.22392677542852174
+   },
+   {
+    "alpha": 1000.0,
+    "prior_fights": 5.0,
+    "all_single_props": 0.223923527114887
+   },
+   {
+    "alpha": 1000.0,
+    "prior_fights": 10.0,
+    "all_single_props": 0.22212134328781324
+   },
+   {
+    "alpha": 1000.0,
+    "prior_fights": 20.0,
+    "all_single_props": 0.22696270860590545
+   }
+  ]
+ },
+ "test": {
+  "fit": [
+   "2016-01-01",
+   "2020-12-31"
+  ],
+  "test": [
+   "2021-01-01",
+   "2024-12-31"
+  ],
+  "fit_fights": 2110,
+  "test_fights": 1570,
+  "metric": "median of |estimated decimal - real decimal| / real decimal",
+  "side": "fav: the corner's no-vig moneyline chance is at least 0.5; dog: below",
+  "by_leg": {
+   "KO/TKO": {
+    "fav": 0.24318808984760232,
+    "dog": 0.22799971167863164
+   },
+   "Submission": {
+    "fav": 0.29181868973451375,
+    "dog": 0.26309072481322365
+   },
+   "Decision": {
+    "fav": 0.16401894362273975,
+    "dog": 0.14384986921263848
+   }
+  },
+  "n": {
+   "KO/TKO": {
+    "fav": 1588,
+    "dog": 1552
+   },
+   "Submission": {
+    "fav": 1588,
+    "dog": 1552
+   },
+   "Decision": {
+    "fav": 1588,
+    "dog": 1552
+   }
+  },
+  "all_single_props": 0.2139433209285285,
+  "props": 9420,
+  "by_year": {
+   "2021": 0.19623556216450888,
+   "2022": 0.20841295263656978,
+   "2023": 0.22818209725458966,
+   "2024": 0.23364555286092517
+  },
+  "ladder": [
+   {
+    "inputs": "constant split",
+    "features": 0,
+    "all_single_props": 0.32902433507309026
+   },
+   {
+    "inputs": "moneyline alone",
+    "features": 3,
+    "all_single_props": 0.3245599650311834
+   },
+   {
+    "inputs": "+ division and rounds",
+    "features": 16,
+    "all_single_props": 0.2846696492655181
+   },
+   {
+    "inputs": "+ records (the estimator)",
+    "features": 24,
+    "all_single_props": 0.2139433209285285
+   }
+  ],
+  "side_slope": 0.848757336255884,
+  "loading_by_estimate": [
+   {
+    "from": 1.0,
+    "to": 2.0,
+    "props": 156,
+    "median_loading": 0.23501013555518002
+   },
+   {
+    "from": 2.0,
+    "to": 3.0,
+    "props": 1058,
+    "median_loading": 0.20901496733241665
+   },
+   {
+    "from": 3.0,
+    "to": 4.0,
+    "props": 1346,
+    "median_loading": 0.17653089023239343
+   },
+   {
+    "from": 4.0,
+    "to": 6.0,
+    "props": 2084,
+    "median_loading": 0.18116191893030942
+   },
+   {
+    "from": 6.0,
+    "to": 9.0,
+    "props": 2162,
+    "median_loading": 0.19131423257863545
+   },
+   {
+    "from": 9.0,
+    "to": 14.0,
+    "props": 1995,
+    "median_loading": 0.12817554123340336
+   },
+   {
+    "from": 14.0,
+    "to": 25.0,
+    "props": 603,
+    "median_loading": 0.11394066265132485
+   },
+   {
+    "from": 25.0,
+    "to": null,
+    "props": 16,
+    "median_loading": 0.37084338346676704
+   }
+  ]
+ },
+ "frozen": {
+  "fit": [
+   "2016-01-01",
+   "2024-12-31"
+  ],
+  "model": {
+   "features": [
+    "p",
+    "p2",
+    "p3",
+    "div:flyweight",
+    "div:bantamweight",
+    "div:featherweight",
+    "div:lightweight",
+    "div:welterweight",
+    "div:middleweight",
+    "div:light heavyweight",
+    "div:heavyweight",
+    "div:women's strawweight",
+    "div:women's flyweight",
+    "div:women's bantamweight",
+    "div:women's featherweight",
+    "five_rounds",
+    "ko_win",
+    "sub_win",
+    "opp_ko_loss",
+    "opp_sub_loss",
+    "opp_ko_win",
+    "opp_sub_win",
+    "log_fights",
+    "opp_log_fights"
+   ],
+   "method_types": [
+    "KO/TKO",
+    "Submission",
+    "Decision"
+   ],
+   "alpha": 10.0,
+   "prior_fights": 3.0,
+   "prior": {
+    "ko_win": 0.21889954568399797,
+    "opp_ko_loss": 0.10368500757193337,
+    "opp_ko_win": 0.21889954568399797,
+    "opp_sub_loss": 0.06752145381120646,
+    "opp_sub_win": 0.12329126703685007,
+    "sub_win": 0.12329126703685007
+   },
+   "side_slope": 0.8821145934007575,
+   "mean": [
+    0.5,
+    0.28042463798133394,
+    0.17063695697199652,
+    0.05217391304347826,
+    0.10842391304347826,
+    0.11902173913043479,
+    0.14266304347826086,
+    0.14673913043478262,
+    0.11902173913043479,
+    0.07744565217391304,
+    0.07880434782608696,
+    0.05407608695652174,
+    0.04728260869565217,
+    0.034239130434782605,
+    0.004891304347826087,
+    0.10244565217391305,
+    0.21483606750395634,
+    0.12166458705498823,
+    0.10470773267364629,
+    0.06852229785747681,
+    0.2148360675039564,
+    0.12166458705498823,
+    1.6736433811814602,
+    1.6736433811814604
+   ],
+   "scale": [
+    0.17442659768891344,
+    0.1775512712855349,
+    0.15102539276596122,
+    0.2223775974355543,
+    0.31091504969013645,
+    0.32381408978734905,
+    0.34972889429355514,
+    0.35384566979692594,
+    0.32381408978734905,
+    0.2672972561274809,
+    0.2694331505026623,
+    0.22616777793486237,
+    0.2122426997816213,
+    0.18184282328938484,
+    0.06976660726739758,
+    0.3032334752704108,
+    0.11328267250793875,
+    0.09469447991807076,
+    0.07989466285487347,
+    0.06770319431222419,
+    0.11328267250793875,
+    0.09469447991807074,
+    0.9138850649003989,
+    0.9138850649003989
+   ],
+   "intercept": {
+    "KO/TKO": -0.29043499611737184,
+    "Submission": -0.7992803114150355
+   },
+   "weights": {
+    "KO/TKO": [
+     -0.22533959595440728,
+     -0.09267289772144242,
+     0.3430871987321336,
+     -0.03490908806966639,
+     -0.017768077737311358,
+     0.017637715765623566,
+     0.04551569740334537,
+     0.07590908477384409,
+     0.10283715367612647,
+     0.14147444103760104,
+     0.14892888099824758,
+     -0.0955497378054248,
+     -0.08855637790326226,
+     -0.06950271793100138,
+     -0.016193715200221278,
+     0.11890769270726051,
+     0.33817238295476676,
+     0.027207410305107933,
+     0.180131493741106,
+     0.0730794552756459,
+     0.03220603845523118,
+     0.05334373591083794,
+     -0.07632593845752966,
+     -0.034715736362260274
+    ],
+    "Submission": [
+     -0.2753368755937791,
+     -0.16154338938019308,
+     0.3651839290722682,
+     0.0001168970355201859,
+     -0.01543482847039233,
+     0.01872430367913579,
+     0.020967708531604724,
+     0.009876874111782974,
+     0.044598955916297034,
+     0.04892910449546555,
+     0.026725275100471502,
+     -0.050038960849873,
+     -0.04296702560065116,
+     -0.02964644597617858,
+     -0.007414334680100859,
+     0.07326282234448286,
+     0.08206580964759604,
+     0.4139490062744992,
+     0.12082443041291492,
+     0.14785907621020986,
+     0.05052780590835314,
+     -0.010295375896753145,
+     -0.04102826082907529,
+     -0.10232529676252877
+    ]
+   },
+   "loading": [
+    0.2985627870715608,
+    0.17600652428447286,
+    0.04861535756300845
+   ],
+   "loading_range": [
+    -4.064191689460796,
+    -0.4683084653283173
+   ],
+   "fit_fights": 3680,
+   "fit_first": "2016-01-02",
+   "fit_last": "2024-12-07"
+  },
+  "sha256": "01f0c5f212235ca311213ab7ec2b85256d88d1deaed9826f468e61a5c57d2151",
+  "loading_curve": [
+   {
+    "chance": 0.02,
+    "loading": 0.4247935871405535,
+    "decimal": 35.09280253032721
+   },
+   {
+    "chance": 0.05,
+    "loading": 0.23070675651204953,
+    "decimal": 16.25082489729891
+   },
+   {
+    "chance": 0.1,
+    "loading": 0.1630506926130033,
+    "decimal": 8.598077507295228
+   },
+   {
+    "chance": 0.15,
+    "loading": 0.1498449269564457,
+    "decimal": 5.797883271366722
+   },
+   {
+    "chance": 0.2,
+    "loading": 0.15167696168700462,
+    "decimal": 4.341495199032094
+   },
+   {
+    "chance": 0.3,
+    "loading": 0.17014320057183374,
+    "decimal": 2.8486541918154775
+   },
+   {
+    "chance": 0.4,
+    "loading": 0.19495263096171955,
+    "decimal": 2.0921331400291194
+   },
+   {
+    "chance": 0.5,
+    "loading": 0.2213071945438676,
+    "decimal": 1.6375896325960462
+   }
+  ]
+ },
+ "caveats": [
+  "Fitted and tested on prices only: the target is the six-way prop market, and no result of any fight it fits or tests on is read.",
+  "The error table is measured fitting on 2016-2020 and testing on 2021-2024. The frozen fit live cards read is fitted on 2016-2024, and its error on a live card cannot be measured (no live prop price exists): the test table is the nearest measure.",
+  "History's moneyline is the closing line (odds.csv); a live card reads its own pair, a different snapshot, so a live estimate may miss by more than the table.",
+  "The dev choice (ridge penalty, prior weight) was made fitting 2016-2019 and checking 2020, and every yearly refit uses it, so a backtest refit for a year up to 2020 uses a choice that saw that year's prices (prices only, never a result).",
+  "History has no prop after 2024-12-07; the fit rows start in 2016, so there is no refit before 2016.",
+  "An estimate is what a book would probably charge, not an edge: the six-way market's median overround is 22.5% across its six outcomes, the moneyline pair's 4.0%."
+ ]
+}

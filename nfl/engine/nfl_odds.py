@@ -17,6 +17,17 @@ no-vig moneyline probability (its two prices scaled to sum to one). The
 median, not the best price: the best price on each side comes from
 different books and together they under-count the margin, which tilts the
 market toward whichever side one book happens to be generous on.
+
+THE SPREAD AND TOTAL PRICES. The same-day parlays (parlays/engine/sameday.py,
+TICKETS v2 SPREAD / TOTAL) price a spread or total leg live, so the price is
+kept beside the line: each side's consensus_price - the moneyline's own
+consensus - AT THE CONSENSUS LINE (offered_line, unchanged), from the books
+that priced BOTH sides at that line. A book's pair counts only then: a price
+at another line (a book on 3 while the consensus is 3.5) is a price for a
+different bet, and one side alone cannot be de-vigged. A price always comes
+from the same source as its line (the-odds-api's line with its price, the
+schedule's with the schedule's), and a missing price says why
+(PRICE_MISSING). The prices are read by no model and no pick.
 """
 
 import json
@@ -121,6 +132,45 @@ def _no_vig(home_price, away_price):
     return h / (h + a)
 
 
+# Why a spread or total price is None in market_for's output.
+PRICE_MISSING = {
+    "no_line": "no line",
+    "before": "fetched before prices were kept",
+    "unpaired": "no book priced both sides at the line",
+    "schedule_none": "the schedule posts none",
+    "schedule_one": "the schedule posts one side only",
+}
+LINE_TOL = 1e-9
+
+
+def _pair(a, b, sign):
+    """(a's price, b's price, the line) when both outcomes are priced at the
+    same line, else None. The line is sign x a's point - the schedule's
+    convention: a spread's home handicap flipped (sign -1), a total as it is
+    (sign +1) - and in both markets it is the point b quotes when b is on
+    the same line (the away side's handicap; the under's total)."""
+    if not a or not b or not a.get("price") or not b.get("price"):
+        return None
+    if a.get("point") is None or b.get("point") is None:
+        return None
+    line = sign * float(a["point"])
+    if abs(float(b["point"]) - line) > LINE_TOL:
+        return None
+    return float(a["price"]), float(b["price"]), line
+
+
+def _at_line(pairs, line):
+    """Each side's consensus price at `line` from the books whose pair is
+    at it, and how many such books: (first, second, books). (None, None, 0)
+    where none is; (None, None, None) where there is no line."""
+    if line is None:
+        return None, None, None
+    at = [(x, y) for x, y, point in pairs if abs(point - line) <= LINE_TOL]
+    if not at:
+        return None, None, 0
+    return consensus_price([x for x, _ in at]), consensus_price([y for _, y in at]), len(at)
+
+
 def parse_events(events):
     """{key: entry} from one API reply. Teams are mapped to franchise codes;
     an event naming a team not in the table is skipped and reported."""
@@ -131,6 +181,7 @@ def parse_events(events):
             unknown.update(n for n in (ev.get("home_team"), ev.get("away_team")) if n not in NAME_TO_CODE)
             continue
         probs, home_prices, away_prices, spreads, totals, books = [], [], [], [], [], []
+        spread_pairs, total_pairs = [], []      # (first price, second price, line) per book
         for book in ev.get("bookmakers") or []:
             books.append(book.get("title") or book.get("key"))
             for market in book.get("markets") or []:
@@ -148,14 +199,24 @@ def parse_events(events):
                         # home gives 3.5); the schedule's convention is the
                         # home side's expected margin, so the sign flips.
                         spreads.append(-float(h["point"]))
+                    pair = _pair(h, outcomes.get(ev["away_team"]), -1)
+                    if pair:
+                        spread_pairs.append(pair)
                 elif market.get("key") == "totals":
                     over = outcomes.get("Over")
                     if over and over.get("point") is not None:
                         totals.append(float(over["point"]))
+                    pair = _pair(over, outcomes.get("Under"), 1)
+                    if pair:
+                        total_pairs.append(pair)
         if not probs and not spreads:
             continue
         best_home = max(home_prices, key=lambda x: _payout(x[0])) if home_prices else (None, None)
         best_away = max(away_prices, key=lambda x: _payout(x[0])) if away_prices else (None, None)
+        spread = offered_line(spreads) if spreads else None
+        total = offered_line(totals) if totals else None
+        sp_home, sp_away, sp_books = _at_line(spread_pairs, spread)
+        to_over, to_under, to_books = _at_line(total_pairs, total)
         out[game_key(away, home, ev.get("commence_time"))] = {
             "home": home, "away": away,
             "commence_time": ev.get("commence_time"),
@@ -164,8 +225,13 @@ def parse_events(events):
             "away_ml": consensus_price([p for p, _ in away_prices]) if away_prices else None,
             "best_home_ml": best_home[0], "best_home_book": best_home[1],
             "best_away_ml": best_away[0], "best_away_book": best_away[1],
-            "spread": offered_line(spreads) if spreads else None,
-            "total": offered_line(totals) if totals else None,
+            "spread": spread,
+            "total": total,
+            # American odds at the line above; None with a count of 0 where
+            # no book priced both sides at it, None with None where there is
+            # no line.
+            "spread_price_home": sp_home, "spread_price_away": sp_away, "spread_price_books": sp_books,
+            "total_price_over": to_over, "total_price_under": to_under, "total_price_books": to_books,
             "books": len(books),
         }
     return out, sorted(unknown)
@@ -278,6 +344,76 @@ def refresh(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=No
     return "fetched" if status == 200 else f"failed ({status})"
 
 
+# The two sides of each line's price, as market_for names them.
+PRICE_SIDES = {"spread": ("home", "away"), "total": ("over", "under")}
+# The schedule's columns for those prices (nflverse; nfl_data.load_games).
+SCHEDULE_PRICES = {"spread": ("home_spread_odds", "away_spread_odds"), "total": ("over_odds", "under_odds")}
+
+
+def _price_fields(market, first, second, books, source, missing):
+    """One line's price fields: <market>_price_<side> (American odds) for
+    both sides, _books (how many books priced both sides at the line; None
+    where the source does not say), _source (whose price - always the
+    line's own source) and _missing (why the prices are None; None when
+    they are not)."""
+    a, b = PRICE_SIDES[market]
+    if missing is not None:
+        first = second = source = None
+    return {f"{market}_price_{a}": first, f"{market}_price_{b}": second, f"{market}_price_books": books,
+            f"{market}_price_source": source, f"{market}_price_missing": missing}
+
+
+def _api_prices(latest):
+    """The spread and total prices of a cached the-odds-api entry, at its
+    own lines. An entry cached before parse_events kept prices has none of
+    the fields: said so, never read as "no book priced it"."""
+    out = {}
+    for market, (a, b) in PRICE_SIDES.items():
+        first, second = latest.get(f"{market}_price_{a}"), latest.get(f"{market}_price_{b}")
+        books = latest.get(f"{market}_price_books")
+        if latest.get(market) is None:
+            missing, books = PRICE_MISSING["no_line"], None
+        elif f"{market}_price_books" not in latest:
+            missing = PRICE_MISSING["before"]
+        elif first is None or second is None:
+            missing = PRICE_MISSING["unpaired"]
+        else:
+            missing = None
+        out.update(_price_fields(market, first, second, books, "the-odds-api", missing))
+    return out
+
+
+def _schedule_prices(game, lines):
+    """The spread and total prices the schedule posts beside its own lines
+    (`lines`: {"spread": ..., "total": ...}, None where none). A pair counts
+    only when both sides are posted."""
+    out = {}
+    for market, cols in SCHEDULE_PRICES.items():
+        posted = [game.get(c) for c in cols]
+        posted = [float(x) if x is not None and x == x else None for x in posted]
+        n = sum(x is not None for x in posted)
+        missing = (PRICE_MISSING["no_line"] if lines[market] is None else
+                   PRICE_MISSING["schedule_none"] if n == 0 else
+                   PRICE_MISSING["schedule_one"] if n == 1 else None)
+        out.update(_price_fields(market, posted[0], posted[1], None, "nflverse", missing))
+    return out
+
+
+def with_price_fields(market):
+    """A market logged before the prices were kept (a game under way or
+    over shows the market its pick was made against), with the price
+    fields present as missing and why - never absent, never invented. A
+    market that has them, or none at all, is returned as it is. A new dict:
+    the log is never changed."""
+    if not market or "spread_price_missing" in market:
+        return market
+    out = dict(market)
+    for m in PRICE_SIDES:
+        out.update(_price_fields(m, None, None, None, None,
+                                 PRICE_MISSING["no_line"] if market.get(m) is None else PRICE_MISSING["before"]))
+    return out
+
+
 def market_for(cache, game, now=None):
     """The market for one game as the app shows it: the API's latest price if
     it is fresh, else the schedule's posted line. Probabilities are the
@@ -286,7 +422,12 @@ def market_for(cache, game, now=None):
     A cached price older than STALE_AFTER_DAYS loses to the schedule's line,
     which is re-synced every run: when a refresh fails (a spent quota, an
     outage) a days-old price must not feed the pick, or the ATS grade, while
-    a fresher line sits on disk."""
+    a fresher line sits on disk.
+
+    Beside each line, its price (_price_fields): from the same source as
+    the line, at that line - the API's consensus from the books that priced
+    both sides at it, or the schedule's own posted pair - and, where None,
+    why (PRICE_MISSING). The pick reads none of them."""
     now = now or _now()
     entry = for_game(cache, game["away"], game["home"], game["kickoff"])
     if entry and now - _parse_time(entry["latest"]["seen"]) > timedelta(days=STALE_AFTER_DAYS):
@@ -301,16 +442,19 @@ def market_for(cache, game, now=None):
             "best_away_ml": latest.get("best_away_ml"), "best_away_book": latest.get("best_away_book"),
             "spread": latest.get("spread"), "total": latest.get("total"),
             "opening_spread": opening.get("spread"), "opening_total": opening.get("total"),
+            **_api_prices(latest),
         }
     home_ml, away_ml = game.get("home_ml"), game.get("away_ml")
     has_ml = home_ml == home_ml and away_ml == away_ml and home_ml is not None and away_ml is not None
     spread, total = game.get("spread_line"), game.get("total_line")
     if not has_ml and not (spread == spread and spread is not None):
         return None
+    lines = {"spread": spread if spread == spread else None, "total": total if total == total else None}
     return {
         "source": "nflverse", "as_of": None, "books": None,
         "home_prob": _no_vig(home_ml, away_ml) if has_ml else None,
         "home_ml": home_ml if has_ml else None, "away_ml": away_ml if has_ml else None,
-        "spread": spread if spread == spread else None,
-        "total": total if total == total else None,
+        "spread": lines["spread"],
+        "total": lines["total"],
+        **_schedule_prices(game, lines),
     }
