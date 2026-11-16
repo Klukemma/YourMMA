@@ -85,9 +85,9 @@
    "year": 2026
   }
  ],
- "bouts": 8755,
- "dataset_end": "2026-11-07",
- "generated": "2026-11-13T22:29:19Z",
+ "bouts": 8768,
+ "dataset_end": "2026-11-14",
+ "generated": "2026-11-16T14:18:45Z",
  "notes": {
   "leak": "Figures published before 2026-09-18 came from a model that could see each fighter's final career record, which inflated historical accuracy to 78% and backtests to +16.2%. Those numbers were fiction and are not shown here.",
   "which_number_counts": "The confirm period is 2020 onward. Anything before it was used to choose how the strategies work, so its +6.1% is not a forecast. The confirm number is."
@@ -830,26 +830,26 @@
      "legs": [
       {
        "decimal": 2.28,
-       "outcome": null,
+       "outcome": "lost",
        "pick": "Charles Radtke"
       },
       {
        "decimal": 1.571429,
-       "outcome": null,
+       "outcome": "won",
        "pick": "Chris Duncan"
       },
       {
        "decimal": 1.25974,
-       "outcome": null,
+       "outcome": "won",
        "pick": "Melquizael Costa"
       }
      ],
      "multiplier": 4.513469,
      "prob": 0.239784,
      "profile": "steady",
-     "profit": null,
+     "profit": -1.0,
      "rule": "mixed_else@steady",
-     "status": "pending"
+     "status": "lost"
     },
     {
      "event_date": "2026-11-14",
@@ -857,31 +857,31 @@
      "legs": [
       {
        "decimal": 1.60241,
-       "outcome": null,
+       "outcome": "won",
        "pick": "Kayla Harrison"
       },
       {
        "decimal": 2.45,
-       "outcome": null,
+       "outcome": "void",
        "pick": "Kevin Holland"
       },
       {
        "decimal": 1.571429,
-       "outcome": null,
+       "outcome": "won",
        "pick": "Chris Duncan"
       },
       {
        "decimal": 1.555556,
-       "outcome": null,
+       "outcome": "lost",
        "pick": "Donte Johnson"
       }
      ],
      "multiplier": 9.596653,
      "prob": 0.11414,
      "profile": "risker",
-     "profit": null,
+     "profit": -1.0,
      "rule": "risker",
-     "status": "pending"
+     "status": "lost"
     },
     {
      "event_date": "2026-11-14",
@@ -889,67 +889,67 @@
      "legs": [
       {
        "decimal": 8.5,
-       "outcome": null,
+       "outcome": "won",
        "pick": "Luis Gurule"
       },
       {
        "decimal": 1.555556,
-       "outcome": null,
+       "outcome": "lost",
        "pick": "Donte Johnson"
       },
       {
        "decimal": 1.25974,
-       "outcome": null,
+       "outcome": "won",
        "pick": "Melquizael Costa"
       },
       {
        "decimal": 3.15,
-       "outcome": null,
+       "outcome": "lost",
        "pick": "Macy Chiasson"
       }
      ],
      "multiplier": 52.468182,
      "prob": 0.033575,
      "profile": "risk_lover",
-     "profit": null,
+     "profit": -1.0,
      "rule": "risk_lover",
-     "status": "pending"
+     "status": "lost"
     }
    ],
    "profiles": {
     "risk_lover": {
      "label": "Risk lover",
-     "lost": 0,
+     "lost": 1,
      "none": 0,
-     "pending": 1,
-     "roi": null,
-     "settled": 0,
+     "pending": 0,
+     "roi": -1.0,
+     "settled": 1,
      "target": "50-100x",
-     "units": null,
+     "units": -1.0,
      "void": 0,
      "won": 0
     },
     "risker": {
      "label": "Risker",
-     "lost": 0,
+     "lost": 1,
      "none": 0,
-     "pending": 1,
-     "roi": null,
-     "settled": 0,
+     "pending": 0,
+     "roi": -1.0,
+     "settled": 1,
      "target": "~10x",
-     "units": null,
+     "units": -1.0,
      "void": 0,
      "won": 0
     },
     "steady": {
      "label": "Steady",
-     "lost": 0,
+     "lost": 1,
      "none": 0,
-     "pending": 1,
-     "roi": null,
-     "settled": 0,
+     "pending": 0,
+     "roi": -1.0,
+     "settled": 1,
      "target": "~5x",
-     "units": null,
+     "units": -1.0,
      "void": 0,
      "won": 0
     }
@@ -1180,9 +1180,15 @@
   ]
  },
  "track_record": {
-  "accuracy": 0.6,
+  "accuracy": 0.6119,
   "accuracy_basis": "unique bouts",
   "by_event": [
+   {
+    "correct": 9,
+    "date": "2026-11-14",
+    "event": "UFC 334: Gane vs. Hokit",
+    "graded": 11
+   },
    {
     "correct": 8,
     "date": "2026-11-07",
@@ -1236,19 +1242,13 @@
     "date": "2026-06-06",
     "event": "UFC Fight Night: Muhammad vs. Bonfim",
     "graded": 11
-   },
-   {
-    "correct": 3,
-    "date": "2026-04-25",
-    "event": "UFC Fight Night: Sterling vs. Zalal",
-    "graded": 10
    }
   ],
-  "correct": 255,
-  "graded": 426,
-  "pending": 95,
+  "correct": 273,
+  "graded": 448,
+  "pending": 73,
   "predictions": 521,
-  "unique_bouts": 190,
-  "upcoming": 12
+  "unique_bouts": 201,
+  "upcoming": 0
  }
 }
