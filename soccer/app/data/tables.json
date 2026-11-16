@@ -8,7 +8,7 @@
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, pooled over the top five, each beat the leagues' own rates from earlier seasons. A league shows only the numbers that beat its own rates in both of its periods; the others are withheld and shown as missing. Both teams to score runs low: across 2016-2025 in the top five its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-15T14:53:34Z",
+ "generated": "2026-11-16T02:14:02Z",
  "leagues": [
   {
    "caveats": [
@@ -8172,8 +8172,8 @@
    "label": "Segunda Divisi\u00f3n",
    "model_through": "2026-11-09",
    "name": "Segunda Divisi\u00f3n",
-   "provisional": 6,
-   "results_through": "2026-11-14",
+   "provisional": 10,
+   "results_through": "2026-11-15",
    "rows": [
     {
      "club": {
@@ -8313,6 +8313,74 @@
     },
     {
      "club": {
+      "bg": "#C31632",
+      "code": "GRA",
+      "fg": "#FFFFFF",
+      "name": "Granada"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-15",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Las Palmas",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 0,
+       "gf": 2,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Eldense",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-23",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Valladolid",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Cadiz",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-12",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Burgos",
+       "result": "W"
+      }
+     ],
+     "ga": 14,
+     "gd": 7,
+     "gf": 21,
+     "lost": 3,
+     "played": 13,
+     "points": 26,
+     "position": 3,
+     "provisional": 1,
+     "rating": 0.042047779155716336,
+     "team": "Granada",
+     "won": 8
+    },
+    {
+     "club": {
       "bg": "#CD2534",
       "code": "GIR",
       "fg": "#FFFFFF",
@@ -8373,10 +8441,78 @@
      "lost": 4,
      "played": 14,
      "points": 24,
-     "position": 3,
+     "position": 4,
      "provisional": 1,
      "rating": 0.34539370183520524,
      "team": "Girona",
+     "won": 7
+    },
+    {
+     "club": {
+      "bg": "#003C7E",
+      "code": "EIB",
+      "fg": "#FFFFFF",
+      "name": "Eibar"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-15",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Cadiz",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Almeria",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Cordoba",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Mallorca",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-12",
+       "ga": 3,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Oviedo",
+       "result": "L"
+      }
+     ],
+     "ga": 15,
+     "gd": 7,
+     "gf": 22,
+     "lost": 3,
+     "played": 13,
+     "points": 24,
+     "position": 5,
+     "provisional": 1,
+     "rating": 0.0888301229250239,
+     "team": "Eibar",
      "won": 7
     },
     {
@@ -8441,7 +8577,7 @@
      "lost": 4,
      "played": 14,
      "points": 24,
-     "position": 4,
+     "position": 6,
      "provisional": 1,
      "rating": 0.012652738476441439,
      "team": "Burgos",
@@ -8509,145 +8645,11 @@
      "lost": 2,
      "played": 13,
      "points": 23,
-     "position": 5,
+     "position": 7,
      "provisional": 1,
      "rating": 0.3060386535632367,
      "team": "Mallorca",
      "won": 6
-    },
-    {
-     "club": {
-      "bg": "#003C7E",
-      "code": "EIB",
-      "fg": "#FFFFFF",
-      "name": "Eibar"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-10-31",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Almeria",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Cordoba",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Mallorca",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Oviedo",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-03",
-       "ga": 1,
-       "gf": 3,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Albacete",
-       "result": "W"
-      }
-     ],
-     "ga": 14,
-     "gd": 7,
-     "gf": 21,
-     "lost": 3,
-     "played": 12,
-     "points": 23,
-     "position": 6,
-     "provisional": 0,
-     "rating": 0.0888301229250239,
-     "team": "Eibar",
-     "won": 7
-    },
-    {
-     "club": {
-      "bg": "#C31632",
-      "code": "GRA",
-      "fg": "#FFFFFF",
-      "name": "Granada"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-11-01",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Eldense",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-23",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Valladolid",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Cadiz",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Burgos",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-04",
-       "ga": 2,
-       "gf": 3,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Sociedad B",
-       "result": "W"
-      }
-     ],
-     "ga": 14,
-     "gd": 6,
-     "gf": 20,
-     "lost": 3,
-     "played": 12,
-     "points": 23,
-     "position": 7,
-     "provisional": 0,
-     "rating": 0.042047779155716336,
-     "team": "Granada",
-     "won": 7
     },
     {
      "club": {
@@ -8863,6 +8865,16 @@
      "drawn": 2,
      "form": [
       {
+       "date": "2026-11-15",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Granada",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-09",
        "ga": 0,
        "gf": 2,
@@ -8897,25 +8909,16 @@
        "league": "SP2",
        "opponent": "Castellon",
        "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Mallorca",
-       "result": "L"
       }
      ],
-     "ga": 21,
-     "gd": -2,
+     "ga": 22,
+     "gd": -3,
      "gf": 19,
-     "lost": 5,
-     "played": 13,
+     "lost": 6,
+     "played": 14,
      "points": 20,
      "position": 11,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.08155582879764967,
      "team": "Las Palmas",
      "won": 6
@@ -8991,79 +8994,22 @@
     {
      "club": {
       "bg": "#5B6170",
-      "code": "SAB",
-      "fg": "#FFFFFF",
-      "name": "Sabadell"
-     },
-     "drawn": 6,
-     "form": [
-      {
-       "date": "2026-11-09",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Sociedad B",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Albacete",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Tenerife",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Burgos",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Ceuta",
-       "result": "W"
-      }
-     ],
-     "ga": 11,
-     "gd": 1,
-     "gf": 12,
-     "lost": 3,
-     "played": 13,
-     "points": 18,
-     "position": 13,
-     "provisional": 0,
-     "rating": 0.033292713237041194,
-     "team": "Sabadell",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
       "code": "TEN",
       "fg": "#FFFFFF",
       "name": "Tenerife"
      },
      "drawn": 6,
      "form": [
+      {
+       "date": "2026-11-15",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Ceuta",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-02",
        "ga": 2,
@@ -9099,28 +9045,155 @@
        "league": "SP2",
        "opponent": "Girona",
        "result": "D"
-      },
-      {
-       "date": "2026-10-05",
-       "ga": 3,
-       "gf": 2,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Cordoba",
-       "result": "L"
       }
      ],
      "ga": 17,
-     "gd": -2,
-     "gf": 15,
+     "gd": 0,
+     "gf": 17,
      "lost": 3,
-     "played": 12,
-     "points": 15,
-     "position": 14,
-     "provisional": 0,
+     "played": 13,
+     "points": 18,
+     "position": 13,
+     "provisional": 1,
      "rating": -0.09208606513594075,
      "team": "Tenerife",
-     "won": 3
+     "won": 4
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "SAB",
+      "fg": "#FFFFFF",
+      "name": "Sabadell"
+     },
+     "drawn": 6,
+     "form": [
+      {
+       "date": "2026-11-15",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Eldense",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-11-09",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Sociedad B",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Albacete",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Tenerife",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Burgos",
+       "result": "L"
+      }
+     ],
+     "ga": 13,
+     "gd": -1,
+     "gf": 12,
+     "lost": 4,
+     "played": 14,
+     "points": 18,
+     "position": 14,
+     "provisional": 1,
+     "rating": 0.033292713237041194,
+     "team": "Sabadell",
+     "won": 4
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "ELD",
+      "fg": "#FFFFFF",
+      "name": "Eldense"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-15",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Sabadell",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-09",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Las Palmas",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 2,
+       "gf": 0,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Granada",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Albacete",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 2,
+       "gf": 3,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Valladolid",
+       "result": "W"
+      }
+     ],
+     "ga": 19,
+     "gd": -4,
+     "gf": 15,
+     "lost": 7,
+     "played": 14,
+     "points": 17,
+     "position": 15,
+     "provisional": 1,
+     "rating": -0.13511318789310844,
+     "team": "Eldense",
+     "won": 5
     },
     {
      "club": {
@@ -9184,77 +9257,10 @@
      "lost": 7,
      "played": 14,
      "points": 15,
-     "position": 15,
+     "position": 16,
      "provisional": 1,
      "rating": -0.19036564069026052,
      "team": "Leganes",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "ELD",
-      "fg": "#FFFFFF",
-      "name": "Eldense"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-11-09",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Las Palmas",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 2,
-       "gf": 0,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Granada",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Albacete",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 2,
-       "gf": 3,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Valladolid",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Cordoba",
-       "result": "W"
-      }
-     ],
-     "ga": 19,
-     "gd": -6,
-     "gf": 13,
-     "lost": 7,
-     "played": 13,
-     "points": 14,
-     "position": 16,
-     "provisional": 0,
-     "rating": -0.13511318789310844,
-     "team": "Eldense",
      "won": 4
     },
     {
@@ -9394,6 +9400,74 @@
     },
     {
      "club": {
+      "bg": "#FDE607",
+      "code": "CAD",
+      "fg": "#0045A7",
+      "name": "C\u00e1diz"
+     },
+     "drawn": 5,
+     "form": [
+      {
+       "date": "2026-11-15",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Eibar",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Oviedo",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-02",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Mallorca",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 3,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Ceuta",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Granada",
+       "result": "L"
+      }
+     ],
+     "ga": 19,
+     "gd": -2,
+     "gf": 17,
+     "lost": 7,
+     "played": 14,
+     "points": 11,
+     "position": 19,
+     "provisional": 1,
+     "rating": -0.24966369824462398,
+     "team": "Cadiz",
+     "won": 2
+    },
+    {
+     "club": {
       "bg": "#5B6170",
       "code": "AND",
       "fg": "#FFFFFF",
@@ -9454,78 +9528,11 @@
      "lost": 8,
      "played": 13,
      "points": 11,
-     "position": 19,
+     "position": 20,
      "provisional": 1,
      "rating": 0.1428172206802656,
      "team": "Andorra",
      "won": 3
-    },
-    {
-     "club": {
-      "bg": "#FDE607",
-      "code": "CAD",
-      "fg": "#0045A7",
-      "name": "C\u00e1diz"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Oviedo",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-02",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Mallorca",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Ceuta",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Granada",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Sp Gijon",
-       "result": "L"
-      }
-     ],
-     "ga": 18,
-     "gd": -2,
-     "gf": 16,
-     "lost": 7,
-     "played": 13,
-     "points": 10,
-     "position": 20,
-     "provisional": 0,
-     "rating": -0.24966369824462398,
-     "team": "Cadiz",
-     "won": 2
     },
     {
      "club": {
@@ -9604,6 +9611,16 @@
      "drawn": 2,
      "form": [
       {
+       "date": "2026-11-15",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Tenerife",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 3,
        "gf": 0,
@@ -9638,25 +9655,16 @@
        "league": "SP2",
        "opponent": "Oviedo",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Sabadell",
-       "result": "L"
       }
      ],
-     "ga": 30,
-     "gd": -20,
+     "ga": 32,
+     "gd": -22,
      "gf": 10,
-     "lost": 10,
-     "played": 13,
+     "lost": 11,
+     "played": 14,
      "points": 5,
      "position": 22,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.36002762314249614,
      "team": "Ceuta",
      "won": 1
