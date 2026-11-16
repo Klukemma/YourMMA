@@ -451,3 +451,149 @@ def opposes(dog_ticket, ticket):
         return False
     d = next((l for l in dog_ticket["legs"] if l.get("dog")), None)
     return d is not None and any(l["key"] == d["key"] and l["pick"] != d["pick"] for l in ticket["legs"])
+
+
+# ---------------------------------------------------------------- tickets v2
+
+WINNER_BETS = (None, "1X2")
+
+
+def is_winner(l):
+    """A leg on who wins (a v1 leg carries no "bet"; a v2 one carries "1X2")."""
+    return l.get("bet") in WINNER_BETS
+
+
+def market_leg(sport, key, day, event, pick, p, decimal, bet, bet_detail=None, p_market=None,
+               p_model=None, opponent=None, kickoff=None, result=None, price_source=None,
+               number=None, lot_key=None, estimated=False, est_decimal=None):
+    """A v2 leg of any market (LEG_MARKETS), or None when it has no price or
+    no chance. key is the EVENT's (sport-prefixed as leg()'s), so a match,
+    game or fight gives at most one leg to any ticket - its winner, its
+    over/under, its spread or a prop, never two that move together.
+    "market" stays "moneyline" because parlay_profiles' settlement reads a
+    resolved yes/no bet that way; "bet" names the market. Floors are the
+    builders' (the likeliest legs need MIN_P; a METHOD leg has none).
+    estimated: the price is the METHOD ESTIMATOR's, not a book's (live props);
+    est_decimal: the estimator's price beside a real one (the backtest's
+    "as live")."""
+    if bet not in LEG_MARKETS:
+        raise ValueError(bet)
+    dec = pp._price(decimal) if hasattr(pp, "_price") else decimal
+    if dec is None or not (isinstance(dec, (int, float)) and math.isfinite(dec)) or dec <= 1.0:
+        return None
+    if p is None or not math.isfinite(float(p)) or not 0.0 < float(p) < 1.0:
+        return None
+    return {
+        "key": f"{sport}:{key}", "sport": sport, "day": day, "event": event,
+        "pick": pick, "opponent": opponent, "kickoff": kickoff, "number": number,
+        "side": "pick", "market": "moneyline", "bet": bet, "bet_detail": bet_detail,
+        "decimal": float(dec), "p": float(p),
+        "p_model": None if p_model is None else float(p_model),
+        "p_market": None if p_market is None else float(p_market),
+        "edge": None if (p_model is None or p_market is None) else float(p_model) - float(p_market),
+        "favourite": p_market is not None and float(p_market) >= 0.5,
+        "lot_key": None if lot_key is None else str(lot_key),
+        "estimated": bool(estimated),
+        "est_decimal": None if est_decimal is None else float(est_decimal),
+        "price_source": price_source, "result": result,
+    }
+
+
+def method_lot_key(corners, corner_name, method_type):
+    """The props lottery's key for one prop: the fight's (dog_lot_key's
+    corners), the corner and the type - one string live and in the backtest."""
+    return "|".join([dog_lot_key("UFC", corners=corners), _norm_name(corner_name), str(method_type)])
+
+
+def _finish(t, legs_order=None):
+    t["legs"] = sorted(t["legs"], key=legs_order or (lambda l: (l.get("kickoff") or "", l["sport"], l["key"])))
+    t["sports"] = sorted({l["sport"] for l in t["legs"]})
+    t["bets"] = sorted({l.get("bet") or "1X2" for l in t["legs"]})
+    t["day"] = t["legs"][0].get("day")
+    return t
+
+
+def build_likeliest_v2(legs, objective="p"):
+    """LIKELIEST v2: the v1 rule over the v2 winner legs (soccer from every
+    league in the app)."""
+    t = build([l for l in legs if l and is_winner(l)], objective=objective)
+    if t is not None:
+        t["profile"] = "same_day_v2" if objective == "p" else "same_day_v2_market_only"
+        t["bets"] = ["1X2"]
+    return t
+
+
+def build_underdog_v2(legs, dogs, salt=DOG_SALT_V2, order="lottery", objective="p"):
+    """UNDERDOG v2: the v1 underdog rule with its own salt, filled from the
+    v2 winner legs."""
+    t = build_dog([l for l in legs if l and is_winner(l)], dogs, salt=salt, order=order, objective=objective)
+    if t is not None:
+        t["profile"] = "same_day_dog_v2" if objective == "p" else "same_day_dog_v2_market_only"
+    return t
+
+
+def build_mixed(legs, objective="p"):
+    """MIXED: the highest product of chances, in BAND, 1-6 legs one per
+    event, among the POOL likeliest winner legs (chance >= MIN_P) and the
+    MIXED_POOL_OTHER likeliest other-market legs (each >= MIN_P, but a METHOD
+    leg has no floor), holding at least one other-market leg. None when
+    nothing fits."""
+    legs = [l for l in legs if l and l.get(objective) is not None]
+    winners = sorted([l for l in legs if is_winner(l) and l[objective] >= MIN_P], key=lambda l: -l[objective])[:POOL]
+    others = sorted([l for l in legs if not is_winner(l) and (l.get("bet") == "METHOD" or l[objective] >= MIN_P)],
+                    key=lambda l: -l[objective])[:MIXED_POOL_OTHER]
+    picked = pp._search([(winners + others, 1, MAX_LEGS)], BAND, objective=objective, max_legs=MAX_LEGS,
+                        require=lambda ls: any(not is_winner(l) for l in ls))
+    if not picked:
+        return None
+    t = pp.ticket(picked, "same_day_mixed" if objective == "p" else "same_day_mixed_market_only", BAND)
+    return _finish(t)
+
+
+def _priced_as(l, price_key):
+    """The leg as the search sees it: priced at price_key when it has one
+    (the estimator's price for a prop "as live"), else at its own price."""
+    v = l.get(price_key) if price_key != "decimal" else None
+    return dict(l, decimal=float(v)) if v is not None else l
+
+
+def build_props(legs, method_legs, salt=PROPS_SALT, band=BAND, price_key="decimal", objective="p"):
+    """PROPS: exactly one METHOD leg priced within PROPS_PRICE, drawn by the
+    lottery (weights its chance), plus the likeliest fill from the
+    likeliest-v2 pool (winner legs, chance >= MIN_P, the POOL likeliest) on
+    other events to `band`; 2-6 legs; the next draw when a prop has no fill,
+    None when none fits.
+
+    price_key "decimal": choose and pay at the legs' own prices (live, where a
+    prop's own price IS the estimate; the backtest's "as priced"). Another key
+    ("est_decimal"): choose by that price - the band, the PROPS_PRICE window
+    and the search read it - and pay at the real one (the backtest's "as
+    live"); the ticket's multiplier is then the real product and may fall
+    outside the band, which is the point of measuring it."""
+    seen = {}
+    for m in method_legs or []:
+        if not m or m.get("bet") != "METHOD" or m.get(objective) is None:
+            continue
+        s = _priced_as(m, price_key)
+        if PROPS_PRICE[0] <= s["decimal"] <= PROPS_PRICE[1]:
+            seen[id(s)] = (s, m)
+    cands = [s for s, _ in seen.values()]
+    real = {id(s): m for s, m in seen.values()}
+    pool_all = sorted([l for l in legs if l and is_winner(l) and l.get(objective) is not None
+                       and l[objective] >= MIN_P], key=lambda l: -l[objective])
+    for rank, s in enumerate(dog_order(cands, salt, "lottery", objective)):
+        pool = [_priced_as(l, price_key) for l in pool_all if l["key"] != s["key"]][:POOL]
+        picked = pp._search([([s], 1, 1), (pool, 1, MAX_LEGS - 1)], band, objective=objective, max_legs=MAX_LEGS)
+        if not picked:
+            continue
+        searched = float(math.prod(l["decimal"] for l in picked))
+        back = {l["key"]: l for l in pool_all}
+        paid_legs = [real[id(s)] if l is s else back[l["key"]] for l in picked]
+        t = pp.ticket(paid_legs, "same_day_props" if objective == "p" else "same_day_props_market_only", band)
+        t = _finish(t, lambda l: (l.get("bet") != "METHOD", l.get("kickoff") or "", l["sport"], l["key"]))
+        t.update({"method_key": real[id(s)]["key"], "method_lot_key": real[id(s)]["lot_key"],
+                  "method_rank": rank, "candidates": len(cands), "salt": salt,
+                  "price_key": price_key, "searched_multiplier": searched,
+                  "estimated": any(l.get("estimated") for l in paid_legs)})
+        return t
+    return None
