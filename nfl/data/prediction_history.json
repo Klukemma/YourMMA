@@ -16797,22 +16797,28 @@
    "away": "BUF",
    "away_leaders": {
     "passing": {
+     "actual": 196.0,
      "gsis_id": "00-0034857",
      "name": "Josh Allen",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 249.709317
     },
     "receiving": {
+     "actual": 26.0,
      "gsis_id": "00-0037261",
      "name": "Khalil Shakir",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 40.928529
     },
     "rushing": {
+     "actual": 157.0,
      "gsis_id": "00-0037248",
      "name": "James Cook",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 77.304019
@@ -16839,6 +16845,7 @@
       "rec_yds": 10.395635,
       "rush_yds": 77.304019
      },
+     "scored": true,
      "status": "active",
      "tds_season": 8
     },
@@ -16853,6 +16860,7 @@
       "rec_yds": null,
       "rush_yds": 19.074281
      },
+     "scored": true,
      "status": "active",
      "tds_season": 9
     },
@@ -16867,6 +16875,7 @@
       "rec_yds": 29.780836,
       "rush_yds": 0.336554
      },
+     "scored": true,
      "status": "active",
      "tds_season": 2
     }
@@ -16880,6 +16889,7 @@
      "position": "RB",
      "prob": 0.611111,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 8
     },
@@ -16891,6 +16901,7 @@
      "position": "QB",
      "prob": 0.365154,
      "rank": 2,
+     "scored": true,
      "status": "active",
      "tds_season": 9
     },
@@ -16902,6 +16913,7 @@
      "position": "WR",
      "prob": 0.287758,
      "rank": 3,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -16913,6 +16925,7 @@
      "position": "WR",
      "prob": 0.281176,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -16924,6 +16937,7 @@
      "position": "TE",
      "prob": 0.261802,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -16935,6 +16949,7 @@
      "position": "WR",
      "prob": 0.247941,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -16946,6 +16961,7 @@
      "position": "TE",
      "prob": 0.18926,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -16957,6 +16973,7 @@
      "position": "RB",
      "prob": 0.185218,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -16968,6 +16985,7 @@
      "position": "WR",
      "prob": 0.129288,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -16979,6 +16997,7 @@
      "position": "RB",
      "prob": 0.09791,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -16990,6 +17009,7 @@
      "position": "QB",
      "prob": 0.047633,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17001,6 +17021,7 @@
      "position": "TE",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17012,6 +17033,7 @@
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -17023,32 +17045,44 @@
      "position": "WR",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 31,
+    "home": 12
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_BUF_NYJ",
    "game_type": "REG",
    "home": "NYJ",
    "home_leaders": {
     "passing": {
+     "actual": 148.0,
      "gsis_id": "00-0030565",
      "name": "Geno Smith",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 240.414558
     },
     "receiving": {
+     "actual": 106.0,
      "gsis_id": "00-0037740",
      "name": "Garrett Wilson",
+     "over": true,
      "position": "WR",
      "status": "questionable",
      "yards": 63.401351
     },
     "rushing": {
+     "actual": 40.0,
      "gsis_id": "00-0039794",
      "name": "Braelon Allen",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 61.560879
@@ -17076,6 +17110,7 @@
       "rec_yds": 14.60745,
       "rush_yds": 61.560879
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -17090,6 +17125,7 @@
       "rec_yds": 12.602517,
       "rush_yds": 53.479404
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -17104,6 +17140,7 @@
       "rec_yds": 63.401351,
       "rush_yds": 0.000384
      },
+     "scored": false,
      "status": "questionable",
      "tds_season": 3
     }
@@ -17117,6 +17154,7 @@
      "position": "RB",
      "prob": 0.416518,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -17128,6 +17166,7 @@
      "position": "RB",
      "prob": 0.343415,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -17139,6 +17178,7 @@
      "position": "WR",
      "prob": 0.313897,
      "rank": 3,
+     "scored": false,
      "status": "questionable",
      "tds_season": 3
     },
@@ -17150,6 +17190,7 @@
      "position": "WR",
      "prob": 0.281414,
      "rank": 4,
+     "scored": false,
      "status": "questionable",
      "tds_season": 2
     },
@@ -17161,6 +17202,7 @@
      "position": "WR",
      "prob": 0.226412,
      "rank": 5,
+     "scored": false,
      "status": "questionable",
      "tds_season": 1
     },
@@ -17172,6 +17214,7 @@
      "position": "TE",
      "prob": 0.170226,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -17183,6 +17226,7 @@
      "position": "TE",
      "prob": 0.166939,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -17194,6 +17238,7 @@
      "position": "WR",
      "prob": 0.107532,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -17202,9 +17247,11 @@
      "group": "1-3",
      "gsis_id": "00-0033375",
      "name": "Tim Patrick",
+     "played": false,
      "position": "WR",
      "prob": 0.093223,
      "rank": 9,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -17216,6 +17263,7 @@
      "position": "RB",
      "prob": 0.087005,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17227,6 +17275,7 @@
      "position": "QB",
      "prob": 0.081455,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17238,6 +17287,7 @@
      "position": "RB",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17246,9 +17296,11 @@
      "group": "under 0.5",
      "gsis_id": "00-0037755",
      "name": "Jelani Woods",
+     "played": false,
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -17260,6 +17312,7 @@
      "position": "TE",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -17271,6 +17324,7 @@
      "position": "FB",
      "prob": null,
      "rank": 15,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17282,6 +17336,7 @@
      "position": "WR",
      "prob": null,
      "rank": 16,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17293,6 +17348,7 @@
      "position": "QB",
      "prob": null,
      "rank": 17,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -17325,39 +17381,50 @@
    "pick": "BUF",
    "pick_prob": 0.777054,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 5.287592,
     "line": -7.5,
     "team": "BUF"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "STRONG",
+   "total_correct": true,
    "total_pick": {
     "edge": 2.422744,
     "line": 51.0,
     "side": "UNDER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_CAR_NO": {
    "away": "CAR",
    "away_leaders": {
     "passing": {
+     "actual": 200.0,
      "gsis_id": "00-0039150",
      "name": "Bryce Young",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 249.644099
     },
     "receiving": {
+     "actual": 35.0,
      "gsis_id": "00-0040124",
      "name": "Tetairoa McMillan",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 60.459067
     },
     "rushing": {
+     "actual": 92.0,
      "gsis_id": "00-0036555",
      "name": "Chuba Hubbard",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 72.571625
@@ -17384,6 +17451,7 @@
       "rec_yds": 16.936868,
       "rush_yds": 72.571625
      },
+     "scored": true,
      "status": "active",
      "tds_season": 7
     },
@@ -17398,6 +17466,7 @@
       "rec_yds": 60.459067,
       "rush_yds": 0.009679
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -17412,6 +17481,7 @@
       "rec_yds": 45.661317,
       "rush_yds": 0.029253
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     }
@@ -17425,6 +17495,7 @@
      "position": "RB",
      "prob": 0.534784,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 7
     },
@@ -17436,6 +17507,7 @@
      "position": "WR",
      "prob": 0.342347,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -17447,6 +17519,7 @@
      "position": "WR",
      "prob": 0.270132,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -17458,6 +17531,7 @@
      "position": "TE",
      "prob": 0.214668,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -17469,6 +17543,7 @@
      "position": "TE",
      "prob": 0.181673,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -17480,6 +17555,7 @@
      "position": "WR",
      "prob": 0.12071,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -17491,6 +17567,7 @@
      "position": "QB",
      "prob": 0.109704,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -17499,9 +17576,11 @@
      "group": "3+",
      "gsis_id": "00-0036265",
      "name": "AJ Dillon",
+     "played": false,
      "position": "RB",
      "prob": 0.104974,
      "rank": 8,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -17513,6 +17592,7 @@
      "position": "TE",
      "prob": 0.100134,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17521,9 +17601,11 @@
      "group": "1-3",
      "gsis_id": "00-0039356",
      "name": "Ja'Tavion Sanders",
+     "played": false,
      "position": "TE",
      "prob": 0.094616,
      "rank": 10,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -17535,6 +17617,7 @@
      "position": "RB",
      "prob": 0.07796,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17546,6 +17629,7 @@
      "position": "WR",
      "prob": 0.068631,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17554,9 +17638,11 @@
      "group": "0.5-1",
      "gsis_id": "00-0038102",
      "name": "Kenny Pickett",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 13,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -17568,6 +17654,7 @@
      "position": "RB",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -17579,6 +17666,7 @@
      "position": "TE",
      "prob": null,
      "rank": 15,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17587,35 +17675,48 @@
      "group": "no history",
      "gsis_id": "00-0041149",
      "name": "Haynes King",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 16,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": false,
+   "final": {
+    "away": 20,
+    "home": 17
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_CAR_NO",
    "game_type": "REG",
    "home": "NO",
    "home_leaders": {
     "passing": {
+     "actual": 187.0,
      "gsis_id": "00-0040743",
      "name": "Tyler Shough",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 249.696789
     },
     "receiving": {
+     "actual": 30.0,
      "gsis_id": "00-0037239",
      "name": "Chris Olave",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 68.869072
     },
     "rushing": {
+     "actual": 6.0,
      "gsis_id": "00-0039373",
      "name": "Audric Estime",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 36.269176
@@ -17643,6 +17744,7 @@
       "rec_yds": 68.869072,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -17657,6 +17759,7 @@
       "rec_yds": 7.014989,
       "rush_yds": 36.269176
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -17671,6 +17774,7 @@
       "rec_yds": 40.722809,
       "rush_yds": 0.018251
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     }
@@ -17684,6 +17788,7 @@
      "position": "WR",
      "prob": 0.389181,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -17695,6 +17800,7 @@
      "position": "RB",
      "prob": 0.308708,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -17706,6 +17812,7 @@
      "position": "WR",
      "prob": 0.284564,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -17717,6 +17824,7 @@
      "position": "RB",
      "prob": 0.274266,
      "rank": 4,
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -17728,6 +17836,7 @@
      "position": "QB",
      "prob": 0.2237,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -17739,6 +17848,7 @@
      "position": "WR",
      "prob": 0.188491,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17750,6 +17860,7 @@
      "position": "TE",
      "prob": 0.187268,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -17761,6 +17872,7 @@
      "position": "WR",
      "prob": 0.14962,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -17772,6 +17884,7 @@
      "position": "TE",
      "prob": 0.119802,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -17783,6 +17896,7 @@
      "position": "WR",
      "prob": 0.074465,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -17791,9 +17905,11 @@
      "group": "1-3",
      "gsis_id": "00-0039376",
      "name": "Spencer Rattler",
+     "played": false,
      "position": "QB",
      "prob": 0.066399,
      "rank": 11,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -17802,9 +17918,11 @@
      "group": "1-3",
      "gsis_id": "00-0037013",
      "name": "Zach Wilson",
+     "played": false,
      "position": "QB",
      "prob": 0.039834,
      "rank": 12,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -17816,6 +17934,7 @@
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -17848,39 +17967,50 @@
    "pick": "NO",
    "pick_prob": 0.522552,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 1.239379,
     "line": -1.0,
     "team": "NO"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "TOSS-UP",
+   "total_correct": true,
    "total_pick": {
     "edge": 1.117723,
     "line": 49.0,
     "side": "UNDER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_HOU_CLE": {
    "away": "HOU",
    "away_leaders": {
     "passing": {
+     "actual": 211.0,
      "gsis_id": "00-0039163",
      "name": "C.J. Stroud",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 229.997821
     },
     "receiving": {
+     "actual": 94.0,
      "gsis_id": "00-0036554",
      "name": "Nico Collins",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 47.601211
     },
     "rushing": {
+     "actual": 50.0,
      "gsis_id": "00-0040583",
      "name": "Woody Marks",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 48.798749
@@ -17907,6 +18037,7 @@
       "rec_yds": 9.114211,
       "rush_yds": 48.798749
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -17921,6 +18052,7 @@
       "rec_yds": 47.601211,
       "rush_yds": 0.270849
      },
+     "scored": true,
      "status": "active",
      "tds_season": 4
     },
@@ -17935,6 +18067,7 @@
       "rec_yds": 29.322679,
       "rush_yds": 0.116799
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
@@ -17948,6 +18081,7 @@
      "position": "RB",
      "prob": 0.32297,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -17959,6 +18093,7 @@
      "position": "WR",
      "prob": 0.259353,
      "rank": 2,
+     "scored": true,
      "status": "active",
      "tds_season": 4
     },
@@ -17970,6 +18105,7 @@
      "position": "WR",
      "prob": 0.227315,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -17978,9 +18114,11 @@
      "group": "3+",
      "gsis_id": "00-0035685",
      "name": "David Montgomery",
+     "played": false,
      "position": "RB",
      "prob": 0.216601,
      "rank": 4,
+     "scored": null,
      "status": "questionable",
      "tds_season": 3
     },
@@ -17992,6 +18130,7 @@
      "position": "WR",
      "prob": 0.187758,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -18003,6 +18142,7 @@
      "position": "WR",
      "prob": 0.181958,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -18014,6 +18154,7 @@
      "position": "TE",
      "prob": 0.154815,
      "rank": 7,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -18025,6 +18166,7 @@
      "position": "RB",
      "prob": 0.120831,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18036,6 +18178,7 @@
      "position": "QB",
      "prob": 0.105633,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -18047,6 +18190,7 @@
      "position": "TE",
      "prob": 0.096672,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -18058,6 +18202,7 @@
      "position": "TE",
      "prob": 0.063811,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18066,9 +18211,11 @@
      "group": "1-3",
      "gsis_id": "00-0036898",
      "name": "Davis Mills",
+     "played": false,
      "position": "QB",
      "prob": 0.061673,
      "rank": 12,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -18080,6 +18227,7 @@
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18091,32 +18239,44 @@
      "position": "WR",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": false,
+   "final": {
+    "away": 24,
+    "home": 27
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_HOU_CLE",
    "game_type": "REG",
    "home": "CLE",
    "home_leaders": {
     "passing": {
+     "actual": 312.0,
      "gsis_id": "00-0033537",
      "name": "Deshaun Watson",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 198.773072
     },
     "receiving": {
+     "actual": 16.0,
      "gsis_id": "00-0041037",
      "name": "Denzel Boston",
+     "over": false,
      "position": "WR",
      "status": "questionable",
      "yards": 50.710231
     },
     "rushing": {
+     "actual": 38.0,
      "gsis_id": "00-0040784",
      "name": "Quinshon Judkins",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 45.997801
@@ -18144,6 +18304,7 @@
       "rec_yds": 7.13394,
       "rush_yds": 45.997801
      },
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -18158,6 +18319,7 @@
       "rec_yds": 50.710231,
       "rush_yds": 0.049105
      },
+     "scored": false,
      "status": "questionable",
      "tds_season": 3
     },
@@ -18172,6 +18334,7 @@
       "rec_yds": 42.582165,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 4
     }
@@ -18185,6 +18348,7 @@
      "position": "RB",
      "prob": 0.281324,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -18196,6 +18360,7 @@
      "position": "WR",
      "prob": 0.280152,
      "rank": 2,
+     "scored": false,
      "status": "questionable",
      "tds_season": 3
     },
@@ -18207,6 +18372,7 @@
      "position": "TE",
      "prob": 0.274281,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -18218,6 +18384,7 @@
      "position": "WR",
      "prob": 0.223358,
      "rank": 4,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -18229,6 +18396,7 @@
      "position": "RB",
      "prob": 0.200793,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18240,6 +18408,7 @@
      "position": "QB",
      "prob": 0.145849,
      "rank": 6,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -18251,6 +18420,7 @@
      "position": "WR",
      "prob": 0.114402,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18259,9 +18429,11 @@
      "group": "3+",
      "gsis_id": "00-0040668",
      "name": "Shedeur Sanders",
+     "played": false,
      "position": "QB",
      "prob": 0.095975,
      "rank": 8,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -18273,6 +18445,7 @@
      "position": "RB",
      "prob": 0.082651,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -18281,9 +18454,11 @@
      "group": "1-3",
      "gsis_id": "00-0040704",
      "name": "Dillon Gabriel",
+     "played": false,
      "position": "QB",
      "prob": 0.048874,
      "rank": 10,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -18295,6 +18470,7 @@
      "position": "WR",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18306,6 +18482,7 @@
      "position": "TE",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -18317,6 +18494,7 @@
      "position": "WR",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18328,6 +18506,7 @@
      "position": "WR",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18336,9 +18515,11 @@
      "group": "no history",
      "gsis_id": "00-0041092",
      "name": "Taylen Green",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 15,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
@@ -18371,39 +18552,50 @@
    "pick": "HOU",
    "pick_prob": 0.672451,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 0.101705,
     "line": 4.5,
     "team": "CLE"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "SOLID",
+   "total_correct": true,
    "total_pick": {
     "edge": 2.684356,
     "line": 40.5,
     "side": "OVER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_JAX_TEN": {
    "away": "JAX",
    "away_leaders": {
     "passing": {
+     "actual": 352.0,
      "gsis_id": "00-0036971",
      "name": "Trevor Lawrence",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 248.662323
     },
     "receiving": {
+     "actual": 152.0,
      "gsis_id": "00-0038606",
      "name": "Parker Washington",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 51.099419
     },
     "rushing": {
+     "actual": 88.0,
      "gsis_id": "00-0040719",
      "name": "Bhayshul Tuten",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 49.729137
@@ -18430,6 +18622,7 @@
       "rec_yds": 11.440664,
       "rush_yds": 49.729137
      },
+     "scored": true,
      "status": "active",
      "tds_season": 7
     },
@@ -18444,6 +18637,7 @@
       "rec_yds": 51.099419,
       "rush_yds": 0.142462
      },
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -18458,6 +18652,7 @@
       "rec_yds": 3.545038,
       "rush_yds": 25.035329
      },
+     "scored": false,
      "status": "active",
      "tds_season": 4
     }
@@ -18471,6 +18666,7 @@
      "position": "RB",
      "prob": 0.459406,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 7
     },
@@ -18482,6 +18678,7 @@
      "position": "WR",
      "prob": 0.367771,
      "rank": 2,
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -18493,6 +18690,7 @@
      "position": "RB",
      "prob": 0.308178,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -18504,6 +18702,7 @@
      "position": "WR",
      "prob": 0.270121,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -18515,6 +18714,7 @@
      "position": "TE",
      "prob": 0.242367,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -18526,6 +18726,7 @@
      "position": "TE",
      "prob": 0.194765,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -18537,6 +18738,7 @@
      "position": "QB",
      "prob": 0.147245,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18548,6 +18750,7 @@
      "position": "WR",
      "prob": 0.139859,
      "rank": 8,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -18559,6 +18762,7 @@
      "position": "WR",
      "prob": 0.139506,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -18567,9 +18771,11 @@
      "group": "3+",
      "gsis_id": "00-0032104",
      "name": "Ameer Abdullah",
+     "played": false,
      "position": "RB",
      "prob": 0.103712,
      "rank": 10,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -18581,6 +18787,7 @@
      "position": "RB",
      "prob": 0.079002,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18592,6 +18799,7 @@
      "position": "TE",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18600,9 +18808,11 @@
      "group": "0.5-1",
      "gsis_id": "00-0040234",
      "name": "Quinn Ewers",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 13,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -18614,6 +18824,7 @@
      "position": "TE",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18622,9 +18833,11 @@
      "group": "under 0.5",
      "gsis_id": "00-0041106",
      "name": "CJ Williams",
+     "played": false,
      "position": "WR",
      "prob": null,
      "rank": 15,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -18636,32 +18849,44 @@
      "position": "WR",
      "prob": null,
      "rank": 16,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 40,
+    "home": 23
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_JAX_TEN",
    "game_type": "REG",
    "home": "TEN",
    "home_leaders": {
     "passing": {
+     "actual": 231.0,
      "gsis_id": "00-0040676",
      "name": "Cam Ward",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 209.929734
     },
     "receiving": {
+     "actual": 10.0,
      "gsis_id": "00-0038117",
      "name": "Wan'Dale Robinson",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 43.463315
     },
     "rushing": {
+     "actual": 33.0,
      "gsis_id": "00-0035261",
      "name": "Tony Pollard",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 76.358763
@@ -18689,6 +18914,7 @@
       "rec_yds": 7.743601,
       "rush_yds": 76.358763
      },
+     "scored": true,
      "status": "active",
      "tds_season": 6
     },
@@ -18703,6 +18929,7 @@
       "rec_yds": 43.463315,
       "rush_yds": 0.025227
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -18717,6 +18944,7 @@
       "rec_yds": 22.346125,
       "rush_yds": 0.009029
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
@@ -18730,6 +18958,7 @@
      "position": "RB",
      "prob": 0.402949,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 6
     },
@@ -18741,6 +18970,7 @@
      "position": "WR",
      "prob": 0.194286,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -18752,6 +18982,7 @@
      "position": "WR",
      "prob": 0.153283,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -18763,6 +18994,7 @@
      "position": "RB",
      "prob": 0.148642,
      "rank": 4,
+     "scored": false,
      "status": "questionable",
      "tds_season": 0
     },
@@ -18774,6 +19006,7 @@
      "position": "QB",
      "prob": 0.147563,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -18785,6 +19018,7 @@
      "position": "TE",
      "prob": 0.145541,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18793,9 +19027,11 @@
      "group": "3+",
      "gsis_id": "00-0036924",
      "name": "Michael Carter",
+     "played": false,
      "position": "RB",
      "prob": 0.108015,
      "rank": 7,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -18807,6 +19043,7 @@
      "position": "WR",
      "prob": 0.104052,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -18818,6 +19055,7 @@
      "position": "TE",
      "prob": 0.091651,
      "rank": 9,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -18829,6 +19067,7 @@
      "position": "WR",
      "prob": 0.085065,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18837,9 +19076,11 @@
      "group": "3+",
      "gsis_id": "00-0040886",
      "name": "Nicholas Singleton",
+     "played": false,
      "position": "RB",
      "prob": 0.084964,
      "rank": 11,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -18848,9 +19089,11 @@
      "group": "1-3",
      "gsis_id": "00-0033869",
      "name": "Mitchell Trubisky",
+     "played": false,
      "position": "QB",
      "prob": 0.041588,
      "rank": 12,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -18859,9 +19102,11 @@
      "group": "1-3",
      "gsis_id": "00-0036876",
      "name": "Kylen Granson",
+     "played": false,
      "position": "TE",
      "prob": 0.03822,
      "rank": 13,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -18873,6 +19118,7 @@
      "position": "TE",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -18881,9 +19127,11 @@
      "group": "under 0.5",
      "gsis_id": "00-0037594",
      "name": "Julius Chestnut",
+     "played": false,
      "position": "RB",
      "prob": null,
      "rank": 15,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
@@ -18916,39 +19164,51 @@
    "pick": "JAX",
    "pick_prob": 0.838425,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 1.986617,
     "line": -10.5,
     "team": "JAX"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "STRONG",
+   "total_correct": false,
    "total_pick": {
     "edge": 0.951648,
     "line": 46.0,
     "side": "UNDER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_KC_ATL": {
    "away": "KC",
    "away_leaders": {
     "passing": {
+     "actual": 348.0,
      "gsis_id": "00-0033873",
      "name": "Patrick Mahomes",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 245.165582
     },
     "receiving": {
+     "actual": 82.0,
      "gsis_id": "00-0039067",
      "name": "Rashee Rice",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 39.119942
     },
     "rushing": {
+     "actual": null,
      "gsis_id": "00-0038134",
      "name": "Kenneth Walker III",
+     "over": null,
+     "played": false,
      "position": "RB",
      "status": "questionable",
      "yards": 85.106677
@@ -18968,6 +19228,7 @@
      "games_season": 8,
      "gsis_id": "00-0038134",
      "name": "Kenneth Walker III",
+     "played": false,
      "position": "RB",
      "prob": 0.595279,
      "proj": {
@@ -18975,6 +19236,7 @@
       "rec_yds": 19.401584,
       "rush_yds": 85.106677
      },
+     "scored": null,
      "status": "questionable",
      "tds_season": 11
     },
@@ -18989,6 +19251,7 @@
       "rec_yds": 37.419778,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -19003,6 +19266,7 @@
       "rec_yds": 39.119942,
       "rush_yds": 0.001305
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     }
@@ -19013,9 +19277,11 @@
      "group": "3+",
      "gsis_id": "00-0038134",
      "name": "Kenneth Walker III",
+     "played": false,
      "position": "RB",
      "prob": 0.595279,
      "rank": 1,
+     "scored": null,
      "status": "questionable",
      "tds_season": 11
     },
@@ -19027,6 +19293,7 @@
      "position": "TE",
      "prob": 0.28441,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -19038,6 +19305,7 @@
      "position": "WR",
      "prob": 0.277696,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -19049,6 +19317,7 @@
      "position": "WR",
      "prob": 0.248262,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -19060,6 +19329,7 @@
      "position": "RB",
      "prob": 0.212992,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -19071,6 +19341,7 @@
      "position": "WR",
      "prob": 0.188381,
      "rank": 6,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -19082,6 +19353,7 @@
      "position": "QB",
      "prob": 0.124752,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -19093,6 +19365,7 @@
      "position": "TE",
      "prob": 0.123975,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -19104,6 +19377,7 @@
      "position": "WR",
      "prob": 0.107245,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -19115,6 +19389,7 @@
      "position": "QB",
      "prob": 0.090141,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -19126,6 +19401,7 @@
      "position": "WR",
      "prob": 0.078642,
      "rank": 11,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -19134,9 +19410,11 @@
      "group": "1-3",
      "gsis_id": "00-0040959",
      "name": "Jaydn Ott",
+     "played": false,
      "position": "RB",
      "prob": 0.075664,
      "rank": 12,
+     "scored": null,
      "status": "questionable",
      "tds_season": 0
     },
@@ -19148,6 +19426,7 @@
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -19159,6 +19438,7 @@
      "position": "WR",
      "prob": null,
      "rank": 14,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -19167,9 +19447,11 @@
      "group": "under 0.5",
      "gsis_id": "00-0038489",
      "name": "Ben VanSumeren",
+     "played": false,
      "position": "FB",
      "prob": null,
      "rank": 15,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -19181,6 +19463,7 @@
      "position": "TE",
      "prob": null,
      "rank": 16,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -19189,35 +19472,48 @@
      "group": "no history",
      "gsis_id": "00-0040906",
      "name": "Garrett Nussmeier",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 17,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 35,
+    "home": 13
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_KC_ATL",
    "game_type": "REG",
    "home": "ATL",
    "home_leaders": {
     "passing": {
+     "actual": 286.0,
      "gsis_id": "00-0039917",
      "name": "Michael Penix",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 233.763951
     },
     "receiving": {
+     "actual": 109.0,
      "gsis_id": "00-0037238",
      "name": "Drake London",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 70.003853
     },
     "rushing": {
+     "actual": 71.0,
      "gsis_id": "00-0038542",
      "name": "Bijan Robinson",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 83.008173
@@ -19245,6 +19541,7 @@
       "rec_yds": 27.856955,
       "rush_yds": 83.008173
      },
+     "scored": true,
      "status": "active",
      "tds_season": 6
     },
@@ -19259,6 +19556,7 @@
       "rec_yds": 70.003853,
       "rush_yds": 0.102448
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -19273,6 +19571,7 @@
       "rec_yds": 25.652509,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 4
     }
@@ -19286,6 +19585,7 @@
      "position": "RB",
      "prob": 0.565321,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 6
     },
@@ -19297,6 +19597,7 @@
      "position": "WR",
      "prob": 0.319766,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -19308,6 +19609,7 @@
      "position": "TE",
      "prob": 0.210124,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -19319,6 +19621,7 @@
      "position": "WR",
      "prob": 0.181571,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -19330,6 +19633,7 @@
      "position": "QB",
      "prob": 0.13137,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -19341,6 +19645,7 @@
      "position": "RB",
      "prob": 0.109351,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -19352,6 +19657,7 @@
      "position": "WR",
      "prob": 0.103761,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -19363,6 +19669,7 @@
      "position": "TE",
      "prob": 0.098259,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -19371,9 +19678,11 @@
      "group": "1-3",
      "gsis_id": "00-0041194",
      "name": "Jack Strand",
+     "played": false,
      "position": "QB",
      "prob": 0.079928,
      "rank": 9,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -19385,6 +19694,7 @@
      "position": "TE",
      "prob": null,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -19393,9 +19703,11 @@
      "group": "0.5-1",
      "gsis_id": "00-0036212",
      "name": "Tua Tagovailoa",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 11,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -19404,9 +19716,11 @@
      "group": "0.5-1",
      "gsis_id": "00-0027973",
      "name": "Andy Dalton",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 12,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -19418,6 +19732,7 @@
      "position": "WR",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -19429,6 +19744,7 @@
      "position": "WR",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -19440,6 +19756,7 @@
      "position": "TE",
      "prob": null,
      "rank": 15,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
@@ -19472,18 +19789,23 @@
    "pick": "KC",
    "pick_prob": 0.622567,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 0.300603,
     "line": -3.0,
     "team": "KC"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": false,
    "total_pick": {
     "edge": 0.582006,
     "line": 47.5,
     "side": "UNDER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_LAC_BAL": {
    "away": "LAC",
@@ -19980,7 +20302,7 @@
     }
    ],
    "kickoff": "2026-11-17T01:15:00Z",
-   "last_logged": "2026-11-15T20:37:18Z",
+   "last_logged": "2026-11-16T23:48:40Z",
    "market": {
     "as_of": "2026-11-15T13:59:21Z",
     "away_ml": 183.0,
@@ -20003,7 +20325,7 @@
    "market_total": 39.0,
    "model_prob": 0.587228,
    "model_spread": 3.444365,
-   "model_total": 37.75983,
+   "model_total": 37.65821,
    "pick": "BAL",
    "pick_prob": 0.647021,
    "season": 2026,
@@ -20014,7 +20336,7 @@
    },
    "tier": "LEAN",
    "total_pick": {
-    "edge": 1.24017,
+    "edge": 1.34179,
     "line": 39.0,
     "side": "UNDER"
    },
@@ -20024,22 +20346,28 @@
    "away": "LA",
    "away_leaders": {
     "passing": {
+     "actual": 249.0,
      "gsis_id": "00-0026498",
      "name": "Matthew Stafford",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 238.633592
     },
     "receiving": {
+     "actual": 17.0,
      "gsis_id": "00-0033110",
      "name": "Tyler Higbee",
+     "over": false,
      "position": "TE",
      "status": "active",
      "yards": 20.207417
     },
     "rushing": {
+     "actual": 23.0,
      "gsis_id": "00-0037840",
      "name": "Kyren Williams",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 53.306892
@@ -20066,6 +20394,7 @@
       "rec_yds": 14.01758,
       "rush_yds": 53.306892
      },
+     "scored": false,
      "status": "active",
      "tds_season": 7
     },
@@ -20080,6 +20409,7 @@
       "rec_yds": 3.71386,
       "rush_yds": 39.525158
      },
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -20094,6 +20424,7 @@
       "rec_yds": 16.251154,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
@@ -20107,6 +20438,7 @@
      "position": "RB",
      "prob": 0.493651,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 7
     },
@@ -20118,6 +20450,7 @@
      "position": "RB",
      "prob": 0.303988,
      "rank": 2,
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -20129,6 +20462,7 @@
      "position": "TE",
      "prob": 0.2104,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -20140,6 +20474,7 @@
      "position": "TE",
      "prob": 0.162706,
      "rank": 4,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -20151,6 +20486,7 @@
      "position": "TE",
      "prob": 0.125108,
      "rank": 5,
+     "scored": true,
      "status": "questionable",
      "tds_season": 2
     },
@@ -20162,6 +20498,7 @@
      "position": "WR",
      "prob": 0.100545,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -20173,6 +20510,7 @@
      "position": "WR",
      "prob": 0.091946,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20184,6 +20522,7 @@
      "position": "RB",
      "prob": 0.063906,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20195,6 +20534,7 @@
      "position": "QB",
      "prob": 0.060595,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20203,9 +20543,11 @@
      "group": "1-3",
      "gsis_id": "00-0039107",
      "name": "Stetson Bennett",
+     "played": false,
      "position": "QB",
      "prob": 0.050839,
      "rank": 10,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -20217,6 +20559,7 @@
      "position": "WR",
      "prob": null,
      "rank": 11,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -20228,6 +20571,7 @@
      "position": "TE",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20239,6 +20583,7 @@
      "position": "WR",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20250,6 +20595,7 @@
      "position": "WR",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20258,35 +20604,49 @@
      "group": "no history",
      "gsis_id": "00-0041568",
      "name": "Ty Simpson",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 15,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 34,
+    "home": 6
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_LA_ARI",
    "game_type": "REG",
    "home": "ARI",
    "home_leaders": {
     "passing": {
+     "actual": null,
      "gsis_id": "00-0033119",
      "name": "Jacoby Brissett",
+     "over": null,
+     "played": false,
      "position": "QB",
      "status": "active",
      "yards": 197.143471
     },
     "receiving": {
+     "actual": 37.0,
      "gsis_id": "00-0037744",
      "name": "Trey McBride",
+     "over": false,
      "position": "TE",
      "status": "active",
      "yards": 62.198464
     },
     "rushing": {
+     "actual": 14.0,
      "gsis_id": "00-0037263",
      "name": "Tyler Allgeier",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 42.4588
@@ -20315,6 +20675,7 @@
       "rec_yds": 62.198464,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -20329,6 +20690,7 @@
       "rec_yds": 8.999987,
       "rush_yds": 42.4588
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -20343,6 +20705,7 @@
       "rec_yds": 4.360069,
       "rush_yds": 15.825063
      },
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -20356,6 +20719,7 @@
      "position": "TE",
      "prob": 0.227676,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -20367,6 +20731,7 @@
      "position": "RB",
      "prob": 0.225343,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -20378,6 +20743,7 @@
      "position": "RB",
      "prob": 0.121197,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20389,6 +20755,7 @@
      "position": "TE",
      "prob": 0.08234,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -20400,6 +20767,7 @@
      "position": "WR",
      "prob": 0.067618,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20408,9 +20776,11 @@
      "group": "3+",
      "gsis_id": "00-0026300",
      "name": "Josh Johnson",
+     "played": false,
      "position": "QB",
      "prob": 0.05556,
      "rank": 6,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -20419,9 +20789,11 @@
      "group": "1-3",
      "gsis_id": "00-0038397",
      "name": "Evan Hull",
+     "played": false,
      "position": "RB",
      "prob": 0.055456,
      "rank": 7,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -20433,6 +20805,7 @@
      "position": "WR",
      "prob": 0.055183,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20444,6 +20817,7 @@
      "position": "WR",
      "prob": null,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20455,6 +20829,7 @@
      "position": "TE",
      "prob": null,
      "rank": 10,
+     "scored": false,
      "status": "questionable",
      "tds_season": 0
     },
@@ -20466,6 +20841,7 @@
      "position": "TE",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -20477,6 +20853,7 @@
      "position": "WR",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20488,6 +20865,7 @@
      "position": "WR",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20499,6 +20877,7 @@
      "position": "QB",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20507,9 +20886,11 @@
      "group": "no history",
      "gsis_id": "00-0041203",
      "name": "Joey Aguilar",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 15,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
@@ -20542,32 +20923,41 @@
    "pick": "LA",
    "pick_prob": 0.822257,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 0.954374,
     "line": 10.0,
     "team": "ARI"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "STRONG",
+   "total_correct": true,
    "total_pick": {
     "edge": 9.941959,
     "line": 38.0,
     "side": "OVER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_MIA_IND": {
    "away": "MIA",
    "away_leaders": {
     "receiving": {
+     "actual": 71.0,
      "gsis_id": "00-0041523",
      "name": "Caleb Douglas",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 50.370768
     },
     "rushing": {
+     "actual": 76.0,
      "gsis_id": "00-0040198",
      "name": "Ollie Gordon",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 56.173807
@@ -20595,6 +20985,7 @@
       "rec_yds": 4.478749,
       "rush_yds": 56.173807
      },
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -20609,6 +21000,7 @@
       "rec_yds": 50.370768,
       "rush_yds": 0.101905
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -20623,6 +21015,7 @@
       "rec_yds": 36.443168,
       "rush_yds": 1.139049
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
@@ -20636,6 +21029,7 @@
      "position": "RB",
      "prob": 0.27473,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -20647,6 +21041,7 @@
      "position": "WR",
      "prob": 0.249059,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -20658,6 +21053,7 @@
      "position": "WR",
      "prob": 0.184736,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -20669,6 +21065,7 @@
      "position": "TE",
      "prob": 0.135575,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20677,9 +21074,11 @@
      "group": "3+",
      "gsis_id": "00-0041525",
      "name": "Chris Bell",
+     "played": false,
      "position": "WR",
      "prob": 0.118668,
      "rank": 5,
+     "scored": null,
      "status": "doubtful",
      "tds_season": 0
     },
@@ -20691,6 +21090,7 @@
      "position": "WR",
      "prob": 0.114746,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -20702,6 +21102,7 @@
      "position": "TE",
      "prob": 0.076887,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20713,6 +21114,7 @@
      "position": "RB",
      "prob": 0.076323,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20724,6 +21126,7 @@
      "position": "RB",
      "prob": 0.064088,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20735,6 +21138,7 @@
      "position": "WR",
      "prob": 0.063935,
      "rank": 10,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -20746,6 +21150,7 @@
      "position": "TE",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20757,6 +21162,7 @@
      "position": "FB",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20765,9 +21171,11 @@
      "group": "no history",
      "gsis_id": "00-0041077",
      "name": "Justin Joly",
+     "played": false,
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -20779,32 +21187,44 @@
      "position": "QB",
      "prob": null,
      "rank": 14,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 22,
+    "home": 24
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_MIA_IND",
    "game_type": "REG",
    "home": "IND",
    "home_leaders": {
     "passing": {
+     "actual": 108.0,
      "gsis_id": "00-0035710",
      "name": "Daniel Jones",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 205.900472
     },
     "receiving": {
+     "actual": 1.0,
      "gsis_id": "00-0040128",
      "name": "Tyler Warren",
+     "over": false,
      "position": "TE",
      "status": "active",
      "yards": 40.61375
     },
     "rushing": {
+     "actual": 83.0,
      "gsis_id": "00-0036223",
      "name": "Jonathan Taylor",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 56.822345
@@ -20832,6 +21252,7 @@
       "rec_yds": 13.92753,
       "rush_yds": 56.822345
      },
+     "scored": false,
      "status": "active",
      "tds_season": 8
     },
@@ -20846,6 +21267,7 @@
       "rec_yds": 40.61375,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -20860,6 +21282,7 @@
       "rec_yds": 2.013086,
       "rush_yds": 22.793053
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     }
@@ -20873,6 +21296,7 @@
      "position": "RB",
      "prob": 0.452433,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 8
     },
@@ -20884,6 +21308,7 @@
      "position": "TE",
      "prob": 0.291047,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -20895,6 +21320,7 @@
      "position": "RB",
      "prob": 0.194099,
      "rank": 3,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -20906,6 +21332,7 @@
      "position": "QB",
      "prob": 0.12743,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -20917,6 +21344,7 @@
      "position": "WR",
      "prob": 0.112162,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -20928,6 +21356,7 @@
      "position": "RB",
      "prob": 0.108904,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20936,9 +21365,11 @@
      "group": "1-3",
      "gsis_id": "00-0040206",
      "name": "Riley Leonard",
+     "played": false,
      "position": "QB",
      "prob": 0.108788,
      "rank": 7,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -20947,9 +21378,11 @@
      "group": "3+",
      "gsis_id": "00-0039164",
      "name": "Anthony Richardson",
+     "played": false,
      "position": "QB",
      "prob": 0.099657,
      "rank": 8,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -20961,6 +21394,7 @@
      "position": "WR",
      "prob": 0.076637,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -20969,9 +21403,11 @@
      "group": "1-3",
      "gsis_id": "00-0038394",
      "name": "Will Mallory",
+     "played": false,
      "position": "TE",
      "prob": 0.071641,
      "rank": 10,
+     "scored": null,
      "status": "questionable",
      "tds_season": 0
     },
@@ -20983,6 +21419,7 @@
      "position": "WR",
      "prob": 0.070748,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -20994,6 +21431,7 @@
      "position": "WR",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21005,6 +21443,7 @@
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21016,6 +21455,7 @@
      "position": "TE",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21027,6 +21467,7 @@
      "position": "WR",
      "prob": null,
      "rank": 15,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -21059,39 +21500,50 @@
    "pick": "IND",
    "pick_prob": 0.651145,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 1.06216,
     "line": -4.5,
     "team": "IND"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "SOLID",
+   "total_correct": true,
    "total_pick": {
     "edge": 7.045993,
     "line": 37.5,
     "side": "OVER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_MIN_GB": {
    "away": "MIN",
    "away_leaders": {
     "passing": {
+     "actual": 207.0,
      "gsis_id": "00-0029604",
      "name": "Kirk Cousins",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 227.150781
     },
     "receiving": {
+     "actual": 74.0,
      "gsis_id": "00-0036322",
      "name": "Justin Jefferson",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 62.629185
     },
     "rushing": {
+     "actual": 59.0,
      "gsis_id": "00-0037525",
      "name": "Jordan Mason",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 40.34028
@@ -21118,6 +21570,7 @@
       "rec_yds": 62.629185,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -21132,6 +21585,7 @@
       "rec_yds": 7.498176,
       "rush_yds": 39.831188
      },
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -21139,6 +21593,7 @@
      "games_season": 7,
      "gsis_id": "00-0038994",
      "name": "Jordan Addison",
+     "played": false,
      "position": "WR",
      "prob": 0.233625,
      "proj": {
@@ -21146,6 +21601,7 @@
       "rec_yds": 41.068677,
       "rush_yds": 1.18369
      },
+     "scored": null,
      "status": "questionable",
      "tds_season": 1
     }
@@ -21159,6 +21615,7 @@
      "position": "WR",
      "prob": 0.25623,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -21170,6 +21627,7 @@
      "position": "RB",
      "prob": 0.2484,
      "rank": 2,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -21178,9 +21636,11 @@
      "group": "3+",
      "gsis_id": "00-0038994",
      "name": "Jordan Addison",
+     "played": false,
      "position": "WR",
      "prob": 0.233625,
      "rank": 3,
+     "scored": null,
      "status": "questionable",
      "tds_season": 1
     },
@@ -21192,6 +21652,7 @@
      "position": "RB",
      "prob": 0.206987,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -21203,6 +21664,7 @@
      "position": "QB",
      "prob": 0.095114,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -21211,9 +21673,11 @@
      "group": "1-3",
      "gsis_id": "00-0032950",
      "name": "Carson Wentz",
+     "played": false,
      "position": "QB",
      "prob": 0.082512,
      "rank": 6,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -21225,6 +21689,7 @@
      "position": "WR",
      "prob": 0.071135,
      "rank": 7,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -21236,6 +21701,7 @@
      "position": "TE",
      "prob": 0.061024,
      "rank": 8,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -21247,6 +21713,7 @@
      "position": "RB",
      "prob": null,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21258,6 +21725,7 @@
      "position": "WR",
      "prob": null,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21269,6 +21737,7 @@
      "position": "TE",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21277,9 +21746,11 @@
      "group": "0.5-1",
      "gsis_id": "00-0040494",
      "name": "Max Brosmer",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 12,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -21291,32 +21762,44 @@
      "position": "FB",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": false,
+   "final": {
+    "away": 30,
+    "home": 10
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_MIN_GB",
    "game_type": "REG",
    "home": "GB",
    "home_leaders": {
     "passing": {
+     "actual": 220.0,
      "gsis_id": "00-0036264",
      "name": "Jordan Love",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 240.352366
     },
     "receiving": {
+     "actual": 70.0,
      "gsis_id": "00-0040667",
      "name": "Matthew Golden",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 65.653483
     },
     "rushing": {
+     "actual": 42.0,
      "gsis_id": "00-0040142",
      "name": "Kaleb Johnson",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 21.083712
@@ -21344,6 +21827,7 @@
       "rec_yds": 60.976143,
       "rush_yds": 0.019239
      },
+     "scored": false,
      "status": "active",
      "tds_season": 7
     },
@@ -21358,6 +21842,7 @@
       "rec_yds": 65.653483,
       "rush_yds": 0.093515
      },
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -21372,6 +21857,7 @@
       "rec_yds": 34.105698,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     }
@@ -21385,6 +21871,7 @@
      "position": "WR",
      "prob": 0.411685,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 7
     },
@@ -21396,6 +21883,7 @@
      "position": "WR",
      "prob": 0.395537,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -21407,6 +21895,7 @@
      "position": "TE",
      "prob": 0.27704,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -21418,6 +21907,7 @@
      "position": "RB",
      "prob": 0.21277,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -21429,6 +21919,7 @@
      "position": "RB",
      "prob": 0.170826,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -21440,6 +21931,7 @@
      "position": "WR",
      "prob": 0.155836,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -21448,9 +21940,11 @@
      "group": "3+",
      "gsis_id": "00-0038098",
      "name": "Pierre Strong",
+     "played": false,
      "position": "RB",
      "prob": 0.131035,
      "rank": 7,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -21462,6 +21956,7 @@
      "position": "QB",
      "prob": 0.099154,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -21473,6 +21968,7 @@
      "position": "QB",
      "prob": 0.05627,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21484,6 +21980,7 @@
      "position": "WR",
      "prob": null,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21495,6 +21992,7 @@
      "position": "TE",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21506,6 +22004,7 @@
      "position": "WR",
      "prob": null,
      "rank": 12,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -21517,6 +22016,7 @@
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21525,9 +22025,11 @@
      "group": "under 0.5",
      "gsis_id": "00-0040352",
      "name": "Coleman Owen",
+     "played": false,
      "position": "WR",
      "prob": null,
      "rank": 14,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
@@ -21560,39 +22062,50 @@
    "pick": "GB",
    "pick_prob": 0.580201,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 2.917731,
     "line": -2.5,
     "team": "GB"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": false,
    "total_pick": {
     "edge": 1.342671,
     "line": 42.0,
     "side": "OVER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_NE_DET": {
    "away": "NE",
    "away_leaders": {
     "passing": {
+     "actual": 48.0,
      "gsis_id": "00-0039851",
      "name": "Drake Maye",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 242.109253
     },
     "receiving": {
+     "actual": 27.0,
      "gsis_id": "00-0035676",
      "name": "A.J. Brown",
+     "over": false,
      "position": "WR",
      "status": "questionable",
      "yards": 53.054734
     },
     "rushing": {
+     "actual": 4.0,
      "gsis_id": "00-0036875",
      "name": "Rhamondre Stevenson",
+     "over": false,
      "position": "RB",
      "status": "questionable",
      "yards": 36.229355
@@ -21619,6 +22132,7 @@
       "rec_yds": 20.503305,
       "rush_yds": 36.229355
      },
+     "scored": false,
      "status": "questionable",
      "tds_season": 4
     },
@@ -21633,6 +22147,7 @@
       "rec_yds": 53.054734,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "questionable",
      "tds_season": 0
     },
@@ -21647,6 +22162,7 @@
       "rec_yds": 37.187773,
       "rush_yds": 9.7e-05
      },
+     "scored": false,
      "status": "active",
      "tds_season": 4
     }
@@ -21660,6 +22176,7 @@
      "position": "RB",
      "prob": 0.380496,
      "rank": 1,
+     "scored": false,
      "status": "questionable",
      "tds_season": 4
     },
@@ -21671,6 +22188,7 @@
      "position": "WR",
      "prob": 0.281744,
      "rank": 2,
+     "scored": false,
      "status": "questionable",
      "tds_season": 0
     },
@@ -21682,6 +22200,7 @@
      "position": "WR",
      "prob": 0.256838,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -21693,6 +22212,7 @@
      "position": "TE",
      "prob": 0.223764,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -21704,6 +22224,7 @@
      "position": "WR",
      "prob": 0.21615,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -21715,6 +22236,7 @@
      "position": "WR",
      "prob": 0.214471,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -21726,6 +22248,7 @@
      "position": "TE",
      "prob": 0.195416,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -21737,6 +22260,7 @@
      "position": "QB",
      "prob": 0.181927,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -21748,6 +22272,7 @@
      "position": "RB",
      "prob": 0.178775,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -21759,6 +22284,7 @@
      "position": "WR",
      "prob": 0.131886,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -21770,6 +22296,7 @@
      "position": "RB",
      "prob": 0.090271,
      "rank": 11,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -21781,6 +22308,7 @@
      "position": "QB",
      "prob": 0.053236,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21792,6 +22320,7 @@
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "questionable",
      "tds_season": 0
     },
@@ -21800,9 +22329,11 @@
      "group": "no history",
      "gsis_id": "00-0041123",
      "name": "Behren Morton",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 14,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
@@ -21818,22 +22349,28 @@
    "home": "DET",
    "home_leaders": {
     "passing": {
+     "actual": 303.0,
      "gsis_id": "00-0033106",
      "name": "Jared Goff",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 276.310147
     },
     "receiving": {
+     "actual": 98.0,
      "gsis_id": "00-0036963",
      "name": "Amon-Ra St. Brown",
+     "over": true,
      "position": "WR",
      "status": "questionable",
      "yards": 80.547539
     },
     "rushing": {
+     "actual": 153.0,
      "gsis_id": "00-0039139",
      "name": "Jahmyr Gibbs",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 90.111782
@@ -21861,6 +22398,7 @@
       "rec_yds": 26.934649,
       "rush_yds": 90.111782
      },
+     "scored": true,
      "status": "active",
      "tds_season": 11
     },
@@ -21875,6 +22413,7 @@
       "rec_yds": 80.547539,
       "rush_yds": 0.202463
      },
+     "scored": true,
      "status": "questionable",
      "tds_season": 5
     },
@@ -21889,6 +22428,7 @@
       "rec_yds": 48.026905,
       "rush_yds": 0.64181
      },
+     "scored": false,
      "status": "active",
      "tds_season": 5
     }
@@ -21902,6 +22442,7 @@
      "position": "RB",
      "prob": 0.712065,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 11
     },
@@ -21913,6 +22454,7 @@
      "position": "WR",
      "prob": 0.446068,
      "rank": 2,
+     "scored": true,
      "status": "questionable",
      "tds_season": 5
     },
@@ -21924,6 +22466,7 @@
      "position": "WR",
      "prob": 0.345813,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -21935,6 +22478,7 @@
      "position": "TE",
      "prob": 0.334033,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -21946,6 +22490,7 @@
      "position": "WR",
      "prob": 0.165556,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -21957,6 +22502,7 @@
      "position": "RB",
      "prob": 0.141236,
      "rank": 6,
+     "scored": false,
      "status": "questionable",
      "tds_season": 0
     },
@@ -21968,6 +22514,7 @@
      "position": "QB",
      "prob": 0.108607,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -21979,6 +22526,7 @@
      "position": "QB",
      "prob": 0.06662,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -21990,6 +22538,7 @@
      "position": "TE",
      "prob": null,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22001,6 +22550,7 @@
      "position": "TE",
      "prob": null,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22012,6 +22562,7 @@
      "position": "WR",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22023,6 +22574,7 @@
      "position": "WR",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22034,6 +22586,7 @@
      "position": "RB",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -22072,6 +22625,8 @@
     "line": 2.5,
     "team": "NE"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "LEAN",
    "total_correct": false,
    "total_pick": {
@@ -22079,28 +22634,35 @@
     "line": 51.0,
     "side": "OVER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_PIT_CIN": {
    "away": "PIT",
    "away_leaders": {
     "passing": {
+     "actual": 143.0,
      "gsis_id": "00-0023459",
      "name": "Aaron Rodgers",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 248.285
     },
     "receiving": {
+     "actual": 54.0,
      "gsis_id": "00-0035640",
      "name": "D.K. Metcalf",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 50.353154
     },
     "rushing": {
+     "actual": 15.0,
      "gsis_id": "00-0037228",
      "name": "Jaylen Warren",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 71.513459
@@ -22127,6 +22689,7 @@
       "rec_yds": 20.703986,
       "rush_yds": 71.513459
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -22141,6 +22704,7 @@
       "rec_yds": 50.353154,
       "rush_yds": 0.125075
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -22155,6 +22719,7 @@
       "rec_yds": 10.421994,
       "rush_yds": 30.998073
      },
+     "scored": false,
      "status": "active",
      "tds_season": 1
     }
@@ -22168,6 +22733,7 @@
      "position": "RB",
      "prob": 0.492478,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -22179,6 +22745,7 @@
      "position": "WR",
      "prob": 0.286938,
      "rank": 2,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -22190,6 +22757,7 @@
      "position": "RB",
      "prob": 0.281298,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -22201,6 +22769,7 @@
      "position": "WR",
      "prob": 0.226781,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -22212,6 +22781,7 @@
      "position": "TE",
      "prob": 0.217449,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -22223,6 +22793,7 @@
      "position": "TE",
      "prob": 0.188573,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -22234,6 +22805,7 @@
      "position": "QB",
      "prob": 0.069882,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22245,6 +22817,7 @@
      "position": "QB",
      "prob": null,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22256,6 +22829,7 @@
      "position": "WR",
      "prob": null,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -22267,6 +22841,7 @@
      "position": "RB",
      "prob": null,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22278,6 +22853,7 @@
      "position": "WR",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22289,6 +22865,7 @@
      "position": "FB",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22300,6 +22877,7 @@
      "position": "RB",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22311,6 +22889,7 @@
      "position": "TE",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22319,9 +22898,11 @@
      "group": "under 0.5",
      "gsis_id": "00-0041490",
      "name": "Eli Heidenreich",
+     "played": false,
      "position": "RB",
      "prob": null,
      "rank": 15,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -22330,9 +22911,11 @@
      "group": "no history",
      "gsis_id": "00-0041565",
      "name": "Drew Allar",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 16,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -22344,6 +22927,7 @@
      "position": "WR",
      "prob": null,
      "rank": 17,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22352,35 +22936,48 @@
      "group": "no history",
      "gsis_id": "00-0040203",
      "name": "Will Howard",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 18,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 18,
+    "home": 38
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_PIT_CIN",
    "game_type": "REG",
    "home": "CIN",
    "home_leaders": {
     "passing": {
+     "actual": 409.0,
      "gsis_id": "00-0036442",
      "name": "Joe Burrow",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 278.529978
     },
     "receiving": {
+     "actual": 231.0,
      "gsis_id": "00-0036900",
      "name": "Ja'Marr Chase",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 73.778465
     },
     "rushing": {
+     "actual": 44.0,
      "gsis_id": "00-0038597",
      "name": "Chase Brown",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 49.891021
@@ -22408,6 +23005,7 @@
       "rec_yds": 35.254875,
       "rush_yds": 49.891021
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -22422,6 +23020,7 @@
       "rec_yds": 73.778465,
       "rush_yds": 0.002613
      },
+     "scored": false,
      "status": "active",
      "tds_season": 7
     },
@@ -22436,6 +23035,7 @@
       "rec_yds": 57.971889,
       "rush_yds": 0.000153
      },
+     "scored": false,
      "status": "active",
      "tds_season": 6
     }
@@ -22449,6 +23049,7 @@
      "position": "RB",
      "prob": 0.498685,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -22460,6 +23061,7 @@
      "position": "WR",
      "prob": 0.47206,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 7
     },
@@ -22471,6 +23073,7 @@
      "position": "WR",
      "prob": 0.422565,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 6
     },
@@ -22482,6 +23085,7 @@
      "position": "RB",
      "prob": 0.197118,
      "rank": 4,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -22493,6 +23097,7 @@
      "position": "QB",
      "prob": 0.191871,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -22504,6 +23109,7 @@
      "position": "TE",
      "prob": 0.185408,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 6
     },
@@ -22515,6 +23121,7 @@
      "position": "WR",
      "prob": 0.161751,
      "rank": 7,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -22526,6 +23133,7 @@
      "position": "WR",
      "prob": 0.082635,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22537,6 +23145,7 @@
      "position": "QB",
      "prob": null,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22548,6 +23157,7 @@
      "position": "TE",
      "prob": null,
      "rank": 10,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -22559,6 +23169,7 @@
      "position": "RB",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22570,6 +23181,7 @@
      "position": "TE",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -22581,6 +23193,7 @@
      "position": "WR",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22592,6 +23205,7 @@
      "position": "TE",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -22624,39 +23238,51 @@
    "pick": "CIN",
    "pick_prob": 0.616377,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 0.006991,
     "line": 3.5,
     "team": "PIT"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "LEAN",
+   "total_correct": false,
    "total_pick": {
     "edge": 2.598192,
     "line": 49.5,
     "side": "UNDER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_SEA_LV": {
    "away": "SEA",
    "away_leaders": {
     "passing": {
+     "actual": 240.0,
      "gsis_id": "00-0035704",
      "name": "Drew Lock",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 214.216411
     },
     "receiving": {
+     "actual": 171.0,
      "gsis_id": "00-0038543",
      "name": "Jaxon Smith-Njigba",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 98.778103
     },
     "rushing": {
+     "actual": null,
      "gsis_id": "00-0038797",
      "name": "Emanuel Wilson",
+     "over": null,
+     "played": false,
      "position": "RB",
      "status": "active",
      "yards": 51.768911
@@ -22684,6 +23310,7 @@
       "rec_yds": 98.778103,
       "rush_yds": 0.789388
      },
+     "scored": true,
      "status": "active",
      "tds_season": 9
     },
@@ -22698,6 +23325,7 @@
       "rec_yds": 6.223469,
       "rush_yds": 34.670403
      },
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22705,6 +23333,7 @@
      "games_season": 7,
      "gsis_id": "00-0038797",
      "name": "Emanuel Wilson",
+     "played": false,
      "position": "RB",
      "prob": 0.30574,
      "proj": {
@@ -22712,6 +23341,7 @@
       "rec_yds": 3.99456,
       "rush_yds": 51.768911
      },
+     "scored": null,
      "status": "active",
      "tds_season": 4
     }
@@ -22725,6 +23355,7 @@
      "position": "WR",
      "prob": 0.459208,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 9
     },
@@ -22736,6 +23367,7 @@
      "position": "RB",
      "prob": 0.330998,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22744,9 +23376,11 @@
      "group": "3+",
      "gsis_id": "00-0038797",
      "name": "Emanuel Wilson",
+     "played": false,
      "position": "RB",
      "prob": 0.30574,
      "rank": 3,
+     "scored": null,
      "status": "active",
      "tds_season": 4
     },
@@ -22758,6 +23392,7 @@
      "position": "TE",
      "prob": 0.26829,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -22769,6 +23404,7 @@
      "position": "RB",
      "prob": 0.256028,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -22780,6 +23416,7 @@
      "position": "WR",
      "prob": 0.174904,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -22791,6 +23428,7 @@
      "position": "WR",
      "prob": 0.174085,
      "rank": 7,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -22802,6 +23440,7 @@
      "position": "WR",
      "prob": 0.155445,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -22810,9 +23449,11 @@
      "group": "3+",
      "gsis_id": "00-0039299",
      "name": "George Holani",
+     "played": false,
      "position": "RB",
      "prob": 0.125759,
      "rank": 9,
+     "scored": null,
      "status": "active",
      "tds_season": 1
     },
@@ -22824,6 +23465,7 @@
      "position": "QB",
      "prob": 0.099027,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22832,9 +23474,11 @@
      "group": "1-3",
      "gsis_id": "00-0040673",
      "name": "Jalen Milroe",
+     "played": false,
      "position": "QB",
      "prob": 0.04239,
      "rank": 11,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -22846,6 +23490,7 @@
      "position": "TE",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -22857,6 +23502,7 @@
      "position": "FB",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22868,6 +23514,7 @@
      "position": "WR",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -22879,32 +23526,44 @@
      "position": "TE",
      "prob": null,
      "rank": 15,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 21,
+    "home": 13
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_SEA_LV",
    "game_type": "REG",
    "home": "LV",
    "home_leaders": {
     "passing": {
+     "actual": 143.0,
      "gsis_id": "00-0041562",
      "name": "Fernando Mendoza",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 183.404104
     },
     "receiving": {
+     "actual": 18.0,
      "gsis_id": "00-0039338",
      "name": "Brock Bowers",
+     "over": false,
      "position": "TE",
      "status": "active",
      "yards": 68.171522
     },
     "rushing": {
+     "actual": 23.0,
      "gsis_id": "00-0040878",
      "name": "Mike Washington Jr.",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 31.338449
@@ -22932,6 +23591,7 @@
       "rec_yds": 68.171522,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 6
     },
@@ -22946,6 +23606,7 @@
       "rec_yds": 23.377988,
       "rush_yds": 28.915868
      },
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -22960,6 +23621,7 @@
       "rec_yds": 30.665495,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "active",
      "tds_season": 4
     }
@@ -22973,6 +23635,7 @@
      "position": "TE",
      "prob": 0.327864,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 6
     },
@@ -22984,6 +23647,7 @@
      "position": "RB",
      "prob": 0.296563,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -22995,6 +23659,7 @@
      "position": "WR",
      "prob": 0.196043,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -23006,6 +23671,7 @@
      "position": "TE",
      "prob": 0.155936,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23017,6 +23683,7 @@
      "position": "RB",
      "prob": 0.151189,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23028,6 +23695,7 @@
      "position": "WR",
      "prob": 0.13697,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23039,6 +23707,7 @@
      "position": "WR",
      "prob": 0.104482,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -23047,9 +23716,11 @@
      "group": "1-3",
      "gsis_id": "00-0038579",
      "name": "Aidan O'Connell",
+     "played": false,
      "position": "QB",
      "prob": 0.086866,
      "rank": 8,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -23061,6 +23732,7 @@
      "position": "WR",
      "prob": 0.07765,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23069,9 +23741,11 @@
      "group": "1-3",
      "gsis_id": "00-0040581",
      "name": "Dont'e Thornton",
+     "played": false,
      "position": "WR",
      "prob": 0.066758,
      "rank": 10,
+     "scored": null,
      "status": "questionable",
      "tds_season": 0
     },
@@ -23080,9 +23754,11 @@
      "group": "1-3",
      "gsis_id": "00-0040894",
      "name": "Malik Benson",
+     "played": false,
      "position": "WR",
      "prob": 0.050951,
      "rank": 11,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -23094,6 +23770,7 @@
      "position": "QB",
      "prob": 0.050271,
      "rank": 12,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -23105,6 +23782,7 @@
      "position": "RB",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23116,6 +23794,7 @@
      "position": "FB",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23127,6 +23806,7 @@
      "position": "TE",
      "prob": null,
      "rank": 15,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23138,6 +23818,7 @@
      "position": "WR",
      "prob": null,
      "rank": 16,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23149,6 +23830,7 @@
      "position": "TE",
      "prob": null,
      "rank": 17,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -23181,39 +23863,50 @@
    "pick": "SEA",
    "pick_prob": 0.735236,
    "season": 2026,
+   "spread_correct": true,
    "spread_pick": {
     "edge": 2.048065,
     "line": -6.5,
     "team": "SEA"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "SOLID",
+   "total_correct": false,
    "total_pick": {
     "edge": 5.15051,
     "line": 40.5,
     "side": "OVER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_SF_DAL": {
    "away": "SF",
    "away_leaders": {
     "passing": {
+     "actual": 389.0,
      "gsis_id": "00-0037834",
      "name": "Brock Purdy",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 279.140613
     },
     "receiving": {
+     "actual": 74.0,
      "gsis_id": "00-0033288",
      "name": "George Kittle",
+     "over": true,
      "position": "TE",
      "status": "active",
      "yards": 56.510403
     },
     "rushing": {
+     "actual": 62.0,
      "gsis_id": "00-0033280",
      "name": "Christian McCaffrey",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 42.370191
@@ -23240,6 +23933,7 @@
       "rec_yds": 37.280118,
       "rush_yds": 42.370191
      },
+     "scored": true,
      "status": "active",
      "tds_season": 10
     },
@@ -23254,6 +23948,7 @@
       "rec_yds": 56.510403,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -23268,6 +23963,7 @@
       "rec_yds": 2.842431,
       "rush_yds": 30.33021
      },
+     "scored": true,
      "status": "active",
      "tds_season": 1
     }
@@ -23281,6 +23977,7 @@
      "position": "RB",
      "prob": 0.629184,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 10
     },
@@ -23292,6 +23989,7 @@
      "position": "TE",
      "prob": 0.425907,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -23303,6 +24001,7 @@
      "position": "RB",
      "prob": 0.288922,
      "rank": 3,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -23314,6 +24013,7 @@
      "position": "WR",
      "prob": 0.281256,
      "rank": 4,
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -23325,6 +24025,7 @@
      "position": "QB",
      "prob": 0.221922,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -23336,6 +24037,7 @@
      "position": "WR",
      "prob": 0.212458,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23347,6 +24049,7 @@
      "position": "WR",
      "prob": 0.212223,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23358,6 +24061,7 @@
      "position": "WR",
      "prob": 0.206714,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23366,9 +24070,11 @@
      "group": "1-3",
      "gsis_id": "00-0031236",
      "name": "Brandin Cooks",
+     "played": false,
      "position": "WR",
      "prob": 0.122309,
      "rank": 9,
+     "scored": null,
      "status": "active",
      "tds_season": 1
     },
@@ -23380,6 +24086,7 @@
      "position": "FB",
      "prob": 0.109844,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -23391,6 +24098,7 @@
      "position": "WR",
      "prob": 0.098056,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23402,6 +24110,7 @@
      "position": "RB",
      "prob": 0.082094,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23410,9 +24119,11 @@
      "group": "1-3",
      "gsis_id": "00-0036972",
      "name": "Mac Jones",
+     "played": false,
      "position": "QB",
      "prob": 0.057044,
      "rank": 13,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -23424,6 +24135,7 @@
      "position": "TE",
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23435,6 +24147,7 @@
      "position": "TE",
      "prob": null,
      "rank": 15,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23443,35 +24156,48 @@
      "group": "no history",
      "gsis_id": "00-0040589",
      "name": "Kurtis Rourke",
+     "played": false,
      "position": "QB",
      "prob": null,
      "rank": 16,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
    ],
+   "correct": true,
+   "final": {
+    "away": 46,
+    "home": 40
+   },
    "first_logged": "2026-11-10T17:59:02Z",
    "game_id": "2026_10_SF_DAL",
    "game_type": "REG",
    "home": "DAL",
    "home_leaders": {
     "passing": {
+     "actual": 343.0,
      "gsis_id": "00-0033077",
      "name": "Dak Prescott",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 274.262217
     },
     "receiving": {
+     "actual": 72.0,
      "gsis_id": "00-0036358",
      "name": "CeeDee Lamb",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 85.925227
     },
     "rushing": {
+     "actual": 63.0,
      "gsis_id": "00-0036997",
      "name": "Javonte Williams",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 66.55256
@@ -23499,6 +24225,7 @@
       "rec_yds": 10.550256,
       "rush_yds": 66.55256
      },
+     "scored": false,
      "status": "active",
      "tds_season": 10
     },
@@ -23513,6 +24240,7 @@
       "rec_yds": 85.925227,
       "rush_yds": 0.0
      },
+     "scored": true,
      "status": "active",
      "tds_season": 7
     },
@@ -23527,6 +24255,7 @@
       "rec_yds": 51.067423,
       "rush_yds": 0.0
      },
+     "scored": true,
      "status": "active",
      "tds_season": 2
     }
@@ -23540,6 +24269,7 @@
      "position": "RB",
      "prob": 0.587508,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 10
     },
@@ -23551,6 +24281,7 @@
      "position": "WR",
      "prob": 0.480076,
      "rank": 2,
+     "scored": true,
      "status": "active",
      "tds_season": 7
     },
@@ -23562,6 +24293,7 @@
      "position": "WR",
      "prob": 0.301411,
      "rank": 3,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -23573,6 +24305,7 @@
      "position": "WR",
      "prob": 0.253669,
      "rank": 4,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -23584,6 +24317,7 @@
      "position": "TE",
      "prob": 0.1397,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23595,6 +24329,7 @@
      "position": "QB",
      "prob": 0.126498,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23606,6 +24341,7 @@
      "position": "RB",
      "prob": 0.109213,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23614,9 +24350,11 @@
      "group": "1-3",
      "gsis_id": "00-0037077",
      "name": "Sam Howell",
+     "played": false,
      "position": "QB",
      "prob": 0.081957,
      "rank": 8,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -23628,6 +24366,7 @@
      "position": "WR",
      "prob": 0.077888,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -23639,6 +24378,7 @@
      "position": "FB",
      "prob": null,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23650,6 +24390,7 @@
      "position": "TE",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23661,6 +24402,7 @@
      "position": "TE",
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -23672,6 +24414,7 @@
      "position": "WR",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -23704,18 +24447,23 @@
    "pick": "SF",
    "pick_prob": 0.656295,
    "season": 2026,
+   "spread_correct": false,
    "spread_pick": {
     "edge": 0.397657,
     "line": 4.0,
     "team": "DAL"
    },
+   "td_all_graded": true,
+   "td_graded": true,
    "tier": "SOLID",
+   "total_correct": false,
    "total_pick": {
     "edge": 0.804099,
     "line": 56.0,
     "side": "UNDER"
    },
-   "week": 10
+   "week": 10,
+   "yards_graded": true
   },
   "2026_10_WAS_NYG": {
    "away": "WAS",
