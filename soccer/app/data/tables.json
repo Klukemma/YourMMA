@@ -1,14 +1,14 @@
 {
  "caveats": {
   "draws": "A draw is rarely the single likeliest result, so it is rarely the pick - even though about a quarter of matches end level. Its chance is always shown.",
-  "feeds": "Fixtures football-data.co.uk has not posted yet, and results it has not posted yet, come from two free, unofficial feeds - ESPN's public scoreboard and fixturedownload.com - which give dates, kickoff times and scores, never a price (in the leagues they cover: each league says which, and seven have neither). Until football-data.co.uk posts a match with its prices (Tuesday and Friday afternoons) its chances are the model's alone, and say so. A result from the feeds is provisional, and marked so, until football-data.co.uk posts its own; a provisional grade it disagrees with is corrected. Where the feeds have not confirmed a kickoff time, the pick closes at midnight UK time on match day. The model's ratings use only football-data.co.uk's results, with their shots where the league's history has them, through Nov 15.",
+  "feeds": "Fixtures football-data.co.uk has not posted yet, and results it has not posted yet, come from two free, unofficial feeds - ESPN's public scoreboard and fixturedownload.com - which give dates, kickoff times and scores, never a price (in the leagues they cover: each league says which, and seven have neither). Until football-data.co.uk posts a match with its prices (Tuesday and Friday afternoons) its chances are the model's alone, and say so. A result from the feeds is provisional, and marked so, until football-data.co.uk posts its own; a provisional grade it disagrees with is corrected. Where the feeds have not confirmed a kickoff time, the pick closes at midnight UK time on match day. The model's ratings use only football-data.co.uk's results, with their shots where the league's history has them, through Nov 16.",
   "model": "The pick is the betting market's chances, recalibrated on earlier seasons: across 2016-2025 in the top five the model alone picked 53.3% of results and the market 54.1%, and blending the model in added nothing the market did not already know. The model's own chances are shown beside each pick, labelled. Every league's pick is its own market's price, measured on its own seasons - the raw price, with the bookmakers' cut removed, where recalibrating it scored worse (D1, E1, E3, SC0, SC1, SC3, AUT, FIN, POL); each league's own numbers and caveats are with it. Betting the model where it disagreed with the price did not make money. Treat a pick as an opinion with a measured hit rate, not an edge.",
   "news": "The model does not read team news - injuries, suspensions, rotation. The betting market does, which is part of why the pick leans on it.",
   "rating": "The model rates each club's attack and defence from its goals, shots on target and shots - from its goals alone where its league's history has no shots, as that league says - weighted toward recent matches; a promoted club carries its rating up with a measured step. The rating is the model's own view - the pick on each match is the market's chances, because the market forecasts better.",
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, pooled over the top five, each beat the leagues' own rates from earlier seasons. A league shows only the numbers that beat its own rates in both of its periods; the others are withheld and shown as missing. Both teams to score runs low: across 2016-2025 in the top five its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-16T21:16:46Z",
+ "generated": "2026-11-17T01:04:07Z",
  "leagues": [
   {
    "caveats": [
@@ -8170,10 +8170,10 @@
    "country": "Spain",
    "group": "europe",
    "label": "Segunda Divisi\u00f3n",
-   "model_through": "2026-11-15",
+   "model_through": "2026-11-16",
    "name": "Segunda Divisi\u00f3n",
    "provisional": 0,
-   "results_through": "2026-11-15",
+   "results_through": "2026-11-16",
    "rows": [
     {
      "club": {
@@ -9257,6 +9257,15 @@
      "drawn": 4,
      "form": [
       {
+       "date": "2026-11-16",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Albacete",
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 2,
        "gf": 1,
@@ -9291,26 +9300,17 @@
        "league": "SP2",
        "opponent": "Tenerife",
        "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 4,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Sociedad B",
-       "result": "W"
       }
      ],
-     "ga": 25,
-     "gd": -6,
+     "ga": 26,
+     "gd": -7,
      "gf": 19,
-     "lost": 6,
-     "played": 13,
+     "lost": 7,
+     "played": 14,
      "points": 13,
      "position": 17,
      "provisional": 0,
-     "rating": -0.19660612441387415,
+     "rating": -0.20923655888769432,
      "team": "Celta B",
      "won": 3
     },
@@ -9383,6 +9383,73 @@
     },
     {
      "club": {
+      "bg": "#5B6170",
+      "code": "ALB",
+      "fg": "#FFFFFF",
+      "name": "Albacete"
+     },
+     "drawn": 1,
+     "form": [
+      {
+       "date": "2026-11-16",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Celta B",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 1,
+       "gf": 3,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Leganes",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Sabadell",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Eldense",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Sp Gijon",
+       "result": "L"
+      }
+     ],
+     "ga": 24,
+     "gd": -10,
+     "gf": 14,
+     "lost": 9,
+     "played": 14,
+     "points": 13,
+     "position": 19,
+     "provisional": 0,
+     "rating": -0.15925730950388273,
+     "team": "Albacete",
+     "won": 4
+    },
+    {
+     "club": {
       "bg": "#FDE607",
       "code": "CAD",
       "fg": "#0045A7",
@@ -9442,7 +9509,7 @@
      "lost": 7,
      "played": 14,
      "points": 11,
-     "position": 19,
+     "position": 20,
      "provisional": 0,
      "rating": -0.2498985239430438,
      "team": "Cadiz",
@@ -9509,77 +9576,10 @@
      "lost": 8,
      "played": 13,
      "points": 11,
-     "position": 20,
+     "position": 21,
      "provisional": 0,
      "rating": 0.15244655230158166,
      "team": "Andorra",
-     "won": 3
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "ALB",
-      "fg": "#FFFFFF",
-      "name": "Albacete"
-     },
-     "drawn": 1,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 1,
-       "gf": 3,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Leganes",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Sabadell",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Eldense",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Sp Gijon",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 5,
-       "gf": 0,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Valladolid",
-       "result": "L"
-      }
-     ],
-     "ga": 24,
-     "gd": -11,
-     "gf": 13,
-     "lost": 9,
-     "played": 13,
-     "points": 10,
-     "position": 21,
-     "provisional": 0,
-     "rating": -0.17291785075623234,
-     "team": "Albacete",
      "won": 3
     },
     {
@@ -44720,7 +44720,7 @@
    "table_note": "The overall table, both conferences together (the Supporters' Shield's); MLS Cup is left out."
   }
  ],
- "model_through": "2026-11-15",
+ "model_through": "2026-11-16",
  "schema": 1,
  "season": 2026,
  "season_label": "2026-27 season"
