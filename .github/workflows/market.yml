@@ -1,0 +1,85 @@
+name: Market research engine
+
+# market/: fetch prices, macro, FX, filings and news; run the tests; backtest
+# the trend switch; grade the prediction ledger; commit the data back.
+#
+# Prices and news run here, not in the dev container: Yahoo rate-limits and
+# Stooq / GDELT refuse the container's shared address, while Actions runners
+# reach them. Scheduled runs only start once this file is on the default
+# branch; until then a push to the dev branch (or a manual run) triggers it.
+#
+# SEC filings need the repository secret SEC_USER_AGENT ("Name email") - SEC
+# refuses requests without a contact. Without it that step reports and moves on.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ccr-ce8ee098-izbzuq]
+    paths:
+      - "market/**"
+      - "!market/data/**"
+      - ".github/workflows/market.yml"
+  schedule:
+    - cron: "23 22 * * 1-5"   # after the US close (16:00 ET = 21:00/20:00 UTC)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  market:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: market
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Tests
+        run: python -m pytest tests -q
+
+      - name: Fetch
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: |
+          for what in prices macro fx news filings; do
+            python -m butterfly fetch "$what" || echo "::warning::fetch $what had failures"
+          done
+
+      - name: Backtest and grade
+        run: |
+          mkdir -p data/reports
+          if [ -f data/prices/SPY.csv ]; then
+            python -m butterfly backtest --ticker SPY --cash DTB3 | tee data/reports/backtest_SPY.txt
+          fi
+          python -m butterfly verify
+          python -m butterfly grade | tee data/reports/grade.txt
+
+      - name: Commit
+        run: |
+          if [ -z "$(git status --porcelain -- data)" ]; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- data
+          git commit -m "Market data: $(date -u +%F)"
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep 5
+          done
+          exit 1

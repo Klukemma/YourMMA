@@ -1,0 +1,521 @@
+{
+ "nodes": {
+  "event:panama_drought": {
+   "type": "event",
+   "name": "Drought cuts Panama Canal water levels"
+  },
+  "event:opec_cut": {
+   "type": "event",
+   "name": "OPEC+ announces production cut"
+  },
+  "event:fed_hike": {
+   "type": "event",
+   "name": "Fed raises rates / signals tighter policy"
+  },
+  "event:chip_export_ban": {
+   "type": "event",
+   "name": "New US export limits on advanced chips"
+  },
+  "event:red_sea_disruption": {
+   "type": "event",
+   "name": "Red Sea / Suez shipping disrupted"
+  },
+  "route:panama_canal": {
+   "type": "route",
+   "name": "Panama Canal transit capacity"
+  },
+  "route:suez": {
+   "type": "route",
+   "name": "Suez / Red Sea transit capacity"
+  },
+  "macro:container_rates": {
+   "type": "macro",
+   "name": "Container freight rates"
+  },
+  "commodity:oil": {
+   "type": "commodity",
+   "name": "Crude oil price"
+  },
+  "commodity:jet_fuel": {
+   "type": "commodity",
+   "name": "Jet fuel price"
+  },
+  "commodity:gold": {
+   "type": "commodity",
+   "name": "Gold price"
+  },
+  "macro:inflation": {
+   "type": "macro",
+   "name": "US inflation expectations"
+  },
+  "macro:rates_10y": {
+   "type": "macro",
+   "name": "US 10-year yield"
+  },
+  "currency:usd": {
+   "type": "currency",
+   "name": "US dollar (trade-weighted)"
+  },
+  "factor:long_duration_growth": {
+   "type": "factor",
+   "name": "Long-duration growth stocks"
+  },
+  "sector:importers_retail": {
+   "type": "sector",
+   "name": "Import-heavy retailers"
+  },
+  "sector:airlines": {
+   "type": "sector",
+   "name": "Airlines"
+  },
+  "sector:china_chip_sales": {
+   "type": "sector",
+   "name": "US chip sales into China"
+  },
+  "tk:XOM": {
+   "type": "company",
+   "name": "Exxon Mobil",
+   "ticker": "XOM"
+  },
+  "tk:CVX": {
+   "type": "company",
+   "name": "Chevron",
+   "ticker": "CVX"
+  },
+  "tk:TLT": {
+   "type": "etf",
+   "name": "20+yr Treasury ETF",
+   "ticker": "TLT"
+  },
+  "tk:GLD": {
+   "type": "etf",
+   "name": "Gold ETF",
+   "ticker": "GLD"
+  },
+  "tk:QQQ": {
+   "type": "etf",
+   "name": "Nasdaq-100 ETF",
+   "ticker": "QQQ"
+  },
+  "tk:NVDA": {
+   "type": "company",
+   "name": "Nvidia",
+   "ticker": "NVDA"
+  },
+  "tk:AMD": {
+   "type": "company",
+   "name": "AMD",
+   "ticker": "AMD"
+  },
+  "tk:TSLA": {
+   "type": "company",
+   "name": "Tesla",
+   "ticker": "TSLA"
+  },
+  "tk:WMT": {
+   "type": "company",
+   "name": "Walmart",
+   "ticker": "WMT"
+  },
+  "tk:COST": {
+   "type": "company",
+   "name": "Costco",
+   "ticker": "COST"
+  },
+  "tk:BA": {
+   "type": "company",
+   "name": "Boeing",
+   "ticker": "BA"
+  },
+  "tk:KO": {
+   "type": "company",
+   "name": "Coca-Cola",
+   "ticker": "KO"
+  },
+  "tk:PG": {
+   "type": "company",
+   "name": "Procter & Gamble",
+   "ticker": "PG"
+  },
+  "tk:MCD": {
+   "type": "company",
+   "name": "McDonald's",
+   "ticker": "MCD"
+  },
+  "tk:AAPL": {
+   "type": "company",
+   "name": "Apple",
+   "ticker": "AAPL"
+  },
+  "tk:JPM": {
+   "type": "company",
+   "name": "JPMorgan",
+   "ticker": "JPM"
+  }
+ },
+ "edges": [
+  {
+   "src": "event:panama_drought",
+   "dst": "route:panama_canal",
+   "sign": -1,
+   "weight": 0.9,
+   "relation": "draft limits cut daily transits",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "event:red_sea_disruption",
+   "dst": "route:suez",
+   "sign": -1,
+   "weight": 0.9,
+   "relation": "ships reroute around Africa",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "route:panama_canal",
+   "dst": "macro:container_rates",
+   "sign": -1,
+   "weight": 0.4,
+   "relation": "less capacity, higher rates",
+   "lag": "weeks",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "route:suez",
+   "dst": "macro:container_rates",
+   "sign": -1,
+   "weight": 0.6,
+   "relation": "longer voyages absorb ship capacity",
+   "lag": "weeks",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "macro:container_rates",
+   "dst": "sector:importers_retail",
+   "sign": -1,
+   "weight": 0.4,
+   "relation": "freight is a cost of imported goods",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "sector:importers_retail",
+   "dst": "tk:WMT",
+   "sign": 1,
+   "weight": 0.5,
+   "relation": "member of the group",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "sector:importers_retail",
+   "dst": "tk:COST",
+   "sign": 1,
+   "weight": 0.5,
+   "relation": "member of the group",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "macro:container_rates",
+   "dst": "macro:inflation",
+   "sign": 1,
+   "weight": 0.2,
+   "relation": "goods prices",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "event:opec_cut",
+   "dst": "commodity:oil",
+   "sign": 1,
+   "weight": 0.7,
+   "relation": "supply cut",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "commodity:oil",
+   "dst": "tk:XOM",
+   "sign": 1,
+   "weight": 0.7,
+   "relation": "upstream revenue",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "commodity:oil",
+   "dst": "tk:CVX",
+   "sign": 1,
+   "weight": 0.7,
+   "relation": "upstream revenue",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "commodity:oil",
+   "dst": "commodity:jet_fuel",
+   "sign": 1,
+   "weight": 0.9,
+   "relation": "refined from crude",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "commodity:jet_fuel",
+   "dst": "sector:airlines",
+   "sign": -1,
+   "weight": 0.6,
+   "relation": "largest variable cost",
+   "lag": "weeks",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "sector:airlines",
+   "dst": "tk:BA",
+   "sign": 1,
+   "weight": 0.2,
+   "relation": "airline profits fund aircraft orders",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "commodity:oil",
+   "dst": "macro:inflation",
+   "sign": 1,
+   "weight": 0.4,
+   "relation": "energy share of CPI",
+   "lag": "weeks",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "macro:inflation",
+   "dst": "macro:rates_10y",
+   "sign": 1,
+   "weight": 0.5,
+   "relation": "inflation premium in yields",
+   "lag": "weeks",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "event:fed_hike",
+   "dst": "macro:rates_10y",
+   "sign": 1,
+   "weight": 0.4,
+   "relation": "policy path",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "event:fed_hike",
+   "dst": "currency:usd",
+   "sign": 1,
+   "weight": 0.4,
+   "relation": "rate differential",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "macro:rates_10y",
+   "dst": "tk:TLT",
+   "sign": -1,
+   "weight": 0.9,
+   "relation": "bond prices fall as yields rise",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "macro:rates_10y",
+   "dst": "factor:long_duration_growth",
+   "sign": -1,
+   "weight": 0.4,
+   "relation": "distant earnings discounted harder",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "macro:rates_10y",
+   "dst": "tk:JPM",
+   "sign": 1,
+   "weight": 0.2,
+   "relation": "wider lending margins",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "factor:long_duration_growth",
+   "dst": "tk:QQQ",
+   "sign": 1,
+   "weight": 0.5,
+   "relation": "index weight",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "factor:long_duration_growth",
+   "dst": "tk:TSLA",
+   "sign": 1,
+   "weight": 0.5,
+   "relation": "high valuation multiple",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "factor:long_duration_growth",
+   "dst": "tk:NVDA",
+   "sign": 1,
+   "weight": 0.4,
+   "relation": "high valuation multiple",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "currency:usd",
+   "dst": "commodity:gold",
+   "sign": -1,
+   "weight": 0.4,
+   "relation": "gold priced in dollars",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "commodity:gold",
+   "dst": "tk:GLD",
+   "sign": 1,
+   "weight": 1.0,
+   "relation": "holds physical gold",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "currency:usd",
+   "dst": "tk:KO",
+   "sign": -1,
+   "weight": 0.2,
+   "relation": "large share of revenue earned abroad",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "currency:usd",
+   "dst": "tk:PG",
+   "sign": -1,
+   "weight": 0.2,
+   "relation": "large share of revenue earned abroad",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "currency:usd",
+   "dst": "tk:MCD",
+   "sign": -1,
+   "weight": 0.2,
+   "relation": "large share of revenue earned abroad",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "currency:usd",
+   "dst": "tk:AAPL",
+   "sign": -1,
+   "weight": 0.2,
+   "relation": "large share of revenue earned abroad",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "event:chip_export_ban",
+   "dst": "sector:china_chip_sales",
+   "sign": -1,
+   "weight": 0.8,
+   "relation": "restricted products",
+   "lag": "days",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "sector:china_chip_sales",
+   "dst": "tk:NVDA",
+   "sign": 1,
+   "weight": 0.4,
+   "relation": "China share of data-center sales",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  },
+  {
+   "src": "sector:china_chip_sales",
+   "dst": "tk:AMD",
+   "sign": 1,
+   "weight": 0.3,
+   "relation": "China share of sales",
+   "lag": "quarters",
+   "source": "seed: general market knowledge - confirm against filings before relying on it",
+   "verified": false,
+   "note": ""
+  }
+ ]
+}
