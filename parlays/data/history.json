@@ -554,6 +554,146 @@
    },
    "paid": 0.0,
    "profit": -1.0
+  },
+  {
+   "day": "2026-11-22",
+   "kind": "likeliest",
+   "built_at": "2026-11-17T19:18:01Z",
+   "status": "pending",
+   "multiplier": 3.0034,
+   "p": 0.310353,
+   "p_market": 0.290722,
+   "first_start": "2026-11-22T18:00:00Z",
+   "last_start": "2026-11-22T18:00:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_11_BAL_CAR",
+     "event": "BAL @ CAR",
+     "pick": "CAR",
+     "opponent": "BAL",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 1.8064516129032258,
+     "p": 0.542598,
+     "p_model": 0.633145,
+     "p_market": 0.528496,
+     "names": {
+      "game_id": "2026_11_BAL_CAR",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_11_JAX_NYG",
+     "event": "JAX @ NYG",
+     "pick": "JAX",
+     "opponent": "NYG",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 1.380952380952381,
+     "p": 0.715844,
+     "p_model": 0.699612,
+     "p_market": 0.692824,
+     "names": {
+      "game_id": "2026_11_JAX_NYG",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_11_NO_CHI",
+     "event": "NO @ CHI",
+     "pick": "CHI",
+     "opponent": "NO",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 1.2039567611666326,
+     "p": 0.799023,
+     "p_model": 0.806463,
+     "p_market": 0.793986,
+     "names": {
+      "game_id": "2026_11_NO_CHI",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    }
+   ],
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-22",
+   "kind": "underdog",
+   "built_at": "2026-11-17T19:18:01Z",
+   "status": "pending",
+   "multiplier": 3.0353,
+   "p": 0.302278,
+   "p_market": 0.301589,
+   "first_start": "2026-11-22T21:05:00Z",
+   "last_start": "2026-11-22T21:25:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_11_NYJ_LAC",
+     "event": "NYJ @ LAC",
+     "pick": "NYJ",
+     "opponent": "LAC",
+     "kickoff": "2026-11-22T21:05:00Z",
+     "decimal": 2.045,
+     "p": 0.45603099999999996,
+     "p_model": 0.359337,
+     "p_market": 0.4676991999336304,
+     "names": {
+      "game_id": "2026_11_NYJ_LAC",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": true,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_11_PIT_PHI",
+     "event": "PIT @ PHI",
+     "pick": "PIT",
+     "opponent": "PHI",
+     "kickoff": "2026-11-22T21:25:00Z",
+     "decimal": 1.4842615012106537,
+     "p": 0.662845,
+     "p_model": 0.5527960000000001,
+     "p_market": 0.644836,
+     "names": {
+      "game_id": "2026_11_PIT_PHI",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "NFL:2026_11_NYJ_LAC",
+    "pick": "NYJ",
+    "lot_key": "2026_11_NYJ_LAC",
+    "rank": 0,
+    "candidates": 6,
+    "salt": "sameday-dog-v1",
+    "version": 1
+   },
+   "paid": null,
+   "profit": null
   }
  ]
 }

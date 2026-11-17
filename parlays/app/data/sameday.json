@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-17T14:33:17Z",
+ "generated": "2026-11-17T19:18:01Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -36,8 +36,8 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_fit",
-    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. No likeliest ticket in the next 7 days yet.",
-    "next_day": null
+    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. The next likeliest ticket is on Sunday, Nov 22.",
+    "next_day": "2026-11-22"
    },
    "underdog": {
     "day": "2026-11-17",
@@ -48,8 +48,211 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_dog",
-    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. No underdog ticket in the next 7 days yet.",
-    "next_day": null
+    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. The next underdog ticket is on Sunday, Nov 22.",
+    "next_day": "2026-11-22"
+   },
+   "cannot_both_win": false
+  },
+  {
+   "day": "2026-11-19",
+   "today": false,
+   "past": false,
+   "in_play": false,
+   "likeliest": {
+    "day": "2026-11-19",
+    "kind": "likeliest",
+    "status": "none",
+    "legs": [],
+    "multiplier": null,
+    "p": null,
+    "p_market": null,
+    "none_reason": "no_fit",
+    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer."
+   },
+   "underdog": {
+    "day": "2026-11-19",
+    "kind": "underdog",
+    "status": "none",
+    "legs": [],
+    "multiplier": null,
+    "p": null,
+    "p_market": null,
+    "none_reason": "no_dog",
+    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance."
+   },
+   "cannot_both_win": false
+  },
+  {
+   "day": "2026-11-22",
+   "today": false,
+   "past": false,
+   "in_play": false,
+   "likeliest": {
+    "day": "2026-11-22",
+    "kind": "likeliest",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "NFL",
+      "event": "BAL @ CAR",
+      "pick": "CAR",
+      "opponent": "BAL",
+      "kickoff": "2026-11-22T18:00:00Z",
+      "decimal": 1.8064516129032258,
+      "p": 0.542598,
+      "p_model": 0.633145,
+      "p_market": 0.528496,
+      "price_source": "consensus moneyline",
+      "american": -124,
+      "reason": "NFL: chance 54%, model 63%, market 53%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false
+     },
+     {
+      "sport": "NFL",
+      "event": "JAX @ NYG",
+      "pick": "JAX",
+      "opponent": "NYG",
+      "kickoff": "2026-11-22T18:00:00Z",
+      "decimal": 1.380952380952381,
+      "p": 0.715844,
+      "p_model": 0.699612,
+      "p_market": 0.692824,
+      "price_source": "consensus moneyline",
+      "american": -262,
+      "reason": "NFL: chance 72%, model 70%, market 69%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false
+     },
+     {
+      "sport": "NFL",
+      "event": "NO @ CHI",
+      "pick": "CHI",
+      "opponent": "NO",
+      "kickoff": "2026-11-22T18:00:00Z",
+      "decimal": 1.2039567611666326,
+      "p": 0.799023,
+      "p_model": 0.806463,
+      "p_market": 0.793986,
+      "price_source": "consensus moneyline",
+      "american": -490,
+      "reason": "NFL: chance 80%, model 81%, market 79%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false
+     }
+    ],
+    "multiplier": 3.0034,
+    "p": 0.310353,
+    "p_market": 0.290722,
+    "sports": [
+     "NFL"
+    ],
+    "first_start": "2026-11-22T18:00:00Z",
+    "last_start": "2026-11-22T18:00:00Z",
+    "built_at": "2026-11-17T19:18:01Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null
+   },
+   "underdog": {
+    "day": "2026-11-22",
+    "kind": "underdog",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "NFL",
+      "event": "NYJ @ LAC",
+      "pick": "NYJ",
+      "opponent": "LAC",
+      "kickoff": "2026-11-22T21:05:00Z",
+      "decimal": 2.045,
+      "p": 0.45603099999999996,
+      "p_model": 0.359337,
+      "p_market": 0.4676991999336304,
+      "price_source": "consensus moneyline",
+      "american": 104,
+      "reason": "NFL: chance 46%, model 36%, market 47%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": true
+     },
+     {
+      "sport": "NFL",
+      "event": "PIT @ PHI",
+      "pick": "PIT",
+      "opponent": "PHI",
+      "kickoff": "2026-11-22T21:25:00Z",
+      "decimal": 1.4842615012106537,
+      "p": 0.662845,
+      "p_model": 0.5527960000000001,
+      "p_market": 0.644836,
+      "price_source": "consensus moneyline",
+      "american": -207,
+      "reason": "NFL: chance 66%, model 55%, market 64%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false
+     }
+    ],
+    "multiplier": 3.0353,
+    "p": 0.302278,
+    "p_market": 0.301589,
+    "sports": [
+     "NFL"
+    ],
+    "first_start": "2026-11-22T21:05:00Z",
+    "last_start": "2026-11-22T21:25:00Z",
+    "built_at": "2026-11-17T19:18:01Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null,
+    "dog": {
+     "pick": "NYJ",
+     "event": "NYJ @ LAC",
+     "sport": "NFL",
+     "rank": 0,
+     "candidates": 6,
+     "salt": "sameday-dog-v1",
+     "version": 1
+    },
+    "lands_1_in": 3,
+    "only_one": false,
+    "best_of_books": false,
+    "price_note": null
+   },
+   "cannot_both_win": false
+  },
+  {
+   "day": "2026-11-23",
+   "today": false,
+   "past": false,
+   "in_play": false,
+   "likeliest": {
+    "day": "2026-11-23",
+    "kind": "likeliest",
+    "status": "none",
+    "legs": [],
+    "multiplier": null,
+    "p": null,
+    "p_market": null,
+    "none_reason": "no_fit",
+    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer."
+   },
+   "underdog": {
+    "day": "2026-11-23",
+    "kind": "underdog",
+    "status": "none",
+    "legs": [],
+    "multiplier": null,
+    "p": null,
+    "p_market": null,
+    "none_reason": "no_fill",
+    "missing_reason": "No underdog ticket: there is an underdog priced 2.00-4.00 (+100 to +300), but no favourites on other events bring it to 3-5x."
    },
    "cannot_both_win": false
   }
@@ -64,8 +267,101 @@
    "p": null,
    "p_market": null,
    "none_reason": "no_fit",
-   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. No likeliest ticket in the next 7 days yet.",
-   "next_day": null
+   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. The next likeliest ticket is on Sunday, Nov 22.",
+   "next_day": "2026-11-22"
+  },
+  {
+   "day": "2026-11-19",
+   "kind": "likeliest",
+   "status": "none",
+   "legs": [],
+   "multiplier": null,
+   "p": null,
+   "p_market": null,
+   "none_reason": "no_fit",
+   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer."
+  },
+  {
+   "day": "2026-11-22",
+   "kind": "likeliest",
+   "status": "open",
+   "legs": [
+    {
+     "sport": "NFL",
+     "event": "BAL @ CAR",
+     "pick": "CAR",
+     "opponent": "BAL",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 1.8064516129032258,
+     "p": 0.542598,
+     "p_model": 0.633145,
+     "p_market": 0.528496,
+     "price_source": "consensus moneyline",
+     "american": -124,
+     "reason": "NFL: chance 54%, model 63%, market 53%",
+     "outcome": null,
+     "void_reason": null,
+     "dog": false
+    },
+    {
+     "sport": "NFL",
+     "event": "JAX @ NYG",
+     "pick": "JAX",
+     "opponent": "NYG",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 1.380952380952381,
+     "p": 0.715844,
+     "p_model": 0.699612,
+     "p_market": 0.692824,
+     "price_source": "consensus moneyline",
+     "american": -262,
+     "reason": "NFL: chance 72%, model 70%, market 69%",
+     "outcome": null,
+     "void_reason": null,
+     "dog": false
+    },
+    {
+     "sport": "NFL",
+     "event": "NO @ CHI",
+     "pick": "CHI",
+     "opponent": "NO",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 1.2039567611666326,
+     "p": 0.799023,
+     "p_model": 0.806463,
+     "p_market": 0.793986,
+     "price_source": "consensus moneyline",
+     "american": -490,
+     "reason": "NFL: chance 80%, model 81%, market 79%",
+     "outcome": null,
+     "void_reason": null,
+     "dog": false
+    }
+   ],
+   "multiplier": 3.0034,
+   "p": 0.310353,
+   "p_market": 0.290722,
+   "sports": [
+    "NFL"
+   ],
+   "first_start": "2026-11-22T18:00:00Z",
+   "last_start": "2026-11-22T18:00:00Z",
+   "built_at": "2026-11-17T19:18:01Z",
+   "paid": null,
+   "profit": null,
+   "missing_reason": null,
+   "none_reason": null
+  },
+  {
+   "day": "2026-11-23",
+   "kind": "likeliest",
+   "status": "none",
+   "legs": [],
+   "multiplier": null,
+   "p": null,
+   "p_market": null,
+   "none_reason": "no_fit",
+   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer."
   }
  ],
  "record": {
@@ -74,7 +370,7 @@
   "units": -2.0,
   "roi": -1.0,
   "implied_roi": -0.0888,
-  "pending": 0,
+  "pending": 1,
   "last": [
    {
     "day": "2026-11-14",
@@ -105,7 +401,7 @@
    "units": -2.0,
    "roi": -1.0,
    "implied_roi": -0.0888,
-   "pending": 0,
+   "pending": 1,
    "last": [
     {
      "day": "2026-11-14",
@@ -135,7 +431,7 @@
    "units": -2.0,
    "roi": -1.0,
    "implied_roi": -0.0686,
-   "pending": 0,
+   "pending": 1,
    "last": [
     {
      "day": "2026-11-14",
