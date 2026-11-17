@@ -1,12 +1,16 @@
 """Daily prices, cached as one CSV per ticker: date, close, adj_close, source.
 
-`adj_close` is adjusted for splits and dividends where the source says so
-(Yahoo's adjclose). Stooq is a fallback whose adjustment is not documented,
-so its rows carry source=stooq and the backtest says so when it uses them.
+Sources, tried in order:
+  tiingo  free account key (tiingo.com), dividend- and split-adjusted history
+          back to the 1990s. Key from TIINGO_API_KEY; in the cloud dev
+          container the network proxy adds it instead.
+  yahoo   no key, adjusted - but refuses most scripts now (HTTP 429)
+  stooq   no key, adjustment undocumented, so its rows carry source=stooq
 """
 from __future__ import annotations
 
 import io
+import os
 from datetime import datetime, timezone
 
 import pandas as pd
@@ -19,6 +23,23 @@ COLUMNS = ["date", "close", "adj_close", "source"]
 
 def _path(ticker: str):
     return config.PRICES_DIR / f"{ticker.upper()}.csv"
+
+
+def parse_tiingo(rows: list[dict]) -> pd.DataFrame:
+    df = pd.DataFrame({"date": [r["date"][:10] for r in rows],
+                       "close": [r["close"] for r in rows],
+                       "adj_close": [r["adjClose"] for r in rows]})
+    df["source"] = "tiingo"
+    return df.dropna(subset=["close", "adj_close"])
+
+
+def fetch_tiingo(ticker: str) -> pd.DataFrame:
+    key = os.environ.get("TIINGO_API_KEY")
+    headers = {"Authorization": f"Token {key}"} if key else None
+    # Tiingo writes BRK-B style tickers with a dash
+    r = get(f"https://api.tiingo.com/tiingo/daily/{ticker.lower().replace('.', '-')}/prices",
+            params={"startDate": "1990-01-01", "format": "json"}, headers=headers)
+    return parse_tiingo(r.json())
 
 
 def parse_yahoo_chart(payload: dict) -> pd.DataFrame:
@@ -36,7 +57,7 @@ def parse_yahoo_chart(payload: dict) -> pd.DataFrame:
 def fetch_yahoo(ticker: str) -> pd.DataFrame:
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
     r = get(url, params={"period1": 0, "period2": 9_999_999_999, "interval": "1d",
-                         "events": "div,splits", "includeAdjustedClose": "true"})
+                         "events": "div,splits", "includeAdjustedClose": "true"}, tries=1)
     return parse_yahoo_chart(r.json())
 
 
@@ -50,7 +71,7 @@ def parse_stooq_csv(text: str) -> pd.DataFrame:
 
 
 def fetch_stooq(ticker: str) -> pd.DataFrame:
-    r = get("https://stooq.com/q/d/l/", params={"s": f"{ticker.lower()}.us", "i": "d"})
+    r = get("https://stooq.com/q/d/l/", params={"s": f"{ticker.lower()}.us", "i": "d"}, tries=1)
     return parse_stooq_csv(r.text)
 
 
@@ -58,7 +79,7 @@ def update(ticker: str) -> tuple[int, str]:
     """Refresh one ticker's cache. Returns (rows, source). Raises FetchError when
     every source fails, leaving the cache as it was."""
     errors = []
-    for fetch in (fetch_yahoo, fetch_stooq):
+    for fetch in (fetch_tiingo, fetch_yahoo, fetch_stooq):
         try:
             df = fetch(ticker)
         except (FetchError, KeyError, IndexError, TypeError, ValueError) as e:

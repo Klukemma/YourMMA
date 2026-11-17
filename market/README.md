@@ -31,7 +31,7 @@ python -m butterfly grade                  # score every closed prediction
 
 | Module | Job |
 |---|---|
-| `sources/prices.py` | Daily prices, Yahoo (dividend-adjusted) with a Stooq fallback |
+| `sources/prices.py` | Daily dividend-adjusted prices from Tiingo (free key), with Yahoo / Stooq fallbacks that mostly refuse scripts now |
 | `sources/macro.py` | FRED: yields, T-bills, oil, gas, dollar, VIX, credit spreads, breakevens. ECB FX rates via Frankfurter |
 | `sources/sec.py` | EDGAR: each company's 10-K / 10-Q / 8-K with exact acceptance times; filing text; Risk Factors and Business sections |
 | `sources/news.py` | GDELT world news for standing themes (shipping, energy, rates, trade, chips, weather, FX), de-duplicated and time-stamped |
@@ -73,13 +73,17 @@ python -m butterfly grade                  # score every closed prediction
 
 ## Where it runs
 
-The dev container reaches FRED, Frankfurter and SEC. Yahoo rate-limits its shared
-address, and Stooq and GDELT refuse it. `.github/workflows/market.yml` runs the
-whole loop on GitHub Actions on every push to the dev branch (and, once merged to
-the default branch, every weekday after the US close), then commits the data back.
+| Source | Dev container | GitHub Actions | Needs |
+|---|---|---|---|
+| FRED macro, ECB FX | yes | yes | nothing |
+| Tiingo prices | yes, once the key is saved as a network secret | yes | `TIINGO_API_KEY` (free account) |
+| SEC EDGAR | yes | yes | `SEC_USER_AGENT` = your name and a contact email |
+| GDELT news | no (refused) | yes | nothing |
 
-SEC needs `SEC_USER_AGENT` = your name and a contact email. Set it in
-`market/.env` locally and as a repository secret for Actions.
+`.github/workflows/market.yml` runs the whole loop on GitHub Actions on every push
+to the dev branch (and, once merged to the default branch, every weekday after
+the US close), then commits the data back. Put both keys in `market/.env`
+locally and as repository secrets for Actions.
 
 ## Next steps
 

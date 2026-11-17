@@ -8,6 +8,7 @@ time is before the prediction it supports.
 from __future__ import annotations
 
 import json
+import time
 from datetime import datetime, timezone
 
 from .. import config
@@ -47,12 +48,21 @@ def parse_gdelt(payload: dict, query_name: str, fetched: str) -> list[dict]:
     return [x for x in out if x["url"]]
 
 
+# GDELT allows one request every 5 seconds per address and answers 429 faster.
+_PAUSE = 6.0
+_LAST = [0.0]
+
+
 def fetch(query_name: str, timespan: str = "1d", maxrecords: int = 75) -> list[dict]:
+    wait = _PAUSE - (time.monotonic() - _LAST[0])
+    if wait > 0:
+        time.sleep(wait)
+    _LAST[0] = time.monotonic()
     r = get("https://api.gdeltproject.org/api/v2/doc/doc", params={
         "query": f"{QUERIES[query_name]} sourcelang:english",
         "mode": "artlist", "format": "json", "maxrecords": maxrecords,
         "timespan": timespan, "sort": "datedesc",
-    })
+    }, tries=2)
     fetched = datetime.now(timezone.utc).isoformat(timespec="seconds")
     return parse_gdelt(r.json(), query_name, fetched)
 
@@ -65,12 +75,12 @@ def append(articles: list[dict]) -> int:
     seen = set()
     if path.exists():
         seen = {json.loads(line)["url"] for line in path.read_text().splitlines() if line.strip()}
-    new = 0
-    with path.open("a") as f:
-        for a in articles:
-            if a["url"] in seen:
-                continue
+    lines = []
+    for a in articles:
+        if a["url"] not in seen:
             seen.add(a["url"])
-            f.write(json.dumps(a, ensure_ascii=False) + "\n")
-            new += 1
-    return new
+            lines.append(json.dumps(a, ensure_ascii=False) + "\n")
+    if lines:
+        with path.open("a") as f:
+            f.writelines(lines)
+    return len(lines)

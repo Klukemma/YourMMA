@@ -226,6 +226,13 @@ def test_parse_yahoo_chart():
     assert list(df["date"]) == ["2026-01-05"] and df["adj_close"].iloc[0] == 9.5
 
 
+def test_parse_tiingo():
+    df = prices.parse_tiingo([{"date": "2026-01-05T00:00:00.000Z", "close": 10.0, "adjClose": 9.4},
+                              {"date": "2026-01-06T00:00:00.000Z", "close": None, "adjClose": None}])
+    assert list(df["date"]) == ["2026-01-05"] and df["adj_close"].iloc[0] == 9.4
+    assert df["source"].iloc[0] == "tiingo"
+
+
 def test_parse_fred_drops_missing():
     df = macro.parse_fred_csv("observation_date,DGS10\n2026-01-02,4.1\n2026-01-05,.\n", "DGS10")
     assert len(df) == 1 and df["value"].iloc[0] == 4.1

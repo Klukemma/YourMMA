@@ -3,13 +3,13 @@ name: Market research engine
 # market/: fetch prices, macro, FX, filings and news; run the tests; backtest
 # the trend switch; grade the prediction ledger; commit the data back.
 #
-# Prices and news run here, not in the dev container: Yahoo rate-limits and
-# Stooq / GDELT refuse the container's shared address, while Actions runners
-# reach them. Scheduled runs only start once this file is on the default
-# branch; until then a push to the dev branch (or a manual run) triggers it.
+# News runs here, not in the dev container, which GDELT refuses. Scheduled
+# runs only start once this file is on the default branch; until then a push
+# to the dev branch (or a manual run) triggers it.
 #
-# SEC filings need the repository secret SEC_USER_AGENT ("Name email") - SEC
-# refuses requests without a contact. Without it that step reports and moves on.
+# Repository secrets: TIINGO_API_KEY (free tiingo.com key) for prices - Yahoo
+# and Stooq refuse scripts - and SEC_USER_AGENT ("Name email"), since SEC
+# refuses requests without a contact. A missing one is reported, not fatal.
 
 on:
   workflow_dispatch:
@@ -54,6 +54,7 @@ jobs:
       - name: Fetch
         env:
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
         run: |
           for what in prices macro fx news filings; do
             python -m butterfly fetch "$what" || echo "::warning::fetch $what had failures"
