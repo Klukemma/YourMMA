@@ -2428,5 +2428,5227 @@
    "Same days and events as the likeliest ticket: on the 1,132 days both exist, the two cannot both win on 102 (the dog is the other side of one of the likeliest ticket's legs). Held together, 1 unit each, they returned +4.0% a unit at the live draw (-2.5% to +10.7%), -1.9% over the 1,000 simulation draws (-6.7% to +3.2%), and -10.2% by the prices; the underdog ticket minus the likeliest was -4.9% a ticket at the live draw, -16.7% over the draws (-26.4% to -7.2%), and +3.5% by the prices.",
    "UFC draws and no contests: 92 of the 5,050 UFC fights from 2016-08-01 to 2026-08-08 (1.8%) ended without a winner - 40 draws, 52 no contests or overturned results, counted from the UFC archive - and none of them is in the history's legs (engine/experiments/parlay_legs.csv.gz keeps decided fights only), so here they are neither legs nor underdogs and a ticket that day is drawn and filled from the other fights. Live the rule cannot know them beforehand: such a fight stays in the draw and the fill, and its leg voids (pays 1.0)."
   ]
+ },
+ "v2": {
+  "version": 2,
+  "rule": {
+   "band": [
+    3.0,
+    5.0
+   ],
+   "max_legs": 6,
+   "pool": 12,
+   "min_p": 0.5,
+   "mixed_pool_other": 6,
+   "dog_salt": "sameday-dog-v2",
+   "props_salt": "sameday-props-v1",
+   "props_price": [
+    1.5,
+    4.0
+   ],
+   "props_live_band": [
+    3.6,
+    4.2
+   ],
+   "props_history_end": "2024-12-07",
+   "dog_price": [
+    2.0,
+    4.0
+   ],
+   "dog_floor": 0.2,
+   "leg_markets": [
+    "1X2",
+    "OU25",
+    "SPREAD",
+    "TOTAL",
+    "METHOD"
+   ],
+   "sim_salts": {
+    "underdog": 1000,
+    "props": 1000
+   }
+  },
+  "periods": {
+   "all": [
+    "2016-08-01",
+    "2026-08-08"
+   ],
+   "first": [
+    "2016-08-01",
+    "2023-08-08"
+   ],
+   "last_3_years": [
+    "2023-08-09",
+    "2026-08-08"
+   ]
+  },
+  "props_periods": {
+   "all": [
+    "2016-08-01",
+    "2024-12-07"
+   ],
+   "first": [
+    "2016-08-01",
+    "2023-08-08"
+   ],
+   "last_3_years": [
+    "2023-08-09",
+    "2024-12-07"
+   ]
+  },
+  "variants": {
+   "all_leagues": "every league in the app",
+   "without_extra_leagues": "the same days without the extra leagues' legs and underdogs (their history is priced at the close)"
+  },
+  "v1_files_sha256": {
+   "legs_ufc.csv.gz": "fcb4a3f892851e7f90b5552e3286bfc26b7903a9a36910b7039be3fecbd4ed30",
+   "legs_nfl.csv.gz": "e53eb5c9f19310b834fcdd64120dfef3556dc89afc192683373522f80e74c0f7",
+   "legs_soccer.csv.gz": "13337a20105892a4d9745081c4b3758aaa255829470b3bf969e13d72f93258b6",
+   "legs_dogs_ufc.csv.gz": "fcf7deeb285b9b7334821ed4084c7db02c501e64798973c523bc0b8ceab024e5",
+   "legs_dogs_nfl.csv.gz": "9c028c9e7eea0c6acdef14014a90125e40f18fd009bbbae5b254fc1cd926f55c",
+   "legs_dogs_soccer.csv.gz": "c125fb95fd5bba7dbccef7573e30239f6fe516ab89c31fa8ac1daae5d43c7b35"
+  },
+  "v1_sha256": "94aaf8aa85ad86cf06b18027ce4e61530c525e3b2268f56e9f97bde3d89eb163",
+  "legs": {
+   "legs_nfl": {
+    "rows": 2760,
+    "first": "2016-09-08",
+    "last": "2026-02-08",
+    "price_source": {
+     "close": 2760
+    }
+   },
+   "legs_ufc": {
+    "rows": 4135,
+    "first": "2016-08-06",
+    "last": "2026-08-08",
+    "price_source": {
+     "close": 3764,
+     "open": 371
+    }
+   },
+   "legs_v2_soccer": {
+    "rows": 118654,
+    "first": "2016-08-01",
+    "last": "2026-08-08",
+    "price_source": {
+     "close": 42035,
+     "pre": 76619
+    },
+    "bet": {
+     "1X2": 118654
+    },
+    "leagues": {
+     "europe": [
+      "B1",
+      "D2",
+      "E1",
+      "E2",
+      "E3",
+      "EC",
+      "F2",
+      "G1",
+      "I2",
+      "N1",
+      "P1",
+      "SC0",
+      "SC1",
+      "SC2",
+      "SC3",
+      "SP2",
+      "T1"
+     ],
+     "extra": [
+      "ARG",
+      "AUT",
+      "BRA",
+      "CHN",
+      "DNK",
+      "FIN",
+      "IRL",
+      "JPN",
+      "MEX",
+      "NOR",
+      "POL",
+      "ROU",
+      "SWE",
+      "SWZ",
+      "USA"
+     ],
+     "top": [
+      "D1",
+      "E0",
+      "F1",
+      "I1",
+      "SP1"
+     ]
+    },
+    "day_source": {
+     "kickoff": 95383,
+     "date": 23271
+    }
+   },
+   "legs_v2_nfl_lines": {
+    "rows": 5516,
+    "first": "2016-09-08",
+    "last": "2026-02-08",
+    "price_source": {
+     "close": 5516
+    },
+    "bet": {
+     "SPREAD": 2756,
+     "TOTAL": 2760
+    },
+    "side_source": {
+     "SPREAD market": 2396,
+     "SPREAD model": 360,
+     "TOTAL market": 2325,
+     "TOTAL model": 435
+    },
+    "void": {
+     "SPREAD": 65,
+     "TOTAL": 23
+    },
+    "games_with_a_total_but_no_spread_leg": 4
+   },
+   "legs_v2_ou25": {
+    "rows": 74444,
+    "first": "2016-08-01",
+    "last": "2026-08-08",
+    "price_source": {
+     "pre": 74444
+    },
+    "bet": {
+     "OU25": 74444
+    },
+    "leagues": [
+     "B1",
+     "D1",
+     "D2",
+     "E0",
+     "E1",
+     "E2",
+     "E3",
+     "EC",
+     "F1",
+     "F2",
+     "G1",
+     "I1",
+     "I2",
+     "N1",
+     "P1",
+     "SC0",
+     "SC1",
+     "SC3",
+     "SP1",
+     "SP2",
+     "T1"
+    ]
+   },
+   "legs_v2_ufc_method": {
+    "rows": 19944,
+    "first": "2016-08-06",
+    "last": "2024-12-07",
+    "price_source": {
+     "close": 19944
+    },
+    "bet": {
+     "METHOD": 19944
+    },
+    "fights": 3324,
+    "est_missing": {
+     "no earlier props to fit the estimator on: the fit rows start 2016-01-02, so method_price.fit_before(2016) is None": 1170
+    },
+    "est_missing_by_year": {
+     "2016": 1170
+    },
+    "fights_no_prop_won": 9,
+    "left_out": {
+     "the card is priced from the opening line (parlay_legs price_source 'open') and the props are the closing snapshot, so a ticket mixing them could never have been bought": 83
+    },
+    "left_out_days": 9,
+    "left_out_span": [
+     "2017-06-25",
+     "2021-04-24"
+    ]
+   },
+   "legs_dogs_nfl": {
+    "rows": 2747,
+    "first": "2016-09-08",
+    "last": "2026-02-08",
+    "price_source": {
+     "close": 2747
+    }
+   },
+   "legs_dogs_ufc": {
+    "rows": 4056,
+    "first": "2016-08-06",
+    "last": "2026-08-08",
+    "price_source": {
+     "close": 3694,
+     "open": 362
+    }
+   },
+   "legs_dogs_v2_soccer": {
+    "rows": 118446,
+    "first": "2016-08-01",
+    "last": "2026-08-08",
+    "price_source": {
+     "close": 41974,
+     "pre": 76472
+    }
+   }
+  },
+  "margins": {
+   "fights": 3324,
+   "six_way_median": 0.2255,
+   "moneyline_median": 0.0396,
+   "method_price_json": {
+    "six_way_median": 0.2251,
+    "moneyline_median": 0.0396,
+    "first": "2016-01-02",
+    "last": "2024-12-07"
+   },
+   "ufc_card_days": 348,
+   "card_days_with_props": 329
+  },
+  "kinds": {
+   "likeliest": {
+    "periods": {
+     "all": [
+      "2016-08-01",
+      "2026-08-08"
+     ],
+     "first": [
+      "2016-08-01",
+      "2023-08-08"
+     ],
+     "last_3_years": [
+      "2023-08-09",
+      "2026-08-08"
+     ]
+    },
+    "period_labels": {
+     "all": "2016-08 to 2026-08, 10.0 years",
+     "first": "2016-08 to 2023-08, 7.0 years",
+     "last_3_years": "2023-08 to 2026-08, 3.0 years"
+    },
+    "live": {
+     "all_leagues": {
+      "all": {
+       "tickets": 2690,
+       "wins": 833,
+       "hit_rate": 0.3097,
+       "expected_hit_rate": 0.3076,
+       "market_hit_rate": 0.274,
+       "mean_multiplier": 3.1,
+       "mean_legs": 2.95,
+       "profit": -118.81,
+       "roi": -0.0442,
+       "roi_low": -0.0968,
+       "roi_high": 0.0114,
+       "biggest_win": 3.8,
+       "implied_roi": -0.1532,
+       "days": 3660,
+       "days_with_ticket": 2690,
+       "share_of_days": 0.735,
+       "tickets_per_day": 0.735,
+       "days_with_legs": 3379,
+       "share_of_days_with_legs": 0.7961
+      },
+      "first": {
+       "tickets": 1901,
+       "wins": 601,
+       "hit_rate": 0.3161,
+       "expected_hit_rate": 0.3094,
+       "market_hit_rate": 0.2756,
+       "mean_multiplier": 3.1,
+       "mean_legs": 2.95,
+       "profit": -46.33,
+       "roi": -0.0244,
+       "roi_low": -0.0876,
+       "roi_high": 0.038,
+       "biggest_win": 3.45,
+       "implied_roi": -0.1485,
+       "days": 2564,
+       "days_with_ticket": 1901,
+       "share_of_days": 0.7414,
+       "tickets_per_day": 0.7414,
+       "days_with_legs": 2366,
+       "share_of_days_with_legs": 0.8035
+      },
+      "last_3_years": {
+       "tickets": 789,
+       "wins": 232,
+       "hit_rate": 0.294,
+       "expected_hit_rate": 0.3031,
+       "market_hit_rate": 0.2702,
+       "mean_multiplier": 3.1,
+       "mean_legs": 2.96,
+       "profit": -72.48,
+       "roi": -0.0919,
+       "roi_low": -0.1902,
+       "roi_high": 0.0091,
+       "biggest_win": 3.8,
+       "implied_roi": -0.1643,
+       "days": 1096,
+       "days_with_ticket": 789,
+       "share_of_days": 0.7199,
+       "tickets_per_day": 0.7199,
+       "days_with_legs": 1013,
+       "share_of_days_with_legs": 0.7789
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "tickets": 2099,
+       "wins": 662,
+       "hit_rate": 0.3154,
+       "expected_hit_rate": 0.3104,
+       "market_hit_rate": 0.276,
+       "mean_multiplier": 3.11,
+       "mean_legs": 2.94,
+       "profit": -54.67,
+       "roi": -0.026,
+       "roi_low": -0.0878,
+       "roi_high": 0.0363,
+       "biggest_win": 3.66,
+       "implied_roi": -0.1449,
+       "days": 3660,
+       "days_with_ticket": 2099,
+       "share_of_days": 0.5735,
+       "tickets_per_day": 0.5735,
+       "days_with_legs": 2800,
+       "share_of_days_with_legs": 0.7496
+      },
+      "first": {
+       "tickets": 1481,
+       "wins": 475,
+       "hit_rate": 0.3207,
+       "expected_hit_rate": 0.3121,
+       "market_hit_rate": 0.2774,
+       "mean_multiplier": 3.11,
+       "mean_legs": 2.93,
+       "profit": -13.79,
+       "roi": -0.0093,
+       "roi_low": -0.0832,
+       "roi_high": 0.0627,
+       "biggest_win": 3.66,
+       "implied_roi": -0.14,
+       "days": 2564,
+       "days_with_ticket": 1481,
+       "share_of_days": 0.5776,
+       "tickets_per_day": 0.5776,
+       "days_with_legs": 1959,
+       "share_of_days_with_legs": 0.756
+      },
+      "last_3_years": {
+       "tickets": 618,
+       "wins": 187,
+       "hit_rate": 0.3026,
+       "expected_hit_rate": 0.3062,
+       "market_hit_rate": 0.2724,
+       "mean_multiplier": 3.11,
+       "mean_legs": 2.95,
+       "profit": -40.89,
+       "roi": -0.0662,
+       "roi_low": -0.1748,
+       "roi_high": 0.0438,
+       "biggest_win": 2.89,
+       "implied_roi": -0.1565,
+       "days": 1096,
+       "days_with_ticket": 618,
+       "share_of_days": 0.5639,
+       "tickets_per_day": 0.5639,
+       "days_with_legs": 841,
+       "share_of_days_with_legs": 0.7348
+      }
+     }
+    },
+    "market_only": {
+     "all_leagues": {
+      "all": {
+       "tickets": 2606,
+       "wins": 819,
+       "hit_rate": 0.3143,
+       "expected_hit_rate": 0.2968,
+       "market_hit_rate": 0.2769,
+       "mean_multiplier": 3.11,
+       "mean_legs": 2.88,
+       "profit": -69.57,
+       "roi": -0.0267,
+       "roi_low": -0.0839,
+       "roi_high": 0.0309,
+       "biggest_win": 3.8,
+       "implied_roi": -0.1435,
+       "days": 3660,
+       "days_with_ticket": 2606,
+       "share_of_days": 0.712,
+       "tickets_per_day": 0.712
+      },
+      "first": {
+       "tickets": 1835,
+       "wins": 582,
+       "hit_rate": 0.3172,
+       "expected_hit_rate": 0.2986,
+       "market_hit_rate": 0.2787,
+       "mean_multiplier": 3.11,
+       "mean_legs": 2.87,
+       "profit": -33.49,
+       "roi": -0.0183,
+       "roi_low": -0.0846,
+       "roi_high": 0.0469,
+       "biggest_win": 3.48,
+       "implied_roi": -0.1383,
+       "days": 2564,
+       "days_with_ticket": 1835,
+       "share_of_days": 0.7157,
+       "tickets_per_day": 0.7157
+      },
+      "last_3_years": {
+       "tickets": 771,
+       "wins": 237,
+       "hit_rate": 0.3074,
+       "expected_hit_rate": 0.2926,
+       "market_hit_rate": 0.2727,
+       "mean_multiplier": 3.11,
+       "mean_legs": 2.89,
+       "profit": -36.08,
+       "roi": -0.0468,
+       "roi_low": -0.1479,
+       "roi_high": 0.0561,
+       "biggest_win": 3.8,
+       "implied_roi": -0.1558,
+       "days": 1096,
+       "days_with_ticket": 771,
+       "share_of_days": 0.7035,
+       "tickets_per_day": 0.7035
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "tickets": 2035,
+       "wins": 613,
+       "hit_rate": 0.3012,
+       "expected_hit_rate": 0.2975,
+       "market_hit_rate": 0.279,
+       "mean_multiplier": 3.12,
+       "mean_legs": 2.87,
+       "profit": -136.59,
+       "roi": -0.0671,
+       "roi_low": -0.1296,
+       "roi_high": -0.0052,
+       "biggest_win": 3.66,
+       "implied_roi": -0.1347,
+       "days": 3660,
+       "days_with_ticket": 2035,
+       "share_of_days": 0.556,
+       "tickets_per_day": 0.556
+      },
+      "first": {
+       "tickets": 1436,
+       "wins": 432,
+       "hit_rate": 0.3008,
+       "expected_hit_rate": 0.2989,
+       "market_hit_rate": 0.2808,
+       "mean_multiplier": 3.11,
+       "mean_legs": 2.86,
+       "profit": -99.01,
+       "roi": -0.0689,
+       "roi_low": -0.142,
+       "roi_high": 0.0074,
+       "biggest_win": 3.66,
+       "implied_roi": -0.1295,
+       "days": 2564,
+       "days_with_ticket": 1436,
+       "share_of_days": 0.5601,
+       "tickets_per_day": 0.5601
+      },
+      "last_3_years": {
+       "tickets": 599,
+       "wins": 181,
+       "hit_rate": 0.3022,
+       "expected_hit_rate": 0.2944,
+       "market_hit_rate": 0.2748,
+       "mean_multiplier": 3.12,
+       "mean_legs": 2.89,
+       "profit": -37.59,
+       "roi": -0.0627,
+       "roi_low": -0.1771,
+       "roi_high": 0.0519,
+       "biggest_win": 3.28,
+       "implied_roi": -0.1471,
+       "days": 1096,
+       "days_with_ticket": 599,
+       "share_of_days": 0.5465,
+       "tickets_per_day": 0.5465
+      }
+     }
+    },
+    "splits": {
+     "note": "descriptive: none can move a rule in v2",
+     "by_bets": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2": {
+       "tickets": 2690,
+       "wins": 833,
+       "hit_rate": 0.3097,
+       "expected_hit_rate": 0.3076,
+       "market_hit_rate": 0.274,
+       "mean_multiplier": 3.1,
+       "mean_legs": 2.95,
+       "profit": -118.81,
+       "roi": -0.0442,
+       "roi_low": -0.0968,
+       "roi_high": 0.0114,
+       "biggest_win": 3.8,
+       "implied_roi": -0.1532,
+       "share": 1.0
+      }
+     },
+     "by_sports": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL": {
+       "tickets": 30,
+       "wins": 12,
+       "hit_rate": 0.4,
+       "expected_hit_rate": 0.3254,
+       "market_hit_rate": 0.2986,
+       "mean_multiplier": 3.06,
+       "mean_legs": 2.87,
+       "profit": 4.56,
+       "roi": 0.152,
+       "roi_low": -0.3466,
+       "roi_high": 0.6767,
+       "biggest_win": 2.3,
+       "implied_roi": -0.0866,
+       "share": 0.0112
+      },
+      "NFL+Soccer": {
+       "tickets": 248,
+       "wins": 79,
+       "hit_rate": 0.3185,
+       "expected_hit_rate": 0.3094,
+       "market_hit_rate": 0.2729,
+       "mean_multiplier": 3.12,
+       "mean_legs": 3.6,
+       "profit": -2.85,
+       "roi": -0.0115,
+       "roi_low": -0.1908,
+       "roi_high": 0.1662,
+       "biggest_win": 2.86,
+       "implied_roi": -0.1513,
+       "share": 0.0922
+      },
+      "NFL+Soccer+UFC": {
+       "tickets": 1,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.3298,
+       "market_hit_rate": 0.2697,
+       "mean_multiplier": 3.02,
+       "mean_legs": 5.0,
+       "profit": -1.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.1842,
+       "share": 0.0004
+      },
+      "Soccer": {
+       "tickets": 2221,
+       "wins": 676,
+       "hit_rate": 0.3044,
+       "expected_hit_rate": 0.3065,
+       "market_hit_rate": 0.2737,
+       "mean_multiplier": 3.1,
+       "mean_legs": 2.83,
+       "profit": -130.3,
+       "roi": -0.0587,
+       "roi_low": -0.1179,
+       "roi_high": 0.0019,
+       "biggest_win": 3.8,
+       "implied_roi": -0.1535,
+       "share": 0.8257
+      },
+      "Soccer+UFC": {
+       "tickets": 164,
+       "wins": 55,
+       "hit_rate": 0.3354,
+       "expected_hit_rate": 0.3134,
+       "market_hit_rate": 0.2726,
+       "mean_multiplier": 3.04,
+       "mean_legs": 3.69,
+       "profit": 3.22,
+       "roi": 0.0196,
+       "roi_low": -0.202,
+       "roi_high": 0.2424,
+       "biggest_win": 2.21,
+       "implied_roi": -0.1718,
+       "share": 0.061
+      },
+      "UFC": {
+       "tickets": 26,
+       "wins": 11,
+       "hit_rate": 0.4231,
+       "expected_hit_rate": 0.3262,
+       "market_hit_rate": 0.2952,
+       "mean_multiplier": 3.06,
+       "mean_legs": 2.58,
+       "profit": 7.55,
+       "roi": 0.2904,
+       "roi_low": -0.2928,
+       "roi_high": 0.8781,
+       "biggest_win": 2.15,
+       "implied_roi": -0.0974,
+       "share": 0.0097
+      }
+     },
+     "by_legs": {
+      "note": "descriptive: none can move a rule in v2",
+      "2 legs": {
+       "tickets": 1009,
+       "wins": 298,
+       "hit_rate": 0.2953,
+       "expected_hit_rate": 0.3069,
+       "market_hit_rate": 0.2862,
+       "mean_multiplier": 3.1,
+       "mean_legs": 2.0,
+       "profit": -88.76,
+       "roi": -0.088,
+       "roi_low": -0.1751,
+       "roi_high": -0.0018,
+       "biggest_win": 2.53,
+       "implied_roi": -0.1153,
+       "share": 0.3751
+      },
+      "3 legs": {
+       "tickets": 1037,
+       "wins": 321,
+       "hit_rate": 0.3095,
+       "expected_hit_rate": 0.3023,
+       "market_hit_rate": 0.2686,
+       "mean_multiplier": 3.15,
+       "mean_legs": 3.0,
+       "profit": -34.36,
+       "roi": -0.0331,
+       "roi_low": -0.1209,
+       "roi_high": 0.0583,
+       "biggest_win": 3.8,
+       "implied_roi": -0.1605,
+       "share": 0.3855
+      },
+      "4 legs": {
+       "tickets": 435,
+       "wins": 137,
+       "hit_rate": 0.3149,
+       "expected_hit_rate": 0.3175,
+       "market_hit_rate": 0.2672,
+       "mean_multiplier": 3.04,
+       "mean_legs": 4.0,
+       "profit": -19.93,
+       "roi": -0.0458,
+       "roi_low": -0.1782,
+       "roi_high": 0.0928,
+       "biggest_win": 2.24,
+       "implied_roi": -0.1894,
+       "share": 0.1617
+      },
+      "5 legs": {
+       "tickets": 179,
+       "wins": 68,
+       "hit_rate": 0.3799,
+       "expected_hit_rate": 0.3165,
+       "market_hit_rate": 0.2573,
+       "mean_multiplier": 3.03,
+       "mean_legs": 5.0,
+       "profit": 26.82,
+       "roi": 0.1499,
+       "roi_low": -0.0698,
+       "roi_high": 0.3696,
+       "biggest_win": 2.14,
+       "implied_roi": -0.221,
+       "share": 0.0665
+      },
+      "6 legs": {
+       "tickets": 30,
+       "wins": 9,
+       "hit_rate": 0.3,
+       "expected_hit_rate": 0.3151,
+       "market_hit_rate": 0.2501,
+       "mean_multiplier": 3.04,
+       "mean_legs": 6.0,
+       "profit": -2.59,
+       "roi": -0.0862,
+       "roi_low": -0.5912,
+       "roi_high": 0.4266,
+       "biggest_win": 2.16,
+       "implied_roi": -0.2406,
+       "share": 0.0112
+      }
+     },
+     "legs_by_bet": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2": {
+       "legs": 7944,
+       "won": 5420,
+       "void": 3,
+       "hit_rate": 0.6825,
+       "mean_p": 0.6782,
+       "mean_p_market": 0.652,
+       "mean_decimal": 1.482,
+       "single_roi": -0.0125,
+       "single_implied_roi": -0.0551
+      }
+     },
+     "legs_by_sport": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL": {
+       "legs": 474,
+       "won": 347,
+       "void": 3,
+       "hit_rate": 0.7367,
+       "mean_p": 0.7391,
+       "mean_p_market": 0.7205,
+       "mean_decimal": 1.378,
+       "single_roi": -0.0055,
+       "single_implied_roi": -0.0301
+      },
+      "Soccer": {
+       "legs": 7191,
+       "won": 4865,
+       "void": 0,
+       "hit_rate": 0.6765,
+       "mean_p": 0.6736,
+       "mean_p_market": 0.6466,
+       "mean_decimal": 1.491,
+       "single_roi": -0.0159,
+       "single_implied_roi": -0.0573
+      },
+      "UFC": {
+       "legs": 279,
+       "won": 208,
+       "void": 0,
+       "hit_rate": 0.7455,
+       "mean_p": 0.6947,
+       "mean_p_market": 0.675,
+       "mean_decimal": 1.443,
+       "single_roi": 0.0631,
+       "single_implied_roi": -0.0389
+      }
+     }
+    }
+   },
+   "underdog": {
+    "periods": {
+     "all": [
+      "2016-08-01",
+      "2026-08-08"
+     ],
+     "first": [
+      "2016-08-01",
+      "2023-08-08"
+     ],
+     "last_3_years": [
+      "2023-08-09",
+      "2026-08-08"
+     ]
+    },
+    "period_labels": {
+     "all": "2016-08 to 2026-08, 10.0 years",
+     "first": "2016-08 to 2023-08, 7.0 years",
+     "last_3_years": "2023-08 to 2026-08, 3.0 years"
+    },
+    "live": {
+     "all_leagues": {
+      "all": {
+       "tickets": 2969,
+       "wins": 707,
+       "hit_rate": 0.2381,
+       "expected_hit_rate": 0.2352,
+       "market_hit_rate": 0.2306,
+       "mean_multiplier": 3.91,
+       "mean_legs": 2.01,
+       "profit": -240.36,
+       "roi": -0.081,
+       "roi_low": -0.1413,
+       "roi_high": -0.0187,
+       "biggest_win": 4.0,
+       "implied_roi": -0.1156,
+       "days": 3660,
+       "days_with_ticket": 2969,
+       "share_of_days": 0.8112,
+       "tickets_per_day": 0.8112,
+       "days_with_legs": 3379,
+       "share_of_days_with_legs": 0.8787
+      },
+      "first": {
+       "tickets": 2094,
+       "wins": 490,
+       "hit_rate": 0.234,
+       "expected_hit_rate": 0.2363,
+       "market_hit_rate": 0.2313,
+       "mean_multiplier": 3.91,
+       "mean_legs": 2.01,
+       "profit": -200.97,
+       "roi": -0.096,
+       "roi_low": -0.1664,
+       "roi_high": -0.0269,
+       "biggest_win": 4.0,
+       "implied_roi": -0.1127,
+       "days": 2564,
+       "days_with_ticket": 2094,
+       "share_of_days": 0.8167,
+       "tickets_per_day": 0.8167,
+       "days_with_legs": 2366,
+       "share_of_days_with_legs": 0.885
+      },
+      "last_3_years": {
+       "tickets": 875,
+       "wins": 217,
+       "hit_rate": 0.248,
+       "expected_hit_rate": 0.2326,
+       "market_hit_rate": 0.2288,
+       "mean_multiplier": 3.92,
+       "mean_legs": 2.01,
+       "profit": -39.39,
+       "roi": -0.045,
+       "roi_low": -0.1555,
+       "roi_high": 0.0675,
+       "biggest_win": 3.99,
+       "implied_roi": -0.1227,
+       "days": 1096,
+       "days_with_ticket": 875,
+       "share_of_days": 0.7984,
+       "tickets_per_day": 0.7984,
+       "days_with_legs": 1013,
+       "share_of_days_with_legs": 0.8638
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "tickets": 2337,
+       "wins": 548,
+       "hit_rate": 0.2345,
+       "expected_hit_rate": 0.2386,
+       "market_hit_rate": 0.2337,
+       "mean_multiplier": 3.89,
+       "mean_legs": 2.01,
+       "profit": -246.13,
+       "roi": -0.1053,
+       "roi_low": -0.1695,
+       "roi_high": -0.0378,
+       "biggest_win": 3.99,
+       "implied_roi": -0.1093,
+       "days": 3660,
+       "days_with_ticket": 2337,
+       "share_of_days": 0.6385,
+       "tickets_per_day": 0.6385,
+       "days_with_legs": 2800,
+       "share_of_days_with_legs": 0.8346
+      },
+      "first": {
+       "tickets": 1636,
+       "wins": 379,
+       "hit_rate": 0.2317,
+       "expected_hit_rate": 0.2393,
+       "market_hit_rate": 0.234,
+       "mean_multiplier": 3.9,
+       "mean_legs": 2.01,
+       "profit": -190.68,
+       "roi": -0.1166,
+       "roi_low": -0.1967,
+       "roi_high": -0.0389,
+       "biggest_win": 3.99,
+       "implied_roi": -0.1063,
+       "days": 2564,
+       "days_with_ticket": 1636,
+       "share_of_days": 0.6381,
+       "tickets_per_day": 0.6381,
+       "days_with_legs": 1959,
+       "share_of_days_with_legs": 0.8351
+      },
+      "last_3_years": {
+       "tickets": 701,
+       "wins": 169,
+       "hit_rate": 0.2411,
+       "expected_hit_rate": 0.2371,
+       "market_hit_rate": 0.2331,
+       "mean_multiplier": 3.87,
+       "mean_legs": 2.01,
+       "profit": -55.45,
+       "roi": -0.0791,
+       "roi_low": -0.2009,
+       "roi_high": 0.0443,
+       "biggest_win": 3.99,
+       "implied_roi": -0.1165,
+       "days": 1096,
+       "days_with_ticket": 701,
+       "share_of_days": 0.6396,
+       "tickets_per_day": 0.6396,
+       "days_with_legs": 841,
+       "share_of_days_with_legs": 0.8335
+      }
+     }
+    },
+    "salt": "sameday-dog-v2",
+    "salts": {
+     "all_leagues": {
+      "all": {
+       "salts": 1000,
+       "tickets_per_salt": 2969,
+       "roi": -0.0744,
+       "roi_low": -0.1057,
+       "roi_high": -0.0429,
+       "hit_rate": 0.2418,
+       "hit_low": 0.2342,
+       "hit_high": 0.2495,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.1155,
+       "market_hit_rate": 0.2307,
+       "mean_multiplier": 3.91,
+       "mean_legs": 2.01,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.1162,
+         "p50": -0.0743,
+         "p95": -0.0301
+        },
+        "hit_rate": {
+         "p5": 0.2307,
+         "p50": 0.2415,
+         "p95": 0.2536
+        },
+        "implied_roi": {
+         "p5": -0.1158,
+         "p50": -0.1155,
+         "p95": -0.1152
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 404,
+        "roi_equal": 0,
+        "hit_below": 291,
+        "hit_equal": 11,
+        "of": 1000
+       }
+      },
+      "first": {
+       "salts": 1000,
+       "tickets_per_salt": 2094,
+       "roi": -0.0757,
+       "roi_low": -0.1115,
+       "roi_high": -0.0386,
+       "hit_rate": 0.2419,
+       "hit_low": 0.2331,
+       "hit_high": 0.251,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.1125,
+       "market_hit_rate": 0.2317,
+       "mean_multiplier": 3.91,
+       "mean_legs": 2.01,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.1292,
+         "p50": -0.0758,
+         "p95": -0.0235
+        },
+        "hit_rate": {
+         "p5": 0.2278,
+         "p50": 0.2416,
+         "p95": 0.256
+        },
+        "implied_roi": {
+         "p5": -0.1128,
+         "p50": -0.1125,
+         "p95": -0.1121
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 255,
+        "roi_equal": 0,
+        "hit_below": 161,
+        "hit_equal": 10,
+        "of": 1000
+       }
+      },
+      "last_3_years": {
+       "salts": 1000,
+       "tickets_per_salt": 875,
+       "roi": -0.0711,
+       "roi_low": -0.13,
+       "roi_high": -0.014,
+       "hit_rate": 0.2415,
+       "hit_low": 0.2273,
+       "hit_high": 0.2553,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.1226,
+       "market_hit_rate": 0.2285,
+       "mean_multiplier": 3.92,
+       "mean_legs": 2.01,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.1491,
+         "p50": -0.0706,
+         "p95": 0.0094
+        },
+        "hit_rate": {
+         "p5": 0.2217,
+         "p50": 0.2411,
+         "p95": 0.2629
+        },
+        "implied_roi": {
+         "p5": -0.1232,
+         "p50": -0.1226,
+         "p95": -0.1221
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 730,
+        "roi_equal": 0,
+        "hit_below": 704,
+        "hit_equal": 32,
+        "of": 1000
+       }
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "salts": 1000,
+       "tickets_per_salt": 2337,
+       "roi": -0.1103,
+       "roi_low": -0.1449,
+       "roi_high": -0.0753,
+       "hit_rate": 0.234,
+       "hit_low": 0.2256,
+       "hit_high": 0.2423,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.1093,
+       "market_hit_rate": 0.2337,
+       "mean_multiplier": 3.89,
+       "mean_legs": 2.01,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.1545,
+         "p50": -0.1109,
+         "p95": -0.0634
+        },
+        "hit_rate": {
+         "p5": 0.2225,
+         "p50": 0.2341,
+         "p95": 0.2465
+        },
+        "implied_roi": {
+         "p5": -0.1096,
+         "p50": -0.1093,
+         "p95": -0.1089
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 579,
+        "roi_equal": 0,
+        "hit_below": 515,
+        "hit_equal": 26,
+        "of": 1000
+       }
+      },
+      "first": {
+       "salts": 1000,
+       "tickets_per_salt": 1636,
+       "roi": -0.1,
+       "roi_low": -0.1399,
+       "roi_high": -0.0599,
+       "hit_rate": 0.2367,
+       "hit_low": 0.2269,
+       "hit_high": 0.2467,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.1063,
+       "market_hit_rate": 0.2343,
+       "mean_multiplier": 3.9,
+       "mean_legs": 2.01,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.1582,
+         "p50": -0.1004,
+         "p95": -0.0424
+        },
+        "hit_rate": {
+         "p5": 0.2219,
+         "p50": 0.2366,
+         "p95": 0.2518
+        },
+        "implied_roi": {
+         "p5": -0.1068,
+         "p50": -0.1063,
+         "p95": -0.1059
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 311,
+        "roi_equal": 0,
+        "hit_below": 283,
+        "hit_equal": 19,
+        "of": 1000
+       }
+      },
+      "last_3_years": {
+       "salts": 1000,
+       "tickets_per_salt": 701,
+       "roi": -0.1342,
+       "roi_low": -0.1958,
+       "roi_high": -0.0718,
+       "hit_rate": 0.2278,
+       "hit_low": 0.2128,
+       "hit_high": 0.2434,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.1162,
+       "market_hit_rate": 0.2323,
+       "mean_multiplier": 3.89,
+       "mean_legs": 2.01,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2164,
+         "p50": -0.1355,
+         "p95": -0.0465
+        },
+        "hit_rate": {
+         "p5": 0.2068,
+         "p50": 0.2282,
+         "p95": 0.2511
+        },
+        "implied_roi": {
+         "p5": -0.1168,
+         "p50": -0.1162,
+         "p95": -0.1155
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 842,
+        "roi_equal": 0,
+        "hit_below": 815,
+        "hit_equal": 19,
+        "of": 1000
+       }
+      }
+     }
+    },
+    "splits": {
+     "note": "descriptive: none can move a rule in v2",
+     "by_bets": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2": {
+       "tickets": 2969,
+       "wins": 707,
+       "hit_rate": 0.2381,
+       "expected_hit_rate": 0.2352,
+       "market_hit_rate": 0.2306,
+       "mean_multiplier": 3.91,
+       "mean_legs": 2.01,
+       "profit": -240.36,
+       "roi": -0.081,
+       "roi_low": -0.1413,
+       "roi_high": -0.0187,
+       "biggest_win": 4.0,
+       "implied_roi": -0.1156,
+       "share": 1.0
+      }
+     },
+     "by_sports": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL": {
+       "tickets": 36,
+       "wins": 6,
+       "hit_rate": 0.1667,
+       "expected_hit_rate": 0.2731,
+       "market_hit_rate": 0.2703,
+       "mean_multiplier": 3.53,
+       "mean_legs": 2.11,
+       "profit": -15.64,
+       "roi": -0.4344,
+       "roi_low": -0.8255,
+       "roi_high": -0.0086,
+       "biggest_win": 3.2,
+       "implied_roi": -0.0656,
+       "share": 0.0121
+      },
+      "NFL+Soccer": {
+       "tickets": 261,
+       "wins": 74,
+       "hit_rate": 0.2835,
+       "expected_hit_rate": 0.2453,
+       "market_hit_rate": 0.2434,
+       "mean_multiplier": 3.8,
+       "mean_legs": 2.04,
+       "profit": 12.54,
+       "roi": 0.048,
+       "roi_low": -0.1541,
+       "roi_high": 0.2578,
+       "biggest_win": 3.99,
+       "implied_roi": -0.0937,
+       "share": 0.0879
+      },
+      "Soccer": {
+       "tickets": 2513,
+       "wins": 575,
+       "hit_rate": 0.2288,
+       "expected_hit_rate": 0.2314,
+       "market_hit_rate": 0.2267,
+       "mean_multiplier": 3.96,
+       "mean_legs": 2.0,
+       "profit": -260.0,
+       "roi": -0.1035,
+       "roi_low": -0.1632,
+       "roi_high": -0.0378,
+       "biggest_win": 4.0,
+       "implied_roi": -0.1199,
+       "share": 0.8464
+      },
+      "Soccer+UFC": {
+       "tickets": 119,
+       "wins": 39,
+       "hit_rate": 0.3277,
+       "expected_hit_rate": 0.264,
+       "market_hit_rate": 0.2586,
+       "mean_multiplier": 3.55,
+       "mean_legs": 2.03,
+       "profit": 20.49,
+       "roi": 0.1722,
+       "roi_low": -0.1318,
+       "roi_high": 0.4739,
+       "biggest_win": 3.98,
+       "implied_roi": -0.0997,
+       "share": 0.0401
+      },
+      "UFC": {
+       "tickets": 40,
+       "wins": 13,
+       "hit_rate": 0.325,
+       "expected_hit_rate": 0.2888,
+       "market_hit_rate": 0.2733,
+       "mean_multiplier": 3.39,
+       "mean_legs": 2.0,
+       "profit": 2.25,
+       "roi": 0.0564,
+       "roi_low": -0.3824,
+       "roi_high": 0.5422,
+       "biggest_win": 2.91,
+       "implied_roi": -0.0815,
+       "share": 0.0135
+      }
+     },
+     "by_legs": {
+      "note": "descriptive: none can move a rule in v2",
+      "2 legs": {
+       "tickets": 2950,
+       "wins": 705,
+       "hit_rate": 0.239,
+       "expected_hit_rate": 0.2349,
+       "market_hit_rate": 0.2303,
+       "mean_multiplier": 3.92,
+       "mean_legs": 2.0,
+       "profit": -227.74,
+       "roi": -0.0772,
+       "roi_low": -0.1362,
+       "roi_high": -0.0148,
+       "biggest_win": 4.0,
+       "implied_roi": -0.1155,
+       "share": 0.9936
+      },
+      "3 legs": {
+       "tickets": 19,
+       "wins": 2,
+       "hit_rate": 0.1053,
+       "expected_hit_rate": 0.2916,
+       "market_hit_rate": 0.2755,
+       "mean_multiplier": 3.17,
+       "mean_legs": 3.0,
+       "profit": -12.62,
+       "roi": -0.6642,
+       "roi_low": -1.0,
+       "roi_high": -0.1514,
+       "biggest_win": 2.36,
+       "implied_roi": -0.1289,
+       "share": 0.0064
+      }
+     },
+     "legs_by_bet": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2": {
+       "legs": 5957,
+       "won": 3251,
+       "void": 0,
+       "hit_rate": 0.5457,
+       "mean_p": 0.5405,
+       "mean_p_market": 0.5301,
+       "mean_decimal": 2.172,
+       "single_roi": -0.0512,
+       "single_implied_roi": -0.0594
+      }
+     },
+     "legs_by_sport": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL": {
+       "legs": 342,
+       "won": 226,
+       "void": 0,
+       "hit_rate": 0.6608,
+       "mean_p": 0.6432,
+       "mean_p_market": 0.6376,
+       "mean_decimal": 1.749,
+       "single_roi": -0.0178,
+       "single_implied_roi": -0.0317
+      },
+      "Soccer": {
+       "legs": 5416,
+       "won": 2896,
+       "void": 0,
+       "hit_rate": 0.5347,
+       "mean_p": 0.5316,
+       "mean_p_market": 0.5206,
+       "mean_decimal": 2.21,
+       "single_roi": -0.0558,
+       "single_implied_roi": -0.0619
+      },
+      "UFC": {
+       "legs": 199,
+       "won": 129,
+       "void": 0,
+       "hit_rate": 0.6482,
+       "mean_p": 0.606,
+       "mean_p_market": 0.6039,
+       "mean_decimal": 1.878,
+       "single_roi": 0.0174,
+       "single_implied_roi": -0.0405
+      }
+     }
+    },
+    "splits_at": "the live draw only (salt sameday-dog-v2): the splits are not measured over the simulation draws, whose mean over all days is under salts",
+    "spread_label": "how much the draw alone moves it, same games"
+   },
+   "mixed": {
+    "periods": {
+     "all": [
+      "2016-08-01",
+      "2026-08-08"
+     ],
+     "first": [
+      "2016-08-01",
+      "2023-08-08"
+     ],
+     "last_3_years": [
+      "2023-08-09",
+      "2026-08-08"
+     ]
+    },
+    "period_labels": {
+     "all": "2016-08 to 2026-08, 10.0 years",
+     "first": "2016-08 to 2023-08, 7.0 years",
+     "last_3_years": "2023-08 to 2026-08, 3.0 years"
+    },
+    "live": {
+     "all_leagues": {
+      "all": {
+       "tickets": 2616,
+       "wins": 775,
+       "hit_rate": 0.2963,
+       "expected_hit_rate": 0.3002,
+       "market_hit_rate": 0.2789,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.83,
+       "profit": -250.4,
+       "roi": -0.0957,
+       "roi_low": -0.1487,
+       "roi_high": -0.0429,
+       "biggest_win": 3.88,
+       "implied_roi": -0.1463,
+       "days": 3660,
+       "days_with_ticket": 2616,
+       "share_of_days": 0.7148,
+       "tickets_per_day": 0.7148,
+       "days_with_legs": 3379,
+       "share_of_days_with_legs": 0.7742,
+       "holds": {
+        "METHOD": 0.0161,
+        "OU25": 0.9404,
+        "SPREAD": 0.0394,
+        "TOTAL": 0.021
+       },
+       "mean_other_legs": 1.1
+      },
+      "first": {
+       "tickets": 1849,
+       "wins": 543,
+       "hit_rate": 0.2937,
+       "expected_hit_rate": 0.3015,
+       "market_hit_rate": 0.2801,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.82,
+       "profit": -186.85,
+       "roi": -0.1011,
+       "roi_low": -0.163,
+       "roi_high": -0.0354,
+       "biggest_win": 3.88,
+       "implied_roi": -0.1423,
+       "days": 2564,
+       "days_with_ticket": 1849,
+       "share_of_days": 0.7211,
+       "tickets_per_day": 0.7211,
+       "days_with_legs": 2366,
+       "share_of_days_with_legs": 0.7815,
+       "holds": {
+        "METHOD": 0.02,
+        "OU25": 0.9367,
+        "SPREAD": 0.0368,
+        "TOTAL": 0.0227
+       },
+       "mean_other_legs": 1.1
+      },
+      "last_3_years": {
+       "tickets": 767,
+       "wins": 232,
+       "hit_rate": 0.3025,
+       "expected_hit_rate": 0.297,
+       "market_hit_rate": 0.2759,
+       "mean_multiplier": 3.06,
+       "mean_legs": 2.86,
+       "profit": -63.56,
+       "roi": -0.0829,
+       "roi_low": -0.1809,
+       "roi_high": 0.0206,
+       "biggest_win": 2.58,
+       "implied_roi": -0.1558,
+       "days": 1096,
+       "days_with_ticket": 767,
+       "share_of_days": 0.6998,
+       "tickets_per_day": 0.6998,
+       "days_with_legs": 1013,
+       "share_of_days_with_legs": 0.7572,
+       "holds": {
+        "METHOD": 0.0065,
+        "OU25": 0.9492,
+        "SPREAD": 0.0456,
+        "TOTAL": 0.0169
+       },
+       "mean_other_legs": 1.09
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "tickets": 2457,
+       "wins": 708,
+       "hit_rate": 0.2882,
+       "expected_hit_rate": 0.3003,
+       "market_hit_rate": 0.2799,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.79,
+       "profit": -288.86,
+       "roi": -0.1176,
+       "roi_low": -0.1712,
+       "roi_high": -0.0612,
+       "biggest_win": 3.88,
+       "implied_roi": -0.1428,
+       "days": 3660,
+       "days_with_ticket": 2457,
+       "share_of_days": 0.6713,
+       "tickets_per_day": 0.6713,
+       "days_with_legs": 2800,
+       "share_of_days_with_legs": 0.8775,
+       "holds": {
+        "METHOD": 0.0171,
+        "OU25": 0.963,
+        "SPREAD": 0.0277,
+        "TOTAL": 0.0138
+       },
+       "mean_other_legs": 1.18
+      },
+      "first": {
+       "tickets": 1732,
+       "wins": 511,
+       "hit_rate": 0.295,
+       "expected_hit_rate": 0.3015,
+       "market_hit_rate": 0.2811,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.79,
+       "profit": -163.88,
+       "roi": -0.0946,
+       "roi_low": -0.1606,
+       "roi_high": -0.0274,
+       "biggest_win": 3.88,
+       "implied_roi": -0.1393,
+       "days": 2564,
+       "days_with_ticket": 1732,
+       "share_of_days": 0.6755,
+       "tickets_per_day": 0.6755,
+       "days_with_legs": 1959,
+       "share_of_days_with_legs": 0.8841,
+       "holds": {
+        "METHOD": 0.0214,
+        "OU25": 0.9607,
+        "SPREAD": 0.0248,
+        "TOTAL": 0.0139
+       },
+       "mean_other_legs": 1.18
+      },
+      "last_3_years": {
+       "tickets": 725,
+       "wins": 197,
+       "hit_rate": 0.2717,
+       "expected_hit_rate": 0.2972,
+       "market_hit_rate": 0.2772,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.8,
+       "profit": -124.98,
+       "roi": -0.1724,
+       "roi_low": -0.2705,
+       "roi_high": -0.0737,
+       "biggest_win": 2.62,
+       "implied_roi": -0.1511,
+       "days": 1096,
+       "days_with_ticket": 725,
+       "share_of_days": 0.6615,
+       "tickets_per_day": 0.6615,
+       "days_with_legs": 841,
+       "share_of_days_with_legs": 0.8621,
+       "holds": {
+        "METHOD": 0.0069,
+        "OU25": 0.9683,
+        "SPREAD": 0.0345,
+        "TOTAL": 0.0138
+       },
+       "mean_other_legs": 1.16
+      }
+     }
+    },
+    "market_only": {
+     "all_leagues": {
+      "all": {
+       "tickets": 2606,
+       "wins": 756,
+       "hit_rate": 0.2901,
+       "expected_hit_rate": 0.2903,
+       "market_hit_rate": 0.2819,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.71,
+       "profit": -297.0,
+       "roi": -0.114,
+       "roi_low": -0.167,
+       "roi_high": -0.0612,
+       "biggest_win": 3.77,
+       "implied_roi": -0.1371,
+       "days": 3660,
+       "days_with_ticket": 2606,
+       "share_of_days": 0.712,
+       "tickets_per_day": 0.712
+      },
+      "first": {
+       "tickets": 1844,
+       "wins": 530,
+       "hit_rate": 0.2874,
+       "expected_hit_rate": 0.2912,
+       "market_hit_rate": 0.283,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.7,
+       "profit": -221.38,
+       "roi": -0.1201,
+       "roi_low": -0.185,
+       "roi_high": -0.0575,
+       "biggest_win": 3.77,
+       "implied_roi": -0.1335,
+       "days": 2564,
+       "days_with_ticket": 1844,
+       "share_of_days": 0.7192,
+       "tickets_per_day": 0.7192
+      },
+      "last_3_years": {
+       "tickets": 762,
+       "wins": 226,
+       "hit_rate": 0.2966,
+       "expected_hit_rate": 0.2882,
+       "market_hit_rate": 0.2792,
+       "mean_multiplier": 3.06,
+       "mean_legs": 2.73,
+       "profit": -75.62,
+       "roi": -0.0992,
+       "roi_low": -0.2018,
+       "roi_high": -0.0036,
+       "biggest_win": 2.58,
+       "implied_roi": -0.1459,
+       "days": 1096,
+       "days_with_ticket": 762,
+       "share_of_days": 0.6953,
+       "tickets_per_day": 0.6953
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "tickets": 2454,
+       "wins": 713,
+       "hit_rate": 0.2905,
+       "expected_hit_rate": 0.2902,
+       "market_hit_rate": 0.2824,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.71,
+       "profit": -270.34,
+       "roi": -0.1102,
+       "roi_low": -0.1637,
+       "roi_high": -0.0561,
+       "biggest_win": 3.77,
+       "implied_roi": -0.1356,
+       "days": 3660,
+       "days_with_ticket": 2454,
+       "share_of_days": 0.6705,
+       "tickets_per_day": 0.6705
+      },
+      "first": {
+       "tickets": 1732,
+       "wins": 505,
+       "hit_rate": 0.2916,
+       "expected_hit_rate": 0.2912,
+       "market_hit_rate": 0.2836,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.7,
+       "profit": -182.65,
+       "roi": -0.1055,
+       "roi_low": -0.1703,
+       "roi_high": -0.0393,
+       "biggest_win": 3.77,
+       "implied_roi": -0.1322,
+       "days": 2564,
+       "days_with_ticket": 1732,
+       "share_of_days": 0.6755,
+       "tickets_per_day": 0.6755
+      },
+      "last_3_years": {
+       "tickets": 722,
+       "wins": 208,
+       "hit_rate": 0.2881,
+       "expected_hit_rate": 0.288,
+       "market_hit_rate": 0.2796,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.72,
+       "profit": -87.69,
+       "roi": -0.1214,
+       "roi_low": -0.2216,
+       "roi_high": -0.0223,
+       "biggest_win": 2.62,
+       "implied_roi": -0.1439,
+       "days": 1096,
+       "days_with_ticket": 722,
+       "share_of_days": 0.6588,
+       "tickets_per_day": 0.6588
+      }
+     }
+    },
+    "splits": {
+     "note": "descriptive: none can move a rule in v2",
+     "by_bets": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2+METHOD": {
+       "tickets": 38,
+       "wins": 14,
+       "hit_rate": 0.3684,
+       "expected_hit_rate": 0.2797,
+       "market_hit_rate": 0.2512,
+       "mean_multiplier": 3.12,
+       "mean_legs": 2.11,
+       "profit": 5.09,
+       "roi": 0.134,
+       "roi_low": -0.3496,
+       "roi_high": 0.6265,
+       "biggest_win": 2.24,
+       "implied_roi": -0.2166,
+       "share": 0.0145
+      },
+      "1X2+OU25": {
+       "tickets": 2281,
+       "wins": 681,
+       "hit_rate": 0.2986,
+       "expected_hit_rate": 0.3018,
+       "market_hit_rate": 0.2785,
+       "mean_multiplier": 3.05,
+       "mean_legs": 2.94,
+       "profit": -205.85,
+       "roi": -0.0902,
+       "roi_low": -0.1459,
+       "roi_high": -0.0352,
+       "biggest_win": 3.88,
+       "implied_roi": -0.1505,
+       "share": 0.8719
+      },
+      "1X2+SPREAD": {
+       "tickets": 73,
+       "wins": 26,
+       "hit_rate": 0.3562,
+       "expected_hit_rate": 0.3016,
+       "market_hit_rate": 0.2904,
+       "mean_multiplier": 3.15,
+       "mean_legs": 2.07,
+       "profit": 4.84,
+       "roi": 0.0663,
+       "roi_low": -0.2426,
+       "roi_high": 0.4143,
+       "biggest_win": 2.53,
+       "implied_roi": -0.087,
+       "share": 0.0279
+      },
+      "1X2+TOTAL": {
+       "tickets": 40,
+       "wins": 10,
+       "hit_rate": 0.25,
+       "expected_hit_rate": 0.2989,
+       "market_hit_rate": 0.2871,
+       "mean_multiplier": 3.18,
+       "mean_legs": 2.12,
+       "profit": -7.69,
+       "roi": -0.1921,
+       "roi_low": -0.6015,
+       "roi_high": 0.2723,
+       "biggest_win": 3.02,
+       "implied_roi": -0.0911,
+       "share": 0.0153
+      },
+      "METHOD": {
+       "tickets": 4,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.3554,
+       "market_hit_rate": 0.2533,
+       "mean_multiplier": 3.22,
+       "mean_legs": 1.0,
+       "profit": -4.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.1878,
+       "share": 0.0015
+      },
+      "OU25": {
+       "tickets": 136,
+       "wins": 32,
+       "hit_rate": 0.2353,
+       "expected_hit_rate": 0.2806,
+       "market_hit_rate": 0.2806,
+       "mean_multiplier": 3.16,
+       "mean_legs": 2.18,
+       "profit": -36.1,
+       "roi": -0.2655,
+       "roi_low": -0.4857,
+       "roi_high": -0.0386,
+       "biggest_win": 3.11,
+       "implied_roi": -0.1207,
+       "share": 0.052
+      },
+      "OU25+SPREAD": {
+       "tickets": 29,
+       "wins": 7,
+       "hit_rate": 0.2414,
+       "expected_hit_rate": 0.2943,
+       "market_hit_rate": 0.2943,
+       "mean_multiplier": 3.1,
+       "mean_legs": 2.0,
+       "profit": -7.0,
+       "roi": -0.2413,
+       "roi_low": -0.6823,
+       "roi_high": 0.297,
+       "biggest_win": 2.52,
+       "implied_roi": -0.0889,
+       "share": 0.0111
+      },
+      "OU25+TOTAL": {
+       "tickets": 14,
+       "wins": 5,
+       "hit_rate": 0.3571,
+       "expected_hit_rate": 0.2871,
+       "market_hit_rate": 0.2871,
+       "mean_multiplier": 3.17,
+       "mean_legs": 2.07,
+       "profit": 1.29,
+       "roi": 0.0924,
+       "roi_low": -0.5672,
+       "roi_high": 0.9632,
+       "biggest_win": 2.15,
+       "implied_roi": -0.097,
+       "share": 0.0054
+      },
+      "SPREAD+TOTAL": {
+       "tickets": 1,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.2722,
+       "market_hit_rate": 0.2722,
+       "mean_multiplier": 3.36,
+       "mean_legs": 2.0,
+       "profit": -1.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.0851,
+       "share": 0.0004
+      }
+     },
+     "by_sports": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL": {
+       "tickets": 22,
+       "wins": 7,
+       "hit_rate": 0.3182,
+       "expected_hit_rate": 0.3119,
+       "market_hit_rate": 0.3016,
+       "mean_multiplier": 3.1,
+       "mean_legs": 2.09,
+       "profit": -1.58,
+       "roi": -0.0718,
+       "roi_low": -0.6302,
+       "roi_high": 0.5376,
+       "biggest_win": 2.32,
+       "implied_roi": -0.065,
+       "share": 0.0084
+      },
+      "NFL+Soccer": {
+       "tickets": 305,
+       "wins": 88,
+       "hit_rate": 0.2885,
+       "expected_hit_rate": 0.3039,
+       "market_hit_rate": 0.2846,
+       "mean_multiplier": 3.09,
+       "mean_legs": 2.9,
+       "profit": -35.62,
+       "roi": -0.1168,
+       "roi_low": -0.2708,
+       "roi_high": 0.0433,
+       "biggest_win": 3.02,
+       "implied_roi": -0.1232,
+       "share": 0.1166
+      },
+      "Soccer": {
+       "tickets": 2149,
+       "wins": 633,
+       "hit_rate": 0.2946,
+       "expected_hit_rate": 0.2996,
+       "market_hit_rate": 0.2785,
+       "mean_multiplier": 3.06,
+       "mean_legs": 2.82,
+       "profit": -216.77,
+       "roi": -0.1009,
+       "roi_low": -0.1587,
+       "roi_high": -0.0437,
+       "biggest_win": 3.88,
+       "implied_roi": -0.1484,
+       "share": 0.8215
+      },
+      "Soccer+UFC": {
+       "tickets": 119,
+       "wins": 43,
+       "hit_rate": 0.3613,
+       "expected_hit_rate": 0.3007,
+       "market_hit_rate": 0.2715,
+       "mean_multiplier": 3.05,
+       "mean_legs": 3.18,
+       "profit": 12.32,
+       "roi": 0.1035,
+       "roi_low": -0.1554,
+       "roi_high": 0.3682,
+       "biggest_win": 2.28,
+       "implied_roi": -0.1734,
+       "share": 0.0455
+      },
+      "UFC": {
+       "tickets": 21,
+       "wins": 4,
+       "hit_rate": 0.1905,
+       "expected_hit_rate": 0.2949,
+       "market_hit_rate": 0.2544,
+       "mean_multiplier": 3.17,
+       "mean_legs": 1.81,
+       "profit": -8.76,
+       "roi": -0.4172,
+       "roi_low": -0.8568,
+       "roi_high": 0.1633,
+       "biggest_win": 2.1,
+       "implied_roi": -0.1948,
+       "share": 0.008
+      }
+     },
+     "by_legs": {
+      "note": "descriptive: none can move a rule in v2",
+      "1 legs": {
+       "tickets": 4,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.3554,
+       "market_hit_rate": 0.2533,
+       "mean_multiplier": 3.22,
+       "mean_legs": 1.0,
+       "profit": -4.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.1878,
+       "share": 0.0015
+      },
+      "2 legs": {
+       "tickets": 1034,
+       "wins": 296,
+       "hit_rate": 0.2863,
+       "expected_hit_rate": 0.2992,
+       "market_hit_rate": 0.2901,
+       "mean_multiplier": 3.07,
+       "mean_legs": 2.0,
+       "profit": -129.13,
+       "roi": -0.1249,
+       "roi_low": -0.2103,
+       "roi_high": -0.0412,
+       "biggest_win": 2.53,
+       "implied_roi": -0.1104,
+       "share": 0.3953
+      },
+      "3 legs": {
+       "tickets": 1056,
+       "wins": 310,
+       "hit_rate": 0.2936,
+       "expected_hit_rate": 0.2974,
+       "market_hit_rate": 0.2736,
+       "mean_multiplier": 3.09,
+       "mean_legs": 3.0,
+       "profit": -105.67,
+       "roi": -0.1001,
+       "roi_low": -0.1853,
+       "roi_high": -0.0151,
+       "biggest_win": 3.88,
+       "implied_roi": -0.1587,
+       "share": 0.4037
+      },
+      "4 legs": {
+       "tickets": 447,
+       "wins": 147,
+       "hit_rate": 0.3289,
+       "expected_hit_rate": 0.3073,
+       "market_hit_rate": 0.2689,
+       "mean_multiplier": 3.02,
+       "mean_legs": 4.0,
+       "profit": -2.99,
+       "roi": -0.0067,
+       "roi_low": -0.1293,
+       "roi_high": 0.1283,
+       "biggest_win": 2.12,
+       "implied_roi": -0.1879,
+       "share": 0.1709
+      },
+      "5 legs": {
+       "tickets": 72,
+       "wins": 22,
+       "hit_rate": 0.3056,
+       "expected_hit_rate": 0.3085,
+       "market_hit_rate": 0.2604,
+       "mean_multiplier": 3.02,
+       "mean_legs": 5.0,
+       "profit": -5.62,
+       "roi": -0.0781,
+       "roi_low": -0.3725,
+       "roi_high": 0.2563,
+       "biggest_win": 2.06,
+       "implied_roi": -0.214,
+       "share": 0.0275
+      },
+      "6 legs": {
+       "tickets": 3,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.3101,
+       "market_hit_rate": 0.2519,
+       "mean_multiplier": 3.01,
+       "mean_legs": 6.0,
+       "profit": -3.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.2412,
+       "share": 0.0011
+      }
+     },
+     "legs_by_bet": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2": {
+       "legs": 4533,
+       "won": 3169,
+       "void": 1,
+       "hit_rate": 0.6992,
+       "mean_p": 0.6988,
+       "mean_p_market": 0.6701,
+       "mean_decimal": 1.444,
+       "single_roi": -0.0146,
+       "single_implied_roi": -0.0527
+      },
+      "METHOD": {
+       "legs": 42,
+       "won": 17,
+       "void": 0,
+       "hit_rate": 0.4048,
+       "mean_p": 0.4145,
+       "mean_p_market": 0.3778,
+       "mean_decimal": 2.255,
+       "single_roi": -0.1415,
+       "single_implied_roi": -0.1717
+      },
+      "OU25": {
+       "legs": 2673,
+       "won": 1629,
+       "void": 0,
+       "hit_rate": 0.6094,
+       "mean_p": 0.6095,
+       "mean_p_market": 0.6095,
+       "mean_decimal": 1.562,
+       "single_roi": -0.0576,
+       "single_implied_roi": -0.0574
+      },
+      "SPREAD": {
+       "legs": 103,
+       "won": 42,
+       "void": 5,
+       "hit_rate": 0.4286,
+       "mean_p": 0.5156,
+       "mean_p_market": 0.5156,
+       "mean_decimal": 1.88,
+       "single_roi": -0.1857,
+       "single_implied_roi": -0.0311
+      },
+      "TOTAL": {
+       "legs": 55,
+       "won": 25,
+       "void": 0,
+       "hit_rate": 0.4545,
+       "mean_p": 0.5119,
+       "mean_p_market": 0.5119,
+       "mean_decimal": 1.895,
+       "single_roi": -0.134,
+       "single_implied_roi": -0.0303
+      }
+     },
+     "legs_by_sport": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL": {
+       "legs": 456,
+       "won": 296,
+       "void": 6,
+       "hit_rate": 0.6578,
+       "mean_p": 0.6765,
+       "mean_p_market": 0.6605,
+       "mean_decimal": 1.531,
+       "single_roi": -0.0455,
+       "single_implied_roi": -0.0303
+      },
+      "Soccer": {
+       "legs": 6767,
+       "won": 4464,
+       "void": 0,
+       "hit_rate": 0.6597,
+       "mean_p": 0.6604,
+       "mean_p_market": 0.6428,
+       "mean_decimal": 1.495,
+       "single_roi": -0.0341,
+       "single_implied_roi": -0.0558
+      },
+      "UFC": {
+       "legs": 183,
+       "won": 122,
+       "void": 0,
+       "hit_rate": 0.6667,
+       "mean_p": 0.6452,
+       "mean_p_market": 0.6185,
+       "mean_decimal": 1.604,
+       "single_roi": -0.0032,
+       "single_implied_roi": -0.0683
+      }
+     }
+    }
+   },
+   "props_as_live": {
+    "periods": {
+     "all": [
+      "2016-08-01",
+      "2024-12-07"
+     ],
+     "first": [
+      "2016-08-01",
+      "2023-08-08"
+     ],
+     "last_3_years": [
+      "2023-08-09",
+      "2024-12-07"
+     ]
+    },
+    "period_labels": {
+     "all": "2016-08 to 2024-12, 8.4 years",
+     "first": "2016-08 to 2023-08, 7.0 years",
+     "last_3_years": "2023-08 to 2024-12, 16 months"
+    },
+    "live": {
+     "all_leagues": {
+      "all": {
+       "tickets": 311,
+       "wins": 75,
+       "hit_rate": 0.2412,
+       "expected_hit_rate": 0.22,
+       "market_hit_rate": 0.2079,
+       "mean_multiplier": 3.94,
+       "mean_legs": 2.35,
+       "profit": -42.32,
+       "roi": -0.1361,
+       "roi_low": -0.308,
+       "roi_high": 0.037,
+       "biggest_win": 4.81,
+       "implied_roi": -0.2362,
+       "days": 3051,
+       "days_with_ticket": 311,
+       "share_of_days": 0.1019,
+       "tickets_per_day": 0.1019,
+       "days_with_legs": 311,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.7,
+        "p75": 3.42,
+        "p95": 5.12
+       },
+       "prop_type": {
+        "Decision": 204,
+        "KO/TKO": 91,
+        "Submission": 16
+       },
+       "prop_est_error_median": 0.1521,
+       "real_in_band": 0.7106,
+       "searched_multiplier": 3.77,
+       "fallback": {
+        "0": 268,
+        "1": 31,
+        "2": 11,
+        "3": 1
+       }
+      },
+      "first": {
+       "tickets": 263,
+       "wins": 65,
+       "hit_rate": 0.2471,
+       "expected_hit_rate": 0.22,
+       "market_hit_rate": 0.209,
+       "mean_multiplier": 3.93,
+       "mean_legs": 2.32,
+       "profit": -29.28,
+       "roi": -0.1113,
+       "roi_low": -0.2984,
+       "roi_high": 0.088,
+       "biggest_win": 4.81,
+       "implied_roi": -0.2366,
+       "days": 2564,
+       "days_with_ticket": 263,
+       "share_of_days": 0.1026,
+       "tickets_per_day": 0.1026,
+       "days_with_legs": 263,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.65,
+        "p75": 3.4,
+        "p95": 5.0
+       },
+       "prop_type": {
+        "Decision": 175,
+        "KO/TKO": 77,
+        "Submission": 11
+       },
+       "prop_est_error_median": 0.1521,
+       "real_in_band": 0.6958,
+       "searched_multiplier": 3.77,
+       "fallback": {
+        "0": 224,
+        "1": 28,
+        "2": 10,
+        "3": 1
+       }
+      },
+      "last_3_years": {
+       "tickets": 48,
+       "wins": 10,
+       "hit_rate": 0.2083,
+       "expected_hit_rate": 0.2195,
+       "market_hit_rate": 0.2022,
+       "mean_multiplier": 4.04,
+       "mean_legs": 2.52,
+       "profit": -13.03,
+       "roi": -0.2715,
+       "roi_low": -0.6431,
+       "roi_high": 0.1672,
+       "biggest_win": 3.43,
+       "implied_roi": -0.2339,
+       "days": 487,
+       "days_with_ticket": 48,
+       "share_of_days": 0.0986,
+       "tickets_per_day": 0.0986,
+       "days_with_legs": 48,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.08,
+        "p50": 2.8,
+        "p75": 3.5,
+        "p95": 5.5
+       },
+       "prop_type": {
+        "Decision": 29,
+        "KO/TKO": 14,
+        "Submission": 5
+       },
+       "prop_est_error_median": 0.1509,
+       "real_in_band": 0.7917,
+       "searched_multiplier": 3.76,
+       "fallback": {
+        "0": 44,
+        "1": 3,
+        "2": 1
+       }
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "tickets": 311,
+       "wins": 73,
+       "hit_rate": 0.2347,
+       "expected_hit_rate": 0.2192,
+       "market_hit_rate": 0.2098,
+       "mean_multiplier": 3.93,
+       "mean_legs": 2.31,
+       "profit": -49.8,
+       "roi": -0.1601,
+       "roi_low": -0.334,
+       "roi_high": 0.0127,
+       "biggest_win": 4.81,
+       "implied_roi": -0.232,
+       "days": 3051,
+       "days_with_ticket": 311,
+       "share_of_days": 0.1019,
+       "tickets_per_day": 0.1019,
+       "days_with_legs": 311,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.65,
+        "p75": 3.4,
+        "p95": 5.12
+       },
+       "prop_type": {
+        "Decision": 203,
+        "KO/TKO": 92,
+        "Submission": 16
+       },
+       "prop_est_error_median": 0.1504,
+       "real_in_band": 0.7138,
+       "searched_multiplier": 3.77,
+       "fallback": {
+        "0": 264,
+        "1": 33,
+        "2": 11,
+        "3": 1,
+        "4": 1,
+        "5": 1
+       }
+      },
+      "first": {
+       "tickets": 263,
+       "wins": 64,
+       "hit_rate": 0.2433,
+       "expected_hit_rate": 0.2193,
+       "market_hit_rate": 0.2108,
+       "mean_multiplier": 3.91,
+       "mean_legs": 2.27,
+       "profit": -33.31,
+       "roi": -0.1267,
+       "roi_low": -0.3118,
+       "roi_high": 0.0652,
+       "biggest_win": 4.81,
+       "implied_roi": -0.232,
+       "days": 2564,
+       "days_with_ticket": 263,
+       "share_of_days": 0.1026,
+       "tickets_per_day": 0.1026,
+       "days_with_legs": 263,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.65,
+        "p75": 3.4,
+        "p95": 5.0
+       },
+       "prop_type": {
+        "Decision": 174,
+        "KO/TKO": 78,
+        "Submission": 11
+       },
+       "prop_est_error_median": 0.1508,
+       "real_in_band": 0.6958,
+       "searched_multiplier": 3.78,
+       "fallback": {
+        "0": 221,
+        "1": 30,
+        "2": 10,
+        "3": 1,
+        "4": 1
+       }
+      },
+      "last_3_years": {
+       "tickets": 48,
+       "wins": 9,
+       "hit_rate": 0.1875,
+       "expected_hit_rate": 0.2191,
+       "market_hit_rate": 0.2044,
+       "mean_multiplier": 3.99,
+       "mean_legs": 2.5,
+       "profit": -16.48,
+       "roi": -0.3434,
+       "roi_low": -0.704,
+       "roi_high": 0.0874,
+       "biggest_win": 3.43,
+       "implied_roi": -0.2323,
+       "days": 487,
+       "days_with_ticket": 48,
+       "share_of_days": 0.0986,
+       "tickets_per_day": 0.0986,
+       "days_with_legs": 48,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.08,
+        "p50": 2.77,
+        "p75": 3.42,
+        "p95": 5.5
+       },
+       "prop_type": {
+        "Decision": 29,
+        "KO/TKO": 14,
+        "Submission": 5
+       },
+       "prop_est_error_median": 0.1464,
+       "real_in_band": 0.8125,
+       "searched_multiplier": 3.75,
+       "fallback": {
+        "0": 43,
+        "1": 3,
+        "2": 1,
+        "5": 1
+       }
+      }
+     }
+    },
+    "days_with_legs_are": "days with a prop that has an estimate (as live can draw)",
+    "salt": "sameday-props-v1",
+    "salts": {
+     "all_leagues": {
+      "all": {
+       "salts": 1000,
+       "tickets_per_salt": 311,
+       "roi": -0.0889,
+       "roi_low": -0.1437,
+       "roi_high": -0.0343,
+       "hit_rate": 0.2516,
+       "hit_low": 0.2373,
+       "hit_high": 0.2658,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2383,
+       "market_hit_rate": 0.2101,
+       "mean_multiplier": 3.92,
+       "mean_legs": 2.37,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2404,
+         "p50": -0.0912,
+         "p95": 0.0581
+        },
+        "hit_rate": {
+         "p5": 0.2122,
+         "p50": 0.2508,
+         "p95": 0.2894
+        },
+        "implied_roi": {
+         "p5": -0.241,
+         "p50": -0.2383,
+         "p95": -0.2358
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 294,
+        "roi_equal": 0,
+        "hit_below": 308,
+        "hit_equal": 49,
+        "of": 1000
+       }
+      },
+      "first": {
+       "salts": 1000,
+       "tickets_per_salt": 263,
+       "roi": -0.0897,
+       "roi_low": -0.1506,
+       "roi_high": -0.0293,
+       "hit_rate": 0.2504,
+       "hit_low": 0.2349,
+       "hit_high": 0.2661,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.238,
+       "market_hit_rate": 0.2103,
+       "mean_multiplier": 3.91,
+       "mean_legs": 2.35,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2461,
+         "p50": -0.0918,
+         "p95": 0.0765
+        },
+        "hit_rate": {
+         "p5": 0.2091,
+         "p50": 0.251,
+         "p95": 0.2928
+        },
+        "implied_roi": {
+         "p5": -0.241,
+         "p50": -0.2379,
+         "p95": -0.2351
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 423,
+        "roi_equal": 0,
+        "hit_below": 430,
+        "hit_equal": 57,
+        "of": 1000
+       }
+      },
+      "last_3_years": {
+       "salts": 1000,
+       "tickets_per_salt": 48,
+       "roi": -0.0842,
+       "roi_low": -0.2261,
+       "roi_high": 0.0543,
+       "hit_rate": 0.258,
+       "hit_low": 0.2193,
+       "hit_high": 0.2953,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.24,
+       "market_hit_rate": 0.2088,
+       "mean_multiplier": 4.02,
+       "mean_legs": 2.47,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.4614,
+         "p50": -0.0921,
+         "p95": 0.3119
+        },
+        "hit_rate": {
+         "p5": 0.1458,
+         "p50": 0.25,
+         "p95": 0.3542
+        },
+        "implied_roi": {
+         "p5": -0.2461,
+         "p50": -0.24,
+         "p95": -0.2337
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 207,
+        "roi_equal": 0,
+        "hit_below": 151,
+        "hit_equal": 103,
+        "of": 1000
+       }
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "salts": 1000,
+       "tickets_per_salt": 311,
+       "roi": -0.0948,
+       "roi_low": -0.151,
+       "roi_high": -0.0376,
+       "hit_rate": 0.2482,
+       "hit_low": 0.2333,
+       "hit_high": 0.263,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2338,
+       "market_hit_rate": 0.2108,
+       "mean_multiplier": 3.93,
+       "mean_legs": 2.32,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2364,
+         "p50": -0.0959,
+         "p95": 0.0479
+        },
+        "hit_rate": {
+         "p5": 0.2122,
+         "p50": 0.2476,
+         "p95": 0.2862
+        },
+        "implied_roi": {
+         "p5": -0.2362,
+         "p50": -0.2338,
+         "p95": -0.2314
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 228,
+        "roi_equal": 0,
+        "hit_below": 244,
+        "hit_equal": 46,
+        "of": 1000
+       }
+      },
+      "first": {
+       "salts": 1000,
+       "tickets_per_salt": 263,
+       "roi": -0.0936,
+       "roi_low": -0.1562,
+       "roi_high": -0.0289,
+       "hit_rate": 0.2478,
+       "hit_low": 0.231,
+       "hit_high": 0.2646,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2334,
+       "market_hit_rate": 0.2109,
+       "mean_multiplier": 3.92,
+       "mean_legs": 2.31,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2463,
+         "p50": -0.0963,
+         "p95": 0.0739
+        },
+        "hit_rate": {
+         "p5": 0.2089,
+         "p50": 0.2471,
+         "p95": 0.2928
+        },
+        "implied_roi": {
+         "p5": -0.2362,
+         "p50": -0.2334,
+         "p95": -0.2307
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 369,
+        "roi_equal": 0,
+        "hit_below": 410,
+        "hit_equal": 53,
+        "of": 1000
+       }
+      },
+      "last_3_years": {
+       "salts": 1000,
+       "tickets_per_salt": 48,
+       "roi": -0.1009,
+       "roi_low": -0.2404,
+       "roi_high": 0.0312,
+       "hit_rate": 0.2504,
+       "hit_low": 0.2129,
+       "hit_high": 0.2873,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2359,
+       "market_hit_rate": 0.2103,
+       "mean_multiplier": 4.01,
+       "mean_legs": 2.41,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.4582,
+         "p50": -0.1077,
+         "p95": 0.3027
+        },
+        "hit_rate": {
+         "p5": 0.1458,
+         "p50": 0.25,
+         "p95": 0.3542
+        },
+        "implied_roi": {
+         "p5": -0.2418,
+         "p50": -0.236,
+         "p95": -0.2301
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 145,
+        "roi_equal": 0,
+        "hit_below": 107,
+        "hit_equal": 84,
+        "of": 1000
+       }
+      }
+     }
+    },
+    "splits": {
+     "note": "descriptive: none can move a rule in v2",
+     "by_bets": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2+METHOD": {
+       "tickets": 311,
+       "wins": 75,
+       "hit_rate": 0.2412,
+       "expected_hit_rate": 0.22,
+       "market_hit_rate": 0.2079,
+       "mean_multiplier": 3.94,
+       "mean_legs": 2.35,
+       "profit": -42.32,
+       "roi": -0.1361,
+       "roi_low": -0.308,
+       "roi_high": 0.037,
+       "biggest_win": 4.81,
+       "implied_roi": -0.2362,
+       "share": 1.0
+      }
+     },
+     "by_sports": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL+Soccer+UFC": {
+       "tickets": 1,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.2306,
+       "market_hit_rate": 0.1778,
+       "mean_multiplier": 4.01,
+       "mean_legs": 4.0,
+       "profit": -1.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.2879,
+       "share": 0.0032
+      },
+      "Soccer+UFC": {
+       "tickets": 248,
+       "wins": 59,
+       "hit_rate": 0.2379,
+       "expected_hit_rate": 0.2206,
+       "market_hit_rate": 0.2061,
+       "mean_multiplier": 3.96,
+       "mean_legs": 2.4,
+       "profit": -35.97,
+       "roi": -0.1451,
+       "roi_low": -0.3373,
+       "roi_high": 0.0498,
+       "biggest_win": 4.81,
+       "implied_roi": -0.2421,
+       "share": 0.7974
+      },
+      "UFC": {
+       "tickets": 62,
+       "wins": 16,
+       "hit_rate": 0.2581,
+       "expected_hit_rate": 0.2171,
+       "market_hit_rate": 0.2159,
+       "mean_multiplier": 3.89,
+       "mean_legs": 2.11,
+       "profit": -5.34,
+       "roi": -0.0862,
+       "roi_low": -0.4618,
+       "roi_high": 0.3283,
+       "biggest_win": 3.55,
+       "implied_roi": -0.2115,
+       "share": 0.1994
+      }
+     },
+     "by_legs": {
+      "note": "descriptive: none can move a rule in v2",
+      "2 legs": {
+       "tickets": 220,
+       "wins": 50,
+       "hit_rate": 0.2273,
+       "expected_hit_rate": 0.2193,
+       "market_hit_rate": 0.2095,
+       "mean_multiplier": 4.0,
+       "mean_legs": 2.0,
+       "profit": -44.53,
+       "roi": -0.2024,
+       "roi_low": -0.3926,
+       "roi_high": 0.0037,
+       "biggest_win": 4.29,
+       "implied_roi": -0.2235,
+       "share": 0.7074
+      },
+      "3 legs": {
+       "tickets": 75,
+       "wins": 20,
+       "hit_rate": 0.2667,
+       "expected_hit_rate": 0.2228,
+       "market_hit_rate": 0.2067,
+       "mean_multiplier": 3.82,
+       "mean_legs": 3.0,
+       "profit": -0.35,
+       "roi": -0.0047,
+       "roi_low": -0.3724,
+       "roi_high": 0.3996,
+       "biggest_win": 4.81,
+       "implied_roi": -0.2602,
+       "share": 0.2412
+      },
+      "4 legs": {
+       "tickets": 14,
+       "wins": 5,
+       "hit_rate": 0.3571,
+       "expected_hit_rate": 0.2145,
+       "market_hit_rate": 0.1946,
+       "mean_multiplier": 3.68,
+       "mean_legs": 4.0,
+       "profit": 4.56,
+       "roi": 0.326,
+       "roi_low": -0.5342,
+       "roi_high": 1.3355,
+       "biggest_win": 3.71,
+       "implied_roi": -0.2949,
+       "share": 0.045
+      },
+      "5 legs": {
+       "tickets": 2,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.2216,
+       "market_hit_rate": 0.1797,
+       "mean_multiplier": 3.8,
+       "mean_legs": 5.0,
+       "profit": -2.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.3171,
+       "share": 0.0064
+      }
+     },
+     "legs_by_bet": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2": {
+       "legs": 420,
+       "won": 344,
+       "void": 0,
+       "hit_rate": 0.819,
+       "mean_p": 0.7825,
+       "mean_p_market": 0.7579,
+       "mean_decimal": 1.266,
+       "single_roi": 0.025,
+       "single_implied_roi": -0.05
+      },
+      "METHOD": {
+       "legs": 311,
+       "won": 98,
+       "void": 0,
+       "hit_rate": 0.3151,
+       "mean_p": 0.3136,
+       "mean_p_market": 0.3101,
+       "mean_decimal": 2.946,
+       "single_roi": -0.1916,
+       "single_implied_roi": -0.1817
+      }
+     },
+     "legs_by_sport": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL": {
+       "legs": 1,
+       "won": 1,
+       "void": 0,
+       "hit_rate": 1.0,
+       "mean_p": 0.8046,
+       "mean_p_market": 0.7914,
+       "mean_decimal": 1.213,
+       "single_roi": 0.2128,
+       "single_implied_roi": -0.0403
+      },
+      "Soccer": {
+       "legs": 333,
+       "won": 275,
+       "void": 0,
+       "hit_rate": 0.8258,
+       "mean_p": 0.7924,
+       "mean_p_market": 0.762,
+       "mean_decimal": 1.254,
+       "single_roi": 0.0262,
+       "single_implied_roi": -0.0531
+      },
+      "UFC": {
+       "legs": 397,
+       "won": 166,
+       "void": 0,
+       "hit_rate": 0.4181,
+       "mean_p": 0.4067,
+       "mean_p_market": 0.4036,
+       "mean_decimal": 2.592,
+       "single_roi": -0.1463,
+       "single_implied_roi": -0.1506
+      }
+     }
+    },
+    "label": "as live: drawn and chosen as live does - each prop weighted by the shipped win chance times the estimator's share and priced at the estimate, in the live band - and paid at the real price",
+    "splits_at": "the live draw only (salt sameday-props-v1): the splits are not measured over the simulation draws, whose mean over all days is under salts",
+    "real_in_band_by_years": {
+     "band_chosen_on": [
+      "2021-01-01",
+      "2024-12-31"
+     ],
+     "source": "the estimator's test years (engine/data/method_price.json test.test), on whose cards the scouts chose the live band (sameday.py PROPS)",
+     "in_choice_years": {
+      "as_live_tickets": 156,
+      "real_in_band": 0.7436
+     },
+     "before_choice_years": {
+      "as_live_tickets": 155,
+      "real_in_band": 0.6774
+     },
+     "after_choice_years": {
+      "as_live_tickets": 0,
+      "real_in_band": null
+     }
+    }
+   },
+   "props_as_live_book_split": {
+    "periods": {
+     "all": [
+      "2016-08-01",
+      "2024-12-07"
+     ],
+     "first": [
+      "2016-08-01",
+      "2023-08-08"
+     ],
+     "last_3_years": [
+      "2023-08-09",
+      "2024-12-07"
+     ]
+    },
+    "period_labels": {
+     "all": "2016-08 to 2024-12, 8.4 years",
+     "first": "2016-08 to 2023-08, 7.0 years",
+     "last_3_years": "2023-08 to 2024-12, 16 months"
+    },
+    "live": {
+     "all_leagues": {
+      "all": {
+       "tickets": 311,
+       "wins": 80,
+       "hit_rate": 0.2572,
+       "expected_hit_rate": 0.2314,
+       "market_hit_rate": 0.2219,
+       "mean_multiplier": 3.63,
+       "mean_legs": 2.37,
+       "profit": -36.65,
+       "roi": -0.1179,
+       "roi_low": -0.2869,
+       "roi_high": 0.058,
+       "biggest_win": 4.29,
+       "implied_roi": -0.2364,
+       "days": 3051,
+       "days_with_ticket": 311,
+       "share_of_days": 0.1019,
+       "tickets_per_day": 0.1019,
+       "days_with_legs": 311,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.69,
+        "p25": 2.1,
+        "p50": 2.5,
+        "p75": 3.08,
+        "p95": 4.22
+       },
+       "prop_type": {
+        "Decision": 202,
+        "KO/TKO": 91,
+        "Submission": 18
+       },
+       "prop_est_error_median": 0.1576,
+       "real_in_band": 0.7106,
+       "searched_multiplier": 3.78,
+       "fallback": {
+        "0": 268,
+        "1": 29,
+        "2": 12,
+        "3": 1,
+        "5": 1
+       }
+      },
+      "first": {
+       "tickets": 263,
+       "wins": 69,
+       "hit_rate": 0.2624,
+       "expected_hit_rate": 0.232,
+       "market_hit_rate": 0.2221,
+       "mean_multiplier": 3.62,
+       "mean_legs": 2.33,
+       "profit": -25.04,
+       "roi": -0.0952,
+       "roi_low": -0.2795,
+       "roi_high": 0.0997,
+       "biggest_win": 4.29,
+       "implied_roi": -0.2366,
+       "days": 2564,
+       "days_with_ticket": 263,
+       "share_of_days": 0.1026,
+       "tickets_per_day": 0.1026,
+       "days_with_legs": 263,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.69,
+        "p25": 2.1,
+        "p50": 2.5,
+        "p75": 3.08,
+        "p95": 4.19
+       },
+       "prop_type": {
+        "Decision": 174,
+        "KO/TKO": 76,
+        "Submission": 13
+       },
+       "prop_est_error_median": 0.156,
+       "real_in_band": 0.7034,
+       "searched_multiplier": 3.78,
+       "fallback": {
+        "0": 223,
+        "1": 27,
+        "2": 12,
+        "3": 1
+       }
+      },
+      "last_3_years": {
+       "tickets": 48,
+       "wins": 11,
+       "hit_rate": 0.2292,
+       "expected_hit_rate": 0.2282,
+       "market_hit_rate": 0.2203,
+       "mean_multiplier": 3.68,
+       "mean_legs": 2.56,
+       "profit": -11.62,
+       "roi": -0.242,
+       "roi_low": -0.6004,
+       "roi_high": 0.1678,
+       "biggest_win": 2.71,
+       "implied_roi": -0.2355,
+       "days": 487,
+       "days_with_ticket": 48,
+       "share_of_days": 0.0986,
+       "tickets_per_day": 0.0986,
+       "days_with_legs": 48,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.59,
+        "p25": 2.0,
+        "p50": 2.58,
+        "p75": 3.04,
+        "p95": 4.19
+       },
+       "prop_type": {
+        "Decision": 28,
+        "KO/TKO": 15,
+        "Submission": 5
+       },
+       "prop_est_error_median": 0.1599,
+       "real_in_band": 0.75,
+       "searched_multiplier": 3.76,
+       "fallback": {
+        "0": 45,
+        "1": 2,
+        "5": 1
+       }
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "tickets": 311,
+       "wins": 80,
+       "hit_rate": 0.2572,
+       "expected_hit_rate": 0.2311,
+       "market_hit_rate": 0.2234,
+       "mean_multiplier": 3.62,
+       "mean_legs": 2.32,
+       "profit": -38.73,
+       "roi": -0.1245,
+       "roi_low": -0.2893,
+       "roi_high": 0.0487,
+       "biggest_win": 4.29,
+       "implied_roi": -0.232,
+       "days": 3051,
+       "days_with_ticket": 311,
+       "share_of_days": 0.1019,
+       "tickets_per_day": 0.1019,
+       "days_with_legs": 311,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.69,
+        "p25": 2.1,
+        "p50": 2.5,
+        "p75": 3.0,
+        "p95": 4.15
+       },
+       "prop_type": {
+        "Decision": 201,
+        "KO/TKO": 92,
+        "Submission": 18
+       },
+       "prop_est_error_median": 0.156,
+       "real_in_band": 0.7138,
+       "searched_multiplier": 3.78,
+       "fallback": {
+        "0": 265,
+        "1": 30,
+        "2": 12,
+        "3": 1,
+        "4": 1,
+        "5": 2
+       }
+      },
+      "first": {
+       "tickets": 263,
+       "wins": 70,
+       "hit_rate": 0.2662,
+       "expected_hit_rate": 0.2314,
+       "market_hit_rate": 0.2235,
+       "mean_multiplier": 3.62,
+       "mean_legs": 2.28,
+       "profit": -23.66,
+       "roi": -0.09,
+       "roi_low": -0.2741,
+       "roi_high": 0.1024,
+       "biggest_win": 4.29,
+       "implied_roi": -0.2319,
+       "days": 2564,
+       "days_with_ticket": 263,
+       "share_of_days": 0.1026,
+       "tickets_per_day": 0.1026,
+       "days_with_legs": 263,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.69,
+        "p25": 2.1,
+        "p50": 2.5,
+        "p75": 3.0,
+        "p95": 4.1
+       },
+       "prop_type": {
+        "Decision": 173,
+        "KO/TKO": 77,
+        "Submission": 13
+       },
+       "prop_est_error_median": 0.156,
+       "real_in_band": 0.7034,
+       "searched_multiplier": 3.79,
+       "fallback": {
+        "0": 221,
+        "1": 28,
+        "2": 12,
+        "3": 1,
+        "4": 1
+       }
+      },
+      "last_3_years": {
+       "tickets": 48,
+       "wins": 10,
+       "hit_rate": 0.2083,
+       "expected_hit_rate": 0.2295,
+       "market_hit_rate": 0.2232,
+       "mean_multiplier": 3.64,
+       "mean_legs": 2.52,
+       "profit": -15.07,
+       "roi": -0.3139,
+       "roi_low": -0.6652,
+       "roi_high": 0.0832,
+       "biggest_win": 2.71,
+       "implied_roi": -0.2329,
+       "days": 487,
+       "days_with_ticket": 48,
+       "share_of_days": 0.0986,
+       "tickets_per_day": 0.0986,
+       "days_with_legs": 48,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.59,
+        "p25": 2.0,
+        "p50": 2.5,
+        "p75": 3.0,
+        "p95": 4.19
+       },
+       "prop_type": {
+        "Decision": 28,
+        "KO/TKO": 15,
+        "Submission": 5
+       },
+       "prop_est_error_median": 0.1562,
+       "real_in_band": 0.7708,
+       "searched_multiplier": 3.74,
+       "fallback": {
+        "0": 44,
+        "1": 2,
+        "5": 2
+       }
+      }
+     }
+    },
+    "days_with_legs_are": "days with a prop that has an estimate (as live can draw)",
+    "salt": "sameday-props-v1",
+    "salts": {
+     "all_leagues": {
+      "all": {
+       "salts": 1000,
+       "tickets_per_salt": 311,
+       "roi": -0.0867,
+       "roi_low": -0.1384,
+       "roi_high": -0.0342,
+       "hit_rate": 0.2668,
+       "hit_low": 0.2516,
+       "hit_high": 0.2816,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2382,
+       "market_hit_rate": 0.2224,
+       "mean_multiplier": 3.65,
+       "mean_legs": 2.37,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2253,
+         "p50": -0.0897,
+         "p95": 0.0562
+        },
+        "hit_rate": {
+         "p5": 0.2283,
+         "p50": 0.2669,
+         "p95": 0.3055
+        },
+        "implied_roi": {
+         "p5": -0.2409,
+         "p50": -0.2381,
+         "p95": -0.2354
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 360,
+        "roi_equal": 0,
+        "hit_below": 316,
+        "hit_equal": 67,
+        "of": 1000
+       }
+      },
+      "first": {
+       "salts": 1000,
+       "tickets_per_salt": 263,
+       "roi": -0.0885,
+       "roi_low": -0.1452,
+       "roi_high": -0.0305,
+       "hit_rate": 0.2651,
+       "hit_low": 0.2487,
+       "hit_high": 0.2816,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2379,
+       "market_hit_rate": 0.2222,
+       "mean_multiplier": 3.65,
+       "mean_legs": 2.36,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2408,
+         "p50": -0.0885,
+         "p95": 0.069
+        },
+        "hit_rate": {
+         "p5": 0.2205,
+         "p50": 0.2662,
+         "p95": 0.308
+        },
+        "implied_roi": {
+         "p5": -0.241,
+         "p50": -0.2378,
+         "p95": -0.235
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 463,
+        "roi_equal": 0,
+        "hit_below": 425,
+        "hit_equal": 64,
+        "of": 1000
+       }
+      },
+      "last_3_years": {
+       "salts": 1000,
+       "tickets_per_salt": 48,
+       "roi": -0.0768,
+       "roi_low": -0.2139,
+       "roi_high": 0.0565,
+       "hit_rate": 0.2763,
+       "hit_low": 0.2353,
+       "hit_high": 0.3167,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2395,
+       "market_hit_rate": 0.2235,
+       "mean_multiplier": 3.68,
+       "mean_legs": 2.47,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.4259,
+         "p50": -0.0857,
+         "p95": 0.2939
+        },
+        "hit_rate": {
+         "p5": 0.1667,
+         "p50": 0.2708,
+         "p95": 0.375
+        },
+        "implied_roi": {
+         "p5": -0.2456,
+         "p50": -0.2395,
+         "p95": -0.2334
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 231,
+        "roi_equal": 0,
+        "hit_below": 163,
+        "hit_equal": 122,
+        "of": 1000
+       }
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "salts": 1000,
+       "tickets_per_salt": 311,
+       "roi": -0.0944,
+       "roi_low": -0.1484,
+       "roi_high": -0.0407,
+       "hit_rate": 0.2626,
+       "hit_low": 0.2471,
+       "hit_high": 0.2781,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2337,
+       "market_hit_rate": 0.223,
+       "mean_multiplier": 3.66,
+       "mean_legs": 2.33,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2287,
+         "p50": -0.0961,
+         "p95": 0.0448
+        },
+        "hit_rate": {
+         "p5": 0.2251,
+         "p50": 0.2605,
+         "p95": 0.3023
+        },
+        "implied_roi": {
+         "p5": -0.2363,
+         "p50": -0.2336,
+         "p95": -0.2313
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 372,
+        "roi_equal": 0,
+        "hit_below": 394,
+        "hit_equal": 48,
+        "of": 1000
+       }
+      },
+      "first": {
+       "salts": 1000,
+       "tickets_per_salt": 263,
+       "roi": -0.0929,
+       "roi_low": -0.1546,
+       "roi_high": -0.0316,
+       "hit_rate": 0.2619,
+       "hit_low": 0.2444,
+       "hit_high": 0.2794,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2334,
+       "market_hit_rate": 0.2226,
+       "mean_multiplier": 3.66,
+       "mean_legs": 2.31,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2388,
+         "p50": -0.0973,
+         "p95": 0.0588
+        },
+        "hit_rate": {
+         "p5": 0.2205,
+         "p50": 0.2624,
+         "p95": 0.3042
+        },
+        "implied_roi": {
+         "p5": -0.2362,
+         "p50": -0.2333,
+         "p95": -0.2307
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 521,
+        "roi_equal": 0,
+        "hit_below": 540,
+        "hit_equal": 60,
+        "of": 1000
+       }
+      },
+      "last_3_years": {
+       "salts": 1000,
+       "tickets_per_salt": 48,
+       "roi": -0.1028,
+       "roi_low": -0.2376,
+       "roi_high": 0.0233,
+       "hit_rate": 0.2669,
+       "hit_low": 0.226,
+       "hit_high": 0.3068,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2355,
+       "market_hit_rate": 0.225,
+       "mean_multiplier": 3.68,
+       "mean_legs": 2.42,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.4463,
+         "p50": -0.1081,
+         "p95": 0.2641
+        },
+        "hit_rate": {
+         "p5": 0.1667,
+         "p50": 0.2708,
+         "p95": 0.375
+        },
+        "implied_roi": {
+         "p5": -0.2414,
+         "p50": -0.2355,
+         "p95": -0.2297
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 173,
+        "roi_equal": 0,
+        "hit_below": 125,
+        "hit_equal": 96,
+        "of": 1000
+       }
+      }
+     }
+    },
+    "splits": {
+     "note": "descriptive: none can move a rule in v2",
+     "by_bets": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2+METHOD": {
+       "tickets": 311,
+       "wins": 80,
+       "hit_rate": 0.2572,
+       "expected_hit_rate": 0.2314,
+       "market_hit_rate": 0.2219,
+       "mean_multiplier": 3.63,
+       "mean_legs": 2.37,
+       "profit": -36.65,
+       "roi": -0.1179,
+       "roi_low": -0.2869,
+       "roi_high": 0.058,
+       "biggest_win": 4.29,
+       "implied_roi": -0.2364,
+       "share": 1.0
+      }
+     },
+     "by_sports": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL+Soccer+UFC": {
+       "tickets": 1,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.2026,
+       "market_hit_rate": 0.1778,
+       "mean_multiplier": 4.01,
+       "mean_legs": 4.0,
+       "profit": -1.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.2879,
+       "share": 0.0032
+      },
+      "Soccer+UFC": {
+       "tickets": 250,
+       "wins": 61,
+       "hit_rate": 0.244,
+       "expected_hit_rate": 0.2306,
+       "market_hit_rate": 0.2191,
+       "mean_multiplier": 3.66,
+       "mean_legs": 2.42,
+       "profit": -39.76,
+       "roi": -0.159,
+       "roi_low": -0.341,
+       "roi_high": 0.0343,
+       "biggest_win": 4.29,
+       "implied_roi": -0.2425,
+       "share": 0.8039
+      },
+      "UFC": {
+       "tickets": 60,
+       "wins": 19,
+       "hit_rate": 0.3167,
+       "expected_hit_rate": 0.2353,
+       "market_hit_rate": 0.234,
+       "mean_multiplier": 3.51,
+       "mean_legs": 2.12,
+       "profit": 4.1,
+       "roi": 0.0684,
+       "roi_low": -0.3367,
+       "roi_high": 0.493,
+       "biggest_win": 3.55,
+       "implied_roi": -0.2102,
+       "share": 0.1929
+      }
+     },
+     "by_legs": {
+      "note": "descriptive: none can move a rule in v2",
+      "2 legs": {
+       "tickets": 216,
+       "wins": 56,
+       "hit_rate": 0.2593,
+       "expected_hit_rate": 0.2317,
+       "market_hit_rate": 0.2262,
+       "mean_multiplier": 3.65,
+       "mean_legs": 2.0,
+       "profit": -26.82,
+       "roi": -0.1242,
+       "roi_low": -0.3177,
+       "roi_high": 0.0715,
+       "biggest_win": 4.29,
+       "implied_roi": -0.2229,
+       "share": 0.6945
+      },
+      "3 legs": {
+       "tickets": 77,
+       "wins": 19,
+       "hit_rate": 0.2468,
+       "expected_hit_rate": 0.2338,
+       "market_hit_rate": 0.216,
+       "mean_multiplier": 3.55,
+       "mean_legs": 3.0,
+       "profit": -10.64,
+       "roi": -0.1382,
+       "roi_low": -0.4683,
+       "roi_high": 0.2129,
+       "biggest_win": 3.74,
+       "implied_roi": -0.2603,
+       "share": 0.2476
+      },
+      "4 legs": {
+       "tickets": 16,
+       "wins": 5,
+       "hit_rate": 0.3125,
+       "expected_hit_rate": 0.2167,
+       "market_hit_rate": 0.1962,
+       "mean_multiplier": 3.67,
+       "mean_legs": 4.0,
+       "profit": 2.8,
+       "roi": 0.1751,
+       "roi_low": -0.5993,
+       "roi_high": 1.1075,
+       "biggest_win": 3.95,
+       "implied_roi": -0.2942,
+       "share": 0.0514
+      },
+      "5 legs": {
+       "tickets": 2,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.2258,
+       "market_hit_rate": 0.1797,
+       "mean_multiplier": 3.8,
+       "mean_legs": 5.0,
+       "profit": -2.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.3171,
+       "share": 0.0064
+      }
+     },
+     "legs_by_bet": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2": {
+       "legs": 426,
+       "won": 344,
+       "void": 0,
+       "hit_rate": 0.8075,
+       "mean_p": 0.7799,
+       "mean_p_market": 0.7551,
+       "mean_decimal": 1.271,
+       "single_roi": 0.0144,
+       "single_implied_roi": -0.0502
+      },
+      "METHOD": {
+       "legs": 311,
+       "won": 106,
+       "void": 0,
+       "hit_rate": 0.3408,
+       "mean_p": 0.3323,
+       "mean_p_market": 0.3328,
+       "mean_decimal": 2.674,
+       "single_roi": -0.1619,
+       "single_implied_roi": -0.1809
+      }
+     },
+     "legs_by_sport": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL": {
+       "legs": 1,
+       "won": 1,
+       "void": 0,
+       "hit_rate": 1.0,
+       "mean_p": 0.8046,
+       "mean_p_market": 0.7914,
+       "mean_decimal": 1.213,
+       "single_roi": 0.2128,
+       "single_implied_roi": -0.0403
+      },
+      "Soccer": {
+       "legs": 340,
+       "won": 277,
+       "void": 0,
+       "hit_rate": 0.8147,
+       "mean_p": 0.7897,
+       "mean_p_market": 0.7589,
+       "mean_decimal": 1.259,
+       "single_roi": 0.0161,
+       "single_implied_roi": -0.0533
+      },
+      "UFC": {
+       "legs": 396,
+       "won": 172,
+       "void": 0,
+       "hit_rate": 0.4343,
+       "mean_p": 0.4199,
+       "mean_p_market": 0.42,
+       "mean_decimal": 2.384,
+       "single_roi": -0.126,
+       "single_implied_roi": -0.1502
+      }
+     }
+    },
+    "label": "as live but weighted by the real book's split: chosen at the estimated price in the live band, the draw weighting each prop by the shipped win chance times the real six-way book's share, which live never has; paid at the real price",
+    "splits_at": "the live draw only (salt sameday-props-v1): the splits are not measured over the simulation draws, whose mean over all days is under salts"
+   },
+   "props_as_priced": {
+    "periods": {
+     "all": [
+      "2016-08-01",
+      "2024-12-07"
+     ],
+     "first": [
+      "2016-08-01",
+      "2023-08-08"
+     ],
+     "last_3_years": [
+      "2023-08-09",
+      "2024-12-07"
+     ]
+    },
+    "period_labels": {
+     "all": "2016-08 to 2024-12, 8.4 years",
+     "first": "2016-08 to 2023-08, 7.0 years",
+     "last_3_years": "2023-08 to 2024-12, 16 months"
+    },
+    "live": {
+     "all_leagues": {
+      "all": {
+       "tickets": 329,
+       "wins": 90,
+       "hit_rate": 0.2736,
+       "expected_hit_rate": 0.234,
+       "market_hit_rate": 0.2263,
+       "mean_multiplier": 3.46,
+       "mean_legs": 2.22,
+       "profit": -25.17,
+       "roi": -0.0765,
+       "roi_low": -0.2386,
+       "roi_high": 0.0903,
+       "biggest_win": 3.8,
+       "implied_roi": -0.232,
+       "days": 3051,
+       "days_with_ticket": 329,
+       "share_of_days": 0.1078,
+       "tickets_per_day": 0.1078,
+       "days_with_legs": 329,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.75,
+        "p75": 3.3,
+        "p95": 4.0
+       },
+       "prop_type": {
+        "Decision": 187,
+        "KO/TKO": 114,
+        "Submission": 28
+       },
+       "prop_est_error_median": 0.1909,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.46,
+       "fallback": {
+        "0": 326,
+        "1": 3
+       }
+      },
+      "first": {
+       "tickets": 281,
+       "wins": 76,
+       "hit_rate": 0.2705,
+       "expected_hit_rate": 0.2338,
+       "market_hit_rate": 0.2258,
+       "mean_multiplier": 3.46,
+       "mean_legs": 2.2,
+       "profit": -23.21,
+       "roi": -0.0826,
+       "roi_low": -0.2581,
+       "roi_high": 0.0954,
+       "biggest_win": 3.64,
+       "implied_roi": -0.2323,
+       "days": 2564,
+       "days_with_ticket": 281,
+       "share_of_days": 0.1096,
+       "tickets_per_day": 0.1096,
+       "days_with_legs": 281,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.7,
+        "p75": 3.3,
+        "p95": 4.0
+       },
+       "prop_type": {
+        "Decision": 163,
+        "KO/TKO": 96,
+        "Submission": 22
+       },
+       "prop_est_error_median": 0.1996,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.46,
+       "fallback": {
+        "0": 279,
+        "1": 2
+       }
+      },
+      "last_3_years": {
+       "tickets": 48,
+       "wins": 14,
+       "hit_rate": 0.2917,
+       "expected_hit_rate": 0.2351,
+       "market_hit_rate": 0.2295,
+       "mean_multiplier": 3.43,
+       "mean_legs": 2.31,
+       "profit": -1.96,
+       "roi": -0.0408,
+       "roi_low": -0.4287,
+       "roi_high": 0.4013,
+       "biggest_win": 3.8,
+       "implied_roi": -0.23,
+       "days": 487,
+       "days_with_ticket": 48,
+       "share_of_days": 0.0986,
+       "tickets_per_day": 0.0986,
+       "days_with_legs": 48,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.76,
+        "p25": 2.2,
+        "p50": 2.77,
+        "p75": 3.17,
+        "p95": 3.93
+       },
+       "prop_type": {
+        "Decision": 24,
+        "KO/TKO": 18,
+        "Submission": 6
+       },
+       "prop_est_error_median": 0.1599,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.43,
+       "fallback": {
+        "0": 47,
+        "1": 1
+       }
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "tickets": 329,
+       "wins": 88,
+       "hit_rate": 0.2675,
+       "expected_hit_rate": 0.2327,
+       "market_hit_rate": 0.2265,
+       "mean_multiplier": 3.47,
+       "mean_legs": 2.19,
+       "profit": -29.38,
+       "roi": -0.0893,
+       "roi_low": -0.2514,
+       "roi_high": 0.0773,
+       "biggest_win": 3.8,
+       "implied_roi": -0.2286,
+       "days": 3051,
+       "days_with_ticket": 329,
+       "share_of_days": 0.1078,
+       "tickets_per_day": 0.1078,
+       "days_with_legs": 329,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.72,
+        "p75": 3.25,
+        "p95": 4.0
+       },
+       "prop_type": {
+        "Decision": 187,
+        "KO/TKO": 114,
+        "Submission": 28
+       },
+       "prop_est_error_median": 0.1909,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.47,
+       "fallback": {
+        "0": 326,
+        "1": 2,
+        "2": 1
+       }
+      },
+      "first": {
+       "tickets": 281,
+       "wins": 75,
+       "hit_rate": 0.2669,
+       "expected_hit_rate": 0.2321,
+       "market_hit_rate": 0.2256,
+       "mean_multiplier": 3.48,
+       "mean_legs": 2.17,
+       "profit": -23.86,
+       "roi": -0.0849,
+       "roi_low": -0.26,
+       "roi_high": 0.0955,
+       "biggest_win": 3.64,
+       "implied_roi": -0.2289,
+       "days": 2564,
+       "days_with_ticket": 281,
+       "share_of_days": 0.1096,
+       "tickets_per_day": 0.1096,
+       "days_with_legs": 281,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.7,
+        "p75": 3.3,
+        "p95": 4.0
+       },
+       "prop_type": {
+        "Decision": 163,
+        "KO/TKO": 96,
+        "Submission": 22
+       },
+       "prop_est_error_median": 0.1996,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.48,
+       "fallback": {
+        "0": 279,
+        "1": 2
+       }
+      },
+      "last_3_years": {
+       "tickets": 48,
+       "wins": 13,
+       "hit_rate": 0.2708,
+       "expected_hit_rate": 0.2362,
+       "market_hit_rate": 0.2313,
+       "mean_multiplier": 3.41,
+       "mean_legs": 2.27,
+       "profit": -5.53,
+       "roi": -0.1152,
+       "roi_low": -0.4931,
+       "roi_high": 0.317,
+       "biggest_win": 3.8,
+       "implied_roi": -0.2268,
+       "days": 487,
+       "days_with_ticket": 48,
+       "share_of_days": 0.0986,
+       "tickets_per_day": 0.0986,
+       "days_with_legs": 48,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.76,
+        "p25": 2.2,
+        "p50": 2.75,
+        "p75": 3.04,
+        "p95": 3.93
+       },
+       "prop_type": {
+        "Decision": 24,
+        "KO/TKO": 18,
+        "Submission": 6
+       },
+       "prop_est_error_median": 0.1628,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.41,
+       "fallback": {
+        "0": 47,
+        "2": 1
+       }
+      }
+     }
+    },
+    "days_with_legs_are": "days with a prop",
+    "salt": "sameday-props-v1",
+    "salts": {
+     "all_leagues": {
+      "all": {
+       "salts": 1000,
+       "tickets_per_salt": 329,
+       "roi": -0.104,
+       "roi_low": -0.1487,
+       "roi_high": -0.0608,
+       "hit_rate": 0.2635,
+       "hit_low": 0.2506,
+       "hit_high": 0.2765,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2336,
+       "market_hit_rate": 0.2261,
+       "mean_multiplier": 3.45,
+       "mean_legs": 2.24,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2308,
+         "p50": -0.1082,
+         "p95": 0.0366
+        },
+        "hit_rate": {
+         "p5": 0.228,
+         "p50": 0.2614,
+         "p95": 0.304
+        },
+        "implied_roi": {
+         "p5": -0.2362,
+         "p50": -0.2336,
+         "p95": -0.2313
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 634,
+        "roi_equal": 0,
+        "hit_below": 653,
+        "hit_equal": 39,
+        "of": 1000
+       }
+      },
+      "first": {
+       "salts": 1000,
+       "tickets_per_salt": 281,
+       "roi": -0.1058,
+       "roi_low": -0.1541,
+       "roi_high": -0.0577,
+       "hit_rate": 0.262,
+       "hit_low": 0.248,
+       "hit_high": 0.2762,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2333,
+       "market_hit_rate": 0.2259,
+       "mean_multiplier": 3.46,
+       "mean_legs": 2.22,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2517,
+         "p50": -0.1063,
+         "p95": 0.0496
+        },
+        "hit_rate": {
+         "p5": 0.2206,
+         "p50": 0.2598,
+         "p95": 0.306
+        },
+        "implied_roi": {
+         "p5": -0.2362,
+         "p50": -0.2332,
+         "p95": -0.2306
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 602,
+        "roi_equal": 0,
+        "hit_below": 603,
+        "hit_equal": 47,
+        "of": 1000
+       }
+      },
+      "last_3_years": {
+       "salts": 1000,
+       "tickets_per_salt": 48,
+       "roi": -0.0935,
+       "roi_low": -0.2057,
+       "roi_high": 0.0195,
+       "hit_rate": 0.2721,
+       "hit_low": 0.2367,
+       "hit_high": 0.3076,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2357,
+       "market_hit_rate": 0.2273,
+       "mean_multiplier": 3.42,
+       "mean_legs": 2.34,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.4251,
+         "p50": -0.1003,
+         "p95": 0.2692
+        },
+        "hit_rate": {
+         "p5": 0.1667,
+         "p50": 0.2708,
+         "p95": 0.375
+        },
+        "implied_roi": {
+         "p5": -0.2414,
+         "p50": -0.2357,
+         "p95": -0.2302
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 608,
+        "roi_equal": 0,
+        "hit_below": 569,
+        "hit_equal": 123,
+        "of": 1000
+       }
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "salts": 1000,
+       "tickets_per_salt": 329,
+       "roi": -0.105,
+       "roi_low": -0.15,
+       "roi_high": -0.0618,
+       "hit_rate": 0.2617,
+       "hit_low": 0.2485,
+       "hit_high": 0.2746,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2299,
+       "market_hit_rate": 0.226,
+       "mean_multiplier": 3.47,
+       "mean_legs": 2.2,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2361,
+         "p50": -0.106,
+         "p95": 0.0272
+        },
+        "hit_rate": {
+         "p5": 0.2219,
+         "p50": 0.2614,
+         "p95": 0.3009
+        },
+        "implied_roi": {
+         "p5": -0.2324,
+         "p50": -0.2299,
+         "p95": -0.2276
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 590,
+        "roi_equal": 0,
+        "hit_below": 584,
+        "hit_equal": 59,
+        "of": 1000
+       }
+      },
+      "first": {
+       "salts": 1000,
+       "tickets_per_salt": 281,
+       "roi": -0.1003,
+       "roi_low": -0.148,
+       "roi_high": -0.0534,
+       "hit_rate": 0.262,
+       "hit_low": 0.248,
+       "hit_high": 0.2755,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2295,
+       "market_hit_rate": 0.2258,
+       "mean_multiplier": 3.48,
+       "mean_legs": 2.19,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2481,
+         "p50": -0.1011,
+         "p95": 0.0522
+        },
+        "hit_rate": {
+         "p5": 0.2206,
+         "p50": 0.2633,
+         "p95": 0.306
+        },
+        "implied_roi": {
+         "p5": -0.2323,
+         "p50": -0.2295,
+         "p95": -0.227
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 572,
+        "roi_equal": 0,
+        "hit_below": 547,
+        "hit_equal": 47,
+        "of": 1000
+       }
+      },
+      "last_3_years": {
+       "salts": 1000,
+       "tickets_per_salt": 48,
+       "roi": -0.1323,
+       "roi_low": -0.2555,
+       "roi_high": -0.0134,
+       "hit_rate": 0.2598,
+       "hit_low": 0.2213,
+       "hit_high": 0.2977,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2323,
+       "market_hit_rate": 0.2276,
+       "mean_multiplier": 3.43,
+       "mean_legs": 2.29,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.4568,
+         "p50": -0.1369,
+         "p95": 0.2289
+        },
+        "hit_rate": {
+         "p5": 0.1667,
+         "p50": 0.25,
+         "p95": 0.375
+        },
+        "implied_roi": {
+         "p5": -0.2375,
+         "p50": -0.2324,
+         "p95": -0.2272
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 547,
+        "roi_equal": 0,
+        "hit_below": 513,
+        "hit_equal": 151,
+        "of": 1000
+       }
+      }
+     }
+    },
+    "splits": {
+     "note": "descriptive: none can move a rule in v2",
+     "by_bets": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2+METHOD": {
+       "tickets": 329,
+       "wins": 90,
+       "hit_rate": 0.2736,
+       "expected_hit_rate": 0.234,
+       "market_hit_rate": 0.2263,
+       "mean_multiplier": 3.46,
+       "mean_legs": 2.22,
+       "profit": -25.17,
+       "roi": -0.0765,
+       "roi_low": -0.2386,
+       "roi_high": 0.0903,
+       "biggest_win": 3.8,
+       "implied_roi": -0.232,
+       "share": 1.0
+      }
+     },
+     "by_sports": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL+Soccer+UFC": {
+       "tickets": 2,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.2634,
+       "market_hit_rate": 0.2375,
+       "mean_multiplier": 3.07,
+       "mean_legs": 3.5,
+       "profit": -2.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.2713,
+       "share": 0.0061
+      },
+      "NFL+UFC": {
+       "tickets": 1,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.2564,
+       "market_hit_rate": 0.2458,
+       "mean_multiplier": 3.03,
+       "mean_legs": 3.0,
+       "profit": -1.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.2556,
+       "share": 0.003
+      },
+      "Soccer+UFC": {
+       "tickets": 254,
+       "wins": 68,
+       "hit_rate": 0.2677,
+       "expected_hit_rate": 0.2378,
+       "market_hit_rate": 0.227,
+       "mean_multiplier": 3.42,
+       "mean_legs": 2.25,
+       "profit": -29.2,
+       "roi": -0.115,
+       "roi_low": -0.2894,
+       "roi_high": 0.0727,
+       "biggest_win": 3.64,
+       "implied_roi": -0.2365,
+       "share": 0.772
+      },
+      "UFC": {
+       "tickets": 72,
+       "wins": 22,
+       "hit_rate": 0.3056,
+       "expected_hit_rate": 0.2196,
+       "market_hit_rate": 0.2233,
+       "mean_multiplier": 3.6,
+       "mean_legs": 2.04,
+       "profit": 7.03,
+       "roi": 0.0976,
+       "roi_low": -0.2705,
+       "roi_high": 0.4931,
+       "biggest_win": 3.8,
+       "implied_roi": -0.2146,
+       "share": 0.2188
+      }
+     },
+     "by_legs": {
+      "note": "descriptive: none can move a rule in v2",
+      "2 legs": {
+       "tickets": 264,
+       "wins": 66,
+       "hit_rate": 0.25,
+       "expected_hit_rate": 0.227,
+       "market_hit_rate": 0.2226,
+       "mean_multiplier": 3.56,
+       "mean_legs": 2.0,
+       "profit": -33.16,
+       "roi": -0.1256,
+       "roi_low": -0.314,
+       "roi_high": 0.0632,
+       "biggest_win": 3.8,
+       "implied_roi": -0.224,
+       "share": 0.8024
+      },
+      "3 legs": {
+       "tickets": 59,
+       "wins": 22,
+       "hit_rate": 0.3729,
+       "expected_hit_rate": 0.2605,
+       "market_hit_rate": 0.2419,
+       "mean_multiplier": 3.05,
+       "mean_legs": 3.0,
+       "profit": 7.94,
+       "roi": 0.1346,
+       "roi_low": -0.2265,
+       "roi_high": 0.4993,
+       "biggest_win": 2.12,
+       "implied_roi": -0.2626,
+       "share": 0.1793
+      },
+      "4 legs": {
+       "tickets": 6,
+       "wins": 2,
+       "hit_rate": 0.3333,
+       "expected_hit_rate": 0.2795,
+       "market_hit_rate": 0.2385,
+       "mean_multiplier": 3.02,
+       "mean_legs": 4.0,
+       "profit": 0.05,
+       "roi": 0.0077,
+       "roi_low": -1.0,
+       "roi_high": 1.0202,
+       "biggest_win": 2.04,
+       "implied_roi": -0.2803,
+       "share": 0.0182
+      }
+     },
+     "legs_by_bet": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2": {
+       "legs": 400,
+       "won": 335,
+       "void": 0,
+       "hit_rate": 0.8375,
+       "mean_p": 0.8022,
+       "mean_p_market": 0.7798,
+       "mean_decimal": 1.231,
+       "single_roi": 0.0222,
+       "single_implied_roi": -0.0494
+      },
+      "METHOD": {
+       "legs": 329,
+       "won": 114,
+       "void": 0,
+       "hit_rate": 0.3465,
+       "mean_p": 0.3141,
+       "mean_p_market": 0.3152,
+       "mean_decimal": 2.757,
+       "single_roi": -0.0985,
+       "single_implied_roi": -0.1833
+      }
+     },
+     "legs_by_sport": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL": {
+       "legs": 3,
+       "won": 3,
+       "void": 0,
+       "hit_rate": 1.0,
+       "mean_p": 0.8051,
+       "mean_p_market": 0.7935,
+       "mean_decimal": 1.218,
+       "single_roi": 0.2178,
+       "single_implied_roi": -0.0337
+      },
+      "Soccer": {
+       "legs": 312,
+       "won": 259,
+       "void": 0,
+       "hit_rate": 0.8301,
+       "mean_p": 0.8124,
+       "mean_p_market": 0.7827,
+       "mean_decimal": 1.221,
+       "single_roi": 0.0067,
+       "single_implied_roi": -0.0526
+      },
+      "UFC": {
+       "legs": 414,
+       "won": 187,
+       "void": 0,
+       "hit_rate": 0.4517,
+       "mean_p": 0.4066,
+       "mean_p_market": 0.4083,
+       "mean_decimal": 2.451,
+       "single_roi": -0.0635,
+       "single_implied_roi": -0.1536
+      }
+     }
+    },
+    "label": "as priced: chosen and paid at the real prop price, band 3-5x, on every day with props",
+    "splits_at": "the live draw only (salt sameday-props-v1): the splits are not measured over the simulation draws, whose mean over all days is under salts"
+   },
+   "props_as_priced_estimated_days": {
+    "periods": {
+     "all": [
+      "2016-08-01",
+      "2024-12-07"
+     ],
+     "first": [
+      "2016-08-01",
+      "2023-08-08"
+     ],
+     "last_3_years": [
+      "2023-08-09",
+      "2024-12-07"
+     ]
+    },
+    "period_labels": {
+     "all": "2016-08 to 2024-12, 8.4 years",
+     "first": "2016-08 to 2023-08, 7.0 years",
+     "last_3_years": "2023-08 to 2024-12, 16 months"
+    },
+    "live": {
+     "all_leagues": {
+      "all": {
+       "tickets": 311,
+       "wins": 83,
+       "hit_rate": 0.2669,
+       "expected_hit_rate": 0.234,
+       "market_hit_rate": 0.2266,
+       "mean_multiplier": 3.45,
+       "mean_legs": 2.22,
+       "profit": -32.39,
+       "roi": -0.1042,
+       "roi_low": -0.2668,
+       "roi_high": 0.0663,
+       "biggest_win": 3.8,
+       "implied_roi": -0.2321,
+       "days": 3051,
+       "days_with_ticket": 311,
+       "share_of_days": 0.1019,
+       "tickets_per_day": 0.1019,
+       "days_with_legs": 311,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.7,
+        "p75": 3.25,
+        "p95": 4.0
+       },
+       "prop_type": {
+        "Decision": 176,
+        "KO/TKO": 109,
+        "Submission": 26
+       },
+       "prop_est_error_median": 0.1909,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.45,
+       "fallback": {
+        "0": 308,
+        "1": 3
+       }
+      },
+      "first": {
+       "tickets": 263,
+       "wins": 69,
+       "hit_rate": 0.2624,
+       "expected_hit_rate": 0.2338,
+       "market_hit_rate": 0.2261,
+       "mean_multiplier": 3.46,
+       "mean_legs": 2.2,
+       "profit": -30.44,
+       "roi": -0.1157,
+       "roi_low": -0.2934,
+       "roi_high": 0.0663,
+       "biggest_win": 3.6,
+       "implied_roi": -0.2324,
+       "days": 2564,
+       "days_with_ticket": 263,
+       "share_of_days": 0.1026,
+       "tickets_per_day": 0.1026,
+       "days_with_legs": 263,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.7,
+        "p75": 3.27,
+        "p95": 4.0
+       },
+       "prop_type": {
+        "Decision": 152,
+        "KO/TKO": 91,
+        "Submission": 20
+       },
+       "prop_est_error_median": 0.1996,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.46,
+       "fallback": {
+        "0": 261,
+        "1": 2
+       }
+      },
+      "last_3_years": {
+       "tickets": 48,
+       "wins": 14,
+       "hit_rate": 0.2917,
+       "expected_hit_rate": 0.2351,
+       "market_hit_rate": 0.2295,
+       "mean_multiplier": 3.43,
+       "mean_legs": 2.31,
+       "profit": -1.96,
+       "roi": -0.0408,
+       "roi_low": -0.4287,
+       "roi_high": 0.4013,
+       "biggest_win": 3.8,
+       "implied_roi": -0.23,
+       "days": 487,
+       "days_with_ticket": 48,
+       "share_of_days": 0.0986,
+       "tickets_per_day": 0.0986,
+       "days_with_legs": 48,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.76,
+        "p25": 2.2,
+        "p50": 2.77,
+        "p75": 3.17,
+        "p95": 3.93
+       },
+       "prop_type": {
+        "Decision": 24,
+        "KO/TKO": 18,
+        "Submission": 6
+       },
+       "prop_est_error_median": 0.1599,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.43,
+       "fallback": {
+        "0": 47,
+        "1": 1
+       }
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "tickets": 311,
+       "wins": 81,
+       "hit_rate": 0.2605,
+       "expected_hit_rate": 0.2327,
+       "market_hit_rate": 0.2267,
+       "mean_multiplier": 3.47,
+       "mean_legs": 2.19,
+       "profit": -36.86,
+       "roi": -0.1185,
+       "roi_low": -0.283,
+       "roi_high": 0.0524,
+       "biggest_win": 3.8,
+       "implied_roi": -0.2288,
+       "days": 3051,
+       "days_with_ticket": 311,
+       "share_of_days": 0.1019,
+       "tickets_per_day": 0.1019,
+       "days_with_legs": 311,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.7,
+        "p75": 3.25,
+        "p95": 4.0
+       },
+       "prop_type": {
+        "Decision": 176,
+        "KO/TKO": 109,
+        "Submission": 26
+       },
+       "prop_est_error_median": 0.1909,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.47,
+       "fallback": {
+        "0": 308,
+        "1": 2,
+        "2": 1
+       }
+      },
+      "first": {
+       "tickets": 263,
+       "wins": 68,
+       "hit_rate": 0.2586,
+       "expected_hit_rate": 0.232,
+       "market_hit_rate": 0.2259,
+       "mean_multiplier": 3.48,
+       "mean_legs": 2.18,
+       "profit": -31.34,
+       "roi": -0.1191,
+       "roi_low": -0.2937,
+       "roi_high": 0.0618,
+       "biggest_win": 3.6,
+       "implied_roi": -0.2292,
+       "days": 2564,
+       "days_with_ticket": 263,
+       "share_of_days": 0.1026,
+       "tickets_per_day": 0.1026,
+       "days_with_legs": 263,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.74,
+        "p25": 2.2,
+        "p50": 2.7,
+        "p75": 3.27,
+        "p95": 4.0
+       },
+       "prop_type": {
+        "Decision": 152,
+        "KO/TKO": 91,
+        "Submission": 20
+       },
+       "prop_est_error_median": 0.1996,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.48,
+       "fallback": {
+        "0": 261,
+        "1": 2
+       }
+      },
+      "last_3_years": {
+       "tickets": 48,
+       "wins": 13,
+       "hit_rate": 0.2708,
+       "expected_hit_rate": 0.2362,
+       "market_hit_rate": 0.2313,
+       "mean_multiplier": 3.41,
+       "mean_legs": 2.27,
+       "profit": -5.53,
+       "roi": -0.1152,
+       "roi_low": -0.4931,
+       "roi_high": 0.317,
+       "biggest_win": 3.8,
+       "implied_roi": -0.2268,
+       "days": 487,
+       "days_with_ticket": 48,
+       "share_of_days": 0.0986,
+       "tickets_per_day": 0.0986,
+       "days_with_legs": 48,
+       "share_of_days_with_legs": 1.0,
+       "prop_price": {
+        "p5": 1.76,
+        "p25": 2.2,
+        "p50": 2.75,
+        "p75": 3.04,
+        "p95": 3.93
+       },
+       "prop_type": {
+        "Decision": 24,
+        "KO/TKO": 18,
+        "Submission": 6
+       },
+       "prop_est_error_median": 0.1628,
+       "real_in_band": 1.0,
+       "searched_multiplier": 3.41,
+       "fallback": {
+        "0": 47,
+        "2": 1
+       }
+      }
+     }
+    },
+    "days_with_legs_are": "days with a prop that has an estimate (as live can draw)",
+    "salt": "sameday-props-v1",
+    "salts": {
+     "all_leagues": {
+      "all": {
+       "salts": 1000,
+       "tickets_per_salt": 311,
+       "roi": -0.1138,
+       "roi_low": -0.1595,
+       "roi_high": -0.07,
+       "hit_rate": 0.2608,
+       "hit_low": 0.247,
+       "hit_high": 0.2741,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2339,
+       "market_hit_rate": 0.2262,
+       "mean_multiplier": 3.45,
+       "mean_legs": 2.25,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.247,
+         "p50": -0.1173,
+         "p95": 0.0281
+        },
+        "hit_rate": {
+         "p5": 0.2219,
+         "p50": 0.2605,
+         "p95": 0.3023
+        },
+        "implied_roi": {
+         "p5": -0.2365,
+         "p50": -0.2338,
+         "p95": -0.2314
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 564,
+        "roi_equal": 0,
+        "hit_below": 585,
+        "hit_equal": 45,
+        "of": 1000
+       }
+      },
+      "first": {
+       "salts": 1000,
+       "tickets_per_salt": 263,
+       "roi": -0.1176,
+       "roi_low": -0.1678,
+       "roi_high": -0.0684,
+       "hit_rate": 0.2587,
+       "hit_low": 0.2439,
+       "hit_high": 0.2734,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2335,
+       "market_hit_rate": 0.226,
+       "mean_multiplier": 3.45,
+       "mean_legs": 2.23,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2647,
+         "p50": -0.1195,
+         "p95": 0.0421
+        },
+        "hit_rate": {
+         "p5": 0.2167,
+         "p50": 0.2586,
+         "p95": 0.3042
+        },
+        "implied_roi": {
+         "p5": -0.2365,
+         "p50": -0.2334,
+         "p95": -0.2307
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 514,
+        "roi_equal": 0,
+        "hit_below": 531,
+        "hit_equal": 49,
+        "of": 1000
+       }
+      },
+      "last_3_years": {
+       "salts": 1000,
+       "tickets_per_salt": 48,
+       "roi": -0.0935,
+       "roi_low": -0.2057,
+       "roi_high": 0.0195,
+       "hit_rate": 0.2721,
+       "hit_low": 0.2367,
+       "hit_high": 0.3076,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2357,
+       "market_hit_rate": 0.2273,
+       "mean_multiplier": 3.42,
+       "mean_legs": 2.34,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.4251,
+         "p50": -0.1003,
+         "p95": 0.2692
+        },
+        "hit_rate": {
+         "p5": 0.1667,
+         "p50": 0.2708,
+         "p95": 0.375
+        },
+        "implied_roi": {
+         "p5": -0.2414,
+         "p50": -0.2357,
+         "p95": -0.2302
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 608,
+        "roi_equal": 0,
+        "hit_below": 569,
+        "hit_equal": 123,
+        "of": 1000
+       }
+      }
+     },
+     "without_extra_leagues": {
+      "all": {
+       "salts": 1000,
+       "tickets_per_salt": 311,
+       "roi": -0.1134,
+       "roi_low": -0.1589,
+       "roi_high": -0.0693,
+       "hit_rate": 0.2594,
+       "hit_low": 0.2457,
+       "hit_high": 0.2726,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2301,
+       "market_hit_rate": 0.2262,
+       "mean_multiplier": 3.47,
+       "mean_legs": 2.21,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2455,
+         "p50": -0.115,
+         "p95": 0.023
+        },
+        "hit_rate": {
+         "p5": 0.2219,
+         "p50": 0.2572,
+         "p95": 0.299
+        },
+        "implied_roi": {
+         "p5": -0.2325,
+         "p50": -0.23,
+         "p95": -0.2276
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 480,
+        "roi_equal": 0,
+        "hit_below": 502,
+        "hit_equal": 48,
+        "of": 1000
+       }
+      },
+      "first": {
+       "salts": 1000,
+       "tickets_per_salt": 263,
+       "roi": -0.11,
+       "roi_low": -0.159,
+       "roi_high": -0.0622,
+       "hit_rate": 0.2593,
+       "hit_low": 0.245,
+       "hit_high": 0.2734,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2296,
+       "market_hit_rate": 0.2259,
+       "mean_multiplier": 3.47,
+       "mean_legs": 2.19,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.2612,
+         "p50": -0.1115,
+         "p95": 0.0451
+        },
+        "hit_rate": {
+         "p5": 0.2167,
+         "p50": 0.2586,
+         "p95": 0.3006
+        },
+        "implied_roi": {
+         "p5": -0.2325,
+         "p50": -0.2296,
+         "p95": -0.2268
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 462,
+        "roi_equal": 0,
+        "hit_below": 462,
+        "hit_equal": 47,
+        "of": 1000
+       }
+      },
+      "last_3_years": {
+       "salts": 1000,
+       "tickets_per_salt": 48,
+       "roi": -0.1323,
+       "roi_low": -0.2555,
+       "roi_high": -0.0134,
+       "hit_rate": 0.2598,
+       "hit_low": 0.2213,
+       "hit_high": 0.2977,
+       "interval": "day bootstrap (4,000 resamples, seed 7) of each day's mean-over-salts profit / won share",
+       "implied_roi": -0.2323,
+       "market_hit_rate": 0.2276,
+       "mean_multiplier": 3.43,
+       "mean_legs": 2.29,
+       "spread": {
+        "label": "how much the draw alone moves it, same games",
+        "roi": {
+         "p5": -0.4568,
+         "p50": -0.1369,
+         "p95": 0.2289
+        },
+        "hit_rate": {
+         "p5": 0.1667,
+         "p50": 0.25,
+         "p95": 0.375
+        },
+        "implied_roi": {
+         "p5": -0.2375,
+         "p50": -0.2324,
+         "p95": -0.2272
+        }
+       },
+       "live_rank": {
+        "label": "the live salt among the 1,000: how many salts did worse / the same",
+        "roi_below": 547,
+        "roi_equal": 0,
+        "hit_below": 513,
+        "hit_equal": 151,
+        "of": 1000
+       }
+      }
+     }
+    },
+    "splits": {
+     "note": "descriptive: none can move a rule in v2",
+     "by_bets": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2+METHOD": {
+       "tickets": 311,
+       "wins": 83,
+       "hit_rate": 0.2669,
+       "expected_hit_rate": 0.234,
+       "market_hit_rate": 0.2266,
+       "mean_multiplier": 3.45,
+       "mean_legs": 2.22,
+       "profit": -32.39,
+       "roi": -0.1042,
+       "roi_low": -0.2668,
+       "roi_high": 0.0663,
+       "biggest_win": 3.8,
+       "implied_roi": -0.2321,
+       "share": 1.0
+      }
+     },
+     "by_sports": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL+Soccer+UFC": {
+       "tickets": 2,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.2634,
+       "market_hit_rate": 0.2375,
+       "mean_multiplier": 3.07,
+       "mean_legs": 3.5,
+       "profit": -2.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.2713,
+       "share": 0.0064
+      },
+      "NFL+UFC": {
+       "tickets": 1,
+       "wins": 0,
+       "hit_rate": 0.0,
+       "expected_hit_rate": 0.2564,
+       "market_hit_rate": 0.2458,
+       "mean_multiplier": 3.03,
+       "mean_legs": 3.0,
+       "profit": -1.0,
+       "roi": -1.0,
+       "roi_low": -1.0,
+       "roi_high": -1.0,
+       "biggest_win": -1.0,
+       "implied_roi": -0.2556,
+       "share": 0.0032
+      },
+      "Soccer+UFC": {
+       "tickets": 242,
+       "wins": 64,
+       "hit_rate": 0.2645,
+       "expected_hit_rate": 0.2378,
+       "market_hit_rate": 0.2274,
+       "mean_multiplier": 3.42,
+       "mean_legs": 2.25,
+       "profit": -31.24,
+       "roi": -0.1291,
+       "roi_low": -0.3106,
+       "roi_high": 0.0653,
+       "biggest_win": 3.6,
+       "implied_roi": -0.2366,
+       "share": 0.7781
+      },
+      "UFC": {
+       "tickets": 66,
+       "wins": 19,
+       "hit_rate": 0.2879,
+       "expected_hit_rate": 0.2189,
+       "market_hit_rate": 0.2233,
+       "mean_multiplier": 3.61,
+       "mean_legs": 2.05,
+       "profit": 1.85,
+       "roi": 0.028,
+       "roi_low": -0.3456,
+       "roi_high": 0.4313,
+       "biggest_win": 3.8,
+       "implied_roi": -0.2139,
+       "share": 0.2122
+      }
+     },
+     "by_legs": {
+      "note": "descriptive: none can move a rule in v2",
+      "2 legs": {
+       "tickets": 249,
+       "wins": 61,
+       "hit_rate": 0.245,
+       "expected_hit_rate": 0.227,
+       "market_hit_rate": 0.2229,
+       "mean_multiplier": 3.55,
+       "mean_legs": 2.0,
+       "profit": -37.31,
+       "roi": -0.1498,
+       "roi_low": -0.3348,
+       "roi_high": 0.0439,
+       "biggest_win": 3.8,
+       "implied_roi": -0.224,
+       "share": 0.8006
+      },
+      "3 legs": {
+       "tickets": 56,
+       "wins": 20,
+       "hit_rate": 0.3571,
+       "expected_hit_rate": 0.2605,
+       "market_hit_rate": 0.2418,
+       "mean_multiplier": 3.05,
+       "mean_legs": 3.0,
+       "profit": 4.87,
+       "roi": 0.087,
+       "roi_low": -0.2921,
+       "roi_high": 0.4691,
+       "biggest_win": 2.12,
+       "implied_roi": -0.2627,
+       "share": 0.1801
+      },
+      "4 legs": {
+       "tickets": 6,
+       "wins": 2,
+       "hit_rate": 0.3333,
+       "expected_hit_rate": 0.2795,
+       "market_hit_rate": 0.2385,
+       "mean_multiplier": 3.02,
+       "mean_legs": 4.0,
+       "profit": 0.05,
+       "roi": 0.0077,
+       "roi_low": -1.0,
+       "roi_high": 1.0202,
+       "biggest_win": 2.04,
+       "implied_roi": -0.2803,
+       "share": 0.0193
+      }
+     },
+     "legs_by_bet": {
+      "note": "descriptive: none can move a rule in v2",
+      "1X2": {
+       "legs": 379,
+       "won": 317,
+       "void": 0,
+       "hit_rate": 0.8364,
+       "mean_p": 0.8016,
+       "mean_p_market": 0.779,
+       "mean_decimal": 1.232,
+       "single_roi": 0.0214,
+       "single_implied_roi": -0.0495
+      },
+      "METHOD": {
+       "legs": 311,
+       "won": 107,
+       "void": 0,
+       "hit_rate": 0.3441,
+       "mean_p": 0.3147,
+       "mean_p_market": 0.3161,
+       "mean_decimal": 2.749,
+       "single_roi": -0.1094,
+       "single_implied_roi": -0.1833
+      }
+     },
+     "legs_by_sport": {
+      "note": "descriptive: none can move a rule in v2",
+      "NFL": {
+       "legs": 3,
+       "won": 3,
+       "void": 0,
+       "hit_rate": 1.0,
+       "mean_p": 0.8051,
+       "mean_p_market": 0.7935,
+       "mean_decimal": 1.218,
+       "single_roi": 0.2178,
+       "single_implied_roi": -0.0337
+      },
+      "Soccer": {
+       "legs": 297,
+       "won": 247,
+       "void": 0,
+       "hit_rate": 0.8316,
+       "mean_p": 0.8115,
+       "mean_p_market": 0.7813,
+       "mean_decimal": 1.223,
+       "single_roi": 0.0104,
+       "single_implied_roi": -0.0526
+      },
+      "UFC": {
+       "legs": 390,
+       "won": 174,
+       "void": 0,
+       "hit_rate": 0.4462,
+       "mean_p": 0.4057,
+       "mean_p_market": 0.408,
+       "mean_decimal": 2.448,
+       "single_roi": -0.0761,
+       "single_implied_roi": -0.1539
+      }
+     }
+    },
+    "label": "as priced on the days as live can draw (a prop with an estimate): chosen and paid at the real prop price, band 3-5x - the row to set beside the headline",
+    "splits_at": "the live draw only (salt sameday-props-v1): the splits are not measured over the simulation draws, whose mean over all days is under salts"
+   }
+  },
+  "activity": {
+   "all_leagues": {
+    "all": {
+     "days": 3660,
+     "tickets": 8586,
+     "tickets_per_day": 2.3459,
+     "days_with_a_ticket": 3089,
+     "share_of_days": 0.844,
+     "by_kind": {
+      "likeliest": 2690,
+      "underdog": 2969,
+      "mixed": 2616,
+      "props_as_live": 311
+     }
+    },
+    "first": {
+     "days": 2564,
+     "tickets": 6107,
+     "tickets_per_day": 2.3818,
+     "days_with_a_ticket": 2182,
+     "share_of_days": 0.851,
+     "by_kind": {
+      "likeliest": 1901,
+      "underdog": 2094,
+      "mixed": 1849,
+      "props_as_live": 263
+     }
+    },
+    "last_3_years": {
+     "days": 1096,
+     "tickets": 2479,
+     "tickets_per_day": 2.2619,
+     "days_with_a_ticket": 907,
+     "share_of_days": 0.8276,
+     "by_kind": {
+      "likeliest": 789,
+      "underdog": 875,
+      "mixed": 767,
+      "props_as_live": 48
+     }
+    }
+   },
+   "without_extra_leagues": {
+    "all": {
+     "days": 3660,
+     "tickets": 7204,
+     "tickets_per_day": 1.9683,
+     "days_with_a_ticket": 2503,
+     "share_of_days": 0.6839,
+     "by_kind": {
+      "likeliest": 2099,
+      "underdog": 2337,
+      "mixed": 2457,
+      "props_as_live": 311
+     }
+    },
+    "first": {
+     "days": 2564,
+     "tickets": 5112,
+     "tickets_per_day": 1.9938,
+     "days_with_a_ticket": 1757,
+     "share_of_days": 0.6853,
+     "by_kind": {
+      "likeliest": 1481,
+      "underdog": 1636,
+      "mixed": 1732,
+      "props_as_live": 263
+     }
+    },
+    "last_3_years": {
+     "days": 1096,
+     "tickets": 2092,
+     "tickets_per_day": 1.9088,
+     "days_with_a_ticket": 746,
+     "share_of_days": 0.6807,
+     "by_kind": {
+      "likeliest": 618,
+      "underdog": 701,
+      "mixed": 725,
+      "props_as_live": 48
+     }
+    }
+   },
+   "v1": {
+    "all": {
+     "days": 3660,
+     "tickets": 2732,
+     "tickets_per_day": 0.7464,
+     "note": "v1's likeliest and underdog tickets (this file's results.same_day and dog.results.live)"
+    },
+    "first": {
+     "days": 2564,
+     "tickets": 1900,
+     "tickets_per_day": 0.741,
+     "note": "v1's likeliest and underdog tickets (this file's results.same_day and dog.results.live)"
+    },
+    "last_3_years": {
+     "days": 1096,
+     "tickets": 832,
+     "tickets_per_day": 0.7591,
+     "note": "v1's likeliest and underdog tickets (this file's results.same_day and dog.results.live)"
+    }
+   },
+   "note": "tickets of the four kinds that ship (LIKELIEST v2, UNDERDOG v2 at the live salt, MIXED, PROPS as live) per calendar day; PROPS has history to 2024-12-07 only"
+  },
+  "headline": "PROPS as live (the headline), 2016-08-01 to 2024-12-07, on the 311 days with an estimated prop: 311 tickets at the live salt, 75 won (24.1%; the prices said 20.8%), -13.6% a ticket (-30.8% to +3.7%), price-implied -23.6%; over the 1,000 simulation salts -8.9% (-14.4% to -3.4%). On the same days, as priced: 311 tickets, 83 won, -10.4% a ticket (-26.7% to +6.6%), over the 1,000 simulation salts -11.4%, price-implied -23.2%; as live weighted by the real book's split (an input live never has): 311 tickets, 80 won, -11.8% a ticket (-28.7% to +5.8%), over the 1,000 simulation salts -8.7%, price-implied -23.6%. As priced on every one of the 329 days with props, 2016-08-01 to 2024-12-07 (the cards without an estimate included): 329 tickets, 90 won, -7.6% a ticket (-23.9% to +9.0%), over the 1,000 simulation salts -10.4%, price-implied -23.2%.",
+  "caveats": [
+   "The market is hard to beat, and no v2 ticket is an edge: every leg pays the bookmaker's margin. Over 2016-08-01 to 2026-08-08, LIKELIEST v2 won 833 of 2,690 (-4.4% a ticket, -9.7% to +1.1%; by the prices -15.3%); UNDERDOG v2 at the live draw won 707 of 2,969 (-8.1% a ticket, -14.1% to -1.9%; by the prices -11.6%), over the 1,000 simulation draws -7.4% (-10.6% to -4.3%); MIXED won 775 of 2,616 (-9.6% a ticket, -14.9% to -4.3%; by the prices -14.6%); and to 2024-12-07, PROPS as live won 75 of 311 (-13.6% a ticket, -30.8% to +3.7%; by the prices -23.6%), over the 1,000 simulation draws -8.9% (-14.4% to -3.4%). None of the four kinds' 95% intervals lies above zero; UNDERDOG v2 and MIXED's lies wholly below it. An interval that spans zero is no evidence of an edge.",
+   "Live there is no prop price on the odds feed: a live props ticket - and a live mixed ticket holding a prop (here 1.6% of MIXED's tickets held one, at the real price) - is chosen and shown at the METHOD ESTIMATOR's price, an estimate. Measured in engine/data/method_price.json: fitted 2016-2020 and tested 2021-2024, its median miss against the real prop price is decision 16.4% as the favourite and 14.4% as the underdog; KO/TKO 24.3% as the favourite and 22.8% as the underdog; submission 29.2% as the favourite and 26.3% as the underdog; 21.4% over all 9,420 single props. Refitted each year on earlier years only, as here, it missed the real price by a median 21.5% over the history's 18,774 estimated props and 15.2% on the props the as-live tickets drew. Chosen by the estimate in 3.6-4.2x, the as-live tickets' real multiplier lay in 3-5x on 71.1% of them (searched 3.77x on average, paid 3.94x); a live ticket's multiplier is an estimate until a book prices the prop. The live band was chosen on the estimator's test cards, 2021-2024 (sameday.py PROPS), so the share in 3-5x is partly in-sample there: 74.4% of 156 as-live tickets in 2021-2024, 67.7% of 155 before 2021.",
+   "As live, the draw weights each prop by the shipped win chance times the ESTIMATOR's share of that corner's wins, and the search reads the estimated price - as live does, where no book splits a win chance by method. Weighted instead by the real six-way book's split, an input live never has (the first build's reading, kept beside it): PROPS as live by the book's split won 80 of 311 (-11.8% a ticket, -28.7% to +5.8%; by the prices -23.6%), over the 1,000 simulation draws -8.7%; the two readings drew a different prop on 47 of the 311 days both have a ticket.",
+   "A prop costs more than a moneyline: on the 3,324 fights with props here the six props' book runs a median 22.6% over across its six outcomes against 4.0% for the same fights' moneyline pair, so a ticket holding a prop pays the heavier margin; PROPS as live is price-implied -23.6% a ticket against LIKELIEST v2's -15.3%. MIXED's price-implied return (-14.6% over all days, every league, against -15.3%) is above LIKELIEST v2's in all 6 periods and league sets: only 1.6% of its tickets held a prop, so most MIXED tickets do not pay the props' margin. In history a card has props only where all six were priced, make a believable book and the card is priced at the close (329 of 348 UFC card days 2016-08-01 to 2024-12-07); live every fight on a card is priced by the estimate, so live PROPS can come on more card days than here.",
+   "One price snapshot a card: the props history is the closing snapshot (method_odds.csv, the same upstream snapshot as odds.csv's close), so the 83 fights with a six-way book on the 9 UFC cards priced from the opening line (2017-06-25 to 2021-04-24) give no prop here (parlays/data/legs_v2_ufc_method_left_out.csv.gz): a ticket pairing a closing prop with that card's opening moneylines could never have been bought, and the prop's chance would mix the two snapshots.",
+   "Closing prices: the 15 extra leagues' history has no pre-match price, so their legs are chosen and priced at the closing average while live they are priced pre-match (1,440 of LIKELIEST v2's 2,690 tickets hold one); NFL moneyline, spread and total legs are chosen and priced at the close, which knows the day's news, while live they are priced when the ticket is built. Without the extra leagues LIKELIEST v2 won 662 of 2,099 (-2.6% a ticket, -8.8% to +3.6%; by the prices -14.5%), on 57.4% of days against 73.5%.",
+   "Props history ends 2024-12-07 (engine/data/method_odds.csv), so PROPS is measured 2016-08-01 to 2024-12-07 and its last-3-years period is 2023-08-09 to 2024-12-07; after it no history ticket holds a prop (MIXED included), while live MIXED can take one at the estimate. 1,170 props have no estimate (1,170: no earlier props to fit the estimator on: the fit rows start 2016-01-02, so method_price.fit_before(2016) is None), so PROPS as live has its first ticket on 2017-01-15 and as priced is the only reading of 2016; 18 of the 329 days with props have no estimated prop, so the row beside the headline is as priced on the 311 days as live can draw - as priced on those days won 83 of 311 (-10.4% a ticket, -26.7% to +6.6%; by the prices -23.2%) - and as priced on every props day is its own row: as priced on every props day won 90 of 329 (-7.6% a ticket, -23.9% to +9.0%; by the prices -23.2%).",
+   "NFL lines: where the two prices at a line are level the leg takes the shipped model's side (the walk-forward's margin or total against the line) at chance 0.5 - 360 spreads and 435 totals of 2,756 and 2,760; 4 games have no spread leg (a zero spread or no price), and a push voids the leg (65 spreads, 23 totals).",
+   "UFC props are graded by the archive's method class: a prop wins only when its corner wins that way, so on the 9 fights won by disqualification or another unclassed method every prop lost (some books void such a prop). UFC draws and no contests: 92 of the 5,050 UFC fights from 2016-08-01 to 2026-08-08 (1.8%) ended without a winner - 40 draws, 52 no contests or overturned results, counted from the UFC archive - and none of them is in the history's legs (engine/experiments/parlay_legs.csv.gz keeps decided fights only), so here they are neither legs nor underdogs and a ticket that day is drawn and filled from the other fights. Live the rule cannot know them beforehand: such a fight stays in the draw and the fill, and its leg voids (pays 1.0).",
+   "Soccer days: 95,383 of the 118,654 soccer winner legs take the ET day of their kickoff and 23,271 (europe 17,793, top 5,478, 2016-08-01 to 2019-06-09) their listed date, the kickoff time not being on file; where it is, a European division's kickoff falls on its listed date in ET for 100.0% of 53,348 legs.",
+   "The live draws are the lotteries with their live salts (sameday-dog-v2 for UNDERDOG v2, sameday-props-v1 for PROPS); the simulation draws are the same lotteries with 1,000 other salts. UNDERDOG v2's live draw drew about average (above 404 of 1,000) and PROPS as live's drew about average (above 294 of 1,000); the 5th-95th percentile across the draws (UNDERDOG v2 -11.6% to -3.0%, PROPS -24.0% to +5.8% a ticket) is how much the draw alone moves the record over the same games; it is not a confidence interval.",
+   "Expected (sameday.py) (written before the results, from prices only) tickets on about 70-80% of days instead of about a third; price-implied returns about -15% (LIKELIEST v2 and MIXED) and -16% to -20% (PROPS) a ticket - a prop carries about 22% margin across its six outcomes against about 4% for a moneyline pair. Measured: the four kinds that ship made 8,586 tickets (2.35 a day, a ticket on 84.4% of days) against v1's 2,732 (0.75 a day); LIKELIEST v2 on 73.5% of days, MIXED on 71.5%, UNDERDOG v2 on 81.1%, PROPS as live on 100.0% of the 311 days with an estimated prop (10.2% of all its days; the other 18 days with props, 2016-08-06 to 2016-12-30, have none: no earlier props to fit the estimator on: the fit rows start 2016-01-02, so method_price.fit_before(2016) is None); by the prices LIKELIEST v2 -15.3%, MIXED -14.6%, UNDERDOG v2 -11.6%, PROPS as live -23.6% and as priced on the same days -23.2% a ticket.",
+   "Prior exposure (sameday.py): v1's likeliest and underdog records had been seen when v2 was asked for; the soccer over/under market-against-model measure, the NFL spread/total measure (no configuration beat -110 in both periods) and the UFC prop flat-bet results (underdog KO props -24%, submission props -52%: parlay_profiles' docstring) had been seen. The extra leagues and the new markets were chosen on the scouts' outcome-free counts, not on any result. The v2 records are not an out-of-sample test of these markets.",
+   "OU25's leagues were chosen on results: a league offers the over/under leg only where it ships over 2.5 from the market (soccer_leagues rule (c)), and it does so only where the market's over/under beat the league's base rate in log loss in both 2006-2015 and 2016-2025 - a measure that read the results of the years measured here. 21 of the 37 leagues in the app pass. Rule (c) left out SC2 (Not shown from the market's prices: over 2.5, over 3.5 - it did not beat the league's base rate in both 2006-2015 and 2016-2025.); the 15 extra leagues ship no number from the market's prices. The prior-exposure text above says the new markets were chosen on the scouts' outcome-free counts; OU25's league set was not.",
+   "The PROPS lottery's key is the fight's two corners, the prop's own corner and its type (sameday.method_lot_key, e.g. 'marlon vera|song yadong|song yadong|Decision'): the registered PROPS text names the corners and the type; the corner is in it so that both corners' props of one type do not share one lottery number. The draws measured here and the live draw are that function's.",
+   "The estimator's own caveats (engine/data/method_price.json): Fitted and tested on prices only: the target is the six-way prop market, and no result of any fight it fits or tests on is read. The error table is measured fitting on 2016-2020 and testing on 2021-2024. The frozen fit live cards read is fitted on 2016-2024, and its error on a live card cannot be measured (no live prop price exists): the test table is the nearest measure. History's moneyline is the closing line (odds.csv); a live card reads its own pair, a different snapshot, so a live estimate may miss by more than the table. The dev choice (ridge penalty, prior weight) was made fitting 2016-2019 and checking 2020, and every yearly refit uses it, so a backtest refit for a year up to 2020 uses a choice that saw that year's prices (prices only, never a result). History has no prop after 2024-12-07; the fit rows start in 2016, so there is no refit before 2016. An estimate is what a book would probably charge, not an edge: the six-way market's median overround is 22.5% across its six outcomes, the moneyline pair's 4.0%.",
+   "The splits by market, sport and legs are descriptive: none can move a rule in v2."
+  ]
  }
 }

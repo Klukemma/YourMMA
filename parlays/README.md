@@ -34,6 +34,14 @@ the UFC history keeps decided fights only, so they are never legs there, while l
 voids. The json's caveats count them, with every other caveat; the figures in this README are
 that file's, and `engine/tests/test_dog_measure.py` holds them to it.
 
+<!-- v2 figures: written by engine/experiments/sameday_backtest.py --v2 from data/sameday_backtest.json (key "v2"); a re-run rewrites them - do not edit by hand -->
+**Tickets v2** (fixed in `engine/sameday.py`'s docstring, "TICKETS v2", on 2026-11-14 before any of their results; asked for to make the builder more active and more diverse): four tickets a day, each 3-5x and logged and graded on its own, from a wider pool - soccer's shipped pick from every league in the app, over/under 2.5 goals where a league ships it from the market, NFL spreads and totals, and UFC method props (a corner wins by KO/TKO, by submission or by decision). LIKELIEST v2 is v1's rule over the wider winner pool; UNDERDOG v2 is v1's underdog lottery with its own salt (`sameday-dog-v2`); MIXED is the likeliest combination that holds at least one leg other than a winner pick; PROPS (UFC card days only) is one method prop drawn by a lottery (`sameday-props-v1`) plus the likeliest fill. Live no odds feed prices a prop, so a prop leg carries the METHOD ESTIMATOR's price (`engine/method_price.py`), marked as an estimate, and a ticket holding one shows its multiplier as an estimate.
+
+**Measured** (`data/sameday_backtest.json`, under `v2`) every day from 2016-08-01 to 2026-08-08, point in time: the four kinds that ship made 8,586 tickets (2.35 a day, a ticket on 84.4% of days) against v1's 2,732 (0.75 a day). LIKELIEST v2 2,690 tickets, 833 won, -4.4% a ticket (-9.7% to +1.1%), by the prices -15.3%; MIXED 2,616, -9.6% (-14.9% to -4.3%), by the prices -14.6%; UNDERDOG v2 2,969 at the live draw, -8.1%; over the 1,000 simulation draws -7.4% (-10.6% to -4.3%), by the prices -11.6%. Props history ends 2024-12-07, so PROPS is measured 2016-08-01 to 2024-12-07, "as live" - drawn and chosen by the estimator's chance and price in the live band, as live does, and paid at the real prop: PROPS as live (the headline) 311 tickets, 75 won, -13.6% a ticket (-30.8% to +3.7%); over the 1,000 simulation draws -8.9%; by the prices -23.6%; on the same days as priced (chosen and paid at the real props) -10.4%, by the prices -23.2%, and as live weighted by the real book's split (an input live never has) -11.8%; as priced on every one of the 329 days with props (the cards without an estimate included) -7.6%, by the prices -23.2%. The live draws are one draw each: UNDERDOG v2's drew about average (above 404 of 1,000 simulation draws), PROPS as live's drew about average (above 294 of 1,000).
+
+None of the four kinds' 95% intervals lies above zero; UNDERDOG v2 and MIXED's lies wholly below it. No v2 ticket is an edge: every leg pays the bookmaker's margin - a prop's book a median 22.6% across its six outcomes against 4.0% for the same fights' moneyline pair - and the market is hard to beat. The json's 17 v2 caveats say what these records leave out or cannot know (the extra leagues and the NFL lines priced at the close, the estimate's error, the end of the props history and the cards without an estimate, the over/under league set chosen by a rule that read results, the prior exposure, among others); every one stays, the page shows them, and the figures here are that file's - `engine/tests/test_v2_measure.py` holds them to it.
+<!-- end of the v2 figures -->
+
 **Live** (`engine/build_sameday.py`, run by `.github/workflows/parlays.yml` after any sport's
 runner and on a schedule): reads `app/data/card.json`, `nfl/app/data/week.json` and
 `soccer/app/data/matches.json`; never uses a leg whose start has passed; rebuilds a day's
@@ -44,6 +52,17 @@ Rebuild the history and the backtest (offline, about three minutes):
 
     python parlays/engine/legs_history.py
     python parlays/engine/experiments/sameday_backtest.py
+
+Tickets v2 have their own files and their own run, which leave every v1 file and number as it was:
+
+    python parlays/engine/legs_history.py --v2
+    python parlays/engine/experiments/sameday_backtest.py --v2
+
+The first writes `data/legs_v2_*.csv.gz` and `data/legs_dogs_v2_soccer.csv.gz` (with
+`data/legs_v2_ufc_method_left_out.csv.gz`, the fights whose props are left out and why); the second
+puts the measurement under the json's `v2` key, writes `data/sameday_v2_tickets.csv.gz` and rewrites
+the v2 paragraphs above from the json. It checks that its 1,000-salt draws reproduce
+`sameday.build_underdog_v2` and `sameday.build_props` at the live salts, and stops if they do not.
 
 `legs_history.py` builds each sport in its own process (the UFC and soccer engines both have a
 package named `experiments`) and writes the pick side (`data/legs_*.csv.gz`) and every event's

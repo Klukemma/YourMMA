@@ -677,6 +677,183 @@ def parlay_profiles_unbuilt(measured, error):
     return out
 
 
+# ---------------------------------------------------------------- method legs
+#
+# WHY. Tickets v2 (parlays/engine/sameday.py) take UFC method props - each
+# corner's "wins by KO/TKO / submission / decision" - and no live feed prices
+# them (the odds api answers the method markets with INVALID_MARKET). So each
+# card fight carries, beside everything it already had and changing none of
+# it, its six props as ESTIMATES: the chance as the app ships a winner (the
+# corner's blended win chance) times the METHOD ESTIMATOR's share of that
+# corner's wins going that way, and the estimator's price
+# (engine/method_price.py, frozen in data/method_price.json) with the median
+# error that price was measured to miss real props by, for its leg type and
+# side. A leg that cannot be estimated keeps its place with no numbers and
+# the reason.
+
+METHOD_LEG_SOURCE = "estimated"
+
+
+def method_estimator(path=None):
+    """The frozen METHOD ESTIMATOR for method_legs_payload: {"model",
+    "measured", "missing"}. When it cannot be used - never fitted, or a file
+    whose coefficients fail their sha256 - model is None and `missing` says
+    why, so every leg on the card can say it too. A dict, not an exception:
+    a card without method legs is still a card."""
+    try:
+        import method_price as mpx
+    except Exception as err:                                   # noqa: BLE001
+        return {"model": None, "measured": None,
+                "missing": f"The method estimator could not be loaded ({type(err).__name__})."}
+    path = mpx.COEFFS if path is None else Path(path)
+    try:
+        model = mpx.load(path)
+    except FileNotFoundError:
+        return {"model": None, "measured": None,
+                "missing": ("The method estimator has not been fitted "
+                            "(engine/experiments/method_price_fit.py), so no prop is estimated.")}
+    except mpx.FrozenMismatch:
+        return {"model": None, "measured": None,
+                "missing": ("The method estimator's coefficients do not match their recorded "
+                            "hash, so they are not used and no prop is estimated.")}
+    except Exception as err:                                   # noqa: BLE001
+        return {"model": None, "measured": None,
+                "missing": f"The method estimator could not be read ({type(err).__name__})."}
+    return {"model": model, "measured": mpx.measured(path), "missing": None}
+
+
+def _method_error_pct(measured, method_type, side):
+    """The measured median error (percent of the real price) for a leg type
+    and side, read from the fit script's test table; None when not on file."""
+    try:
+        value = measured["test"]["by_leg"][method_type][side]
+    except (KeyError, TypeError):
+        return None
+    value = _number(value)
+    return None if value is None else round(100.0 * value, 1)
+
+
+def _method_moneyline(fight):
+    """(the pick's no-vig moneyline chance, where it was read) for the
+    method estimate, or (None, None).
+
+    THE MEDIAN PAIR FIRST. The estimator was fitted on history's moneyline,
+    one book's closing pair (method_odds.csv / odds.csv); live, the card's
+    median pair across books (decimal_median / decimal_other_median, which
+    predict_card.with_median_prices writes before the method legs) is the
+    closest match to it - the typical book near the bell. The best pair
+    takes each side's best price, often from two books: it under-counts the
+    margin and leans to whichever book is generous on one side. So the
+    median pair, de-vigged in proportion, when the card has both sides of
+    it ("median of N books", N the thinner side's count); else the best
+    pair (decimal / decimal_other: "best of books"); else the card's
+    market_prob, the blend's own no-vig chance for the pick, for a fight
+    carrying no pair at all ("card market chance")."""
+    pairs = (("decimal_median", "decimal_other_median"), ("decimal", "decimal_other"))
+    for a, b in pairs:
+        pa, pb = _number(fight.get(a)), _number(fight.get(b))
+        if pa is None or pb is None or pa <= 1.0 or pb <= 1.0:
+            continue
+        ia, ib = 1.0 / pa, 1.0 / pb
+        if a == "decimal_median":
+            books = _number(fight.get("books_median"))
+            source = f"median of {int(books)} books" if books else "median of books"
+        else:
+            source = "best of books"
+        return ia / (ia + ib), source
+    m = _number(fight.get("market_prob"))
+    return (m, "card market chance") if m is not None else (None, None)
+
+
+def method_legs_payload(fight, division, archive, event_date, estimator):
+    """A card fight's six method legs - for each corner, each type in
+    method_price.METHOD_TYPES - as {corner, fighter, type, chance,
+    market_chance, est_decimal, est_american, error_pct, source,
+    moneyline_source, missing_reason}.
+
+    The estimate's moneyline input is the card's median pair when it has
+    one, else its best pair, else its market_prob (_method_moneyline says
+    why); moneyline_source names which one each estimated leg was built
+    from (None on a leg that was not estimated).
+
+    fight: the card's fight (red, blue, pick, win_prob and market_prob for
+    the pick, rounds_scheduled). division: the weight class FIGHT_CONTEXTS
+    names for the bout. archive: the results frame (r_name, b_name, date,
+    winner, method) each corner's record is read from - only bouts dated
+    strictly before `event_date` (parlay_profiles.facts), as the fit's
+    records were. estimator: method_estimator().
+
+    chance is the corner's shipped win chance times the estimator's share
+    of its wins by that type; market_chance the estimator's own chance of
+    the prop (market only), which its price is built from; est_decimal /
+    est_american that price; error_pct the median |estimate - price| / price
+    measured on 2021-2024 props for the type and side ("fav": the corner's
+    no-vig moneyline chance at least 0.5), in percent. Every input exists
+    before the bell. No real price exists for these props live: source is
+    "estimated" on every leg."""
+    import method_price as mpx
+    import parlay_profiles as pp
+    red, blue, pick = fight.get("red"), fight.get("blue"), fight.get("pick")
+    corners = (("red", red), ("blue", blue))
+
+    def legs(reason, est=None, shipped=None, market=None):
+        out = []
+        for corner, name in corners:
+            for method_type in mpx.METHOD_TYPES:
+                e = (est or {}).get(corner, {}).get(method_type)
+                dec = _clean(e["decimal"]) if e else None
+                out.append({
+                    "corner": corner, "fighter": name, "type": method_type,
+                    "chance": _clean(shipped[corner] * e["share"]) if e else None,
+                    "market_chance": _clean(e["market_chance"]) if e else None,
+                    "est_decimal": dec,
+                    "est_american": mpx.american(dec) if dec else None,
+                    "error_pct": (_method_error_pct((estimator or {}).get("measured"), method_type,
+                                                    mpx.side_of(market[corner])) if e else None),
+                    "source": METHOD_LEG_SOURCE,
+                    "moneyline_source": ml_source if e else None,
+                    "missing_reason": None if e else reason,
+                })
+        return out
+
+    model = (estimator or {}).get("model")
+    p_pick = _number(fight.get("win_prob"))
+    m_pick, ml_source = _method_moneyline(fight)
+    if model is None:
+        return legs((estimator or {}).get("missing") or "The method estimator is not loaded.")
+    if not red or not blue or pick not in (red, blue) or p_pick is None:
+        return legs("No shipped win chance for this fight, so no prop chance.")
+    if m_pick is None or not 0.0 < m_pick < 1.0:
+        return legs("No moneyline pair on file for this fight: the estimate is built from "
+                    "the market's no-vig chance.")
+    if not division or not str(division).strip():
+        return legs("No division named for this bout (FIGHT_CONTEXTS): the estimate reads "
+                    "the weight class.")
+    if archive is None or not event_date:
+        return legs("The fighters' UFC records could not be read on this run: the estimate "
+                    "reads them.")
+    red_picked = pick == red
+    shipped = {"red": p_pick if red_picked else 1.0 - p_pick}
+    shipped["blue"] = 1.0 - shipped["red"]
+    market = {"red": m_pick if red_picked else 1.0 - m_pick}
+    market["blue"] = 1.0 - market["red"]
+    est = mpx.predict({"p_red": market["red"], "division": division,
+                       "rounds_scheduled": fight.get("rounds_scheduled"),
+                       "facts_red": pp.facts(archive, red, event_date),
+                       "facts_blue": pp.facts(archive, blue, event_date)}, model)
+    return legs(None, est, shipped, market)
+
+
+def method_legs_unbuilt(fight, error):
+    """The six legs, every one "Not estimated on this run (<ErrorType>).",
+    for a run whose estimate raised: the card still says why there is no
+    price, and never shows a stale one."""
+    kind = error if isinstance(error, str) else type(error).__name__
+    return method_legs_payload(fight, None, None, None,
+                               {"model": None, "measured": None,
+                                "missing": f"Not estimated on this run ({kind})."})
+
+
 def parlay_records(entries, event_name, event_date, first_start=None, timestamp=None):
     """prediction_history.json's "parlays" rows for one run of the card: ONE
     PER BAND, each leg by both full names and its corner so

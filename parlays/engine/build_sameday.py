@@ -9,7 +9,10 @@ appends to parlays/data/history.json.
 THE CLOCK DECIDES, NOT A STATUS. An app file is rewritten only when its
 sport's runner runs, so a match it lists as "upcoming" may have started; a
 leg - or an underdog candidate - is used only while its scheduled start is
-after `now`.
+after `now`. A status can only take an event OUT: a soccer entry the feeds
+report off (postponed, cancelled, abandoned, date to come - soccer_off)
+keeps a kickoff ahead of the clock and, held, the logged pick's prices, but
+gives no leg of any kind (it would void, or be graded on the replay).
 
 DAYS SHOWN: today, plus every day of the next WINDOW_DAYS (7) that has at
 least one leg or underdog candidate (or a ticket logged and not yet
@@ -112,7 +115,15 @@ THE PAYLOAD (parlays/app/data/sameday.json):
            tickets, beside the realised one (the likeliest's from the
            backtest's ticket list, implied_from_tickets).
   caveats  every caveat the backtest carries, the dog block's, and this
-           builder's (prices, what the underdog ticket is not).
+           builder's (prices, what the underdog ticket is not) - tickets
+           v2's first. caveats_v2 / caveats_v1 split the same list: v2's
+           (the market-is-hard-to-beat one first, the v2 block's, this
+           builder's V2_CAVEATS, the prop margin and the prop estimator's
+           own caveats read from engine/data/method_price.json) and v1's
+           (the backtest's top-level and dog caveats), so the page leads
+           with v2's and folds v1's under v1's label. None is dropped.
+  records  each kind's `last` tickets say whether their multiplier was an
+           estimate (a prop), so the page marks it wherever it lists one.
 
 GRADING reads each sport's own results: UFC through engine/grade.py's
 name-tolerant match on the archive (a draw or no contest is void; a bout
@@ -124,6 +135,61 @@ open), soccer the prediction log's
 finals - the WHOLE log, archived months included (soccer_picks), because
 every run settles every day's ticket again - and its voids for good (a
 match that never produced a result, or was rescheduled: soccer_results).
+
+TICKETS v2 (sameday.py's TICKETS v2 - the rule lives there and is never
+re-implemented here: every v2 leg is made by sameday.market_leg, every v2
+ticket by build_likeliest_v2 / build_underdog_v2 / build_mixed /
+build_props). WHY: the user asked for a builder that builds more often and
+more kinds of bet; v1 left two days in three without a ticket and took
+winners only. FOUR MORE KINDS a day, each built, locked at its own first
+start, superseded, logged and graded on its own exactly as v1's two are:
+history rows of kind "likeliest_v2", "underdog_v2", "mixed" and "props"
+(the props ticket on a day with a UFC card only). v1's two kinds keep being
+built beside them, unchanged (top-five soccer, winners only), so their live
+records keep growing; the page shows them labelled v1.
+  THE v2 POOL (live_v2) from the same three files:
+  1X2     each sport's shipped winner pick as v1's leg, soccer from EVERY
+          league the soccer app shows (matches.json holds only those).
+  OU25    soccer over/under 2.5 at prices.avg.o25 / u25 (soccer_predict.
+          prices_of), only where the match ships market_o25 - a withheld
+          over 2.5 gives no leg - the side the no-vig pair favours, its
+          chance that no-vig chance. A missing key reads as not posted.
+  SPREAD / TOTAL  NFL at week.json's market.spread_price_home/away and
+          total_price_over/under (American odds at the consensus line);
+          a missing price is no leg, with nfl_odds' reason counted.
+  METHOD  UFC card.json's method_legs (engine/app_export.method_legs_
+          payload): each corner by KO/TKO, submission or decision, priced
+          at the ESTIMATOR's price (estimated=True: no feed prices a prop),
+          its measured error_pct carried to the page.
+  Every leg that could not be offered is counted by its reason, per day
+  and market, and the page shows the counts: a missing number is shown as
+  missing, with why (an over/under on a match file written before the
+  prices were kept, on a match with no pick - not in the soccer log, so
+  never gradable - or on a match the feeds report off; a game with no
+  market at all). A SPREAD / TOTAL leg names whose price it is: the books'
+  consensus, or the schedule's posted pair where nfl_odds fell back to it.
+  A PAST DAY (shown in play, never built) with no row of a kind says it
+  was not logged (NOT_LOGGED), never a reason no run computed for it.
+  THE PROPS TICKET is searched in PROPS_LIVE_BAND at the estimated price
+  (sameday.py: the band that lands the real price in 3-5x most often), so
+  its multiplier, and its record, are estimates, and the page says so.
+  GRADED per market: OU25 on the soccer log final's goals, SPREAD / TOTAL
+  on the schedule's margin and total points (a push is void), METHOD on
+  the UFC archive's method class (engine/grade.categorise_method): won
+  only when that corner wins by that type; void with no winner, or as
+  "cancelled" exactly as a moneyline leg on the bout.
+  MEASURED: read from sameday_backtest.json's "v2" block (v2_measured),
+  defensively - until it exists every kind says it is not measured yet,
+  and why, and shows no number. A lottery's every reading (headline, as
+  priced, without the extra leagues) is passed with its mean over the
+  draws. rule.v2.method_error carries the years of the estimator's error
+  table (method_price.json): an estimated prop's error is that test's,
+  never the live fit's, and the page says so.
+  NO MEASURED COMPARISON IS TYPED: the prop's margin is read from the
+  estimator's file (v2_margin_caveat) and dropped once the backtest's v2
+  caveats state it with numbers; which kind the prices expect to return
+  more is the page's to compute from the measured block, never this file's
+  to say.
 """
 
 from __future__ import annotations
@@ -156,7 +222,11 @@ SOCCER_LOG_SCHEMA = 1          # soccer_log.SCHEMA
 SOCCER_LATE = "logged after kickoff"
 SOCCER_RECORD = "football-data.co.uk"
 
-KINDS = ("likeliest", "underdog")
+KINDS_V1 = ("likeliest", "underdog")
+KINDS_V2 = ("likeliest_v2", "underdog_v2", "mixed", "props")
+KINDS = KINDS_V1 + KINDS_V2
+# The kinds whose row logs a lottery draw ("dog"), and its version.
+DOG_KINDS = {"underdog": sdy.DOG_VERSION, "underdog_v2": sdy.V2_VERSION}
 WINDOW_DAYS = 7
 IN_PLAY_DAYS = 2
 # The fewest books a UFC median pair must come from to count as the typical
@@ -280,14 +350,45 @@ def nfl_legs(week, now):
 SOCCER_MEASURED = ("E0", "SP1", "I1", "D1", "F1")
 
 
-def soccer_legs(data, now):
+# The one soccer entry status that is a match still to be played at its
+# listed kickoff (soccer_predict: "upcoming"). Every other status the soccer
+# app writes for an entry ahead of the clock says the feeds do NOT expect it
+# then: "postponed" / "cancelled" / "abandoned" (an off entry, its listed
+# kickoff the feed's original one), "tbc" (a placeholder noon kickoff, date
+# to come) - and hold() gives such an entry the logged pick's prices and
+# market, price_status "posted". WHY SKIP THEM: a leg on a match the feeds
+# already call off would build a ticket that later voids ("rescheduled",
+# "no result") or, through id_was, is graded on the replayed match weeks
+# later - not the ticket shown. The clock still decides for an "upcoming"
+# entry (it may have started); a status can only take a match OUT, never
+# make a started one usable. An entry with no status (an older file) is
+# read as upcoming, as before.
+SOCCER_ON = "upcoming"
+
+
+def soccer_off(m):
+    """Why a soccer entry is not a match to be played at its listed kickoff,
+    as the page says it, or None when it is (status "upcoming", or none)."""
+    st = m.get("status")
+    if st is None or st == SOCCER_ON:
+        return None
+    return f"{'date to come' if st == 'tbc' else st}, as the feeds report it"
+
+
+def soccer_legs(data, now, leagues=SOCCER_MEASURED):
+    """The soccer winner legs: the shipped pick H/D/A at the average price,
+    from `leagues` (v1: SOCCER_MEASURED; None: every league in the file -
+    tickets v2's 1X2, which takes every league the soccer app shows). An
+    entry the feeds report off (soccer_off) gives no leg."""
     out = []
     for m in (data or {}).get("matches", []):
         k = _parse(m.get("kickoff"))
         pick = m.get("pick")
-        if m.get("league") not in SOCCER_MEASURED:
+        if leagues is not None and m.get("league") not in leagues:
             continue
         if k is None or k <= now or pick not in ("H", "D", "A") or m.get("price_status") != "posted":
+            continue
+        if soccer_off(m):
             continue
         avg = ((m.get("prices") or {}).get("avg") or {})
         dec = _num(avg.get(pick.lower()))
@@ -461,16 +562,20 @@ def nfl_dogs(week, now):
     return out
 
 
-def soccer_dogs(data, now):
+def soccer_dogs(data, now, leagues=SOCCER_MEASURED):
     """Each measured-league match's underdog TEAM (never the draw): the lower
     of the no-vig market's home and away chances, at the average price, its
-    chance the shipped p_h / p_a. Level home and away: none."""
+    chance the shipped p_h / p_a. Level home and away: none. `leagues` None:
+    every league in the file (UNDERDOG v2's dogs). An entry the feeds report
+    off (soccer_off) gives none, as it gives no leg; nor does one with no
+    pick: the soccer log keeps only picked matches, and its finals are what
+    a soccer leg is graded on."""
     out = []
     for m in (data or {}).get("matches", []):
-        if m.get("league") not in SOCCER_MEASURED or not m.get("match_id"):
+        if (leagues is not None and m.get("league") not in leagues) or not m.get("match_id"):
             continue
         k = _parse(m.get("kickoff"))
-        if k is None or k <= now or m.get("price_status") != "posted":
+        if k is None or k <= now or m.get("price_status") != "posted" or soccer_off(m) or not m.get("pick"):
             continue
         mk = m.get("market") or {}
         qh, qa = _num(mk.get("p_h")), _num(mk.get("p_a"))
@@ -495,10 +600,280 @@ def live_dogs(now, files=None):
             + soccer_dogs(files.get("matches"), now))
 
 
+# ---------------------------------------------------------------- tickets v2: the pool
+
+# Why a leg of a v2 market is not offered, as the page says it (counted per
+# day and market; no file path, no word the page does not define).
+OU_NOT_POSTED = "no over/under 2.5 price posted"
+# soccer_predict.prices_of writes o25 / u25 on every entry (None when not
+# posted), so a key absent from the file means a file written before it did.
+OU_NOT_IN_FILE = "not in this match file (written before the over/under prices were kept)"
+# The soccer log keeps only picked matches (soccer_predict logs `e["pick"]`
+# entries), and an over/under leg is graded on that log's final: a leg on a
+# pickless match could never be graded - it would keep its ticket pending
+# when every other leg wins, and lose it when one loses.
+OU_NO_PICK = "no pick logged for this match, so no result to grade it on"
+OU_WITHHELD = "the app does not ship this league's over 2.5 from the market"
+LEVEL = "level prices"
+NFL_NOT_IN_FILE = "not in this week's file (written before the prices were kept)"
+NFL_NO_PRICE = "no price at the line"
+NFL_ZERO_SPREAD = "a zero spread (that is the moneyline's bet)"
+NFL_LEVEL_NO_SIDE = "level prices and no model side"
+METHOD_NOT_IN_FILE = "not estimated in this card's file (written before the method legs)"
+METHOD_NOT_ESTIMATED = "not estimated"
+NFL_NO_MARKET = "no market posted for this game"
+NFL_LINE_PRICE = "consensus price at the consensus line"
+# Whose price a SPREAD / TOTAL leg is at, by nfl_odds' <market>_price_source:
+# the books' consensus (the-odds-api) or, where that entry is stale or absent
+# (market_for falls back to the schedule), nflverse's own posted pair at its
+# own line - not a consensus, and the leg says so.
+NFL_SCHEDULE_PRICE = "schedule's posted price at the schedule's line"
+NFL_PRICE_SOURCES = {"the-odds-api": NFL_LINE_PRICE, "nflverse": NFL_SCHEDULE_PRICE}
+NFL_UNKNOWN_PRICE = "line's price (whose price is not in this file)"
+METHOD_PRICE = "estimated"
+
+
+def _miss(missing, day, bet, reason, n=1):
+    """Count one leg of `bet` on `day` not offered, and why."""
+    if missing is None or day is None:
+        return
+    per = missing.setdefault((day, bet), {})
+    per[reason] = per.get(reason, 0) + n
+
+
+def _v2_winner(l):
+    """A v1 winner leg as a v2 1X2 leg (sameday.market_leg, bet "1X2"): the
+    same event key, pick, chance and price, and the names it is graded by."""
+    if not l:
+        return None
+    v = sdy.market_leg(l["sport"], l["key"].split(":", 1)[1], l["day"], l["event"], l["pick"], l["p"],
+                       l["decimal"], "1X2", bet_detail="winner", p_market=l.get("p_market"),
+                       p_model=l.get("p_model"), opponent=l.get("opponent"), kickoff=l.get("kickoff"),
+                       price_source=l.get("price_source"), number=l.get("number"))
+    if v:
+        v["names"] = l.get("names")
+    return v
+
+
+def soccer_ou_legs(data, now, missing=None):
+    """OU25: per match not yet started, the side of over/under 2.5 goals the
+    no-vig pair at prices.avg.o25 / u25 favours, at that average price, its
+    chance that no-vig chance - the number the app ships as market_o25
+    (soccer_predict: bt.no_vig_total of the same two averages). Only where
+    market_o25 is not null: a league whose over 2.5 the app withholds
+    gives no leg. A price key missing from the file (written before the
+    prices were kept) is counted as that (OU_NOT_IN_FILE), a key present
+    and None as not posted. Level prices: no leg. Every miss is counted
+    with its reason, and so are a match the feeds report off (soccer_off)
+    and a match with no pick (OU_NO_PICK: it is not in the soccer log, so
+    the leg could never be graded)."""
+    out = []
+    for m in (data or {}).get("matches", []):
+        k = _parse(m.get("kickoff"))
+        if k is None or k <= now or not m.get("match_id"):
+            continue
+        day = sdy.et_day(k)
+        off = soccer_off(m)
+        if off:
+            _miss(missing, day, "OU25", off)
+            continue
+        avg = ((m.get("prices") or {}).get("avg") or {})
+        if "o25" not in avg or "u25" not in avg:
+            _miss(missing, day, "OU25", OU_NOT_IN_FILE)
+            continue
+        if not m.get("pick"):
+            _miss(missing, day, "OU25", OU_NO_PICK)
+            continue
+        o, u = _num(avg.get("o25")), _num(avg.get("u25"))
+        if o is None or u is None or o <= 1 or u <= 1:
+            _miss(missing, day, "OU25", OU_NOT_POSTED)
+            continue
+        if _num(m.get("market_o25")) is None:
+            _miss(missing, day, "OU25", OU_WITHHELD)
+            continue
+        q_over = _no_vig(o, u)
+        if q_over == 0.5:
+            _miss(missing, day, "OU25", LEVEL)
+            continue
+        over = q_over > 0.5
+        label = f"{'Over' if over else 'Under'} 2.5 goals"
+        home, away = (m.get("home") or {}).get("name"), (m.get("away") or {}).get("name")
+        q = q_over if over else 1 - q_over
+        l = sdy.market_leg("Soccer", m["match_id"], day, f"{home} v {away}", label, q, o if over else u,
+                           "OU25", bet_detail=label, p_market=q, opponent=f"{m.get('league')}",
+                           kickoff=_iso(k), price_source=SOCCER_PRICE)
+        if l:
+            l["names"] = {"match_id": m["match_id"], "over": over, "line": 2.5}
+            out.append(l)
+    return out
+
+
+def _line_text(x):
+    """A handicap as a bet slip prints it: -3.5, +2."""
+    return f"{x:+g}"
+
+
+def nfl_line_legs(week, now, missing=None):
+    """SPREAD and TOTAL: per game not yet started, the side whose no-vig
+    chance at the consensus spread (total) prices - market.spread_price_home
+    / _away and total_price_over / _under, American odds at the consensus
+    line - is above 0.5, its chance that no-vig chance (the model was
+    measured not to beat the line). Level prices: the shipped model's side
+    (spread_pick / total_pick), chance 0.5. A zero spread gives no leg (the
+    moneyline is that bet). A price nfl_odds left missing gives no leg, its
+    reason counted; a market from a file written before the prices were
+    kept, likewise; a game with no market at all (market_for found no
+    moneyline and no spread: NFL_NO_MARKET) too. market.spread is the home
+    side's expected margin (the schedule's convention), so home lays
+    -spread and away takes +spread. Each leg's price_source names whose
+    price it is (NFL_PRICE_SOURCES, by <market>_price_source): the books'
+    consensus, or the schedule's posted pair when nfl_odds fell back to it."""
+    out = []
+    for g in (week or {}).get("games", []):
+        k = _parse(g.get("kickoff"))
+        if k is None or k <= now or not g.get("game_id"):
+            continue
+        day = sdy.et_day(k)
+        if not g.get("market"):
+            for bet in ("SPREAD", "TOTAL"):
+                _miss(missing, day, bet, NFL_NO_MARKET)
+            continue
+        mk = g["market"]
+        home, away = g.get("home"), g.get("away")
+        for bet, market, sides in (("SPREAD", "spread", ("home", "away")), ("TOTAL", "total", ("over", "under"))):
+            a, b = (mk.get(f"{market}_price_{s}") for s in sides)
+            line = _num(mk.get(market))
+            if f"{market}_price_missing" not in mk and f"{market}_price_{sides[0]}" not in mk:
+                _miss(missing, day, bet, NFL_NOT_IN_FILE)
+                continue
+            if mk.get(f"{market}_price_missing"):
+                _miss(missing, day, bet, str(mk[f"{market}_price_missing"]))
+                continue
+            da, db = _dec(a), _dec(b)
+            if line is None or da is None or db is None or da <= 1 or db <= 1:
+                _miss(missing, day, bet, NFL_NO_PRICE)
+                continue
+            if bet == "SPREAD" and line == 0:
+                _miss(missing, day, bet, NFL_ZERO_SPREAD)
+                continue
+            q_first = _no_vig(da, db)
+            if q_first != 0.5:
+                first, q = q_first > 0.5, max(q_first, 1 - q_first)
+            else:
+                shipped = g.get("spread_pick" if bet == "SPREAD" else "total_pick") or {}
+                side = shipped.get("team") if bet == "SPREAD" else shipped.get("side")
+                if side not in ((home, away) if bet == "SPREAD" else ("OVER", "UNDER")):
+                    _miss(missing, day, bet, NFL_LEVEL_NO_SIDE)
+                    continue
+                first, q = side in (home, "OVER"), 0.5
+            if bet == "SPREAD":
+                label = f"{home} {_line_text(-line)}" if first else f"{away} {_line_text(line)}"
+                names = {"game_id": g["game_id"], "home": first, "line": line}
+            else:
+                label = f"{'Over' if first else 'Under'} {line:g}"
+                names = {"game_id": g["game_id"], "over": first, "line": line}
+            src = mk.get(f"{market}_price_source")
+            l = sdy.market_leg("NFL", g["game_id"], day, f"{away} @ {home}", label, q, da if first else db, bet,
+                               bet_detail=label, p_market=q, opponent=away if first else home, kickoff=_iso(k),
+                               price_source=NFL_PRICE_SOURCES.get(src) or (f"{src}'s price at its line" if src
+                                                                            else NFL_UNKNOWN_PRICE))
+            if l:
+                l["names"] = names
+                out.append(l)
+    return out
+
+
+def _ufc_card_day(card, now):
+    """(the card's ET day, its first bell) while it has not started, as
+    ufc_legs reads it; None once it has, or with no card."""
+    if not card:
+        return None
+    ev = card.get("event") or {}
+    start = ufc_first_start(card)
+    if start is not None and start <= now:
+        return None
+    day = sdy.et_day(start) if start else str(ev.get("date"))[:10]
+    if start is None and day < sdy.et_day(now):
+        return None
+    return day, start
+
+
+def ufc_method_legs(card, now, missing=None):
+    """METHOD: every estimated method leg on the card (card.json's
+    method_legs, engine/app_export.method_legs_payload) as a v2 leg on the
+    fight's event key: "<fighter> by <type>", its chance the leg's chance
+    (the corner's shipped win chance x the estimator's share of its wins
+    that way), its price the ESTIMATOR's (estimated=True: no feed prices a
+    prop live), its market chance the estimator's own, its lot key
+    sameday.method_lot_key's. A leg the card did not estimate is counted
+    with the card's reason; a fight with no method_legs (a card written
+    before them) counts its six as not in the file."""
+    cd = _ufc_card_day(card, now)
+    if cd is None:
+        return []
+    day, start = cd
+    ev = card.get("event") or {}
+    out = []
+    for f in card.get("fights", []):
+        red, blue = f.get("red"), f.get("blue")
+        if not red or not blue:
+            continue
+        legs = f.get("method_legs")
+        if not isinstance(legs, list):
+            _miss(missing, day, "METHOD", METHOD_NOT_IN_FILE, 2 * len(sdy.METHOD_TYPES))
+            continue
+        for m in legs:
+            fighter, mtype, corner = m.get("fighter"), m.get("type"), m.get("corner")
+            chance, est = _num(m.get("chance")), _num(m.get("est_decimal"))
+            if (fighter not in (red, blue) or mtype not in sdy.METHOD_TYPES or corner not in ("red", "blue")
+                    or chance is None or est is None):
+                _miss(missing, day, "METHOD", str(m.get("missing_reason") or METHOD_NOT_ESTIMATED))
+                continue
+            label = f"{fighter} by {mtype}"
+            l = sdy.market_leg("UFC", f"{ev.get('date')}:{red}:{blue}", day, f"{red} vs {blue}", label, chance,
+                               est, "METHOD", bet_detail=mtype, p_market=_num(m.get("market_chance")),
+                               opponent=blue if fighter == red else red, kickoff=_iso(start) if start else None,
+                               price_source=METHOD_PRICE, number=f.get("number"),
+                               lot_key=sdy.method_lot_key([red, blue], fighter, mtype), estimated=True,
+                               est_decimal=est)
+            if l:
+                l["names"] = {"red": red, "blue": blue, "event_date": str(ev.get("date"))[:10],
+                              "corner": corner, "type": mtype}
+                l["error_pct"] = _num(m.get("error_pct"))
+                l["moneyline_source"] = m.get("moneyline_source")
+                out.append(l)
+            else:
+                _miss(missing, day, "METHOD", METHOD_NOT_ESTIMATED)
+    return out
+
+
+def live_v2(now, files=None):
+    """The v2 pool from the three app files: {"legs": the 1X2 legs (soccer
+    from every league) and every other market's (OU25, SPREAD, TOTAL,
+    METHOD), "dogs": the underdog candidates (soccer from every league),
+    "ufc_days": the card's day while it has not started, "missing":
+    {(day, bet): {reason: count}} of the legs not offered}."""
+    files = load_app_files() if files is None else files
+    card, week, matches = files.get("card"), files.get("week"), files.get("matches")
+    missing = {}
+    winners = [_v2_winner(l) for l in ufc_legs(card, now) + nfl_legs(week, now)
+               + soccer_legs(matches, now, leagues=None)]
+    legs = ([l for l in winners if l] + soccer_ou_legs(matches, now, missing) + nfl_line_legs(week, now, missing)
+            + ufc_method_legs(card, now, missing))
+    dogs = ufc_dogs(card, now) + nfl_dogs(week, now) + soccer_dogs(matches, now, leagues=None)
+    cd = _ufc_card_day(card, now)
+    ufc = {cd[0]} if cd and (card or {}).get("fights") else set()
+    return {"legs": legs, "dogs": dogs, "ufc_days": ufc, "missing": missing}
+
+
 # ---------------------------------------------------------------- logging
 
 LEG_FIELDS = ("sport", "key", "event", "pick", "opponent", "kickoff", "decimal", "p", "p_model", "p_market",
               "names", "price_source", "dog")
+# A v2 leg also logs its market, whether its price is an estimate (and the
+# estimate's measured error), and a prop's lot key. v1 rows keep their shape.
+LEG_FIELDS_V2 = LEG_FIELDS + ("bet", "bet_detail", "estimated", "est_decimal", "error_pct", "lot_key",
+                              "moneyline_source")
 
 
 def kind_of(row):
@@ -523,22 +898,70 @@ def build_day(day, legs, dogs):
             "candidates": len(fit)}
 
 
+def build_day_v2(day, v2):
+    """This run's four v2 tickets for `day`, each (ticket or None,
+    none_reason or None), by sameday's v2 builders from the day's v2 pool
+    (live_v2): LIKELIEST v2 ("no_fit"), UNDERDOG v2 ("no_dog" / "no_fill"),
+    MIXED ("no_other": no other-market leg clears its floor; else
+    "no_fit") and PROPS - on a day with a UFC card only ("no_card"
+    otherwise), searched in PROPS_LIVE_BAND at the estimated prices
+    ("no_estimate": no method leg estimated at all - the reason is counted
+    in `missing`; "no_prop": none priced within PROPS_PRICE; else
+    "no_fill")."""
+    legs = [l for l in (v2 or {}).get("legs") or [] if l and l.get("day") == day]
+    dogs = [d for d in (v2 or {}).get("dogs") or [] if d and d.get("day") == day]
+    props = [l for l in legs if l.get("bet") == "METHOD"]
+    t1 = sdy.build_likeliest_v2(legs)
+    t2 = sdy.build_underdog_v2(legs, dogs)
+    fit = [d for d in dogs if d.get("p") is not None and d["p"] >= sdy.DOG_FLOOR]
+    t3 = sdy.build_mixed(legs)
+    others = [l for l in legs if not sdy.is_winner(l) and (l.get("bet") == "METHOD" or l["p"] >= sdy.MIN_P)]
+    priced = [m for m in props if sdy.PROPS_PRICE[0] <= m["decimal"] <= sdy.PROPS_PRICE[1]]
+    ufc_day = day in ((v2 or {}).get("ufc_days") or ())
+    t4 = sdy.build_props(legs, props, band=sdy.PROPS_LIVE_BAND) if ufc_day else None
+    missing = {bet: dict(per) for (d, bet), per in ((v2 or {}).get("missing") or {}).items() if d == day}
+    return {"likeliest_v2": (t1, None if t1 else "no_fit"),
+            "underdog_v2": (t2, None if t2 else ("no_fill" if fit else "no_dog")),
+            "mixed": (t3, None if t3 else ("no_fit" if others else "no_other")),
+            "props": (t4, None if t4 else ("no_card" if not ufc_day else "no_fill" if priced
+                                           else "no_prop" if props else "no_estimate")),
+            "candidates_v2": len(fit), "props_candidates": len(priced), "ufc_day": ufc_day,
+            "missing": missing}
+
+
 def ticket_row(day, t, now, kind="likeliest", none_reason=None):
+    v2 = kind in KINDS_V2
     if t is None:
-        return {"day": day, "kind": kind, "built_at": _iso(now), "status": "none", "multiplier": None,
-                "legs": [], "none_reason": none_reason}
+        row = {"day": day, "kind": kind, "built_at": _iso(now), "status": "none", "multiplier": None,
+               "legs": [], "none_reason": none_reason}
+        if v2:
+            row["version"] = sdy.V2_VERSION
+        return row
     starts = [l["kickoff"] for l in t["legs"] if l.get("kickoff")]
     row = {"day": day, "kind": kind, "built_at": _iso(now), "status": "pending",
            "multiplier": round(t["multiplier"], 4), "p": round(t["p"], 6),
            "p_market": None if t["p_market"] is None else round(t["p_market"], 6),
            "first_start": min(starts) if starts else None, "last_start": max(starts) if starts else None,
            "sports": t["sports"],
-           "legs": [{k: l.get(k) for k in LEG_FIELDS} for l in t["legs"]]}
-    if kind == "underdog":
+           "legs": [{k: l.get(k) for k in (LEG_FIELDS_V2 if v2 else LEG_FIELDS)} for l in t["legs"]]}
+    if kind in DOG_KINDS:
         d = next(l for l in t["legs"] if l.get("dog"))
         row["dog"] = {"key": d["key"], "pick": d["pick"], "lot_key": d.get("lot_key"),
                       "rank": t.get("dog_rank"), "candidates": t.get("candidates"), "salt": t.get("salt"),
-                      "version": sdy.DOG_VERSION}
+                      "version": DOG_KINDS[kind]}
+    if v2:
+        for l in row["legs"]:
+            l["bet"] = l.get("bet") or "1X2"           # an underdog candidate is a winner leg
+            l["estimated"] = bool(l.get("estimated"))
+        row["version"] = sdy.V2_VERSION
+        row["bets"] = sorted({l["bet"] for l in row["legs"]})
+        row["estimated"] = any(l["estimated"] for l in row["legs"])
+    if kind == "props":
+        m = next(l for l in t["legs"] if l["key"] == t.get("method_key") and l.get("bet") == "METHOD")
+        row["props"] = {"key": m["key"], "pick": m["pick"], "lot_key": t.get("method_lot_key"),
+                        "rank": t.get("method_rank"), "candidates": t.get("candidates"), "salt": t.get("salt"),
+                        "version": sdy.V2_VERSION, "band": list(sdy.PROPS_LIVE_BAND),
+                        "price_key": t.get("price_key")}
     return row
 
 
@@ -572,7 +995,7 @@ def _leg_sig(l):
     graded. WHY THE START: the lock reads the logged first_start, so a
     kickoff moved earlier must be logged, or the ticket would stay open
     past its real first start."""
-    return (l.get("key"), l.get("pick"), l.get("decimal"), l.get("kickoff"))
+    return (l.get("key"), l.get("pick"), l.get("decimal"), l.get("kickoff"), l.get("bet") or "1X2")
 
 
 def _same(prev, row):
@@ -586,8 +1009,9 @@ def _same(prev, row):
         return False
     if row["status"] == "none":
         return prev.get("none_reason") == row.get("none_reason")
-    if row.get("kind") == "underdog":
-        a, b = prev.get("dog") or {}, row.get("dog") or {}
+    if row.get("kind") in DOG_KINDS or row.get("kind") == "props":
+        draw = "props" if row.get("kind") == "props" else "dog"
+        a, b = prev.get(draw) or {}, row.get(draw) or {}
         return ((a.get("key"), a.get("pick"), a.get("candidates"))
                 == (b.get("key"), b.get("pick"), b.get("candidates")))
     return True
@@ -620,24 +1044,38 @@ def days_shown(history, now, legs, dogs=(), starts=None):
     return in_play_days(history, now, starts) + [today] + sorted(ahead)
 
 
-def update(history, now, legs, dogs=(), why=None, starts=None):
-    """Build and log both kinds of ticket for every day shown; returns the
+def update(history, now, legs, dogs=(), why=None, starts=None, v2=None):
+    """Build and log every kind of ticket for every day shown; returns the
     days. A kind whose newest row is locked is left alone; a kind with no row
     and nothing built logs nothing (there was never a ticket to supersede).
     `why`, when given a dict, gets {(day, kind): none_reason} and
     {(day, "candidates"): n} for this run, so the page can say why a day
     without a logged row has no ticket. A day before today (in play) is
     shown, never built: its events have all started, so a rebuild could only
-    log a wrong "none" over what was there."""
-    show = days_shown(history, now, legs, dogs, starts)
+    log a wrong "none" over what was there.
+
+    v2: the v2 pool (live_v2). Without it only v1's two kinds are built -
+    and no v2 row is touched, so a run that could not read the pool never
+    supersedes a v2 ticket. With it, the four v2 kinds too (build_day_v2),
+    and `why` also gets the day's "candidates_v2", "props_candidates",
+    "ufc_day" and "missing" (the legs not offered, by market and reason)."""
+    v2legs, v2dogs = list((v2 or {}).get("legs") or []), list((v2 or {}).get("dogs") or [])
+    show = days_shown(history, now, list(legs) + v2legs, list(dogs) + v2dogs, starts)
     today = sdy.et_day(now)
     for day in show:
         if day < today:
             continue
         built = build_day(day, legs, dogs)
+        if v2 is not None:
+            built.update(build_day_v2(day, v2))
         if why is not None:
             why[(day, "candidates")] = built["candidates"]
+            for k in ("candidates_v2", "props_candidates", "ufc_day", "missing"):
+                if k in built:
+                    why[(day, k)] = built[k]
         for kind in KINDS:
+            if kind not in built:
+                continue
             t, reason_ = built[kind]
             if why is not None:
                 why[(day, kind)] = reason_
@@ -655,11 +1093,15 @@ def update(history, now, legs, dogs=(), why=None, starts=None):
 # ---------------------------------------------------------------- grading
 
 def _results():
-    """The three sports' results, loaded once."""
+    """The three sports' results, loaded once: "ufc" (grade.py and its
+    archive index), "nfl" {game_id: home margin}, "nfl_total" {game_id:
+    total points} (SPREAD / TOTAL legs), "soccer" {match_id: H / D / A /
+    void} and "soccer_goals" {match_id: (home, away) / "void" / None} (OU25
+    legs: None when the final carries no goals)."""
     sys.path.insert(0, str(ROOT / "engine"))
     import grade
     import pandas as pd
-    out = {"ufc": None, "nfl": {}, "soccer": {}}
+    out = {"ufc": None, "nfl": {}, "nfl_total": {}, "soccer": {}, "soccer_goals": {}}
     try:
         out["ufc"] = (grade, grade.load_results(UFC_ARCHIVE))
     except Exception:
@@ -670,9 +1112,12 @@ def _results():
             hs, as_ = getattr(r, "home_score", None), getattr(r, "away_score", None)
             if hs is not None and as_ is not None and not (pd.isna(hs) or pd.isna(as_)):
                 out["nfl"][r.game_id] = float(hs) - float(as_)
+                out["nfl_total"][r.game_id] = float(hs) + float(as_)
     except Exception:
         pass
-    out["soccer"] = soccer_results()
+    full = soccer_results(with_goals=True)
+    out["soccer"] = {k: v if v == "void" else v["result"] for k, v in full.items()}
+    out["soccer_goals"] = {k: v if v == "void" else v["goals"] for k, v in full.items()}
     return out
 
 
@@ -726,10 +1171,19 @@ def _void_for_good(p):
     return bool(v) and not (v == SOCCER_LATE and p.get("void_by") not in (None, SOCCER_RECORD))
 
 
-def soccer_results(path=None):
+def _goals(final):
+    """(home goals, away goals) from a soccer log final, or None."""
+    h, a = _num((final or {}).get("home")), _num((final or {}).get("away"))
+    return None if h is None or a is None else (h, a)
+
+
+def soccer_results(path=None, with_goals=False):
     """{match_id: "H" / "D" / "A" / "void"} for every soccer pick with a
     result or void for good; a match with neither is left out (its leg
-    stays open).
+    stays open). with_goals: each result as {"result": H / D / A, "goals":
+    (home, away) or None} instead (a void stays "void") - the over/under
+    2.5 leg (tickets v2's OU25) is graded on the final's goals, which the
+    same final carries beside its result.
 
     VOID is read off soccer_log's own key, "void" (it never writes a
     "status"): "no result" (no result STALE_DAYS after kickoff: postponed
@@ -748,7 +1202,7 @@ def soccer_results(path=None):
     for mid, p in picks.items():
         fin = p.get("final") or {}
         if fin.get("result") in ("H", "D", "A") and not p.get("void"):
-            r = fin["result"]
+            r = {"result": fin["result"], "goals": _goals(fin)} if with_goals else fin["result"]
         elif _void_for_good(p):
             r = "void"
         else:
@@ -776,10 +1230,95 @@ def ufc_cancel_index(history, ufc, log=None):
             "ufc_fighters": grade._fighter_dates(index)}
 
 
+def _line_result(diff, pick_first):
+    """A spread or total leg's result from the margin over the line (home
+    margin less the line; total points less the line): a push (0) is void,
+    as books return it."""
+    if diff == 0:
+        return {"winner": None, "void_reason": "push"}
+    return {"winner": "pick" if (diff > 0) == bool(pick_first) else "other"}
+
+
+def _ufc_bout(l, res, now):
+    """(the archive's (date, winner, method) for the leg's bout, None), or
+    (None, the leg's result when the bout is not there): void as
+    "cancelled" by engine/grade.py's rule (leg_result), else None - not
+    known yet. Shared by the moneyline and the method legs, so a cancelled
+    bout voids both alike."""
+    if res.get("ufc") is None:
+        return None, None
+    grade, index = res["ufc"]
+    n = l.get("names") or {}
+    found = grade.find_result({"red_corner": n.get("red"), "blue_corner": n.get("blue"),
+                               "event_date": n.get("event_date")}, index)
+    if found is not None:
+        return found, None
+    cards, fighters, day = res.get("ufc_cards"), res.get("ufc_fighters"), n.get("event_date")
+    if now is None or cards is None or fighters is None or not day:
+        return None, None
+    card = {"first_start": l.get("kickoff"), "event_date": day}
+    if (day in cards and grade.card_is_complete(card, now)
+            and grade._cancelled({"red": n.get("red"), "blue": n.get("blue")}, day, fighters)):
+        return None, {"winner": None, "void_reason": "cancelled"}
+    return None, None
+
+
+def market_result(l, res, now=None):
+    """A v2 other-market leg's result (OU25, SPREAD, TOTAL, METHOD), in
+    leg_result's contract.
+      OU25    the soccer log final's goals: over wins above 2.5 (no push at
+              2.5); a void match is void; a final without goals stays open.
+      SPREAD  the schedule's home margin against the line (market.spread,
+              the home side's expected margin): home covers above it, away
+              below, a push is void.
+      TOTAL   the schedule's total points against the line; a push is void.
+      METHOD  the UFC archive's row for the bout: void with no winner (draw,
+              no contest), "cancelled" as a moneyline leg on a bout that
+              never happened; lost when the other corner won; else won only
+              when engine/grade.categorise_method reads the archive's method
+              as this leg's type (a DQ or an overturned result reads as none
+              of the three: lost). A winner whose method is not recorded yet
+              stays open."""
+    n = l.get("names") or {}
+    bet = l.get("bet")
+    if bet == "OU25":
+        g = (res.get("soccer_goals") or {}).get(n.get("match_id"))
+        if g is None:
+            return None
+        if g == "void":
+            return {"winner": None}
+        return {"winner": "pick" if (sum(g) > float(n.get("line", 2.5))) == bool(n.get("over")) else "other"}
+    if bet in ("SPREAD", "TOTAL"):
+        src = res.get("nfl") if bet == "SPREAD" else res.get("nfl_total")
+        x, line = (src or {}).get(n.get("game_id")), _num(n.get("line"))
+        if x is None or line is None:
+            return None
+        return _line_result(x - line, n.get("home") if bet == "SPREAD" else n.get("over"))
+    if bet == "METHOD":
+        found, r = _ufc_bout(l, res, now)
+        if found is None:
+            return r
+        grade = res["ufc"][0]
+        _, winner, method = found
+        if not isinstance(winner, str) or not winner.strip():
+            return {"winner": None, "void_reason": "draw or no contest"}
+        corner = grade._corner(winner, n.get("red"), n.get("blue"))
+        if corner is None:
+            return None
+        if corner != n.get("corner"):
+            return {"winner": "other"}
+        if not isinstance(method, str) or not method.strip():
+            return None
+        return {"winner": "pick" if grade.categorise_method(method) == n.get("type") else "other"}
+    raise ValueError(bet)
+
+
 def leg_result(l, res, now=None):
     """A leg's result as parlay_profiles settles it: {"winner": "pick" /
     "other"}, {"winner": None, "void_reason": ...} (void: books return the
-    leg at 1.0), or None (not known yet - the leg stays open).
+    leg at 1.0), or None (not known yet - the leg stays open). A v2 leg of
+    another market (bet OU25 / SPREAD / TOTAL / METHOD) is graded by
+    market_result; a winner leg (no bet, or "1X2") as below.
 
     A UFC BOUT THAT NEVER HAPPENED (called off on fight night, after the
     ticket locked) has no archive row, so "not found" alone would keep its
@@ -790,6 +1329,8 @@ def leg_result(l, res, now=None):
     card is old enough to be complete at `now` (grade.card_is_complete on
     the leg's first bell) and neither fighter has a result within the date
     tolerance (grade._cancelled). Otherwise it stays open."""
+    if l.get("bet") not in sdy.WINNER_BETS:
+        return market_result(l, res, now)
     n = l.get("names") or {}
     if l["sport"] == "NFL":
         m = res["nfl"].get(n.get("game_id"))
@@ -803,20 +1344,10 @@ def leg_result(l, res, now=None):
         if r is None:
             return None
         return {"winner": None} if r == "void" else {"winner": "pick" if r == n.get("pick") else "other"}
-    if res["ufc"] is None:
-        return None
-    grade, index = res["ufc"]
-    found = grade.find_result({"red_corner": n.get("red"), "blue_corner": n.get("blue"),
-                               "event_date": n.get("event_date")}, index)
+    found, r = _ufc_bout(l, res, now)
     if found is None:
-        cards, fighters, day = res.get("ufc_cards"), res.get("ufc_fighters"), n.get("event_date")
-        if now is None or cards is None or fighters is None or not day:
-            return None
-        card = {"first_start": l.get("kickoff"), "event_date": day}
-        if (day in cards and grade.card_is_complete(card, now)
-                and grade._cancelled({"red": n.get("red"), "blue": n.get("blue")}, day, fighters)):
-            return {"winner": None, "void_reason": "cancelled"}
-        return None
+        return r
+    grade = res["ufc"][0]
     _, winner, _ = found
     if not isinstance(winner, str) or not winner.strip():
         return {"winner": None, "void_reason": "draw or no contest"}
@@ -879,8 +1410,14 @@ def record(graded, kind=None):
     return {"settled": len(done), "won": won, "units": units,
             "roi": round(units / len(done), 4) if done else None,
             "implied_roi": round(sum(exp) / len(exp), 4) if exp and len(exp) == len(done) else None,
+            # settled tickets paid at an ESTIMATED price (a UFC prop): their
+            # units and implied return are estimates too, and the page says so
+            "estimated": sum(bool(r.get("estimated")) for r in done),
             "pending": sum(r.get("status") == "pending" for r in rows),
-            "last": [{k: r.get(k) for k in ("day", "status", "multiplier", "paid", "profit", "sports")}
+            # each last ticket says whether its multiplier was an estimate, so
+            # the page marks it "est." wherever it lists it
+            "last": [dict({k: r.get(k) for k in ("day", "status", "multiplier", "paid", "profit", "sports")},
+                          estimated=bool(r.get("estimated")))
                      for r in sorted(done, key=lambda r: r["day"])[-10:]]}
 
 
@@ -891,8 +1428,52 @@ def _band_text():
     return f"{lo:.2f}-{hi:.2f} (+{sdy.american(lo)} to +{sdy.american(hi)})"
 
 
+def _x(band):
+    return f"{band[0]:g}-{band[1]:g}x"
+
+
+OTHER_MARKETS = "over/under, spread, total or method"
+KIND_WORD = {"likeliest": "likeliest", "underdog": "underdog", "likeliest_v2": "likeliest", "underdog_v2": "underdog",
+             "mixed": "mixed", "props": "props"}
+
+
+# A day before today with no row of a kind logged at all. Past days are
+# shown, never built (update), so this run has no reason of its own for
+# them; whatever a kind's builder would have said that day was never logged
+# (a kind logs a "none" row only over a ticket it supersedes), and at tickets
+# v2's first runs its kinds were not built at all. Saying "no combination
+# fits" there would be a reason nobody computed.
+NOT_LOGGED = "not_logged"
+
+
 def none_reason_text(kind, code, candidates=None):
-    """Why a day has no ticket of this kind, in a reader's words."""
+    """Why a day has no ticket of this kind, in a reader's words - every
+    number read from sameday.py's constants."""
+    if code == NOT_LOGGED:
+        return (f"No {KIND_WORD.get(kind, kind)} ticket was logged for this day before its events started, so "
+                f"there is none to show; why none fitted then was not logged.")
+    if kind == "likeliest_v2":
+        return (f"No combination of this day's priced winner picks (each at least a {sdy.MIN_P:.0%} chance) "
+                f"pays {_x(sdy.BAND)} with {sdy.MAX_LEGS} legs or fewer.")
+    if kind == "mixed":
+        if code == "no_other":
+            return (f"No mixed ticket: no {OTHER_MARKETS} leg is on offer this day (each but a method leg "
+                    f"needs at least a {sdy.MIN_P:.0%} chance).")
+        return (f"No mixed ticket: no combination holding an {OTHER_MARKETS} leg pays {_x(sdy.BAND)} "
+                f"with {sdy.MAX_LEGS} legs or fewer.")
+    if kind == "props":
+        lo, hi = sdy.PROPS_PRICE
+        if code == "no_card":
+            return "No props ticket: there is no UFC card on this day."
+        if code == "no_estimate":
+            return ("No props ticket: no method prop on this card could be estimated (the reason is beside "
+                    "the day's markets).")
+        if code == "no_prop":
+            return f"No props ticket: no method prop on this card is priced {lo:.2f}-{hi:.2f} (estimated)."
+        n = candidates or 0
+        return (f"No props ticket: {n} method prop{'' if n == 1 else 's'} priced {lo:.2f}-{hi:.2f}, but no "
+                f"favourites on other events bring {'it' if n == 1 else 'any of them'} to "
+                f"{_x(sdy.PROPS_LIVE_BAND)} at the estimated price.")
     if kind == "likeliest":
         return ("No combination of this day's priced picks (each at least a 50% chance) "
                 "pays 3-5x with six legs or fewer.")
@@ -912,20 +1493,67 @@ def _day_name(day):
     return f"{d:%A}, {d:%b} {d.day}"
 
 
+# The market each v2 leg is on, as the page tags it.
+MARKET_NAME = {"OU25": "Over/under", "SPREAD": "Spread", "TOTAL": "Total", "METHOD": "Method"}
+
+
+def leg_label(l):
+    """A leg as a bet slip names it: "Arsenal to win", "Draw", "Over 2.5
+    goals", "BUF -3.5", "Over 44.5", "Ciryl Gane by KO/TKO" - a v2 other-
+    market leg's pick already is its label."""
+    if l.get("bet") not in sdy.WINNER_BETS:
+        return l.get("pick")
+    if l.get("sport") == "Soccer" and (l.get("names") or {}).get("pick") == "D":
+        return "Draw"
+    return f"{l.get('pick')} to win"
+
+
+def market_name(l):
+    if l.get("bet") in MARKET_NAME:
+        return MARKET_NAME[l["bet"]]
+    return "1X2" if l.get("sport") == "Soccer" else "Moneyline"
+
+
+def leg_reason(l):
+    """One line from a v2 leg's own numbers. A method leg's chance is the
+    corner's shipped win chance times the estimator's share of its wins that
+    way, and its market chance the estimator's - never called the market's."""
+    if l.get("bet") == "METHOD":
+        bits = [f"UFC: chance {l['p']:.0%}"]
+        if l.get("p_market") is not None:
+            bits.append(f"the estimator's market chance {l['p_market']:.0%}")
+        return ", ".join(bits)
+    if l.get("bet") in MARKET_NAME:
+        return f"{l['sport']}: chance {l['p']:.0%}, the market's (no-vig)"
+    return sdy.reason(l)
+
+
 def ticket_payload(day, row, now, kind="likeliest", none_reason=None, candidates=None, starts=None):
     """One ticket for the page. A day with no ticket says why: the reason
-    logged on its "none" row, else this run's (update's `why`)."""
+    logged on its "none" row, else this run's (update's `why`). A v2 ticket's
+    legs carry their market (bet, market, label), and an estimated price its
+    measured error; the ticket says whether any price on it is estimated."""
+    v2 = kind in KINDS_V2
     if row is None or row.get("status") == "none":
-        code = (row or {}).get("none_reason") or none_reason or ("no_fit" if kind == "likeliest" else None)
-        return {"day": day, "kind": kind, "status": "none", "legs": [], "multiplier": None, "p": None,
-                "p_market": None, "none_reason": code,
-                "missing_reason": none_reason_text(kind, code, candidates)}
+        code = ((row or {}).get("none_reason") or none_reason
+                or ("no_fit" if kind in ("likeliest", "likeliest_v2", "mixed") else None))
+        out = {"day": day, "kind": kind, "status": "none", "legs": [], "multiplier": None, "p": None,
+               "p_market": None, "none_reason": code,
+               "missing_reason": none_reason_text(kind, code, candidates)}
+        if v2:
+            out.update(version=sdy.V2_VERSION, estimated=False)
+        return out
     legs = []
     for l in row["legs"]:
-        legs.append(dict({k: l.get(k) for k in ("sport", "event", "pick", "opponent", "kickoff", "decimal",
-                                                 "p", "p_model", "p_market", "price_source")},
-                         american=sdy.american(l["decimal"]), reason=sdy.reason(l), outcome=l.get("outcome"),
-                         void_reason=l.get("void_reason"), dog=bool(l.get("dog"))))
+        x = dict({k: l.get(k) for k in ("sport", "event", "pick", "opponent", "kickoff", "decimal",
+                                        "p", "p_model", "p_market", "price_source")},
+                 american=sdy.american(l["decimal"]), reason=leg_reason(l) if v2 else sdy.reason(l),
+                 outcome=l.get("outcome"), void_reason=l.get("void_reason"), dog=bool(l.get("dog")))
+        if v2:
+            x.update(bet=l.get("bet") or "1X2", bet_detail=l.get("bet_detail"), label=leg_label(l),
+                     market=market_name(l), estimated=bool(l.get("estimated")), error_pct=l.get("error_pct"),
+                     moneyline_source=l.get("moneyline_source"))
+        legs.append(x)
     status = row.get("status", "pending")
     if status == "pending":
         status = "locked" if locked(row, now, starts) else "open"
@@ -934,7 +1562,17 @@ def ticket_payload(day, row, now, kind="likeliest", none_reason=None, candidates
            "first_start": row.get("first_start"), "last_start": row.get("last_start"),
            "built_at": row.get("built_at"), "paid": row.get("paid"), "profit": row.get("profit"),
            "missing_reason": None, "none_reason": None}
-    if kind == "underdog":
+    if v2:
+        out.update(version=row.get("version"), bets=row.get("bets"),
+                   estimated=any(l.get("estimated") for l in legs))
+    if kind == "props":
+        pr = row.get("props") or {}
+        ml = next((l for l in row["legs"] if l.get("key") == pr.get("key") and l.get("bet") == "METHOD"), {})
+        out.update({"props": {"pick": ml.get("pick"), "event": ml.get("event"), "rank": pr.get("rank"),
+                              "candidates": pr.get("candidates"), "version": pr.get("version"),
+                              "band": pr.get("band")},
+                    "only_one": pr.get("candidates") == 1})
+    if kind in DOG_KINDS:
         dg = row.get("dog") or {}
         dl = next((l for l in row["legs"] if l.get("dog")), {})
         pm = row.get("p_market")
@@ -1025,6 +1663,269 @@ def dog_measured(bt):
         "splits": blk.get("splits")}), None
 
 
+# ---------------------------------------------------------------- tickets v2: measured
+
+# Where a v2 kind's record may sit in the "v2" block, by the names the
+# measurement gives it (the backtest's kinds, then the history's), and which
+# of its readings is the headline: the rule's tickets ("live" - for a lottery
+# its live draw); the props ticket "as live" (chosen at the estimate, paid at
+# the real props - sameday.py), with "as priced" beside it. A reading may be
+# split by league set ("all_leagues", "without_extra_leagues": the extra
+# leagues' history is priced at the close): the headline is every league's,
+# the other shown beside it.
+V2_BLOCK_NAMES = {"likeliest_v2": ("likeliest", "likeliest_v2", "same_day_v2"),
+                  "underdog_v2": ("underdog", "underdog_v2", "same_day_dog_v2"),
+                  "mixed": ("mixed", "same_day_mixed"),
+                  "props": ("props_as_live", "props", "same_day_props")}
+V2_AS_PRICED = ("props_as_priced",)
+# The props readings set beside the headline (sameday_backtest's PROPS_KINDS):
+# as priced on the SAME days as live can draw (a prop with an estimate) - the
+# row to compare the headline with, since as priced on every day also holds
+# days no estimate exists for - and as live with the draw weighted by the
+# real book's split, an input live never has. Each passed with its draws.
+V2_PROPS_BESIDE = {"as_priced_same_days": "props_as_priced_estimated_days",
+                   "book_split": "props_as_live_book_split"}
+V2_HEADLINE = ("live", "rule", "results")
+V2_VARIANT, V2_WITHOUT_EXTRA = "all_leagues", "without_extra_leagues"
+V2_SALTS = {"underdog_v2": sdy.DOG_SALT_V2, "props": sdy.PROPS_SALT}
+
+
+def _periods(x):
+    """x when it is {period: record} with a record carrying tickets."""
+    if not isinstance(x, dict):
+        return None
+    recs = {k: v for k, v in x.items() if isinstance(v, dict) and "tickets" in v}
+    return recs if any(v.get("tickets") for v in recs.values()) else None
+
+
+def _variant(x, variant=V2_VARIANT):
+    """{period: record} from a reading that is one, or is split by league
+    set ({variant: {period: record}}): `variant`'s, else None."""
+    if _periods(x):
+        return _periods(x) if variant == V2_VARIANT else None
+    return _periods(x.get(variant)) if isinstance(x, dict) else None
+
+
+def _reading(kb, keys, variant=V2_VARIANT):
+    """(the first of kb's readings named `keys` that holds records, its
+    name), looked for at the top of the block and under "results"."""
+    res = kb.get("results") if isinstance(kb.get("results"), dict) else {}
+    for k in keys:
+        for src in (kb, res):
+            p = _variant(src.get(k), variant)
+            if p:
+                return p, k
+    return None, None
+
+
+def _salts(x, variant=V2_VARIANT):
+    """A lottery's means over its simulation draws, {period: stats}, split
+    by league set or not: `variant`'s - an unsplit one is every league's, so
+    it is never returned as another variant's."""
+    if not isinstance(x, dict):
+        return None
+    if isinstance(x.get(V2_VARIANT), dict) or isinstance(x.get(V2_WITHOUT_EXTRA), dict):
+        return x[variant] if isinstance(x.get(variant), dict) else None
+    if variant != V2_VARIANT:
+        return None
+    return x if any(isinstance(v, dict) and "roi" in v for v in x.values()) else None
+
+
+def v2_measured(bt):
+    """({kind: measured block or None}, {kind: why it is None, or None}) for
+    the four v2 kinds, from sameday_backtest.json's "v2" block - read
+    defensively: the measurement writes it separately and may not have yet.
+    A block for another version, or a lottery measured at another draw, is
+    another rule's record and is never shown as this one's.
+
+    Each block: headline {period: record} (every league; headline_from names
+    the reading), without_extra (the same without the extra leagues), periods,
+    the lottery's mean over its simulation draws (salts, and
+    without_extra_salts beside without_extra), the props ticket "as priced"
+    beside "as live" (with its own draws' mean, as_priced_salts), the
+    market-only control, splits and caveats - each passed through as
+    written, NaN as missing. The reasons are reader-facing (no path, no
+    "salt")."""
+    blk = (bt or {}).get("v2")
+    if not isinstance(blk, dict):
+        why = ("Not measured yet: the v2 tickets' backtest has not been run, so no record is shown for them."
+               if bt else "Not measured yet: the backtest of these tickets has not been run, so no record "
+                          "is shown.")
+        return {k: None for k in KINDS_V2}, {k: why for k in KINDS_V2}
+    if blk.get("version") is not None and blk.get("version") != sdy.V2_VERSION:
+        why = (f"Not shown: the v2 record on file was measured for another version of the rule "
+               f"(v{blk.get('version')}), not the live v{sdy.V2_VERSION}.")
+        return {k: None for k in KINDS_V2}, {k: why for k in KINDS_V2}
+    kinds = blk.get("kinds") if isinstance(blk.get("kinds"), dict) else blk
+    out, why = {}, {}
+    for kind in KINDS_V2:
+        kb = next((kinds[n] for n in V2_BLOCK_NAMES[kind] if isinstance(kinds.get(n), dict)), None)
+        if kb is None:
+            out[kind], why[kind] = None, "Not measured yet: the v2 backtest on file has no record of this ticket."
+            continue
+        if kind in V2_SALTS and kb.get("salt") is not None and kb.get("salt") != V2_SALTS[kind]:
+            out[kind], why[kind] = None, ("Not shown: the record on file was measured at another draw, not "
+                                          "this ticket's live one.")
+            continue
+        head, name = _reading(kb, V2_HEADLINE)
+        if head is None:
+            out[kind], why[kind] = None, "Not measured yet: the v2 record on file for this ticket has no tickets."
+            continue
+        res = kb.get("results") if isinstance(kb.get("results"), dict) else {}
+        priced = next((kinds[n] for n in V2_AS_PRICED if isinstance(kinds.get(n), dict)), None) \
+            if kind == "props" else None
+        lot = kind in V2_SALTS
+        x = {"headline": head, "headline_from": name,
+             "without_extra": _reading(kb, (name,), V2_WITHOUT_EXTRA)[0],
+             "periods": kb.get("periods") or blk.get("periods") or (bt or {}).get("periods"),
+             "salts": _salts(kb.get("salts", res.get("salts"))) if lot else None,
+             # a lottery's every reading is shown beside its mean over the
+             # draws, never at the live draw alone
+             "without_extra_salts": _salts(kb.get("salts", res.get("salts")), V2_WITHOUT_EXTRA) if lot else None,
+             "as_priced": _reading(priced, V2_HEADLINE)[0] if priced else kb.get("as_priced"),
+             "as_priced_salts": _salts(priced.get("salts")) if priced else None,
+             # how often the real multiplier lands in the band, in the years the
+             # live band was chosen on and outside them (partly in-sample there)
+             "real_in_band_by_years": kb.get("real_in_band_by_years") if kind == "props" else None,
+             "market_only": _variant(kb.get("market_only", res.get("market_only"))),
+             "splits": kb.get("splits"), "label": kb.get("label"),
+             "caveats": [c for c in kb.get("caveats") or [] if isinstance(c, str)]}
+        if kind == "props":
+            for name, src in V2_PROPS_BESIDE.items():
+                b = kinds.get(src) if isinstance(kinds.get(src), dict) else None
+                if b is not None and (b.get("salt") is None or b.get("salt") == V2_SALTS["props"]):
+                    x[name] = _reading(b, V2_HEADLINE)[0]
+                    x[f"{name}_salts"] = _salts(b.get("salts"))
+        out[kind] = _json_safe({k: v for k, v in x.items() if v is not None})
+        why[kind] = None
+    return out, why
+
+
+def v2_activity(bt):
+    """The measured activity of the four kinds together - tickets per day,
+    the share of days with a ticket - every league's, beside v1's, from the
+    "v2" block (None until it carries one)."""
+    act = ((bt or {}).get("v2") or {}).get("activity") if isinstance((bt or {}).get("v2"), dict) else None
+    if not isinstance(act, dict):
+        return None
+    v2 = act.get(V2_VARIANT) if isinstance(act.get(V2_VARIANT), dict) else None
+    if not v2:
+        return None
+    return _json_safe({"v2": v2, "v1": act.get("v1") if isinstance(act.get("v1"), dict) else None,
+                       "note": act.get("note") if isinstance(act.get("note"), str) else None})
+
+
+# The builder's own v2 caveats: what the new markets are priced at, what an
+# estimated price is, and what v2 is not. No number and no comparison of
+# measured numbers typed: each sits beside the measured figure it qualifies
+# on the page, or is read from a file (v2_margin_caveat, estimator_caveats).
+# The first says the market is hard to beat: the page opens its v2 caveats
+# with it.
+V2_CAVEATS = [
+    "The market is hard to beat, and no v2 ticket is presented as an edge: tickets v2 were fixed before any "
+    "of their results was computed, and ship whatever their records show.",
+    "Tickets v2 add markets: soccer over or under 2.5 goals at the average posted price, in the leagues "
+    "whose over 2.5 the app ships from the market; NFL spreads and totals at the consensus price at the "
+    "consensus line - or, where no fresh consensus is on file, at the schedule's posted price at its own "
+    "line, and each such leg says which (a push voids the leg); and UFC method props, each corner to win by "
+    "knockout, by submission or by decision. Their winner legs take soccer from every league in the app.",
+    "No book on the feeds prices a UFC method prop, so each prop's price is an ESTIMATE (marked est.), from "
+    "a market-only estimator, shown with the median error it was measured to miss real prop prices by. A "
+    "ticket holding one shows its multiplier, its chance and its market chance as estimates, and its live "
+    "record is at the estimated prices: a real book may pay less, or more.",
+    "The props estimate reads the fight's moneyline at the card's median pair across books where the card "
+    "carries it - the closest live match to the closing line the estimator was fitted on - else at the best "
+    "pair; each prop on the page says which.",
+    "The v1 tickets (the likeliest and the underdog, top-five soccer, winners only) keep being built, logged "
+    "and graded beside v2 on their own rules, each with its own record, labelled v1.",
+]
+
+METHOD_PRICE_FILE = ROOT / "engine" / "data" / "method_price.json"
+
+
+def method_file(path=None):
+    """The prop estimator's own file (engine/data/method_price.json, written
+    by its fit script), or None when it is not there or does not read - the
+    page then says each figure it would have read is missing."""
+    x = _load(METHOD_PRICE_FILE if path is None else path)
+    return x if isinstance(x, dict) else None
+
+
+def _span(x):
+    """"2021-2024" from a [first, last] pair of dates, else None."""
+    if isinstance(x, (list, tuple)) and len(x) == 2 and all(isinstance(v, str) and len(v) >= 4 for v in x):
+        a, b = x[0][:4], x[1][:4]
+        return a if a == b else f"{a}-{b}"
+    return None
+
+
+def method_error_rule(mp):
+    """What the page prints beside an estimated prop's error, from the
+    estimator's file: the years its error table was fitted (`fit`) and
+    tested on (`test`), the error by test year (`by_year`, a share), the
+    years of the fit live cards read (`frozen`), and the last real prop on
+    file (`last_real`). WHY: the leg's error_pct is that test table's median
+    - a 2016-2020 fit on 2021-2024 props - not a measure of the live fit,
+    which no real prop can check; printed bare it would read as the live
+    error. None when the file is not there."""
+    if not mp:
+        return None
+    test, frozen, cov = mp.get("test") or {}, mp.get("frozen") or {}, mp.get("coverage") or {}
+    by_year = {k: v for k, v in (test.get("by_year") or {}).items() if isinstance(v, (int, float))}
+    return _json_safe({"fit": _span(test.get("fit")), "test": _span(test.get("test")), "by_year": by_year or None,
+                       "frozen": _span(frozen.get("fit")), "last_real": cov.get("last")})
+
+
+def _pct1(x):
+    return f"{100 * x:.1f}%"
+
+
+def v2_margin_caveat(mp, v2blk):
+    """A prop's margin, read, never typed: its six-way book's median
+    overround against the same fights' moneyline pair's, from the
+    estimator's file (coverage), the word comparing them computed from the
+    two. None once the backtest's v2 block carries its own caveats (they
+    state the same, measured on the backtest's fights, with numbers), as
+    DOG_CAVEATS stand in only until the dog block exists. Without the file,
+    the fact without its size - and that it is missing."""
+    if isinstance(v2blk, dict) and any(isinstance(c, str) for c in v2blk.get("caveats") or []):
+        return None
+    cov = (mp or {}).get("coverage") or {}
+    six, ml = _num(cov.get("six_way_overround_median")), _num(cov.get("moneyline_overround_median"))
+    if six is None or ml is None:
+        return ("A UFC method prop's book spreads its margin over six outcomes, and a ticket holding a prop "
+                "pays that book's margin on it; the margin's measured size is missing here (the prop "
+                "estimator's file does not carry it).")
+    word = "more" if six > ml else "less" if six < ml else "the same"
+    when = f", {cov['first']} to {cov['last']}" if cov.get("first") and cov.get("last") else ""
+    return (f"A UFC method prop's book runs a median {_pct1(six)} over across its six outcomes, against "
+            f"{_pct1(ml)} for the same fights' moneyline pair (the prop prices on file{when}): a ticket "
+            f"holding a prop pays {word} margin on it than on a moneyline leg.")
+
+
+ESTIMATOR_CAVEAT = "The prop estimator, as its own file says: "
+
+
+def estimator_caveats(mp, have=()):
+    """The prop estimator's own caveats (method_price.json "caveats", as its
+    fit script wrote them), each prefixed so a reader knows whose they are;
+    one already among `have` (the backtest may carry them) is not repeated.
+    WHY HERE: every live prop price is that estimator's, so what it says it
+    cannot know belongs beside the tickets that use it."""
+    out = []
+    for c in (mp or {}).get("caveats") or []:
+        if isinstance(c, str) and c and not any(c in h for h in have):
+            out.append(ESTIMATOR_CAVEAT + c)
+    return out
+
+
+# Where every live price comes from (v1's and v2's winner legs alike); the
+# v2 markets' own sources are in V2_CAVEATS.
+PRICES_CAVEAT = ("Prices are the ones on file when the sports' runners last ran: UFC the best price seen across "
+                 "books, NFL the consensus moneyline, soccer the average posted price. One book may pay less. "
+                 "Check every price before betting; a leg whose game has started is never used.")
+
+
 # Shown until the backtest's dog block (with its own, measured caveats) exists.
 DOG_CAVEATS = [
     "The underdog ticket is for variety and a bigger payout, not a better bet: drawing an underdog "
@@ -1072,33 +1973,73 @@ def payload(history, show, now, graded, why=None, starts=None):
         # path in the reader's text - see dog_measured)
         caveats = ["Not measured yet: the backtest of these tickets has not been run, so no record is "
                    "shown. The market is hard to beat."]
-    caveats.append("Prices are the ones on file when the sports' runners last ran: UFC the best price seen "
-                   "across books, NFL the consensus moneyline, soccer the average posted price. One book "
-                   "may pay less. Check every price before betting; a leg whose game has started is never used.")
     # This builder's underdog caveats stand in for the backtest's own until its
     # dog block exists; once it does, its caveats say the same with numbers.
     if not (measured or {}).get("underdog"):
         caveats += [c for c in DOG_CAVEATS if c not in caveats]
+    caveats_v1 = caveats
+    # Tickets v2's caveats, kept apart from v1's: the page leads with v2's
+    # tickets, so it leads with v2's caveats - the market-is-hard-to-beat
+    # one first (with the measured figures when the backtest has written
+    # them) - and folds v1's under v1's label. WHY: v1's caveats (its own
+    # positive headline, top-five soccer only) read under v2's records would
+    # describe tickets they are not about. None is dropped: `caveats` keeps
+    # every one, v2's first.
+    v2m, v2why = v2_measured(bt)
+    v2blk = (bt or {}).get("v2") if isinstance((bt or {}).get("v2"), dict) else {}
+    mp = method_file()
+    caveats_v2 = []
+
+    def add(xs):
+        caveats_v2.extend(c for c in xs if isinstance(c, str) and c and c not in caveats_v2)
+    add(v2blk.get("caveats") or [])
+    for blk in v2m.values():
+        add((blk or {}).get("caveats") or [])
+    add(V2_CAVEATS)
+    add([v2_margin_caveat(mp, v2blk)])
+    add(estimator_caveats(mp, caveats_v2))
+    add(dict.fromkeys(v2why.values()))
+    add([PRICES_CAVEAT])
+    caveats_v2.sort(key=lambda c: "hard to beat" not in c)          # stable: the rest keep their order
+    caveats = caveats_v2 + [c for c in caveats_v1 if c not in caveats_v2]
 
     today = sdy.et_day(now)
     days = []
     for d in show:
-        rl, ru = latest(history, d, "likeliest"), latest(history, d, "underdog")
-        lk = ticket_payload(d, rl, now, "likeliest", why.get((d, "likeliest")), starts=starts)
-        dg = ticket_payload(d, ru, now, "underdog", why.get((d, "underdog")), why.get((d, "candidates")), starts)
         past = d < today
-        days.append({"day": d, "today": d == today, "past": past,
-                     "in_play": past and any(t["status"] == "locked" for t in (lk, dg)),
-                     "likeliest": lk, "underdog": dg,
-                     "cannot_both_win": lk["status"] != "none" and dg["status"] != "none" and sdy.opposes(ru, rl)})
+        # a past day is never built: a kind with no row then was not logged
+        # (NOT_LOGGED), never "this run found nothing"
+        wy = (lambda k: why.get((d, k)) or NOT_LOGGED) if past else (lambda k: why.get((d, k)))
+        rl, ru = latest(history, d, "likeliest"), latest(history, d, "underdog")
+        lk = ticket_payload(d, rl, now, "likeliest", wy("likeliest"), starts=starts)
+        dg = ticket_payload(d, ru, now, "underdog", wy("underdog"), why.get((d, "candidates")), starts)
+        x = {"day": d, "today": d == today, "past": past, "likeliest": lk, "underdog": dg,
+             "cannot_both_win": lk["status"] != "none" and dg["status"] != "none" and sdy.opposes(ru, rl)}
+        # v2: the four kinds - the props ticket on a day with a UFC card (or
+        # with a props row logged, so a card moved off the day says so).
+        r2 = {k: latest(history, d, k) for k in KINDS_V2}
+        ufc_day = bool(why.get((d, "ufc_day"))) or r2["props"] is not None
+        x.update({"ufc_day": ufc_day, "missing": why.get((d, "missing")) or {},
+                  "likeliest_v2": ticket_payload(d, r2["likeliest_v2"], now, "likeliest_v2", wy("likeliest_v2"),
+                                                 starts=starts),
+                  "underdog_v2": ticket_payload(d, r2["underdog_v2"], now, "underdog_v2", wy("underdog_v2"),
+                                                why.get((d, "candidates_v2")), starts),
+                  "mixed": ticket_payload(d, r2["mixed"], now, "mixed", wy("mixed"), starts=starts),
+                  "props": (ticket_payload(d, r2["props"], now, "props", wy("props"),
+                                           why.get((d, "props_candidates")), starts) if ufc_day else None)})
+        x["v2_cannot_both_win"] = (x["likeliest_v2"]["status"] != "none" and x["underdog_v2"]["status"] != "none"
+                                   and sdy.opposes(r2["underdog_v2"], r2["likeliest_v2"]))
+        x["in_play"] = past and any(t and t["status"] == "locked" for t in (x[k] for k in KINDS))
+        days.append(x)
     # Today's "none" names the next day with a ticket of its kind (days in
     # play come before today, so today is found, not assumed first).
     at = next((i for i, x in enumerate(days) if x["today"]), None)
-    for kind, label in (("likeliest", "likeliest"), ("underdog", "underdog")):
+    for kind in KINDS:
         first = days[at][kind] if at is not None else None
         if first is None or first["status"] != "none":
             continue
-        nxt = next((x["day"] for x in days[at + 1:] if x[kind]["status"] != "none"), None)
+        label = KIND_WORD[kind]
+        nxt = next((x["day"] for x in days[at + 1:] if x[kind] and x[kind]["status"] != "none"), None)
         first["next_day"] = nxt
         first["missing_reason"] += (f" The next {label} ticket is on {_day_name(nxt)}." if nxt else
                                     f" No {label} ticket in the next {WINDOW_DAYS} days yet.")
@@ -1107,11 +2048,22 @@ def payload(history, show, now, graded, why=None, starts=None):
             "rule": {"band": list(sdy.BAND), "max_legs": sdy.MAX_LEGS, "pool": sdy.POOL, "min_p": sdy.MIN_P,
                      "window_days": WINDOW_DAYS,
                      "dog": {"version": sdy.DOG_VERSION, "salt": sdy.DOG_SALT, "price": list(sdy.DOG_PRICE),
-                             "floor": sdy.DOG_FLOOR, "sim_salts": len(sdy.DOG_SIM_SALTS)}},
+                             "floor": sdy.DOG_FLOOR, "sim_salts": len(sdy.DOG_SIM_SALTS)},
+                     "v2": {"version": sdy.V2_VERSION, "kinds": list(KINDS_V2), "markets": list(sdy.LEG_MARKETS),
+                            "method_types": list(sdy.METHOD_TYPES), "dog_salt": sdy.DOG_SALT_V2,
+                            "props_salt": sdy.PROPS_SALT, "props_price": list(sdy.PROPS_PRICE),
+                            "props_live_band": list(sdy.PROPS_LIVE_BAND),
+                            "mixed_pool_other": sdy.MIXED_POOL_OTHER,
+                            "sim_salts": len(sdy.DOG_SIM_SALTS_V2), "props_sim_salts": len(sdy.PROPS_SIM_SALTS),
+                            "method_error": method_error_rule(mp)}},
+            "kinds": {"v1": list(KINDS_V1), "v2": list(KINDS_V2)},
             "days": days,
             "tickets": [x["likeliest"] for x in days if not x["past"]],
             "record": records["likeliest"], "records": records,
-            "measured": measured, "caveats": caveats}
+            "measured": measured,
+            "measured_v2": {"kinds": v2m, "missing_reason": v2why, "activity": v2_activity(bt),
+                            "headline": v2blk.get("headline") if isinstance(v2blk.get("headline"), str) else None},
+            "caveats": caveats, "caveats_v2": caveats_v2, "caveats_v1": caveats_v1}
 
 
 def load_history(path=None):
@@ -1143,7 +2095,7 @@ def main():
     files = load_app_files()
     starts = starts_on_file(files)
     legs, dogs, why = live_legs(now, files), live_dogs(now, files), {}
-    show = update(history, now, legs, dogs, why, starts)
+    show = update(history, now, legs, dogs, why, starts, v2=live_v2(now, files))
     graded = grade_all(history, now)
     out = payload(history, show, now, graded, why, starts)
     text = json.dumps(out, indent=1, allow_nan=False)
@@ -1157,8 +2109,10 @@ def main():
     for x in out["days"]:
         for kind in KINDS:
             t = x[kind]
-            legs = ", ".join(f"{l['sport']} {l['pick']}{' (dog)' if l.get('dog') else ''} {l['decimal']:.2f}"
-                             for l in t["legs"])
+            if t is None:
+                continue
+            legs = ", ".join(f"{l['sport']} {l.get('label') or l['pick']}{' (dog)' if l.get('dog') else ''} "
+                             f"{l['decimal']:.2f}{' est.' if l.get('estimated') else ''}" for l in t["legs"])
             print(f"{t['day']} {kind}: {t['status']} {t['multiplier'] or ''} {legs or t['missing_reason']}")
 
 

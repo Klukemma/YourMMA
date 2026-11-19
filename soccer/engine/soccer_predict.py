@@ -388,6 +388,29 @@ def _num(x):
     return None if x is None or x != x else float(x)
 
 
+# The prices a match entry carries: football-data.co.uk's pre-match average
+# and best of each outcome, home/draw/away and over/under 2.5 goals
+# (soccer_data.SOURCES: avg_*, max_*).
+PRICE_KEYS = ("h", "d", "a", "o25", "u25")
+
+
+def prices_of(row):
+    """A match's posted prices: {"avg": {h, d, a, o25, u25}, "best": {...}},
+    each None where it is not posted - never NaN, so a reader cannot take a
+    missing price for a number. The over/under 2.5 prices are kept even where
+    the league withholds over 2.5 from its source (market_o25 is nulled,
+    soccer_leagues.withheld): the withholding is about a CHANCE the app was
+    not measured to ship, while a posted price is a fact, and the same-day
+    parlays (parlays/engine/sameday.py, TICKETS v2 OU25) read it to price an
+    over/under leg live from the same pre-match average the history prices
+    it at."""
+    def posted(col):
+        x = _num(row.get(col))
+        return x if x is not None and np.isfinite(x) else None
+    return {"avg": {k: posted(f"avg_{k}") for k in PRICE_KEYS},
+            "best": {k: posted(f"max_{k}") for k in PRICE_KEYS}}
+
+
 def match_entry(row, model_p, blend_p, model_only, p_o25, market_o25, matches, now, priced_at, card=None,
                 basis=None, price_kind=None):
     """One match still to play, as the app shows it. basis / price_kind:
@@ -422,8 +445,7 @@ def match_entry(row, model_p, blend_p, model_only, p_o25, market_o25, matches, n
         "pick": pick, "pick_prob": probs[pick] if pick else None,
         "model": three(model_p) if has else None,
         "market": {"p_h": float(mkt.p_h), "p_d": float(mkt.p_d), "p_a": float(mkt.p_a)} if has_mkt and not model_only else None,
-        "prices": {"avg": {"h": row.get("avg_h"), "d": row.get("avg_d"), "a": row.get("avg_a")},
-                   "best": {"h": row.get("max_h"), "d": row.get("max_d"), "a": row.get("max_a")}},
+        "prices": prices_of(row),
         "p_o25": p_o25, "model_o25": model_o25, "market_o25": market_o25,
         # When these prices were first fetched (soccer_data.first_seen), and
         # only where there are prices.

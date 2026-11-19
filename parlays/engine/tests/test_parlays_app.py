@@ -121,7 +121,7 @@ def _helpers(calls):
     body = js[js.index("const $ = (id)"):js.index("const BOOT = {")]
     stub = ("const DESK = { esc: (s) => String(s ?? '').replace(/[&<>\"']/g, (c) => "
             "({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' }[c])),"
-            " icon: () => '', cardFold: (a, b, c) => a + b + c };\n"
+            " icon: () => '', cardFold: (a, b, c) => a + b + c, sub: (a, b) => a + b };\n"
             "const document = { getElementById: () => null };\n")
     tail = ("\nconst setShape = (d) => { SHAPE = shapeOf(d); return SHAPE; };\n"
             "console.log(JSON.stringify(" + calls + "));")
@@ -208,3 +208,199 @@ def test_no_long_token_from_the_data_is_left_unbreakable():
     assert r[1] == "a &amp; b &lt;c&gt;"
     assert all(len(part) <= 16 for part in r[2].split("<wbr>"))
     assert r[3] == "short words only"
+
+
+
+# ---------------------------------------------------------------- tickets v2
+
+def test_the_cache_was_bumped_for_tickets_v2_and_the_page_reads_them():
+    """sameday.json gained the four v2 kinds a day: an installed app must
+    not keep a page that shows v1's two only."""
+    sw = (APP / "sw.js").read_text()
+    assert int(re.search(r'const CACHE = "yourparlays-v(\d+)"', sw).group(1)) >= 4
+    js = (APP / "app.js").read_text()
+    for key in ('"likeliest_v2"', '"underdog_v2"', '"mixed"', '"props"', "measured_v2", "v2_cannot_both_win",
+                "d.missing" if "d.missing" in js else "x.missing"):
+        assert key in js, key
+    assert "The market is hard to beat." in js and " (v1)" in js
+
+
+def _v2_day():
+    legs = {
+        "ou": {"sport": "Soccer", "event": "Hull City v Arsenal", "pick": "Over 2.5 goals", "label": "Over 2.5 goals",
+               "market": "Over/under", "bet": "OU25", "kickoff": "2026-11-14T15:00:00Z", "american": -125, "p": 0.55,
+               "reason": "Soccer: chance 55%, the market's (no-vig)", "estimated": False},
+        "sp": {"sport": "NFL", "event": "BUF @ NYG", "pick": "BUF -3.5", "label": "BUF -3.5", "market": "Spread",
+               "bet": "SPREAD", "kickoff": "2026-11-15T18:00:00Z", "american": -120, "p": 0.52, "reason": "r",
+               "estimated": False, "price_source": "schedule's posted price at the schedule's line"},
+        "to": {"sport": "NFL", "event": "BUF @ NYG", "pick": "Over 44.5", "label": "Over 44.5", "market": "Total",
+               "bet": "TOTAL", "kickoff": "2026-11-15T18:00:00Z", "american": -110, "p": 0.51, "reason": "r",
+               "estimated": False},
+        "ko": {"sport": "UFC", "event": "Ciryl Gane vs Josh Hokit", "pick": "Ciryl Gane by KO/TKO",
+               "label": "Ciryl Gane by KO/TKO", "market": "Method", "bet": "METHOD", "kickoff": "2026-11-15T00:00:00Z",
+               "american": 150, "p": 0.36, "reason": "UFC: chance 36%, the estimator's market chance 33%",
+               "estimated": True, "error_pct": 22.1, "moneyline_source": "best of books"},
+    }
+    t = lambda kind, ls, **kw: dict({"kind": kind, "status": "open", "legs": ls, "multiplier": 3.9, "p": 0.25,
+                                     "p_market": 0.24, "sports": sorted({l["sport"] for l in ls})}, **kw)
+    none = lambda kind, why: {"kind": kind, "status": "none", "legs": [], "missing_reason": why}
+    return {"day": "2026-11-14", "today": True, "past": False,
+            "likeliest": none("likeliest", "v1 none."), "underdog": none("underdog", "v1 dog none."),
+            "likeliest_v2": none("likeliest_v2", "No combination."),
+            "underdog_v2": none("underdog_v2", "No underdog ticket."),
+            "mixed": t("mixed", [legs["ou"], legs["sp"], legs["to"]]),
+            "props": t("props", [legs["ko"], legs["ou"]], estimated=True, only_one=True),
+            "missing": {"SPREAD": {"no book priced both sides at the line": 3}, "METHOD": {"not estimated": 6}},
+            "v2_cannot_both_win": False, "cannot_both_win": False}
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+def test_every_v2_leg_is_labelled_by_its_market_and_an_estimate_says_so():
+    day = _v2_day()
+    err = {"fit": "2016-2020", "test": "2021-2024", "by_year": {"2021": 0.196}, "frozen": "2016-2024",
+           "last_real": "2024-12-07"}
+    data = {"days": [day], "rule": {"band": [3.0, 5.0], "max_legs": 6, "min_p": 0.5,
+                                   "v2": {"props_live_band": [3.6, 4.2], "props_price": [1.5, 4.0],
+                                          "method_error": err}},
+            "measured_v2": {"kinds": {}, "missing_reason": {"props": "Not measured yet: the v2 tickets' backtest has not been run."}}}
+    r = _helpers(f"(() => {{ const d = {json.dumps(data)}; DATA = d; setShape(d); const x = d.days[0]; return {{"
+                 "card: dayCard(x, true), take: takeOf(x), props: ticketPanel(x.props, 'props', true),"
+                 "mixed: ticketPanel(x.mixed, 'mixed', true),"
+                 "how: KINDS_V2.map(howBuilt), off: notOffered(x.missing), lines: v2Lines('props'),"
+                 "why: S().v2Why, live: liveLine({settled: 3, won: 1, units: -0.5, roi: -0.1667, implied_roi: -0.2, estimated: 3}),"
+                 "none: liveLine({settled: 0, pending: 2}), band: propsRealBand(),"
+                 "bare: (() => { d.rule.v2.method_error = null; return estNote(x.props.legs[0]); })() }; })()")
+    card = r["card"]
+    for label in ("Over 2.5 goals", "BUF -3.5", "Over 44.5", "Ciryl Gane by KO/TKO"):
+        assert label in card
+    for market in ("Over/under", "Spread", "Total", "Method"):
+        assert f'<span class="tag flat">{market}</span>' in card
+    # an estimated price: "est." beside it, its measured error, the multiplier marked
+    assert '<span class="mini">est.</span> +150' in r["props"] and "Pays, est." in r["props"]
+    # the error is the estimator's test table, said so with its years, never as the live fit's
+    assert ("measured to miss real props of its kind by a median 22% on 2021-2024 props (a 2016-2020 fit; the "
+            "live fit, 2016-2024, has no real prop after 2024-12-07 to be checked on)") in r["props"]
+    assert "measured to miss real props of its kind by a median 22% (which fit, on which props: not in this data file)" == r["bare"].replace("estimated price, ", "")
+    assert "Its multiplier, chance and market chance are estimates" in r["props"] and "Only one prop fit today." in r["props"]
+    # a prop's chance and market chance are the estimator's: marked est. as its pay is
+    assert ">Chance, est.<" in r["props"] and ">Market, est.<" in r["props"] and "no book prices it" in r["props"]
+    assert "Pays, est." not in ticket_of(card, "Mixed ticket") and ">Market<" in r["mixed"]
+    # whose price: a prop's moneyline pair, a spread at the schedule's pair
+    assert "its moneyline: best of books" in r["props"]
+    assert "priced at the schedule&#39;s posted price at the schedule&#39;s line" in r["mixed"]
+    assert r["band"] == "how often its real price paid 3-5x in the backtest: not measured yet"
+    assert r["take"] == "Likeliest none · Underdog none · Mixed x3.90 · Props x3.90 est."
+    # one plain line per kind, numbers read from the rule
+    assert r["how"][0].startswith("The likeliest combination of the day's winner picks") and "3-5x" in r["how"][0]
+    assert "3.6-4.2x at the estimated prices" in r["how"][3] and "over/under, spread, total or method" in r["how"][2]
+    # the legs not offered, counted, each with its reason; v1 folded and labelled
+    assert r["off"]["head"] == "Not offered this day: Spread on 3 games; Method props on 6 props."
+    assert "Spread, 3 games: no book priced both sides at the line." in r["off"]["body"]
+    assert "v1 tickets, the earlier rules" in card and "Likeliest ticket (v1)" in card
+    # not measured: no number, the file's reason
+    assert r["lines"] is None and r["why"]["props"].startswith("Not measured yet")
+    assert r["why"]["mixed"] == "Not measured yet: the backtest of these tickets has not been run, so no record is shown."
+    assert "by the prices −20%" in r["live"] and "estimated prop prices" in r["live"]
+    assert r["none"] == "Live: no ticket settled yet (2 waiting on results)."
+
+
+def ticket_of(card, name):
+    """The panel of one ticket in a day card's html."""
+    i = card.index(name)
+    j = card.find('<div class="panel">', i)
+    return card[i:j if j > 0 else None]
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
+def test_a_measured_v2_kind_shows_its_record_beside_the_prices_and_a_v1_file_still_reads():
+    rec = {"tickets": 2400, "wins": 700, "hit_rate": 0.2917, "roi": -0.1, "roi_low": -0.15, "roi_high": -0.05,
+           "implied_roi": -0.15, "days": 3660, "days_with_ticket": 2400}
+    m = {"likeliest_v2": {"headline": {"all": rec}, "periods": {"all": ["2016-08-01", "2026-08-08"]},
+                          "without_extra": {"all": dict(rec, tickets=2000)}},
+         "props": {"headline": {"all": dict(rec, real_in_band=0.7094), "last_3_years": dict(rec, tickets=48)},
+                   "salts": {"all": {"roi": -0.2, "roi_low": -0.3, "roi_high": -0.1, "implied_roi": -0.21,
+                                     "salts": 1000, "spread": {"roi": {"p5": -0.2178, "p50": -0.084, "p95": 0.0612}}}},
+                   "as_priced": {"all": dict(rec, tickets=1100)},
+                   "as_priced_salts": {"all": {"roi": -0.109, "implied_roi": -0.234, "salts": 1000}},
+                   "as_priced_same_days": {"all": dict(rec, tickets=1050)},
+                   "real_in_band_by_years": {"band_chosen_on": ["2021-01-01", "2024-12-31"],
+                                             "in_choice_years": {"tickets": 140, "real_in_band": 0.75},
+                                             "before_choice_years": {"tickets": 180, "real_in_band": 0.68}},
+                   "periods": {"all": ["2016-08-01", "2024-12-07"], "last_3_years": ["2023-08-09", "2024-12-07"]}},
+         "underdog_v2": {"headline": {"all": dict(rec, tickets=2969)}, "salts": {"all": {"roi": -0.074, "salts": 1000}},
+                         "without_extra": {"all": dict(rec, tickets=2337)},
+                         "without_extra_salts": {"all": {"roi": -0.11, "salts": 1000}},
+                         "periods": {"all": ["2016-08-01", "2026-08-08"]}}}
+    data = {"days": [_v2_day()], "rule": {"band": [3.0, 5.0]},
+            "measured_v2": {"kinds": m, "missing_reason": {"likeliest_v2": None, "props": None},
+                            "activity": {"v2": {"all": {"tickets_per_day": 1.9, "share_of_days": 0.74}},
+                                         "v1": {"all": {"tickets_per_day": 0.74}}}}}
+    v1file = {"days": [{"day": "2026-11-14", "today": True, "likeliest": {"status": "none", "legs": [],
+                                                                         "missing_reason": "x"},
+                        "underdog": {"status": "none", "legs": [], "missing_reason": "y"}}]}
+    r = _helpers(f"(() => {{ const d = {json.dumps(data)}; DATA = d; setShape(d); const out = {{"
+                 "lk: v2Lines('likeliest_v2'), props: v2Lines('props'), act: activitySummary(), "
+                 "dog: v2Lines('underdog_v2'), brief: v2Lines('props', true), band: propsRealBand(), "
+                 "years: propsBandYears(), "
+                 "sentence: pricesSentenceV2() };"
+                 f"const o = {json.dumps(v1file)}; DATA = o; setShape(o); out.old = dayCard(o.days[0], true);"
+                 "out.oldTake = takeOf(o.days[0]); out.oldWhy = S().v2Why; return out; })()")
+    assert r["lk"][0].startswith("All, 2016-2026: 2,400 tickets, 700 won (29%), −10% a ticket (−15% to −5%)")
+    assert "by the prices −15%" in r["lk"][0] and r["lk"][1] == "A ticket on 2,400 of 3,660 days (66%)."
+    assert any(x.startswith("Without the extra leagues") and "2,000 tickets" in x for x in r["lk"])
+    assert "as live (chosen at the estimate, paid at the real props)" in r["props"][0]
+    assert any("over the 1,000 draws, the mean: −20% a ticket" in x.lower() for x in r["props"])
+    assert any("as priced on every day with props (chosen and paid at the real props), at the live draw" in x
+               and "1,100 tickets" in x for x in r["props"])
+    # the row to compare the headline with: as priced on the same days, right after it
+    same = next(i for i, x in enumerate(r["props"]) if "as priced on the same days" in x)
+    assert "1,050 tickets" in r["props"][same] and same < next(i for i, x in enumerate(r["props"]) if "1,100 tickets" in x)
+    assert r["years"] == ("The band was chosen on the estimator's 2021-2024 test cards, so the share is partly "
+                          "in-sample there: 75% of 140 tickets in 2021-2024, 68% of 180 before 2021.")
+    # every lottery reading beside its draws' mean - as priced and without the extra leagues too
+    assert any("over the 1,000 draws, the mean: −11% a ticket" in x.lower() for x in r["props"])
+    assert any(x.startswith("Without the extra leagues") and "at the live draw" in x and "2,337 tickets" in x
+               for x in r["dog"])
+    assert r["dog"][r["dog"].index(next(x for x in r["dog"] if x.startswith("Without the extra"))) + 1].startswith(
+        "Over the 1,000 draws, the mean: −11% a ticket")
+    assert ("5th to 95th draw - how much the draw alone moves it, same games: −22% to +6%, middle −8%."
+            in r["props"])
+    # a last period that is not three years long is named by its own months
+    assert r["brief"][0].startswith("Last period, 2023-08 to 2024-12 (its history ends there), as live, at the live draw: 48")
+    assert not any("Last 3 years" in x for x in r["props"])
+    assert r["band"] == "at the real prices, 71% of the backtest's props tickets paid 3-5x"
+    assert r["act"] == ("Measured, every day of the backtest: 1.90 tickets a day, a ticket on 74% of days (the props "
+                        "ticket counted to 2024-12-07 only, where its history ends); v1's two kinds 0.74 a day.")
+    assert r["sentence"] == ("By the prices, over the backtest's tickets: the likeliest ticket loses about 15%; "
+                             "the underdog ticket loses about 15%; the props ticket loses about 15% of the stake on average.")
+    # a file from before v2: its two tickets as before, unlabelled, and v2 says why it is missing
+    assert "(v1)" not in r["old"] and "v1 tickets" not in r["old"] and r["oldTake"] == "Likeliest none · Underdog none"
+    assert r["oldWhy"]["mixed"] == ("This data file was written before tickets v2; the next run of the page's builder "
+                                    "adds them.")
+
+
+def test_the_page_types_no_v2_return_and_no_verdict():
+    """No price-implied figure or result word for v2 is typed: each is read
+    from the data. The expected returns in sameday.py's EXPECTED stay there."""
+    js = (APP / "app.js").read_text()
+    for typed in ("-15%", "−15%", "-16%", "-20%", "70-80%", "about 22%", "beats the market", "profitable"):
+        assert typed not in js, typed
+
+
+def test_the_page_marks_every_estimate_and_leads_with_v2s_caveats():
+    """Review findings on v2's page, held: an estimated multiplier is marked
+    in the Record list too; v2's caveats lead (the market-is-hard-to-beat
+    one as the fold's summary) and v1's sit under v1's label; the Splits tab
+    says the market is hard to beat; a v1-only file says why v2 is missing;
+    no result verdict ("most often", "expected to return less") is typed."""
+    js = (APP / "app.js").read_text()
+    assert '${t.estimated ? ` <span class="mini">est.</span>` : ""}' in js           # Record list
+    assert "d.caveats_v2" in js and "d.caveats_v1" in js and 'DESK.sub("v1, the earlier rules: their caveats"' in js
+    splits = js[js.index("async splits()"):js.index("method() {")]
+    assert "<b>The market is hard to beat.</b>" in splits and 'at: "At the live draw: "' in splits
+    assert js.count("WHY.noV2") >= 3                       # defined use, Today and Method
+    assert "most often" not in js
+    method = js[js.index("method() {"):]
+    assert "pricesSentenceV2()" in method and "v1, the earlier rules: " in method
+    builder = (ROOT / "parlays" / "engine" / "build_sameday.py").read_text()
+    assert "expected to return" not in builder

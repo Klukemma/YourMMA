@@ -509,9 +509,11 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
                     "pick", "pick_prob", "home_prob", "model_prob", "market_prob", "market_source",
                     "tier", "model_spread", "market_spread", "spread_pick", "model_total",
                     "market_total", "total_pick")})
-                # The price the pick was made against, not today's.
+                # The price the pick was made against, not today's - a market
+                # logged before the spread and total prices were kept shows
+                # them as missing, and why (nfl_odds.with_price_fields).
                 if logged.get("market"):
-                    game["market"] = logged["market"]
+                    game["market"] = no.with_price_fields(logged["market"])
                 for side in ("home_td", "away_td", "home_td_all", "away_td_all", "home_leaders",
                              "away_leaders"):
                     if logged.get(side):
