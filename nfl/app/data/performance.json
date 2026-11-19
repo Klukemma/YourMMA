@@ -162,11 +162,11 @@
     "season": 2025
    },
    {
-    "accuracy": 0.686131,
-    "games": 137,
-    "log_loss": 0.618142,
-    "market_accuracy": 0.678832,
-    "market_log_loss": 0.622718,
+    "accuracy": 0.684564,
+    "games": 149,
+    "log_loss": 0.611769,
+    "market_accuracy": 0.684564,
+    "market_log_loss": 0.615257,
     "season": 2026
    }
   ],
@@ -508,8 +508,8 @@
   "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
   "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
  },
- "data_through": "2026-11-15",
- "generated": "2026-11-15T20:38:30Z",
+ "data_through": "2026-11-16",
+ "generated": "2026-11-19T14:04:25Z",
  "props": {
   "2014-2019": {
    "pass": {
@@ -1691,18 +1691,18 @@
    },
    {
     "rest": {
-     "n": 20,
-     "no_td": 19,
-     "rate": 0.95
+     "n": 270,
+     "no_td": 236,
+     "rate": 0.874074
     },
     "rest_from": [
      "list"
     ],
     "season": 2026,
     "top3": {
-     "n": 6,
-     "rate": 0.666667,
-     "scored": 4
+     "n": 80,
+     "rate": 0.35,
+     "scored": 28
     },
     "week": 10
    }
@@ -1714,18 +1714,50 @@
   ],
   "overall": {
    "rest": {
-    "n": 857,
-    "no_td": 768,
-    "rate": 0.896149
+    "n": 1107,
+    "no_td": 985,
+    "rate": 0.889792
    },
    "top3": {
-    "n": 268,
-    "rate": 0.395522,
-    "scored": 106
+    "n": 342,
+    "rate": 0.380117,
+    "scored": 130
    }
   },
   "pending": 0,
   "players": [
+   {
+    "gsis_id": "00-0037744",
+    "name": "Trey McBride",
+    "position": "TE",
+    "rest": {
+     "n": 0,
+     "no_td": 0,
+     "rate": null
+    },
+    "team": "ARI",
+    "top3": {
+     "n": 4,
+     "rate": 0.5,
+     "scored": 2
+    }
+   },
+   {
+    "gsis_id": "00-0037263",
+    "name": "Tyler Allgeier",
+    "position": "RB",
+    "rest": {
+     "n": 1,
+     "no_td": 0,
+     "rate": 0.0
+    },
+    "team": "ARI",
+    "top3": {
+     "n": 3,
+     "rate": 0.0,
+     "scored": 0
+    }
+   },
    {
     "gsis_id": "00-0038559",
     "name": "Michael Wilson",
@@ -1743,33 +1775,17 @@
     }
    },
    {
-    "gsis_id": "00-0037744",
-    "name": "Trey McBride",
-    "position": "TE",
-    "rest": {
-     "n": 0,
-     "no_td": 0,
-     "rate": null
-    },
-    "team": "ARI",
-    "top3": {
-     "n": 3,
-     "rate": 0.666667,
-     "scored": 2
-    }
-   },
-   {
-    "gsis_id": "00-0037263",
-    "name": "Tyler Allgeier",
+    "gsis_id": "00-0037157",
+    "name": "Zonovan Knight",
     "position": "RB",
     "rest": {
-     "n": 1,
-     "no_td": 0,
-     "rate": 0.0
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
     },
     "team": "ARI",
     "top3": {
-     "n": 2,
+     "n": 1,
      "rate": 0.0,
      "scored": 0
     }
@@ -1795,8 +1811,8 @@
     "name": "Elijah Higgins",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "ARI",
@@ -1811,8 +1827,8 @@
     "name": "Reggie Virgil",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "ARI",
@@ -1827,8 +1843,8 @@
     "name": "Simi Fehoko",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "ARI",
@@ -1843,8 +1859,8 @@
     "name": "Teagan Quitoriano",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "ARI",
@@ -1859,8 +1875,8 @@
     "name": "Devin Duvernay",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "ARI",
@@ -1887,9 +1903,9 @@
     }
    },
    {
-    "gsis_id": "00-0033119",
-    "name": "Jacoby Brissett",
-    "position": "QB",
+    "gsis_id": "00-0041368",
+    "name": "Harrison Wallace",
+    "position": "WR",
     "rest": {
      "n": 2,
      "no_td": 2,
@@ -1919,12 +1935,12 @@
     }
    },
    {
-    "gsis_id": "00-0037157",
-    "name": "Zonovan Knight",
-    "position": "RB",
+    "gsis_id": "00-0041561",
+    "name": "Carson Beck",
+    "position": "QB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 1,
+     "no_td": 1,
      "rate": 1.0
     },
     "team": "ARI",
@@ -1951,9 +1967,9 @@
     }
    },
    {
-    "gsis_id": "00-0041368",
-    "name": "Harrison Wallace III",
-    "position": "WR",
+    "gsis_id": "00-0037004",
+    "name": "Hunter Long",
+    "position": "TE",
     "rest": {
      "n": 1,
      "no_td": 1,
@@ -1983,6 +1999,22 @@
     }
    },
    {
+    "gsis_id": "00-0033891",
+    "name": "Zay Jones",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "ARI",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
     "gsis_id": "00-0038542",
     "name": "Bijan Robinson",
     "position": "RB",
@@ -1993,9 +2025,9 @@
     },
     "team": "ATL",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
-     "scored": 1
+     "n": 4,
+     "rate": 0.5,
+     "scored": 2
     }
    },
    {
@@ -2009,8 +2041,8 @@
     },
     "team": "ATL",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
     }
    },
@@ -2025,8 +2057,8 @@
     },
     "team": "ATL",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
     }
    },
@@ -2035,8 +2067,8 @@
     "name": "Austin Hooper",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "ATL",
@@ -2051,9 +2083,9 @@
     "name": "Charlie Woerner",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "ATL",
     "top3": {
@@ -2067,8 +2099,8 @@
     "name": "Chris Blair",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "ATL",
@@ -2083,8 +2115,8 @@
     "name": "Jahan Dotson",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "ATL",
@@ -2099,8 +2131,8 @@
     "name": "Michael Penix",
     "position": "QB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "ATL",
@@ -2115,9 +2147,9 @@
     "name": "Nick Muse",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "ATL",
     "top3": {
@@ -2131,8 +2163,8 @@
     "name": "Khalil Herbert",
     "position": "RB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "ATL",
@@ -2147,8 +2179,8 @@
     "name": "Olamide Zaccheaus",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "ATL",
@@ -2175,6 +2207,22 @@
     }
    },
    {
+    "gsis_id": "00-0040432",
+    "name": "Beaux Collins",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "ATL",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
     "gsis_id": "00-0032764",
     "name": "Derrick Henry",
     "position": "RB",
@@ -2185,9 +2233,9 @@
     },
     "team": "BAL",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
-     "scored": 1
+     "n": 4,
+     "rate": 0.5,
+     "scored": 2
     }
    },
    {
@@ -2201,25 +2249,9 @@
     },
     "team": "BAL",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
-    }
-   },
-   {
-    "gsis_id": "00-0034753",
-    "name": "Mark Andrews",
-    "position": "TE",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "BAL",
-    "top3": {
-     "n": 2,
-     "rate": 0.0,
-     "scored": 0
     }
    },
    {
@@ -2233,9 +2265,25 @@
     },
     "team": "BAL",
     "top3": {
-     "n": 1,
-     "rate": 1.0,
+     "n": 2,
+     "rate": 0.5,
      "scored": 1
+    }
+   },
+   {
+    "gsis_id": "00-0034753",
+    "name": "Mark Andrews",
+    "position": "TE",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "BAL",
+    "top3": {
+     "n": 2,
+     "rate": 0.0,
+     "scored": 0
     }
    },
    {
@@ -2243,8 +2291,8 @@
     "name": "Devontez Walker",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "BAL",
@@ -2259,8 +2307,8 @@
     "name": "Ja'Kobi Lane",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "BAL",
@@ -2275,8 +2323,8 @@
     "name": "Josh Cuevas",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "BAL",
@@ -2291,8 +2339,8 @@
     "name": "LaJohntay Wester",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "BAL",
@@ -2306,6 +2354,64 @@
     "gsis_id": "00-0040879",
     "name": "Matthew Hibner",
     "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "BAL",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0036550",
+    "name": "Rashod Bateman",
+    "position": "WR",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "BAL",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "by_team": {
+     "ARI": {
+      "rest": {
+       "n": 2,
+       "no_td": 2,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "BAL": {
+      "rest": {
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     }
+    },
+    "gsis_id": "00-0033119",
+    "name": "Jacoby Brissett",
+    "position": "QB",
     "rest": {
      "n": 3,
      "no_td": 3,
@@ -2338,22 +2444,6 @@
     "gsis_id": "00-0039796",
     "name": "Rasheen Ali",
     "position": "RB",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "BAL",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0036550",
-    "name": "Rashod Bateman",
-    "position": "WR",
     "rest": {
      "n": 3,
      "no_td": 3,
@@ -2425,9 +2515,9 @@
     },
     "team": "BUF",
     "top3": {
-     "n": 2,
+     "n": 3,
      "rate": 1.0,
-     "scored": 2
+     "scored": 3
     }
    },
    {
@@ -2441,9 +2531,9 @@
     },
     "team": "BUF",
     "top3": {
-     "n": 2,
-     "rate": 0.5,
-     "scored": 1
+     "n": 3,
+     "rate": 0.666667,
+     "scored": 2
     }
    },
    {
@@ -2457,9 +2547,9 @@
     },
     "team": "BUF",
     "top3": {
-     "n": 1,
-     "rate": 0.0,
-     "scored": 0
+     "n": 2,
+     "rate": 0.5,
+     "scored": 1
     }
    },
    {
@@ -2467,8 +2557,8 @@
     "name": "Keon Coleman",
     "position": "WR",
     "rest": {
-     "n": 1,
-     "no_td": 1,
+     "n": 2,
+     "no_td": 2,
      "rate": 1.0
     },
     "team": "BUF",
@@ -2483,9 +2573,9 @@
     "name": "Dalton Kincaid",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
     },
     "team": "BUF",
     "top3": {
@@ -2499,8 +2589,8 @@
     "name": "Dawson Knox",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "BUF",
@@ -2515,8 +2605,8 @@
     "name": "Greg Dortch",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "BUF",
@@ -2531,8 +2621,8 @@
     "name": "Jackson Hawes",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "BUF",
@@ -2547,9 +2637,9 @@
     "name": "Keleki Latu",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
     },
     "team": "BUF",
     "top3": {
@@ -2563,8 +2653,8 @@
     "name": "Khalil Shakir",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "BUF",
@@ -2579,8 +2669,8 @@
     "name": "Kyle Allen",
     "position": "QB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "BUF",
@@ -2595,8 +2685,8 @@
     "name": "Ray Davis",
     "position": "RB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "BUF",
@@ -2611,8 +2701,8 @@
     "name": "Ty Johnson",
     "position": "RB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "BUF",
@@ -2639,6 +2729,22 @@
     }
    },
    {
+    "gsis_id": "00-0041443",
+    "name": "Skyler Bell",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "BUF",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
     "gsis_id": "00-0036555",
     "name": "Chuba Hubbard",
     "position": "RB",
@@ -2649,9 +2755,9 @@
     },
     "team": "CAR",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
-     "scored": 1
+     "n": 4,
+     "rate": 0.5,
+     "scored": 2
     }
    },
    {
@@ -2665,8 +2771,8 @@
     },
     "team": "CAR",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
     }
    },
@@ -2681,8 +2787,8 @@
     },
     "team": "CAR",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
     }
    },
@@ -2691,8 +2797,8 @@
     "name": "Bryce Young",
     "position": "QB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "CAR",
@@ -2707,8 +2813,8 @@
     "name": "Brycen Tremayne",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "CAR",
@@ -2723,9 +2829,9 @@
     "name": "Darren Waller",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 1,
-     "rate": 0.333333
+     "n": 4,
+     "no_td": 2,
+     "rate": 0.5
     },
     "team": "CAR",
     "top3": {
@@ -2739,8 +2845,8 @@
     "name": "John Metchie",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "CAR",
@@ -2755,8 +2861,8 @@
     "name": "Mitchell Evans",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "CAR",
@@ -2771,9 +2877,9 @@
     "name": "Tommy Tremble",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "CAR",
     "top3": {
@@ -2787,8 +2893,8 @@
     "name": "Trevor Etienne",
     "position": "RB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "CAR",
@@ -2803,25 +2909,9 @@
     "name": "Anthony Tyus III",
     "position": "RB",
     "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
-    },
-    "team": "CAR",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0033589",
-    "name": "David Moore",
-    "position": "WR",
-    "rest": {
-     "n": 2,
+     "n": 3,
      "no_td": 2,
-     "rate": 1.0
+     "rate": 0.666667
     },
     "team": "CAR",
     "top3": {
@@ -2834,6 +2924,22 @@
     "gsis_id": "00-0036825",
     "name": "Feleipe Franks",
     "position": "TE",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "CAR",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0033589",
+    "name": "David Moore",
+    "position": "WR",
     "rest": {
      "n": 2,
      "no_td": 2,
@@ -3081,9 +3187,9 @@
     },
     "team": "CIN",
     "top3": {
-     "n": 3,
-     "rate": 0.0,
-     "scored": 0
+     "n": 4,
+     "rate": 0.25,
+     "scored": 1
     }
    },
    {
@@ -3097,8 +3203,8 @@
     },
     "team": "CIN",
     "top3": {
-     "n": 3,
-     "rate": 1.0,
+     "n": 4,
+     "rate": 0.75,
      "scored": 3
     }
    },
@@ -3113,8 +3219,8 @@
     },
     "team": "CIN",
     "top3": {
-     "n": 3,
-     "rate": 1.0,
+     "n": 4,
+     "rate": 0.75,
      "scored": 3
     }
    },
@@ -3123,8 +3229,8 @@
     "name": "Colbie Young",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "CIN",
@@ -3139,9 +3245,9 @@
     "name": "Dohnte Meyers",
     "position": "WR",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 3,
-     "rate": 1.0
+     "rate": 0.75
     },
     "team": "CIN",
     "top3": {
@@ -3155,9 +3261,9 @@
     "name": "Drew Sample",
     "position": "TE",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 2,
-     "rate": 0.666667
+     "rate": 0.5
     },
     "team": "CIN",
     "top3": {
@@ -3171,9 +3277,9 @@
     "name": "Jack Endries",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "CIN",
     "top3": {
@@ -3187,9 +3293,9 @@
     "name": "Joe Burrow",
     "position": "QB",
     "rest": {
-     "n": 3,
-     "no_td": 1,
-     "rate": 0.333333
+     "n": 4,
+     "no_td": 2,
+     "rate": 0.5
     },
     "team": "CIN",
     "top3": {
@@ -3203,9 +3309,9 @@
     "name": "Mike Gesicki",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 1,
-     "rate": 0.333333
+     "n": 4,
+     "no_td": 2,
+     "rate": 0.5
     },
     "team": "CIN",
     "top3": {
@@ -3219,9 +3325,9 @@
     "name": "Samaje Perine",
     "position": "RB",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 2,
-     "rate": 0.666667
+     "rate": 0.5
     },
     "team": "CIN",
     "top3": {
@@ -3235,8 +3341,8 @@
     "name": "Cam Grandy",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "CIN",
@@ -3251,8 +3357,8 @@
     "name": "Mitchell Tinsley",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "CIN",
@@ -3266,6 +3372,22 @@
     "gsis_id": "00-0040208",
     "name": "Tahj Brooks",
     "position": "RB",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "CIN",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0026158",
+    "name": "Joe Flacco",
+    "position": "QB",
     "rest": {
      "n": 2,
      "no_td": 2,
@@ -3295,22 +3417,6 @@
     }
    },
    {
-    "gsis_id": "00-0026158",
-    "name": "Joe Flacco",
-    "position": "QB",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "CIN",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
     "gsis_id": "00-0041037",
     "name": "Denzel Boston",
     "position": "WR",
@@ -3321,7 +3427,7 @@
     },
     "team": "CLE",
     "top3": {
-     "n": 3,
+     "n": 4,
      "rate": 0.0,
      "scored": 0
     }
@@ -3337,8 +3443,8 @@
     },
     "team": "CLE",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
     }
    },
@@ -3353,9 +3459,9 @@
     },
     "team": "CLE",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
-     "scored": 1
+     "n": 4,
+     "rate": 0.5,
+     "scored": 2
     }
    },
    {
@@ -3363,8 +3469,8 @@
     "name": "Blake Whiteheart",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "CLE",
@@ -3379,8 +3485,8 @@
     "name": "Dylan Sampson",
     "position": "RB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "CLE",
@@ -3395,8 +3501,8 @@
     "name": "Isaiah Bond",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "CLE",
@@ -3411,8 +3517,8 @@
     "name": "Jerry Jeudy",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "CLE",
@@ -3427,9 +3533,9 @@
     "name": "KC Concepcion",
     "position": "WR",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 2,
-     "rate": 0.666667
+     "rate": 0.5
     },
     "team": "CLE",
     "top3": {
@@ -3443,9 +3549,41 @@
     "name": "Malachi Corley",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
+    },
+    "team": "CLE",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0036630",
+    "name": "Tylan Wallace",
+    "position": "WR",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "CLE",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0033537",
+    "name": "Deshaun Watson",
+    "position": "QB",
+    "rest": {
+     "n": 3,
+     "no_td": 1,
+     "rate": 0.333333
     },
     "team": "CLE",
     "top3": {
@@ -3471,29 +3609,13 @@
     }
    },
    {
-    "gsis_id": "00-0036630",
-    "name": "Tylan Wallace",
-    "position": "WR",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "CLE",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0033537",
-    "name": "Deshaun Watson",
-    "position": "QB",
+    "gsis_id": "00-0038794",
+    "name": "Jaleel McLaughlin",
+    "position": "RB",
     "rest": {
      "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "no_td": 2,
+     "rate": 1.0
     },
     "team": "CLE",
     "top3": {
@@ -3519,22 +3641,6 @@
     }
    },
    {
-    "gsis_id": "00-0038794",
-    "name": "Jaleel McLaughlin",
-    "position": "RB",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "CLE",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
     "gsis_id": "00-0036358",
     "name": "CeeDee Lamb",
     "position": "WR",
@@ -3545,9 +3651,9 @@
     },
     "team": "DAL",
     "top3": {
-     "n": 4,
-     "rate": 0.5,
-     "scored": 2
+     "n": 5,
+     "rate": 0.6,
+     "scored": 3
     }
    },
    {
@@ -3561,8 +3667,8 @@
     },
     "team": "DAL",
     "top3": {
-     "n": 4,
-     "rate": 0.75,
+     "n": 5,
+     "rate": 0.6,
      "scored": 3
     }
    },
@@ -3577,9 +3683,9 @@
     },
     "team": "DAL",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
-     "scored": 1
+     "n": 4,
+     "rate": 0.5,
+     "scored": 2
     }
    },
    {
@@ -3587,8 +3693,8 @@
     "name": "Brevyn Spann-Ford",
     "position": "TE",
     "rest": {
-     "n": 4,
-     "no_td": 4,
+     "n": 5,
+     "no_td": 5,
      "rate": 1.0
     },
     "team": "DAL",
@@ -3603,9 +3709,9 @@
     "name": "Dak Prescott",
     "position": "QB",
     "rest": {
-     "n": 4,
-     "no_td": 3,
-     "rate": 0.75
+     "n": 5,
+     "no_td": 4,
+     "rate": 0.8
     },
     "team": "DAL",
     "top3": {
@@ -3619,9 +3725,25 @@
     "name": "Hunter Luepke",
     "position": "FB",
     "rest": {
-     "n": 4,
-     "no_td": 4,
+     "n": 5,
+     "no_td": 5,
      "rate": 1.0
+    },
+    "team": "DAL",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0039410",
+    "name": "Ryan Flournoy",
+    "position": "WR",
+    "rest": {
+     "n": 5,
+     "no_td": 2,
+     "rate": 0.4
     },
     "team": "DAL",
     "top3": {
@@ -3663,22 +3785,6 @@
     }
    },
    {
-    "gsis_id": "00-0039410",
-    "name": "Ryan Flournoy",
-    "position": "WR",
-    "rest": {
-     "n": 4,
-     "no_td": 2,
-     "rate": 0.5
-    },
-    "team": "DAL",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
     "gsis_id": "00-0037120",
     "name": "Tyler Goodson",
     "position": "RB",
@@ -3699,8 +3805,8 @@
     "name": "Camden Brown",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "DAL",
@@ -3715,8 +3821,8 @@
     "name": "Luke Schoonmaker",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "DAL",
@@ -3730,6 +3836,38 @@
     "gsis_id": "00-0037282",
     "name": "James Mitchell",
     "position": "TE",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "DAL",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0038389",
+    "name": "Israel Abanikanda",
+    "position": "RB",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "DAL",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0037801",
+    "name": "KaVontae Turpin",
+    "position": "WR",
     "rest": {
      "n": 1,
      "no_td": 1,
@@ -3977,9 +4115,9 @@
     },
     "team": "DET",
     "top3": {
-     "n": 3,
-     "rate": 0.0,
-     "scored": 0
+     "n": 4,
+     "rate": 0.25,
+     "scored": 1
     }
    },
    {
@@ -3993,9 +4131,9 @@
     },
     "team": "DET",
     "top3": {
-     "n": 3,
-     "rate": 0.666667,
-     "scored": 2
+     "n": 4,
+     "rate": 0.75,
+     "scored": 3
     }
    },
    {
@@ -4009,8 +4147,8 @@
     },
     "team": "DET",
     "top3": {
-     "n": 2,
-     "rate": 0.5,
+     "n": 3,
+     "rate": 0.333333,
      "scored": 1
     }
    },
@@ -4019,8 +4157,8 @@
     "name": "Sam LaPorta",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "DET",
@@ -4035,8 +4173,8 @@
     "name": "Brock Wright",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "DET",
@@ -4051,9 +4189,9 @@
     "name": "Isaac TeSlaa",
     "position": "WR",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 3,
-     "rate": 1.0
+     "rate": 0.75
     },
     "team": "DET",
     "top3": {
@@ -4067,8 +4205,8 @@
     "name": "Jared Goff",
     "position": "QB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "DET",
@@ -4083,8 +4221,8 @@
     "name": "Sione Vaki",
     "position": "RB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "DET",
@@ -4099,8 +4237,8 @@
     "name": "Tay Martin",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "DET",
@@ -4115,8 +4253,8 @@
     "name": "Tyler Conklin",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "DET",
@@ -4130,6 +4268,38 @@
     "gsis_id": "00-0031763",
     "name": "DeAndre Carter",
     "position": "WR",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "DET",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0038896",
+    "name": "Jacob Saylors",
+    "position": "RB",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "DET",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0033949",
+    "name": "Joshua Dobbs",
+    "position": "QB",
     "rest": {
      "n": 1,
      "no_td": 1,
@@ -4153,8 +4323,8 @@
     },
     "team": "GB",
     "top3": {
-     "n": 4,
-     "rate": 0.25,
+     "n": 5,
+     "rate": 0.2,
      "scored": 1
     }
    },
@@ -4169,8 +4339,8 @@
     },
     "team": "GB",
     "top3": {
-     "n": 4,
-     "rate": 0.75,
+     "n": 5,
+     "rate": 0.6,
      "scored": 3
     }
    },
@@ -4191,12 +4361,28 @@
     }
    },
    {
+    "gsis_id": "00-0038996",
+    "name": "Tucker Kraft",
+    "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 2,
+     "rate": 0.5
+    },
+    "team": "GB",
+    "top3": {
+     "n": 1,
+     "rate": 0.0,
+     "scored": 0
+    }
+   },
+   {
     "gsis_id": "00-0039811",
     "name": "MarShawn Lloyd",
     "position": "RB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "GB",
@@ -4211,8 +4397,8 @@
     "name": "Bo Melton",
     "position": "WR",
     "rest": {
-     "n": 4,
-     "no_td": 4,
+     "n": 5,
+     "no_td": 5,
      "rate": 1.0
     },
     "team": "GB",
@@ -4227,9 +4413,9 @@
     "name": "J. Michael Sturdivant",
     "position": "WR",
     "rest": {
-     "n": 4,
+     "n": 5,
      "no_td": 4,
-     "rate": 1.0
+     "rate": 0.8
     },
     "team": "GB",
     "top3": {
@@ -4243,9 +4429,9 @@
     "name": "Jordan Love",
     "position": "QB",
     "rest": {
-     "n": 4,
-     "no_td": 2,
-     "rate": 0.5
+     "n": 5,
+     "no_td": 3,
+     "rate": 0.6
     },
     "team": "GB",
     "top3": {
@@ -4257,6 +4443,38 @@
    {
     "gsis_id": "00-0040598",
     "name": "Mark Redman",
+    "position": "TE",
+    "rest": {
+     "n": 5,
+     "no_td": 5,
+     "rate": 1.0
+    },
+    "team": "GB",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0040009",
+    "name": "Savion Williams",
+    "position": "WR",
+    "rest": {
+     "n": 5,
+     "no_td": 4,
+     "rate": 0.8
+    },
+    "team": "GB",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0033858",
+    "name": "Jonnu Smith",
     "position": "TE",
     "rest": {
      "n": 4,
@@ -4287,54 +4505,6 @@
     }
    },
    {
-    "gsis_id": "00-0040009",
-    "name": "Savion Williams",
-    "position": "WR",
-    "rest": {
-     "n": 4,
-     "no_td": 3,
-     "rate": 0.75
-    },
-    "team": "GB",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0038996",
-    "name": "Tucker Kraft",
-    "position": "TE",
-    "rest": {
-     "n": 4,
-     "no_td": 2,
-     "rate": 0.5
-    },
-    "team": "GB",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0033858",
-    "name": "Jonnu Smith",
-    "position": "TE",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "GB",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
     "gsis_id": "00-0038589",
     "name": "Josh Whyle",
     "position": "TE",
@@ -4355,9 +4525,25 @@
     "name": "Kaleb Johnson",
     "position": "RB",
     "rest": {
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
+    },
+    "team": "GB",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0028118",
+    "name": "Tyrod Taylor",
+    "position": "QB",
+    "rest": {
      "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "no_td": 2,
+     "rate": 1.0
     },
     "team": "GB",
     "top3": {
@@ -4383,22 +4569,6 @@
     }
    },
    {
-    "gsis_id": "00-0028118",
-    "name": "Tyrod Taylor",
-    "position": "QB",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "GB",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
     "gsis_id": "00-0036554",
     "name": "Nico Collins",
     "position": "WR",
@@ -4409,9 +4579,9 @@
     },
     "team": "HOU",
     "top3": {
-     "n": 2,
-     "rate": 0.5,
-     "scored": 1
+     "n": 3,
+     "rate": 0.666667,
+     "scored": 2
     }
    },
    {
@@ -4425,7 +4595,7 @@
     },
     "team": "HOU",
     "top3": {
-     "n": 2,
+     "n": 3,
      "rate": 0.0,
      "scored": 0
     }
@@ -4441,7 +4611,7 @@
     },
     "team": "HOU",
     "top3": {
-     "n": 1,
+     "n": 2,
      "rate": 0.0,
      "scored": 0
     }
@@ -4451,7 +4621,7 @@
     "name": "Xavier Hutchinson",
     "position": "WR",
     "rest": {
-     "n": 1,
+     "n": 2,
      "no_td": 0,
      "rate": 0.0
     },
@@ -4460,6 +4630,70 @@
      "n": 1,
      "rate": 1.0,
      "scored": 1
+    }
+   },
+   {
+    "gsis_id": "00-0039163",
+    "name": "C.J. Stroud",
+    "position": "QB",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "HOU",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0034383",
+    "name": "Dalton Schultz",
+    "position": "TE",
+    "rest": {
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
+    },
+    "team": "HOU",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0034981",
+    "name": "Foster Moreau",
+    "position": "TE",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "HOU",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0038608",
+    "name": "Kayshon Boutte",
+    "position": "WR",
+    "rest": {
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
+    },
+    "team": "HOU",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
     }
    },
    {
@@ -4479,24 +4713,8 @@
     }
    },
    {
-    "gsis_id": "00-0039163",
-    "name": "C.J. Stroud",
-    "position": "QB",
-    "rest": {
-     "n": 2,
-     "no_td": 2,
-     "rate": 1.0
-    },
-    "team": "HOU",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0034383",
-    "name": "Dalton Schultz",
+    "gsis_id": "00-0039359",
+    "name": "Cade Stover",
     "position": "TE",
     "rest": {
      "n": 2,
@@ -4527,9 +4745,9 @@
     }
    },
    {
-    "gsis_id": "00-0034981",
-    "name": "Foster Moreau",
-    "position": "TE",
+    "gsis_id": "00-0038705",
+    "name": "Emari Demercado",
+    "position": "RB",
     "rest": {
      "n": 2,
      "no_td": 2,
@@ -4543,13 +4761,13 @@
     }
    },
    {
-    "gsis_id": "00-0038608",
-    "name": "Kayshon Boutte",
-    "position": "WR",
+    "gsis_id": "00-0041472",
+    "name": "Marlin Klein",
+    "position": "TE",
     "rest": {
      "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "no_td": 2,
+     "rate": 1.0
     },
     "team": "HOU",
     "top3": {
@@ -4575,12 +4793,38 @@
     }
    },
    {
-    "gsis_id": "00-0039359",
-    "name": "Cade Stover",
-    "position": "TE",
+    "by_team": {
+     "HOU": {
+      "rest": {
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "KC": {
+      "rest": {
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     }
+    },
+    "gsis_id": "00-0038519",
+    "name": "Nikko Remigio",
+    "position": "WR",
     "rest": {
-     "n": 1,
-     "no_td": 1,
+     "n": 2,
+     "no_td": 2,
      "rate": 1.0
     },
     "team": "HOU",
@@ -4594,22 +4838,6 @@
     "gsis_id": "00-0036898",
     "name": "Davis Mills",
     "position": "QB",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "HOU",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0038705",
-    "name": "Emari Demercado",
-    "position": "RB",
     "rest": {
      "n": 1,
      "no_td": 1,
@@ -4639,22 +4867,6 @@
     }
    },
    {
-    "gsis_id": "00-0041472",
-    "name": "Marlin Klein",
-    "position": "TE",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "HOU",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
     "gsis_id": "00-0036223",
     "name": "Jonathan Taylor",
     "position": "RB",
@@ -4665,24 +4877,8 @@
     },
     "team": "IND",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
-     "scored": 1
-    }
-   },
-   {
-    "gsis_id": "00-0038997",
-    "name": "Josh Downs",
-    "position": "WR",
-    "rest": {
-     "n": 0,
-     "no_td": 0,
-     "rate": null
-    },
-    "team": "IND",
-    "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
     }
    },
@@ -4697,25 +4893,25 @@
     },
     "team": "IND",
     "top3": {
-     "n": 2,
+     "n": 3,
      "rate": 0.0,
      "scored": 0
     }
    },
    {
-    "gsis_id": "00-0030279",
-    "name": "Keenan Allen",
-    "position": "WR",
+    "gsis_id": "00-0041125",
+    "name": "Seth McGowan",
+    "position": "RB",
     "rest": {
-     "n": 2,
+     "n": 3,
      "no_td": 2,
-     "rate": 1.0
+     "rate": 0.666667
     },
     "team": "IND",
     "top3": {
      "n": 1,
-     "rate": 0.0,
-     "scored": 0
+     "rate": 1.0,
+     "scored": 1
     }
    },
    {
@@ -4723,8 +4919,8 @@
     "name": "Andrew Ogletree",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "IND",
@@ -4739,9 +4935,9 @@
     "name": "Ashton Dulin",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "IND",
     "top3": {
@@ -4755,8 +4951,8 @@
     "name": "Daniel Jones",
     "position": "QB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "IND",
@@ -4771,8 +4967,8 @@
     "name": "Deion Burks",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "IND",
@@ -4787,9 +4983,9 @@
     "name": "Laquon Treadwell",
     "position": "WR",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 3,
-     "rate": 1.0
+     "rate": 0.75
     },
     "team": "IND",
     "top3": {
@@ -4815,13 +5011,45 @@
     }
    },
    {
-    "gsis_id": "00-0041125",
-    "name": "Seth McGowan",
+    "gsis_id": "00-0039816",
+    "name": "Anthony Gould",
+    "position": "WR",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "IND",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0040179",
+    "name": "DJ Giddens",
     "position": "RB",
     "rest": {
-     "n": 3,
+     "n": 2,
      "no_td": 2,
-     "rate": 0.666667
+     "rate": 1.0
+    },
+    "team": "IND",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0033439",
+    "name": "Pharaoh Brown",
+    "position": "TE",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
     },
     "team": "IND",
     "top3": {
@@ -4837,22 +5065,6 @@
     "rest": {
      "n": 2,
      "no_td": 2,
-     "rate": 1.0
-    },
-    "team": "IND",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0039816",
-    "name": "Anthony Gould",
-    "position": "WR",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
      "rate": 1.0
     },
     "team": "IND",
@@ -4879,25 +5091,9 @@
     }
    },
    {
-    "gsis_id": "00-0040179",
-    "name": "DJ Giddens",
-    "position": "RB",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "IND",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0033439",
-    "name": "Pharaoh Brown",
-    "position": "TE",
+    "gsis_id": "00-0036182",
+    "name": "Nick Westbrook-Ikhine",
+    "position": "WR",
     "rest": {
      "n": 1,
      "no_td": 1,
@@ -4921,9 +5117,9 @@
     },
     "team": "JAX",
     "top3": {
-     "n": 2,
+     "n": 3,
      "rate": 1.0,
-     "scored": 2
+     "scored": 3
     }
    },
    {
@@ -4937,25 +5133,9 @@
     },
     "team": "JAX",
     "top3": {
-     "n": 2,
-     "rate": 0.5,
-     "scored": 1
-    }
-   },
-   {
-    "gsis_id": "00-0038935",
-    "name": "Brenton Strange",
-    "position": "TE",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "JAX",
-    "top3": {
-     "n": 1,
-     "rate": 0.0,
-     "scored": 0
+     "n": 3,
+     "rate": 0.666667,
+     "scored": 2
     }
    },
    {
@@ -4969,24 +5149,24 @@
     },
     "team": "JAX",
     "top3": {
-     "n": 1,
-     "rate": 1.0,
+     "n": 2,
+     "rate": 0.5,
      "scored": 1
     }
    },
    {
-    "gsis_id": "00-0032104",
-    "name": "Ameer Abdullah",
-    "position": "RB",
+    "gsis_id": "00-0038935",
+    "name": "Brenton Strange",
+    "position": "TE",
     "rest": {
      "n": 2,
-     "no_td": 2,
-     "rate": 1.0
+     "no_td": 1,
+     "rate": 0.5
     },
     "team": "JAX",
     "top3": {
-     "n": 0,
-     "rate": null,
+     "n": 1,
+     "rate": 0.0,
      "scored": 0
     }
    },
@@ -4995,9 +5175,9 @@
     "name": "Brian Thomas",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
     },
     "team": "JAX",
     "top3": {
@@ -5011,8 +5191,8 @@
     "name": "Jakobi Meyers",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "JAX",
@@ -5027,9 +5207,9 @@
     "name": "Josh Cameron",
     "position": "WR",
     "rest": {
-     "n": 2,
+     "n": 3,
      "no_td": 2,
-     "rate": 1.0
+     "rate": 0.666667
     },
     "team": "JAX",
     "top3": {
@@ -5043,8 +5223,8 @@
     "name": "LeQuint Allen",
     "position": "RB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "JAX",
@@ -5059,9 +5239,9 @@
     "name": "Nate Boerkircher",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
     },
     "team": "JAX",
     "top3": {
@@ -5075,8 +5255,8 @@
     "name": "Quintin Morris",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "JAX",
@@ -5091,8 +5271,8 @@
     "name": "Tanner Koziol",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "JAX",
@@ -5107,8 +5287,8 @@
     "name": "Travis Hunter",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "JAX",
@@ -5122,6 +5302,22 @@
     "gsis_id": "00-0036971",
     "name": "Trevor Lawrence",
     "position": "QB",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "JAX",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0032104",
+    "name": "Ameer Abdullah",
+    "position": "RB",
     "rest": {
      "n": 2,
      "no_td": 2,
@@ -5151,13 +5347,55 @@
     }
    },
    {
-    "gsis_id": "00-0038134",
-    "name": "Kenneth Walker III",
-    "position": "RB",
+    "gsis_id": "00-0030506",
+    "name": "Travis Kelce",
+    "position": "TE",
     "rest": {
      "n": 0,
      "no_td": 0,
      "rate": null
+    },
+    "team": "KC",
+    "top3": {
+     "n": 4,
+     "rate": 0.25,
+     "scored": 1
+    }
+   },
+   {
+    "by_team": {
+     "IND": {
+      "rest": {
+       "n": 0,
+       "no_td": 0,
+       "rate": null
+      },
+      "top3": {
+       "n": 3,
+       "rate": 0.333333,
+       "scored": 1
+      }
+     },
+     "KC": {
+      "rest": {
+       "n": 1,
+       "no_td": 0,
+       "rate": 0.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     }
+    },
+    "gsis_id": "00-0038997",
+    "name": "Josh Downs",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 0,
+     "rate": 0.0
     },
     "team": "KC",
     "top3": {
@@ -5167,9 +5405,9 @@
     }
    },
    {
-    "gsis_id": "00-0030506",
-    "name": "Travis Kelce",
-    "position": "TE",
+    "gsis_id": "00-0038134",
+    "name": "Kenneth Walker III",
+    "position": "RB",
     "rest": {
      "n": 0,
      "no_td": 0,
@@ -5187,8 +5425,8 @@
     "name": "Xavier Worthy",
     "position": "WR",
     "rest": {
-     "n": 1,
-     "no_td": 1,
+     "n": 2,
+     "no_td": 2,
      "rate": 1.0
     },
     "team": "KC",
@@ -5209,7 +5447,7 @@
     },
     "team": "KC",
     "top3": {
-     "n": 1,
+     "n": 2,
      "rate": 0.0,
      "scored": 0
     }
@@ -5219,9 +5457,9 @@
     "name": "Andrew Armstrong",
     "position": "WR",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 3,
-     "rate": 1.0
+     "rate": 0.75
     },
     "team": "KC",
     "top3": {
@@ -5235,9 +5473,9 @@
     "name": "Cyrus Allen",
     "position": "WR",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 3,
-     "rate": 1.0
+     "rate": 0.75
     },
     "team": "KC",
     "top3": {
@@ -5251,9 +5489,9 @@
     "name": "Emmett Johnson",
     "position": "RB",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 1,
-     "rate": 0.333333
+     "rate": 0.25
     },
     "team": "KC",
     "top3": {
@@ -5267,8 +5505,8 @@
     "name": "Jake Briningstool",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "KC",
@@ -5283,8 +5521,8 @@
     "name": "Jalen Royals",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "KC",
@@ -5299,9 +5537,9 @@
     "name": "Noah Gray",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "KC",
     "top3": {
@@ -5315,8 +5553,8 @@
     "name": "Patrick Mahomes",
     "position": "QB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "KC",
@@ -5330,6 +5568,22 @@
     "gsis_id": "00-0039824",
     "name": "Jared Wiley",
     "position": "TE",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "KC",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0036945",
+    "name": "Justin Fields",
+    "position": "QB",
     "rest": {
      "n": 2,
      "no_td": 2,
@@ -5359,40 +5613,8 @@
     }
    },
    {
-    "gsis_id": "00-0036945",
-    "name": "Justin Fields",
-    "position": "QB",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "KC",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
     "gsis_id": "00-0034386",
     "name": "Justin Watson",
-    "position": "WR",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "KC",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0038519",
-    "name": "Nikko Remigio",
     "position": "WR",
     "rest": {
      "n": 1,
@@ -5417,9 +5639,9 @@
     },
     "team": "LA",
     "top3": {
-     "n": 3,
+     "n": 4,
      "rate": 1.0,
-     "scored": 3
+     "scored": 4
     }
    },
    {
@@ -5433,8 +5655,8 @@
     },
     "team": "LA",
     "top3": {
-     "n": 3,
-     "rate": 0.666667,
+     "n": 4,
+     "rate": 0.5,
      "scored": 2
     }
    },
@@ -5455,12 +5677,28 @@
     }
    },
    {
+    "gsis_id": "00-0036244",
+    "name": "Colby Parkinson",
+    "position": "TE",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "LA",
+    "top3": {
+     "n": 1,
+     "rate": 0.0,
+     "scored": 0
+    }
+   },
+   {
     "gsis_id": "00-0041399",
     "name": "CJ Daniels",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "LA",
@@ -5475,9 +5713,73 @@
     "name": "Davis Allen",
     "position": "TE",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 2,
-     "rate": 0.666667
+     "rate": 0.5
+    },
+    "team": "LA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0040590",
+    "name": "Konata Mumpfield",
+    "position": "WR",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "LA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0026498",
+    "name": "Matthew Stafford",
+    "position": "QB",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "LA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0036849",
+    "name": "Tutu Atwell",
+    "position": "WR",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "LA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0033110",
+    "name": "Tyler Higbee",
+    "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "LA",
     "top3": {
@@ -5503,72 +5805,8 @@
     }
    },
    {
-    "gsis_id": "00-0040590",
-    "name": "Konata Mumpfield",
-    "position": "WR",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "LA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0026498",
-    "name": "Matthew Stafford",
-    "position": "QB",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "LA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0036849",
-    "name": "Tutu Atwell",
-    "position": "WR",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "LA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0033110",
-    "name": "Tyler Higbee",
-    "position": "TE",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "LA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0036244",
-    "name": "Colby Parkinson",
+    "gsis_id": "00-0041510",
+    "name": "Max Klare",
     "position": "TE",
     "rest": {
      "n": 2,
@@ -5599,9 +5837,9 @@
     }
    },
    {
-    "gsis_id": "00-0041510",
-    "name": "Max Klare",
-    "position": "TE",
+    "gsis_id": "00-0040597",
+    "name": "Brennan Presley",
+    "position": "WR",
     "rest": {
      "n": 1,
      "no_td": 1,
@@ -5615,18 +5853,34 @@
     }
    },
    {
-    "gsis_id": "00-0039391",
-    "name": "Kimani Vidal",
+    "gsis_id": "00-0037557",
+    "name": "Ronnie Rivers",
     "position": "RB",
     "rest": {
-     "n": 0,
-     "no_td": 0,
-     "rate": null
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
     },
-    "team": "LAC",
+    "team": "LA",
     "top3": {
-     "n": 2,
-     "rate": 0.0,
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0038359",
+    "name": "Xavier Smith",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 0,
+     "rate": 0.0
+    },
+    "team": "LA",
+    "top3": {
+     "n": 0,
+     "rate": null,
      "scored": 0
     }
    },
@@ -5641,9 +5895,9 @@
     },
     "team": "LAC",
     "top3": {
-     "n": 2,
-     "rate": 0.0,
-     "scored": 0
+     "n": 3,
+     "rate": 0.333333,
+     "scored": 1
     }
    },
    {
@@ -5657,9 +5911,25 @@
     },
     "team": "LAC",
     "top3": {
-     "n": 2,
-     "rate": 0.5,
+     "n": 3,
+     "rate": 0.333333,
      "scored": 1
+    }
+   },
+   {
+    "gsis_id": "00-0039391",
+    "name": "Kimani Vidal",
+    "position": "RB",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "LAC",
+    "top3": {
+     "n": 2,
+     "rate": 0.0,
+     "scored": 0
     }
    },
    {
@@ -5667,8 +5937,8 @@
     "name": "Charlie Kolar",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "LAC",
@@ -5683,25 +5953,9 @@
     "name": "Derius Davis",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
-    },
-    "team": "LAC",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0039489",
-    "name": "Hayden Rucci",
-    "position": "TE",
-    "rest": {
-     "n": 2,
+     "n": 3,
      "no_td": 2,
-     "rate": 1.0
+     "rate": 0.666667
     },
     "team": "LAC",
     "top3": {
@@ -5715,9 +5969,9 @@
     "name": "Justin Herbert",
     "position": "QB",
     "rest": {
-     "n": 2,
+     "n": 3,
      "no_td": 2,
-     "rate": 1.0
+     "rate": 0.666667
     },
     "team": "LAC",
     "top3": {
@@ -5731,8 +5985,8 @@
     "name": "KeAndre Lambert-Smith",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "LAC",
@@ -5747,8 +6001,8 @@
     "name": "Keaton Mitchell",
     "position": "RB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "LAC",
@@ -5763,8 +6017,8 @@
     "name": "Oronde Gadsden II",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "LAC",
@@ -5779,8 +6033,8 @@
     "name": "Scott Matlock",
     "position": "FB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "LAC",
@@ -5794,6 +6048,22 @@
     "gsis_id": "00-0040727",
     "name": "Tre Harris",
     "position": "WR",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "LAC",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0039489",
+    "name": "Hayden Rucci",
+    "position": "TE",
     "rest": {
      "n": 2,
      "no_td": 2,
@@ -5839,6 +6109,22 @@
     }
    },
    {
+    "gsis_id": "00-0040311",
+    "name": "Theo Wease",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "LAC",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
     "gsis_id": "00-0040122",
     "name": "Ashton Jeanty",
     "position": "RB",
@@ -5849,8 +6135,8 @@
     },
     "team": "LV",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
     }
    },
@@ -5865,8 +6151,8 @@
     },
     "team": "LV",
     "top3": {
-     "n": 3,
-     "rate": 0.666667,
+     "n": 4,
+     "rate": 0.5,
      "scored": 2
     }
    },
@@ -5881,8 +6167,8 @@
     },
     "team": "LV",
     "top3": {
-     "n": 2,
-     "rate": 0.5,
+     "n": 3,
+     "rate": 0.333333,
      "scored": 1
     }
    },
@@ -5891,8 +6177,8 @@
     "name": "Mike Washington Jr.",
     "position": "RB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "LV",
@@ -5907,8 +6193,8 @@
     "name": "Connor Heyward",
     "position": "FB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "LV",
@@ -5923,8 +6209,8 @@
     "name": "Dareke Young",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "LV",
@@ -5939,8 +6225,8 @@
     "name": "Ian Thomas",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "LV",
@@ -5955,25 +6241,9 @@
     "name": "Jalen Nailor",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
-    },
-    "team": "LV",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0029604",
-    "name": "Kirk Cousins",
-    "position": "QB",
-    "rest": {
-     "n": 3,
-     "no_td": 1,
-     "rate": 0.333333
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "LV",
     "top3": {
@@ -5987,8 +6257,8 @@
     "name": "Michael Mayer",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "LV",
@@ -6003,8 +6273,8 @@
     "name": "Cody White",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "LV",
@@ -6019,8 +6289,8 @@
     "name": "Dylan Laube",
     "position": "RB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "LV",
@@ -6035,8 +6305,24 @@
     "name": "Jack Bech",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "LV",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0040488",
+    "name": "Carter Runyon",
+    "position": "TE",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
      "rate": 1.0
     },
     "team": "LV",
@@ -6054,6 +6340,22 @@
      "n": 1,
      "no_td": 1,
      "rate": 1.0
+    },
+    "team": "LV",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041562",
+    "name": "Fernando Mendoza",
+    "position": "QB",
+    "rest": {
+     "n": 1,
+     "no_td": 0,
+     "rate": 0.0
     },
     "team": "LV",
     "top3": {
@@ -6089,8 +6391,8 @@
     },
     "team": "MIA",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
     }
    },
@@ -6105,8 +6407,8 @@
     },
     "team": "MIA",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
     }
    },
@@ -6121,7 +6423,7 @@
     },
     "team": "MIA",
     "top3": {
-     "n": 2,
+     "n": 3,
      "rate": 0.0,
      "scored": 0
     }
@@ -6143,6 +6445,86 @@
     }
    },
    {
+    "gsis_id": "00-0041436",
+    "name": "DJ Herman",
+    "position": "FB",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "MIA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0037252",
+    "name": "Greg Dulcich",
+    "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "MIA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041529",
+    "name": "Kevin Coleman",
+    "position": "WR",
+    "rest": {
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
+    },
+    "team": "MIA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041579",
+    "name": "Seydou Traore",
+    "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "MIA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041524",
+    "name": "Will Kacmarek",
+    "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "MIA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
     "gsis_id": "00-0041525",
     "name": "Chris Bell",
     "position": "WR",
@@ -6159,9 +6541,9 @@
     }
    },
    {
-    "gsis_id": "00-0041436",
-    "name": "DJ Herman",
-    "position": "FB",
+    "gsis_id": "00-0039874",
+    "name": "Jaylen Wright",
+    "position": "RB",
     "rest": {
      "n": 3,
      "no_td": 3,
@@ -6175,61 +6557,13 @@
     }
    },
    {
-    "gsis_id": "00-0037252",
-    "name": "Greg Dulcich",
-    "position": "TE",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "MIA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0041529",
-    "name": "Kevin Coleman",
+    "gsis_id": "00-0037666",
+    "name": "Jalen Tolbert",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
-    },
-    "team": "MIA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0041579",
-    "name": "Seydou Traore",
-    "position": "TE",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "MIA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0041524",
-    "name": "Will Kacmarek",
-    "position": "TE",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
+     "n": 2,
+     "no_td": 1,
+     "rate": 0.5
     },
     "team": "MIA",
     "top3": {
@@ -6255,8 +6589,8 @@
     }
    },
    {
-    "gsis_id": "00-0039874",
-    "name": "Jaylen Wright",
+    "gsis_id": "00-0041096",
+    "name": "Kaytron Allen",
     "position": "RB",
     "rest": {
      "n": 2,
@@ -6271,29 +6605,13 @@
     }
    },
    {
-    "gsis_id": "00-0037666",
-    "name": "Jalen Tolbert",
-    "position": "WR",
+    "gsis_id": "00-0040014",
+    "name": "Kyle McCord",
+    "position": "QB",
     "rest": {
      "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "MIA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0041096",
-    "name": "Kaytron Allen",
-    "position": "RB",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
+     "no_td": 0,
+     "rate": 0.0
     },
     "team": "MIA",
     "top3": {
@@ -6313,7 +6631,39 @@
     },
     "team": "MIN",
     "top3": {
+     "n": 4,
+     "rate": 0.25,
+     "scored": 1
+    }
+   },
+   {
+    "gsis_id": "00-0036322",
+    "name": "Justin Jefferson",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "MIN",
+    "top3": {
      "n": 3,
+     "rate": 0.333333,
+     "scored": 1
+    }
+   },
+   {
+    "gsis_id": "00-0037525",
+    "name": "Jordan Mason",
+    "position": "RB",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "MIN",
+    "top3": {
+     "n": 2,
      "rate": 0.0,
      "scored": 0
     }
@@ -6335,44 +6685,12 @@
     }
    },
    {
-    "gsis_id": "00-0037525",
-    "name": "Jordan Mason",
-    "position": "RB",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "MIN",
-    "top3": {
-     "n": 2,
-     "rate": 0.0,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0036322",
-    "name": "Justin Jefferson",
-    "position": "WR",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "MIN",
-    "top3": {
-     "n": 2,
-     "rate": 0.5,
-     "scored": 1
-    }
-   },
-   {
     "gsis_id": "00-0040509",
     "name": "Ben Yurosek",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "MIN",
@@ -6387,8 +6705,8 @@
     "name": "DeeJay Dallas",
     "position": "RB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "MIN",
@@ -6403,9 +6721,51 @@
     "name": "Gavin Bartholomew",
     "position": "TE",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 3,
-     "rate": 1.0
+     "rate": 0.75
+    },
+    "team": "MIN",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "by_team": {
+     "LV": {
+      "rest": {
+       "n": 3,
+       "no_td": 1,
+       "rate": 0.333333
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "MIN": {
+      "rest": {
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     }
+    },
+    "gsis_id": "00-0029604",
+    "name": "Kirk Cousins",
+    "position": "QB",
+    "rest": {
+     "n": 4,
+     "no_td": 2,
+     "rate": 0.5
     },
     "team": "MIN",
     "top3": {
@@ -6419,8 +6779,8 @@
     "name": "Max Bredeson",
     "position": "FB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "MIN",
@@ -6435,8 +6795,24 @@
     "name": "Myles Price",
     "position": "WR",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 3,
+     "rate": 0.75
+    },
+    "team": "MIN",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0040154",
+    "name": "Tai Felton",
+    "position": "WR",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "MIN",
@@ -6454,22 +6830,6 @@
      "n": 3,
      "no_td": 1,
      "rate": 0.333333
-    },
-    "team": "MIN",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0040154",
-    "name": "Tai Felton",
-    "position": "WR",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
     },
     "team": "MIN",
     "top3": {
@@ -6553,25 +6913,9 @@
     },
     "team": "NE",
     "top3": {
-     "n": 3,
-     "rate": 0.666667,
+     "n": 4,
+     "rate": 0.5,
      "scored": 2
-    }
-   },
-   {
-    "gsis_id": "00-0033090",
-    "name": "Hunter Henry",
-    "position": "TE",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "NE",
-    "top3": {
-     "n": 2,
-     "rate": 0.0,
-     "scored": 0
     }
    },
    {
@@ -6585,23 +6929,23 @@
     },
     "team": "NE",
     "top3": {
-     "n": 1,
+     "n": 2,
      "rate": 0.0,
      "scored": 0
     }
    },
    {
-    "gsis_id": "00-0041395",
-    "name": "Eli Raridon",
+    "gsis_id": "00-0033090",
+    "name": "Hunter Henry",
     "position": "TE",
     "rest": {
      "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "no_td": 2,
+     "rate": 1.0
     },
     "team": "NE",
     "top3": {
-     "n": 1,
+     "n": 2,
      "rate": 0.0,
      "scored": 0
     }
@@ -6617,6 +6961,22 @@
     },
     "team": "NE",
     "top3": {
+     "n": 2,
+     "rate": 0.0,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041395",
+    "name": "Eli Raridon",
+    "position": "TE",
+    "rest": {
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
+    },
+    "team": "NE",
+    "top3": {
      "n": 1,
      "rate": 0.0,
      "scored": 0
@@ -6627,9 +6987,9 @@
     "name": "Corey Kiner",
     "position": "RB",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "NE",
     "top3": {
@@ -6643,9 +7003,9 @@
     "name": "Drake Maye",
     "position": "QB",
     "rest": {
-     "n": 3,
-     "no_td": 1,
-     "rate": 0.333333
+     "n": 4,
+     "no_td": 2,
+     "rate": 0.5
     },
     "team": "NE",
     "top3": {
@@ -6659,9 +7019,9 @@
     "name": "Efton Chism III",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "NE",
     "top3": {
@@ -6675,9 +7035,9 @@
     "name": "Kyle Williams",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "NE",
     "top3": {
@@ -6691,8 +7051,8 @@
     "name": "Cameron Latu",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "NE",
@@ -6707,9 +7067,9 @@
     "name": "Lan Larison",
     "position": "RB",
     "rest": {
-     "n": 2,
+     "n": 3,
      "no_td": 2,
-     "rate": 1.0
+     "rate": 0.666667
     },
     "team": "NE",
     "top3": {
@@ -6735,8 +7095,24 @@
     }
    },
    {
-    "gsis_id": "00-0038824",
-    "name": "Ryan Miller",
+    "gsis_id": "00-0038476",
+    "name": "Tommy DeVito",
+    "position": "QB",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "NE",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0033555",
+    "name": "Mack Hollins",
     "position": "WR",
     "rest": {
      "n": 1,
@@ -6751,9 +7127,9 @@
     }
    },
    {
-    "gsis_id": "00-0038476",
-    "name": "Tommy DeVito",
-    "position": "QB",
+    "gsis_id": "00-0038824",
+    "name": "Ryan Miller",
+    "position": "WR",
     "rest": {
      "n": 1,
      "no_td": 1,
@@ -6793,7 +7169,7 @@
     },
     "team": "NO",
     "top3": {
-     "n": 2,
+     "n": 3,
      "rate": 0.0,
      "scored": 0
     }
@@ -6809,8 +7185,8 @@
     },
     "team": "NO",
     "top3": {
-     "n": 2,
-     "rate": 0.5,
+     "n": 3,
+     "rate": 0.333333,
      "scored": 1
     }
    },
@@ -6819,9 +7195,25 @@
     "name": "Alvin Kamara",
     "position": "RB",
     "rest": {
-     "n": 1,
+     "n": 2,
      "no_td": 1,
-     "rate": 1.0
+     "rate": 0.5
+    },
+    "team": "NO",
+    "top3": {
+     "n": 1,
+     "rate": 0.0,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0039373",
+    "name": "Audric Estime",
+    "position": "RB",
+    "rest": {
+     "n": 1,
+     "no_td": 0,
+     "rate": 0.0
     },
     "team": "NO",
     "top3": {
@@ -6851,8 +7243,8 @@
     "name": "Barion Brown",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "NO",
@@ -6867,8 +7259,8 @@
     "name": "Bryce Lance",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "NO",
@@ -6883,9 +7275,9 @@
     "name": "Juwan Johnson",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
     },
     "team": "NO",
     "top3": {
@@ -6899,8 +7291,8 @@
     "name": "Noah Fant",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "NO",
@@ -6915,8 +7307,8 @@
     "name": "Oscar Delp",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "NO",
@@ -6931,25 +7323,9 @@
     "name": "Tyler Shough",
     "position": "QB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
-    },
-    "team": "NO",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0039373",
-    "name": "Audric Estime",
-    "position": "RB",
-    "rest": {
-     "n": 1,
-     "no_td": 0,
-     "rate": 0.0
     },
     "team": "NO",
     "top3": {
@@ -6977,6 +7353,22 @@
    {
     "gsis_id": "00-0038979",
     "name": "Cedric Tillman",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "NO",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041029",
+    "name": "Jordyn Tyson",
     "position": "WR",
     "rest": {
      "n": 1,
@@ -7257,8 +7649,8 @@
     },
     "team": "NYJ",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
     }
    },
@@ -7267,9 +7659,9 @@
     "name": "Omar Cooper",
     "position": "WR",
     "rest": {
-     "n": 1,
-     "no_td": 0,
-     "rate": 0.0
+     "n": 2,
+     "no_td": 1,
+     "rate": 0.5
     },
     "team": "NYJ",
     "top3": {
@@ -7289,7 +7681,7 @@
     },
     "team": "NYJ",
     "top3": {
-     "n": 1,
+     "n": 2,
      "rate": 0.0,
      "scored": 0
     }
@@ -7305,7 +7697,7 @@
     },
     "team": "NYJ",
     "top3": {
-     "n": 1,
+     "n": 2,
      "rate": 0.0,
      "scored": 0
     }
@@ -7315,9 +7707,9 @@
     "name": "Adonai Mitchell",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "NYJ",
     "top3": {
@@ -7331,8 +7723,8 @@
     "name": "Geno Smith",
     "position": "QB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "NYJ",
@@ -7347,8 +7739,8 @@
     "name": "Isaiah Davis",
     "position": "RB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "NYJ",
@@ -7363,9 +7755,73 @@
     "name": "Isaiah Williams",
     "position": "WR",
     "rest": {
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
+    },
+    "team": "NYJ",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0037805",
+    "name": "Jeremy Ruckert",
+    "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "NYJ",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041032",
+    "name": "Kenyon Sadiq",
+    "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "NYJ",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0040736",
+    "name": "Mason Taylor",
+    "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
+    },
+    "team": "NYJ",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0034959",
+    "name": "Andrew Beck",
+    "position": "FB",
+    "rest": {
      "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "no_td": 3,
+     "rate": 1.0
     },
     "team": "NYJ",
     "top3": {
@@ -7391,76 +7847,12 @@
     }
    },
    {
-    "gsis_id": "00-0037805",
-    "name": "Jeremy Ruckert",
-    "position": "TE",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "NYJ",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0041032",
-    "name": "Kenyon Sadiq",
-    "position": "TE",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "NYJ",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0040736",
-    "name": "Mason Taylor",
-    "position": "TE",
-    "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
-    },
-    "team": "NYJ",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0034959",
-    "name": "Andrew Beck",
-    "position": "FB",
-    "rest": {
-     "n": 2,
-     "no_td": 2,
-     "rate": 1.0
-    },
-    "team": "NYJ",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
     "gsis_id": "00-0041267",
     "name": "Malik McClain",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "NYJ",
@@ -7474,6 +7866,22 @@
     "gsis_id": "00-0036842",
     "name": "Kene Nwangwu",
     "position": "RB",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "NYJ",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041056",
+    "name": "Cade Klubnik",
+    "position": "QB",
     "rest": {
      "n": 1,
      "no_td": 1,
@@ -7737,9 +8145,9 @@
     },
     "team": "PIT",
     "top3": {
-     "n": 2,
-     "rate": 0.0,
-     "scored": 0
+     "n": 3,
+     "rate": 0.333333,
+     "scored": 1
     }
    },
    {
@@ -7753,25 +8161,9 @@
     },
     "team": "PIT",
     "top3": {
-     "n": 2,
-     "rate": 0.5,
+     "n": 3,
+     "rate": 0.333333,
      "scored": 1
-    }
-   },
-   {
-    "gsis_id": "00-0041489",
-    "name": "Germie Bernard",
-    "position": "WR",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "PIT",
-    "top3": {
-     "n": 1,
-     "rate": 0.0,
-     "scored": 0
     }
    },
    {
@@ -7785,9 +8177,25 @@
     },
     "team": "PIT",
     "top3": {
-     "n": 1,
-     "rate": 1.0,
+     "n": 2,
+     "rate": 0.5,
      "scored": 1
+    }
+   },
+   {
+    "gsis_id": "00-0041489",
+    "name": "Germie Bernard",
+    "position": "WR",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "PIT",
+    "top3": {
+     "n": 1,
+     "rate": 0.0,
+     "scored": 0
     }
    },
    {
@@ -7795,8 +8203,104 @@
     "name": "Aaron Rodgers",
     "position": "QB",
     "rest": {
-     "n": 2,
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "PIT",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0036775",
+    "name": "Brandon Smith",
+    "position": "WR",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "PIT",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0038558",
+    "name": "Darnell Washington",
+    "position": "TE",
+    "rest": {
+     "n": 3,
      "no_td": 2,
+     "rate": 0.666667
+    },
+    "team": "PIT",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0038409",
+    "name": "Lew Nichols",
+    "position": "RB",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "PIT",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0036894",
+    "name": "Pat Freiermuth",
+    "position": "TE",
+    "rest": {
+     "n": 3,
+     "no_td": 1,
+     "rate": 0.333333
+    },
+    "team": "PIT",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041398",
+    "name": "Riley Nowakowski",
+    "position": "FB",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "PIT",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0033757",
+    "name": "Robert Tonyan",
+    "position": "TE",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "PIT",
@@ -7823,105 +8327,57 @@
     }
    },
    {
-    "gsis_id": "00-0036775",
-    "name": "Brandon Smith",
-    "position": "WR",
-    "rest": {
-     "n": 2,
-     "no_td": 2,
-     "rate": 1.0
-    },
-    "team": "PIT",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0038558",
-    "name": "Darnell Washington",
-    "position": "TE",
-    "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
-    },
-    "team": "PIT",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0038409",
-    "name": "Lew Nichols",
-    "position": "RB",
-    "rest": {
-     "n": 2,
-     "no_td": 2,
-     "rate": 1.0
-    },
-    "team": "PIT",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0036894",
-    "name": "Pat Freiermuth",
-    "position": "TE",
-    "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
-    },
-    "team": "PIT",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0041398",
-    "name": "Riley Nowakowski",
-    "position": "FB",
-    "rest": {
-     "n": 2,
-     "no_td": 2,
-     "rate": 1.0
-    },
-    "team": "PIT",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0033757",
-    "name": "Robert Tonyan",
-    "position": "TE",
-    "rest": {
-     "n": 2,
-     "no_td": 2,
-     "rate": 1.0
-    },
-    "team": "PIT",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
     "gsis_id": "00-0034771",
     "name": "Mason Rudolph",
     "position": "QB",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "PIT",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0036862",
+    "name": "Ben Skowronek",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "PIT",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041397",
+    "name": "Kaden Wetjen",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "PIT",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0035594",
+    "name": "Travis Homer",
+    "position": "RB",
     "rest": {
      "n": 1,
      "no_td": 1,
@@ -7945,9 +8401,9 @@
     },
     "team": "SEA",
     "top3": {
-     "n": 3,
-     "rate": 0.666667,
-     "scored": 2
+     "n": 4,
+     "rate": 0.75,
+     "scored": 3
     }
    },
    {
@@ -7961,7 +8417,7 @@
     },
     "team": "SEA",
     "top3": {
-     "n": 2,
+     "n": 3,
      "rate": 0.0,
      "scored": 0
     }
@@ -7971,9 +8427,9 @@
     "name": "AJ Barner",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
     },
     "team": "SEA",
     "top3": {
@@ -8003,8 +8459,8 @@
     "name": "Brady Russell",
     "position": "FB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "SEA",
@@ -8019,9 +8475,9 @@
     "name": "Cooper Kupp",
     "position": "WR",
     "rest": {
-     "n": 3,
+     "n": 4,
      "no_td": 2,
-     "rate": 0.666667
+     "rate": 0.5
     },
     "team": "SEA",
     "top3": {
@@ -8035,8 +8491,40 @@
     "name": "Eric Saubert",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "SEA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0040058",
+    "name": "Nick Kallerup",
+    "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "SEA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0040648",
+    "name": "Tory Horton",
+    "position": "WR",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "SEA",
@@ -8063,12 +8551,12 @@
     }
    },
    {
-    "gsis_id": "00-0040058",
-    "name": "Nick Kallerup",
-    "position": "TE",
+    "gsis_id": "00-0035704",
+    "name": "Drew Lock",
+    "position": "QB",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 2,
+     "no_td": 2,
      "rate": 1.0
     },
     "team": "SEA",
@@ -8079,12 +8567,44 @@
     }
    },
    {
-    "gsis_id": "00-0040648",
-    "name": "Tory Horton",
+    "gsis_id": "00-0037156",
+    "name": "Irvin Charles",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 2,
+     "no_td": 2,
+     "rate": 1.0
+    },
+    "team": "SEA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0041512",
+    "name": "Jadarian Price",
+    "position": "RB",
+    "rest": {
+     "n": 2,
+     "no_td": 1,
+     "rate": 0.5
+    },
+    "team": "SEA",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0037545",
+    "name": "Rashid Shaheed",
+    "position": "WR",
+    "rest": {
+     "n": 2,
+     "no_td": 2,
      "rate": 1.0
     },
     "team": "SEA",
@@ -8101,70 +8621,6 @@
     "rest": {
      "n": 2,
      "no_td": 2,
-     "rate": 1.0
-    },
-    "team": "SEA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0035704",
-    "name": "Drew Lock",
-    "position": "QB",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "SEA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0037156",
-    "name": "Irvin Charles",
-    "position": "WR",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "SEA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0041512",
-    "name": "Jadarian Price",
-    "position": "RB",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
-     "rate": 1.0
-    },
-    "team": "SEA",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
-    "gsis_id": "00-0037545",
-    "name": "Rashid Shaheed",
-    "position": "WR",
-    "rest": {
-     "n": 1,
-     "no_td": 1,
      "rate": 1.0
     },
     "team": "SEA",
@@ -8201,9 +8657,9 @@
     },
     "team": "SF",
     "top3": {
-     "n": 3,
+     "n": 4,
      "rate": 1.0,
-     "scored": 3
+     "scored": 4
     }
    },
    {
@@ -8217,25 +8673,9 @@
     },
     "team": "SF",
     "top3": {
-     "n": 3,
-     "rate": 0.333333,
+     "n": 4,
+     "rate": 0.25,
      "scored": 1
-    }
-   },
-   {
-    "gsis_id": "00-0037834",
-    "name": "Brock Purdy",
-    "position": "QB",
-    "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
-    },
-    "team": "SF",
-    "top3": {
-     "n": 1,
-     "rate": 0.0,
-     "scored": 0
     }
    },
    {
@@ -8246,6 +8686,64 @@
      "n": 2,
      "no_td": 1,
      "rate": 0.5
+    },
+    "team": "SF",
+    "top3": {
+     "n": 2,
+     "rate": 0.5,
+     "scored": 1
+    }
+   },
+   {
+    "gsis_id": "00-0037834",
+    "name": "Brock Purdy",
+    "position": "QB",
+    "rest": {
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
+    },
+    "team": "SF",
+    "top3": {
+     "n": 1,
+     "rate": 0.0,
+     "scored": 0
+    }
+   },
+   {
+    "by_team": {
+     "IND": {
+      "rest": {
+       "n": 2,
+       "no_td": 2,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 1,
+       "rate": 0.0,
+       "scored": 0
+      }
+     },
+     "SF": {
+      "rest": {
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     }
+    },
+    "gsis_id": "00-0030279",
+    "name": "Keenan Allen",
+    "position": "WR",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
     },
     "team": "SF",
     "top3": {
@@ -8271,28 +8769,12 @@
     }
    },
    {
-    "gsis_id": "00-0031236",
-    "name": "Brandin Cooks",
-    "position": "WR",
-    "rest": {
-     "n": 3,
-     "no_td": 3,
-     "rate": 1.0
-    },
-    "team": "SF",
-    "top3": {
-     "n": 0,
-     "rate": null,
-     "scored": 0
-    }
-   },
-   {
     "gsis_id": "00-0038643",
     "name": "Brayden Willis",
     "position": "TE",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "SF",
@@ -8307,8 +8789,8 @@
     "name": "Jacob Cowing",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 3,
+     "n": 4,
+     "no_td": 4,
      "rate": 1.0
     },
     "team": "SF",
@@ -8323,9 +8805,9 @@
     "name": "Jordan Watkins",
     "position": "WR",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "SF",
     "top3": {
@@ -8339,9 +8821,9 @@
     "name": "Kyle Juszczyk",
     "position": "FB",
     "rest": {
-     "n": 3,
-     "no_td": 2,
-     "rate": 0.666667
+     "n": 4,
+     "no_td": 3,
+     "rate": 0.75
     },
     "team": "SF",
     "top3": {
@@ -8354,6 +8836,22 @@
     "gsis_id": "00-0036887",
     "name": "Luke Farrell",
     "position": "TE",
+    "rest": {
+     "n": 4,
+     "no_td": 4,
+     "rate": 1.0
+    },
+    "team": "SF",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0031236",
+    "name": "Brandin Cooks",
+    "position": "WR",
     "rest": {
      "n": 3,
      "no_td": 3,
@@ -8371,8 +8869,8 @@
     "name": "Jordan James",
     "position": "RB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "SF",
@@ -8385,6 +8883,38 @@
    {
     "gsis_id": "00-0034775",
     "name": "Christian Kirk",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 1,
+     "rate": 1.0
+    },
+    "team": "SF",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0035719",
+    "name": "Deebo Samuel",
+    "position": "WR",
+    "rest": {
+     "n": 1,
+     "no_td": 0,
+     "rate": 0.0
+    },
+    "team": "SF",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0032775",
+    "name": "Demarcus Robinson",
     "position": "WR",
     "rest": {
      "n": 1,
@@ -8681,9 +9211,9 @@
     },
     "team": "TEN",
     "top3": {
-     "n": 2,
+     "n": 3,
      "rate": 1.0,
-     "scored": 2
+     "scored": 3
     }
    },
    {
@@ -8697,8 +9227,8 @@
     },
     "team": "TEN",
     "top3": {
-     "n": 2,
-     "rate": 0.5,
+     "n": 3,
+     "rate": 0.333333,
      "scored": 1
     }
    },
@@ -8713,7 +9243,7 @@
     },
     "team": "TEN",
     "top3": {
-     "n": 1,
+     "n": 2,
      "rate": 0.0,
      "scored": 0
     }
@@ -8739,8 +9269,8 @@
     "name": "Cam Ward",
     "position": "QB",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "TEN",
@@ -8755,9 +9285,9 @@
     "name": "Chimere Dike",
     "position": "WR",
     "rest": {
-     "n": 2,
-     "no_td": 1,
-     "rate": 0.5
+     "n": 3,
+     "no_td": 2,
+     "rate": 0.666667
     },
     "team": "TEN",
     "top3": {
@@ -8771,9 +9301,9 @@
     "name": "Daniel Bellinger",
     "position": "TE",
     "rest": {
-     "n": 2,
+     "n": 3,
      "no_td": 2,
-     "rate": 1.0
+     "rate": 0.666667
     },
     "team": "TEN",
     "top3": {
@@ -8787,8 +9317,8 @@
     "name": "David Martin-Robinson",
     "position": "TE",
     "rest": {
-     "n": 2,
-     "no_td": 2,
+     "n": 3,
+     "no_td": 3,
      "rate": 1.0
     },
     "team": "TEN",
@@ -8802,6 +9332,22 @@
     "gsis_id": "00-0040584",
     "name": "Gunnar Helm",
     "position": "TE",
+    "rest": {
+     "n": 3,
+     "no_td": 3,
+     "rate": 1.0
+    },
+    "team": "TEN",
+    "top3": {
+     "n": 0,
+     "rate": null,
+     "scored": 0
+    }
+   },
+   {
+    "gsis_id": "00-0034837",
+    "name": "Calvin Ridley",
+    "position": "WR",
     "rest": {
      "n": 2,
      "no_td": 2,
@@ -8831,9 +9377,9 @@
     }
    },
    {
-    "gsis_id": "00-0034837",
-    "name": "Calvin Ridley",
-    "position": "WR",
+    "gsis_id": "00-0037594",
+    "name": "Julius Chestnut",
+    "position": "RB",
     "rest": {
      "n": 1,
      "no_td": 1,
@@ -8847,8 +9393,8 @@
     }
    },
    {
-    "gsis_id": "00-0037594",
-    "name": "Julius Chestnut",
+    "gsis_id": "00-0039032",
+    "name": "Tyjae Spears",
     "position": "RB",
     "rest": {
      "n": 1,
@@ -9123,15 +9669,99 @@
    {
     "name": "Green Bay Packers",
     "rest": {
-     "n": 40,
-     "no_td": 34,
-     "rate": 0.85
+     "n": 49,
+     "no_td": 42,
+     "rate": 0.857143
     },
     "team": "GB",
     "top3": {
-     "n": 12,
-     "rate": 0.5,
+     "n": 15,
+     "rate": 0.4,
      "scored": 6
+    }
+   },
+   {
+    "name": "Dallas Cowboys",
+    "rest": {
+     "n": 42,
+     "no_td": 37,
+     "rate": 0.880952
+    },
+    "team": "DAL",
+    "top3": {
+     "n": 14,
+     "rate": 0.571429,
+     "scored": 8
+    }
+   },
+   {
+    "name": "New York Jets",
+    "rest": {
+     "n": 44,
+     "no_td": 40,
+     "rate": 0.909091
+    },
+    "team": "NYJ",
+    "top3": {
+     "n": 10,
+     "rate": 0.1,
+     "scored": 1
+    }
+   },
+   {
+    "name": "Cincinnati Bengals",
+    "rest": {
+     "n": 40,
+     "no_td": 30,
+     "rate": 0.75
+    },
+    "team": "CIN",
+    "top3": {
+     "n": 12,
+     "rate": 0.583333,
+     "scored": 7
+    }
+   },
+   {
+    "name": "Las Vegas Raiders",
+    "rest": {
+     "n": 40,
+     "no_td": 36,
+     "rate": 0.9
+    },
+    "team": "LV",
+    "top3": {
+     "n": 12,
+     "rate": 0.333333,
+     "scored": 4
+    }
+   },
+   {
+    "name": "Baltimore Ravens",
+    "rest": {
+     "n": 39,
+     "no_td": 39,
+     "rate": 1.0
+    },
+    "team": "BAL",
+    "top3": {
+     "n": 12,
+     "rate": 0.333333,
+     "scored": 4
+    }
+   },
+   {
+    "name": "Kansas City Chiefs",
+    "rest": {
+     "n": 40,
+     "no_td": 32,
+     "rate": 0.8
+    },
+    "team": "KC",
+    "top3": {
+     "n": 11,
+     "rate": 0.181818,
+     "scored": 2
     }
    },
    {
@@ -9149,27 +9779,209 @@
     }
    },
    {
-    "name": "Dallas Cowboys",
+    "name": "Cleveland Browns",
     "rest": {
-     "n": 33,
-     "no_td": 29,
-     "rate": 0.878788
+     "n": 38,
+     "no_td": 34,
+     "rate": 0.894737
     },
-    "team": "DAL",
+    "team": "CLE",
+    "top3": {
+     "n": 12,
+     "rate": 0.25,
+     "scored": 3
+    }
+   },
+   {
+    "name": "Indianapolis Colts",
+    "rest": {
+     "n": 38,
+     "no_td": 35,
+     "rate": 0.921053
+    },
+    "team": "IND",
+    "top3": {
+     "n": 12,
+     "rate": 0.25,
+     "scored": 3
+    }
+   },
+   {
+    "name": "Carolina Panthers",
+    "rest": {
+     "n": 37,
+     "no_td": 33,
+     "rate": 0.891892
+    },
+    "team": "CAR",
+    "top3": {
+     "n": 12,
+     "rate": 0.333333,
+     "scored": 4
+    }
+   },
+   {
+    "name": "Minnesota Vikings",
+    "rest": {
+     "n": 38,
+     "no_td": 34,
+     "rate": 0.894737
+    },
+    "team": "MIN",
     "top3": {
      "n": 11,
-     "rate": 0.545455,
+     "rate": 0.181818,
+     "scored": 2
+    }
+   },
+   {
+    "name": "San Francisco 49ers",
+    "rest": {
+     "n": 37,
+     "no_td": 32,
+     "rate": 0.864865
+    },
+    "team": "SF",
+    "top3": {
+     "n": 12,
+     "rate": 0.5,
      "scored": 6
     }
    },
    {
-    "name": "Baltimore Ravens",
+    "name": "Miami Dolphins",
+    "rest": {
+     "n": 36,
+     "no_td": 31,
+     "rate": 0.861111
+    },
+    "team": "MIA",
+    "top3": {
+     "n": 12,
+     "rate": 0.166667,
+     "scored": 2
+    }
+   },
+   {
+    "name": "Arizona Cardinals",
+    "rest": {
+     "n": 35,
+     "no_td": 34,
+     "rate": 0.971429
+    },
+    "team": "ARI",
+    "top3": {
+     "n": 12,
+     "rate": 0.25,
+     "scored": 3
+    }
+   },
+   {
+    "name": "Los Angeles Rams",
+    "rest": {
+     "n": 35,
+     "no_td": 31,
+     "rate": 0.885714
+    },
+    "team": "LA",
+    "top3": {
+     "n": 12,
+     "rate": 0.75,
+     "scored": 9
+    }
+   },
+   {
+    "name": "New England Patriots",
+    "rest": {
+     "n": 36,
+     "no_td": 28,
+     "rate": 0.777778
+    },
+    "team": "NE",
+    "top3": {
+     "n": 11,
+     "rate": 0.181818,
+     "scored": 2
+    }
+   },
+   {
+    "name": "Seattle Seahawks",
+    "rest": {
+     "n": 37,
+     "no_td": 33,
+     "rate": 0.891892
+    },
+    "team": "SEA",
+    "top3": {
+     "n": 9,
+     "rate": 0.444444,
+     "scored": 4
+    }
+   },
+   {
+    "name": "Atlanta Falcons",
+    "rest": {
+     "n": 33,
+     "no_td": 31,
+     "rate": 0.939394
+    },
+    "team": "ATL",
+    "top3": {
+     "n": 12,
+     "rate": 0.333333,
+     "scored": 4
+    }
+   },
+   {
+    "name": "Detroit Lions",
+    "rest": {
+     "n": 32,
+     "no_td": 30,
+     "rate": 0.9375
+    },
+    "team": "DET",
+    "top3": {
+     "n": 12,
+     "rate": 0.416667,
+     "scored": 5
+    }
+   },
+   {
+    "name": "Jacksonville Jaguars",
+    "rest": {
+     "n": 33,
+     "no_td": 28,
+     "rate": 0.848485
+    },
+    "team": "JAX",
+    "top3": {
+     "n": 9,
+     "rate": 0.666667,
+     "scored": 6
+    }
+   },
+   {
+    "name": "Buffalo Bills",
+    "rest": {
+     "n": 32,
+     "no_td": 29,
+     "rate": 0.90625
+    },
+    "team": "BUF",
+    "top3": {
+     "n": 9,
+     "rate": 0.666667,
+     "scored": 6
+    }
+   },
+   {
+    "name": "Pittsburgh Steelers",
     "rest": {
      "n": 31,
-     "no_td": 31,
-     "rate": 1.0
+     "no_td": 28,
+     "rate": 0.903226
     },
-    "team": "BAL",
+    "team": "PIT",
     "top3": {
      "n": 9,
      "rate": 0.333333,
@@ -9177,17 +9989,17 @@
     }
    },
    {
-    "name": "Minnesota Vikings",
+    "name": "Houston Texans",
     "rest": {
      "n": 30,
-     "no_td": 28,
-     "rate": 0.933333
+     "no_td": 24,
+     "rate": 0.8
     },
-    "team": "MIN",
+    "team": "HOU",
     "top3": {
      "n": 9,
-     "rate": 0.111111,
-     "scored": 1
+     "rate": 0.333333,
+     "scored": 3
     }
    },
    {
@@ -9205,20 +10017,6 @@
     }
    },
    {
-    "name": "New York Jets",
-    "rest": {
-     "n": 32,
-     "no_td": 28,
-     "rate": 0.875
-    },
-    "team": "NYJ",
-    "top3": {
-     "n": 7,
-     "rate": 0.142857,
-     "scored": 1
-    }
-   },
-   {
     "name": "Tampa Bay Buccaneers",
     "rest": {
      "n": 30,
@@ -9233,87 +10031,17 @@
     }
    },
    {
-    "name": "Cincinnati Bengals",
+    "name": "Los Angeles Chargers",
     "rest": {
-     "n": 29,
-     "no_td": 22,
-     "rate": 0.758621
+     "n": 30,
+     "no_td": 28,
+     "rate": 0.933333
     },
-    "team": "CIN",
+    "team": "LAC",
     "top3": {
-     "n": 9,
-     "rate": 0.666667,
-     "scored": 6
-    }
-   },
-   {
-    "name": "Cleveland Browns",
-    "rest": {
-     "n": 29,
-     "no_td": 27,
-     "rate": 0.931034
-    },
-    "team": "CLE",
-    "top3": {
-     "n": 9,
-     "rate": 0.222222,
+     "n": 8,
+     "rate": 0.25,
      "scored": 2
-    }
-   },
-   {
-    "name": "Indianapolis Colts",
-    "rest": {
-     "n": 29,
-     "no_td": 27,
-     "rate": 0.931034
-    },
-    "team": "IND",
-    "top3": {
-     "n": 9,
-     "rate": 0.222222,
-     "scored": 2
-    }
-   },
-   {
-    "name": "Kansas City Chiefs",
-    "rest": {
-     "n": 29,
-     "no_td": 25,
-     "rate": 0.862069
-    },
-    "team": "KC",
-    "top3": {
-     "n": 9,
-     "rate": 0.222222,
-     "scored": 2
-    }
-   },
-   {
-    "name": "Las Vegas Raiders",
-    "rest": {
-     "n": 29,
-     "no_td": 26,
-     "rate": 0.896552
-    },
-    "team": "LV",
-    "top3": {
-     "n": 9,
-     "rate": 0.444444,
-     "scored": 4
-    }
-   },
-   {
-    "name": "Carolina Panthers",
-    "rest": {
-     "n": 28,
-     "no_td": 24,
-     "rate": 0.857143
-    },
-    "team": "CAR",
-    "top3": {
-     "n": 9,
-     "rate": 0.333333,
-     "scored": 3
     }
    },
    {
@@ -9331,48 +10059,6 @@
     }
    },
    {
-    "name": "Miami Dolphins",
-    "rest": {
-     "n": 27,
-     "no_td": 24,
-     "rate": 0.888889
-    },
-    "team": "MIA",
-    "top3": {
-     "n": 9,
-     "rate": 0.222222,
-     "scored": 2
-    }
-   },
-   {
-    "name": "San Francisco 49ers",
-    "rest": {
-     "n": 27,
-     "no_td": 23,
-     "rate": 0.851852
-    },
-    "team": "SF",
-    "top3": {
-     "n": 9,
-     "rate": 0.444444,
-     "scored": 4
-    }
-   },
-   {
-    "name": "Arizona Cardinals",
-    "rest": {
-     "n": 26,
-     "no_td": 25,
-     "rate": 0.961538
-    },
-    "team": "ARI",
-    "top3": {
-     "n": 9,
-     "rate": 0.333333,
-     "scored": 3
-    }
-   },
-   {
     "name": "Philadelphia Eagles",
     "rest": {
      "n": 26,
@@ -9384,62 +10070,6 @@
      "n": 9,
      "rate": 0.444444,
      "scored": 4
-    }
-   },
-   {
-    "name": "Los Angeles Rams",
-    "rest": {
-     "n": 25,
-     "no_td": 24,
-     "rate": 0.96
-    },
-    "team": "LA",
-    "top3": {
-     "n": 9,
-     "rate": 0.888889,
-     "scored": 8
-    }
-   },
-   {
-    "name": "New England Patriots",
-    "rest": {
-     "n": 26,
-     "no_td": 19,
-     "rate": 0.730769
-    },
-    "team": "NE",
-    "top3": {
-     "n": 8,
-     "rate": 0.25,
-     "scored": 2
-    }
-   },
-   {
-    "name": "Seattle Seahawks",
-    "rest": {
-     "n": 27,
-     "no_td": 25,
-     "rate": 0.925926
-    },
-    "team": "SEA",
-    "top3": {
-     "n": 7,
-     "rate": 0.428571,
-     "scored": 3
-    }
-   },
-   {
-    "name": "Atlanta Falcons",
-    "rest": {
-     "n": 24,
-     "no_td": 22,
-     "rate": 0.916667
-    },
-    "team": "ATL",
-    "top3": {
-     "n": 9,
-     "rate": 0.333333,
-     "scored": 3
     }
    },
    {
@@ -9457,130 +10087,46 @@
     }
    },
    {
-    "name": "Detroit Lions",
-    "rest": {
-     "n": 22,
-     "no_td": 21,
-     "rate": 0.954545
-    },
-    "team": "DET",
-    "top3": {
-     "n": 9,
-     "rate": 0.333333,
-     "scored": 3
-    }
-   },
-   {
-    "name": "Jacksonville Jaguars",
-    "rest": {
-     "n": 23,
-     "no_td": 20,
-     "rate": 0.869565
-    },
-    "team": "JAX",
-    "top3": {
-     "n": 6,
-     "rate": 0.666667,
-     "scored": 4
-    }
-   },
-   {
-    "name": "Buffalo Bills",
-    "rest": {
-     "n": 21,
-     "no_td": 18,
-     "rate": 0.857143
-    },
-    "team": "BUF",
-    "top3": {
-     "n": 6,
-     "rate": 0.5,
-     "scored": 3
-    }
-   },
-   {
-    "name": "Houston Texans",
-    "rest": {
-     "n": 21,
-     "no_td": 17,
-     "rate": 0.809524
-    },
-    "team": "HOU",
-    "top3": {
-     "n": 6,
-     "rate": 0.333333,
-     "scored": 2
-    }
-   },
-   {
-    "name": "Los Angeles Chargers",
-    "rest": {
-     "n": 20,
-     "no_td": 19,
-     "rate": 0.95
-    },
-    "team": "LAC",
-    "top3": {
-     "n": 6,
-     "rate": 0.166667,
-     "scored": 1
-    }
-   },
-   {
-    "name": "Pittsburgh Steelers",
-    "rest": {
-     "n": 19,
-     "no_td": 17,
-     "rate": 0.894737
-    },
-    "team": "PIT",
-    "top3": {
-     "n": 6,
-     "rate": 0.333333,
-     "scored": 2
-    }
-   },
-   {
     "name": "New Orleans Saints",
     "rest": {
-     "n": 16,
-     "no_td": 14,
+     "n": 24,
+     "no_td": 21,
      "rate": 0.875
     },
     "team": "NO",
     "top3": {
-     "n": 6,
-     "rate": 0.166667,
+     "n": 9,
+     "rate": 0.111111,
      "scored": 1
     }
    },
    {
     "name": "Tennessee Titans",
     "rest": {
-     "n": 15,
-     "no_td": 14,
-     "rate": 0.933333
+     "n": 22,
+     "no_td": 20,
+     "rate": 0.909091
     },
     "team": "TEN",
     "top3": {
-     "n": 6,
-     "rate": 0.5,
-     "scored": 3
+     "n": 9,
+     "rate": 0.444444,
+     "scored": 4
     }
    }
   ]
  },
  "track_record": {
-  "accuracy": 0.77193,
+  "accuracy": 0.753623,
   "ats": {
-   "correct": 27,
-   "picks": 57
+   "correct": 33,
+   "picks": 69
   },
   "basis": "one pick per game, the last one logged before kickoff",
   "by_season": [
    {
-    "correct": 44,
-    "picks": 57,
+    "correct": 52,
+    "picks": 69,
     "season": 2026
    }
   ],
@@ -9610,28 +10156,28 @@
     "week": 9
    },
    {
-    "correct": 1,
-    "picks": 2,
+    "correct": 9,
+    "picks": 14,
     "season": 2026,
     "week": 10
    }
   ],
-  "correct": 44,
-  "graded": 57,
-  "log_loss": 0.57316,
-  "logged": 69,
-  "pending": 12,
+  "correct": 52,
+  "graded": 69,
+  "log_loss": 0.567748,
+  "logged": 82,
+  "pending": 13,
   "td": {
-   "picks": 268,
-   "scored": 106
+   "picks": 342,
+   "scored": 130
   },
   "totals": {
-   "correct": 27,
-   "picks": 57
+   "correct": 32,
+   "picks": 69
   },
   "yards": {
-   "over": 128,
-   "picks": 258
+   "over": 164,
+   "picks": 331
   }
  },
  "trained_on": 6484

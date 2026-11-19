@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-16T14:19:41Z",
+ "generated": "2026-11-19T18:25:18Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -23,285 +23,171 @@
  },
  "days": [
   {
-   "day": "2026-11-14",
-   "today": false,
-   "past": true,
+   "day": "2026-11-19",
+   "today": true,
+   "past": false,
    "in_play": false,
    "likeliest": {
-    "day": "2026-11-14",
+    "day": "2026-11-19",
     "kind": "likeliest",
-    "status": "lost",
-    "legs": [
-     {
-      "sport": "UFC",
-      "event": "Donte Johnson vs Cesar Almeida",
-      "pick": "Donte Johnson",
-      "opponent": "Cesar Almeida",
-      "kickoff": "2026-11-14T22:15:00Z",
-      "decimal": 1.555556,
-      "p": 0.671892,
-      "p_model": 0.797212,
-      "p_market": 0.630118823765514,
-      "price_source": null,
-      "american": -180,
-      "reason": "UFC: chance 67%, model 80%, market 63%",
-      "outcome": "lost",
-      "void_reason": null,
-      "dog": false
-     },
-     {
-      "sport": "UFC",
-      "event": "Drew Dober vs Chris Duncan",
-      "pick": "Chris Duncan",
-      "opponent": "Drew Dober",
-      "kickoff": "2026-11-14T22:15:00Z",
-      "decimal": 1.571429,
-      "p": 0.6629,
-      "p_model": 0.76835,
-      "p_market": 0.6277495132572406,
-      "price_source": null,
-      "american": -175,
-      "reason": "UFC: chance 66%, model 77%, market 63%",
-      "outcome": "won",
-      "void_reason": null,
-      "dog": false
-     },
-     {
-      "sport": "UFC",
-      "event": "Jared Gordon vs Melquizael Costa",
-      "pick": "Melquizael Costa",
-      "opponent": "Jared Gordon",
-      "kickoff": "2026-11-14T22:15:00Z",
-      "decimal": 1.25974,
-      "p": 0.764422,
-      "p_model": 0.749887,
-      "p_market": 0.7692674010117697,
-      "price_source": null,
-      "american": -385,
-      "reason": "UFC: chance 76%, model 75%, market 77%",
-      "outcome": "won",
-      "void_reason": null,
-      "dog": false
-     }
-    ],
-    "multiplier": 3.0794,
-    "p": 0.340471,
-    "p_market": 0.304289,
-    "sports": [
-     "UFC"
-    ],
-    "first_start": "2026-11-14T22:15:00Z",
-    "last_start": "2026-11-14T22:15:00Z",
-    "built_at": "2026-11-13T22:30:10Z",
-    "paid": 0.0,
-    "profit": -1.0,
-    "missing_reason": null,
-    "none_reason": null
+    "status": "none",
+    "legs": [],
+    "multiplier": null,
+    "p": null,
+    "p_market": null,
+    "none_reason": "no_fit",
+    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. The next likeliest ticket is on Sunday, Nov 22.",
+    "next_day": "2026-11-22"
    },
    "underdog": {
-    "day": "2026-11-14",
+    "day": "2026-11-19",
     "kind": "underdog",
-    "status": "lost",
-    "legs": [
-     {
-      "sport": "UFC",
-      "event": "Caio Borralho vs Yousri Belgaroui",
-      "pick": "Yousri Belgaroui",
-      "opponent": "Caio Borralho",
-      "kickoff": "2026-11-14T22:15:00Z",
-      "decimal": 2.35,
-      "p": 0.41161000000000003,
-      "p_model": 0.431752,
-      "p_market": 0.40823068024261033,
-      "price_source": "median of 6 books",
-      "american": 135,
-      "reason": "UFC: chance 41%, model 43%, market 41%",
-      "outcome": "lost",
-      "void_reason": null,
-      "dog": true
-     },
-     {
-      "sport": "UFC",
-      "event": "Donte Johnson vs Cesar Almeida",
-      "pick": "Donte Johnson",
-      "opponent": "Cesar Almeida",
-      "kickoff": "2026-11-14T22:15:00Z",
-      "decimal": 1.555556,
-      "p": 0.671892,
-      "p_model": 0.797212,
-      "p_market": 0.630118823765514,
-      "price_source": "best of books",
-      "american": -180,
-      "reason": "UFC: chance 67%, model 80%, market 63%",
-      "outcome": "lost",
-      "void_reason": null,
-      "dog": false
-     }
-    ],
-    "multiplier": 3.6556,
-    "p": 0.276557,
-    "p_market": 0.257234,
-    "sports": [
-     "UFC"
-    ],
-    "first_start": "2026-11-14T22:15:00Z",
-    "last_start": "2026-11-14T22:15:00Z",
-    "built_at": "2026-11-13T22:33:24Z",
-    "paid": 0.0,
-    "profit": -1.0,
-    "missing_reason": null,
-    "none_reason": null,
-    "dog": {
-     "pick": "Yousri Belgaroui",
-     "event": "Caio Borralho vs Yousri Belgaroui",
-     "sport": "UFC",
-     "rank": 0,
-     "candidates": 9,
-     "salt": "sameday-dog-v1",
-     "version": 1
-    },
-    "lands_1_in": 4,
-    "only_one": false,
-    "best_of_books": false,
-    "price_note": null
+    "status": "none",
+    "legs": [],
+    "multiplier": null,
+    "p": null,
+    "p_market": null,
+    "none_reason": "no_dog",
+    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. The next underdog ticket is on Sunday, Nov 22.",
+    "next_day": "2026-11-22"
    },
    "cannot_both_win": false
   },
   {
-   "day": "2026-11-15",
+   "day": "2026-11-22",
    "today": false,
-   "past": true,
-   "in_play": true,
+   "past": false,
+   "in_play": false,
    "likeliest": {
-    "day": "2026-11-15",
+    "day": "2026-11-22",
     "kind": "likeliest",
-    "status": "locked",
+    "status": "open",
     "legs": [
      {
       "sport": "NFL",
-      "event": "HOU @ CLE",
-      "pick": "HOU",
-      "opponent": "CLE",
-      "kickoff": "2026-11-15T18:00:00Z",
-      "decimal": 1.4444444444444444,
-      "p": 0.672451,
-      "p_model": 0.6613020000000001,
-      "p_market": 0.663648,
+      "event": "BAL @ CAR",
+      "pick": "CAR",
+      "opponent": "BAL",
+      "kickoff": "2026-11-22T18:00:00Z",
+      "decimal": 1.7142857142857144,
+      "p": 0.576559,
+      "p_model": 0.633145,
+      "p_market": 0.562044,
       "price_source": "consensus moneyline",
-      "american": -225,
-      "reason": "NFL: chance 67%, model 66%, market 66%",
+      "american": -140,
+      "reason": "NFL: chance 58%, model 63%, market 56%",
       "outcome": null,
       "void_reason": null,
       "dog": false
      },
      {
       "sport": "NFL",
-      "event": "KC @ ATL",
-      "pick": "KC",
-      "opponent": "ATL",
-      "kickoff": "2026-11-15T18:00:00Z",
-      "decimal": 1.5555555555555556,
-      "p": 0.622567,
-      "p_model": 0.609524,
-      "p_market": 0.618729,
+      "event": "JAX @ NYG",
+      "pick": "JAX",
+      "opponent": "NYG",
+      "kickoff": "2026-11-22T18:00:00Z",
+      "decimal": 1.3703703703703702,
+      "p": 0.717619,
+      "p_model": 0.699612,
+      "p_market": 0.701195,
       "price_source": "consensus moneyline",
-      "american": -180,
-      "reason": "NFL: chance 62%, model 61%, market 62%",
+      "american": -270,
+      "reason": "NFL: chance 72%, model 70%, market 70%",
       "outcome": null,
       "void_reason": null,
       "dog": false
      },
      {
       "sport": "NFL",
-      "event": "SEA @ LV",
-      "pick": "SEA",
-      "opponent": "LV",
-      "kickoff": "2026-11-15T21:05:00Z",
-      "decimal": 1.3448275862068966,
-      "p": 0.735236,
-      "p_model": 0.769882,
-      "p_market": 0.713551,
+      "event": "TB @ DET",
+      "pick": "DET",
+      "opponent": "TB",
+      "kickoff": "2026-11-22T18:00:00Z",
+      "decimal": 1.303030303030303,
+      "p": 0.728952,
+      "p_model": 0.683832,
+      "p_market": 0.737981,
       "price_source": "consensus moneyline",
-      "american": -290,
-      "reason": "NFL: chance 74%, model 77%, market 71%",
+      "american": -330,
+      "reason": "NFL: chance 73%, model 68%, market 74%",
       "outcome": null,
       "void_reason": null,
       "dog": false
      }
     ],
-    "multiplier": 3.0217,
-    "p": 0.307803,
-    "p_market": 0.292997,
+    "multiplier": 3.0611,
+    "p": 0.301604,
+    "p_market": 0.29084,
     "sports": [
      "NFL"
     ],
-    "first_start": "2026-11-15T18:00:00Z",
-    "last_start": "2026-11-15T21:05:00Z",
-    "built_at": "2026-11-15T14:01:44Z",
+    "first_start": "2026-11-22T18:00:00Z",
+    "last_start": "2026-11-22T18:00:00Z",
+    "built_at": "2026-11-19T14:05:32Z",
     "paid": null,
     "profit": null,
     "missing_reason": null,
     "none_reason": null
    },
    "underdog": {
-    "day": "2026-11-15",
+    "day": "2026-11-22",
     "kind": "underdog",
-    "status": "locked",
+    "status": "open",
     "legs": [
      {
       "sport": "NFL",
-      "event": "KC @ ATL",
-      "pick": "ATL",
-      "opponent": "KC",
-      "kickoff": "2026-11-15T18:00:00Z",
-      "decimal": 2.5,
-      "p": 0.377433,
-      "p_model": 0.390476,
-      "p_market": 0.38356164383561653,
+      "event": "NYJ @ LAC",
+      "pick": "NYJ",
+      "opponent": "LAC",
+      "kickoff": "2026-11-22T21:05:00Z",
+      "decimal": 2.3600000000000003,
+      "p": 0.40286599999999995,
+      "p_model": 0.359337,
+      "p_market": 0.40663024584057605,
       "price_source": "consensus moneyline",
-      "american": 150,
-      "reason": "NFL: chance 38%, model 39%, market 38%",
+      "american": 136,
+      "reason": "NFL: chance 40%, model 36%, market 41%",
       "outcome": null,
       "void_reason": null,
       "dog": true
      },
      {
       "sport": "NFL",
-      "event": "LA @ ARI",
-      "pick": "LA",
-      "opponent": "ARI",
-      "kickoff": "2026-11-15T21:05:00Z",
-      "decimal": 1.2,
-      "p": 0.822257,
-      "p_model": 0.780017,
-      "p_market": 0.801653,
+      "event": "TB @ DET",
+      "pick": "DET",
+      "opponent": "TB",
+      "kickoff": "2026-11-22T18:00:00Z",
+      "decimal": 1.303030303030303,
+      "p": 0.728952,
+      "p_model": 0.683832,
+      "p_market": 0.737981,
       "price_source": "consensus moneyline",
-      "american": -500,
-      "reason": "NFL: chance 82%, model 78%, market 80%",
+      "american": -330,
+      "reason": "NFL: chance 73%, model 68%, market 74%",
       "outcome": null,
       "void_reason": null,
       "dog": false
      }
     ],
-    "multiplier": 3.0,
-    "p": 0.310347,
-    "p_market": 0.307483,
+    "multiplier": 3.0752,
+    "p": 0.29367,
+    "p_market": 0.300085,
     "sports": [
      "NFL"
     ],
-    "first_start": "2026-11-15T18:00:00Z",
-    "last_start": "2026-11-15T21:05:00Z",
-    "built_at": "2026-11-15T14:56:45Z",
+    "first_start": "2026-11-22T18:00:00Z",
+    "last_start": "2026-11-22T21:05:00Z",
+    "built_at": "2026-11-19T14:05:32Z",
     "paid": null,
     "profit": null,
     "missing_reason": null,
     "none_reason": null,
     "dog": {
-     "pick": "ATL",
-     "event": "KC @ ATL",
+     "pick": "NYJ",
+     "event": "NYJ @ LAC",
      "sport": "NFL",
      "rank": 0,
-     "candidates": 7,
+     "candidates": 6,
      "salt": "sameday-dog-v1",
      "version": 1
     },
@@ -310,15 +196,15 @@
     "best_of_books": false,
     "price_note": null
    },
-   "cannot_both_win": true
+   "cannot_both_win": false
   },
   {
-   "day": "2026-11-16",
-   "today": true,
+   "day": "2026-11-23",
+   "today": false,
    "past": false,
    "in_play": false,
    "likeliest": {
-    "day": "2026-11-16",
+    "day": "2026-11-23",
     "kind": "likeliest",
     "status": "none",
     "legs": [],
@@ -326,11 +212,10 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_fit",
-    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. No likeliest ticket in the next 7 days yet.",
-    "next_day": null
+    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer."
    },
    "underdog": {
-    "day": "2026-11-16",
+    "day": "2026-11-23",
     "kind": "underdog",
     "status": "none",
     "legs": [],
@@ -338,15 +223,14 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_fill",
-    "missing_reason": "No underdog ticket: there is an underdog priced 2.00-4.00 (+100 to +300), but no favourites on other events bring it to 3-5x. No underdog ticket in the next 7 days yet.",
-    "next_day": null
+    "missing_reason": "No underdog ticket: there is an underdog priced 2.00-4.00 (+100 to +300), but no favourites on other events bring it to 3-5x."
    },
    "cannot_both_win": false
   }
  ],
  "tickets": [
   {
-   "day": "2026-11-16",
+   "day": "2026-11-19",
    "kind": "likeliest",
    "status": "none",
    "legs": [],
@@ -354,16 +238,98 @@
    "p": null,
    "p_market": null,
    "none_reason": "no_fit",
-   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. No likeliest ticket in the next 7 days yet.",
-   "next_day": null
+   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. The next likeliest ticket is on Sunday, Nov 22.",
+   "next_day": "2026-11-22"
+  },
+  {
+   "day": "2026-11-22",
+   "kind": "likeliest",
+   "status": "open",
+   "legs": [
+    {
+     "sport": "NFL",
+     "event": "BAL @ CAR",
+     "pick": "CAR",
+     "opponent": "BAL",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 1.7142857142857144,
+     "p": 0.576559,
+     "p_model": 0.633145,
+     "p_market": 0.562044,
+     "price_source": "consensus moneyline",
+     "american": -140,
+     "reason": "NFL: chance 58%, model 63%, market 56%",
+     "outcome": null,
+     "void_reason": null,
+     "dog": false
+    },
+    {
+     "sport": "NFL",
+     "event": "JAX @ NYG",
+     "pick": "JAX",
+     "opponent": "NYG",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 1.3703703703703702,
+     "p": 0.717619,
+     "p_model": 0.699612,
+     "p_market": 0.701195,
+     "price_source": "consensus moneyline",
+     "american": -270,
+     "reason": "NFL: chance 72%, model 70%, market 70%",
+     "outcome": null,
+     "void_reason": null,
+     "dog": false
+    },
+    {
+     "sport": "NFL",
+     "event": "TB @ DET",
+     "pick": "DET",
+     "opponent": "TB",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 1.303030303030303,
+     "p": 0.728952,
+     "p_model": 0.683832,
+     "p_market": 0.737981,
+     "price_source": "consensus moneyline",
+     "american": -330,
+     "reason": "NFL: chance 73%, model 68%, market 74%",
+     "outcome": null,
+     "void_reason": null,
+     "dog": false
+    }
+   ],
+   "multiplier": 3.0611,
+   "p": 0.301604,
+   "p_market": 0.29084,
+   "sports": [
+    "NFL"
+   ],
+   "first_start": "2026-11-22T18:00:00Z",
+   "last_start": "2026-11-22T18:00:00Z",
+   "built_at": "2026-11-19T14:05:32Z",
+   "paid": null,
+   "profit": null,
+   "missing_reason": null,
+   "none_reason": null
+  },
+  {
+   "day": "2026-11-23",
+   "kind": "likeliest",
+   "status": "none",
+   "legs": [],
+   "multiplier": null,
+   "p": null,
+   "p_market": null,
+   "none_reason": "no_fit",
+   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer."
   }
  ],
  "record": {
-  "settled": 1,
+  "settled": 2,
   "won": 0,
-  "units": -1.0,
+  "units": -2.0,
   "roi": -1.0,
-  "implied_roi": -0.063,
+  "implied_roi": -0.0888,
   "pending": 1,
   "last": [
    {
@@ -375,16 +341,26 @@
     "sports": [
      "UFC"
     ]
+   },
+   {
+    "day": "2026-11-15",
+    "status": "lost",
+    "multiplier": 3.0217,
+    "paid": 0.0,
+    "profit": -1.0,
+    "sports": [
+     "NFL"
+    ]
    }
   ]
  },
  "records": {
   "likeliest": {
-   "settled": 1,
+   "settled": 2,
    "won": 0,
-   "units": -1.0,
+   "units": -2.0,
    "roi": -1.0,
-   "implied_roi": -0.063,
+   "implied_roi": -0.0888,
    "pending": 1,
    "last": [
     {
@@ -396,15 +372,25 @@
      "sports": [
       "UFC"
      ]
+    },
+    {
+     "day": "2026-11-15",
+     "status": "lost",
+     "multiplier": 3.0217,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
+      "NFL"
+     ]
     }
    ]
   },
   "underdog": {
-   "settled": 1,
+   "settled": 2,
    "won": 0,
-   "units": -1.0,
+   "units": -2.0,
    "roi": -1.0,
-   "implied_roi": -0.0597,
+   "implied_roi": -0.0686,
    "pending": 1,
    "last": [
     {
@@ -415,6 +401,16 @@
      "profit": -1.0,
      "sports": [
       "UFC"
+     ]
+    },
+    {
+     "day": "2026-11-15",
+     "status": "lost",
+     "multiplier": 3.0,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
+      "NFL"
      ]
     }
    ]
