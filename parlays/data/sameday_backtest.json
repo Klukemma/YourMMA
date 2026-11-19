@@ -3835,6 +3835,7 @@
       }
      }
     },
+    "splits_at": "the live draw only (salt sameday-dog-v2): the splits are not measured over the simulation draws, whose mean over all days is under salts",
     "spread_label": "how much the draw alone moves it, same games"
    },
    "mixed": {
@@ -5314,6 +5315,7 @@
      }
     },
     "label": "as live: drawn and chosen as live does - each prop weighted by the shipped win chance times the estimator's share and priced at the estimate, in the live band - and paid at the real price",
+    "splits_at": "the live draw only (salt sameday-props-v1): the splits are not measured over the simulation draws, whose mean over all days is under salts",
     "real_in_band_by_years": {
      "band_chosen_on": [
       "2021-01-01",
@@ -5321,15 +5323,15 @@
      ],
      "source": "the estimator's test years (engine/data/method_price.json test.test), on whose cards the scouts chose the live band (sameday.py PROPS)",
      "in_choice_years": {
-      "tickets": 156,
+      "as_live_tickets": 156,
       "real_in_band": 0.7436
      },
      "before_choice_years": {
-      "tickets": 155,
+      "as_live_tickets": 155,
       "real_in_band": 0.6774
      },
      "after_choice_years": {
-      "tickets": 0,
+      "as_live_tickets": 0,
       "real_in_band": null
      }
     }
@@ -6069,7 +6071,8 @@
       }
      }
     },
-    "label": "as live but weighted by the real book's split: chosen at the estimated price in the live band, the draw weighting each prop by the shipped win chance times the real six-way book's share, which live never has; paid at the real price"
+    "label": "as live but weighted by the real book's split: chosen at the estimated price in the live band, the draw weighting each prop by the shipped win chance times the real six-way book's share, which live never has; paid at the real price",
+    "splits_at": "the live draw only (salt sameday-props-v1): the splits are not measured over the simulation draws, whose mean over all days is under salts"
    },
    "props_as_priced": {
     "periods": {
@@ -6793,7 +6796,8 @@
       }
      }
     },
-    "label": "as priced: chosen and paid at the real prop price, band 3-5x, on every day with props"
+    "label": "as priced: chosen and paid at the real prop price, band 3-5x, on every day with props",
+    "splits_at": "the live draw only (salt sameday-props-v1): the splits are not measured over the simulation draws, whose mean over all days is under salts"
    },
    "props_as_priced_estimated_days": {
     "periods": {
@@ -7517,7 +7521,8 @@
       }
      }
     },
-    "label": "as priced on the days as live can draw (a prop with an estimate): chosen and paid at the real prop price, band 3-5x - the row to set beside the headline"
+    "label": "as priced on the days as live can draw (a prop with an estimate): chosen and paid at the real prop price, band 3-5x - the row to set beside the headline",
+    "splits_at": "the live draw only (salt sameday-props-v1): the splits are not measured over the simulation draws, whose mean over all days is under salts"
    }
   },
   "activity": {
@@ -7629,7 +7634,7 @@
   "caveats": [
    "The market is hard to beat, and no v2 ticket is an edge: every leg pays the bookmaker's margin. Over 2016-08-01 to 2026-08-08, LIKELIEST v2 won 833 of 2,690 (-4.4% a ticket, -9.7% to +1.1%; by the prices -15.3%); UNDERDOG v2 at the live draw won 707 of 2,969 (-8.1% a ticket, -14.1% to -1.9%; by the prices -11.6%), over the 1,000 simulation draws -7.4% (-10.6% to -4.3%); MIXED won 775 of 2,616 (-9.6% a ticket, -14.9% to -4.3%; by the prices -14.6%); and to 2024-12-07, PROPS as live won 75 of 311 (-13.6% a ticket, -30.8% to +3.7%; by the prices -23.6%), over the 1,000 simulation draws -8.9% (-14.4% to -3.4%). None of the four kinds' 95% intervals lies above zero; UNDERDOG v2 and MIXED's lies wholly below it. An interval that spans zero is no evidence of an edge.",
    "Live there is no prop price on the odds feed: a live props ticket - and a live mixed ticket holding a prop (here 1.6% of MIXED's tickets held one, at the real price) - is chosen and shown at the METHOD ESTIMATOR's price, an estimate. Measured in engine/data/method_price.json: fitted 2016-2020 and tested 2021-2024, its median miss against the real prop price is decision 16.4% as the favourite and 14.4% as the underdog; KO/TKO 24.3% as the favourite and 22.8% as the underdog; submission 29.2% as the favourite and 26.3% as the underdog; 21.4% over all 9,420 single props. Refitted each year on earlier years only, as here, it missed the real price by a median 21.5% over the history's 18,774 estimated props and 15.2% on the props the as-live tickets drew. Chosen by the estimate in 3.6-4.2x, the as-live tickets' real multiplier lay in 3-5x on 71.1% of them (searched 3.77x on average, paid 3.94x); a live ticket's multiplier is an estimate until a book prices the prop. The live band was chosen on the estimator's test cards, 2021-2024 (sameday.py PROPS), so the share in 3-5x is partly in-sample there: 74.4% of 156 as-live tickets in 2021-2024, 67.7% of 155 before 2021.",
-   "As live, the draw weights each prop by the shipped win chance times the ESTIMATOR's share of that corner's wins, and the search reads the estimated price - as live does, where no book splits a win chance by method. Weighted instead by the real six-way book's split, an input live never has (the first build's reading, kept beside it): PROPS as live by the book's split won 80 of 311 (-11.8% a ticket, -28.7% to +5.8%; by the prices -23.6%), over the 1,000 simulation draws -8.7%; the two readings drew a different prop on 47 of 311 of the days both have a ticket.",
+   "As live, the draw weights each prop by the shipped win chance times the ESTIMATOR's share of that corner's wins, and the search reads the estimated price - as live does, where no book splits a win chance by method. Weighted instead by the real six-way book's split, an input live never has (the first build's reading, kept beside it): PROPS as live by the book's split won 80 of 311 (-11.8% a ticket, -28.7% to +5.8%; by the prices -23.6%), over the 1,000 simulation draws -8.7%; the two readings drew a different prop on 47 of the 311 days both have a ticket.",
    "A prop costs more than a moneyline: on the 3,324 fights with props here the six props' book runs a median 22.6% over across its six outcomes against 4.0% for the same fights' moneyline pair, so a ticket holding a prop pays the heavier margin; PROPS as live is price-implied -23.6% a ticket against LIKELIEST v2's -15.3%. MIXED's price-implied return (-14.6% over all days, every league, against -15.3%) is above LIKELIEST v2's in all 6 periods and league sets: only 1.6% of its tickets held a prop, so most MIXED tickets do not pay the props' margin. In history a card has props only where all six were priced, make a believable book and the card is priced at the close (329 of 348 UFC card days 2016-08-01 to 2024-12-07); live every fight on a card is priced by the estimate, so live PROPS can come on more card days than here.",
    "One price snapshot a card: the props history is the closing snapshot (method_odds.csv, the same upstream snapshot as odds.csv's close), so the 83 fights with a six-way book on the 9 UFC cards priced from the opening line (2017-06-25 to 2021-04-24) give no prop here (parlays/data/legs_v2_ufc_method_left_out.csv.gz): a ticket pairing a closing prop with that card's opening moneylines could never have been bought, and the prop's chance would mix the two snapshots.",
    "Closing prices: the 15 extra leagues' history has no pre-match price, so their legs are chosen and priced at the closing average while live they are priced pre-match (1,440 of LIKELIEST v2's 2,690 tickets hold one); NFL moneyline, spread and total legs are chosen and priced at the close, which knows the day's news, while live they are priced when the ticket is built. Without the extra leagues LIKELIEST v2 won 662 of 2,099 (-2.6% a ticket, -8.8% to +3.6%; by the prices -14.5%), on 57.4% of days against 73.5%.",
@@ -7638,7 +7643,7 @@
    "UFC props are graded by the archive's method class: a prop wins only when its corner wins that way, so on the 9 fights won by disqualification or another unclassed method every prop lost (some books void such a prop). UFC draws and no contests: 92 of the 5,050 UFC fights from 2016-08-01 to 2026-08-08 (1.8%) ended without a winner - 40 draws, 52 no contests or overturned results, counted from the UFC archive - and none of them is in the history's legs (engine/experiments/parlay_legs.csv.gz keeps decided fights only), so here they are neither legs nor underdogs and a ticket that day is drawn and filled from the other fights. Live the rule cannot know them beforehand: such a fight stays in the draw and the fill, and its leg voids (pays 1.0).",
    "Soccer days: 95,383 of the 118,654 soccer winner legs take the ET day of their kickoff and 23,271 (europe 17,793, top 5,478, 2016-08-01 to 2019-06-09) their listed date, the kickoff time not being on file; where it is, a European division's kickoff falls on its listed date in ET for 100.0% of 53,348 legs.",
    "The live draws are the lotteries with their live salts (sameday-dog-v2 for UNDERDOG v2, sameday-props-v1 for PROPS); the simulation draws are the same lotteries with 1,000 other salts. UNDERDOG v2's live draw drew about average (above 404 of 1,000) and PROPS as live's drew about average (above 294 of 1,000); the 5th-95th percentile across the draws (UNDERDOG v2 -11.6% to -3.0%, PROPS -24.0% to +5.8% a ticket) is how much the draw alone moves the record over the same games; it is not a confidence interval.",
-   "Expected (sameday.py) (written before the results, from prices only) tickets on about 70-80% of days instead of about a third; price-implied returns about -15% (LIKELIEST v2 and MIXED) and -16% to -20% (PROPS) a ticket - a prop carries about 22% margin across its six outcomes against about 4% for a moneyline pair. Measured: the four kinds that ship made 8,586 tickets (2.35 a day, a ticket on 84.4% of days) against v1's 2,732 (0.75 a day); LIKELIEST v2 on 73.5% of days, MIXED on 71.5%, UNDERDOG v2 on 81.1%, PROPS as live on 100.0% of the 311 days with an estimated prop (10.2% of all its days; the other 18 days with props, 2016-08-06 to 2016-12-30, have none: no earlier props to fit the estimator on: the fit rows start 2016-01-02, so method_price.fit_before(2016) is None); by the prices LIKELIEST v2 -15.3%, MIXED -14.6%, UNDERDOG v2 -11.6%, PROPS as live -23.6% and as priced -23.2% a ticket.",
+   "Expected (sameday.py) (written before the results, from prices only) tickets on about 70-80% of days instead of about a third; price-implied returns about -15% (LIKELIEST v2 and MIXED) and -16% to -20% (PROPS) a ticket - a prop carries about 22% margin across its six outcomes against about 4% for a moneyline pair. Measured: the four kinds that ship made 8,586 tickets (2.35 a day, a ticket on 84.4% of days) against v1's 2,732 (0.75 a day); LIKELIEST v2 on 73.5% of days, MIXED on 71.5%, UNDERDOG v2 on 81.1%, PROPS as live on 100.0% of the 311 days with an estimated prop (10.2% of all its days; the other 18 days with props, 2016-08-06 to 2016-12-30, have none: no earlier props to fit the estimator on: the fit rows start 2016-01-02, so method_price.fit_before(2016) is None); by the prices LIKELIEST v2 -15.3%, MIXED -14.6%, UNDERDOG v2 -11.6%, PROPS as live -23.6% and as priced on the same days -23.2% a ticket.",
    "Prior exposure (sameday.py): v1's likeliest and underdog records had been seen when v2 was asked for; the soccer over/under market-against-model measure, the NFL spread/total measure (no configuration beat -110 in both periods) and the UFC prop flat-bet results (underdog KO props -24%, submission props -52%: parlay_profiles' docstring) had been seen. The extra leagues and the new markets were chosen on the scouts' outcome-free counts, not on any result. The v2 records are not an out-of-sample test of these markets.",
    "OU25's leagues were chosen on results: a league offers the over/under leg only where it ships over 2.5 from the market (soccer_leagues rule (c)), and it does so only where the market's over/under beat the league's base rate in log loss in both 2006-2015 and 2016-2025 - a measure that read the results of the years measured here. 21 of the 37 leagues in the app pass. Rule (c) left out SC2 (Not shown from the market's prices: over 2.5, over 3.5 - it did not beat the league's base rate in both 2006-2015 and 2016-2025.); the 15 extra leagues ship no number from the market's prices. The prior-exposure text above says the new markets were chosen on the scouts' outcome-free counts; OU25's league set was not.",
    "The PROPS lottery's key is the fight's two corners, the prop's own corner and its type (sameday.method_lot_key, e.g. 'marlon vera|song yadong|song yadong|Decision'): the registered PROPS text names the corners and the type; the corner is in it so that both corners' props of one type do not share one lottery number. The draws measured here and the live draw are that function's.",

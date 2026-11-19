@@ -190,6 +190,13 @@ stay as they are (kept on the page as v1); v2 is measured on its own.
            Measured 2016-08-01 to 2024-12-07 only: history has no prop
            after that.
 
+  ERRATUM 2026-11-19 (wording only; no rule or number changes): the props
+           lot key written above as "dog_lot_key's corners plus the leg type"
+           is, in the code that every measured and live props ticket used
+           (method_lot_key), the fight's corners, THE PROP'S CORNER and the
+           type - without the corner both fighters' "by KO/TKO" props would
+           share one lottery number. Noted after the results were computed;
+           the code was never changed to match the shorter wording.
   MEASURED as v1's MEASURED (periods all/FIRST/LAST3, a day bootstrap of
            4,000 resamples with seed 7, price-implied return beside every
            record, the 1,000 simulation salts for each lottery, the live
