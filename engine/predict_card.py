@@ -50,8 +50,8 @@ RUN_OPTUNA = False
 # ==============================================================================
 # 2. EVENT DETAILS
 # ==============================================================================
-EVENT_NAME = "UFC 334: Gane vs. Hokit"
-EVENT_DATE = "2026-11-14"  # Format: YYYY-MM-DD
+EVENT_NAME = "UFC Fight Night: Prochazka vs. Stirling"
+EVENT_DATE = "2026-11-21"  # Format: YYYY-MM-DD
 
 # ==============================================================================
 # 3. FIGHT CARD
@@ -60,40 +60,45 @@ EVENT_DATE = "2026-11-14"  # Format: YYYY-MM-DD
 # - is_5_rounds: True for main events and title fights
 # - is_title_fight: True if fighting for a championship
 #
-# Bout list reconciled 2026-11-10 by two independent passes over Bloody
-# Elbow (Nov 9 preview), MMA News (full-card preview), UFC.com (event page
-# and fight-by-fight preview), Sherdog, Boxing News, Cageside Press, Heavy,
-# AgentMMA, MMA Sucka, MMA Mania, Combat Edge and UFCalendar: 13 bouts, each
-# on two outlets or more, both passes agreeing. Changes since announcement:
-# Baisangur Susurkaev withdrew, Cesar Almeida replaced him against Donte
-# Johnson (Sherdog, Boxing News, MMA Sucka, AgentMMA); Adrian Yanez withdrew,
-# Alatengheili replaced him against Juan Diaz on about eight days' notice
-# (Boxing News, Bloody Elbow, MMA Mania); Nazim Sadykhov vs. Jefferson
-# Nascimento is off (both withdrew). Joselyne Edwards is the named backup
-# for the women's bantamweight title fight. Samuel Sanches makes his UFC
-# debut. The champions are listed in the red corner; elsewhere the
-# first-billed fighter is listed first (no source states corners), and the
-# order within each segment follows the outlets' listings where they give one.
+# Bout list reconciled 2026-11-19 (fight week) over UFC.com (event page and
+# fight-by-fight preview), ESPN FightCenter, Sherdog, Tapology, Wikipedia,
+# bet365 News, MMA Mania, Yahoo Sports, Heavy, Boxing News, Cageside Press,
+# AgentMMA and UFCalendar: 12 bouts, each on two outlets or more. Five-round
+# non-title main event. Nine bouts were announced Sept. 29 (Cageside Press,
+# Sherdog); Nikolas Motta vs. Dom Mar Fan joined Oct. 30 (Cageside Press,
+# AgentMMA); Diyar Nurgozhay vs. Alik Lorenz later (Cageside Press, AgentMMA,
+# UFC.com preview). Jake Matthews was first announced against Akbar Abdullaev
+# and now meets Tahir Abdullayev (Wikipedia, Tapology, MMA Mania; AgentMMA
+# says the first announcement reportedly contained an error). John Mitchell
+# vs. Shoaib Yousaf was added four days out, on Nov. 17 (Heavy, Boxing News,
+# Yahoo Sports, AgentMMA); Wikipedia carries it as announced but outside its
+# card table, so it is listed last. Off the card: Jacqueline Cavalcanti vs.
+# Michelle Montague, announced Oct. 30, moved to UFC 335 on Dec. 12
+# (AgentMMA; GidStats lists it cancelled for Qatar), and Magomed Zaynukov
+# vs. Manoel Sousa, reported for the card, never signed - Zaynukov says he
+# is out until 2027 after surgery (Low Kick MMA, Boxing News, AgentMMA).
+# Alik Lorenz, John Mitchell and Shoaib Yousaf make their UFC debuts. No
+# source states corners: the first-billed fighter is listed first, and the
+# order within each segment follows Wikipedia's and bet365's listings
+# (Tapology puts Matthews vs. Abdullayev third of the night, under Albazi
+# vs. Costa, consistent with it).
 
 FIGHT_CARD = [
     # Main Card
-    ("Ciryl Gane", "Josh Hokit", True, True),                  # 0 - Main Event, Heavyweight title (5 rounds)
-    ("Kayla Harrison", "Amanda Nunes", True, True),            # 1 - Co-Main, Women's Bantamweight title (5 rounds)
-    ("Caio Borralho", "Yousri Belgaroui"),                     # 2 - Middleweight
-    ("Uros Medic", "Kevin Holland"),                           # 3 - Welterweight
-    ("Bilal Hasan", "Luis Gurule"),                            # 4 - Flyweight
+    ("Jiri Prochazka", "Navajo Stirling", True, False),        # 0 - Main Event, Light Heavyweight (5 rounds)
+    ("Aljamain Sterling", "Kevin Vallejos"),                   # 1 - Co-Main, Featherweight
+    ("Dan Hooker", "Brian Ortega"),                            # 2 - Lightweight
+    ("Kyoji Horiguchi", "Asu Almabayev"),                      # 3 - Flyweight
+    ("Jared Cannonier", "Ikram Aliskerov"),                    # 4 - Middleweight
 
     # Preliminary Card
-    ("Stephen Thompson", "Charles Radtke"),                    # 5 - Welterweight (Thompson: announced as the last fight of his career)
-    ("Drew Dober", "Chris Duncan"),                            # 6 - Lightweight
-    ("Jim Miller", "Terrance McKinney"),                       # 7 - Lightweight
-    ("Donte Johnson", "Cesar Almeida"),                        # 8 - Middleweight (Almeida: replacement for Susurkaev)
-
-    # Early Preliminary Card
-    ("Jared Gordon", "Melquizael Costa"),                      # 9 - Lightweight (Costa: up from featherweight)
-    ("Macy Chiasson", "Bia Mesquita"),                         # 10 - Women's Bantamweight
-    ("Evan Elder", "Samuel Sanches"),                          # 11 - Lightweight (Sanches: UFC debut)
-    ("Juan Diaz", "Alatengheili"),                             # 12 - Bantamweight (Alatengheili: short notice for Yanez)
+    ("Aleksandre Topuria", "Santiago Luna"),                   # 5 - Bantamweight
+    ("Shamil Gaziev", "Tallison Teixeira"),                    # 6 - Heavyweight
+    ("Amir Albazi", "Alessandro Costa"),                       # 7 - Flyweight (rematch)
+    ("Jake Matthews", "Tahir Abdullayev"),                     # 8 - Welterweight (first announced vs. Akbar Abdullaev)
+    ("Nikolas Motta", "Dom Mar Fan"),                          # 9 - Lightweight
+    ("Diyar Nurgozhay", "Alik Lorenz"),                        # 10 - Light Heavyweight (Lorenz: UFC debut)
+    ("John Mitchell", "Shoaib Yousaf"),                        # 11 - Lightweight (added four days out; both UFC debuts)
 ]
 
 # ==============================================================================
@@ -102,9 +107,10 @@ FIGHT_CARD = [
 # Home advantage only counts when ONE fighter is home and the other is NOT.
 # If both fighters are "home" (e.g., both USA-based), no advantage.
 #
-# UFC 334: Gane vs. Hokit - Madison Square Garden, New York, NY: the
-# standard Octagon, so no cage_size (that key is for cages smaller or larger
-# than standard, e.g. 'small' at the Apex).
+# UFC Fight Night: Prochazka vs. Stirling - ABHA Arena (Ali Bin Hamad
+# al-Attiyah Arena), Doha, Qatar: an arena show on the standard Octagon, so
+# no cage_size (that key is for cages smaller or larger than standard, e.g.
+# 'small' at the Apex). No source found states the cage size either way.
 #
 # Home flags are left off this card: nobody's base was checked fight by
 # fight, and a guessed flag is worse than none.
@@ -115,19 +121,18 @@ FIGHT_CARD = [
 # is wrong whenever one of them is changing class.
 
 FIGHT_CONTEXTS = {
-    0: {"division": "heavyweight"},
-    1: {"division": "women's bantamweight"},
-    2: {"division": "middleweight"},
-    3: {"division": "welterweight"},
-    4: {"division": "flyweight"},
-    5: {"division": "welterweight"},
-    6: {"division": "lightweight"},
-    7: {"division": "lightweight"},
-    8: {"division": "middleweight"},
+    0: {"division": "light heavyweight"},
+    1: {"division": "featherweight"},
+    2: {"division": "lightweight"},
+    3: {"division": "flyweight"},
+    4: {"division": "middleweight"},
+    5: {"division": "bantamweight"},
+    6: {"division": "heavyweight"},
+    7: {"division": "flyweight"},
+    8: {"division": "welterweight"},
     9: {"division": "lightweight"},
-    10: {"division": "women's bantamweight"},
+    10: {"division": "light heavyweight"},
     11: {"division": "lightweight"},
-    12: {"division": "bantamweight"},
 }
 
 # ==============================================================================
