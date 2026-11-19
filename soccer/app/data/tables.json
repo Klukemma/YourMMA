@@ -8,7 +8,7 @@
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, pooled over the top five, each beat the leagues' own rates from earlier seasons. A league shows only the numbers that beat its own rates in both of its periods; the others are withheld and shown as missing. Both teams to score runs low: across 2016-2025 in the top five its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-17T23:59:39Z",
+ "generated": "2026-11-19T14:03:28Z",
  "leagues": [
   {
    "caveats": [
@@ -29975,8 +29975,8 @@
    "label": "S\u00e9rie A",
    "model_through": "2026-11-14",
    "name": "S\u00e9rie A",
-   "provisional": 0,
-   "results_through": "2026-11-14",
+   "provisional": 6,
+   "results_through": "2026-11-19",
    "rows": [
     {
      "club": {
@@ -29987,6 +29987,16 @@
      },
      "drawn": 7,
      "form": [
+      {
+       "date": "2026-11-18",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Athletico-PR",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-04",
        "ga": 1,
@@ -30022,28 +30032,19 @@
        "league": "BRA",
        "opponent": "Bahia",
        "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Fluminense",
-       "result": "W"
       }
      ],
-     "ga": 29,
-     "gd": 42,
-     "gf": 71,
+     "ga": 30,
+     "gd": 43,
+     "gf": 73,
      "lost": 4,
-     "played": 34,
-     "points": 76,
+     "played": 35,
+     "points": 79,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.9922238348559894,
      "team": "Flamengo RJ",
-     "won": 23
+     "won": 24
     },
     {
      "club": {
@@ -30054,6 +30055,16 @@
      },
      "drawn": 10,
      "form": [
+      {
+       "date": "2026-11-18",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Cruzeiro",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-05",
        "ga": 1,
@@ -30089,25 +30100,16 @@
        "league": "BRA",
        "opponent": "Athletico-PR",
        "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 4,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Corinthians",
-       "result": "W"
       }
      ],
-     "ga": 23,
-     "gd": 39,
-     "gf": 62,
-     "lost": 3,
-     "played": 34,
+     "ga": 25,
+     "gd": 38,
+     "gf": 63,
+     "lost": 4,
+     "played": 35,
      "points": 73,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.8122786747578709,
      "team": "Palmeiras",
      "won": 21
@@ -30121,6 +30123,16 @@
      },
      "drawn": 6,
      "form": [
+      {
+       "date": "2026-11-18",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Palmeiras",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-06",
        "ga": 2,
@@ -30156,28 +30168,19 @@
        "league": "BRA",
        "opponent": "Gremio",
        "result": "W"
-      },
-      {
-       "date": "2026-10-13",
-       "ga": 4,
-       "gf": 2,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Bragantino",
-       "result": "L"
       }
      ],
-     "ga": 48,
-     "gd": 7,
-     "gf": 55,
+     "ga": 49,
+     "gd": 8,
+     "gf": 57,
      "lost": 10,
-     "played": 34,
-     "points": 60,
+     "played": 35,
+     "points": 63,
      "position": 3,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.29761004137337377,
      "team": "Cruzeiro",
-     "won": 18
+     "won": 19
     },
     {
      "club": {
@@ -30256,6 +30259,16 @@
      "drawn": 9,
      "form": [
       {
+       "date": "2026-11-18",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Flamengo RJ",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-04",
        "ga": 3,
        "gf": 1,
@@ -30290,25 +30303,16 @@
        "league": "BRA",
        "opponent": "Palmeiras",
        "result": "L"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 1,
-       "gf": 4,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Chapecoense-SC",
-       "result": "W"
       }
      ],
-     "ga": 43,
-     "gd": 8,
-     "gf": 51,
-     "lost": 10,
-     "played": 34,
+     "ga": 45,
+     "gd": 7,
+     "gf": 52,
+     "lost": 11,
+     "played": 35,
      "points": 54,
      "position": 5,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.06542875015821403,
      "team": "Athletico-PR",
      "won": 15
@@ -30320,8 +30324,18 @@
       "fg": "#FFFFFF",
       "name": "Bahia"
      },
-     "drawn": 11,
+     "drawn": 12,
      "form": [
+      {
+       "date": "2026-11-19",
+       "ga": 0,
+       "gf": 0,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Gremio",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-06",
        "ga": 3,
@@ -30357,25 +30371,16 @@
        "league": "BRA",
        "opponent": "Flamengo RJ",
        "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Mirassol",
-       "result": "W"
       }
      ],
      "ga": 45,
      "gd": 5,
      "gf": 50,
      "lost": 9,
-     "played": 34,
-     "points": 53,
+     "played": 35,
+     "points": 54,
      "position": 6,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.08512083331711207,
      "team": "Bahia",
      "won": 14
@@ -30450,6 +30455,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "SNT",
+      "fg": "#FFFFFF",
+      "name": "Santos"
+     },
+     "drawn": 11,
+     "form": [
+      {
+       "date": "2026-11-18",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Coritiba",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-02",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Bragantino",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-28",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Palmeiras",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Bahia",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Fluminense",
+       "result": "W"
+      }
+     ],
+     "ga": 49,
+     "gd": 2,
+     "gf": 51,
+     "lost": 11,
+     "played": 35,
+     "points": 50,
+     "position": 8,
+     "provisional": 1,
+     "rating": 0.07483262968227233,
+     "team": "Santos",
+     "won": 13
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "BRA",
       "fg": "#FFFFFF",
       "name": "Bragantino"
@@ -30508,78 +30581,11 @@
      "lost": 13,
      "played": 34,
      "points": 47,
-     "position": 8,
+     "position": 9,
      "provisional": 0,
      "rating": 0.057304597862745776,
      "team": "Bragantino",
      "won": 13
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "SNT",
-      "fg": "#FFFFFF",
-      "name": "Santos"
-     },
-     "drawn": 11,
-     "form": [
-      {
-       "date": "2026-11-02",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Bragantino",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-28",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Palmeiras",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Bahia",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Fluminense",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Atletico-MG",
-       "result": "L"
-      }
-     ],
-     "ga": 49,
-     "gd": 1,
-     "gf": 50,
-     "lost": 11,
-     "played": 34,
-     "points": 47,
-     "position": 9,
-     "provisional": 0,
-     "rating": 0.07483262968227233,
-     "team": "Santos",
-     "won": 12
     },
     {
      "club": {
@@ -30725,6 +30731,16 @@
      "drawn": 9,
      "form": [
       {
+       "date": "2026-11-19",
+       "ga": 4,
+       "gf": 0,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Corinthians",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-05",
        "ga": 0,
        "gf": 1,
@@ -30759,25 +30775,16 @@
        "league": "BRA",
        "opponent": "Chapecoense-SC",
        "result": "W"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Coritiba",
-       "result": "D"
       }
      ],
-     "ga": 53,
-     "gd": -7,
+     "ga": 57,
+     "gd": -11,
      "gf": 46,
-     "lost": 14,
-     "played": 34,
+     "lost": 15,
+     "played": 35,
      "points": 42,
      "position": 12,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.008028755538767696,
      "team": "Botafogo RJ",
      "won": 11
@@ -30791,6 +30798,16 @@
      },
      "drawn": 9,
      "form": [
+      {
+       "date": "2026-11-18",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Santos",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-04",
        "ga": 1,
@@ -30826,25 +30843,16 @@
        "league": "BRA",
        "opponent": "Atletico-MG",
        "result": "L"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Botafogo RJ",
-       "result": "D"
       }
      ],
-     "ga": 51,
-     "gd": -11,
+     "ga": 52,
+     "gd": -12,
      "gf": 40,
-     "lost": 14,
-     "played": 34,
+     "lost": 15,
+     "played": 35,
      "points": 42,
      "position": 13,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.28736921177143604,
      "team": "Coritiba",
      "won": 11
@@ -30919,6 +30927,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "COR",
+      "fg": "#FFFFFF",
+      "name": "Corinthians"
+     },
+     "drawn": 10,
+     "form": [
+      {
+       "date": "2026-11-19",
+       "ga": 0,
+       "gf": 4,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Botafogo RJ",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-05",
+       "ga": 0,
+       "gf": 0,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Sao Paulo",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-30",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Mirassol",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 3,
+       "gf": 2,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Vasco",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Vitoria",
+       "result": "D"
+      }
+     ],
+     "ga": 42,
+     "gd": -2,
+     "gf": 40,
+     "lost": 15,
+     "played": 35,
+     "points": 40,
+     "position": 15,
+     "provisional": 1,
+     "rating": -0.0883751781116574,
+     "team": "Corinthians",
+     "won": 10
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "INT",
       "fg": "#FFFFFF",
       "name": "Internacional"
@@ -30977,10 +31053,78 @@
      "lost": 14,
      "played": 34,
      "points": 38,
-     "position": 15,
+     "position": 16,
      "provisional": 0,
      "rating": -0.06727008422101677,
      "team": "Internacional",
+     "won": 9
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "GRE",
+      "fg": "#FFFFFF",
+      "name": "Gremio"
+     },
+     "drawn": 11,
+     "form": [
+      {
+       "date": "2026-11-19",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Bahia",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-11-04",
+       "ga": 3,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Flamengo RJ",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-30",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Athletico-PR",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-26",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Coritiba",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 4,
+       "gf": 2,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Cruzeiro",
+       "result": "L"
+      }
+     ],
+     "ga": 47,
+     "gd": -9,
+     "gf": 38,
+     "lost": 15,
+     "played": 35,
+     "points": 38,
+     "position": 17,
+     "provisional": 1,
+     "rating": -0.12167892609514963,
+     "team": "Gremio",
      "won": 9
     },
     {
@@ -31044,145 +31188,11 @@
      "lost": 16,
      "played": 34,
      "points": 38,
-     "position": 16,
+     "position": 18,
      "provisional": 0,
      "rating": -0.32177972549349465,
      "team": "Vitoria",
      "won": 10
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "COR",
-      "fg": "#FFFFFF",
-      "name": "Corinthians"
-     },
-     "drawn": 10,
-     "form": [
-      {
-       "date": "2026-11-05",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Sao Paulo",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-30",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Mirassol",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 3,
-       "gf": 2,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Vasco",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Vitoria",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 4,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Palmeiras",
-       "result": "L"
-      }
-     ],
-     "ga": 42,
-     "gd": -6,
-     "gf": 36,
-     "lost": 15,
-     "played": 34,
-     "points": 37,
-     "position": 17,
-     "provisional": 0,
-     "rating": -0.0883751781116574,
-     "team": "Corinthians",
-     "won": 9
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "GRE",
-      "fg": "#FFFFFF",
-      "name": "Gremio"
-     },
-     "drawn": 10,
-     "form": [
-      {
-       "date": "2026-11-04",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Flamengo RJ",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-30",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Athletico-PR",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-26",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Coritiba",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 4,
-       "gf": 2,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Cruzeiro",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Internacional",
-       "result": "D"
-      }
-     ],
-     "ga": 47,
-     "gd": -9,
-     "gf": 38,
-     "lost": 15,
-     "played": 34,
-     "points": 37,
-     "position": 18,
-     "provisional": 0,
-     "rating": -0.12167892609514963,
-     "team": "Gremio",
-     "won": 9
     },
     {
      "club": {
@@ -31193,6 +31203,16 @@
      },
      "drawn": 11,
      "form": [
+      {
+       "date": "2026-11-18",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Chapecoense-SC",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-05",
        "ga": 6,
@@ -31228,28 +31248,19 @@
        "league": "BRA",
        "opponent": "Bragantino",
        "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Vasco",
-       "result": "D"
       }
      ],
      "ga": 57,
-     "gd": -20,
-     "gf": 37,
+     "gd": -18,
+     "gf": 39,
      "lost": 17,
-     "played": 34,
-     "points": 29,
+     "played": 35,
+     "points": 32,
      "position": 19,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.35695686056062015,
      "team": "Remo",
-     "won": 6
+     "won": 7
     },
     {
      "club": {
@@ -31260,6 +31271,16 @@
      },
      "drawn": 9,
      "form": [
+      {
+       "date": "2026-11-18",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Remo",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-14",
        "ga": 2,
@@ -31295,25 +31316,16 @@
        "league": "BRA",
        "opponent": "Fluminense",
        "result": "W"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Botafogo RJ",
-       "result": "L"
       }
      ],
-     "ga": 70,
-     "gd": -37,
+     "ga": 72,
+     "gd": -39,
      "gf": 33,
-     "lost": 21,
-     "played": 34,
+     "lost": 22,
+     "played": 35,
      "points": 21,
      "position": 20,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.7461723441720325,
      "team": "Chapecoense-SC",
      "won": 4
