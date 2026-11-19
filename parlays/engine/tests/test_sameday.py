@@ -1337,8 +1337,16 @@ def test_a_lotterys_every_v2_reading_carries_its_draws_mean():
         "underdog": {"salt": sdy.DOG_SALT_V2, "live": split(rec, rec), "salts": split(salts(-0.07), salts(-0.11))},
         "props_as_live": {"salt": sdy.PROPS_SALT, "live": split(rec, rec), "salts": split(salts(-0.08), salts(-0.08))},
         "props_as_priced": {"salt": sdy.PROPS_SALT, "live": split(rec, rec), "salts": split(salts(-0.109), None)},
+        "props_as_priced_estimated_days": {"salt": sdy.PROPS_SALT, "live": split(rec, rec),
+                                           "salts": split(salts(-0.0998), None)},
+        "props_as_live_book_split": {"salt": "another", "live": split(rec, rec), "salts": split(salts(-0.12), None)},
         "mixed": {"live": split(rec, rec)}}}}
     got, _ = bs.v2_measured(bt)
+    # beside the props headline: as priced on the same days, with its draws;
+    # a reading measured at another draw is never shown as this one's
+    assert got["props"]["as_priced_same_days"]["all"]["tickets"] == 300
+    assert got["props"]["as_priced_same_days_salts"]["all"]["roi"] == -0.0998
+    assert "book_split" not in got["props"]
     assert got["underdog_v2"]["salts"]["all"]["roi"] == -0.07
     assert got["underdog_v2"]["without_extra_salts"]["all"]["roi"] == -0.11
     assert got["props"]["as_priced_salts"]["all"]["roi"] == -0.109

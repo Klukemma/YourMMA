@@ -1018,10 +1018,13 @@ def table(payload):
 # ================================================================ tickets v2
 #
 # sameday.py's TICKETS v2, MEASURED: LIKELIEST v2, UNDERDOG v2 (salt
-# DOG_SALT_V2, the 1,000 DOG_SIM_SALTS_V2), MIXED and PROPS - "as priced"
-# (chosen and paid at the real props, BAND) and "as live" (chosen by the
-# yearly-refitted estimator's price in PROPS_LIVE_BAND, paid at the real
-# props; the headline), each over PROPS_SALT and the 1,000 PROPS_SIM_SALTS -
+# DOG_SALT_V2, the 1,000 DOG_SIM_SALTS_V2), MIXED and PROPS - "as live"
+# (drawn and chosen by the yearly-refitted estimator's chance and price in
+# PROPS_LIVE_BAND, as live draws, paid at the real props; the headline),
+# beside it on the same days "as priced" (chosen and paid at the real props,
+# BAND) and "as live" weighted by the real book's split (an input live never
+# has), and "as priced" on every props day as its own row (PROPS_KINDS),
+# each over PROPS_SALT and the 1,000 PROPS_SIM_SALTS -
 # every one built by sameday's own v2 functions, over every day of the
 # registered periods (v1's DOG_PERIODS; PROPS to PROPS_HISTORY_END, so its
 # last-3-years period is the overlap), with every league in the app and
@@ -1301,7 +1304,7 @@ def band_years(ts):
                            f"({type(e).__name__})"}
 
     def share(xs):
-        return {"tickets": len(xs), "real_in_band": round(float(np.mean([sdy.BAND[0] <= t["multiplier"] <= sdy.BAND[1]
+        return {"as_live_tickets": len(xs), "real_in_band": round(float(np.mean([sdy.BAND[0] <= t["multiplier"] <= sdy.BAND[1]
                                                                           for t in xs])), 4) if xs else None}
     return {"band_chosen_on": [lo, hi],
             "source": "the estimator's test years (engine/data/method_price.json test.test), on whose cards the "
@@ -1483,6 +1486,9 @@ def measure_v2(payload):
         kinds[k] = block
     for k in PROPS_KINDS:
         kinds[k]["label"] = PROPS_LABELS[k]
+    for k in V2_LOTTERIES:
+        kinds[k]["splits_at"] = (f"the live draw only (salt {kinds[k]['salt']}): the splits are not measured over "
+                                 f"the simulation draws, whose mean over all days is under salts")
     kinds["props_as_live"]["real_in_band_by_years"] = band_years(
         [t for t in tickets[("props_as_live", "all_leagues")] if in_period(t["day"], PROPS_PERIODS["all"])])
     kinds["underdog"]["spread_label"] = SPREAD_LABEL
@@ -1817,8 +1823,8 @@ def v2_caveats(v2, frames, tickets):
         f"{PL.get('days_with_legs', 0):,} days with an estimated prop ({sh(PL.get('share_of_days'))} of all its days; "
         + no_estimate_days_text(frames) + "); by the prices "
         f"LIKELIEST v2 {pc(L.get('implied_roi'))}, MIXED {pc(X.get('implied_roi'))}, UNDERDOG v2 "
-        f"{pc(U.get('implied_roi'))}, PROPS as live {pc(PL.get('implied_roi'))} and as priced "
-        f"{pc(PP.get('implied_roi'))} a ticket.")
+        f"{pc(U.get('implied_roi'))}, PROPS as live {pc(PL.get('implied_roi'))} and as priced on the same days "
+        f"{pc(PE.get('implied_roi'))} a ticket.")
     out.append("Prior exposure (sameday.py): " + _doc_block("PRIOR EXPOSURE")
                + " The v2 records are not an out-of-sample test of these markets.")
     out.append(ou_rule_text(frames))
@@ -1842,7 +1848,8 @@ def band_years_text(by):
         return by["missing"][0].upper() + by["missing"][1:] + "."
     lo, hi = by["band_chosen_on"]
     a, b = by["in_choice_years"], by["before_choice_years"]
-    f = lambda x: "missing (no ticket)" if x["real_in_band"] is None else f"{x['real_in_band']:.1%} of {x['tickets']:,}"
+    f = lambda x: ("missing (no ticket)" if x["real_in_band"] is None else
+                   f"{x['real_in_band']:.1%} of {x['as_live_tickets']:,}")
     return (f"The live band was chosen on the estimator's test cards, {lo[:4]}-{hi[:4]} (sameday.py PROPS), so the "
             f"share in {sdy.BAND[0]:g}-{sdy.BAND[1]:g}x is partly in-sample there: {f(a)} as-live tickets in "
             f"{lo[:4]}-{hi[:4]}, {f(b)} before {lo[:4]}.")

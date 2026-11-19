@@ -893,6 +893,9 @@ function v2Lines(kind, brief = false) {
     for (const [k] of PERIODS.filter(([p]) => head[p] && p !== "first")) {
       out.push(...read(head[k], salts[k], `${periodLabel(k, per)}${props ? ", as live" : ""}`));
     }
+    // the props headline's comparison row: as priced on the same days
+    const same = props && m.as_priced_same_days && m.as_priced_same_days.all;
+    if (same) out.push(...read(same, obj(m.as_priced_same_days_salts).all, `${periodLabel("all", per)}, as priced on the same days`));
     const act = activityLine(head.all);
     if (act) out.push(act);
     return out;
@@ -904,11 +907,20 @@ function v2Lines(kind, brief = false) {
     const act = activityLine(head[k]);
     if (act) out.push(act);
   }
-  const ap = props && m.as_priced && typeof m.as_priced === "object" ? m.as_priced : null;
-  if (ap) {
-    for (const [k] of PERIODS.filter(([p]) => ap[p])) {
-      out.push(...read(ap[k], obj(m.as_priced_salts)[k], `${periodLabel(k, per)}, as priced (chosen and paid at the real props)`));
-    }
+  // Beside the props headline: as priced on the SAME days (the days a prop
+  // was estimated - the row to compare it with), then as priced on every day
+  // with props (which holds days no estimate exists for), then the same
+  // lottery with its draw weighted by the real book's split (an input live
+  // never has). Each with its draws' mean, when the file carries it.
+  const beside = props ? [
+    ["as_priced_same_days", "as priced on the same days (chosen and paid at the real props, on the days a prop was estimated)"],
+    ["as_priced", m.as_priced_same_days ? "as priced on every day with props (chosen and paid at the real props)" : "as priced (chosen and paid at the real props)"],
+    ["book_split", "as live, the draw weighted by the real book's split (an input live never has)"],
+  ] : [];
+  for (const [key, what] of beside) {
+    const rd = m[key] && typeof m[key] === "object" ? m[key] : null;
+    if (!rd) continue;
+    for (const [k] of PERIODS.filter(([p]) => rd[p])) out.push(...read(rd[k], obj(m[`${key}_salts`])[k], `${periodLabel(k, per)}, ${what}`));
   }
   const wx = m.without_extra && typeof m.without_extra === "object" ? m.without_extra : null;
   if (wx && wx.all) out.push(...read(wx.all, obj(m.without_extra_salts).all, "Without the extra leagues (their history is priced at the close), all"));
@@ -956,6 +968,20 @@ function propsRealBand() {
   const band = bandX(RULE().band);
   return x == null ? `how often its real price paid ${band} in the backtest: ${S().v2Why.props ? "not measured yet" : S().absent}`
     : `at the real prices, ${pct(x)} of the backtest's props tickets paid ${band}`;
+}
+
+// The live band was chosen on the estimator's test cards, so the share of
+// props tickets whose real price paid the band is partly in-sample in those
+// years: the share in them and before them, read from the measured record.
+function propsBandYears() {
+  const by = S().v2.props && S().v2.props.real_in_band_by_years;
+  if (!by || typeof by !== "object") return "";
+  if (typeof by.missing === "string") return `${by.missing[0].toUpperCase()}${by.missing.slice(1)}.`;
+  const [lo, hi] = Array.isArray(by.band_chosen_on) ? by.band_chosen_on.map((x) => String(x).slice(0, 4)) : [];
+  if (!lo || !hi) return "";
+  const f = (x) => (!x || num(x.real_in_band) == null ? `missing (no ticket)` : `${pct(x.real_in_band)} of ${(x.tickets || 0).toLocaleString()}`);
+  return `The band was chosen on the estimator's ${lo}-${hi} test cards, so the share is partly in-sample there: ${
+    f(by.in_choice_years)} tickets in ${lo}-${hi}, ${f(by.before_choice_years)} before ${lo}.`;
 }
 
 // What the prices expect of each v2 kind over the backtest's tickets,
@@ -1210,8 +1236,10 @@ const BOOT = {
       const tables = Object.entries(sp2).flatMap(([name, rows]) => (isTable(rows) ? [[name, rows]]
         : rows && typeof rows === "object" ? Object.entries(rows).filter(([, r]) => isTable(r)).map(([sub, r]) => [`${name} ${sub}`, r]) : []));
       const legTables = Object.entries(sp2).filter(([, rows]) => isLegTable(rows));
+      // "their chances said": a v2 ticket's legs are not all the apps' picks
+      // (an underdog, an over/under at the market's chance, a prop's share)
       return tables.map(([name, rows]) => block(`${NAME[k]} ${name.replace(/_/g, " ")}${lot ? ", at the live draw" : ""}`, rows, note,
-        lot ? { at: "At the live draw: " } : {})).join("")
+        lot ? { at: "At the live draw: ", said: "their chances said" } : { said: "their chances said" })).join("")
         + legTables.map(([name, rows]) => legBlock(`${NAME[k]}: its ${name.replace(/_/g, " ")}${lot ? ", at the live draw" : ""}`, rows)).join("")
         || `<div class="card"><h2>${esc(NAME[k])}</h2><div class="mini">No splits of this ticket in this data file.</div></div>`;
     }).join("");
@@ -1248,7 +1276,8 @@ const BOOT = {
           fight or match.</li>
         <li><b>The legs.</b> Each app's winner pick (soccer from every league in the app); soccer over or under 2.5 goals at
           the average posted price, the side the market favours, in the leagues whose over 2.5 the app ships from the market;
-          NFL spreads and totals, the side the market favours at the consensus price at the consensus line (a push is void);
+          NFL spreads and totals, the side the market favours at the consensus price at the consensus line - or, where no
+          fresh consensus is on file, at the schedule's posted price at its own line, and the leg says which (a push is void);
           and UFC method props, each corner by KO/TKO, by submission or by decision.</li>
         <li><b>A prop's price is an estimate.</b> No book on the feeds prices a method prop, so each is priced by a
           market-only estimator, frozen before use and shown with the median error it was measured to miss real props by.
@@ -1259,7 +1288,7 @@ const BOOT = {
           are tried, each at least a ${pct(r.min_p)} chance but a prop.</li>
         <li><b>Props</b>, on a UFC day: ${esc(howBuilt("props"))}${pp ? ` A prop counts if its estimated price is
           ${Number(pp[0]).toFixed(2)}-${Number(pp[1]).toFixed(2)}.` : ""} The search band was chosen on real prop prices, to
-          land the real price in ${bandX(r.band)}: ${esc(propsRealBand())}.</li>
+          land the real price in ${bandX(r.band)}: ${esc(propsRealBand())}. ${esc(propsBandYears())}</li>
         <li><b>Locked, logged and graded on its own</b>, each kind at its own first start: over/under on the goals, spreads
           and totals on the score, a prop only when that corner wins that way (void with no winner, or if the bout is off).</li>
         <li><b>Fixed before it was measured</b>, and shipped whatever its record shows. None is presented as an edge.</li>

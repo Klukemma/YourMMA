@@ -9,7 +9,10 @@ appends to parlays/data/history.json.
 THE CLOCK DECIDES, NOT A STATUS. An app file is rewritten only when its
 sport's runner runs, so a match it lists as "upcoming" may have started; a
 leg - or an underdog candidate - is used only while its scheduled start is
-after `now`.
+after `now`. A status can only take an event OUT: a soccer entry the feeds
+report off (postponed, cancelled, abandoned, date to come - soccer_off)
+keeps a kickoff ahead of the clock and, held, the logged pick's prices, but
+gives no leg of any kind (it would void, or be graded on the replay).
 
 DAYS SHOWN: today, plus every day of the next WINDOW_DAYS (7) that has at
 least one leg or underdog candidate (or a ticket logged and not yet
@@ -112,7 +115,15 @@ THE PAYLOAD (parlays/app/data/sameday.json):
            tickets, beside the realised one (the likeliest's from the
            backtest's ticket list, implied_from_tickets).
   caveats  every caveat the backtest carries, the dog block's, and this
-           builder's (prices, what the underdog ticket is not).
+           builder's (prices, what the underdog ticket is not) - tickets
+           v2's first. caveats_v2 / caveats_v1 split the same list: v2's
+           (the market-is-hard-to-beat one first, the v2 block's, this
+           builder's V2_CAVEATS, the prop margin and the prop estimator's
+           own caveats read from engine/data/method_price.json) and v1's
+           (the backtest's top-level and dog caveats), so the page leads
+           with v2's and folds v1's under v1's label. None is dropped.
+  records  each kind's `last` tickets say whether their multiplier was an
+           estimate (a prop), so the page marks it wherever it lists one.
 
 GRADING reads each sport's own results: UFC through engine/grade.py's
 name-tolerant match on the archive (a draw or no contest is void; a bout
@@ -152,7 +163,13 @@ records keep growing; the page shows them labelled v1.
           its measured error_pct carried to the page.
   Every leg that could not be offered is counted by its reason, per day
   and market, and the page shows the counts: a missing number is shown as
-  missing, with why.
+  missing, with why (an over/under on a match file written before the
+  prices were kept, on a match with no pick - not in the soccer log, so
+  never gradable - or on a match the feeds report off; a game with no
+  market at all). A SPREAD / TOTAL leg names whose price it is: the books'
+  consensus, or the schedule's posted pair where nfl_odds fell back to it.
+  A PAST DAY (shown in play, never built) with no row of a kind says it
+  was not logged (NOT_LOGGED), never a reason no run computed for it.
   THE PROPS TICKET is searched in PROPS_LIVE_BAND at the estimated price
   (sameday.py: the band that lands the real price in 3-5x most often), so
   its multiplier, and its record, are estimates, and the page says so.
@@ -163,7 +180,16 @@ records keep growing; the page shows them labelled v1.
   "cancelled" exactly as a moneyline leg on the bout.
   MEASURED: read from sameday_backtest.json's "v2" block (v2_measured),
   defensively - until it exists every kind says it is not measured yet,
-  and why, and shows no number.
+  and why, and shows no number. A lottery's every reading (headline, as
+  priced, without the extra leagues) is passed with its mean over the
+  draws. rule.v2.method_error carries the years of the estimator's error
+  table (method_price.json): an estimated prop's error is that test's,
+  never the live fit's, and the page says so.
+  NO MEASURED COMPARISON IS TYPED: the prop's margin is read from the
+  estimator's file (v2_margin_caveat) and dropped once the backtest's v2
+  caveats state it with numbers; which kind the prices expect to return
+  more is the page's to compute from the measured block, never this file's
+  to say.
 """
 
 from __future__ import annotations
@@ -1652,6 +1678,13 @@ V2_BLOCK_NAMES = {"likeliest_v2": ("likeliest", "likeliest_v2", "same_day_v2"),
                   "mixed": ("mixed", "same_day_mixed"),
                   "props": ("props_as_live", "props", "same_day_props")}
 V2_AS_PRICED = ("props_as_priced",)
+# The props readings set beside the headline (sameday_backtest's PROPS_KINDS):
+# as priced on the SAME days as live can draw (a prop with an estimate) - the
+# row to compare the headline with, since as priced on every day also holds
+# days no estimate exists for - and as live with the draw weighted by the
+# real book's split, an input live never has. Each passed with its draws.
+V2_PROPS_BESIDE = {"as_priced_same_days": "props_as_priced_estimated_days",
+                   "book_split": "props_as_live_book_split"}
 V2_HEADLINE = ("live", "rule", "results")
 V2_VARIANT, V2_WITHOUT_EXTRA = "all_leagues", "without_extra_leagues"
 V2_SALTS = {"underdog_v2": sdy.DOG_SALT_V2, "props": sdy.PROPS_SALT}
@@ -1751,9 +1784,18 @@ def v2_measured(bt):
              "without_extra_salts": _salts(kb.get("salts", res.get("salts")), V2_WITHOUT_EXTRA) if lot else None,
              "as_priced": _reading(priced, V2_HEADLINE)[0] if priced else kb.get("as_priced"),
              "as_priced_salts": _salts(priced.get("salts")) if priced else None,
+             # how often the real multiplier lands in the band, in the years the
+             # live band was chosen on and outside them (partly in-sample there)
+             "real_in_band_by_years": kb.get("real_in_band_by_years") if kind == "props" else None,
              "market_only": _variant(kb.get("market_only", res.get("market_only"))),
              "splits": kb.get("splits"), "label": kb.get("label"),
              "caveats": [c for c in kb.get("caveats") or [] if isinstance(c, str)]}
+        if kind == "props":
+            for name, src in V2_PROPS_BESIDE.items():
+                b = kinds.get(src) if isinstance(kinds.get(src), dict) else None
+                if b is not None and (b.get("salt") is None or b.get("salt") == V2_SALTS["props"]):
+                    x[name] = _reading(b, V2_HEADLINE)[0]
+                    x[f"{name}_salts"] = _salts(b.get("salts"))
         out[kind] = _json_safe({k: v for k, v in x.items() if v is not None})
         why[kind] = None
     return out, why

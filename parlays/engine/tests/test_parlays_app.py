@@ -322,6 +322,10 @@ def test_a_measured_v2_kind_shows_its_record_beside_the_prices_and_a_v1_file_sti
                                      "salts": 1000, "spread": {"roi": {"p5": -0.2178, "p50": -0.084, "p95": 0.0612}}}},
                    "as_priced": {"all": dict(rec, tickets=1100)},
                    "as_priced_salts": {"all": {"roi": -0.109, "implied_roi": -0.234, "salts": 1000}},
+                   "as_priced_same_days": {"all": dict(rec, tickets=1050)},
+                   "real_in_band_by_years": {"band_chosen_on": ["2021-01-01", "2024-12-31"],
+                                             "in_choice_years": {"tickets": 140, "real_in_band": 0.75},
+                                             "before_choice_years": {"tickets": 180, "real_in_band": 0.68}},
                    "periods": {"all": ["2016-08-01", "2024-12-07"], "last_3_years": ["2023-08-09", "2024-12-07"]}},
          "underdog_v2": {"headline": {"all": dict(rec, tickets=2969)}, "salts": {"all": {"roi": -0.074, "salts": 1000}},
                          "without_extra": {"all": dict(rec, tickets=2337)},
@@ -337,6 +341,7 @@ def test_a_measured_v2_kind_shows_its_record_beside_the_prices_and_a_v1_file_sti
     r = _helpers(f"(() => {{ const d = {json.dumps(data)}; DATA = d; setShape(d); const out = {{"
                  "lk: v2Lines('likeliest_v2'), props: v2Lines('props'), act: activitySummary(), "
                  "dog: v2Lines('underdog_v2'), brief: v2Lines('props', true), band: propsRealBand(), "
+                 "years: propsBandYears(), "
                  "sentence: pricesSentenceV2() };"
                  f"const o = {json.dumps(v1file)}; DATA = o; setShape(o); out.old = dayCard(o.days[0], true);"
                  "out.oldTake = takeOf(o.days[0]); out.oldWhy = S().v2Why; return out; })()")
@@ -345,8 +350,13 @@ def test_a_measured_v2_kind_shows_its_record_beside_the_prices_and_a_v1_file_sti
     assert any(x.startswith("Without the extra leagues") and "2,000 tickets" in x for x in r["lk"])
     assert "as live (chosen at the estimate, paid at the real props)" in r["props"][0]
     assert any("over the 1,000 draws, the mean: −20% a ticket" in x.lower() for x in r["props"])
-    assert any("as priced (chosen and paid at the real props), at the live draw" in x and "1,100 tickets" in x
-               for x in r["props"])
+    assert any("as priced on every day with props (chosen and paid at the real props), at the live draw" in x
+               and "1,100 tickets" in x for x in r["props"])
+    # the row to compare the headline with: as priced on the same days, right after it
+    same = next(i for i, x in enumerate(r["props"]) if "as priced on the same days" in x)
+    assert "1,050 tickets" in r["props"][same] and same < next(i for i, x in enumerate(r["props"]) if "1,100 tickets" in x)
+    assert r["years"] == ("The band was chosen on the estimator's 2021-2024 test cards, so the share is partly "
+                          "in-sample there: 75% of 140 tickets in 2021-2024, 68% of 180 before 2021.")
     # every lottery reading beside its draws' mean - as priced and without the extra leagues too
     assert any("over the 1,000 draws, the mean: −11% a ticket" in x.lower() for x in r["props"])
     assert any(x.startswith("Without the extra leagues") and "at the live draw" in x and "2,337 tickets" in x
