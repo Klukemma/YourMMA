@@ -501,7 +501,15 @@ def market_leg(sport, key, day, event, pick, p, decimal, bet, bet_detail=None, p
 
 def method_lot_key(corners, corner_name, method_type):
     """The props lottery's key for one prop: the fight's (dog_lot_key's
-    corners), the corner and the type - one string live and in the backtest."""
+    corners), the prop's corner (normalised as dog_lot_key's names) and the
+    type - one string live and in the backtest.
+
+    CLARIFICATION (2026-11-19, not a rule change - the draw measured and the
+    draw live are this function's): PROPS in the module docstring names the
+    key "dog_lot_key's corners plus the leg type"; the corner's own name is
+    in it as well, because without it both corners' "wins by KO/TKO" props
+    of one fight would hash to one string, share one u and so never be
+    drawn apart by the lottery's order - only by their chances."""
     return "|".join([dog_lot_key("UFC", corners=corners), _norm_name(corner_name), str(method_type)])
 
 
@@ -550,14 +558,29 @@ def build_mixed(legs, objective="p"):
     return _finish(t)
 
 
-def _priced_as(l, price_key):
+def _priced_as(l, price_key, chance_key=None, objective="p"):
     """The leg as the search sees it: priced at price_key when it has one
-    (the estimator's price for a prop "as live"), else at its own price."""
+    (the estimator's price for a prop "as live"), else at its own price; and
+    with chance_key, its chance (the `objective` field) read from chance_key
+    when it has one (the estimator's chance for a prop "as live"), else its
+    own. WHY THE CHANCE TOO: live, a prop's chance is the shipped win chance
+    times the ESTIMATOR's share of that corner's wins, and that chance
+    weights the lottery; a backtest that swapped only the price would draw by
+    the real six-way book's split, which live never has."""
     v = l.get(price_key) if price_key != "decimal" else None
-    return dict(l, decimal=float(v)) if v is not None else l
+    c = l.get(chance_key) if chance_key else None
+    if v is None and c is None:
+        return l
+    out = dict(l)
+    if v is not None:
+        out["decimal"] = float(v)
+    if c is not None:
+        out[objective] = float(c)
+    return out
 
 
-def build_props(legs, method_legs, salt=PROPS_SALT, band=BAND, price_key="decimal", objective="p"):
+def build_props(legs, method_legs, salt=PROPS_SALT, band=BAND, price_key="decimal", objective="p",
+                chance_key=None):
     """PROPS: exactly one METHOD leg priced within PROPS_PRICE, drawn by the
     lottery (weights its chance), plus the likeliest fill from the
     likeliest-v2 pool (winner legs, chance >= MIN_P, the POOL likeliest) on
@@ -565,18 +588,27 @@ def build_props(legs, method_legs, salt=PROPS_SALT, band=BAND, price_key="decima
     None when none fits.
 
     price_key "decimal": choose and pay at the legs' own prices (live, where a
-    prop's own price IS the estimate; the backtest's "as priced"). Another key
-    ("est_decimal"): choose by that price - the band, the PROPS_PRICE window
-    and the search read it - and pay at the real one (the backtest's "as
-    live"); the ticket's multiplier is then the real product and may fall
-    outside the band, which is the point of measuring it."""
+    prop's own price IS the estimate and its chance the estimator's; the
+    backtest's "as priced"). Another key ("est_decimal"): choose by that
+    price - the band, the PROPS_PRICE window and the search read it - and pay
+    at the real one (the backtest's "as live"); the ticket's multiplier is
+    then the real product and may fall outside the band, which is the point
+    of measuring it. chance_key ("est_p"): the lottery's weight and the
+    search read that chance for a prop in place of its own (the backtest's
+    "as live": the estimator's chance, as live has it); the paid prop keeps
+    its real price, result and no-vig chance (p_market, the price-implied
+    return's) and carries the chance it was drawn by, its own kept as
+    p_book. None: the prop's own chance (live; "as priced"; and the as-live
+    reading weighted by the real book's split, reported beside it)."""
     seen = {}
     for m in method_legs or []:
         if not m or m.get("bet") != "METHOD" or m.get(objective) is None:
             continue
-        s = _priced_as(m, price_key)
+        s = _priced_as(m, price_key, chance_key, objective)
+        if chance_key and m.get(chance_key) is None:
+            continue                            # no estimated chance: as live it could not be drawn
         if PROPS_PRICE[0] <= s["decimal"] <= PROPS_PRICE[1]:
-            seen[id(s)] = (s, m)
+            seen[id(s)] = (s, dict(m, **{objective: s[objective], "p_book": m[objective]}) if chance_key else m)
     cands = [s for s, _ in seen.values()]
     real = {id(s): m for s, m in seen.values()}
     pool_all = sorted([l for l in legs if l and is_winner(l) and l.get(objective) is not None

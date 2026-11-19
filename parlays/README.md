@@ -34,6 +34,9 @@ the UFC history keeps decided fights only, so they are never legs there, while l
 voids. The json's caveats count them, with every other caveat; the figures in this README are
 that file's, and `engine/tests/test_dog_measure.py` holds them to it.
 
+<!-- v2 figures: written by engine/experiments/sameday_backtest.py --v2 from data/sameday_backtest.json -->
+<!-- end of the v2 figures -->
+
 **Live** (`engine/build_sameday.py`, run by `.github/workflows/parlays.yml` after any sport's
 runner and on a schedule): reads `app/data/card.json`, `nfl/app/data/week.json` and
 `soccer/app/data/matches.json`; never uses a leg whose start has passed; rebuilds a day's
@@ -44,6 +47,17 @@ Rebuild the history and the backtest (offline, about three minutes):
 
     python parlays/engine/legs_history.py
     python parlays/engine/experiments/sameday_backtest.py
+
+Tickets v2 have their own files and their own run, which leave every v1 file and number as it was:
+
+    python parlays/engine/legs_history.py --v2
+    python parlays/engine/experiments/sameday_backtest.py --v2
+
+The first writes `data/legs_v2_*.csv.gz` and `data/legs_dogs_v2_soccer.csv.gz` (with
+`data/legs_v2_ufc_method_left_out.csv.gz`, the fights whose props are left out and why); the second
+puts the measurement under the json's `v2` key, writes `data/sameday_v2_tickets.csv.gz` and rewrites
+the v2 paragraphs above from the json. It checks that its 1,000-salt draws reproduce
+`sameday.build_underdog_v2` and `sameday.build_props` at the live salts, and stops if they do not.
 
 `legs_history.py` builds each sport in its own process (the UFC and soccer engines both have a
 package named `experiments`) and writes the pick side (`data/legs_*.csv.gz`) and every event's

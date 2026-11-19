@@ -188,6 +188,17 @@ def sb_franchise(code):
     return nd.franchise(code)
 
 
+def test_a_card_priced_from_the_opening_line_gives_no_props(files):
+    """One snapshot a card: the props are the close's, so a card parlay_legs
+    priced from the opening line gives none, and every fight left out is
+    listed with its reason."""
+    m, ufc = files["legs_v2_ufc_method"], files["legs_ufc"].set_index("key")
+    assert (ufc.loc[m["key"].unique(), "price_source"] == "close").all()
+    out = pd.read_csv(DATA / "legs_v2_ufc_method_left_out.csv.gz")
+    assert len(out) and out["reason"].notna().all() and not set(out["key"]) & set(m["key"])
+    assert (ufc.loc[out["key"], "price_source"] == "open").all() and (out["price_source"] == "open").all()
+
+
 def test_method_legs_chance_estimate_and_grading(files):
     m = files["legs_v2_ufc_method"]
     assert m["day"].min() >= "2016-08-01" and m["day"].max() <= sdy.PROPS_HISTORY_END
@@ -198,6 +209,10 @@ def test_method_legs_chance_estimate_and_grading(files):
     # the estimate: refitted on earlier years only, missing (with its reason) for 2016
     est = m[m["est_decimal"].notna()]
     assert (est["est_fit_last"] < est["day"].str[:4] + "-01-01").all()
+    # the estimator's chance beside the book's - what a live prop carries (shipped win chance x its share)
+    assert (m["est_p"].notna() == m["est_decimal"].notna()).all() and (m["est_share"].notna() == m["est_p"].notna()).all()
+    assert ((est["est_p"] - est["p_win"] * est["est_share"]).abs() < 2e-6).all()
+    assert ((est.groupby(["key", "corner"])["est_share"].sum() - 1).abs() < 1e-5).all()
     miss = m[m["est_decimal"].isna()]
     assert miss["est_missing"].notna().all()
     assert (m.loc[m["day"] < "2017-01-01", "est_decimal"].isna()).all()
@@ -227,7 +242,8 @@ def test_the_json_has_no_nan_and_keeps_its_labels(v2):
     assert v2["props_periods"]["all"][1] == sdy.PROPS_HISTORY_END
     assert v2["props_periods"]["last_3_years"] == [sb.DOG_PERIODS["last_3_years"][0], sdy.PROPS_HISTORY_END]
     assert set(v2["kinds"]) == set(sb.V2_KINDS)
-    for k in ("underdog", "props_as_live", "props_as_priced"):
+    for k in sb.V2_LOTTERIES:
+        assert v2["kinds"][k]["salt"] == sb.V2_LOTTERIES[k][0], k
         for v in sb.V2_VARIANTS:
             for p, st in v2["kinds"][k]["salts"][v].items():
                 if st.get("tickets_per_salt"):
@@ -306,11 +322,15 @@ def _build(kind, W, O, D):
         return sdy.build_mixed(W + O, "p_market")
     if kind == "underdog":
         return sdy.build_underdog_v2(W, D)
+    E = [m for m in M if m.get("est_decimal") is not None and m.get("est_p") is not None]
     if kind == "props_as_priced":
         return sdy.build_props(W, M) if M else None
+    if kind == "props_as_priced_estimated_days":
+        return sdy.build_props(W, M) if E else None
     if kind == "props_as_live":
-        M = [m for m in M if m.get("est_decimal") is not None]
-        return sdy.build_props(W, M, band=sdy.PROPS_LIVE_BAND, price_key="est_decimal") if M else None
+        return sdy.build_props(W, E, band=sdy.PROPS_LIVE_BAND, price_key="est_decimal", chance_key="est_p") if E else None
+    if kind == "props_as_live_book_split":
+        return sdy.build_props(W, E, band=sdy.PROPS_LIVE_BAND, price_key="est_decimal") if E else None
     raise ValueError(kind)
 
 
@@ -346,6 +366,47 @@ def test_a_sample_of_v2_tickets_reproduces_from_sameday_builders(tickets, frames
             assert sdy.settle(got)["status"] == row["status"], (k, v, day)
 
 
+def test_as_live_draws_by_the_estimators_chance(frames, v2):
+    """As live, the drawn prop carries the chance live gives it (the shipped
+    win chance x the estimator's share, est_p), its real price and its
+    book's no-vig chance; the book-split reading draws by the file's p."""
+    m = frames["others"][(frames["others"]["bet"] == "METHOD") & frames["others"]["est_p"].notna()]
+    days = random.Random(23).sample(sorted(m["day"].unique()), 25)
+    by = sb.v2_days(frames, days)
+    for day in days:
+        W, O, D = by[day]
+        t = _build("props_as_live", W, O, D)
+        if t is None:
+            continue
+        prop = next(l for l in t["legs"] if l.get("bet") == "METHOD")
+        row = m[(m["day"] == day) & (m["lot_key"] == prop["lot_key"])].iloc[0]
+        assert math.isclose(prop["p"], row["est_p"], abs_tol=1e-6) and math.isclose(prop["p_book"], row["p"], abs_tol=1e-6)
+        assert math.isclose(prop["decimal"], row["decimal"], abs_tol=1e-6)
+        assert math.isclose(prop["p_market"], row["p_market"], abs_tol=1e-6)
+    pl = v2["kinds"]["props_as_live"]["live"]["all_leagues"]["all"]
+    assert v2["kinds"]["props_as_live_book_split"]["live"]["all_leagues"]["all"]["days_with_legs"] == pl["days_with_legs"]
+
+
+def test_the_comparison_row_is_as_priced_on_the_days_as_live_can_draw(v2, tickets, frames):
+    """The row beside the headline covers the days as live can draw (a prop
+    with an estimate): as priced's tickets on exactly those days."""
+    me = frames["others"][frames["others"]["bet"] == "METHOD"]
+    est_days = set(me.loc[me["est_decimal"].notna() & me["est_p"].notna(), "day"])
+    for v in sb.V2_VARIANTS:
+        pp = tickets[(tickets["kind"] == "props_as_priced") & (tickets["variant"] == v)]
+        pe = tickets[(tickets["kind"] == "props_as_priced_estimated_days") & (tickets["variant"] == v)]
+        assert set(pe["day"]) == set(pp["day"]) & est_days, v
+        a = pp.set_index("day").loc[sorted(pe["day"])]
+        assert (a["keys"].values == pe.sort_values("day")["keys"].values).all(), v
+    K = v2["kinds"]
+    assert K["props_as_priced_estimated_days"]["live"]["all_leagues"]["all"]["days_with_legs"] == \
+        K["props_as_live"]["live"]["all_leagues"]["all"]["days_with_legs"] == \
+        len({d for d in est_days if sb.in_period(d, sb.PROPS_PERIODS["all"])})
+    assert K["props_as_priced"]["live"]["all_leagues"]["all"]["days_with_legs"] == \
+        len({d for d in me["day"] if sb.in_period(d, sb.PROPS_PERIODS["all"])})
+    assert "On the same days, as priced" in v2["headline"]
+
+
 def test_as_live_pays_the_real_prop_and_searched_the_estimate(tickets, frames):
     t = tickets[(tickets["kind"] == "props_as_live") & (tickets["variant"] == "all_leagues")]
     lo, hi = sdy.PROPS_LIVE_BAND
@@ -359,10 +420,14 @@ def test_as_live_pays_the_real_prop_and_searched_the_estimate(tickets, frames):
 def test_the_caveats_say_what_the_rule_and_the_project_require(v2):
     text = " ".join(v2["caveats"])
     for must in ("hard to beat", "Prior exposure", "estimate", "method_price.json", "not a confidence interval",
-                 sdy.PROPS_HISTORY_END, "closing", "Expected (sameday.py)", "descriptive"):
+                 sdy.PROPS_HISTORY_END, "closing", "Expected (sameday.py)", "descriptive",
+                 "OU25's leagues were chosen on results", "One price snapshot a card", "real six-way book's split",
+                 "The live band was chosen on", "sameday.method_lot_key"):
         assert must in text, must
     doc = json.loads((ROOT / "engine" / "data" / "method_price.json").read_text())
     assert f"{doc['test']['all_single_props']:.1%}" in text
+    for c in doc["caveats"]:                                     # the estimator's own caveats reach the page
+        assert c in text, c
     assert sb._doc_block("PRIOR EXPOSURE") in text
     for k in ("underdog", "props_as_live"):
         rank = v2["kinds"][k]["salts"]["all_leagues"]["all"]["live_rank"]
@@ -377,6 +442,8 @@ def test_the_readmes_v2_figures_are_the_jsons(v2):
     K = v2["kinds"]
     L, U, X = (K[k]["live"]["all_leagues"]["all"] for k in ("likeliest", "underdog", "mixed"))
     PL, PP = K["props_as_live"]["live"]["all_leagues"]["all"], K["props_as_priced"]["live"]["all_leagues"]["all"]
+    PE = K["props_as_priced_estimated_days"]["live"]["all_leagues"]["all"]
+    PB = K["props_as_live_book_split"]["live"]["all_leagues"]["all"]
     US, PS = K["underdog"]["salts"]["all_leagues"]["all"], K["props_as_live"]["salts"]["all_leagues"]["all"]
     a, a1 = v2["activity"]["all_leagues"]["all"], v2["activity"]["v1"]["all"]
     want = [
@@ -390,7 +457,11 @@ def test_the_readmes_v2_figures_are_the_jsons(v2):
         f"{pc(US['roi'])} ({pc(US['roi_low'])} to {pc(US['roi_high'])}), by the prices {pc(U['implied_roi'])}",
         f"PROPS as live (the headline) {PL['tickets']:,} tickets, {PL['wins']:,} won, {pc(PL['roi'])} a ticket "
         f"({pc(PL['roi_low'])} to {pc(PL['roi_high'])}); over the 1,000 simulation draws {pc(PS['roi'])}; by the "
-        f"prices {pc(PL['implied_roi'])}; as priced {pc(PP['roi'])}, by the prices {pc(PP['implied_roi'])}",
+        f"prices {pc(PL['implied_roi'])}; on the same days as priced (chosen and paid at the real props) "
+        f"{pc(PE['roi'])}, by the prices {pc(PE['implied_roi'])}, and as live weighted by the real book's split "
+        f"(an input live never has) {pc(PB['roi'])}; as priced on every one of the {PP['days_with_legs']:,} days "
+        f"with props (the cards without an estimate included) {pc(PP['roi'])}, by the prices {pc(PP['implied_roi'])}",
     ]
+    assert "market is hard to beat" in text and "v2 caveats" in text
     for w in want:
         assert w in text, w

@@ -108,10 +108,29 @@ bet_detail:
                       refitted on fights dated before the card's year only
                       (fit_before) - missing for 2016, which has no earlier
                       props to fit on, with the reason in est_missing.
+                      est_share / est_p: that refit's share of the corner's
+                      wins going that way, and the shipped win chance times
+                      it - the chance a live prop carries (app_export.
+                      method_legs_payload's "chance"). WHY BOTH CHANCES: the
+                      backtest's "as live" reading must draw and search as
+                      live does, and live has no six-way book to split a win
+                      chance by, only the estimator; p (the book's split)
+                      stays for "as priced", which reads the real book.
                       Result from the archive's method class (parlay_
                       profiles.method_class of the archive's method): won
                       only when the corner won by that type - a win by DQ
                       wins no prop - and void when the fight had no winner.
+                      ONE SNAPSHOT A CARD: the props are the method_odds
+                      snapshot, the same upstream snapshot as odds.csv's
+                      CLOSE, so a card that parlay_legs priced from the
+                      OPENING line (price_source "open": the close did not
+                      price most of its fights) gives no props here - a
+                      ticket pairing a close-priced prop with that card's
+                      open-priced moneylines could never have been bought
+                      (parlay_legs' docstring), and the prop's chance would
+                      mix the open pair's blend with the close's split. The
+                      fights left out are listed, with the reason, in
+                      legs_v2_ufc_method_left_out.
 
 WHY THE DAY IS THE V1 FILES' DAY: a v2 leg sits on the day its event's v1 leg
 does (soccer the ET day of the kickoff, else the date; NFL the schedule day;
@@ -333,8 +352,12 @@ V2_COLS = ["day", "key", "lot_key", "event", "bet", "bet_detail", "pick", "oppon
            "p_market", "decimal", "price_source", "result"]
 SOCCER_V2_COLS = V2_COLS + ["league", "group", "day_source"]
 NFL_LINE_COLS = V2_COLS + ["line", "side_source", "overround"]
-METHOD_COLS = V2_COLS + ["corner", "p_win", "share", "est_decimal", "est_missing", "est_fit_last",
-                         "method_overround"]
+METHOD_COLS = V2_COLS + ["corner", "p_win", "share", "est_decimal", "est_share", "est_p", "est_missing",
+                         "est_fit_last", "method_overround"]
+LEFT_OUT_COLS = ["day", "key", "event", "price_source", "reason"]
+# A card priced from the opening line gives no props (module docstring, ONE SNAPSHOT A CARD).
+OPEN_CARD = ("the card is priced from the opening line (parlay_legs price_source 'open') and the props are "
+             "the closing snapshot, so a ticket mixing them could never have been bought")
 # The 2016 cards have no earlier props in the fit rows (method_price.fit_before):
 # said on every such row rather than left blank.
 NO_FIT_2016 = ("no earlier props to fit the estimator on: the fit rows start 2016-01-02, so "
@@ -506,7 +529,7 @@ def ufc_v2():
     fit = {r["fight_id"]: r for r in mpr.fit_rows()}
     rows_all = list(fit.values())
     models = {}
-    rows, counts = [], Counter()
+    rows, left_out, counts = [], [], Counter()
     for r in d.itertuples():
         over = 1.0 / r.dec_red + 1.0 / r.dec_blue - 1.0
         if over < 0 or over > 0.15:            # the v1 UFC file's believable-book check
@@ -515,6 +538,12 @@ def ufc_v2():
                                                             "decision_red", "decision_blue")})
         if mm is None:
             counts["fights without a believable six-way book"] += 1
+            continue
+        if r.price_source != "close":
+            # one snapshot a card (module docstring): the props are the close's
+            counts["fights with a six-way book on a card priced from the opening line (left out)"] += 1
+            left_out.append({"day": r.date, "key": r.fight_id, "event": r.event,
+                             "price_source": r.price_source, "reason": OPEN_CARD})
             continue
         counts["fights with props"] += 1
         mk_red = _devig(r.dec_red, r.dec_blue)
@@ -550,12 +579,14 @@ def ufc_v2():
                              "decimal": float(getattr(r, f"{col}_{side}")), "price_source": "close",
                              "result": result, "corner": side, "p_win": p_win, "share": share,
                              "est_decimal": None if est is None else est[side][t]["decimal"],
+                             "est_share": None if est is None else est[side][t]["share"],
+                             "est_p": None if est is None else p_win * est[side][t]["share"],
                              "est_missing": why, "est_fit_last": None if model is None else model["fit_last"],
                              "method_overround": book})
     out = pd.DataFrame(rows, columns=METHOD_COLS)
     counts["props without an estimate"] = int(out["est_decimal"].isna().sum())
     print("ufc v2 method:", dict(counts))
-    return {"legs_v2_ufc_method": out}
+    return {"legs_v2_ufc_method": out, "legs_v2_ufc_method_left_out": pd.DataFrame(left_out, columns=LEFT_OUT_COLS)}
 
 
 def write_v2(frames):
@@ -566,6 +597,10 @@ def write_v2(frames):
         df = df.sort_values(sort, kind="mergesort").reset_index(drop=True)
         df.to_csv(DATA / f"{name}.csv.gz", index=False, float_format="%.6f",
                   compression={"method": "gzip", "mtime": 0})
+        if "result" not in df.columns:          # a list of what was left out, with the reason
+            print(f"{name:20s} {len(df):7,d} rows  " + "; ".join(f"{n:,}: {why}" for why, n in
+                                                              df["reason"].value_counts().items()))
+            continue
         won = np.mean(df["result"] == "won") if len(df) else float("nan")
         print(f"{name:20s} {len(df):7,d} rows  {df['day'].min()} .. {df['day'].max()}  won {won:.3f}  "
               f"mean p {df['p'].mean():.3f}  mean p_market {df['p_market'].mean():.3f}")

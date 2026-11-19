@@ -615,18 +615,32 @@ function howBuilt(kind) {
 }
 
 // An estimated price (a UFC prop: no book on the feeds prices one) says so,
-// with the error it was measured to miss real props of its kind by.
-const estNote = (l) => (!l.estimated ? "" : num(l.error_pct) != null
-  ? `estimated price, measured to miss real props of its kind by a median ${Math.round(l.error_pct)}%`
-  : "estimated price; its measured error is not in this data file");
-const EST_TICKET = "Its multiplier is an estimate: a prop on it is priced by the estimator, not a book. A real book may pay less, or more - check before betting.";
+// with the error it was measured to miss real props of its kind by - and
+// on what: that error is the estimator's test table (an earlier fit tested
+// on later real props), not the live fit's, which no real prop can check.
+// The years are read from the estimator's own file (rule.v2.method_error).
+function estNote(l) {
+  if (!l.estimated) return "";
+  if (num(l.error_pct) == null) return "estimated price; its measured error is not in this data file";
+  const e = (RULE().v2 || {}).method_error;
+  const when = e && e.test && e.fit
+    ? ` on ${e.test} props (a ${e.fit} fit${e.frozen ? `; the live fit, ${e.frozen}, has no real prop${e.last_real ? ` after ${e.last_real}` : ""} to be checked on` : ""})`
+    : " (which fit, on which props: not in this data file)";
+  return `estimated price, measured to miss real props of its kind by a median ${Math.round(l.error_pct)}%${when}`;
+}
+// Whose price a leg is at, where it is not the usual one: a spread or total
+// at the books' consensus, or at the schedule's own pair when no fresh
+// consensus was on file; a prop's estimate, which moneyline pair it read.
+const sourceNote = (l) => ((l.bet === "SPREAD" || l.bet === "TOTAL") && l.price_source ? ` · priced at the ${esc(l.price_source)}`
+  : l.estimated && l.moneyline_source ? ` · its moneyline: ${esc(l.moneyline_source)}` : "");
+const EST_TICKET = "Its multiplier, chance and market chance are estimates: a prop on it is priced by the estimator, not a book. A real book may pay less, or more - check before betting.";
 
 const legRow = (l) => `<li><span><span class="tag">${esc(l.sport)}</span>${l.market ? ` <span class="tag flat">${esc(l.market)}</span>` : ""}${
     l.dog ? ` <span class="tag accent">Underdog</span>` : ""}
     <b>${esc(l.label || l.pick)}</b> <span class="mini">${esc(l.event)}</span><br>
     <span class="mini">${esc(kickTime(l.kickoff))}${l.outcome && OUTCOME[l.outcome] ? ` · ${OUTCOME[l.outcome]}${
       l.outcome === "void" && l.void_reason ? ` (${esc(l.void_reason)})` : ""}` : ""} · ${esc(l.reason)}${
-      l.dog && l.price_source ? ` · priced at the ${esc(l.price_source)}` : ""}${l.estimated ? ` · ${esc(estNote(l))}` : ""}</span></span>
+      l.dog && l.price_source ? ` · priced at the ${esc(l.price_source)}` : sourceNote(l)}${l.estimated ? ` · ${esc(estNote(l))}` : ""}</span></span>
     <span class="end num">${l.estimated ? `<span class="mini">est.</span> ` : ""}${odds(l.american)}<br><span class="mini">${pct(l.p)}</span></span></li>`;
 
 // `labelV1`: v1's tickets are labelled v1 beside v2's; in a file from
@@ -645,14 +659,17 @@ function ticketPanel(t, kind, today, labelV1 = true) {
   const [word, line] = STATUS[t.status] || [t.status, ""];
   const settled = t.status === "won" || t.status === "lost" || t.status === "void";
   const dog = kind === "underdog" || kind === "underdog_v2";
+  // a prop on the ticket: its price, its chance and its market chance are
+  // all the estimator's, so every figure built from them is marked est.
+  const est = !!t.estimated;
   return `<div class="panel">
       <div class="eyebrow">${esc(name)} · ${esc((t.sports || []).join(" + "))} · ${t.legs.length} leg${t.legs.length === 1 ? "" : "s"} ·
         <span class="tag${t.status === "lost" ? " warn" : ""}">${esc(word)}</span></div>
       ${how || dog ? `<div class="mini">${esc(how || LOTTERY)}</div>` : ""}
       <div class="stat3">
-        <div><div class="k">${t.estimated ? "Pays, est." : "Pays"}</div><div class="v">${mult(t.multiplier)}</div></div>
-        <div title="The chance every leg lands: each pick's chance, multiplied"><div class="k">Chance</div><div class="v">${chance(t.p)}</div></div>
-        <div title="The same from the market's prices, the bookmaker's cut removed"><div class="k">Market</div><div class="v">${chance(t.p_market)}</div></div>
+        <div><div class="k">${est ? "Pays, est." : "Pays"}</div><div class="v">${mult(t.multiplier)}</div></div>
+        <div title="${esc(est ? "The chance every leg lands, each pick's chance multiplied - a prop's from the estimator's share of its corner's wins" : "The chance every leg lands: each pick's chance, multiplied")}"><div class="k">${est ? "Chance, est." : "Chance"}</div><div class="v">${chance(t.p)}</div></div>
+        <div title="${esc(est ? "The same from the prices, the bookmaker's cut removed - a prop's from the estimator: no book prices it" : "The same from the market's prices, the bookmaker's cut removed")}"><div class="k">${est ? "Market, est." : "Market"}</div><div class="v">${chance(t.p_market)}</div></div>
       </div>
       ${t.estimated ? `<div class="alert doubtful">${esc(EST_TICKET)}</div>` : ""}
       ${dog && t.lands_1_in ? `<div class="mini num">Lands about 1 in ${esc(String(t.lands_1_in))} by the prices.</div>` : ""}
@@ -720,9 +737,22 @@ function recordLine(s, label) {
 
 const yearsLabel = (p) => (Array.isArray(p) && p.length === 2 ? `${String(p[0]).slice(0, 4)}-${String(p[1]).slice(0, 4)}` : "");
 const PERIODS = [["last_3_years", "Last 3 years"], ["first", "First years"], ["all", "All"]];
+// A period's length in days, from its own dates, or null.
+const spanDays = (p) => {
+  if (!Array.isArray(p) || p.length !== 2) return null;
+  const d = (new Date(`${p[1]}T12:00:00Z`) - new Date(`${p[0]}T12:00:00Z`)) / 864e5;
+  return Number.isFinite(d) ? d : null;
+};
+// "Last 3 years" only when the period is three years long: a kind whose
+// history ends early (the props ticket's) has a shorter last period, named
+// by its own months - never "3 years" for 16 months.
 const periodLabel = (k, periods) => {
   const [, label] = PERIODS.find(([p]) => p === k) || [k, k];
   const p = (periods || {})[k];
+  const d = k === "last_3_years" ? spanDays(p) : null;
+  if (d != null && Math.abs(d - 3 * 365.25) > 31) {
+    return `Last period, ${String(p[0]).slice(0, 7)} to ${String(p[1]).slice(0, 7)} (its history ends there)`;
+  }
   return `${label}${p ? `, ${yearsLabel(p)}` : ""}`;
 };
 const notMeasured = (why) => `<div><span class="tag warn">Not measured yet</span></div>${why ? `<div class="mini">${brk(why)}</div>` : ""}`;
@@ -839,16 +869,29 @@ function activityLine(s) {
 // what the prices expected. null when the kind is not measured - the
 // caller shows why. `brief` (the Today tab): the last 3 years and all, the
 // headline only, how often it builds over all; the Record tab shows the rest.
+// How much the draw alone moves a lottery's record over the same games: the
+// 5th to 95th of its simulation draws, when the file carries them.
+const spreadLine = (s) => {
+  const sp = (s && s.spread && s.spread.roi) || {};
+  return num(sp.p5) != null && num(sp.p95) != null
+    ? [`5th to 95th draw - how much the draw alone moves it, same games: ${pc(sp.p5)} to ${pc(sp.p95)}${num(sp.p50) == null ? "" : `, middle ${pc(sp.p50)}`}.`]
+    : [];
+};
+
 function v2Lines(kind, brief = false) {
   const m = S().v2[kind];
   if (!m || !m.headline || typeof m.headline !== "object") return null;
   const per = m.periods || {}, head = m.headline;
-  const props = kind === "props";
+  const props = kind === "props", lot = LOTTERIES.includes(kind);
+  const obj = (x) => (x && typeof x === "object" ? x : {});
+  // a lottery's every reading - the headline, as priced, without the extra
+  // leagues - sits beside its mean over the draws, never at the live draw alone
+  const read = (rec, salts, label) => (lot ? drawLines(rec, salts, label) : [recordLine(rec, label)]);
+  const salts = obj(m.salts);
   const out = [];
   if (brief) {
     for (const [k] of PERIODS.filter(([p]) => head[p] && p !== "first")) {
-      const label = `${periodLabel(k, per)}${props ? ", as live" : ""}`;
-      out.push(...(LOTTERIES.includes(kind) ? drawLines(head[k], m.salts && m.salts[k], label) : [recordLine(head[k], label)]));
+      out.push(...read(head[k], salts[k], `${periodLabel(k, per)}${props ? ", as live" : ""}`));
     }
     const act = activityLine(head.all);
     if (act) out.push(act);
@@ -856,15 +899,19 @@ function v2Lines(kind, brief = false) {
   }
   for (const [k] of PERIODS.filter(([p]) => head[p])) {
     const label = `${periodLabel(k, per)}${props ? ", as live (chosen at the estimate, paid at the real props)" : ""}`;
-    if (LOTTERIES.includes(kind)) out.push(...drawLines(head[k], m.salts && m.salts[k], label));
-    else out.push(recordLine(head[k], label));
+    out.push(...read(head[k], salts[k], label));
+    if (lot) out.push(...spreadLine(salts[k]));
     const act = activityLine(head[k]);
     if (act) out.push(act);
   }
   const ap = props && m.as_priced && typeof m.as_priced === "object" ? m.as_priced : null;
-  if (ap) for (const [k] of PERIODS.filter(([p]) => ap[p])) out.push(recordLine(ap[k], `${periodLabel(k, per)}, as priced (chosen and paid at the real props)`));
+  if (ap) {
+    for (const [k] of PERIODS.filter(([p]) => ap[p])) {
+      out.push(...read(ap[k], obj(m.as_priced_salts)[k], `${periodLabel(k, per)}, as priced (chosen and paid at the real props)`));
+    }
+  }
   const wx = m.without_extra && typeof m.without_extra === "object" ? m.without_extra : null;
-  if (wx && wx.all) out.push(recordLine(wx.all, "Without the extra leagues (their history is priced at the close), all"));
+  if (wx && wx.all) out.push(...read(wx.all, obj(m.without_extra_salts).all, "Without the extra leagues (their history is priced at the close), all"));
   const mo = m.market_only && typeof m.market_only === "object" ? m.market_only : null;
   if (mo && mo.all) out.push(recordLine(mo.all, "Market only (no model), all"));
   return out;
@@ -872,12 +919,22 @@ function v2Lines(kind, brief = false) {
 
 // How active the four kinds are together, measured, beside v1's two - the
 // reason v2 exists - or nothing until the backtest says.
+// The props ticket's history can end before the others' (no prop prices
+// after it): its last day, when it does, read from the periods.
+function propsEnd() {
+  const end = (k) => { const p = S().v2[k] && S().v2[k].periods && S().v2[k].periods.all; return Array.isArray(p) && p.length === 2 ? String(p[1]) : null; };
+  const pe = end("props");
+  const others = ["likeliest_v2", "underdog_v2", "mixed"].map(end).filter(Boolean);
+  return pe && others.some((x) => x > pe) ? pe : null;
+}
 function activitySummary() {
   const a = DATA && DATA.measured_v2 && DATA.measured_v2.activity;
   const v = a && a.v2 && a.v2.all, w = a && a.v1 && a.v1.all;
   if (!v || num(v.tickets_per_day) == null) return null;
+  const pe = propsEnd();
   return `Measured, every day of the backtest: ${v.tickets_per_day.toFixed(2)} tickets a day${
     num(v.share_of_days) != null ? `, a ticket on ${pct(v.share_of_days)} of days` : ""}${
+    pe ? ` (the props ticket counted to ${pe} only, where its history ends)` : ""}${
     w && num(w.tickets_per_day) != null ? `; v1's two kinds ${w.tickets_per_day.toFixed(2)} a day` : ""}.`;
 }
 
@@ -888,6 +945,17 @@ function liveLine(r) {
   if (!r.settled) return `Live: no ticket settled yet${r.pending ? ` (${r.pending} waiting on results)` : ""}.`;
   return `Live: ${r.settled} settled, ${r.won} won, ${signed(r.units, 2)} units, ${pc(r.roi)} a ticket; ${byPrices(r)}${
     num(r.estimated) ? `; ${r.estimated} of them paid at estimated prop prices, so these figures are estimates too` : ""}.`;
+}
+
+// A props ticket is searched at ESTIMATED prices, so "pays 3-5x" holds by
+// those prices only: how often the real price paid the band in the
+// backtest is read from the measured record (real_in_band), or said missing.
+function propsRealBand() {
+  const h = S().v2.props && S().v2.props.headline && S().v2.props.headline.all;
+  const x = h ? num(h.real_in_band) : null;
+  const band = bandX(RULE().band);
+  return x == null ? `how often its real price paid ${band} in the backtest: ${S().v2Why.props ? "not measured yet" : S().absent}`
+    : `at the real prices, ${pct(x)} of the backtest's props tickets paid ${band}`;
 }
 
 // What the prices expect of each v2 kind over the backtest's tickets,
@@ -923,9 +991,12 @@ function pricesSentence(need = false) {
 // define their "salt" (the live draw is the lottery with the live salt, its
 // seed); were the word used with no definition on file, it is mapped here,
 // at display only. No caveat is ever dropped.
-function caveatsOf(list) {
+function caveatsOf(list, all = list) {
   const cs = (Array.isArray(list) ? list : []).filter((c) => typeof c === "string" && c);
-  if (cs.some((c) => /\bsalt\b/i.test(c) && /\bseed\b/i.test(c))) return cs;
+  // decided on every caveat in the file, so v2's and v1's lists (shown apart)
+  // use the same word
+  const every = (Array.isArray(all) ? all : []).filter((c) => typeof c === "string");
+  if (every.concat(cs).some((c) => /\bsalt\b/i.test(c) && /\bseed\b/i.test(c))) return cs;
   return cs.map((c) => c.replace(/\b([Tt])he live salt\b/g, "$1he live draw").replace(/\bsimulation salts\b/g, "simulation draws")
     .replace(/\bsalts\b/g, "draws").replace(/\bsalt\b/g, "draw"));
 }
@@ -963,19 +1034,30 @@ const BOOT = {
     const measured = v2 ? `${act ? lines([act]) : ""}${v2rec}<div class="eyebrow">v1, the earlier rules</div>
       <div class="mini">${brk(pricesSentence(true) || "")}</div>${v1}` : v1;
     const cs = caveatsOf(d.caveats);
+    // v2's caveats lead (the market-is-hard-to-beat one is the fold's
+    // summary), v1's folded beneath under v1's label; an older file has one list
+    const cs2 = caveatsOf(d.caveats_v2, d.caveats), cs1 = caveatsOf(d.caveats_v1, d.caveats);
+    const para = (c) => `<p style="margin:0">${brk(c)}</p>`;
+    const cav = v2 && cs2.length
+      ? fold(cs2[0], cs2.slice(1).map(para).join("") + DESK.sub("v1, the earlier rules: their caveats", cs1.map(para).join("")))
+      : fold(cs[0], cs.slice(1).map(para).join(""));
     const lead = v2
-      ? `Up to four tickets a day, each paying ${band[0]}-${band[1]}x: the likeliest, an underdog drawn by lot, a mixed ticket
+      ? `Up to four tickets a day, each paying ${band[0]}-${band[1]}x by its prices - a props ticket by estimated prices
+        (${esc(propsRealBand())}): the likeliest, an underdog drawn by lot, a mixed ticket
         holding an over/under, spread, total or method leg, and on a UFC day a props ticket. None is a bet expected to profit:
         every leg pays the bookmaker's margin, a prop most of all. ${brk(pricesSentenceV2())}`
       : `Two tickets a day: the likeliest one from the day's picks paying
         ${band[0]}-${band[1]}x, and an underdog ticket - the market's underdog, usually against the app's pick, plus favourites -
         for a bigger payout. Neither is a bet expected to profit: every leg pays the bookmaker's margin. ${brk(pricesSentence(true))}`;
+    // a file from before tickets v2 shows v1's two as before - and says why v2's are not there
+    const noV2 = !v2 && !S().hasV2 ? `<div class="note">${brk(WHY.noV2)}</div>` : "";
     el.innerHTML = `
       ${DESK.banner()}
       <div class="note"><b>The market is hard to beat.</b> ${lead}</div>
+      ${noV2}
       ${days.map((x) => dayCard(x, x.today || x.in_play || x === next)).join("") || `<div class="card"><div class="mini">No ticket yet.</div></div>`}
       <div class="card"><h2>What tickets like these returned</h2>${measured}
-        ${fold(cs[0], cs.slice(1).map((c) => `<p style="margin:0">${brk(c)}</p>`).join(""))}</div>`;
+        ${cav}</div>`;
   },
 
   async record() {
@@ -993,16 +1075,17 @@ const BOOT = {
       // The underdog's live tickets are its live draw; no other draw is
       // graded live, so the mean over the draws is the backtest's, below.
       const drawNote = LOTTERIES.includes(kind) ? `<div class="mini">At the live draw: only the ticket shown is logged and graded, so over the other draws there is no live record; the backtest's is below.</div>` : "";
-      const estNote_ = num(r.estimated) ? `<div class="mini">${esc(`${r.estimated} of these tickets paid at estimated prop prices: their units are estimates too.`)}</div>` : "";
+      const est = num(r.estimated) ? " (est.)" : "";
+      const estNote_ = est ? `<div class="mini">${esc(`${r.estimated} of these tickets paid at estimated prop prices: their multipliers, units and by-the-prices return are estimates too (marked est.).`)}</div>` : "";
       return `${head}${r.settled
         ? `<div class="stat3">
             <div><div class="k">Settled</div><div class="v">${r.settled}</div></div>
             <div><div class="k">Won</div><div class="v">${r.won}</div></div>
             <div><div class="k">${num(r.estimated) ? "Units, est." : "Units"}</div><div class="v">${signed(r.units, 2)}</div></div></div>
-           <div class="mini num">${esc(`${pc(r.roi)} a ticket; ${byPrices(r)}`)}</div>${drawNote}${estNote_}
+           <div class="mini num">${esc(`${pc(r.roi)} a ticket${est}; ${byPrices(r)}${est}`)}</div>${drawNote}${estNote_}
            <ul class="list">${(r.last || []).slice().reverse().map((t) => `<li><span>${esc(dayName(t.day))}<br>
              <span class="mini">${esc((t.sports || []).join(" + "))}</span></span>
-             <span class="end num">${mult(t.multiplier)}<br><span class="mini">${esc(t.status)}</span></span></li>`).join("")}</ul>`
+             <span class="end num">${mult(t.multiplier)}${t.estimated ? ` <span class="mini">est.</span>` : ""}<br><span class="mini">${esc(t.status)}</span></span></li>`).join("")}</ul>`
         : `<div class="mini">No ticket has settled yet${r.pending ? ` (${r.pending} waiting on results)` : ""}.</div>`}</div>`;
     };
     const rows = lk ? [["The rule", lk.rule], ["Market only (no model)", lk.market_only]].map(([name, s]) => `
@@ -1066,6 +1149,7 @@ const BOOT = {
     try { d = await data(); } catch (e) { return fail(el, e, "the splits", () => BOOT.splits()); }
     const { lk, dog, lkWhy, dogWhy } = S();
     const sp = lk && lk.splits;
+    const v2 = daysOf(d).some(hasV2);
     // `said` names whose chance the expected hit rate is: the likeliest's legs
     // are the apps' picks; an underdog is the market's, rarely an app's pick.
     // A split the backtest gives no price-implied return says so once, on
@@ -1085,7 +1169,8 @@ const BOOT = {
     const ds = dog && dog.splits;
     const live = (dog && dog.live && dog.live.all) || {}, mean = (dog && dog.salts && dog.salts.all) || {};
     const desc = "Descriptive: none of these can move the price band, the floor, the weight or the sports in this version.";
-    const drawNote = `At the live draw - the one ticket a day the page shows. Over ${drawsName()}: not measured by split (the backtest splits the live draw only); over all days the draws averaged ${
+    const dogYrs = v2 && yearsLabel(dog && dog.periods && dog.periods.all) ? `${yearsLabel(dog.periods.all)}. ` : "";
+    const drawNote = `${dogYrs}At the live draw - the one ticket a day the page shows. Over ${drawsName()}: not measured by split (the backtest splits the live draw only); over all days the draws averaged ${
       pc(mean.roi)} a ticket, the live draw ${pc(live.roi)}. ${desc}`;
     const dogBlocks = ds && typeof ds === "object" ? Object.entries(ds).filter(([, rows]) => rows && typeof rows === "object")
       .map(([k, rows]) => (k === "dogs_by_price"
@@ -1097,7 +1182,6 @@ const BOOT = {
     const years = (lk && lk.periods && lk.periods.all) || (dog && dog.periods && dog.periods.all);
     // Tickets v2's splits (by leg type, by sport...), as the measurement
     // writes them: a table of records, or one level of tables under a name.
-    const v2 = daysOf(d).some(hasV2);
     // A table of legs (the backtest's legs_by_bet, legs_by_sport): each group's
     // legs as single bets at their prices, beside what the prices expected.
     const isLegTable = (rows) => rows && typeof rows === "object" && Object.values(rows).some((r) => r && typeof r === "object" && "legs" in r);
@@ -1111,23 +1195,37 @@ const BOOT = {
     };
     const isTable = (rows) => rows && typeof rows === "object" && Object.values(rows).some((r) => r && typeof r === "object" && "tickets" in r);
     const v2Blocks = !v2 ? "" : KINDS_V2.map((k) => {
-      const sp2 = S().v2[k] && S().v2[k].splits;
+      const m2 = S().v2[k];
+      const sp2 = m2 && m2.splits;
       if (!sp2 || typeof sp2 !== "object") return `<div class="card"><h2>${esc(NAME[k])}</h2>${notMeasured(S().v2Why[k] || `No splits of this ticket in this data file.`)}</div>`;
+      // each kind's splits over its own years (the props ticket's history ends early)
+      const yrs = yearsLabel(m2.periods && m2.periods.all);
+      const desc2 = `${yrs ? `${yrs}. ` : ""}Descriptive: none of these can move a rule in this version.`;
+      // a lottery's splits are of its live draw only (the backtest splits no
+      // other draw): said so, with the mean over the draws beside it, as v1's
+      const lot = LOTTERIES.includes(k);
+      const lv = (m2.headline && m2.headline.all) || {}, mn = (m2.salts && m2.salts.all) || {};
+      const note = lot ? `At the live draw - the one ticket a day the page shows. Over ${drawsName()}: not measured by split; over all days the draws averaged ${
+        pc(mn.roi)} a ticket, the live draw ${pc(lv.roi)}. ${desc2}` : desc2;
       const tables = Object.entries(sp2).flatMap(([name, rows]) => (isTable(rows) ? [[name, rows]]
         : rows && typeof rows === "object" ? Object.entries(rows).filter(([, r]) => isTable(r)).map(([sub, r]) => [`${name} ${sub}`, r]) : []));
       const legTables = Object.entries(sp2).filter(([, rows]) => isLegTable(rows));
-      return tables.map(([name, rows]) => block(`${NAME[k]} ${name.replace(/_/g, " ")}`, rows,
-        "Descriptive: none of these can move a rule in this version.")).join("")
-        + legTables.map(([name, rows]) => legBlock(`${NAME[k]}: its ${name.replace(/_/g, " ")}`, rows)).join("")
+      return tables.map(([name, rows]) => block(`${NAME[k]} ${name.replace(/_/g, " ")}${lot ? ", at the live draw" : ""}`, rows, note,
+        lot ? { at: "At the live draw: " } : {})).join("")
+        + legTables.map(([name, rows]) => legBlock(`${NAME[k]}: its ${name.replace(/_/g, " ")}${lot ? ", at the live draw" : ""}`, rows)).join("")
         || `<div class="card"><h2>${esc(NAME[k])}</h2><div class="mini">No splits of this ticket in this data file.</div></div>`;
     }).join("");
     const t1 = (x) => (v2 ? `v1 likeliest ticket, ${x}` : `${x[0].toUpperCase()}${x.slice(1)}`);
-    el.innerHTML = `<div class="note">Splits of the same backtests${years ? `, ${esc(yearsLabel(years))}` : ""}. Small groups swing widely:
+    const lkYears = lk && lk.periods && lk.periods.all;
+    const v1Yrs = v2 && yearsLabel(lkYears) ? `${yearsLabel(lkYears)}.` : "";
+    // with v2 on the page each card says its own years (they differ by kind)
+    const span = v2 ? ", each card over its own years" : years ? `, ${esc(yearsLabel(years))}` : "";
+    el.innerHTML = `<div class="note"><b>The market is hard to beat.</b> Splits of the same backtests${span}. Small groups swing widely:
         an interval that spans zero is no evidence of anything.</div>
       ${v2Blocks}
-      ${sp ? `${block(t1("by sports on the ticket"), sp.by_mix)}
-      ${block(t1("by weekday"), sp.by_weekday, "The day in US Eastern time.")}
-      ${block(t1("by year"), sp.by_year)}` : `<div class="card"><h2>The likeliest ticket${v2 ? " (v1)" : ""}</h2>${notMeasured(lkWhy)}</div>`}
+      ${sp ? `${block(t1("by sports on the ticket"), sp.by_mix, v1Yrs)}
+      ${block(t1("by weekday"), sp.by_weekday, `${v1Yrs ? `${v1Yrs} ` : ""}The day in US Eastern time.`)}
+      ${block(t1("by year"), sp.by_year, v1Yrs)}` : `<div class="card"><h2>The likeliest ticket${v2 ? " (v1)" : ""}</h2>${notMeasured(lkWhy)}</div>`}
       ${dogBlocks}`;
   },
 
@@ -1146,7 +1244,8 @@ const BOOT = {
     const v2Card = !v ? "" : `<div class="card"><h2>Tickets v2</h2>
       <ul class="plain">
         <li><b>Why.</b> Asked for: more tickets, and more kinds of bet than who wins. Up to four tickets a day, each
-          ${bandX(r.band)}, every leg played that day, one leg per game, fight or match.</li>
+          ${bandX(r.band)} by its prices (a props ticket by estimated prices), every leg played that day, one leg per game,
+          fight or match.</li>
         <li><b>The legs.</b> Each app's winner pick (soccer from every league in the app); soccer over or under 2.5 goals at
           the average posted price, the side the market favours, in the leagues whose over 2.5 the app ships from the market;
           NFL spreads and totals, the side the market favours at the consensus price at the consensus line (a push is void);
@@ -1159,13 +1258,15 @@ const BOOT = {
         <li><b>Mixed:</b> ${esc(howBuilt("mixed"))} Up to ${esc(String(v.mixed_pool_other))} of the day's other-market legs
           are tried, each at least a ${pct(r.min_p)} chance but a prop.</li>
         <li><b>Props</b>, on a UFC day: ${esc(howBuilt("props"))}${pp ? ` A prop counts if its estimated price is
-          ${Number(pp[0]).toFixed(2)}-${Number(pp[1]).toFixed(2)}.` : ""} The search band is the one measured to land the real
-          price in ${bandX(r.band)} most often.</li>
+          ${Number(pp[0]).toFixed(2)}-${Number(pp[1]).toFixed(2)}.` : ""} The search band was chosen on real prop prices, to
+          land the real price in ${bandX(r.band)}: ${esc(propsRealBand())}.</li>
         <li><b>Locked, logged and graded on its own</b>, each kind at its own first start: over/under on the goals, spreads
           and totals on the score, a prop only when that corner wins that way (void with no winner, or if the bout is off).</li>
         <li><b>Fixed before it was measured</b>, and shipped whatever its record shows. None is presented as an edge.</li>
       </ul></div>`;
-    $("view-method").innerHTML = `${v2Card}<div class="card"><h2>${v ? "v1: the likeliest ticket" : "The likeliest ticket"}</h2>
+    // a file from before tickets v2 (it carries no v2 rule) says why they are missing
+    const noV2 = !v && DATA ? `<div class="note">${brk(WHY.noV2)}</div>` : "";
+    $("view-method").innerHTML = `${v2Card}${noV2}<div class="card"><h2>${v ? "v1: the likeliest ticket" : "The likeliest ticket"}</h2>
       <ul class="plain">
         <li><b>One ticket a day</b>, every leg played that day - the US Eastern calendar day of each game's start.</li>
         <li><b>Legs</b> are the three apps' own picks: the UFC fight desk's pick, the NFL pick, the soccer pick
@@ -1205,7 +1306,7 @@ const BOOT = {
       <div class="card"><h2>What they do not do</h2>
       <ul class="plain">
         <li>They do not promise a profit: the market is hard to beat, and a parlay pays the bookmaker's margin on every leg.
-          ${brk(pricesSentence())}</li>
+          ${brk(v ? `${pricesSentenceV2() || `Tickets v2, by the prices: ${S().v2Why.likeliest_v2 || S().absent}`} v1, the earlier rules: ${pricesSentence().replace(/^By/, "by")}` : pricesSentence())}</li>
         <li>They do not read news the three apps do not read. Check every leg and price before betting.</li>
         <li>No ticket on a day where nothing fits: a day with one NFL game and no soccer often has none. The page then shows
           the next days with tickets, up to ${r.window_days || 7} days ahead.</li>

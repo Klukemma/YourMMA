@@ -797,7 +797,15 @@ def test_a_ticket_still_in_play_after_midnight_stays_on_the_page(monkeypatch):
     past, today = out["days"]
     assert past["past"] and past["in_play"] and not past["today"]
     assert past["likeliest"]["status"] == "locked" and past["underdog"]["none_reason"] == "no_fill"
+    # a past day's kind with no row logged says so - never a "no combination
+    # fits" that no run computed for it (past days are not built)
+    for kind in bs.KINDS_V2:
+        if past[kind] is not None:
+            assert past[kind]["none_reason"] == bs.NOT_LOGGED, kind
+            assert past[kind]["missing_reason"].startswith(f"No {bs.KIND_WORD[kind]} ticket was logged"), kind
+            assert "combination" not in past[kind]["missing_reason"]
     assert today["today"] and not today["past"] and not today["in_play"]
+    assert today["mixed"]["none_reason"] != bs.NOT_LOGGED            # today is built: its own reason
     assert "No likeliest ticket in the next 7 days" in today["likeliest"]["missing_reason"]
     assert [t["day"] for t in out["tickets"]] == ["2026-11-15"]           # the old shape: today first
     # once graded it leaves the days shown (it is in the record's last tickets instead)
@@ -840,6 +848,9 @@ def test_an_over_under_leg_is_the_side_the_average_pair_favours_and_only_where_t
     data = {"matches": [_ou_match("over"), _ou_match("under", o25=2.20, u25=1.68, market_o25=0.43),
                         _ou_match("held", league="SC2", market_o25=None),
                         _ou_match("level", o25=1.90, u25=1.90), old,
+                        _ou_match("unposted", o25=None, u25=None),            # prices_of: posted None
+                        _ou_match("off", status="postponed", held=True),      # the feeds call it off
+                        _ou_match("nopick", pick=None, pick_prob=None),       # not in the soccer log
                         _ou_match("gone", kickoff="2026-11-14T11:00:00Z")]}
     over, under = bs.soccer_ou_legs(data, SAT, missing)
     ia, ib = 1 / 1.80, 1 / 2.05
@@ -847,7 +858,30 @@ def test_an_over_under_leg_is_the_side_the_average_pair_favours_and_only_where_t
     assert over["p"] == pytest.approx(ia / (ia + ib)) == over["p_market"]
     assert over["key"] == "Soccer:over" and over["market"] == "moneyline"      # one leg per match, any market
     assert (under["pick"], under["decimal"], under["names"]["over"]) == ("Under 2.5 goals", 1.68, False)
-    assert missing[("2026-11-14", "OU25")] == {bs.OU_WITHHELD: 1, bs.LEVEL: 1, bs.OU_NOT_POSTED: 1}
+    assert missing[("2026-11-14", "OU25")] == {bs.OU_WITHHELD: 1, bs.LEVEL: 1, bs.OU_NOT_POSTED: 1,
+                                               bs.OU_NOT_IN_FILE: 1, bs.OU_NO_PICK: 1,
+                                               "postponed, as the feeds report it": 1}
+
+
+def test_a_soccer_match_the_feeds_report_off_gives_no_leg_and_no_underdog():
+    """soccer_predict.hold() gives a postponed (or date-to-come) entry its
+    logged pick's prices and market, price_status "posted", at the feed's
+    original kickoff - still ahead of the clock. Such a match is not on at
+    that time: no 1X2 leg, no underdog, no over/under (counted), v1 or v2."""
+    on = _ou_match("on")
+    off = [_ou_match("pp", status="postponed", held=True), _ou_match("tbc", status="tbc", held=True)]
+    data = {"matches": [on] + off}
+    assert [l["key"] for l in bs.soccer_legs(data, SAT)] == ["Soccer:on"]
+    assert [l["key"] for l in bs.soccer_legs(data, SAT, leagues=None)] == ["Soccer:on"]
+    assert [d["key"] for d in bs.soccer_dogs(data, SAT, leagues=None)] == ["Soccer:on"]
+    missing = {}
+    assert [l["key"] for l in bs.soccer_ou_legs(data, SAT, missing)] == ["Soccer:on"]
+    assert missing[("2026-11-14", "OU25")] == {"postponed, as the feeds report it": 1,
+                                               "date to come, as the feeds report it": 1}
+    # an entry with no status (an older file) is read as upcoming, as before
+    bare = dict(on, match_id="bare")
+    bare.pop("status")
+    assert [l["key"] for l in bs.soccer_legs({"matches": [bare]}, SAT)] == ["Soccer:bare"]
 
 
 def test_nfl_spread_and_total_legs_are_the_no_vig_side_at_the_consensus_line():
@@ -857,18 +891,26 @@ def test_nfl_spread_and_total_legs_are_the_no_vig_side_at_the_consensus_line():
         g.update(kw)
         return g
     priced = {"spread": -3.5, "spread_price_home": 100, "spread_price_away": -120, "spread_price_missing": None,
-              "total": 44.5, "total_price_over": -105, "total_price_under": -115, "total_price_missing": None}
+              "spread_price_source": "the-odds-api", "total": 44.5, "total_price_over": -105,
+              "total_price_under": -115, "total_price_missing": None, "total_price_source": "the-odds-api"}
     missing = {}
+    nomarket = game("g5", {})
+    nomarket["market"] = None                                 # market_for found no moneyline and no spread
     week = {"games": [
         game("g1", priced),
         game("g2", dict(priced, spread=0.0, total_price_over=None, total_price_under=None,
                         total_price_missing="no book priced both sides at the line")),
         game("g3", dict(priced, spread=2.0, spread_price_home=-110, spread_price_away=-110, total_price_over=-110,
-                        total_price_under=-110), spread_pick={"team": "NYG", "line": -2.0},
-             total_pick={"side": "OVER", "line": 44.5}),
-        game("g4", {"spread": 1.0, "total": 40.0})]}               # a file from before the prices were kept
+                        total_price_under=-110, spread_price_source="nflverse", total_price_source="nflverse"),
+             spread_pick={"team": "NYG", "line": -2.0}, total_pick={"side": "OVER", "line": 44.5}),
+        game("g4", {"spread": 1.0, "total": 40.0}),               # a file from before the prices were kept
+        nomarket]
+    }
     legs = {(l["names"]["game_id"], l["bet"]): l for l in bs.nfl_line_legs(week, THU, missing)}
     s, t = legs[("g1", "SPREAD")], legs[("g1", "TOTAL")]
+    # whose price: the books' consensus, or the schedule's own pair when nfl_odds fell back to it
+    assert s["price_source"] == t["price_source"] == bs.NFL_LINE_PRICE
+    assert legs[("g3", "SPREAD")]["price_source"] == legs[("g3", "TOTAL")]["price_source"] == bs.NFL_SCHEDULE_PRICE
     ia, ib = 1 / 2.0, 1 / (1 + 100 / 120)
     assert (s["pick"], s["decimal"], s["names"]["home"]) == ("BUF -3.5", pytest.approx(1 + 100 / 120), False)
     assert s["p"] == pytest.approx(ib / (ia + ib)) and s["key"] == "NFL:g1"
@@ -877,8 +919,9 @@ def test_nfl_spread_and_total_legs_are_the_no_vig_side_at_the_consensus_line():
     assert (legs[("g3", "SPREAD")]["pick"], legs[("g3", "SPREAD")]["p"]) == ("NYG -2", 0.5)
     assert legs[("g3", "TOTAL")]["pick"] == "Over 44.5"
     assert ("g2", "SPREAD") not in legs and ("g2", "TOTAL") not in legs and ("g4", "SPREAD") not in legs
-    assert missing[("2026-11-15", "SPREAD")] == {bs.NFL_ZERO_SPREAD: 1, bs.NFL_NOT_IN_FILE: 1}
-    assert missing[("2026-11-15", "TOTAL")] == {"no book priced both sides at the line": 1, bs.NFL_NOT_IN_FILE: 1}
+    assert missing[("2026-11-15", "SPREAD")] == {bs.NFL_ZERO_SPREAD: 1, bs.NFL_NOT_IN_FILE: 1, bs.NFL_NO_MARKET: 1}
+    assert missing[("2026-11-15", "TOTAL")] == {"no book priced both sides at the line": 1, bs.NFL_NOT_IN_FILE: 1,
+                                                bs.NFL_NO_MARKET: 1}
 
 
 def _method_card(est=2.6, chance=0.30, reason=None):
@@ -1218,3 +1261,87 @@ def test_the_v2_measured_block_in_the_backtests_shape():
     other = json.loads(json.dumps(bt))
     other["v2"]["kinds"]["underdog"]["salt"] = "sameday-dog-v9"
     assert bs.v2_measured(other)[0]["underdog_v2"] is None
+
+
+def test_v2_caveats_lead_v1_s_are_kept_apart_and_none_is_typed_or_dropped(monkeypatch, tmp_path):
+    """The page leads with v2's tickets, so its caveats lead with v2's, the
+    market-is-hard-to-beat one first; v1's are kept, apart. The prop margin
+    is read from the estimator's file (no comparison of measured returns is
+    typed), and the estimator's own caveats and error years reach the page."""
+    monkeypatch.setattr(bs, "_results", lambda: {"ufc": None, "nfl": {}, "soccer": {}})
+    mp = {"coverage": {"first": "2016-01-02", "last": "2024-12-07", "six_way_overround_median": 0.2251,
+                       "moneyline_overround_median": 0.0396},
+          "test": {"fit": ["2016-01-01", "2020-12-31"], "test": ["2021-01-01", "2024-12-31"],
+                   "by_year": {"2021": 0.196, "2024": 0.234}},
+          "frozen": {"fit": ["2016-01-01", "2024-12-31"]},
+          "caveats": ["Fitted on prices only.", "History's moneyline is the closing line."]}
+    (tmp_path / "mp.json").write_text(json.dumps(mp))
+    monkeypatch.setattr(bs, "METHOD_PRICE_FILE", tmp_path / "mp.json")
+    base = {"results": {"same_day": {}, "market_only": {}}, "periods": {},
+            "splits": {"same_day": {"multipliers": {}, "by_sports": {}, "by_mix": {}, "by_weekday": {},
+                                    "by_year": {}}},
+            "caveats": ["The market is hard to beat. Over the last 3 years the rule's tickets won (v1)."]}
+    path = tmp_path / "bt.json"
+    monkeypatch.setattr(bs, "BACKTEST", path)
+    path.write_text(json.dumps(base))
+    history = {"tickets": []}
+    show = bs.update(history, NOW, [])
+    out = bs.payload(history, show, NOW, [])
+    v2, v1 = out["caveats_v2"], out["caveats_v1"]
+    assert v2[0] == bs.V2_CAVEATS[0] and "hard to beat" in v2[0]
+    assert base["caveats"][0] in v1 and base["caveats"][0] not in v2
+    assert out["caveats"] == v2 + [c for c in v1 if c not in v2]               # every caveat, v2's first
+    assert set(bs.DOG_CAVEATS) <= set(v1) and bs.PRICES_CAVEAT in v2
+    margin = next(c for c in v2 if "six outcomes" in c)
+    assert "22.5%" in margin and "4.0%" in margin and "pays more margin" in margin
+    assert "expected to return less" not in " ".join(out["caveats"])
+    assert bs.ESTIMATOR_CAVEAT + "Fitted on prices only." in v2
+    assert out["rule"]["v2"]["method_error"] == {"fit": "2016-2020", "test": "2021-2024",
+                                                 "by_year": {"2021": 0.196, "2024": 0.234},
+                                                 "frozen": "2016-2024", "last_real": "2024-12-07"}
+    # once the backtest's v2 block has caveats, they lead and state the margin
+    # themselves; an estimator caveat it already carries is not repeated
+    v2blk = {"version": sdy.V2_VERSION, "kinds": {},
+             "caveats": ["A prop costs more than a moneyline: measured.", "The market is hard to beat, and no v2 "
+                         "ticket is an edge.", "Fitted on prices only."]}
+    path.write_text(json.dumps(dict(base, v2=v2blk)))
+    out = bs.payload(history, show, NOW, [])
+    v2 = out["caveats_v2"]
+    assert v2[0] == v2blk["caveats"][1] and v2[1] == bs.V2_CAVEATS[0]
+    assert not any("six outcomes" in c for c in v2) and v2blk["caveats"][0] in v2
+    assert bs.ESTIMATOR_CAVEAT + "Fitted on prices only." not in v2
+    assert bs.ESTIMATOR_CAVEAT + "History's moneyline is the closing line." in v2
+    # no estimator file: the margin fact stays, its size said to be missing
+    monkeypatch.setattr(bs, "METHOD_PRICE_FILE", tmp_path / "none.json")
+    path.write_text(json.dumps(base))
+    out = bs.payload(history, show, NOW, [])
+    assert any("six outcomes" in c and "missing" in c for c in out["caveats_v2"])
+    assert out["rule"]["v2"]["method_error"] is None
+    json.dumps(out, allow_nan=False)
+
+
+def test_a_settled_tickets_estimated_price_is_marked_in_the_records_last_tickets():
+    rows = [{"day": "2026-11-14", "kind": "props", "status": "won", "multiplier": 3.63, "paid": 3.63, "profit": 2.63,
+             "p_market": 0.25, "sports": ["UFC"], "estimated": True},
+            {"day": "2026-11-15", "kind": "props", "status": "lost", "multiplier": 3.9, "paid": 0.0, "profit": -1.0,
+             "p_market": 0.25, "sports": ["UFC"]}]
+    r = bs.record(rows, "props")
+    assert [t["estimated"] for t in r["last"]] == [True, False] and r["estimated"] == 1
+
+
+def test_a_lotterys_every_v2_reading_carries_its_draws_mean():
+    salts = lambda roi: {"all": {"roi": roi, "salts": 1000, "spread": {"roi": {"p5": -0.2, "p50": -0.08, "p95": 0.06}}}}
+    rec = {"all": {"tickets": 300, "wins": 80, "roi": -0.1, "implied_roi": -0.2}}
+    split = lambda a, b: {"all_leagues": a, "without_extra_leagues": b}
+    bt = {"v2": {"version": sdy.V2_VERSION, "kinds": {
+        "underdog": {"salt": sdy.DOG_SALT_V2, "live": split(rec, rec), "salts": split(salts(-0.07), salts(-0.11))},
+        "props_as_live": {"salt": sdy.PROPS_SALT, "live": split(rec, rec), "salts": split(salts(-0.08), salts(-0.08))},
+        "props_as_priced": {"salt": sdy.PROPS_SALT, "live": split(rec, rec), "salts": split(salts(-0.109), None)},
+        "mixed": {"live": split(rec, rec)}}}}
+    got, _ = bs.v2_measured(bt)
+    assert got["underdog_v2"]["salts"]["all"]["roi"] == -0.07
+    assert got["underdog_v2"]["without_extra_salts"]["all"]["roi"] == -0.11
+    assert got["props"]["as_priced_salts"]["all"]["roi"] == -0.109
+    assert "without_extra_salts" not in got["mixed"] and "as_priced_salts" not in got["underdog_v2"]
+    # an unsplit draws' block is every league's: never shown as another league set's
+    assert bs._salts(salts(-0.07), bs.V2_WITHOUT_EXTRA) is None and bs._salts(salts(-0.07))["all"]["roi"] == -0.07

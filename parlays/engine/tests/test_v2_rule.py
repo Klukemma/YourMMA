@@ -111,6 +111,28 @@ def test_as_live_chooses_by_the_estimate_and_pays_the_real_price():
     assert sdy.build_props(fill, [prop], band=sdy.PROPS_LIVE_BAND) is None   # by its real price it does not fit
 
 
+def test_as_live_draws_by_the_estimators_chance_as_live_does():
+    """Live a prop's chance is the shipped win chance times the ESTIMATOR's
+    share, and that chance weights the draw; "as live" must draw by it, not
+    by the real book's split, and still pay the real price."""
+    fill = [W("m3", 0.80, 1.50)]
+    a = P("f1", "A", "KO/TKO", 0.45, 3.10, est=2.60)             # the book's split favours a ...
+    b = P("f2", "C", "Decision", 0.05, 3.00, est=2.70)
+    a["est_p"], b["est_p"] = 0.05, 0.45                         # ... the estimator's favours b
+    kw = {"band": sdy.PROPS_LIVE_BAND, "price_key": "est_decimal"}
+    by_est = [sdy.build_props(fill, [a, b], salt=s, chance_key="est_p", **kw) for s in sdy.PROPS_SIM_SALTS[:400]]
+    by_book = [sdy.build_props(fill, [a, b], salt=s, **kw) for s in sdy.PROPS_SIM_SALTS[:400]]
+    share = lambda ts, m: sum(t["method_lot_key"] == m["lot_key"] for t in ts) / len(ts)
+    assert share(by_est, b) > 0.8 and share(by_book, a) > 0.8
+    t = next(t for t in by_est if t["method_lot_key"] == b["lot_key"])
+    prop = t["legs"][0]
+    assert math.isclose(t["multiplier"], 3.00 * 1.50) and math.isclose(t["searched_multiplier"], 2.70 * 1.50)
+    assert prop["p"] == 0.45 and prop["p_book"] == 0.05 and prop["p_market"] == 0.05   # drawn by, the book's, no-vig
+    c = P("f3", "E", "KO/TKO", 0.40, 2.60, est=2.60)             # no estimated chance: as live cannot draw it
+    assert sdy.build_props(fill, [c], chance_key="est_p", **kw) is None
+    assert sdy.build_props(fill, [c], **kw) is not None
+
+
 def test_every_market_settles_through_the_same_contract():
     won = [M("o1", 0.6, 1.7, result={"winner": "pick"}), P("f1", "A", "KO/TKO", 0.3, 2.8, result={"winner": "pick"})]
     t = {"legs": won}
