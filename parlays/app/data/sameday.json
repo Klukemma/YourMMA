@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-19T18:36:24Z",
+ "generated": "2026-11-19T18:41:18Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -93,8 +93,8 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_fit",
-    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. The next likeliest ticket is on Sunday, Nov 22.",
-    "next_day": "2026-11-22"
+    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. The next likeliest ticket is on Saturday, Nov 21.",
+    "next_day": "2026-11-21"
    },
    "underdog": {
     "day": "2026-11-19",
@@ -105,8 +105,8 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_dog",
-    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. The next underdog ticket is on Sunday, Nov 22.",
-    "next_day": "2026-11-22"
+    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. The next underdog ticket is on Saturday, Nov 21.",
+    "next_day": "2026-11-21"
    },
    "cannot_both_win": false,
    "ufc_day": false,
@@ -130,10 +130,10 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_fit",
-    "missing_reason": "No combination of this day's priced winner picks (each at least a 50% chance) pays 3-5x with 6 legs or fewer. The next likeliest ticket is on Sunday, Nov 22.",
+    "missing_reason": "No combination of this day's priced winner picks (each at least a 50% chance) pays 3-5x with 6 legs or fewer. The next likeliest ticket is on Saturday, Nov 21.",
     "version": 2,
     "estimated": false,
-    "next_day": "2026-11-22"
+    "next_day": "2026-11-21"
    },
    "underdog_v2": {
     "day": "2026-11-19",
@@ -231,12 +231,469 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_other",
-    "missing_reason": "No mixed ticket: no over/under, spread, total or method leg is on offer this day (each but a method leg needs at least a 50% chance). No mixed ticket in the next 7 days yet.",
+    "missing_reason": "No mixed ticket: no over/under, spread, total or method leg is on offer this day (each but a method leg needs at least a 50% chance). The next mixed ticket is on Saturday, Nov 21.",
     "version": 2,
     "estimated": false,
-    "next_day": null
+    "next_day": "2026-11-21"
    },
    "props": null,
+   "v2_cannot_both_win": false,
+   "in_play": false
+  },
+  {
+   "day": "2026-11-21",
+   "today": false,
+   "past": false,
+   "likeliest": {
+    "day": "2026-11-21",
+    "kind": "likeliest",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "UFC",
+      "event": "Jared Cannonier vs Ikram Aliskerov",
+      "pick": "Ikram Aliskerov",
+      "opponent": "Jared Cannonier",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 1.344828,
+      "p": 0.737378,
+      "p_model": 0.799801,
+      "p_market": 0.7165697049503164,
+      "price_source": "best of books",
+      "american": -290,
+      "reason": "UFC: chance 74%, model 80%, market 72%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false
+     },
+     {
+      "sport": "UFC",
+      "event": "Kyoji Horiguchi vs Asu Almabayev",
+      "pick": "Asu Almabayev",
+      "opponent": "Kyoji Horiguchi",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 2.65,
+      "p": 0.559416,
+      "p_model": 0.559416,
+      "p_market": null,
+      "price_source": "best of books",
+      "american": 165,
+      "reason": "UFC: chance 56%, model 56%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false
+     }
+    ],
+    "multiplier": 3.5638,
+    "p": 0.412501,
+    "p_market": null,
+    "sports": [
+     "UFC"
+    ],
+    "first_start": "2026-11-21T15:10:00Z",
+    "last_start": "2026-11-21T15:10:00Z",
+    "built_at": "2026-11-19T18:41:18Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null
+   },
+   "underdog": {
+    "day": "2026-11-21",
+    "kind": "underdog",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "UFC",
+      "event": "Jiri Prochazka vs Navajo Stirling",
+      "pick": "Jiri Prochazka",
+      "opponent": "Navajo Stirling",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 2.47,
+      "p": 0.369822,
+      "p_model": 0.30657199999999996,
+      "p_market": 0.3868927600970943,
+      "price_source": "median of 7 books",
+      "american": 147,
+      "reason": "UFC: chance 37%, model 31%, market 39%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": true
+     },
+     {
+      "sport": "UFC",
+      "event": "Jared Cannonier vs Ikram Aliskerov",
+      "pick": "Ikram Aliskerov",
+      "opponent": "Jared Cannonier",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 1.344828,
+      "p": 0.737378,
+      "p_model": 0.799801,
+      "p_market": 0.7165697049503164,
+      "price_source": "best of books",
+      "american": -290,
+      "reason": "UFC: chance 74%, model 80%, market 72%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false
+     }
+    ],
+    "multiplier": 3.3217,
+    "p": 0.272699,
+    "p_market": 0.277236,
+    "sports": [
+     "UFC"
+    ],
+    "first_start": "2026-11-21T15:10:00Z",
+    "last_start": "2026-11-21T15:10:00Z",
+    "built_at": "2026-11-19T18:41:18Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null,
+    "dog": {
+     "pick": "Jiri Prochazka",
+     "event": "Jiri Prochazka vs Navajo Stirling",
+     "sport": "UFC",
+     "rank": 0,
+     "candidates": 8,
+     "salt": "sameday-dog-v1",
+     "version": 1
+    },
+    "lands_1_in": 4,
+    "only_one": false,
+    "best_of_books": false,
+    "price_note": null
+   },
+   "cannot_both_win": false,
+   "ufc_day": true,
+   "missing": {
+    "OU25": {
+     "not in this match file (written before the over/under prices were kept)": 140
+    },
+    "METHOD": {
+     "No moneyline pair on file for this fight: the estimate is built from the market's no-vig chance.": 6
+    }
+   },
+   "likeliest_v2": {
+    "day": "2026-11-21",
+    "kind": "likeliest_v2",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "UFC",
+      "event": "Jared Cannonier vs Ikram Aliskerov",
+      "pick": "Ikram Aliskerov",
+      "opponent": "Jared Cannonier",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 1.344828,
+      "p": 0.737378,
+      "p_model": 0.799801,
+      "p_market": 0.7165697049503164,
+      "price_source": "best of books",
+      "american": -290,
+      "reason": "UFC: chance 74%, model 80%, market 72%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "1X2",
+      "bet_detail": "winner",
+      "label": "Ikram Aliskerov to win",
+      "market": "Moneyline",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     },
+     {
+      "sport": "UFC",
+      "event": "Kyoji Horiguchi vs Asu Almabayev",
+      "pick": "Asu Almabayev",
+      "opponent": "Kyoji Horiguchi",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 2.65,
+      "p": 0.559416,
+      "p_model": 0.559416,
+      "p_market": null,
+      "price_source": "best of books",
+      "american": 165,
+      "reason": "UFC: chance 56%, model 56%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "1X2",
+      "bet_detail": "winner",
+      "label": "Asu Almabayev to win",
+      "market": "Moneyline",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     }
+    ],
+    "multiplier": 3.5638,
+    "p": 0.412501,
+    "p_market": null,
+    "sports": [
+     "UFC"
+    ],
+    "first_start": "2026-11-21T15:10:00Z",
+    "last_start": "2026-11-21T15:10:00Z",
+    "built_at": "2026-11-19T18:41:18Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null,
+    "version": 2,
+    "bets": [
+     "1X2"
+    ],
+    "estimated": false
+   },
+   "underdog_v2": {
+    "day": "2026-11-21",
+    "kind": "underdog_v2",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "UFC",
+      "event": "Nikolas Motta vs Dom Mar Fan",
+      "pick": "Nikolas Motta",
+      "opponent": "Dom Mar Fan",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 2.42,
+      "p": 0.372564,
+      "p_model": 0.29451799999999995,
+      "p_market": 0.3962429847551354,
+      "price_source": "median of 7 books",
+      "american": 142,
+      "reason": "UFC: chance 37%, model 29%, market 40%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": true,
+      "bet": "1X2",
+      "bet_detail": null,
+      "label": "Nikolas Motta to win",
+      "market": "Moneyline",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     },
+     {
+      "sport": "UFC",
+      "event": "Jared Cannonier vs Ikram Aliskerov",
+      "pick": "Ikram Aliskerov",
+      "opponent": "Jared Cannonier",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 1.344828,
+      "p": 0.737378,
+      "p_model": 0.799801,
+      "p_market": 0.7165697049503164,
+      "price_source": "best of books",
+      "american": -290,
+      "reason": "UFC: chance 74%, model 80%, market 72%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "1X2",
+      "bet_detail": "winner",
+      "label": "Ikram Aliskerov to win",
+      "market": "Moneyline",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     }
+    ],
+    "multiplier": 3.2545,
+    "p": 0.27472,
+    "p_market": 0.283936,
+    "sports": [
+     "UFC"
+    ],
+    "first_start": "2026-11-21T15:10:00Z",
+    "last_start": "2026-11-21T15:10:00Z",
+    "built_at": "2026-11-19T18:41:18Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null,
+    "version": 2,
+    "bets": [
+     "1X2"
+    ],
+    "estimated": false,
+    "dog": {
+     "pick": "Nikolas Motta",
+     "event": "Nikolas Motta vs Dom Mar Fan",
+     "sport": "UFC",
+     "rank": 0,
+     "candidates": 8,
+     "salt": "sameday-dog-v2",
+     "version": 2
+    },
+    "lands_1_in": 4,
+    "only_one": false,
+    "best_of_books": false,
+    "price_note": null
+   },
+   "mixed": {
+    "day": "2026-11-21",
+    "kind": "mixed",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "UFC",
+      "event": "Jiri Prochazka vs Navajo Stirling",
+      "pick": "Navajo Stirling by KO/TKO",
+      "opponent": "Jiri Prochazka",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 1.962926,
+      "p": 0.445311,
+      "p_model": null,
+      "p_market": 0.424097,
+      "price_source": "estimated",
+      "american": -104,
+      "reason": "UFC: chance 45%, the estimator's market chance 42%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "METHOD",
+      "bet_detail": "KO/TKO",
+      "label": "Navajo Stirling by KO/TKO",
+      "market": "Method",
+      "estimated": true,
+      "error_pct": 24.3,
+      "moneyline_source": "median of 7 books"
+     },
+     {
+      "sport": "UFC",
+      "event": "Nikolas Motta vs Dom Mar Fan",
+      "pick": "Dom Mar Fan",
+      "opponent": "Nikolas Motta",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 1.636943,
+      "p": 0.627436,
+      "p_model": 0.705482,
+      "p_market": 0.6014205699957365,
+      "price_source": "best of books",
+      "american": -157,
+      "reason": "UFC: chance 63%, model 71%, market 60%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "1X2",
+      "bet_detail": "winner",
+      "label": "Dom Mar Fan to win",
+      "market": "Moneyline",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     }
+    ],
+    "multiplier": 3.2132,
+    "p": 0.279404,
+    "p_market": 0.255061,
+    "sports": [
+     "UFC"
+    ],
+    "first_start": "2026-11-21T15:10:00Z",
+    "last_start": "2026-11-21T15:10:00Z",
+    "built_at": "2026-11-19T18:41:18Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null,
+    "version": 2,
+    "bets": [
+     "1X2",
+     "METHOD"
+    ],
+    "estimated": true
+   },
+   "props": {
+    "day": "2026-11-21",
+    "kind": "props",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "UFC",
+      "event": "Jared Cannonier vs Ikram Aliskerov",
+      "pick": "Ikram Aliskerov by KO/TKO",
+      "opponent": "Jared Cannonier",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 2.295569,
+      "p": 0.389763,
+      "p_model": null,
+      "p_market": 0.367146,
+      "price_source": "estimated",
+      "american": 130,
+      "reason": "UFC: chance 39%, the estimator's market chance 37%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "METHOD",
+      "bet_detail": "KO/TKO",
+      "label": "Ikram Aliskerov by KO/TKO",
+      "market": "Method",
+      "estimated": true,
+      "error_pct": 24.3,
+      "moneyline_source": "median of 7 books"
+     },
+     {
+      "sport": "UFC",
+      "event": "Jiri Prochazka vs Navajo Stirling",
+      "pick": "Navajo Stirling",
+      "opponent": "Jiri Prochazka",
+      "kickoff": "2026-11-21T15:10:00Z",
+      "decimal": 1.617284,
+      "p": 0.630178,
+      "p_model": 0.693428,
+      "p_market": 0.6090952421927042,
+      "price_source": "best of books",
+      "american": -162,
+      "reason": "UFC: chance 63%, model 69%, market 61%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "1X2",
+      "bet_detail": "winner",
+      "label": "Navajo Stirling to win",
+      "market": "Moneyline",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     }
+    ],
+    "multiplier": 3.7126,
+    "p": 0.24562,
+    "p_market": 0.223627,
+    "sports": [
+     "UFC"
+    ],
+    "first_start": "2026-11-21T15:10:00Z",
+    "last_start": "2026-11-21T15:10:00Z",
+    "built_at": "2026-11-19T18:41:18Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null,
+    "version": 2,
+    "bets": [
+     "1X2",
+     "METHOD"
+    ],
+    "estimated": true,
+    "props": {
+     "pick": "Ikram Aliskerov by KO/TKO",
+     "event": "Jared Cannonier vs Ikram Aliskerov",
+     "rank": 0,
+     "candidates": 15,
+     "version": 2,
+     "band": [
+      3.6,
+      4.2
+     ]
+    },
+    "only_one": false
+   },
    "v2_cannot_both_win": false,
    "in_play": false
   },
@@ -688,8 +1145,62 @@
    "p": null,
    "p_market": null,
    "none_reason": "no_fit",
-   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. The next likeliest ticket is on Sunday, Nov 22.",
-   "next_day": "2026-11-22"
+   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. The next likeliest ticket is on Saturday, Nov 21.",
+   "next_day": "2026-11-21"
+  },
+  {
+   "day": "2026-11-21",
+   "kind": "likeliest",
+   "status": "open",
+   "legs": [
+    {
+     "sport": "UFC",
+     "event": "Jared Cannonier vs Ikram Aliskerov",
+     "pick": "Ikram Aliskerov",
+     "opponent": "Jared Cannonier",
+     "kickoff": "2026-11-21T15:10:00Z",
+     "decimal": 1.344828,
+     "p": 0.737378,
+     "p_model": 0.799801,
+     "p_market": 0.7165697049503164,
+     "price_source": "best of books",
+     "american": -290,
+     "reason": "UFC: chance 74%, model 80%, market 72%",
+     "outcome": null,
+     "void_reason": null,
+     "dog": false
+    },
+    {
+     "sport": "UFC",
+     "event": "Kyoji Horiguchi vs Asu Almabayev",
+     "pick": "Asu Almabayev",
+     "opponent": "Kyoji Horiguchi",
+     "kickoff": "2026-11-21T15:10:00Z",
+     "decimal": 2.65,
+     "p": 0.559416,
+     "p_model": 0.559416,
+     "p_market": null,
+     "price_source": "best of books",
+     "american": 165,
+     "reason": "UFC: chance 56%, model 56%",
+     "outcome": null,
+     "void_reason": null,
+     "dog": false
+    }
+   ],
+   "multiplier": 3.5638,
+   "p": 0.412501,
+   "p_market": null,
+   "sports": [
+    "UFC"
+   ],
+   "first_start": "2026-11-21T15:10:00Z",
+   "last_start": "2026-11-21T15:10:00Z",
+   "built_at": "2026-11-19T18:41:18Z",
+   "paid": null,
+   "profit": null,
+   "missing_reason": null,
+   "none_reason": null
   },
   {
    "day": "2026-11-22",
@@ -781,7 +1292,7 @@
   "roi": -1.0,
   "implied_roi": -0.0888,
   "estimated": 0,
-  "pending": 1,
+  "pending": 2,
   "last": [
    {
     "day": "2026-11-14",
@@ -815,7 +1326,7 @@
    "roi": -1.0,
    "implied_roi": -0.0888,
    "estimated": 0,
-   "pending": 1,
+   "pending": 2,
    "last": [
     {
      "day": "2026-11-14",
@@ -848,7 +1359,7 @@
    "roi": -1.0,
    "implied_roi": -0.0686,
    "estimated": 0,
-   "pending": 1,
+   "pending": 2,
    "last": [
     {
      "day": "2026-11-14",
@@ -881,7 +1392,7 @@
    "roi": null,
    "implied_roi": null,
    "estimated": 0,
-   "pending": 1,
+   "pending": 2,
    "last": []
   },
   "underdog_v2": {
@@ -891,7 +1402,7 @@
    "roi": null,
    "implied_roi": null,
    "estimated": 0,
-   "pending": 2,
+   "pending": 3,
    "last": []
   },
   "mixed": {
@@ -901,7 +1412,7 @@
    "roi": null,
    "implied_roi": null,
    "estimated": 0,
-   "pending": 0,
+   "pending": 1,
    "last": []
   },
   "props": {
@@ -911,7 +1422,7 @@
    "roi": null,
    "implied_roi": null,
    "estimated": 0,
-   "pending": 0,
+   "pending": 1,
    "last": []
   }
  },
