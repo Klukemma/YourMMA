@@ -87,7 +87,7 @@
  ],
  "bouts": 8768,
  "dataset_end": "2026-11-14",
- "generated": "2026-11-16T14:18:45Z",
+ "generated": "2026-11-19T18:40:00Z",
  "notes": {
   "leak": "Figures published before 2026-09-18 came from a model that could see each fighter's final career record, which inflated historical accuracy to 78% and backtests to +16.2%. Those numbers were fiction and are not shown here.",
   "which_number_counts": "The confirm period is 2020 onward. Anything before it was used to choose how the strategies work, so its +6.1% is not a forecast. The confirm number is."
@@ -825,6 +825,55 @@
   "live": {
    "last": [
     {
+     "event_date": "2026-11-21",
+     "event_name": "UFC Fight Night: Prochazka vs. Stirling",
+     "legs": [
+      {
+       "decimal": 1.8,
+       "outcome": null,
+       "pick": "Kevin Vallejos"
+      },
+      {
+       "decimal": 2.68,
+       "outcome": null,
+       "pick": "Tallison Teixeira"
+      }
+     ],
+     "multiplier": 4.824,
+     "prob": 0.228997,
+     "profile": "steady",
+     "profit": null,
+     "rule": "mixed_else@steady",
+     "status": "pending"
+    },
+    {
+     "event_date": "2026-11-21",
+     "event_name": "UFC Fight Night: Prochazka vs. Stirling",
+     "legs": [
+      {
+       "decimal": 2.1,
+       "outcome": null,
+       "pick": "Aljamain Sterling"
+      },
+      {
+       "decimal": 1.344828,
+       "outcome": null,
+       "pick": "Ikram Aliskerov"
+      },
+      {
+       "decimal": 3.4,
+       "outcome": null,
+       "pick": "Santiago Luna"
+      }
+     ],
+     "multiplier": 9.602069,
+     "prob": 0.13758,
+     "profile": "risker",
+     "profit": null,
+     "rule": "risker",
+     "status": "pending"
+    },
+    {
      "event_date": "2026-11-14",
      "event_name": "UFC 334: Gane vs. Hokit",
      "legs": [
@@ -920,7 +969,7 @@
     "risk_lover": {
      "label": "Risk lover",
      "lost": 1,
-     "none": 0,
+     "none": 1,
      "pending": 0,
      "roi": -1.0,
      "settled": 1,
@@ -933,7 +982,7 @@
      "label": "Risker",
      "lost": 1,
      "none": 0,
-     "pending": 0,
+     "pending": 1,
      "roi": -1.0,
      "settled": 1,
      "target": "~10x",
@@ -945,7 +994,7 @@
      "label": "Steady",
      "lost": 1,
      "none": 0,
-     "pending": 0,
+     "pending": 1,
      "roi": -1.0,
      "settled": 1,
      "target": "~5x",
@@ -1246,9 +1295,9 @@
   ],
   "correct": 273,
   "graded": 448,
-  "pending": 73,
-  "predictions": 521,
+  "pending": 83,
+  "predictions": 531,
   "unique_bouts": 201,
-  "upcoming": 0
+  "upcoming": 10
  }
 }
