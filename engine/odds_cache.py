@@ -27,6 +27,7 @@ that gap permanently instead of being thrown away with the runner.
 
 import json
 from datetime import datetime, timedelta, timezone
+from difflib import SequenceMatcher
 from pathlib import Path
 
 from roi import norm_name
@@ -445,24 +446,44 @@ def for_card(cache, fights, existing=None):
     price at all rather than another fight's.
     """
     out = as_current_odds(cache, existing)
+    own, missing = set(), []
     for fighter_a, fighter_b, date in fights:
         entry = find(cache, fighter_a, fighter_b, date)
         if entry is None:
-            # Every spelling of these two (suffix or not), so the matcher
-            # cannot reach another of their fights through a near name.
-            gone = {_core(fighter_a), _core(fighter_b)}
-            for key in [k for k in out if _core(k) in gone]:
-                del out[key]
+            missing += [fighter_a, fighter_b]
             continue
         odds = _entry_odds(entry)
         out.update(odds)
+        own.update(odds)
         # Served under the card's own spelling too, so the matcher finds this
         # bout's price by exact name rather than reaching it by a near one.
         for card_name in (fighter_a, fighter_b):
             side = [k for k in odds if _initial_and_surname(k) == _initial_and_surname(card_name)]
             if len(side) == 1:
                 out[card_name.lower()] = odds[side[0]]
+                own.add(card_name.lower())
+    # A bout not on file leaves neither fighter reachable: every spelling the
+    # matcher could take for theirs - the same name (suffix or not), the same
+    # surname, or a near spelling of the whole name (its 0.90 bar) - unless
+    # it is a price this card's own bouts served. A respelled SURNAME (Asu
+    # Almabayev, the feed's Almabaev) left one side priced by a near name and
+    # the other unpriced: a pick with a price and no market chance.
+    for name in missing:
+        core = _core(name)
+        surname = core.split()[-1] if core else ""
+        for key in [k for k in out if k not in own and _reachable(core, surname, k)]:
+            del out[key]
     return out
+
+
+def _reachable(core, surname, key):
+    """Could predict_card's matcher reach `key` for the card name `core`?"""
+    other = _core(key)
+    if not core or not other:
+        return False
+    if other == core or (surname and other.split()[-1] == surname):
+        return True
+    return SequenceMatcher(None, core, other).ratio() > 0.90
 
 
 def _offers(price, book, prices):

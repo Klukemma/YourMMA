@@ -3020,6 +3020,9 @@ ODDS_NAME_ALIASES = {
     "ramazan temirov": "ramazonbek temirov",
     "abdul rakhman yakhyaev": "abdulrakhman yakhyaev",
     "abus magomedov": "abusupyian magomedov",
+    # The feed's spelling of the surname (UFC Doha, 2026-11-21): no
+    # respelling rule reaches a surname, and the bout went half-priced.
+    "asu almabayev": "asu almabaev",
 }
 
 
