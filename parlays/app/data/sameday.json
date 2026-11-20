@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-20T21:38:31Z",
+ "generated": "2026-11-20T22:57:24Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -99,7 +99,7 @@
    "underdog": {
     "day": "2026-11-20",
     "kind": "underdog",
-    "status": "locked",
+    "status": "lost",
     "legs": [
      {
       "sport": "Soccer",
@@ -114,7 +114,7 @@
       "price_source": "average price",
       "american": 220,
       "reason": "Soccer: chance 29%, market 29%",
-      "outcome": null,
+      "outcome": "lost",
       "void_reason": null,
       "dog": true
      },
@@ -131,7 +131,7 @@
       "price_source": "average price",
       "american": -1429,
       "reason": "Soccer: chance 88%, market 88%",
-      "outcome": null,
+      "outcome": "lost",
       "void_reason": null,
       "dog": false
      }
@@ -145,8 +145,8 @@
     "first_start": "2026-11-20T19:30:00Z",
     "last_start": "2026-11-20T19:45:00Z",
     "built_at": "2026-11-20T19:21:26Z",
-    "paid": null,
-    "profit": null,
+    "paid": 0.0,
+    "profit": -1.0,
     "missing_reason": null,
     "none_reason": null,
     "dog": {
@@ -173,7 +173,7 @@
    "likeliest_v2": {
     "day": "2026-11-20",
     "kind": "likeliest_v2",
-    "status": "locked",
+    "status": "lost",
     "legs": [
      {
       "sport": "Soccer",
@@ -188,7 +188,7 @@
       "price_source": "average price",
       "american": -1429,
       "reason": "Soccer: chance 88%, market 88%",
-      "outcome": null,
+      "outcome": "lost",
       "void_reason": null,
       "dog": false,
       "bet": "1X2",
@@ -257,8 +257,8 @@
     "first_start": "2026-11-20T19:30:00Z",
     "last_start": "2026-11-21T03:10:00Z",
     "built_at": "2026-11-20T19:21:26Z",
-    "paid": null,
-    "profit": null,
+    "paid": 0.0,
+    "profit": -1.0,
     "missing_reason": null,
     "none_reason": null,
     "version": 2,
@@ -270,7 +270,7 @@
    "underdog_v2": {
     "day": "2026-11-20",
     "kind": "underdog_v2",
-    "status": "locked",
+    "status": "lost",
     "legs": [
      {
       "sport": "Soccer",
@@ -309,7 +309,7 @@
       "price_source": "average price",
       "american": -1429,
       "reason": "Soccer: chance 88%, market 88%",
-      "outcome": null,
+      "outcome": "lost",
       "void_reason": null,
       "dog": false,
       "bet": "1X2",
@@ -330,8 +330,8 @@
     "first_start": "2026-11-20T19:30:00Z",
     "last_start": "2026-11-21T03:00:00Z",
     "built_at": "2026-11-20T19:21:26Z",
-    "paid": null,
-    "profit": null,
+    "paid": 0.0,
+    "profit": -1.0,
     "missing_reason": null,
     "none_reason": null,
     "version": 2,
@@ -356,7 +356,7 @@
    "mixed": {
     "day": "2026-11-20",
     "kind": "mixed",
-    "status": "locked",
+    "status": "lost",
     "legs": [
      {
       "sport": "Soccer",
@@ -395,7 +395,7 @@
       "price_source": "average price",
       "american": -147,
       "reason": "Soccer: chance 56%, the market's (no-vig)",
-      "outcome": null,
+      "outcome": "lost",
       "void_reason": null,
       "dog": false,
       "bet": "OU25",
@@ -416,8 +416,8 @@
     "first_start": "2026-11-20T19:30:00Z",
     "last_start": "2026-11-20T20:00:00Z",
     "built_at": "2026-11-20T19:21:26Z",
-    "paid": null,
-    "profit": null,
+    "paid": 0.0,
+    "profit": -1.0,
     "missing_reason": null,
     "none_reason": null,
     "version": 2,
@@ -2275,13 +2275,13 @@
    ]
   },
   "underdog": {
-   "settled": 2,
+   "settled": 3,
    "won": 0,
-   "units": -2.0,
+   "units": -3.0,
    "roi": -1.0,
-   "implied_roi": -0.0686,
+   "implied_roi": -0.0842,
    "estimated": 0,
-   "pending": 4,
+   "pending": 3,
    "last": [
     {
      "day": "2026-11-14",
@@ -2304,27 +2304,50 @@
       "NFL"
      ],
      "estimated": false
+    },
+    {
+     "day": "2026-11-20",
+     "status": "lost",
+     "multiplier": 3.424,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
+      "Soccer"
+     ],
+     "estimated": false
     }
    ]
   },
   "likeliest_v2": {
-   "settled": 0,
+   "settled": 1,
    "won": 0,
-   "units": 0,
-   "roi": null,
-   "implied_roi": null,
+   "units": -1.0,
+   "roi": -1.0,
+   "implied_roi": -0.1349,
    "estimated": 0,
-   "pending": 4,
-   "last": []
+   "pending": 3,
+   "last": [
+    {
+     "day": "2026-11-20",
+     "status": "lost",
+     "multiplier": 3.1375,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
+      "Soccer"
+     ],
+     "estimated": false
+    }
+   ]
   },
   "underdog_v2": {
-   "settled": 1,
+   "settled": 2,
    "won": 1,
-   "units": 2.42,
-   "roi": 2.42,
-   "implied_roi": -0.108,
+   "units": 1.42,
+   "roi": 0.71,
+   "implied_roi": -0.102,
    "estimated": 0,
-   "pending": 4,
+   "pending": 3,
    "last": [
     {
      "day": "2026-11-19",
@@ -2337,17 +2360,28 @@
       "Soccer"
      ],
      "estimated": false
+    },
+    {
+     "day": "2026-11-20",
+     "status": "lost",
+     "multiplier": 3.852,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
+      "Soccer"
+     ],
+     "estimated": false
     }
    ]
   },
   "mixed": {
-   "settled": 1,
+   "settled": 2,
    "won": 0,
-   "units": -1.0,
+   "units": -2.0,
    "roi": -1.0,
-   "implied_roi": -0.108,
+   "implied_roi": -0.1073,
    "estimated": 0,
-   "pending": 4,
+   "pending": 3,
    "last": [
     {
      "day": "2026-11-19",
@@ -2357,6 +2391,17 @@
      "profit": -1.0,
      "sports": [
       "NFL",
+      "Soccer"
+     ],
+     "estimated": false
+    },
+    {
+     "day": "2026-11-20",
+     "status": "lost",
+     "multiplier": 3.0408,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
       "Soccer"
      ],
      "estimated": false
