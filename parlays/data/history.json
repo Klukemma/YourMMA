@@ -1656,7 +1656,7 @@
    "day": "2026-11-19",
    "kind": "mixed",
    "built_at": "2026-11-19T20:44:03Z",
-   "status": "pending",
+   "status": "lost",
    "multiplier": 3.1118,
    "p": 0.297266,
    "p_market": 0.286647,
@@ -1718,7 +1718,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "lost"
     }
    ],
    "version": 2,
@@ -1727,8 +1727,8 @@
     "SPREAD"
    ],
    "estimated": false,
-   "paid": null,
-   "profit": null
+   "paid": 0.0,
+   "profit": -1.0
   },
   {
    "day": "2026-11-22",
@@ -2162,7 +2162,7 @@
    "day": "2026-11-19",
    "kind": "underdog_v2",
    "built_at": "2026-11-19T23:51:38Z",
-   "status": "pending",
+   "status": "won",
    "multiplier": 3.4195,
    "p": 0.259811,
    "p_market": 0.26085,
@@ -2223,7 +2223,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "won"
     }
    ],
    "dog": {
@@ -2240,8 +2240,8 @@
     "1X2"
    ],
    "estimated": false,
-   "paid": null,
-   "profit": null
+   "paid": 3.419523809523809,
+   "profit": 2.419523809523809
   },
   {
    "day": "2026-11-21",
