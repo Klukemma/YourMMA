@@ -431,6 +431,32 @@ def test_a_missing_bout_reaches_none_of_its_fighters_other_fights():
     assert "kai kamaka" not in served and "someone else" in served
 
 
+def test_a_respelled_surname_never_half_prices_a_bout():
+    """UFC Doha: the feed spells Almabaev, the card Almabayev. The bout was
+    not found, Horiguchi's price was removed, and the matcher reached
+    'asu almabaev' by a near spelling: a pick priced at +165 with no other
+    side and so no market chance. Neither side, until the alias is typed."""
+    cache = _cache_with(("Asu Almabaev", "Kyoji Horiguchi", "2026-11-21"),
+                        ("Jiri Prochazka", "Navajo Stirling", "2026-11-21"))
+    served = oc.for_card(cache, [("Kyoji Horiguchi", "Asu Almabayev", "2026-11-21"),
+                                 ("Jiri Prochazka", "Navajo Stirling", "2026-11-21")])
+    assert "asu almabaev" not in served and "kyoji horiguchi" not in served
+    assert "jiri prochazka" in served and "navajo stirling" in served
+    # under the feed's spelling (predict_card's alias) both sides are priced
+    served = oc.for_card(cache, [("Kyoji Horiguchi", "Asu Almabaev", "2026-11-21")])
+    assert "asu almabaev" in served and "kyoji horiguchi" in served
+
+
+def test_a_missing_bout_never_unprices_the_cards_own_bouts():
+    """Two card fighters share a surname; one's bout is missing. The other's
+    own price stays, whichever order the card lists them in."""
+    cache = _cache_with(("Jared Gordon", "Kevin Holland", "2026-11-21"))
+    for card in ([("Jared Gordon", "Kevin Holland", "2026-11-21"), ("Chris Gordon", "Someone New", "2026-11-21")],
+                 [("Chris Gordon", "Someone New", "2026-11-21"), ("Jared Gordon", "Kevin Holland", "2026-11-21")]):
+        served = oc.for_card(cache, card)
+        assert "jared gordon" in served and "kevin holland" in served
+
+
 # --- a respelled first name -------------------------------------------------
 
 def _cache_with(*bouts):

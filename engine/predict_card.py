@@ -82,6 +82,15 @@ EVENT_DATE = "2026-11-21"  # Format: YYYY-MM-DD
 # order within each segment follows Wikipedia's and bet365's listings
 # (Tapology puts Matthews vs. Abdullayev third of the night, under Albazi
 # vs. Costa, consistent with it).
+#
+# Weigh-ins, Friday 2026-11-20 (Doha, 9 a.m. local), checked by two
+# independent sweeps and agreeing for all 24 fighters: every fighter weighed
+# in and all 12 bouts go ahead. One miss: Tahir Abdullayev weighed 172 against
+# the 171 non-title welterweight limit, forfeits 20% of his purse to Jake
+# Matthews (170), and the bout goes ahead at a catchweight (Yahoo Sports /
+# MMA Junkie, Bloody Elbow, EssentiallySports, MMA Insight, News.az, HITC).
+# The division stays welterweight for the engine. No bout changed since
+# Nov 19.
 
 FIGHT_CARD = [
     # Main Card
@@ -95,7 +104,7 @@ FIGHT_CARD = [
     ("Aleksandre Topuria", "Santiago Luna"),                   # 5 - Bantamweight
     ("Shamil Gaziev", "Tallison Teixeira"),                    # 6 - Heavyweight
     ("Amir Albazi", "Alessandro Costa"),                       # 7 - Flyweight (rematch)
-    ("Jake Matthews", "Tahir Abdullayev"),                     # 8 - Welterweight (first announced vs. Akbar Abdullaev)
+    ("Jake Matthews", "Tahir Abdullayev"),                     # 8 - Welterweight, catchweight after Abdullayev missed (172) (first announced vs. Akbar Abdullaev)
     ("Nikolas Motta", "Dom Mar Fan"),                          # 9 - Lightweight
     ("Diyar Nurgozhay", "Alik Lorenz"),                        # 10 - Light Heavyweight (Lorenz: UFC debut)
     ("John Mitchell", "Shoaib Yousaf"),                        # 11 - Lightweight (added four days out; both UFC debuts)
@@ -3020,6 +3029,9 @@ ODDS_NAME_ALIASES = {
     "ramazan temirov": "ramazonbek temirov",
     "abdul rakhman yakhyaev": "abdulrakhman yakhyaev",
     "abus magomedov": "abusupyian magomedov",
+    # The feed's spelling of the surname (UFC Doha, 2026-11-21): no
+    # respelling rule reaches a surname, and the bout went half-priced.
+    "asu almabayev": "asu almabaev",
 }
 
 
