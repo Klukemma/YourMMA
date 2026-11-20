@@ -1,5 +1,5 @@
 {
- "as_of": "2026-11-19T20:41:07Z",
+ "as_of": "2026-11-20T21:10:45Z",
  "byes": [
   "ATL",
   "CLE",
@@ -22,7 +22,7 @@
   "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
   "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
  },
- "data_through": "2026-11-16",
+ "data_through": "2026-11-19",
  "game_type": "REG",
  "games": [
   {
@@ -30,7 +30,7 @@
     {
      "name": "Jaylin Noel",
      "position": "WR",
-     "reason": "on a reserve list",
+     "reason": "did not play",
      "role": "#3 on offence",
      "side": "home",
      "status": "out",
@@ -39,7 +39,7 @@
     {
      "name": "Danielle Hunter",
      "position": "DE",
-     "reason": "Out on the injury report (hamstring)",
+     "reason": "did not play",
      "role": "#2 defender",
      "side": "home",
      "status": "out",
@@ -48,7 +48,7 @@
     {
      "name": "Alec Pierce",
      "position": "WR",
-     "reason": "on a reserve list",
+     "reason": "did not play",
      "role": "#2 on offence",
      "side": "away",
      "status": "out",
@@ -186,22 +186,28 @@
    "away_injuries_total": 8,
    "away_leaders": {
     "passing": {
+     "actual": 144.0,
      "gsis_id": "00-0035710",
      "name": "Daniel Jones",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 192.989884
     },
     "receiving": {
+     "actual": 22.0,
      "gsis_id": "00-0040128",
      "name": "Tyler Warren",
+     "over": false,
      "position": "TE",
      "status": "active",
      "yards": 37.932304
     },
     "rushing": {
+     "actual": 21.0,
      "gsis_id": "00-0036223",
      "name": "Jonathan Taylor",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 53.119211
@@ -240,11 +246,6 @@
       "line": "19 rec, 239 yds, 1 TD",
       "name": "Laquon Treadwell",
       "position": "WR",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 19.188238,
-       "rush_yds": 0.004453
-      },
       "rank": 1,
       "reason": null,
       "status": "active",
@@ -257,7 +258,7 @@
       "name": "Alec Pierce",
       "position": "WR",
       "rank": 2,
-      "reason": "on a reserve list",
+      "reason": "did not play",
       "status": "out",
       "value": 2.177811
      },
@@ -267,11 +268,6 @@
       "line": "285 rush yds, 2 TD",
       "name": "Seth McGowan",
       "position": "RB",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 1.545027,
-       "rush_yds": 27.943559
-      },
       "rank": 3,
       "reason": null,
       "status": "active",
@@ -300,8 +296,8 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.25,
+       "n": 5,
+       "rate": 0.2,
        "scored": 1
       }
      },
@@ -313,6 +309,7 @@
       "rec_yds": 13.664819,
       "rush_yds": 53.119211
      },
+     "scored": false,
      "status": "active",
      "tds_season": 8
     },
@@ -326,7 +323,7 @@
        "rate": null
       },
       "top3": {
-       "n": 3,
+       "n": 4,
        "rate": 0.0,
        "scored": 0
       }
@@ -339,6 +336,7 @@
       "rec_yds": 37.932304,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -352,8 +350,8 @@
        "rate": 0.666667
       },
       "top3": {
-       "n": 1,
-       "rate": 1.0,
+       "n": 2,
+       "rate": 0.5,
        "scored": 1
       }
      },
@@ -365,6 +363,7 @@
       "rec_yds": 1.545027,
       "rush_yds": 27.943559
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     }
@@ -381,8 +380,8 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.25,
+       "n": 5,
+       "rate": 0.2,
        "scored": 1
       }
      },
@@ -390,6 +389,7 @@
      "position": "RB",
      "prob": 0.350809,
      "rank": 1,
+     "scored": false,
      "status": "active",
      "tds_season": 8
     },
@@ -404,7 +404,7 @@
        "rate": null
       },
       "top3": {
-       "n": 3,
+       "n": 4,
        "rate": 0.0,
        "scored": 0
       }
@@ -413,6 +413,7 @@
      "position": "TE",
      "prob": 0.199881,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -427,8 +428,8 @@
        "rate": 0.666667
       },
       "top3": {
-       "n": 1,
-       "rate": 1.0,
+       "n": 2,
+       "rate": 0.5,
        "scored": 1
       }
      },
@@ -436,6 +437,7 @@
      "position": "RB",
      "prob": 0.182148,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -445,9 +447,9 @@
      "gsis_id": "00-0032951",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 3,
-       "rate": 0.75
+       "n": 5,
+       "no_td": 4,
+       "rate": 0.8
       },
       "top3": {
        "n": 0,
@@ -459,6 +461,7 @@
      "position": "WR",
      "prob": 0.115656,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -468,8 +471,8 @@
      "gsis_id": "00-0035710",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -482,6 +485,7 @@
      "position": "QB",
      "prob": 0.102797,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -502,9 +506,11 @@
       }
      },
      "name": "Riley Leonard",
+     "played": false,
      "position": "QB",
      "prob": 0.089616,
      "rank": 6,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -514,9 +520,9 @@
      "gsis_id": "00-0036271",
      "meters": {
       "rest": {
-       "n": 0,
-       "no_td": 0,
-       "rate": null
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
       },
       "top3": {
        "n": 0,
@@ -528,6 +534,7 @@
      "position": "WR",
      "prob": 0.085424,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -537,8 +544,8 @@
      "gsis_id": "00-0039164",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -551,6 +558,7 @@
      "position": "QB",
      "prob": 0.079472,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -560,9 +568,9 @@
      "gsis_id": "00-0035021",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 3,
-       "rate": 0.75
+       "n": 5,
+       "no_td": 4,
+       "rate": 0.8
       },
       "top3": {
        "n": 0,
@@ -574,6 +582,7 @@
      "position": "WR",
      "prob": 0.069144,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -583,8 +592,8 @@
      "gsis_id": "00-0041132",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -597,6 +606,7 @@
      "position": "WR",
      "prob": 0.066974,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -606,8 +616,8 @@
      "gsis_id": "00-0040179",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -620,6 +630,7 @@
      "position": "RB",
      "prob": 0.062457,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -629,8 +640,8 @@
      "gsis_id": "00-0039816",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -643,6 +654,7 @@
      "position": "WR",
      "prob": 0.061781,
      "rank": 12,
+     "scored": false,
      "status": "questionable",
      "tds_season": 0
     },
@@ -652,8 +664,8 @@
      "gsis_id": "00-0037292",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -666,6 +678,7 @@
      "position": "TE",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -673,29 +686,6 @@
      "games_season": 4,
      "group": "0.5-1",
      "gsis_id": "00-0036182",
-     "meters": {
-      "rest": {
-       "n": 1,
-       "no_td": 1,
-       "rate": 1.0
-      },
-      "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
-      }
-     },
-     "name": "Nick Westbrook-Ikhine",
-     "position": "WR",
-     "prob": null,
-     "rank": 14,
-     "status": "active",
-     "tds_season": 0
-    },
-    {
-     "games_season": 3,
-     "group": "under 0.5",
-     "gsis_id": "00-0033439",
      "meters": {
       "rest": {
        "n": 2,
@@ -708,10 +698,35 @@
        "scored": 0
       }
      },
+     "name": "Nick Westbrook-Ikhine",
+     "position": "WR",
+     "prob": null,
+     "rank": 14,
+     "scored": false,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 3,
+     "group": "under 0.5",
+     "gsis_id": "00-0033439",
+     "meters": {
+      "rest": {
+       "n": 3,
+       "no_td": 3,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
      "name": "Pharaoh Brown",
      "position": "TE",
      "prob": null,
      "rank": 15,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -847,22 +862,28 @@
    "home_injuries_total": 7,
    "home_leaders": {
     "passing": {
+     "actual": 194.0,
      "gsis_id": "00-0039163",
      "name": "C.J. Stroud",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 257.814463
     },
     "receiving": {
+     "actual": 58.0,
      "gsis_id": "00-0036554",
      "name": "Nico Collins",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 56.943554
     },
     "rushing": {
+     "actual": 107.0,
      "gsis_id": "00-0035685",
      "name": "David Montgomery",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 27.482382
@@ -889,7 +910,7 @@
       "name": "Danielle Hunter",
       "position": "DE",
       "rank": 2,
-      "reason": "Out on the injury report (hamstring)",
+      "reason": "did not play",
       "status": "out",
       "value": 7.75
      }
@@ -901,11 +922,6 @@
       "line": "2,462 pass yds, 19 TD, 3 INT, 120 rush yds",
       "name": "C.J. Stroud",
       "position": "QB",
-      "proj": {
-       "pass_yds": 257.814463,
-       "rec_yds": null,
-       "rush_yds": 8.637568
-      },
       "rank": 1,
       "reason": null,
       "status": "active",
@@ -917,11 +933,6 @@
       "line": "37 rec, 478 yds, 5 TD",
       "name": "Nico Collins",
       "position": "WR",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 56.943554,
-       "rush_yds": 0.215883
-      },
       "rank": 2,
       "reason": null,
       "status": "active",
@@ -934,7 +945,7 @@
       "name": "Jaylin Noel",
       "position": "WR",
       "rank": 3,
-      "reason": "on a reserve list",
+      "reason": "did not play",
       "status": "out",
       "value": 17.674506
      }
@@ -962,9 +973,9 @@
        "rate": null
       },
       "top3": {
-       "n": 3,
-       "rate": 0.666667,
-       "scored": 2
+       "n": 4,
+       "rate": 0.75,
+       "scored": 3
       }
      },
      "name": "Nico Collins",
@@ -975,6 +986,7 @@
       "rec_yds": 56.943554,
       "rush_yds": 0.215883
      },
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -988,8 +1000,8 @@
        "rate": null
       },
       "top3": {
-       "n": 0,
-       "rate": null,
+       "n": 1,
+       "rate": 0.0,
        "scored": 0
       }
      },
@@ -1001,6 +1013,7 @@
       "rec_yds": 6.234984,
       "rush_yds": 27.482382
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -1014,8 +1027,8 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 1,
-       "rate": 1.0,
+       "n": 2,
+       "rate": 0.5,
        "scored": 1
       }
      },
@@ -1027,6 +1040,7 @@
       "rec_yds": 30.883883,
       "rush_yds": 0.423705
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     }
@@ -1043,15 +1057,16 @@
        "rate": null
       },
       "top3": {
-       "n": 3,
-       "rate": 0.666667,
-       "scored": 2
+       "n": 4,
+       "rate": 0.75,
+       "scored": 3
       }
      },
      "name": "Nico Collins",
      "position": "WR",
      "prob": 0.406403,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -1066,8 +1081,8 @@
        "rate": null
       },
       "top3": {
-       "n": 0,
-       "rate": null,
+       "n": 1,
+       "rate": 0.0,
        "scored": 0
       }
      },
@@ -1075,6 +1090,7 @@
      "position": "RB",
      "prob": 0.279501,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -1089,8 +1105,8 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 1,
-       "rate": 1.0,
+       "n": 2,
+       "rate": 0.5,
        "scored": 1
       }
      },
@@ -1098,6 +1114,7 @@
      "position": "WR",
      "prob": 0.270619,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -1107,9 +1124,9 @@
      "gsis_id": "00-0038977",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 0,
-       "rate": 0.0
+       "n": 2,
+       "no_td": 1,
+       "rate": 0.5
       },
       "top3": {
        "n": 2,
@@ -1121,6 +1138,7 @@
      "position": "WR",
      "prob": 0.254968,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -1130,9 +1148,9 @@
      "gsis_id": "00-0038608",
      "meters": {
       "rest": {
-       "n": 3,
+       "n": 4,
        "no_td": 2,
-       "rate": 0.666667
+       "rate": 0.5
       },
       "top3": {
        "n": 0,
@@ -1144,6 +1162,7 @@
      "position": "WR",
      "prob": 0.200405,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -1153,9 +1172,9 @@
      "gsis_id": "00-0034383",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 2,
-       "rate": 0.666667
+       "n": 4,
+       "no_td": 3,
+       "rate": 0.75
       },
       "top3": {
        "n": 0,
@@ -1167,6 +1186,7 @@
      "position": "TE",
      "prob": 0.184432,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -1174,29 +1194,6 @@
      "games_season": 4,
      "group": "3+",
      "gsis_id": "00-0038705",
-     "meters": {
-      "rest": {
-       "n": 2,
-       "no_td": 2,
-       "rate": 1.0
-      },
-      "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
-      }
-     },
-     "name": "Emari Demercado",
-     "position": "RB",
-     "prob": 0.173139,
-     "rank": 7,
-     "status": "active",
-     "tds_season": 0
-    },
-    {
-     "games_season": 9,
-     "group": "1-3",
-     "gsis_id": "00-0039163",
      "meters": {
       "rest": {
        "n": 3,
@@ -1209,10 +1206,35 @@
        "scored": 0
       }
      },
+     "name": "Emari Demercado",
+     "position": "RB",
+     "prob": 0.173139,
+     "rank": 7,
+     "scored": false,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 9,
+     "group": "1-3",
+     "gsis_id": "00-0039163",
+     "meters": {
+      "rest": {
+       "n": 4,
+       "no_td": 4,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
      "name": "C.J. Stroud",
      "position": "QB",
      "prob": 0.140305,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -1233,9 +1255,11 @@
       }
      },
      "name": "Davis Mills",
+     "played": false,
      "position": "QB",
      "prob": 0.07504,
      "rank": 9,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -1256,9 +1280,11 @@
       }
      },
      "name": "Cade Stover",
+     "played": false,
      "position": "TE",
      "prob": null,
      "rank": 10,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -1268,8 +1294,8 @@
      "gsis_id": "00-0034981",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 3,
+       "n": 4,
+       "no_td": 4,
        "rate": 1.0
       },
       "top3": {
@@ -1282,6 +1308,7 @@
      "position": "TE",
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -1291,9 +1318,9 @@
      "gsis_id": "00-0041472",
      "meters": {
       "rest": {
-       "n": 2,
+       "n": 3,
        "no_td": 2,
-       "rate": 1.0
+       "rate": 0.666667
       },
       "top3": {
        "n": 0,
@@ -1305,6 +1332,7 @@
      "position": "TE",
      "prob": null,
      "rank": 12,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -1314,8 +1342,8 @@
      "gsis_id": "00-0038519",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -1328,11 +1356,13 @@
      "position": "WR",
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
    ],
    "kickoff": "2026-11-20T01:15:00Z",
+   "logged_at": "2026-11-19T20:41:07Z",
    "market": {
     "as_of": "2026-11-19T20:41:07Z",
     "away_ml": 525.0,
@@ -1496,7 +1526,11 @@
    ],
    "pick": "HOU",
    "pick_prob": 0.857923,
-   "roof": "retractable",
+   "roof": "open",
+   "score": {
+    "away": 3,
+    "home": 26
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 4.751713,
@@ -1504,30 +1538,30 @@
     "team": "IND"
    },
    "stadium": "Reliant Stadium",
-   "status": "upcoming",
+   "status": "final",
    "td_meters": {
     "away": {
      "rest": {
-      "n": 38,
-      "no_td": 35,
-      "rate": 0.921053
+      "n": 49,
+      "no_td": 46,
+      "rate": 0.938776
      },
      "top3": {
-      "n": 12,
-      "rate": 0.25,
+      "n": 15,
+      "rate": 0.2,
       "scored": 3
      }
     },
     "home": {
      "rest": {
-      "n": 30,
-      "no_td": 24,
-      "rate": 0.8
+      "n": 38,
+      "no_td": 30,
+      "rate": 0.789474
      },
      "top3": {
-      "n": 9,
+      "n": 12,
       "rate": 0.333333,
-      "scored": 3
+      "scored": 4
      }
     }
    },
@@ -2811,9 +2845,103 @@
    "market_total": 41.0,
    "model_prob": 0.901455,
    "model_spread": 16.911865,
-   "model_total": 42.386331,
+   "model_total": 42.429353,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.profootballrumors.com/2026/11/cardinals-likely-to-start-qb-josh-johnson-in-week-11",
+     "players": [
+      "Josh Johnson"
+     ],
+     "published": "2026-11-20T20:50:04Z",
+     "source": "Pro Football Rumors",
+     "summary": "The quarterback spot has seen plenty of turnover in the case of the Cardinals recently. Yet another new starter is likely to be in ...",
+     "teams": [
+      "ARI"
+     ],
+     "title": "Cardinals Likely To Start QB Josh Johnson In Week 11"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/chiefs-rule-out-kenneth-walker-trey-smith-jaylon-moore",
+     "players": [
+      "Jaylon Moore",
+      "Trey Smith"
+     ],
+     "published": "2026-11-20T20:16:44Z",
+     "source": "ProFootballTalk",
+     "summary": "The Chiefs will be without running back Kenneth Walker again this weekend.",
+     "teams": [
+      "KC"
+     ],
+     "title": "Chiefs rule out Kenneth Walker, Trey Smith, Jaylon Moore"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.cbssports.com/nfl/news/carson-beck-back-spasms-could-force-cardinals-to-start-fourth-quarterback-in-five-weeks/",
+     "players": [
+      "Carson Beck"
+     ],
+     "published": "2026-11-20T18:44:46Z",
+     "source": "CBS Sports",
+     "summary": "Carson Beck did not practice Friday due to a back injury",
+     "teams": [
+      "ARI"
+     ],
+     "title": "Carson Beck back spasms could force Cardinals to start fourth quarterback in five weeks"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/nfl/article/cardinals-qb-carson-beck-misses-practice-with-back-spasms-mike-lafleur-says-team-is-preparing-for-josh-johnson-start-183403498.html",
+     "players": [
+      "Carson Beck",
+      "Josh Johnson"
+     ],
+     "published": "2026-11-20T18:34:03Z",
+     "source": "Yahoo Sports",
+     "summary": "LaFleur said the team isn't \"gonna shut the door\" on Beck returning, but Arizona might have to turn to their fourth quarterback of the season.",
+     "teams": [
+      "ARI"
+     ],
+     "title": "Cardinals QB Carson Beck misses practice with back spasms; Mike LaFleur says team is preparing for Josh Johnson start"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-beck-dealing-with-back-spasms-josh-johnson-in-line-to-start-vs-chiefs",
+     "players": [
+      "Carson Beck",
+      "Josh Johnson"
+     ],
+     "published": "2026-11-20T18:01:10Z",
+     "source": "ProFootballTalk",
+     "summary": "The Cardinals may have a fourth starting quarterback in four weeks when they play the Chiefs on Sunday.",
+     "teams": [
+      "ARI",
+      "KC"
+     ],
+     "title": "Carson Beck dealing with back spasms, Josh Johnson in line to start vs. Chiefs"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.cbssports.com/nfl/news/in-kansas-city-kenneth-walker-iii-run-game-completely-transformed-chiefs-offense-super-bowl/",
+     "players": [
+      "Kenneth Walker III"
+     ],
+     "published": "2026-11-20T16:15:17Z",
+     "source": "CBS Sports",
+     "summary": "One of the league's most explosive running backs has the Chiefs looking like their old Super Bowl-winning selves.",
+     "teams": [
+      "KC"
+     ],
+     "title": "In Kansas City, Kenneth Walker III and the run game makes the Chiefs contenders again"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-19T20:41:07Z",
@@ -2840,95 +2968,6 @@
      "summary": "Josh Downs and Trey McBride are ideal fantasy football trade targets before Week 11 of the NFL season.",
      "teams": [],
      "title": "Moves to Make Before Week 11 Fantasy Football: Buy Josh Downs, sell Jonathan Taylor"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://www.cbssports.com/nfl/news/revisiting-chiefs-2026-nfl-draft-kansas-city-justified-trading-up-mansoor-delane/",
-     "players": [
-      "Mansoor Delane",
-      "Peter Woods"
-     ],
-     "published": "2026-11-19T18:07:33Z",
-     "source": "CBS Sports",
-     "summary": "Trading up for Mansoor Delane has paid off in the secondary, but Peter Woods' slow start and an ignored wide receiver room leave lingering questions about Kansas City's first-round approach",
-     "teams": [
-      "KC"
-     ],
-     "title": "Revisiting the Chiefs' 2026 NFL Draft: Was Kansas City justified in trading up for Mansoor Delane?"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mike-lafleur-i-dont-buy-narrative-that-you-cant-evaluate-carson-beck-in-current-offense",
-     "players": [
-      "Carson Beck"
-     ],
-     "published": "2026-11-19T16:32:58Z",
-     "source": "ProFootballTalk",
-     "summary": "The Cardinals are set to start Carson Beck at quarterback for the rest of the season and the rookie's performance over the remaining seven games will play a role in how the team approaches the offseason.",
-     "teams": [
-      "ARI"
-     ],
-     "title": "Mike LaFleur: I don't buy narrative that you can't evaluate Carson Beck in current offense"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://sports.yahoo.com/articles/chiefs-news-sunday-travis-kelce-130200140.html",
-     "players": [
-      "Travis Kelce"
-     ],
-     "published": "2026-11-19T13:02:00Z",
-     "source": "Yahoo Sports",
-     "summary": "The latest Chiefs news, brought fresh to you every morning!",
-     "teams": [
-      "KC"
-     ],
-     "title": "Chiefs News: Sunday is Travis Kelce\u2019s 100th game at Arrowhead Stadium"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-11-injury-report-chiefs-kenneth-walker-iii-lions-kerby-joseph/",
-     "players": [
-      "Kenneth Walker III"
-     ],
-     "published": "2026-11-19T01:17:02Z",
-     "source": "CBS Sports",
-     "summary": "Get the latest Week 11 injury updates on Kenneth Walker III, Kerby Joseph, Baker Mayfield, Mike Evans and other notable NFL players",
-     "teams": [
-      "KC"
-     ],
-     "title": "NFL Week 11 injury report: Latest update on Chiefs' Kenneth Walker III; Lions' Kerby Joseph practices fully"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.profootballrumors.com/2026/11/chiefs-work-out-matt-prater-amid-harrison-butkers-continuing-kicking-woes",
-     "players": [
-      "Harrison Butker"
-     ],
-     "published": "2026-11-19T00:03:27Z",
-     "source": "Pro Football Rumors",
-     "summary": "The Chiefs are continuing to explore alternative options to struggling kicker Harrison Butker, who has converted a career-low 63.2% of his field goals this ...",
-     "teams": [
-      "KC"
-     ],
-     "title": "Chiefs Work Out Matt Prater Amid Harrison Butker\u2019s Kicking Woes"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-11-qb-power-rankings-joe-burrow-patrick-mahomes-jordan-love/",
-     "players": [
-      "Patrick Mahomes"
-     ],
-     "published": "2026-11-18T18:22:52Z",
-     "source": "CBS Sports",
-     "summary": "Joe Burrow keeps the top spot, Patrick Mahomes is back in the top five and Jordan Love is one of the biggest fallers",
-     "teams": [],
-     "title": "Week 11 QB Power Rankings: Patrick Mahomes a big riser, while Packers' Jordan Love plummets"
     }
    ],
    "pick": "KC",
@@ -2971,7 +3010,7 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 1.386331,
+    "edge": 1.429353,
     "line": 41.0,
     "side": "OVER"
    },
@@ -4313,19 +4352,66 @@
    "market_total": 43.5,
    "model_prob": 0.633145,
    "model_spread": 4.417744,
-   "model_total": 43.984433,
+   "model_total": 44.027455,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/panthers-lb-bobby-okereke-will-miss-a-third-consecutive-game",
+     "players": [
+      "Bobby Okereke"
+     ],
+     "published": "2026-11-20T20:23:59Z",
+     "source": "ProFootballTalk",
+     "summary": "Panthers linebacker Bobby Okereke will miss his third consecutive game with a foot injury.",
+     "teams": [
+      "CAR"
+     ],
+     "title": "Panthers LB Bobby Okereke will miss a third consecutive game"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/ravens-rule-out-nnamdi-madubuike-jaylinn-hawkins",
+     "players": [
+      "Jaylinn Hawkins",
+      "Nnamdi Madubuike"
+     ],
+     "published": "2026-11-20T18:48:58Z",
+     "source": "ProFootballTalk",
+     "summary": "Ravens head coach Jesse Minter ruled out a pair of players for Sunday's road game against the Panthers.",
+     "teams": [
+      "BAL",
+      "CAR"
+     ],
+     "title": "Ravens rule out Nnamdi Madubuike, Jaylinn Hawkins"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/nnamdi-madubuike-misses-second-straight-practice",
+     "players": [
+      "Nnamdi Madubuike"
+     ],
+     "published": "2026-11-19T21:31:22Z",
+     "source": "ProFootballTalk",
+     "summary": "The Ravens had one player out of practice due to injury on Thursday.",
+     "teams": [
+      "BAL"
+     ],
+     "title": "Nnamdi Madubuike misses second straight practice"
+    },
+    {
+     "dated_by_feed": true,
      "gathered": "2026-11-19T20:41:07Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/darren-waller-tommy-tremble-return-to-panthers-practice-thursday",
+     "link": "https://sports.yahoo.com/articles/darren-waller-tommy-tremble-return-200739050.html",
      "players": [
       "Darren Waller",
       "Tommy Tremble"
      ],
      "published": "2026-11-19T20:07:39Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "The Panthers got a pair of key offensive contributors back on the practice field Thursday.",
      "teams": [
       "CAR"
@@ -4392,51 +4478,6 @@
       "CAR"
      ],
      "title": "Panthers CB Michael Jackson, RB Jonathon Brooks Return To Practice"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/cb-mike-jackson-says-hes-ready-to-return-to-panthers-lineup",
-     "players": [
-      "Mike Jackson"
-     ],
-     "published": "2026-11-19T13:11:44Z",
-     "source": "ProFootballTalk",
-     "summary": "The Panthers are set to get a key piece of their secondary back for Sunday's game against the Ravens.",
-     "teams": [
-      "BAL",
-      "CAR"
-     ],
-     "title": "CB Mike Jackson says he's ready to return to Panthers lineup"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://sports.yahoo.com/articles/ravens-activate-rb-adam-randall-123000697.html",
-     "players": [
-      "Adam Randall"
-     ],
-     "published": "2026-11-19T12:30:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Baltimore\u2019s rookie running back could make his NFL debut on Sunday against the Panthers.",
-     "teams": [
-      "BAL",
-      "CAR"
-     ],
-     "title": "Ravens activate RB Adam Randall from injured reserve"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T20:41:07Z",
-     "link": "https://www.rotowire.com//football/player/darren-waller-10215",
-     "players": [
-      "Darren Waller"
-     ],
-     "published": "2026-11-19T12:08:00Z",
-     "source": "RotoWire",
-     "summary": "Waller (knee) was a limited participant in Thursday's practice, Mike Kaye of ESPN reports. Visit RotoWire.com for more analysis on this update.",
-     "teams": [],
-     "title": "Darren Waller: Limited Thursday"
     }
    ],
    "pick": "CAR",
@@ -4479,7 +4520,7 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 0.484433,
+    "edge": 0.527455,
     "line": 43.5,
     "side": "OVER"
    },
@@ -5774,7 +5815,7 @@
    "market_total": 46.5,
    "model_prob": 0.300388,
    "model_spread": -5.931847,
-   "model_total": 45.879286,
+   "model_total": 45.922308,
    "neutral": false,
    "news": [
     {
@@ -5937,7 +5978,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 0.620714,
+    "edge": 0.577692,
     "line": 46.5,
     "side": "UNDER"
    },
@@ -7232,9 +7273,41 @@
    "market_total": 44.5,
    "model_prob": 0.911645,
    "model_spread": 17.532952,
-   "model_total": 45.102182,
+   "model_total": 45.145204,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/dalton-kincaid-doubtful-week-11-204741313.html",
+     "players": [
+      "Dalton Kincaid",
+      "Josh Allen"
+     ],
+     "published": "2026-11-20T20:47:41Z",
+     "source": "Yahoo Sports",
+     "summary": "One of Josh Allen's favprite targets could miss Week 11.",
+     "teams": [],
+     "title": "Dalton Kincaid doubtful for Week 11"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/christian-benford-and-dorian-williams-ruled-out-dalton-kincaid-doubtful-for-bills",
+     "players": [
+      "Christian Benford",
+      "Dalton Kincaid",
+      "Dorian Williams"
+     ],
+     "published": "2026-11-20T18:24:08Z",
+     "source": "ProFootballTalk",
+     "summary": "The Bills will be missing a couple of defensive players for Sunday's game against the Dolphins.",
+     "teams": [
+      "BUF",
+      "MIA"
+     ],
+     "title": "Christian Benford and Dorian Williams ruled out, Dalton Kincaid doubtful for Bills"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-19T20:41:07Z",
@@ -7322,36 +7395,6 @@
       "MIA"
      ],
      "title": "Dolphins DL Zeek Biggers To Undergo Season-Ending Knee Surgery"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-15T20:37:18Z",
-     "link": "https://sports.yahoo.com/articles/dolphins-hit-weight-room-pick-202612040.html",
-     "players": [
-      "Chris Johnson"
-     ],
-     "published": "2026-11-15T20:26:12Z",
-     "source": "Yahoo Sports",
-     "summary": "Rookie defensive back Chris Johnson hits the weight room after this Pick-Six of Daniel Jones",
-     "teams": [
-      "MIA"
-     ],
-     "title": "Dolphins hit the weight room after Pick-Six vs. Colts"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-15T20:37:18Z",
-     "link": "https://sports.yahoo.com/articles/move-over-peyton-manning-josh-184005851.html",
-     "players": [
-      "Josh Allen"
-     ],
-     "published": "2026-11-15T18:40:05Z",
-     "source": "Yahoo Sports",
-     "summary": "The Bills quarterback takes sole possession of the NFL touchdown record with a season and a half to spare.",
-     "teams": [
-      "BUF"
-     ],
-     "title": "Move over, Peyton Manning! Josh Allen now owns another NFL record"
     }
    ],
    "pick": "BUF",
@@ -7394,7 +7437,7 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 0.602182,
+    "edge": 0.645204,
     "line": 44.5,
     "side": "OVER"
    },
@@ -8638,18 +8681,112 @@
    "market_total": 48.5,
    "model_prob": 0.806463,
    "model_spread": 10.46997,
-   "model_total": 45.453045,
+   "model_total": 45.496067,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/luther-burden-iii-track-play-194311769.html",
+     "players": [
+      "Luther Burden III"
+     ],
+     "published": "2026-11-20T19:43:11Z",
+     "source": "Yahoo Sports",
+     "summary": "Bears WR Luther Burden III will likely be available to play in Week 11 after clearing the concussion protocol",
+     "teams": [
+      "CHI"
+     ],
+     "title": "Luther Burden III on track to play in Week 11"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/bears-vs-saints-injury-report-194000987.html",
+     "players": [
+      "Kyler Gordon"
+     ],
+     "published": "2026-11-20T19:40:00Z",
+     "source": "Yahoo Sports",
+     "summary": "The final injury report for the Bears vs. the Saints is out, and @wiltfongjr has it right here.",
+     "teams": [
+      "CHI",
+      "NO"
+     ],
+     "title": "Bears vs. Saints Injury Report: Kyler Gordon out, but 2 players return"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jeffery-simmons-luther-burden-kyle-monangai-have-no-injury-designations-for-sunday",
+     "players": [
+      "Jeffery Simmons",
+      "Kyle Monangai"
+     ],
+     "published": "2026-11-20T19:23:49Z",
+     "source": "ProFootballTalk",
+     "summary": "The Bears' final injury report ahead of Sunday's game against the Saints brought good news on both sides of the ball.",
+     "teams": [
+      "CHI",
+      "NO"
+     ],
+     "title": "Jeffery Simmons, Luther Burden, Kyle Monangai have no injury designations for Sunday"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/justin-reid-posts-farewell-message-to-saints-new-orleans",
+     "players": [
+      "Justin Reid"
+     ],
+     "published": "2026-11-20T18:14:40Z",
+     "source": "ProFootballTalk",
+     "summary": "The Saints have not announced any move involving safety Justin Reid, but it seems one is coming soon.",
+     "teams": [
+      "NO"
+     ],
+     "title": "Justin Reid posts farewell message to Saints, New Orleans"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.cbssports.com/nfl/news/revisiting-2026-nfl-draft-saints-took-chance-on-jordyn-tyson/",
+     "players": [
+      "Jordyn Tyson",
+      "Tyler Shough"
+     ],
+     "published": "2026-11-20T18:01:03Z",
+     "source": "CBS Sports",
+     "summary": "New Orleans took a gamble on the explosive wideout at No. 8 overall, and his early impact alongside Tyler Shough is proving the top-10 talent was worth the durability concerns",
+     "teams": [
+      "NO"
+     ],
+     "title": "Revisiting 2026 NFL Draft: Were the Saints wise in taking a chance on injury-prone Jordyn Tyson?"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.profootballrumors.com/2026/11/saints-s-justin-reid-agree-to-part-ways",
+     "players": [
+      "Justin Reid"
+     ],
+     "published": "2026-11-20T04:20:05Z",
+     "source": "Pro Football Rumors",
+     "summary": "The Saints are granting safety Justin Reid his release from the team\u2019s roster, per Nick Underhill of NewOrleans.Football. Reid, 29, requested his release \u201cearlier ...",
+     "teams": [
+      "NO"
+     ],
+     "title": "Saints, S Justin Reid Agree To Part Ways"
+    },
+    {
+     "dated_by_feed": true,
      "gathered": "2026-11-19T20:41:07Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jeffery-simmons-remains-limited-at-bears-practice",
+     "link": "https://sports.yahoo.com/articles/jeffery-simmons-remains-limited-bears-203346171.html",
      "players": [
       "Jeffery Simmons"
      ],
      "published": "2026-11-19T20:33:46Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "Defensive tackle Jeffery Simmons remained a limited participant at Bears practice on Thursday.",
      "teams": [
       "CHI"
@@ -8670,93 +8807,6 @@
       "CHI"
      ],
      "title": "2027 Bears mock draft: Finding a running mate for Jeffery Simmons"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.cbssports.com/nfl/news/grading-nfl-quarterbacks-on-rookie-contracts-caleb-williams-c-j-stroud/",
-     "players": [
-      "Caleb Williams"
-     ],
-     "published": "2026-11-19T12:56:31Z",
-     "source": "CBS Sports",
-     "summary": "A few young quarterbacks have aced their tests in 2026",
-     "teams": [],
-     "title": "Grading NFL quarterbacks on rookie contracts: Caleb Williams, C.J. Stroud kick careers into high gear"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://sports.yahoo.com/articles/bear-den-bears-presented-interesting-110000794.html",
-     "players": [
-      "Kyler Gordon"
-     ],
-     "published": "2026-11-19T11:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Kyler Gordon missed practic Wednesday, a feat made even harder by the fact that the Bears didn\u2019t practice on Wednesday.",
-     "teams": [
-      "CHI"
-     ],
-     "title": "The Bear\u2019s Den: Bears presented interesting injury report Wednesday"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.profootballrumors.com/2026/11/nfl-trade-deadline-notes-titans-giants-bengals-reed-sainristil-matlock",
-     "players": [
-      "Jeffery Simmons"
-     ],
-     "published": "2026-11-19T04:22:16Z",
-     "source": "Pro Football Rumors",
-     "summary": "The Giants were among the teams that pursued Jeffery Simmons before the Titans sent the star defensive tackle to Chicago, but Tennessee may have ...",
-     "teams": [],
-     "title": "NFL Trade Deadline Notes: Titans, Giants, Bengals, Reed, Sainristil, Matlock"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/wr-luther-burden-rb-kyle-monangai-full-participants-wednesday",
-     "players": [
-      "Kyle Monangai",
-      "Luther Burden III"
-     ],
-     "published": "2026-11-18T21:22:17Z",
-     "source": "ProFootballTalk",
-     "summary": "Wide receiver Luther Burden III (concussion) and running back Kyle Monangai (toe) were full participants for the Bears on Wednesday.",
-     "teams": [
-      "CHI"
-     ],
-     "title": "WR Luther Burden, RB Kyle Monangai full participants Wednesday"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-15T20:37:18Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/saints-finally-on-the-board-tie-panthers-7-7-in-third-quarter",
-     "players": [
-      "Alvin Kamara"
-     ],
-     "published": "2026-11-15T20:03:01Z",
-     "source": "ProFootballTalk",
-     "summary": "Alvin Kamara didn't touch the ball in the first half of Sunday's game, but he finally got the ball in the third quarter and he gave the Saints their first points of the afternoon.",
-     "teams": [
-      "NO"
-     ],
-     "title": "Saints finally on the board, tie Panthers 7-7 in third quarter"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-15T13:59:21Z",
-     "link": "https://sports.yahoo.com/articles/bears-playing-today-nfl-week-110830313.html",
-     "players": [
-      "Caleb Williams"
-     ],
-     "published": "2026-11-15T11:08:30Z",
-     "source": "Yahoo Sports",
-     "summary": "Caleb Williams threw four interceptions, and the 7-2 Bears still won. Now they sit while the Lions, Vikings and Packers try to close in.",
-     "teams": [
-      "CHI"
-     ],
-     "title": "Are the Bears playing today? NFL Week 10 schedule, next game, NFC North standings"
     }
    ],
    "pick": "CHI",
@@ -8799,7 +8849,7 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 3.046955,
+    "edge": 3.003933,
     "line": 48.5,
     "side": "UNDER"
    },
@@ -10025,129 +10075,129 @@
    "market_total": 45.5,
    "model_prob": 0.683832,
    "model_spread": 5.803029,
-   "model_total": 47.422183,
+   "model_total": 47.465205,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-19T20:41:07Z",
-     "link": "https://sports.yahoo.com/articles/lions-quietly-had-60-million-185758626.html",
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/d-j-reed-sione-vaki-listed-as-questionable-for-the-lions",
      "players": [
-      "Aidan Hutchinson"
+      "D.J. Reed",
+      "Sione Vaki"
      ],
-     "published": "2026-11-19T18:57:58Z",
-     "source": "Yahoo Sports",
-     "summary": "The Lions made sure they didn't leave themselves exposed when they signed Aidan Hutchinson to a $180 million extension last year.",
+     "published": "2026-11-20T21:00:25Z",
+     "source": "ProFootballTalk",
+     "summary": "Lions cornerback D.J.",
      "teams": [
       "DET"
      ],
-     "title": "Lions quietly had $60 million clause put in Aidan Hutchinson\u2019s contract before devastating injury"
+     "title": "D.J. Reed, Sione Vaki listed as questionable for the Lions"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-19T20:41:07Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/baker-mayfield-says-hes-ready-to-go-after-return-to-practice",
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/lions-bucs-injury-designations-cade-203312116.html",
      "players": [
-      "Baker Mayfield"
+      "Cade Mays"
      ],
-     "published": "2026-11-19T18:46:49Z",
-     "source": "ProFootballTalk",
-     "summary": "Buccaneers quarterback Baker Mayfield was back on the practice field Thursday.",
+     "published": "2026-11-20T20:33:12Z",
+     "source": "Yahoo Sports",
+     "summary": "Taking a closer look at the Lions and Bucs injury designations for Week 11.",
      "teams": [
-      "TB"
+      "DET"
      ],
-     "title": "Baker Mayfield says he's ready to go after return to practice"
+     "title": "Lions, Bucs injury designations: Cade Mays ruled OUT"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/baker-mayfield-returned-to-practice-on-thursday",
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/kerby-joseph-speaks-return-knew-201130781.html",
      "players": [
-      "Baker Mayfield"
+      "Kerby Joseph"
      ],
-     "published": "2026-11-19T17:57:11Z",
-     "source": "ProFootballTalk",
-     "summary": "Buccaneers quarterback Baker Mayfield appears to be trending toward playing on Sunday against the Lions.",
+     "published": "2026-11-20T20:11:30Z",
+     "source": "Yahoo Sports",
+     "summary": "Detroit Lions safety Kerby Joseph talked about his recovery and return to football this week vs. the Buccaneers.",
      "teams": [
       "DET",
       "TB"
      ],
-     "title": "Baker Mayfield returned to practice on Thursday"
+     "title": "Kerby Joseph speaks on his return: I knew I\u2019d be back"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://sports.yahoo.com/articles/lions-mailbag-detroit-defensive-adjustments-171111781.html",
-     "players": [
-      "Aidan Hutchinson",
-      "Kerby Joseph"
-     ],
-     "published": "2026-11-19T17:11:11Z",
-     "source": "Yahoo Sports",
-     "summary": "Breaking down how the Detroit Lions will have to adjust with the loss of Aidan Hutchinson and return of Kerby Joseph.",
-     "teams": [
-      "DET"
-     ],
-     "title": "Lions mailbag: Detroit\u2019s defensive adjustments without Hutchinson, with Kerby Joseph"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jared-goff-jahmyr-gibbs-is-a-special-player-special-guy-special-teammate",
-     "players": [
-      "Jahmyr Gibbs",
-      "Jared Goff"
-     ],
-     "published": "2026-11-19T15:14:48Z",
-     "source": "ProFootballTalk",
-     "summary": "Back in August, the Lions signed Jahmyr Gibbs to a three-year contract extension.",
-     "teams": [
-      "DET"
-     ],
-     "title": "Jared Goff: Jahmyr Gibbs is a special player, special guy, special teammate"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://sports.yahoo.com/articles/lions-cb-d-j-reed-130000559.html",
-     "players": [
-      "D.J. Reed"
-     ],
-     "published": "2026-11-19T13:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "After returning too soon last year, Detroit Lions CB D.J. Reed is taking his time with his current hip injury.",
-     "teams": [
-      "DET"
-     ],
-     "title": "Lions CB D.J. Reed won\u2019t rush back after last year\u2019s injury issues"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.cbssports.com/nfl/news/it-wouldnt-shock-me-if-for-week-11-jared-goffs-tony-pollard/",
-     "players": [
-      "Jared Goff"
-     ],
-     "published": "2026-11-19T12:42:09Z",
-     "source": "CBS Sports",
-     "summary": "Plus, Tony Pollard could shine in his first game back in Dallas",
-     "teams": [],
-     "title": "It wouldn't shock me if ... for Week 11: New WR crashes OROY race, Jared Goff's pesky streak continues"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/sean-payton-wont-use-aidan-hutchinson-injury-as-a-teaching-moment",
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/aidan-hutchinson-makes-promise-first-190051072.html",
      "players": [
       "Aidan Hutchinson"
      ],
-     "published": "2026-11-19T05:05:09Z",
-     "source": "ProFootballTalk",
-     "summary": "Lions coach Dan Campbell has made his position clear regarding player celebrations, in the aftermath of defensive end Aidan Hutchinson's season-ending knee injury.",
+     "published": "2026-11-20T19:00:51Z",
+     "source": "Yahoo Sports",
+     "summary": "Lions edge rusher Aidan Hutchinson promised to keep his celebrations grounded from here on out.",
      "teams": [
       "DET"
      ],
-     "title": "Sean Payton won't use Aidan Hutchinson injury as a teaching moment"
+     "title": "Aidan Hutchinson makes promise in first comments since crushing Lions injury"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/dan-campbell-tay-martins-special-teams-tape-was-so-good-i-was-shocked-we-got-him",
+     "players": [
+      "Tay Martin"
+     ],
+     "published": "2026-11-20T17:52:58Z",
+     "source": "ProFootballTalk",
+     "summary": "Lions wide receiver Tay Martin has been in the NFL since 2022, and he has only four career catches.",
+     "teams": [
+      "DET"
+     ],
+     "title": "Dan Campbell: Tay Martin's special teams tape was so good, I was shocked we got him"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/todd-bowles-baker-mayfield-trending-in-the-right-direction-to-play-vs-lions",
+     "players": [
+      "Baker Mayfield"
+     ],
+     "published": "2026-11-20T17:27:29Z",
+     "source": "ProFootballTalk",
+     "summary": "It sounds like the Buccaneers are planning to have quarterback Baker Mayfield start this weekend when they play the Lions.",
+     "teams": [
+      "DET",
+      "TB"
+     ],
+     "title": "Todd Bowles: Baker Mayfield trending in the right direction to play vs. Lions"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.cbssports.com/nfl/news/lions-aidan-hutchinson-speaks-out-freak-injury-celebration/",
+     "players": [
+      "Aidan Hutchinson"
+     ],
+     "published": "2026-11-20T15:51:05Z",
+     "source": "CBS Sports",
+     "summary": "Hutchinson tore his ACL while celebrating a sack of New England's Drake Maye",
+     "teams": [],
+     "title": "Aidan Hutchinson speaks out on freak injury celebration: 'That's the last time I go airborne'"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.cbssports.com/nfl/news/lions-jahmyr-gibbs-laying-early-foundation-for-rb-goat-case/",
+     "players": [
+      "Jahmyr Gibbs"
+     ],
+     "published": "2026-11-20T15:34:44Z",
+     "source": "CBS Sports",
+     "summary": "Gibbs is only 3.5 years into his NFL career, and he's on a few different record-breaking paces",
+     "teams": [
+      "DET"
+     ],
+     "title": "Lions' Jahmyr Gibbs laying early foundation for one of the best running back careers ever"
     }
    ],
    "pick": "DET",
@@ -10190,7 +10240,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 1.922183,
+    "edge": 1.965205,
     "line": 45.5,
     "side": "OVER"
    },
@@ -11434,18 +11484,48 @@
    "market_total": 55.0,
    "model_prob": 0.780599,
    "model_spread": 9.500681,
-   "model_total": 52.810101,
+   "model_total": 52.853123,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/cowboys-add-lb-jaishawn-barham-to-injury-report-list-him-as-questionable",
+     "players": [
+      "Jaishawn Barham"
+     ],
+     "published": "2026-11-20T21:03:29Z",
+     "source": "ProFootballTalk",
+     "summary": "The Cowboys added linebacker Jaishawn Barham to the injury report on Friday with hip and groin injuries.",
+     "teams": [
+      "DAL"
+     ],
+     "title": "Cowboys add LB Jaishawn Barham to injury report, list him as questionable"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-11-bold-predictions-fernando-mendoza-raiders-broncos/",
+     "players": [
+      "Tony Pollard"
+     ],
+     "published": "2026-11-20T13:57:35Z",
+     "source": "CBS Sports",
+     "summary": "Plus, Jahmyr Gibbs dominates Tampa Bay's No. 1 run defense",
+     "teams": [
+      "DAL"
+     ],
+     "title": "Week 11 bold predictions: Fernando Mendoza upsets Broncos, Tony Pollard breaks Cowboys"
+    },
+    {
+     "dated_by_feed": true,
      "gathered": "2026-11-19T20:41:07Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/after-record-breaking-contract-cowboys-kicker-brandon-aubrey-is-having-his-worst-season",
+     "link": "https://sports.yahoo.com/articles/record-breaking-contract-cowboys-kicker-194420548.html",
      "players": [
       "Brandon Aubrey"
      ],
      "published": "2026-11-19T19:44:20Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "In April, the Cowboys signed kicker Brandon Aubrey to a four-year, $28 million contract, making him the highest-paid kicker in NFL history.",
      "teams": [
       "DAL"
@@ -11524,36 +11604,6 @@
       "TEN"
      ],
      "title": "Titans get Carnell Tate back at practice"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.profootballrumors.com/2026/11/cowboys-designate-s-jalen-thompson-for-return",
-     "players": [
-      "Jalen Thompson"
-     ],
-     "published": "2026-11-18T19:21:32Z",
-     "source": "Pro Football Rumors",
-     "summary": "The Cowboys\u2019 beleaguered defense could get a key cog back in the coming weeks. Safety Jalen Thompson is returning to practice on Wednesday, Calvin ...",
-     "teams": [
-      "DAL"
-     ],
-     "title": "Cowboys Designate S Jalen Thompson For Return"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.profootballrumors.com/2026/11/titans-wr-wandale-robinson-out-for-season",
-     "players": [
-      "Fernando Carmona"
-     ],
-     "published": "2026-11-18T17:23:32Z",
-     "source": "Pro Football Rumors",
-     "summary": "Wide receiver Wan\u2019Dale Robinson\u2019s first season in Tennessee is over after nine games. Titans head coach Robert Saleh announced Robinson will miss the rest ...",
-     "teams": [
-      "TEN"
-     ],
-     "title": "Titans WR Wan\u2019Dale Robinson Out For Season; RG Fernando Carmona Designated For Return"
     }
    ],
    "pick": "DAL",
@@ -11596,7 +11646,7 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 2.189899,
+    "edge": 2.146877,
     "line": 55.0,
     "side": "UNDER"
    },
@@ -12932,9 +12982,24 @@
    "market_total": 42.0,
    "model_prob": 0.640663,
    "model_spread": 4.0896,
-   "model_total": 44.344334,
+   "model_total": 44.387357,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/geno-smith-had-a-full-practice-has-no-injury-designation",
+     "players": [
+      "Geno Smith"
+     ],
+     "published": "2026-11-20T20:53:22Z",
+     "source": "ProFootballTalk",
+     "summary": "Jets quarterback Geno Smith (ankle) was a full participant at Friday's practice and has no injury designation.",
+     "teams": [
+      "NYJ"
+     ],
+     "title": "Geno Smith had a full practice Friday, has no injury designation"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-19T14:02:48Z",
@@ -13041,19 +13106,6 @@
       "LAC"
      ],
      "title": "Chargers activate TE David Njoku, LB Denzel Perryman for Monday night vs. Ravens"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-16T23:48:40Z",
-     "link": "https://sports.yahoo.com/articles/geno-smith-set-undergo-tests-210023577.html",
-     "players": [
-      "Geno Smith"
-     ],
-     "published": "2026-11-16T21:00:23Z",
-     "source": "Yahoo Sports",
-     "summary": "Jet QB Geno Smith's Week 11 status uncertain because of ankle injury",
-     "teams": [],
-     "title": "Geno Smith set to undergo tests on ankle"
     }
    ],
    "pick": "LAC",
@@ -13096,7 +13148,7 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 2.344334,
+    "edge": 2.387357,
     "line": 42.0,
     "side": "OVER"
    },
@@ -14404,9 +14456,53 @@
    "market_total": 40.5,
    "model_prob": 0.843612,
    "model_spread": 12.530579,
-   "model_total": 43.97653,
+   "model_total": 44.019552,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/brock-bowers-questionable-play-sunday-203654241.html",
+     "players": [
+      "Brock Bowers"
+     ],
+     "published": "2026-11-20T20:36:54Z",
+     "source": "Yahoo Sports",
+     "summary": "Star tight end is dealing with ankle and quad injuries",
+     "teams": [],
+     "title": "Brock Bowers is questionable to play Sunday at Denver"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/nfl-predictions-fernando-mendoza-chapter-190700973.html",
+     "players": [
+      "Fernando Mendoza"
+     ],
+     "published": "2026-11-20T19:07:00Z",
+     "source": "Yahoo Sports",
+     "summary": "Silver & Black Pride\u2019s Pick\u2019em competition, too!",
+     "teams": [
+      "DEN",
+      "LV"
+     ],
+     "title": "NFL predictions: Fernando Mendoza\u2019s chapter in Las Vegas Raiders-Denver Broncos rivalry begins in Week 11"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-11-bold-predictions-fernando-mendoza-raiders-broncos/",
+     "players": [
+      "Fernando Mendoza"
+     ],
+     "published": "2026-11-20T13:57:35Z",
+     "source": "CBS Sports",
+     "summary": "Plus, Jahmyr Gibbs dominates Tampa Bay's No. 1 run defense",
+     "teams": [
+      "DEN"
+     ],
+     "title": "Week 11 bold predictions: Fernando Mendoza upsets Broncos, Tony Pollard breaks Cowboys"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-19T20:41:07Z",
@@ -14485,51 +14581,6 @@
       "LV"
      ],
      "title": "Raiders\u2019 plan for Fernando Mendoza starts with four yards on first down"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://sports.yahoo.com/articles/broncos-sign-cb-riley-moss-174203163.html",
-     "players": [
-      "Riley Moss"
-     ],
-     "published": "2026-11-19T17:42:03Z",
-     "source": "Yahoo Sports",
-     "summary": "Denver Broncos cornerback Riley Moss's contract was due to expire after 2026. See the details on the new deal keeping him in Denver.",
-     "teams": [
-      "DEN"
-     ],
-     "title": "Broncos sign CB Riley Moss to multiyear extension. See the details"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://sports.yahoo.com/articles/broncos-sign-cb-riley-moss-170055114.html",
-     "players": [
-      "Riley Moss"
-     ],
-     "published": "2026-11-19T17:25:21Z",
-     "source": "Yahoo Sports",
-     "summary": "According to NFL insider Tom Pelissero, the Denver Broncos are finalizing a four-year contract extension with cornerback Riley Moss. It is a four-year deal worth up to $67 million dollars as the Broncos lock up one of their key starters in their secondary. The story heading into the season was: which player would the B",
-     "teams": [
-      "DEN"
-     ],
-     "title": "Broncos sign CB Riley Moss to a four-year contract extension worth $67 million"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://sports.yahoo.com/articles/broncos-riley-moss-agree-four-165834561.html",
-     "players": [
-      "Riley Moss"
-     ],
-     "published": "2026-11-19T16:58:34Z",
-     "source": "Yahoo Sports",
-     "summary": "The Broncos have locked up one of their key defensive players.",
-     "teams": [
-      "DEN"
-     ],
-     "title": "Broncos, Riley Moss agree to four-year extension"
     }
    ],
    "pick": "DEN",
@@ -14572,7 +14623,7 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 3.47653,
+    "edge": 3.519552,
     "line": 40.5,
     "side": "OVER"
    },
@@ -14987,29 +15038,6 @@
      "tds_season": 3
     },
     {
-     "games_season": 5,
-     "group": "1-3",
-     "gsis_id": "00-0036775",
-     "meters": {
-      "rest": {
-       "n": 3,
-       "no_td": 3,
-       "rate": 1.0
-      },
-      "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
-      }
-     },
-     "name": "Brandon Smith",
-     "position": "WR",
-     "prob": 0.086552,
-     "rank": 7,
-     "status": "active",
-     "tds_season": 0
-    },
-    {
      "games_season": 7,
      "group": "1-3",
      "gsis_id": "00-0038409",
@@ -15028,7 +15056,7 @@
      "name": "Lew Nichols",
      "position": "RB",
      "prob": 0.086335,
-     "rank": 8,
+     "rank": 7,
      "status": "active",
      "tds_season": 0
     },
@@ -15051,7 +15079,7 @@
      "name": "Aaron Rodgers",
      "position": "QB",
      "prob": 0.068151,
-     "rank": 9,
+     "rank": 8,
      "status": "active",
      "tds_season": 0
     },
@@ -15074,7 +15102,7 @@
      "name": "Mason Rudolph",
      "position": "QB",
      "prob": null,
-     "rank": 10,
+     "rank": 9,
      "status": "active",
      "tds_season": 0
     },
@@ -15097,7 +15125,7 @@
      "name": "Ben Skowronek",
      "position": "WR",
      "prob": null,
-     "rank": 11,
+     "rank": 10,
      "status": "active",
      "tds_season": 1
     },
@@ -15120,7 +15148,7 @@
      "name": "Travis Homer",
      "position": "RB",
      "prob": null,
-     "rank": 12,
+     "rank": 11,
      "status": "active",
      "tds_season": 0
     },
@@ -15143,7 +15171,7 @@
      "name": "Robert Tonyan",
      "position": "TE",
      "prob": null,
-     "rank": 13,
+     "rank": 12,
      "status": "active",
      "tds_season": 0
     },
@@ -15166,7 +15194,7 @@
      "name": "Riley Nowakowski",
      "position": "FB",
      "prob": null,
-     "rank": 14,
+     "rank": 13,
      "status": "active",
      "tds_season": 0
     },
@@ -15189,7 +15217,7 @@
      "name": "Eli Heidenreich",
      "position": "RB",
      "prob": null,
-     "rank": 15,
+     "rank": 14,
      "status": "active",
      "tds_season": 0
     },
@@ -15212,7 +15240,7 @@
      "name": "Drew Allar",
      "position": "QB",
      "prob": null,
-     "rank": 16,
+     "rank": 15,
      "status": "active",
      "tds_season": 0
     },
@@ -15235,7 +15263,7 @@
      "name": "Kaden Wetjen",
      "position": "WR",
      "prob": null,
-     "rank": 17,
+     "rank": 16,
      "status": "active",
      "tds_season": 0
     },
@@ -15258,7 +15286,7 @@
      "name": "Will Howard",
      "position": "QB",
      "prob": null,
-     "rank": 18,
+     "rank": 17,
      "status": "active",
      "tds_season": 0
     }
@@ -15936,9 +15964,59 @@
    "market_total": 37.5,
    "model_prob": 0.447204,
    "model_spread": -1.695186,
-   "model_total": 40.029071,
+   "model_total": 40.072093,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/devonta-smith-set-to-return-zack-baun-dontayvion-wicks-ruled-out-for-eagles",
+     "players": [
+      "DeVonta Smith",
+      "Dontayvion Wicks",
+      "Zack Baun"
+     ],
+     "published": "2026-11-20T21:06:48Z",
+     "source": "ProFootballTalk",
+     "summary": "DeVonta Smith has missed the last month with a hamstring injury, but the Eagles are set to have their top wideout back in the lineup against the Steelers on Sunday.",
+     "teams": [
+      "PHI",
+      "PIT"
+     ],
+     "title": "DeVonta Smith set to return; Zack Baun, Dontayvion Wicks ruled out for Eagles"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/michael-pittman-patrick-queen-among-steelers-questionable-for-week-11",
+     "players": [
+      "Michael Pittman",
+      "Patrick Queen"
+     ],
+     "published": "2026-11-20T20:10:33Z",
+     "source": "ProFootballTalk",
+     "summary": "The Steelers have several players listed as questionable for Sunday's game against the Eagles.",
+     "teams": [
+      "PHI",
+      "PIT"
+     ],
+     "title": "Michael Pittman, Patrick Queen among Steelers questionable for Week 11"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/zack-baun-remains-out-of-eagles-practice",
+     "players": [
+      "Zack Baun"
+     ],
+     "published": "2026-11-19T22:42:21Z",
+     "source": "ProFootballTalk",
+     "summary": "The Eagles remained without a key defensive player at practice on Thursday.",
+     "teams": [
+      "PHI"
+     ],
+     "title": "Zack Baun remains out of Eagles practice"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-19T20:41:07Z",
@@ -16015,50 +16093,6 @@
       "PIT"
      ],
      "title": "Steelers WRs Michael Pittman, Roman Wilson return to practice"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.profootballrumors.com/2026/11/steelers-lg-mason-mccormick-suffers-dislocated-ankle-playoff-return-possible",
-     "players": [
-      "Mason McCormick"
-     ],
-     "published": "2026-11-18T19:41:13Z",
-     "source": "Pro Football Rumors",
-     "summary": "1:41pm: The Steelers have placed McCormick on IR, per Adam Schefter of ESPN. 10:01am: It looked as if Steelers left guard Mason McCormick would ...",
-     "teams": [
-      "PIT"
-     ],
-     "title": "Steelers LG Mason McCormick Suffers Dislocated Ankle; Playoff Return Possible"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.rotowire.com//football/player/devonta-smith-15406",
-     "players": [
-      "DeVonta Smith"
-     ],
-     "published": "2026-11-18T02:59:00Z",
-     "source": "RotoWire",
-     "summary": "Smith (hamstring) was a limited participant in Wednesday's practice. Visit RotoWire.com for more analysis on this update.",
-     "teams": [],
-     "title": "DeVonta Smith: Limited in return to practice"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-17T19:15:40Z",
-     "link": "https://sports.yahoo.com/articles/steelers-wr-roman-wilson-trending-181515299.html",
-     "players": [
-      "Roman Wilson"
-     ],
-     "published": "2026-11-17T18:15:15Z",
-     "source": "Yahoo Sports",
-     "summary": "It looks like the Steelers will get a boost to their WR room this weekend against the Eagles.",
-     "teams": [
-      "PHI",
-      "PIT"
-     ],
-     "title": "Steelers WR Roman Wilson trending towards playing vs. Eagles"
     }
    ],
    "pick": "PIT",
@@ -16101,7 +16135,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 2.529071,
+    "edge": 2.572093,
     "line": 37.5,
     "side": "OVER"
    },
@@ -17460,9 +17494,104 @@
    "market_total": 46.5,
    "model_prob": 0.603074,
    "model_spread": 3.159638,
-   "model_total": 46.620414,
+   "model_total": 46.663436,
    "neutral": true,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/one-matchup-tip-49ers-vikings-203000924.html",
+     "players": [
+      "Dallas Turner",
+      "Trent Williams"
+     ],
+     "published": "2026-11-20T20:30:00Z",
+     "source": "Yahoo Sports",
+     "summary": "Let them fight\u2026",
+     "teams": [
+      "MIN",
+      "SF"
+     ],
+     "title": "The one matchup that will tip 49ers-Vikings: Dallas Turner versus Trent Williams"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/49ers-final-injury-report-mike-201246260.html",
+     "players": [
+      "Mike Evans"
+     ],
+     "published": "2026-11-20T20:26:42Z",
+     "source": "Yahoo Sports",
+     "summary": "The 49ers did not rule out any players for Week 11",
+     "teams": [
+      "SF"
+     ],
+     "title": "49ers final injury report: Mike Evans is \u2018going in the right direction\u2019"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://sports.yahoo.com/articles/why-49ers-vikings-clash-ultimate-200330733.html",
+     "players": [
+      "Brock Purdy"
+     ],
+     "published": "2026-11-20T20:03:30Z",
+     "source": "Yahoo Sports",
+     "summary": "Brock Purdy has excelled this season when facing the blitz. Meanwhile, the Vikings is incredibly aggressive, leading to great results.",
+     "teams": [
+      "MIN",
+      "SF"
+     ],
+     "title": "Why the 49ers Vikings clash is ultimate immovable object vs. unstoppable force"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mike-evans-listed-as-questionable-49ers-to-make-decision-on-saturday",
+     "players": [
+      "Mike Evans"
+     ],
+     "published": "2026-11-20T19:55:42Z",
+     "source": "ProFootballTalk",
+     "summary": "The 49ers got wide receiver Mike Evans back at practice on Thursday and he could be back in the lineup against the Vikings on Sunday night.",
+     "teams": [
+      "MIN",
+      "SF"
+     ],
+     "title": "Mike Evans listed as questionable, 49ers to make decision on Saturday"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/vikings-list-isaiah-rodgers-as-questionable-for-sunday-nights-game",
+     "players": [
+      "Isaiah Rodgers"
+     ],
+     "published": "2026-11-20T19:35:00Z",
+     "source": "ProFootballTalk",
+     "summary": "The Vikings may not have starting cornerback Isaiah Rodgers for Sunday night's game against the 49ers in Mexico City.",
+     "teams": [
+      "MIN",
+      "SF"
+     ],
+     "title": "Vikings list Isaiah Rodgers as questionable for Sunday night's game"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mike-evans-limited-in-his-return-to-practice",
+     "players": [
+      "Mike Evans"
+     ],
+     "published": "2026-11-20T00:34:57Z",
+     "source": "ProFootballTalk",
+     "summary": "49ers wide receiver Mike Evans was a limited participant in his return to practice Thursday.",
+     "teams": [
+      "SF"
+     ],
+     "title": "Mike Evans limited in his return to practice"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-19T20:41:07Z",
@@ -17492,94 +17621,6 @@
       "MIN"
      ],
      "title": "Kirk Cousins called Fernando Mendoza to \"debrief\" after rookie's first start"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T20:41:07Z",
-     "link": "https://sports.yahoo.com/articles/fernando-mendoza-raiders-bromance-still-192450916.html",
-     "players": [
-      "Kirk Cousins"
-     ],
-     "published": "2026-11-19T19:24:50Z",
-     "source": "Yahoo Sports",
-     "summary": "The Raiders traded Kirk Cousins to Minnesota. Nobody told Fernando Mendoza he had to lose his number. So after Mendoza made his first NFL start Sunday against the Seahawks, he...",
-     "teams": [],
-     "title": "Fernando Mendoza\u2019s Raiders bromance is still going strong, as postgame phone call shows"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T20:41:07Z",
-     "link": "https://sports.yahoo.com/articles/brock-purdy-golden-opportunity-shake-192104640.html",
-     "players": [
-      "Brock Purdy"
-     ],
-     "published": "2026-11-19T19:21:04Z",
-     "source": "Yahoo Sports",
-     "summary": "The 49ers quarterback sits third in the MVP race, but has a big opportunity this weekend.",
-     "teams": [
-      "MIN",
-      "SF"
-     ],
-     "title": "Brock Purdy has golden opportunity to shake up MVP race vs. Vikings"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T20:41:07Z",
-     "link": "https://sports.yahoo.com/articles/minnesota-vikings-news-links-keys-183105624.html",
-     "players": [
-      "Carson Wentz"
-     ],
-     "published": "2026-11-19T18:31:05Z",
-     "source": "Yahoo Sports",
-     "summary": "Another huge game this week! It will be good to have a test against one of the top teams in the NFL if not the top team. The Vikings already lost to the Bills but that was mainly due to a horrendous performance by Carson Wentz. You simply have to throw that game out. I [\u2026]",
-     "teams": [
-      "MIN",
-      "SF"
-     ],
-     "title": "Minnesota Vikings News and Links: What Are The Keys To Beating The 49ers?"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/49ers-wr-christian-kirk-had-meniscus-surgery",
-     "players": [
-      "Christian Kirk"
-     ],
-     "published": "2026-11-19T15:37:32Z",
-     "source": "ProFootballTalk",
-     "summary": "49ers wide receiver Christian Kirk went on injured reserve because of a knee injury a couple of weeks ago and that injury has also led him to the operating room.",
-     "teams": [
-      "SF"
-     ],
-     "title": "49ers WR Christian Kirk had meniscus surgery"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://www.profootballrumors.com/2026/11/49ers-wr-christian-kirk-recovering-from-meniscus-surgery",
-     "players": [
-      "Christian Kirk"
-     ],
-     "published": "2026-11-19T15:03:19Z",
-     "source": "Pro Football Rumors",
-     "summary": "Earlier this month, Christian Kirk landed on injured reserve for the second time this year. The 49ers wideout is dealing with a meniscus injury. A recent ...",
-     "teams": [
-      "SF"
-     ],
-     "title": "49ers WR Christian Kirk Recovering From Meniscus Surgery"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.cbssports.com/nfl/news/grading-every-trade-deadline-acquisitions-new-team-debut-kirk-cousins/",
-     "players": [
-      "Kirk Cousins"
-     ],
-     "published": "2026-11-19T12:59:34Z",
-     "source": "CBS Sports",
-     "summary": "Many midseason movers had strong debuts for their new teams",
-     "teams": [],
-     "title": "Grading every trade deadline acquisition's new team debut: Kirk Cousins, two WRs get near 'A'"
     }
    ],
    "pick": "SF",
@@ -17622,7 +17663,7 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 0.120414,
+    "edge": 0.163436,
     "line": 46.5,
     "side": "OVER"
    },
@@ -18871,18 +18912,95 @@
    "market_total": 54.0,
    "model_prob": 0.365752,
    "model_spread": -3.735235,
-   "model_total": 50.577231,
+   "model_total": 50.620253,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.profootballrumors.com/2026/11/commanders-lt-laremy-tunsil-not-expected-to-play-in-2026",
+     "players": [
+      "Laremy Tunsil"
+     ],
+     "published": "2026-11-20T15:02:58Z",
+     "source": "Pro Football Rumors",
+     "summary": "Laremy Tunsil suffered a triceps tear in August. The injury led to questions about his ability to play for the Commanders in 2026, and it ...",
+     "teams": [
+      "WAS"
+     ],
+     "title": "Commanders LT Laremy Tunsil Not Expected To Play In 2026"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.rotowire.com//football/player/joe-burrow-14442",
+     "players": [
+      "Joe Burrow"
+     ],
+     "published": "2026-11-20T12:36:00Z",
+     "source": "RotoWire",
+     "summary": "Burrow (illness) said Friday that he's getting better, noting that he \"for sure\" feels optimistic he'll be at full strength for Monday night's game against the Commanders, Kelsey Conway of The Cincinnati Enquirer reports. Visit RotoWire.com for more analysis on this update.",
+     "teams": [
+      "WAS"
+     ],
+     "title": "Joe Burrow: Expects to be full strength for MNF"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.cbssports.com/nfl/news/bengals-duo-could-break-nfl-record-jamarr-chase-tee-higgins-historic-pace/",
+     "players": [
+      "Ja'Marr Chase",
+      "Tee Higgins"
+     ],
+     "published": "2026-11-20T02:07:10Z",
+     "source": "CBS Sports",
+     "summary": "Ja'Marr Chase and Tee Higgins could make NFL history for the red hot Bengals",
+     "teams": [
+      "CIN"
+     ],
+     "title": "Bengals duo could break NFL record that has stood for 31 years: Ja'Marr Chase and Tee Higgins on historic pace"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-19-26",
+     "players": [
+      "Swayze Bozeman"
+     ],
+     "published": "2026-11-20T00:25:27Z",
+     "source": "Pro Football Rumors",
+     "summary": "Here\u2019s a look at Thursday\u2019s minor NFL moves\u2026 Cincinnati Bengals Designated for return from IR: LB Swayze Bozeman Green Bay Packers Waived: RB Pierre ...",
+     "teams": [
+      "CIN"
+     ],
+     "title": "Minor NFL Transactions: 11/19/26"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-20T21:10:45Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/joe-burrow-on-injury-report-fully-participates-in-practice-despite-illness",
+     "players": [
+      "Joe Burrow"
+     ],
+     "published": "2026-11-19T21:49:58Z",
+     "source": "ProFootballTalk",
+     "summary": "Bengals quarterback Joe Burrow landed on the team's first injury report of the week, but it doesn't look like anything that should interfere with his availability for Monday night's game against the Commanders.",
+     "teams": [
+      "CIN",
+      "WAS"
+     ],
+     "title": "Joe Burrow on injury report, fully participates in practice despite illness"
+    },
+    {
+     "dated_by_feed": true,
      "gathered": "2026-11-19T20:41:07Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/bengals-designate-lb-swayze-bozeman-for-return-from-ir",
+     "link": "https://sports.yahoo.com/articles/bengals-designate-lb-swayze-bozeman-195915446.html",
      "players": [
       "Swayze Bozeman"
      ],
      "published": "2026-11-19T19:59:15Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "Linebacker Swayze Bozeman is back at Bengals practice this week.",
      "teams": [
       "CIN"
@@ -18917,77 +19035,6 @@
      "summary": "Burrow and Peyton Manning are the only QBs ever with 4 TDs in 5 straight games. If Burrow does it again on Monday night, he'll be the first in NFL history to do it in 6 straight games.",
      "teams": [],
      "title": "Joe Burrow can become the first QB ever with 4+ touchdowns in 6 consecutive games"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-11-qb-power-rankings-joe-burrow-patrick-mahomes-jordan-love/",
-     "players": [
-      "Joe Burrow"
-     ],
-     "published": "2026-11-18T18:22:52Z",
-     "source": "CBS Sports",
-     "summary": "Joe Burrow keeps the top spot, Patrick Mahomes is back in the top five and Jordan Love is one of the biggest fallers",
-     "teams": [],
-     "title": "Week 11 QB Power Rankings: Patrick Mahomes a big riser, while Packers' Jordan Love plummets"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-17T19:15:40Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jacory-croskey-merritt-returns-to-commanders-practice",
-     "players": [
-      "Jacory Croskey-Merritt"
-     ],
-     "published": "2026-11-17T19:06:33Z",
-     "source": "ProFootballTalk",
-     "summary": "The Commanders could get running back Jacory Croskey-Merritt back in the lineup as they try to win for the second straight week.",
-     "teams": [
-      "WAS"
-     ],
-     "title": "Jacory Croskey-Merritt returns to Commanders practice"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-17T19:15:40Z",
-     "link": "https://www.cbssports.com/nfl/news/2026-nfl-starting-quarterback-rankings-joe-burrow-josh-allen/",
-     "players": [
-      "Joe Burrow"
-     ],
-     "published": "2026-11-17T14:47:21Z",
-     "source": "CBS Sports",
-     "summary": "Every quarterback to start an NFL game this season is ranked across 10 tiers, with Joe Burrow setting the gold standar",
-     "teams": [],
-     "title": "Ranking the 50 QBs who have started an NFL game in 2026: From cellar-dwellers to gold standard"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-17T19:15:40Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-11-picks-score-predictions-49ers-vikings-mexico/",
-     "players": [
-      "Joe Burrow"
-     ],
-     "published": "2026-11-17T14:43:55Z",
-     "source": "CBS Sports",
-     "summary": "We pick every Week 11 game as Joe Burrow draws an inviting matchup, the 49ers battle the Vikings in Mexico City",
-     "teams": [
-      "CIN"
-     ],
-     "title": "NFL Week 11 picks and score predictions: 49ers win Mexico City thriller over Vikings, Bengals stay hot"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-17T19:15:40Z",
-     "link": "https://www.rotowire.com//football/player/jacory-croskey-merritt-18811",
-     "players": [
-      "Jacory Croskey-Merritt"
-     ],
-     "published": "2026-11-17T11:03:00Z",
-     "source": "RotoWire",
-     "summary": "The Commanders designated Croskey-Merritt (groin) for return from injured reserve Tuesday. Visit RotoWire.com for more analysis on this update.",
-     "teams": [
-      "WAS"
-     ],
-     "title": "Jacory Croskey-Merritt: Cleared to resume practicing"
     }
    ],
    "pick": "CIN",
@@ -19030,14 +19077,14 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 3.422769,
+    "edge": 3.379747,
     "line": 54.0,
     "side": "UNDER"
    },
    "week": 11
   }
  ],
- "generated": "2026-11-19T20:42:23Z",
+ "generated": "2026-11-20T21:12:00Z",
  "label": "Week 11",
  "schema": 1,
  "season": 2026,
