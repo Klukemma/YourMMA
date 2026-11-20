@@ -1,14 +1,14 @@
 {
  "caveats": {
   "draws": "A draw is rarely the single likeliest result, so it is rarely the pick - even though about a quarter of matches end level. Its chance is always shown.",
-  "feeds": "Fixtures football-data.co.uk has not posted yet, and results it has not posted yet, come from two free, unofficial feeds - ESPN's public scoreboard and fixturedownload.com - which give dates, kickoff times and scores, never a price (in the leagues they cover: each league says which, and seven have neither). Until football-data.co.uk posts a match with its prices (Tuesday and Friday afternoons) its chances are the model's alone, and say so. A result from the feeds is provisional, and marked so, until football-data.co.uk posts its own; a provisional grade it disagrees with is corrected. Where the feeds have not confirmed a kickoff time, the pick closes at midnight UK time on match day. The model's ratings use only football-data.co.uk's results, with their shots where the league's history has them, through Nov 16.",
+  "feeds": "Fixtures football-data.co.uk has not posted yet, and results it has not posted yet, come from two free, unofficial feeds - ESPN's public scoreboard and fixturedownload.com - which give dates, kickoff times and scores, never a price (in the leagues they cover: each league says which, and seven have neither). Until football-data.co.uk posts a match with its prices (Tuesday and Friday afternoons) its chances are the model's alone, and say so. A result from the feeds is provisional, and marked so, until football-data.co.uk posts its own; a provisional grade it disagrees with is corrected. Where the feeds have not confirmed a kickoff time, the pick closes at midnight UK time on match day. The model's ratings use only football-data.co.uk's results, with their shots where the league's history has them, through Nov 20.",
   "model": "The pick is the betting market's chances, recalibrated on earlier seasons: across 2016-2025 in the top five the model alone picked 53.3% of results and the market 54.1%, and blending the model in added nothing the market did not already know. The model's own chances are shown beside each pick, labelled. Every league's pick is its own market's price, measured on its own seasons - the raw price, with the bookmakers' cut removed, where recalibrating it scored worse (D1, E1, E3, SC0, SC1, SC3, AUT, FIN, POL); each league's own numbers and caveats are with it. Betting the model where it disagreed with the price did not make money. Treat a pick as an opinion with a measured hit rate, not an edge.",
   "news": "The model does not read team news - injuries, suspensions, rotation. The betting market does, which is part of why the pick leans on it.",
   "rating": "The model rates each club's attack and defence from its goals, shots on target and shots - from its goals alone where its league's history has no shots, as that league says - weighted toward recent matches; a promoted club carries its rating up with a measured step. The rating is the model's own view - the pick on each match is the market's chances, because the market forecasts better.",
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, pooled over the top five, each beat the leagues' own rates from earlier seasons. A league shows only the numbers that beat its own rates in both of its periods; the others are withheld and shown as missing. Both teams to score runs low: across 2016-2025 in the top five its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-19T23:48:37Z",
+ "generated": "2026-11-20T19:17:50Z",
  "leagues": [
   {
    "caveats": [
@@ -29973,10 +29973,10 @@
    "country": "Brazil",
    "group": "extra",
    "label": "S\u00e9rie A",
-   "model_through": "2026-11-14",
+   "model_through": "2026-11-20",
    "name": "S\u00e9rie A",
-   "provisional": 6,
-   "results_through": "2026-11-19",
+   "provisional": 0,
+   "results_through": "2026-11-20",
    "rows": [
     {
      "club": {
@@ -29994,7 +29994,6 @@
        "home": true,
        "league": "BRA",
        "opponent": "Athletico-PR",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -30041,8 +30040,8 @@
      "played": 35,
      "points": 79,
      "position": 1,
-     "provisional": 1,
-     "rating": 0.9922238348559894,
+     "provisional": 0,
+     "rating": 0.9702148877789909,
      "team": "Flamengo RJ",
      "won": 24
     },
@@ -30062,7 +30061,6 @@
        "home": false,
        "league": "BRA",
        "opponent": "Cruzeiro",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -30109,8 +30107,8 @@
      "played": 35,
      "points": 73,
      "position": 2,
-     "provisional": 1,
-     "rating": 0.8122786747578709,
+     "provisional": 0,
+     "rating": 0.7885804085954724,
      "team": "Palmeiras",
      "won": 21
     },
@@ -30130,7 +30128,6 @@
        "home": true,
        "league": "BRA",
        "opponent": "Palmeiras",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -30177,8 +30174,8 @@
      "played": 35,
      "points": 63,
      "position": 3,
-     "provisional": 1,
-     "rating": 0.29761004137337377,
+     "provisional": 0,
+     "rating": 0.3281688083466421,
      "team": "Cruzeiro",
      "won": 19
     },
@@ -30191,6 +30188,15 @@
      },
      "drawn": 9,
      "form": [
+      {
+       "date": "2026-11-20",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Sao Paulo",
+       "result": "W"
+      },
       {
        "date": "2026-11-06",
        "ga": 0,
@@ -30226,28 +30232,19 @@
        "league": "BRA",
        "opponent": "Santos",
        "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Flamengo RJ",
-       "result": "L"
       }
      ],
      "ga": 42,
-     "gd": 13,
-     "gf": 55,
+     "gd": 14,
+     "gf": 56,
      "lost": 9,
-     "played": 34,
-     "points": 57,
+     "played": 35,
+     "points": 60,
      "position": 4,
      "provisional": 0,
-     "rating": 0.30482886544210874,
+     "rating": 0.32387658170886435,
      "team": "Fluminense",
-     "won": 16
+     "won": 17
     },
     {
      "club": {
@@ -30265,7 +30262,6 @@
        "home": false,
        "league": "BRA",
        "opponent": "Flamengo RJ",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -30312,8 +30308,8 @@
      "played": 35,
      "points": 54,
      "position": 5,
-     "provisional": 1,
-     "rating": 0.06542875015821403,
+     "provisional": 0,
+     "rating": 0.08301081905739949,
      "team": "Athletico-PR",
      "won": 15
     },
@@ -30333,7 +30329,6 @@
        "home": false,
        "league": "BRA",
        "opponent": "Gremio",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -30380,8 +30375,8 @@
      "played": 35,
      "points": 54,
      "position": 6,
-     "provisional": 1,
-     "rating": 0.08512083331711207,
+     "provisional": 0,
+     "rating": 0.08740399110419794,
      "team": "Bahia",
      "won": 14
     },
@@ -30468,7 +30463,6 @@
        "home": false,
        "league": "BRA",
        "opponent": "Coritiba",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -30515,8 +30509,8 @@
      "played": 35,
      "points": 50,
      "position": 8,
-     "provisional": 1,
-     "rating": 0.07483262968227233,
+     "provisional": 0,
+     "rating": 0.09671870458593079,
      "team": "Santos",
      "won": 13
     },
@@ -30529,6 +30523,15 @@
      },
      "drawn": 8,
      "form": [
+      {
+       "date": "2026-11-19",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Vitoria",
+       "result": "L"
+      },
       {
        "date": "2026-11-02",
        "ga": 1,
@@ -30564,95 +30567,19 @@
        "league": "BRA",
        "opponent": "Remo",
        "result": "D"
-      },
-      {
-       "date": "2026-10-13",
-       "ga": 2,
-       "gf": 4,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Cruzeiro",
-       "result": "W"
       }
      ],
-     "ga": 39,
-     "gd": 5,
-     "gf": 44,
-     "lost": 13,
-     "played": 34,
+     "ga": 41,
+     "gd": 4,
+     "gf": 45,
+     "lost": 14,
+     "played": 35,
      "points": 47,
      "position": 9,
      "provisional": 0,
-     "rating": 0.057304597862745776,
+     "rating": 0.0358219501935928,
      "team": "Bragantino",
      "won": 13
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "SAO",
-      "fg": "#FFFFFF",
-      "name": "Sao Paulo"
-     },
-     "drawn": 8,
-     "form": [
-      {
-       "date": "2026-11-05",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Corinthians",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-29",
-       "ga": 3,
-       "gf": 2,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Bahia",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Mirassol",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Vasco",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Vitoria",
-       "result": "W"
-      }
-     ],
-     "ga": 39,
-     "gd": 0,
-     "gf": 39,
-     "lost": 14,
-     "played": 34,
-     "points": 44,
-     "position": 10,
-     "provisional": 0,
-     "rating": -0.01740686481399678,
-     "team": "Sao Paulo",
-     "won": 12
     },
     {
      "club": {
@@ -30663,6 +30590,15 @@
      },
      "drawn": 8,
      "form": [
+      {
+       "date": "2026-11-19",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Internacional",
+       "result": "W"
+      },
       {
        "date": "2026-11-14",
        "ga": 0,
@@ -30698,27 +30634,85 @@
        "league": "BRA",
        "opponent": "Corinthians",
        "result": "W"
+      }
+     ],
+     "ga": 51,
+     "gd": -4,
+     "gf": 47,
+     "lost": 14,
+     "played": 35,
+     "points": 47,
+     "position": 10,
+     "provisional": 0,
+     "rating": -0.03795764524769352,
+     "team": "Vasco",
+     "won": 13
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "SAO",
+      "fg": "#FFFFFF",
+      "name": "Sao Paulo"
+     },
+     "drawn": 8,
+     "form": [
+      {
+       "date": "2026-11-20",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Fluminense",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-05",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Corinthians",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-29",
+       "ga": 3,
+       "gf": 2,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Bahia",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Mirassol",
+       "result": "D"
       },
       {
        "date": "2026-10-18",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
+       "ga": 0,
+       "gf": 1,
+       "home": true,
        "league": "BRA",
-       "opponent": "Sao Paulo",
-       "result": "L"
+       "opponent": "Vasco",
+       "result": "W"
       }
      ],
-     "ga": 50,
-     "gd": -5,
-     "gf": 45,
-     "lost": 14,
-     "played": 34,
+     "ga": 40,
+     "gd": -1,
+     "gf": 39,
+     "lost": 15,
+     "played": 35,
      "points": 44,
      "position": 11,
      "provisional": 0,
-     "rating": -0.04988857038509997,
-     "team": "Vasco",
+     "rating": -0.03764411039126958,
+     "team": "Sao Paulo",
      "won": 12
     },
     {
@@ -30737,7 +30731,6 @@
        "home": false,
        "league": "BRA",
        "opponent": "Corinthians",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -30784,8 +30777,8 @@
      "played": 35,
      "points": 42,
      "position": 12,
-     "provisional": 1,
-     "rating": -0.008028755538767696,
+     "provisional": 0,
+     "rating": -0.09177714681642235,
      "team": "Botafogo RJ",
      "won": 11
     },
@@ -30805,7 +30798,6 @@
        "home": true,
        "league": "BRA",
        "opponent": "Santos",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -30852,8 +30844,8 @@
      "played": 35,
      "points": 42,
      "position": 13,
-     "provisional": 1,
-     "rating": -0.28736921177143604,
+     "provisional": 0,
+     "rating": -0.3058310940205007,
      "team": "Coritiba",
      "won": 11
     },
@@ -30927,6 +30919,73 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "VIT",
+      "fg": "#FFFFFF",
+      "name": "Vitoria"
+     },
+     "drawn": 8,
+     "form": [
+      {
+       "date": "2026-11-19",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Bragantino",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-06",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Fluminense",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Coritiba",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Athletico-PR",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-20",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Corinthians",
+       "result": "D"
+      }
+     ],
+     "ga": 52,
+     "gd": -15,
+     "gf": 37,
+     "lost": 16,
+     "played": 35,
+     "points": 41,
+     "position": 15,
+     "provisional": 0,
+     "rating": -0.3023143954418819,
+     "team": "Vitoria",
+     "won": 11
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "COR",
       "fg": "#FFFFFF",
       "name": "Corinthians"
@@ -30940,7 +30999,6 @@
        "home": true,
        "league": "BRA",
        "opponent": "Botafogo RJ",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -30986,9 +31044,9 @@
      "lost": 15,
      "played": 35,
      "points": 40,
-     "position": 15,
-     "provisional": 1,
-     "rating": -0.0883751781116574,
+     "position": 16,
+     "provisional": 0,
+     "rating": -0.01469663573350477,
      "team": "Corinthians",
      "won": 10
     },
@@ -31001,6 +31059,15 @@
      },
      "drawn": 11,
      "form": [
+      {
+       "date": "2026-11-19",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Vasco",
+       "result": "L"
+      },
       {
        "date": "2026-11-04",
        "ga": 0,
@@ -31036,26 +31103,17 @@
        "league": "BRA",
        "opponent": "Mirassol",
        "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Gremio",
-       "result": "D"
       }
      ],
-     "ga": 42,
-     "gd": -4,
-     "gf": 38,
-     "lost": 14,
-     "played": 34,
+     "ga": 44,
+     "gd": -5,
+     "gf": 39,
+     "lost": 15,
+     "played": 35,
      "points": 38,
-     "position": 16,
+     "position": 17,
      "provisional": 0,
-     "rating": -0.06727008422101677,
+     "rating": -0.07803778404178308,
      "team": "Internacional",
      "won": 9
     },
@@ -31075,7 +31133,6 @@
        "home": true,
        "league": "BRA",
        "opponent": "Bahia",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -31121,78 +31178,11 @@
      "lost": 15,
      "played": 35,
      "points": 38,
-     "position": 17,
-     "provisional": 1,
-     "rating": -0.12167892609514963,
-     "team": "Gremio",
-     "won": 9
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "VIT",
-      "fg": "#FFFFFF",
-      "name": "Vitoria"
-     },
-     "drawn": 8,
-     "form": [
-      {
-       "date": "2026-11-06",
-       "ga": 3,
-       "gf": 0,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Fluminense",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Coritiba",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Athletico-PR",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Corinthians",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Sao Paulo",
-       "result": "L"
-      }
-     ],
-     "ga": 51,
-     "gd": -16,
-     "gf": 35,
-     "lost": 16,
-     "played": 34,
-     "points": 38,
      "position": 18,
      "provisional": 0,
-     "rating": -0.32177972549349465,
-     "team": "Vitoria",
-     "won": 10
+     "rating": -0.122658825054479,
+     "team": "Gremio",
+     "won": 9
     },
     {
      "club": {
@@ -31210,7 +31200,6 @@
        "home": true,
        "league": "BRA",
        "opponent": "Chapecoense-SC",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -31257,8 +31246,8 @@
      "played": 35,
      "points": 32,
      "position": 19,
-     "provisional": 1,
-     "rating": -0.35695686056062015,
+     "provisional": 0,
+     "rating": -0.3275900295567885,
      "team": "Remo",
      "won": 7
     },
@@ -31278,7 +31267,6 @@
        "home": false,
        "league": "BRA",
        "opponent": "Remo",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -31325,8 +31313,8 @@
      "played": 35,
      "points": 21,
      "position": 20,
-     "provisional": 1,
-     "rating": -0.7461723441720325,
+     "provisional": 0,
+     "rating": -0.7666712863140329,
      "team": "Chapecoense-SC",
      "won": 4
     }
@@ -34786,8 +34774,8 @@
    "label": "J1 League",
    "model_through": "2026-11-08",
    "name": "J1 League",
-   "provisional": 0,
-   "results_through": "2026-11-08",
+   "provisional": 3,
+   "results_through": "2026-11-20",
    "rows": [
     {
      "club": {
@@ -34866,6 +34854,16 @@
      "drawn": 1,
      "form": [
       {
+       "date": "2026-11-20",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Chiba",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 1,
        "gf": 2,
@@ -34900,25 +34898,16 @@
        "league": "JPN",
        "opponent": "FC Tokyo",
        "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 3,
-       "gf": 1,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Nagoya Grampus",
-       "result": "L"
       }
      ],
-     "ga": 20,
-     "gd": 11,
+     "ga": 21,
+     "gd": 10,
      "gf": 31,
-     "lost": 3,
-     "played": 14,
+     "lost": 4,
+     "played": 15,
      "points": 31,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.5559267616504697,
      "team": "Kashiwa Reysol",
      "won": 10
@@ -35067,6 +35056,16 @@
      "drawn": 3,
      "form": [
       {
+       "date": "2026-11-20",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Mito",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-08",
        "ga": 2,
        "gf": 2,
@@ -35101,25 +35100,16 @@
        "league": "JPN",
        "opponent": "Kawasaki Frontale",
        "result": "L"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 0,
-       "gf": 3,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Okayama",
-       "result": "W"
       }
      ],
-     "ga": 14,
-     "gd": 9,
-     "gf": 23,
-     "lost": 3,
-     "played": 14,
+     "ga": 16,
+     "gd": 8,
+     "gf": 24,
+     "lost": 4,
+     "played": 15,
      "points": 27,
      "position": 5,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.4110716952965243,
      "team": "Vissel Kobe",
      "won": 8
@@ -35131,8 +35121,18 @@
       "fg": "#FFFFFF",
       "name": "Kashima Antlers"
      },
-     "drawn": 2,
+     "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-20",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Shimizu S-Pulse",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-07",
        "ga": 2,
@@ -35168,25 +35168,16 @@
        "league": "JPN",
        "opponent": "Kyoto",
        "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "JPN",
-       "opponent": "V-Varen Nagasaki",
-       "result": "W"
       }
      ],
-     "ga": 24,
+     "ga": 25,
      "gd": 5,
-     "gf": 29,
+     "gf": 30,
      "lost": 5,
-     "played": 14,
-     "points": 23,
+     "played": 15,
+     "points": 24,
      "position": 6,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.47530291005807057,
      "team": "Kashima Antlers",
      "won": 7
@@ -35596,6 +35587,142 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "CHI",
+      "fg": "#FFFFFF",
+      "name": "Chiba"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-20",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Kashiwa Reysol",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Mito",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Avispa Fukuoka",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Cerezo Osaka",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-21",
+       "ga": 3,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Urawa Reds",
+       "result": "L"
+      }
+     ],
+     "ga": 24,
+     "gd": -7,
+     "gf": 17,
+     "lost": 7,
+     "played": 15,
+     "points": 16,
+     "position": 13,
+     "provisional": 1,
+     "rating": -0.36590508303469116,
+     "team": "Chiba",
+     "won": 4
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "SHI",
+      "fg": "#FFFFFF",
+      "name": "Shimizu S-Pulse"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-20",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Kashima Antlers",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Verdy",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Kyoto",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 4,
+       "gf": 0,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Sanfrecce Hiroshima",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-21",
+       "ga": 5,
+       "gf": 0,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Machida",
+       "result": "L"
+      }
+     ],
+     "ga": 24,
+     "gd": -13,
+     "gf": 11,
+     "lost": 8,
+     "played": 15,
+     "points": 15,
+     "position": 14,
+     "provisional": 1,
+     "rating": -0.45634764562206565,
+     "team": "Shimizu S-Pulse",
+     "won": 4
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "NAG",
       "fg": "#FFFFFF",
       "name": "Nagoya Grampus"
@@ -35654,7 +35781,7 @@
      "lost": 8,
      "played": 14,
      "points": 14,
-     "position": 13,
+     "position": 15,
      "provisional": 0,
      "rating": -0.2506885053094625,
      "team": "Nagoya Grampus",
@@ -35721,78 +35848,11 @@
      "lost": 6,
      "played": 14,
      "points": 14,
-     "position": 14,
+     "position": 16,
      "provisional": 0,
      "rating": -0.381524676143132,
      "team": "Verdy",
      "won": 3
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "SHI",
-      "fg": "#FFFFFF",
-      "name": "Shimizu S-Pulse"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Verdy",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Kyoto",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 4,
-       "gf": 0,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Sanfrecce Hiroshima",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 5,
-       "gf": 0,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Machida",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Gamba Osaka",
-       "result": "D"
-      }
-     ],
-     "ga": 23,
-     "gd": -13,
-     "gf": 10,
-     "lost": 8,
-     "played": 14,
-     "points": 14,
-     "position": 15,
-     "provisional": 0,
-     "rating": -0.45634764562206565,
-     "team": "Shimizu S-Pulse",
-     "won": 4
     },
     {
      "club": {
@@ -35855,77 +35915,10 @@
      "lost": 7,
      "played": 14,
      "points": 13,
-     "position": 16,
+     "position": 17,
      "provisional": 0,
      "rating": -0.2513095919010475,
      "team": "V-Varen Nagasaki",
-     "won": 3
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "CHI",
-      "fg": "#FFFFFF",
-      "name": "Chiba"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-11-08",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Mito",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Avispa Fukuoka",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Cerezo Osaka",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 3,
-       "gf": 2,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Urawa Reds",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Yokohama F. Marinos",
-       "result": "D"
-      }
-     ],
-     "ga": 24,
-     "gd": -8,
-     "gf": 16,
-     "lost": 7,
-     "played": 14,
-     "points": 13,
-     "position": 17,
-     "provisional": 0,
-     "rating": -0.36590508303469116,
-     "team": "Chiba",
      "won": 3
     },
     {
@@ -36005,6 +35998,16 @@
      "drawn": 3,
      "form": [
       {
+       "date": "2026-11-20",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Vissel Kobe",
+       "provisional": true,
+       "result": "W"
+      },
+      {
        "date": "2026-11-08",
        "ga": 1,
        "gf": 0,
@@ -36039,28 +36042,19 @@
        "league": "JPN",
        "opponent": "Okayama",
        "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Urawa Reds",
-       "result": "L"
       }
      ],
-     "ga": 26,
-     "gd": -14,
-     "gf": 12,
+     "ga": 27,
+     "gd": -13,
+     "gf": 14,
      "lost": 9,
-     "played": 14,
-     "points": 9,
+     "played": 15,
+     "points": 12,
      "position": 19,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.4811297287719565,
      "team": "Mito",
-     "won": 2
+     "won": 3
     },
     {
      "club": {
@@ -42712,8 +42706,8 @@
    "label": "MLS",
    "model_through": "2026-11-08",
    "name": "MLS",
-   "provisional": 0,
-   "results_through": "2026-11-08",
+   "provisional": 1,
+   "results_through": "2026-11-20",
    "rows": [
     {
      "club": {
@@ -43455,6 +43449,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "FCC",
+      "fg": "#FFFFFF",
+      "name": "FC Cincinnati"
+     },
+     "drawn": 10,
+     "form": [
+      {
+       "date": "2026-11-20",
+       "ga": 1,
+       "gf": 3,
+       "home": false,
+       "league": "USA",
+       "opponent": "Orlando City",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 2,
+       "gf": 0,
+       "home": true,
+       "league": "USA",
+       "opponent": "Nashville SC",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "USA",
+       "opponent": "Philadelphia Union",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-28",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "USA",
+       "opponent": "Inter Miami",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 0,
+       "gf": 2,
+       "home": false,
+       "league": "USA",
+       "opponent": "DC United",
+       "result": "W"
+      }
+     ],
+     "ga": 76,
+     "gd": -6,
+     "gf": 70,
+     "lost": 12,
+     "played": 35,
+     "points": 49,
+     "position": 12,
+     "provisional": 1,
+     "rating": -0.08804402083588925,
+     "team": "FC Cincinnati",
+     "won": 13
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "LOS",
       "fg": "#FFFFFF",
       "name": "Los Angeles FC"
@@ -43513,7 +43575,7 @@
      "lost": 11,
      "played": 34,
      "points": 47,
-     "position": 12,
+     "position": 13,
      "provisional": 0,
      "rating": 0.27914763389932795,
      "team": "Los Angeles FC",
@@ -43580,7 +43642,7 @@
      "lost": 15,
      "played": 34,
      "points": 47,
-     "position": 13,
+     "position": 14,
      "provisional": 0,
      "rating": 0.2682262228858199,
      "team": "Columbus Crew",
@@ -43647,7 +43709,7 @@
      "lost": 14,
      "played": 34,
      "points": 46,
-     "position": 14,
+     "position": 15,
      "provisional": 0,
      "rating": 0.05089680706379185,
      "team": "Portland Timbers",
@@ -43714,77 +43776,10 @@
      "lost": 12,
      "played": 34,
      "points": 46,
-     "position": 15,
+     "position": 16,
      "provisional": 0,
      "rating": 0.02217646197108225,
      "team": "Seattle Sounders",
-     "won": 12
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "FCC",
-      "fg": "#FFFFFF",
-      "name": "FC Cincinnati"
-     },
-     "drawn": 10,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 2,
-       "gf": 0,
-       "home": true,
-       "league": "USA",
-       "opponent": "Nashville SC",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "USA",
-       "opponent": "Philadelphia Union",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-28",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "USA",
-       "opponent": "Inter Miami",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "USA",
-       "opponent": "DC United",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-22",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "USA",
-       "opponent": "DC United",
-       "result": "W"
-      }
-     ],
-     "ga": 75,
-     "gd": -8,
-     "gf": 67,
-     "lost": 12,
-     "played": 34,
-     "points": 46,
-     "position": 16,
-     "provisional": 0,
-     "rating": -0.08804402083588925,
-     "team": "FC Cincinnati",
      "won": 12
     },
     {
@@ -43796,6 +43791,16 @@
      },
      "drawn": 7,
      "form": [
+      {
+       "date": "2026-11-20",
+       "ga": 3,
+       "gf": 1,
+       "home": true,
+       "league": "USA",
+       "opponent": "FC Cincinnati",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-07",
        "ga": 0,
@@ -43831,25 +43836,16 @@
        "league": "USA",
        "opponent": "New York City",
        "result": "D"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 1,
-       "gf": 4,
-       "home": true,
-       "league": "USA",
-       "opponent": "DC United",
-       "result": "W"
       }
      ],
-     "ga": 78,
-     "gd": -15,
-     "gf": 63,
-     "lost": 14,
-     "played": 34,
+     "ga": 81,
+     "gd": -17,
+     "gf": 64,
+     "lost": 15,
+     "played": 35,
      "points": 46,
      "position": 17,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.08879816851077815,
      "team": "Orlando City",
      "won": 13
@@ -44732,7 +44728,7 @@
    "table_note": "The overall table, both conferences together (the Supporters' Shield's); MLS Cup is left out."
   }
  ],
- "model_through": "2026-11-16",
+ "model_through": "2026-11-20",
  "schema": 1,
  "season": 2026,
  "season_label": "2026-27 season"
