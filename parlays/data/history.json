@@ -5165,7 +5165,7 @@
    "day": "2026-11-21",
    "kind": "underdog",
    "built_at": "2026-11-21T13:32:52Z",
-   "status": "pending",
+   "status": "superseded",
    "multiplier": 3.3872,
    "p": 0.265442,
    "p_market": 0.260463,
@@ -5436,6 +5436,71 @@
     "1X2"
    ],
    "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-21",
+   "kind": "underdog",
+   "built_at": "2026-11-21T15:30:16Z",
+   "status": "pending",
+   "multiplier": 3.3872,
+   "p": 0.265442,
+   "p_market": 0.260463,
+   "first_start": "2026-11-21T17:30:00Z",
+   "last_start": "2026-11-21T20:00:00Z",
+   "sports": [
+    "Soccer"
+   ],
+   "legs": [
+    {
+     "sport": "Soccer",
+     "key": "Soccer:SP1-20261121-sevilla-betis",
+     "event": "Sevilla v Real Betis",
+     "pick": "Sevilla",
+     "opponent": "SP1",
+     "kickoff": "2026-11-21T17:30:00Z",
+     "decimal": 2.92,
+     "p": 0.31392042703683676,
+     "p_model": null,
+     "p_market": 0.3210961358361497,
+     "names": {
+      "match_id": "SP1-20261121-sevilla-betis",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": true,
+     "outcome": null
+    },
+    {
+     "sport": "Soccer",
+     "key": "Soccer:SP1-20261121-realmadrid-celta",
+     "event": "Real Madrid v Celta Vigo",
+     "pick": "Real Madrid",
+     "opponent": "SP1",
+     "kickoff": "2026-11-21T20:00:00Z",
+     "decimal": 1.16,
+     "p": 0.8455694432630029,
+     "p_model": null,
+     "p_market": 0.8111685736488116,
+     "names": {
+      "match_id": "SP1-20261121-realmadrid-celta",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "Soccer:SP1-20261121-sevilla-betis",
+    "pick": "Sevilla",
+    "lot_key": "SP1-20261121-sevilla-betis",
+    "rank": 0,
+    "candidates": 5,
+    "salt": "sameday-dog-v1",
+    "version": 1
+   },
    "paid": null,
    "profit": null
   }
