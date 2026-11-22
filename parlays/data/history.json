@@ -4691,7 +4691,7 @@
      },
      "price_source": "average price",
      "dog": null,
-     "outcome": null
+     "outcome": "won"
     }
    ],
    "paid": null,
@@ -5003,7 +5003,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "won"
     },
     {
      "sport": "Soccer",
@@ -5135,7 +5135,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "won"
     }
    ],
    "version": 2,
@@ -5230,7 +5230,7 @@
    "day": "2026-11-21",
    "kind": "likeliest_v2",
    "built_at": "2026-11-21T13:32:52Z",
-   "status": "pending",
+   "status": "lost",
    "multiplier": 3.0389,
    "p": 0.320158,
    "p_market": 0.272994,
@@ -5344,7 +5344,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "lost"
     }
    ],
    "version": 2,
@@ -5352,14 +5352,14 @@
     "1X2"
    ],
    "estimated": false,
-   "paid": null,
-   "profit": null
+   "paid": 0.0,
+   "profit": -1.0
   },
   {
    "day": "2026-11-21",
    "kind": "underdog_v2",
    "built_at": "2026-11-21T13:32:52Z",
-   "status": "pending",
+   "status": "won",
    "multiplier": 4.1412,
    "p": 0.207823,
    "p_market": 0.208304,
@@ -5419,7 +5419,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "won"
     }
    ],
    "dog": {
@@ -5436,14 +5436,14 @@
     "1X2"
    ],
    "estimated": false,
-   "paid": null,
-   "profit": null
+   "paid": 4.1411999999999995,
+   "profit": 3.1411999999999995
   },
   {
    "day": "2026-11-21",
    "kind": "underdog",
    "built_at": "2026-11-21T15:30:16Z",
-   "status": "pending",
+   "status": "lost",
    "multiplier": 3.3872,
    "p": 0.265442,
    "p_market": 0.260463,
@@ -5470,7 +5470,7 @@
      },
      "price_source": "average price",
      "dog": true,
-     "outcome": null
+     "outcome": "lost"
     },
     {
      "sport": "Soccer",
@@ -5489,7 +5489,7 @@
      },
      "price_source": "average price",
      "dog": null,
-     "outcome": null
+     "outcome": "won"
     }
    ],
    "dog": {
@@ -5501,8 +5501,8 @@
     "salt": "sameday-dog-v1",
     "version": 1
    },
-   "paid": null,
-   "profit": null
+   "paid": 0.0,
+   "profit": -1.0
   }
  ]
 }
