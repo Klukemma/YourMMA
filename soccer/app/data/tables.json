@@ -8,7 +8,7 @@
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, pooled over the top five, each beat the leagues' own rates from earlier seasons. A league shows only the numbers that beat its own rates in both of its periods; the others are withheld and shown as missing. Both teams to score runs low: across 2016-2025 in the top five its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-21T18:13:15Z",
+ "generated": "2026-11-22T02:22:05Z",
  "leagues": [
   {
    "caveats": [
@@ -20,7 +20,7 @@
    "label": "Premier League",
    "model_through": "2026-11-08",
    "name": "Premier League",
-   "provisional": 6,
+   "provisional": 7,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -30,8 +30,18 @@
       "fg": "#FFFFFF",
       "name": "Arsenal"
      },
-     "drawn": 0,
+     "drawn": 1,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "E0",
+       "opponent": "Newcastle",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-07",
        "ga": 0,
@@ -67,25 +77,16 @@
        "league": "E0",
        "opponent": "Nott'm Forest",
        "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "E0",
-       "opponent": "Leeds",
-       "result": "W"
       }
      ],
-     "ga": 5,
+     "ga": 7,
      "gd": 10,
-     "gf": 15,
+     "gf": 17,
      "lost": 1,
-     "played": 10,
-     "points": 27,
+     "played": 11,
+     "points": 28,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.6060522954619136,
      "team": "Arsenal",
      "won": 9
@@ -773,8 +774,18 @@
       "fg": "#FFFFFF",
       "name": "Newcastle United"
      },
-     "drawn": 3,
+     "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "E0",
+       "opponent": "Arsenal",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-07",
        "ga": 1,
@@ -810,25 +821,16 @@
        "league": "E0",
        "opponent": "Aston Villa",
        "result": "L"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 4,
-       "gf": 1,
-       "home": false,
-       "league": "E0",
-       "opponent": "Coventry",
-       "result": "L"
       }
      ],
-     "ga": 16,
+     "ga": 18,
      "gd": -3,
-     "gf": 13,
+     "gf": 15,
      "lost": 4,
-     "played": 10,
-     "points": 12,
+     "played": 11,
+     "points": 13,
      "position": 12,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.13738117538168249,
      "team": "Newcastle",
      "won": 3
@@ -1389,7 +1391,7 @@
    "label": "La Liga",
    "model_through": "2026-11-08",
    "name": "La Liga",
-   "provisional": 3,
+   "provisional": 5,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -1469,6 +1471,16 @@
      "drawn": 0,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "SP1",
+       "opponent": "Celta",
+       "provisional": true,
+       "result": "W"
+      },
+      {
        "date": "2026-11-07",
        "ga": 0,
        "gf": 3,
@@ -1503,28 +1515,19 @@
        "league": "SP1",
        "opponent": "Sevilla",
        "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "SP1",
-       "opponent": "Villarreal",
-       "result": "W"
       }
      ],
-     "ga": 10,
-     "gd": 21,
-     "gf": 31,
+     "ga": 11,
+     "gd": 22,
+     "gf": 33,
      "lost": 2,
-     "played": 12,
-     "points": 30,
+     "played": 13,
+     "points": 33,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.862602724491624,
      "team": "Real Madrid",
-     "won": 10
+     "won": 11
     },
     {
      "club": {
@@ -1600,8 +1603,18 @@
       "fg": "#FFFFFF",
       "name": "Real Betis"
      },
-     "drawn": 2,
+     "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "SP1",
+       "opponent": "Sevilla",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-08",
        "ga": 0,
@@ -1637,25 +1650,16 @@
        "league": "SP1",
        "opponent": "Barcelona",
        "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 2,
-       "gf": 5,
-       "home": true,
-       "league": "SP1",
-       "opponent": "Osasuna",
-       "result": "W"
       }
      ],
-     "ga": 15,
+     "ga": 16,
      "gd": 5,
-     "gf": 20,
+     "gf": 21,
      "lost": 2,
-     "played": 12,
-     "points": 26,
+     "played": 13,
+     "points": 27,
      "position": 4,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.2101564784802954,
      "team": "Betis",
      "won": 8
@@ -1734,8 +1738,18 @@
       "fg": "#FFFFFF",
       "name": "Sevilla"
      },
-     "drawn": 3,
+     "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "SP1",
+       "opponent": "Betis",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-06",
        "ga": 0,
@@ -1771,25 +1785,16 @@
        "league": "SP1",
        "opponent": "Real Madrid",
        "result": "L"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 3,
-       "gf": 3,
-       "home": false,
-       "league": "SP1",
-       "opponent": "Levante",
-       "result": "D"
       }
      ],
-     "ga": 19,
+     "ga": 20,
      "gd": -2,
-     "gf": 17,
+     "gf": 18,
      "lost": 4,
-     "played": 12,
-     "points": 18,
+     "played": 13,
+     "points": 19,
      "position": 6,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.07179132755130713,
      "team": "Sevilla",
      "won": 5
@@ -2210,6 +2215,16 @@
      "drawn": 7,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "SP1",
+       "opponent": "Real Madrid",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-08",
        "ga": 0,
        "gf": 0,
@@ -2244,25 +2259,16 @@
        "league": "SP1",
        "opponent": "Alaves",
        "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "SP1",
-       "opponent": "Elche",
-       "result": "D"
       }
      ],
-     "ga": 10,
-     "gd": 0,
-     "gf": 10,
-     "lost": 3,
-     "played": 12,
+     "ga": 12,
+     "gd": -1,
+     "gf": 11,
+     "lost": 4,
+     "played": 13,
      "points": 13,
      "position": 13,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.09552398140913154,
      "team": "Celta",
      "won": 2
@@ -2754,7 +2760,7 @@
    "label": "Serie A",
    "model_through": "2026-11-08",
    "name": "Serie A",
-   "provisional": 2,
+   "provisional": 4,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -2827,6 +2833,74 @@
     },
     {
      "club": {
+      "bg": "#8E1F2F",
+      "code": "ROM",
+      "fg": "#F0BC42",
+      "name": "Roma"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 5,
+       "home": false,
+       "league": "I1",
+       "opponent": "Parma",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "I1",
+       "opponent": "Sassuolo",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 5,
+       "home": false,
+       "league": "I1",
+       "opponent": "Udinese",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 2,
+       "gf": 4,
+       "home": true,
+       "league": "I1",
+       "opponent": "Cagliari",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 3,
+       "gf": 3,
+       "home": false,
+       "league": "I1",
+       "opponent": "Napoli",
+       "result": "D"
+      }
+     ],
+     "ga": 11,
+     "gd": 25,
+     "gf": 36,
+     "lost": 0,
+     "played": 12,
+     "points": 30,
+     "position": 2,
+     "provisional": 1,
+     "rating": 0.6060474576624791,
+     "team": "Roma",
+     "won": 9
+    },
+    {
+     "club": {
       "bg": "#0068A8",
       "code": "INT",
       "fg": "#000000",
@@ -2886,78 +2960,11 @@
      "lost": 1,
      "played": 11,
      "points": 28,
-     "position": 2,
+     "position": 3,
      "provisional": 0,
      "rating": 0.9019843598209515,
      "team": "Inter",
      "won": 9
-    },
-    {
-     "club": {
-      "bg": "#8E1F2F",
-      "code": "ROM",
-      "fg": "#F0BC42",
-      "name": "Roma"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "I1",
-       "opponent": "Sassuolo",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 5,
-       "home": false,
-       "league": "I1",
-       "opponent": "Udinese",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 2,
-       "gf": 4,
-       "home": true,
-       "league": "I1",
-       "opponent": "Cagliari",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 3,
-       "gf": 3,
-       "home": false,
-       "league": "I1",
-       "opponent": "Napoli",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "I1",
-       "opponent": "Genoa",
-       "result": "W"
-      }
-     ],
-     "ga": 10,
-     "gd": 21,
-     "gf": 31,
-     "lost": 0,
-     "played": 11,
-     "points": 27,
-     "position": 3,
-     "provisional": 0,
-     "rating": 0.6060474576624791,
-     "team": "Roma",
-     "won": 8
     },
     {
      "club": {
@@ -3163,6 +3170,74 @@
     },
     {
      "club": {
+      "bg": "#12A0D7",
+      "code": "NAP",
+      "fg": "#000000",
+      "name": "Napoli"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "I1",
+       "opponent": "Torino",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "I1",
+       "opponent": "Lazio",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "I1",
+       "opponent": "Juventus",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-28",
+       "ga": 1,
+       "gf": 4,
+       "home": false,
+       "league": "I1",
+       "opponent": "Monza",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 3,
+       "gf": 3,
+       "home": true,
+       "league": "I1",
+       "opponent": "Roma",
+       "result": "D"
+      }
+     ],
+     "ga": 14,
+     "gd": 5,
+     "gf": 19,
+     "lost": 4,
+     "played": 12,
+     "points": 18,
+     "position": 7,
+     "provisional": 1,
+     "rating": 0.40546333355097397,
+     "team": "Napoli",
+     "won": 5
+    },
+    {
+     "club": {
       "bg": "#000000",
       "code": "JUV",
       "fg": "#FFFFFF",
@@ -3222,7 +3297,7 @@
      "lost": 3,
      "played": 11,
      "points": 18,
-     "position": 7,
+     "position": 8,
      "provisional": 0,
      "rating": 0.47637552814991335,
      "team": "Juventus",
@@ -3289,7 +3364,7 @@
      "lost": 4,
      "played": 11,
      "points": 17,
-     "position": 8,
+     "position": 9,
      "provisional": 0,
      "rating": 0.16402941363841594,
      "team": "Bologna",
@@ -3357,145 +3432,11 @@
      "lost": 6,
      "played": 12,
      "points": 16,
-     "position": 9,
+     "position": 10,
      "provisional": 1,
      "rating": -0.2860392439730516,
      "team": "Cagliari",
      "won": 5
-    },
-    {
-     "club": {
-      "bg": "#12A0D7",
-      "code": "NAP",
-      "fg": "#000000",
-      "name": "Napoli"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-08",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "I1",
-       "opponent": "Lazio",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "I1",
-       "opponent": "Juventus",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-28",
-       "ga": 1,
-       "gf": 4,
-       "home": false,
-       "league": "I1",
-       "opponent": "Monza",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 3,
-       "gf": 3,
-       "home": true,
-       "league": "I1",
-       "opponent": "Roma",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "I1",
-       "opponent": "Venezia",
-       "result": "L"
-      }
-     ],
-     "ga": 14,
-     "gd": 4,
-     "gf": 18,
-     "lost": 4,
-     "played": 11,
-     "points": 15,
-     "position": 10,
-     "provisional": 0,
-     "rating": 0.40546333355097397,
-     "team": "Napoli",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#8A1E03",
-      "code": "TOR",
-      "fg": "#FFFFFF",
-      "name": "Torino"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "I1",
-       "opponent": "Lecce",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "I1",
-       "opponent": "Frosinone",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 3,
-       "gf": 1,
-       "home": true,
-       "league": "I1",
-       "opponent": "Como",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-23",
-       "ga": 2,
-       "gf": 3,
-       "home": true,
-       "league": "I1",
-       "opponent": "Monza",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-19",
-       "ga": 0,
-       "gf": 3,
-       "home": false,
-       "league": "I1",
-       "opponent": "Parma",
-       "result": "W"
-      }
-     ],
-     "ga": 17,
-     "gd": -2,
-     "gf": 15,
-     "lost": 5,
-     "played": 11,
-     "points": 14,
-     "position": 11,
-     "provisional": 0,
-     "rating": -0.23971779842550056,
-     "team": "Torino",
-     "won": 4
     },
     {
      "club": {
@@ -3558,10 +3499,78 @@
      "lost": 5,
      "played": 11,
      "points": 14,
-     "position": 12,
+     "position": 11,
      "provisional": 0,
      "rating": 0.10721012522714912,
      "team": "Atalanta",
+     "won": 4
+    },
+    {
+     "club": {
+      "bg": "#8A1E03",
+      "code": "TOR",
+      "fg": "#FFFFFF",
+      "name": "Torino"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "I1",
+       "opponent": "Napoli",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "I1",
+       "opponent": "Lecce",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "I1",
+       "opponent": "Frosinone",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 3,
+       "gf": 1,
+       "home": true,
+       "league": "I1",
+       "opponent": "Como",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-23",
+       "ga": 2,
+       "gf": 3,
+       "home": true,
+       "league": "I1",
+       "opponent": "Monza",
+       "result": "W"
+      }
+     ],
+     "ga": 18,
+     "gd": -3,
+     "gf": 15,
+     "lost": 6,
+     "played": 12,
+     "points": 14,
+     "position": 12,
+     "provisional": 1,
+     "rating": -0.23971779842550056,
+     "team": "Torino",
      "won": 4
     },
     {
@@ -3776,6 +3785,16 @@
      "drawn": 2,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 5,
+       "gf": 1,
+       "home": true,
+       "league": "I1",
+       "opponent": "Roma",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 2,
        "gf": 1,
@@ -3810,25 +3829,16 @@
        "league": "I1",
        "opponent": "Lazio",
        "result": "L"
-      },
-      {
-       "date": "2026-10-19",
-       "ga": 3,
-       "gf": 0,
-       "home": true,
-       "league": "I1",
-       "opponent": "Torino",
-       "result": "L"
       }
      ],
-     "ga": 17,
-     "gd": -8,
-     "gf": 9,
-     "lost": 7,
-     "played": 11,
+     "ga": 22,
+     "gd": -12,
+     "gf": 10,
+     "lost": 8,
+     "played": 12,
      "points": 8,
      "position": 16,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.37920250691384416,
      "team": "Parma",
      "won": 2
@@ -4117,7 +4127,7 @@
    "label": "Bundesliga",
    "model_through": "2026-11-08",
    "name": "Bundesliga",
-   "provisional": 6,
+   "provisional": 7,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -4597,6 +4607,74 @@
     },
     {
      "club": {
+      "bg": "#FFFFFF",
+      "code": "VFB",
+      "fg": "#E32219",
+      "name": "Stuttgart"
+     },
+     "drawn": 1,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 0,
+       "home": false,
+       "league": "D1",
+       "opponent": "Schalke 04",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "D1",
+       "opponent": "Werder Bremen",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 4,
+       "home": false,
+       "league": "D1",
+       "opponent": "Leverkusen",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-23",
+       "ga": 3,
+       "gf": 2,
+       "home": true,
+       "league": "D1",
+       "opponent": "M'gladbach",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "D1",
+       "opponent": "Hamburg",
+       "result": "L"
+      }
+     ],
+     "ga": 15,
+     "gd": 0,
+     "gf": 15,
+     "lost": 5,
+     "played": 10,
+     "points": 13,
+     "position": 8,
+     "provisional": 1,
+     "rating": 0.29865308455657025,
+     "team": "Stuttgart",
+     "won": 4
+    },
+    {
+     "club": {
       "bg": "#000000",
       "code": "SVE",
       "fg": "#FFFFFF",
@@ -4657,77 +4735,10 @@
      "lost": 5,
      "played": 10,
      "points": 13,
-     "position": 8,
+     "position": 9,
      "provisional": 1,
      "rating": -0.3381904042230921,
      "team": "Elversberg",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#FFFFFF",
-      "code": "VFB",
-      "fg": "#E32219",
-      "name": "Stuttgart"
-     },
-     "drawn": 0,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "D1",
-       "opponent": "Werder Bremen",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 4,
-       "home": false,
-       "league": "D1",
-       "opponent": "Leverkusen",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-23",
-       "ga": 3,
-       "gf": 2,
-       "home": true,
-       "league": "D1",
-       "opponent": "M'gladbach",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "D1",
-       "opponent": "Hamburg",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "D1",
-       "opponent": "Paderborn",
-       "result": "W"
-      }
-     ],
-     "ga": 15,
-     "gd": 0,
-     "gf": 15,
-     "lost": 5,
-     "played": 9,
-     "points": 12,
-     "position": 9,
-     "provisional": 0,
-     "rating": 0.29865308455657025,
-     "team": "Stuttgart",
      "won": 4
     },
     {
@@ -5137,6 +5148,74 @@
     },
     {
      "club": {
+      "bg": "#004D9D",
+      "code": "S04",
+      "fg": "#FFFFFF",
+      "name": "Schalke"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "D1",
+       "opponent": "Stuttgart",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "D1",
+       "opponent": "Hoffenheim",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 0,
+       "home": true,
+       "league": "D1",
+       "opponent": "RB Leipzig",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 0,
+       "gf": 0,
+       "home": false,
+       "league": "D1",
+       "opponent": "FC Koln",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "D1",
+       "opponent": "Mainz",
+       "result": "L"
+      }
+     ],
+     "ga": 11,
+     "gd": -6,
+     "gf": 5,
+     "lost": 5,
+     "played": 10,
+     "points": 7,
+     "position": 16,
+     "provisional": 1,
+     "rating": -0.4341703368755758,
+     "team": "Schalke 04",
+     "won": 1
+    },
+    {
+     "club": {
       "bg": "#EB1923",
       "code": "FCU",
       "fg": "#FFFFFF",
@@ -5197,77 +5276,10 @@
      "lost": 5,
      "played": 10,
      "points": 7,
-     "position": 16,
+     "position": 17,
      "provisional": 1,
      "rating": -0.4142779308677129,
      "team": "Union Berlin",
-     "won": 1
-    },
-    {
-     "club": {
-      "bg": "#004D9D",
-      "code": "S04",
-      "fg": "#FFFFFF",
-      "name": "Schalke"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-08",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "D1",
-       "opponent": "Hoffenheim",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 0,
-       "home": true,
-       "league": "D1",
-       "opponent": "RB Leipzig",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "D1",
-       "opponent": "FC Koln",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "D1",
-       "opponent": "Mainz",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "D1",
-       "opponent": "Freiburg",
-       "result": "L"
-      }
-     ],
-     "ga": 11,
-     "gd": -6,
-     "gf": 5,
-     "lost": 5,
-     "played": 9,
-     "points": 6,
-     "position": 17,
-     "provisional": 0,
-     "rating": -0.4341703368755758,
-     "team": "Schalke 04",
      "won": 1
     },
     {
@@ -5352,8 +5364,8 @@
    "label": "Ligue 1",
    "model_through": "2026-11-08",
    "name": "Ligue 1",
-   "provisional": 1,
-   "results_through": "2026-11-20",
+   "provisional": 6,
+   "results_through": "2026-11-21",
    "rows": [
     {
      "club": {
@@ -5364,6 +5376,16 @@
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 3,
+       "home": false,
+       "league": "F1",
+       "opponent": "Nice",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-07",
        "ga": 0,
@@ -5399,28 +5421,19 @@
        "league": "F1",
        "opponent": "Strasbourg",
        "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "F1",
-       "opponent": "Le Mans",
-       "result": "W"
       }
      ],
-     "ga": 10,
-     "gd": 12,
-     "gf": 22,
+     "ga": 12,
+     "gd": 13,
+     "gf": 25,
      "lost": 1,
-     "played": 10,
-     "points": 23,
+     "played": 11,
+     "points": 26,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.8926071924149472,
      "team": "Paris SG",
-     "won": 7
+     "won": 8
     },
     {
      "club": {
@@ -5431,6 +5444,16 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "F1",
+       "opponent": "Lyon",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-08",
        "ga": 1,
@@ -5466,25 +5489,16 @@
        "league": "F1",
        "opponent": "Brest",
        "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "F1",
-       "opponent": "Le Havre",
-       "result": "W"
       }
      ],
-     "ga": 7,
-     "gd": 7,
+     "ga": 8,
+     "gd": 6,
      "gf": 14,
-     "lost": 1,
-     "played": 10,
+     "lost": 2,
+     "played": 11,
      "points": 21,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.32048032480756505,
      "team": "Lille",
      "won": 6
@@ -5558,6 +5572,74 @@
     },
     {
      "club": {
+      "bg": "#FFFFFF",
+      "code": "LYO",
+      "fg": "#1A3D8F",
+      "name": "Lyon"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "F1",
+       "opponent": "Lille",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "F1",
+       "opponent": "Brest",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "F1",
+       "opponent": "Angers",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-26",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "F1",
+       "opponent": "Paris SG",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "F1",
+       "opponent": "Nice",
+       "result": "W"
+      }
+     ],
+     "ga": 9,
+     "gd": 7,
+     "gf": 16,
+     "lost": 3,
+     "played": 11,
+     "points": 20,
+     "position": 4,
+     "provisional": 1,
+     "rating": 0.19698969418287948,
+     "team": "Lyon",
+     "won": 6
+    },
+    {
+     "club": {
       "bg": "#2FAEE0",
       "code": "MAR",
       "fg": "#000000",
@@ -5617,7 +5699,7 @@
      "lost": 4,
      "played": 10,
      "points": 18,
-     "position": 4,
+     "position": 5,
      "provisional": 0,
      "rating": 0.31549341668473563,
      "team": "Marseille",
@@ -5625,69 +5707,70 @@
     },
     {
      "club": {
-      "bg": "#FFFFFF",
-      "code": "LYO",
-      "fg": "#1A3D8F",
-      "name": "Lyon"
+      "bg": "#E30613",
+      "code": "BRE",
+      "fg": "#FFFFFF",
+      "name": "Brest"
      },
-     "drawn": 2,
+     "drawn": 3,
      "form": [
       {
-       "date": "2026-11-08",
-       "ga": 2,
-       "gf": 0,
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 1,
        "home": false,
        "league": "F1",
-       "opponent": "Brest",
-       "result": "L"
+       "opponent": "Strasbourg",
+       "provisional": true,
+       "result": "W"
       },
       {
-       "date": "2026-11-01",
+       "date": "2026-11-08",
        "ga": 0,
        "gf": 2,
        "home": true,
        "league": "F1",
-       "opponent": "Angers",
+       "opponent": "Lyon",
        "result": "W"
       },
       {
-       "date": "2026-10-26",
-       "ga": 2,
-       "gf": 0,
+       "date": "2026-11-02",
+       "ga": 0,
+       "gf": 2,
        "home": false,
        "league": "F1",
-       "opponent": "Paris SG",
-       "result": "L"
+       "opponent": "Lorient",
+       "result": "W"
       },
       {
-       "date": "2026-10-18",
-       "ga": 1,
-       "gf": 2,
+       "date": "2026-10-23",
+       "ga": 2,
+       "gf": 1,
        "home": true,
        "league": "F1",
        "opponent": "Nice",
-       "result": "W"
+       "result": "L"
       },
       {
-       "date": "2026-10-09",
-       "ga": 2,
+       "date": "2026-10-17",
+       "ga": 1,
        "gf": 1,
        "home": false,
        "league": "F1",
-       "opponent": "Lens",
-       "result": "L"
+       "opponent": "Lille",
+       "result": "D"
       }
      ],
-     "ga": 9,
-     "gd": 6,
-     "gf": 15,
+     "ga": 12,
+     "gd": 7,
+     "gf": 19,
      "lost": 3,
-     "played": 10,
-     "points": 17,
-     "position": 5,
-     "provisional": 0,
-     "rating": 0.19698969418287948,
-     "team": "Lyon",
+     "played": 11,
+     "points": 18,
+     "position": 6,
+     "provisional": 1,
+     "rating": 0.022412263043002145,
+     "team": "Brest",
      "won": 5
     },
     {
@@ -5699,6 +5782,16 @@
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 2,
+       "home": true,
+       "league": "F1",
+       "opponent": "Paris SG",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-08",
        "ga": 0,
@@ -5734,25 +5827,16 @@
        "league": "F1",
        "opponent": "Lyon",
        "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "F1",
-       "opponent": "Strasbourg",
-       "result": "W"
       }
      ],
-     "ga": 12,
-     "gd": 3,
-     "gf": 15,
-     "lost": 3,
-     "played": 10,
+     "ga": 15,
+     "gd": 2,
+     "gf": 17,
+     "lost": 4,
+     "played": 11,
      "points": 17,
-     "position": 6,
-     "provisional": 0,
+     "position": 7,
+     "provisional": 1,
      "rating": -0.1296428596727326,
      "team": "Nice",
      "won": 5
@@ -5764,8 +5848,18 @@
       "fg": "#FFFFFF",
       "name": "Monaco"
      },
-     "drawn": 4,
+     "drawn": 5,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "F1",
+       "opponent": "Auxerre",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-08",
        "ga": 1,
@@ -5801,25 +5895,16 @@
        "league": "F1",
        "opponent": "Lorient",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "F1",
-       "opponent": "Toulouse",
-       "result": "D"
       }
      ],
-     "ga": 11,
+     "ga": 12,
      "gd": 2,
-     "gf": 13,
+     "gf": 14,
      "lost": 2,
-     "played": 10,
-     "points": 16,
-     "position": 7,
-     "provisional": 0,
+     "played": 11,
+     "points": 17,
+     "position": 8,
+     "provisional": 1,
      "rating": 0.15241116239687247,
      "team": "Monaco",
      "won": 4
@@ -5885,78 +5970,11 @@
      "lost": 4,
      "played": 10,
      "points": 16,
-     "position": 8,
+     "position": 9,
      "provisional": 0,
      "rating": 0.14006592927646722,
      "team": "Rennes",
      "won": 5
-    },
-    {
-     "club": {
-      "bg": "#E30613",
-      "code": "BRE",
-      "fg": "#FFFFFF",
-      "name": "Brest"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-08",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "F1",
-       "opponent": "Lyon",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-02",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "F1",
-       "opponent": "Lorient",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-23",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "F1",
-       "opponent": "Nice",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "F1",
-       "opponent": "Lille",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 5,
-       "home": true,
-       "league": "F1",
-       "opponent": "Angers",
-       "result": "W"
-      }
-     ],
-     "ga": 12,
-     "gd": 6,
-     "gf": 18,
-     "lost": 3,
-     "played": 10,
-     "points": 15,
-     "position": 9,
-     "provisional": 0,
-     "rating": 0.022412263043002145,
-     "team": "Brest",
-     "won": 4
     },
     {
      "club": {
@@ -6032,8 +6050,18 @@
       "fg": "#E2001A",
       "name": "Lens"
      },
-     "drawn": 1,
+     "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "F1",
+       "opponent": "Toulouse",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-08",
        "ga": 2,
@@ -6069,25 +6097,16 @@
        "league": "F1",
        "opponent": "Troyes",
        "result": "W"
-      },
-      {
-       "date": "2026-10-09",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "F1",
-       "opponent": "Lyon",
-       "result": "W"
       }
      ],
-     "ga": 15,
+     "ga": 16,
      "gd": 2,
-     "gf": 17,
+     "gf": 18,
      "lost": 5,
-     "played": 10,
-     "points": 13,
+     "played": 11,
+     "points": 14,
      "position": 11,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.35085743089316335,
      "team": "Lens",
      "won": 4
@@ -6099,8 +6118,18 @@
       "fg": "#FFFFFF",
       "name": "Toulouse"
      },
-     "drawn": 4,
+     "drawn": 5,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "F1",
+       "opponent": "Lens",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-06",
        "ga": 1,
@@ -6136,25 +6165,16 @@
        "league": "F1",
        "opponent": "Le Mans",
        "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "F1",
-       "opponent": "Monaco",
-       "result": "D"
       }
      ],
-     "ga": 14,
+     "ga": 15,
      "gd": 1,
-     "gf": 15,
+     "gf": 16,
      "lost": 3,
-     "played": 10,
-     "points": 13,
+     "played": 11,
+     "points": 14,
      "position": 12,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.0867551489909566,
      "team": "Toulouse",
      "won": 3
@@ -6229,80 +6249,23 @@
     },
     {
      "club": {
-      "bg": "#009FE3",
-      "code": "STR",
-      "fg": "#000000",
-      "name": "Strasbourg"
-     },
-     "drawn": 1,
-     "form": [
-      {
-       "date": "2026-11-06",
-       "ga": 3,
-       "gf": 1,
-       "home": false,
-       "league": "F1",
-       "opponent": "Toulouse",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 1,
-       "gf": 5,
-       "home": true,
-       "league": "F1",
-       "opponent": "Auxerre",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 3,
-       "gf": 0,
-       "home": false,
-       "league": "F1",
-       "opponent": "Rennes",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 3,
-       "gf": 1,
-       "home": true,
-       "league": "F1",
-       "opponent": "Paris SG",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "F1",
-       "opponent": "Nice",
-       "result": "L"
-      }
-     ],
-     "ga": 22,
-     "gd": -4,
-     "gf": 18,
-     "lost": 6,
-     "played": 10,
-     "points": 10,
-     "position": 14,
-     "provisional": 0,
-     "rating": -0.009987884431789773,
-     "team": "Strasbourg",
-     "won": 3
-    },
-    {
-     "club": {
       "bg": "#FFFFFF",
       "code": "AJA",
       "fg": "#005BAC",
       "name": "Auxerre"
      },
-     "drawn": 1,
+     "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "F1",
+       "opponent": "Monaco",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-07",
        "ga": 1,
@@ -6338,27 +6301,86 @@
        "league": "F1",
        "opponent": "Le Havre",
        "result": "W"
+      }
+     ],
+     "ga": 25,
+     "gd": -11,
+     "gf": 14,
+     "lost": 6,
+     "played": 11,
+     "points": 11,
+     "position": 14,
+     "provisional": 1,
+     "rating": -0.30539767955216934,
+     "team": "Auxerre",
+     "won": 3
+    },
+    {
+     "club": {
+      "bg": "#009FE3",
+      "code": "STR",
+      "fg": "#000000",
+      "name": "Strasbourg"
+     },
+     "drawn": 1,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "F1",
+       "opponent": "Brest",
+       "provisional": true,
+       "result": "L"
       },
       {
-       "date": "2026-10-11",
-       "ga": 4,
+       "date": "2026-11-06",
+       "ga": 3,
        "gf": 1,
+       "home": false,
+       "league": "F1",
+       "opponent": "Toulouse",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 1,
+       "gf": 5,
+       "home": true,
+       "league": "F1",
+       "opponent": "Auxerre",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 3,
+       "gf": 0,
        "home": false,
        "league": "F1",
        "opponent": "Rennes",
        "result": "L"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 3,
+       "gf": 1,
+       "home": true,
+       "league": "F1",
+       "opponent": "Paris SG",
+       "result": "L"
       }
      ],
-     "ga": 24,
-     "gd": -11,
-     "gf": 13,
-     "lost": 6,
-     "played": 10,
+     "ga": 23,
+     "gd": -5,
+     "gf": 18,
+     "lost": 7,
+     "played": 11,
      "points": 10,
      "position": 15,
-     "provisional": 0,
-     "rating": -0.30539767955216934,
-     "team": "Auxerre",
+     "provisional": 1,
+     "rating": -0.009987884431789773,
+     "team": "Strasbourg",
      "won": 3
     },
     {
@@ -8230,9 +8252,77 @@
    "label": "Segunda Divisi\u00f3n",
    "model_through": "2026-11-16",
    "name": "Segunda Divisi\u00f3n",
-   "provisional": 3,
+   "provisional": 5,
    "results_through": "2026-11-21",
    "rows": [
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "CAS",
+      "fg": "#FFFFFF",
+      "name": "Castellon"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Eldense",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-14",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Valladolid",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Burgos",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 0,
+       "gf": 4,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Sp Gijon",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 0,
+       "gf": 3,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Las Palmas",
+       "result": "W"
+      }
+     ],
+     "ga": 5,
+     "gd": 21,
+     "gf": 26,
+     "lost": 1,
+     "played": 14,
+     "points": 33,
+     "position": 1,
+     "provisional": 1,
+     "rating": 0.4322660921398771,
+     "team": "Castellon",
+     "won": 10
+    },
     {
      "club": {
       "bg": "#EE1119",
@@ -8294,78 +8384,11 @@
      "lost": 2,
      "played": 14,
      "points": 32,
-     "position": 1,
+     "position": 2,
      "provisional": 0,
      "rating": 0.2885820173825975,
      "team": "Almeria",
      "won": 10
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "CAS",
-      "fg": "#FFFFFF",
-      "name": "Castellon"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-14",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Valladolid",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Burgos",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 0,
-       "gf": 4,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Sp Gijon",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 3,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Las Palmas",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Andorra",
-       "result": "L"
-      }
-     ],
-     "ga": 5,
-     "gd": 19,
-     "gf": 24,
-     "lost": 1,
-     "played": 13,
-     "points": 30,
-     "position": 2,
-     "provisional": 0,
-     "rating": 0.4322660921398771,
-     "team": "Castellon",
-     "won": 9
     },
     {
      "club": {
@@ -8504,6 +8527,74 @@
     },
     {
      "club": {
+      "bg": "#E20613",
+      "code": "MLL",
+      "fg": "#000000",
+      "name": "Mallorca"
+     },
+     "drawn": 6,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Tenerife",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-11-14",
+       "ga": 3,
+       "gf": 3,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Cordoba",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-02",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Cadiz",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Leganes",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Eibar",
+       "result": "D"
+      }
+     ],
+     "ga": 10,
+     "gd": 8,
+     "gf": 18,
+     "lost": 2,
+     "played": 14,
+     "points": 24,
+     "position": 5,
+     "provisional": 1,
+     "rating": 0.30435378092300214,
+     "team": "Mallorca",
+     "won": 6
+    },
+    {
+     "club": {
       "bg": "#003C7E",
       "code": "EIB",
       "fg": "#FFFFFF",
@@ -8563,7 +8654,7 @@
      "lost": 3,
      "played": 13,
      "points": 24,
-     "position": 5,
+     "position": 6,
      "provisional": 0,
      "rating": 0.0882719345089269,
      "team": "Eibar",
@@ -8630,78 +8721,11 @@
      "lost": 4,
      "played": 14,
      "points": 24,
-     "position": 6,
+     "position": 7,
      "provisional": 0,
      "rating": 0.003917786921730393,
      "team": "Burgos",
      "won": 7
-    },
-    {
-     "club": {
-      "bg": "#E20613",
-      "code": "MLL",
-      "fg": "#000000",
-      "name": "Mallorca"
-     },
-     "drawn": 5,
-     "form": [
-      {
-       "date": "2026-11-14",
-       "ga": 3,
-       "gf": 3,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Cordoba",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-02",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Cadiz",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Leganes",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Eibar",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Las Palmas",
-       "result": "W"
-      }
-     ],
-     "ga": 10,
-     "gd": 8,
-     "gf": 18,
-     "lost": 2,
-     "played": 13,
-     "points": 23,
-     "position": 7,
-     "provisional": 0,
-     "rating": 0.30435378092300214,
-     "team": "Mallorca",
-     "won": 6
     },
     {
      "club": {
@@ -8974,6 +8998,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "TEN",
+      "fg": "#FFFFFF",
+      "name": "Tenerife"
+     },
+     "drawn": 7,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Mallorca",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-11-15",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Ceuta",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-02",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "SP2",
+       "opponent": "Andorra",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Sabadell",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-19",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Celta B",
+       "result": "D"
+      }
+     ],
+     "ga": 17,
+     "gd": 0,
+     "gf": 17,
+     "lost": 3,
+     "played": 14,
+     "points": 19,
+     "position": 12,
+     "provisional": 1,
+     "rating": -0.07843793949636502,
+     "team": "Tenerife",
+     "won": 4
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "SAB",
       "fg": "#FFFFFF",
       "name": "Sabadell"
@@ -9033,7 +9125,7 @@
      "lost": 4,
      "played": 15,
      "points": 19,
-     "position": 12,
+     "position": 13,
      "provisional": 1,
      "rating": 0.006626560316357999,
      "team": "Sabadell",
@@ -9100,78 +9192,11 @@
      "lost": 6,
      "played": 14,
      "points": 18,
-     "position": 13,
+     "position": 14,
      "provisional": 0,
      "rating": 0.010810233955001802,
      "team": "Valladolid",
      "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "TEN",
-      "fg": "#FFFFFF",
-      "name": "Tenerife"
-     },
-     "drawn": 6,
-     "form": [
-      {
-       "date": "2026-11-15",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Ceuta",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-02",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Andorra",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Sabadell",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-19",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Celta B",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "SP2",
-       "opponent": "Girona",
-       "result": "D"
-      }
-     ],
-     "ga": 17,
-     "gd": 0,
-     "gf": 17,
-     "lost": 3,
-     "played": 13,
-     "points": 18,
-     "position": 14,
-     "provisional": 0,
-     "rating": -0.07843793949636502,
-     "team": "Tenerife",
-     "won": 4
     },
     {
      "club": {
@@ -9251,6 +9276,16 @@
      "drawn": 2,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "SP2",
+       "opponent": "Castellon",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-15",
        "ga": 0,
        "gf": 2,
@@ -9285,25 +9320,16 @@
        "league": "SP2",
        "opponent": "Albacete",
        "result": "L"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 2,
-       "gf": 3,
-       "home": false,
-       "league": "SP2",
-       "opponent": "Valladolid",
-       "result": "W"
       }
      ],
-     "ga": 19,
-     "gd": -4,
+     "ga": 21,
+     "gd": -6,
      "gf": 15,
-     "lost": 7,
-     "played": 14,
+     "lost": 8,
+     "played": 15,
      "points": 17,
      "position": 16,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.10566223679480857,
      "team": "Eldense",
      "won": 5
@@ -9731,7 +9757,7 @@
    "label": "Serie B",
    "model_through": "2026-11-08",
    "name": "Serie B",
-   "provisional": 7,
+   "provisional": 8,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -9940,6 +9966,74 @@
     },
     {
      "club": {
+      "bg": "#0C2A5B",
+      "code": "PIS",
+      "fg": "#FFFFFF",
+      "name": "Pisa"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "I2",
+       "opponent": "Empoli",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "I2",
+       "opponent": "Sudtirol",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "I2",
+       "opponent": "Avellino",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-28",
+       "ga": 3,
+       "gf": 3,
+       "home": true,
+       "league": "I2",
+       "opponent": "Palermo",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "I2",
+       "opponent": "Verona",
+       "result": "D"
+      }
+     ],
+     "ga": 17,
+     "gd": 4,
+     "gf": 21,
+     "lost": 3,
+     "played": 12,
+     "points": 19,
+     "position": 4,
+     "provisional": 1,
+     "rating": 0.2259206150130586,
+     "team": "Pisa",
+     "won": 5
+    },
+    {
+     "club": {
       "bg": "#5B6170",
       "code": "MAN",
       "fg": "#FFFFFF",
@@ -9999,7 +10093,7 @@
      "lost": 2,
      "played": 11,
      "points": 19,
-     "position": 4,
+     "position": 5,
      "provisional": 0,
      "rating": 0.0798177631515633,
      "team": "Mantova",
@@ -10067,7 +10161,7 @@
      "lost": 2,
      "played": 12,
      "points": 18,
-     "position": 5,
+     "position": 6,
      "provisional": 1,
      "rating": -0.11909285617201171,
      "team": "Sudtirol",
@@ -10135,7 +10229,7 @@
      "lost": 2,
      "played": 12,
      "points": 18,
-     "position": 6,
+     "position": 7,
      "provisional": 1,
      "rating": -0.13191521308318843,
      "team": "Cesena",
@@ -10202,7 +10296,7 @@
      "lost": 3,
      "played": 11,
      "points": 16,
-     "position": 7,
+     "position": 8,
      "provisional": 0,
      "rating": -0.07718180855197998,
      "team": "Avellino",
@@ -10270,77 +10364,10 @@
      "lost": 4,
      "played": 12,
      "points": 16,
-     "position": 8,
+     "position": 9,
      "provisional": 1,
      "rating": 0.2624753202288941,
      "team": "Verona",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#0C2A5B",
-      "code": "PIS",
-      "fg": "#FFFFFF",
-      "name": "Pisa"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "I2",
-       "opponent": "Sudtirol",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "I2",
-       "opponent": "Avellino",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-28",
-       "ga": 3,
-       "gf": 3,
-       "home": true,
-       "league": "I2",
-       "opponent": "Palermo",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "I2",
-       "opponent": "Verona",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "I2",
-       "opponent": "Cremonese",
-       "result": "W"
-      }
-     ],
-     "ga": 17,
-     "gd": 3,
-     "gf": 20,
-     "lost": 3,
-     "played": 11,
-     "points": 16,
-     "position": 9,
-     "provisional": 0,
-     "rating": 0.2259206150130586,
-     "team": "Pisa",
      "won": 4
     },
     {
@@ -10963,6 +10990,16 @@
      "drawn": 3,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "I2",
+       "opponent": "Pisa",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 2,
        "gf": 2,
@@ -10997,25 +11034,16 @@
        "league": "I2",
        "opponent": "Vicenza",
        "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "I2",
-       "opponent": "Ascoli",
-       "result": "D"
       }
      ],
-     "ga": 19,
-     "gd": -7,
+     "ga": 20,
+     "gd": -8,
      "gf": 12,
-     "lost": 6,
-     "played": 11,
+     "lost": 7,
+     "played": 12,
      "points": 9,
      "position": 19,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.16589896033581786,
      "team": "Empoli",
      "won": 2
@@ -11105,7 +11133,7 @@
    "label": "2. Bundesliga",
    "model_through": "2026-11-08",
    "name": "2. Bundesliga",
-   "provisional": 5,
+   "provisional": 6,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -11584,6 +11612,74 @@
     },
     {
      "club": {
+      "bg": "#624839",
+      "code": "STP",
+      "fg": "#FFFFFF",
+      "name": "St. Pauli"
+     },
+     "drawn": 6,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "D2",
+       "opponent": "Bochum",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 4,
+       "gf": 1,
+       "home": false,
+       "league": "D2",
+       "opponent": "Magdeburg",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 3,
+       "gf": 1,
+       "home": true,
+       "league": "D2",
+       "opponent": "Nurnberg",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-23",
+       "ga": 0,
+       "gf": 0,
+       "home": false,
+       "league": "D2",
+       "opponent": "Darmstadt",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "D2",
+       "opponent": "Hannover",
+       "result": "D"
+      }
+     ],
+     "ga": 16,
+     "gd": -1,
+     "gf": 15,
+     "lost": 3,
+     "played": 12,
+     "points": 15,
+     "position": 8,
+     "provisional": 1,
+     "rating": 0.1510535301645639,
+     "team": "St Pauli",
+     "won": 3
+    },
+    {
+     "club": {
       "bg": "#00A651",
       "code": "H96",
       "fg": "#000000",
@@ -11644,7 +11740,7 @@
      "lost": 5,
      "played": 12,
      "points": 15,
-     "position": 8,
+     "position": 9,
      "provisional": 1,
      "rating": 0.02821315440056149,
      "team": "Hannover",
@@ -11712,7 +11808,7 @@
      "lost": 6,
      "played": 12,
      "points": 14,
-     "position": 9,
+     "position": 10,
      "provisional": 1,
      "rating": -0.23011371179967188,
      "team": "Braunschweig",
@@ -11727,6 +11823,16 @@
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "D2",
+       "opponent": "St Pauli",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-08",
        "ga": 2,
@@ -11762,95 +11868,19 @@
        "league": "D2",
        "opponent": "Kaiserslautern",
        "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "D2",
-       "opponent": "Bielefeld",
-       "result": "L"
       }
      ],
-     "ga": 13,
-     "gd": -2,
+     "ga": 15,
+     "gd": -4,
      "gf": 11,
-     "lost": 5,
-     "played": 11,
+     "lost": 6,
+     "played": 12,
      "points": 14,
-     "position": 10,
-     "provisional": 0,
+     "position": 11,
+     "provisional": 1,
      "rating": 0.06480233927928691,
      "team": "Bochum",
      "won": 4
-    },
-    {
-     "club": {
-      "bg": "#624839",
-      "code": "STP",
-      "fg": "#FFFFFF",
-      "name": "St. Pauli"
-     },
-     "drawn": 6,
-     "form": [
-      {
-       "date": "2026-11-08",
-       "ga": 4,
-       "gf": 1,
-       "home": false,
-       "league": "D2",
-       "opponent": "Magdeburg",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 3,
-       "gf": 1,
-       "home": true,
-       "league": "D2",
-       "opponent": "Nurnberg",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-23",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "D2",
-       "opponent": "Darmstadt",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "D2",
-       "opponent": "Hannover",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "D2",
-       "opponent": "Karlsruhe",
-       "result": "W"
-      }
-     ],
-     "ga": 16,
-     "gd": -3,
-     "gf": 13,
-     "lost": 3,
-     "played": 11,
-     "points": 12,
-     "position": 11,
-     "provisional": 0,
-     "rating": 0.1510535301645639,
-     "team": "St Pauli",
-     "won": 2
     },
     {
      "club": {
@@ -12342,7 +12372,7 @@
    "label": "Ligue 2",
    "model_through": "2026-11-07",
    "name": "Ligue 2",
-   "provisional": 6,
+   "provisional": 7,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -12354,6 +12384,16 @@
      },
      "drawn": 1,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "F2",
+       "opponent": "Reims",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-07",
        "ga": 0,
@@ -12389,28 +12429,19 @@
        "league": "F2",
        "opponent": "Red Star",
        "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "F2",
-       "opponent": "Rodez",
-       "result": "W"
       }
      ],
      "ga": 11,
-     "gd": 14,
-     "gf": 25,
+     "gd": 15,
+     "gf": 26,
      "lost": 2,
-     "played": 12,
-     "points": 28,
+     "played": 13,
+     "points": 31,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.49791430047041496,
      "team": "St Etienne",
-     "won": 9
+     "won": 10
     },
     {
      "club": {
@@ -12558,6 +12589,16 @@
      "drawn": 6,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "F2",
+       "opponent": "St Etienne",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-06",
        "ga": 3,
        "gf": 2,
@@ -12592,25 +12633,16 @@
        "league": "F2",
        "opponent": "Dijon",
        "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "F2",
-       "opponent": "Nantes",
-       "result": "D"
       }
      ],
-     "ga": 15,
-     "gd": 9,
+     "ga": 16,
+     "gd": 8,
      "gf": 24,
-     "lost": 1,
-     "played": 12,
+     "lost": 2,
+     "played": 13,
      "points": 21,
      "position": 4,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.3413730033846887,
      "team": "Reims",
      "won": 5
@@ -16879,7 +16911,7 @@
    "label": "National League",
    "model_through": "2026-11-14",
    "name": "National League",
-   "provisional": 11,
+   "provisional": 12,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -17089,6 +17121,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "YEO",
+      "fg": "#FFFFFF",
+      "name": "Yeovil"
+     },
+     "drawn": 5,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 3,
+       "home": true,
+       "league": "EC",
+       "opponent": "Forest Green",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-14",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "EC",
+       "opponent": "Boreham Wood",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "EC",
+       "opponent": "Halifax",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "EC",
+       "opponent": "Hornchurch",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "EC",
+       "opponent": "Altrincham",
+       "result": "L"
+      }
+     ],
+     "ga": 24,
+     "gd": 16,
+     "gf": 40,
+     "lost": 4,
+     "played": 18,
+     "points": 32,
+     "position": 4,
+     "provisional": 1,
+     "rating": -0.07243338285023615,
+     "team": "Yeovil",
+     "won": 9
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "CAR",
       "fg": "#FFFFFF",
       "name": "Carlisle"
@@ -17148,7 +17248,7 @@
      "lost": 4,
      "played": 18,
      "points": 32,
-     "position": 4,
+     "position": 5,
      "provisional": 1,
      "rating": 0.5722146162247315,
      "team": "Carlisle",
@@ -17216,7 +17316,7 @@
      "lost": 4,
      "played": 18,
      "points": 32,
-     "position": 5,
+     "position": 6,
      "provisional": 1,
      "rating": 0.5998956592622648,
      "team": "Southend",
@@ -17284,78 +17384,11 @@
      "lost": 4,
      "played": 18,
      "points": 32,
-     "position": 6,
+     "position": 7,
      "provisional": 1,
      "rating": -0.04214817917714542,
      "team": "Worthing",
      "won": 9
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "YEO",
-      "fg": "#FFFFFF",
-      "name": "Yeovil"
-     },
-     "drawn": 5,
-     "form": [
-      {
-       "date": "2026-11-14",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "EC",
-       "opponent": "Boreham Wood",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "EC",
-       "opponent": "Halifax",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "EC",
-       "opponent": "Hornchurch",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "EC",
-       "opponent": "Altrincham",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 6,
-       "home": false,
-       "league": "EC",
-       "opponent": "Wealdstone",
-       "result": "W"
-      }
-     ],
-     "ga": 22,
-     "gd": 15,
-     "gf": 37,
-     "lost": 4,
-     "played": 17,
-     "points": 29,
-     "position": 7,
-     "provisional": 0,
-     "rating": -0.07243338285023615,
-     "team": "Yeovil",
-     "won": 8
     },
     {
      "club": {
@@ -18047,6 +18080,16 @@
      "drawn": 4,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 2,
+       "home": false,
+       "league": "EC",
+       "opponent": "Yeovil",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-10-31",
        "ga": 2,
        "gf": 2,
@@ -18081,25 +18124,16 @@
        "league": "EC",
        "opponent": "Wealdstone",
        "result": "D"
-      },
-      {
-       "date": "2026-09-26",
-       "ga": 3,
-       "gf": 3,
-       "home": false,
-       "league": "EC",
-       "opponent": "Sutton",
-       "result": "D"
       }
      ],
-     "ga": 24,
-     "gd": -1,
-     "gf": 23,
-     "lost": 5,
-     "played": 14,
+     "ga": 27,
+     "gd": -2,
+     "gf": 25,
+     "lost": 6,
+     "played": 15,
      "points": 19,
      "position": 18,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.3058707721327223,
      "team": "Forest Green",
      "won": 5
@@ -18528,7 +18562,7 @@
    "label": "Premiership",
    "model_through": "2026-11-08",
    "name": "Premiership",
-   "provisional": 4,
+   "provisional": 6,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -18609,6 +18643,16 @@
      "drawn": 3,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "SC0",
+       "opponent": "Motherwell",
+       "provisional": true,
+       "result": "W"
+      },
+      {
        "date": "2026-11-07",
        "ga": 0,
        "gf": 2,
@@ -18643,28 +18687,19 @@
        "league": "SC0",
        "opponent": "Dundee",
        "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "SC0",
-       "opponent": "Kilmarnock",
-       "result": "W"
       }
      ],
-     "ga": 9,
-     "gd": 12,
-     "gf": 21,
+     "ga": 10,
+     "gd": 13,
+     "gf": 23,
      "lost": 1,
-     "played": 12,
-     "points": 27,
+     "played": 13,
+     "points": 30,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.7904190449871517,
      "team": "Rangers",
-     "won": 8
+     "won": 9
     },
     {
      "club": {
@@ -18744,6 +18779,16 @@
      "drawn": 2,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 8,
+       "home": false,
+       "league": "SC0",
+       "opponent": "Dundee",
+       "provisional": true,
+       "result": "W"
+      },
+      {
        "date": "2026-11-08",
        "ga": 5,
        "gf": 2,
@@ -18778,28 +18823,19 @@
        "league": "SC0",
        "opponent": "Celtic",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 5,
-       "home": true,
-       "league": "SC0",
-       "opponent": "St Mirren",
-       "result": "W"
       }
      ],
      "ga": 22,
-     "gd": 4,
-     "gf": 26,
+     "gd": 12,
+     "gf": 34,
      "lost": 4,
-     "played": 12,
-     "points": 20,
+     "played": 13,
+     "points": 23,
      "position": 4,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.41991364037409284,
      "team": "Hearts",
-     "won": 6
+     "won": 7
     },
     {
      "club": {
@@ -18872,73 +18908,6 @@
     {
      "club": {
       "bg": "#5B6170",
-      "code": "DUN",
-      "fg": "#FFFFFF",
-      "name": "Dundee"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "SC0",
-       "opponent": "St Johnstone",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-28",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "SC0",
-       "opponent": "Kilmarnock",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "SC0",
-       "opponent": "St Mirren",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "SC0",
-       "opponent": "Rangers",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "SC0",
-       "opponent": "Falkirk",
-       "result": "W"
-      }
-     ],
-     "ga": 15,
-     "gd": 3,
-     "gf": 18,
-     "lost": 5,
-     "played": 12,
-     "points": 17,
-     "position": 6,
-     "provisional": 0,
-     "rating": -0.290826387841465,
-     "team": "Dundee",
-     "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
       "code": "STJ",
       "fg": "#FFFFFF",
       "name": "St Johnstone"
@@ -18998,11 +18967,79 @@
      "lost": 5,
      "played": 14,
      "points": 17,
-     "position": 7,
+     "position": 6,
      "provisional": 1,
      "rating": -0.12002351495419661,
      "team": "St Johnstone",
      "won": 4
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "DUN",
+      "fg": "#FFFFFF",
+      "name": "Dundee"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 8,
+       "gf": 0,
+       "home": true,
+       "league": "SC0",
+       "opponent": "Hearts",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "SC0",
+       "opponent": "St Johnstone",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-28",
+       "ga": 1,
+       "gf": 3,
+       "home": true,
+       "league": "SC0",
+       "opponent": "Kilmarnock",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "SC0",
+       "opponent": "St Mirren",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "SC0",
+       "opponent": "Rangers",
+       "result": "D"
+      }
+     ],
+     "ga": 23,
+     "gd": -5,
+     "gf": 18,
+     "lost": 6,
+     "played": 13,
+     "points": 17,
+     "position": 7,
+     "provisional": 1,
+     "rating": -0.290826387841465,
+     "team": "Dundee",
+     "won": 5
     },
     {
      "club": {
@@ -19150,6 +19187,16 @@
      "drawn": 4,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "SC0",
+       "opponent": "Rangers",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 1,
        "gf": 1,
@@ -19184,25 +19231,16 @@
        "league": "SC0",
        "opponent": "Hearts",
        "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 3,
-       "gf": 2,
-       "home": false,
-       "league": "SC0",
-       "opponent": "Kilmarnock",
-       "result": "L"
       }
      ],
-     "ga": 21,
-     "gd": -6,
-     "gf": 15,
-     "lost": 6,
-     "played": 13,
+     "ga": 23,
+     "gd": -7,
+     "gf": 16,
+     "lost": 7,
+     "played": 14,
      "points": 13,
      "position": 10,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.006001584001237736,
      "team": "Motherwell",
      "won": 3
@@ -21438,7 +21476,7 @@
    "label": "Eredivisie",
    "model_through": "2026-11-08",
    "name": "Eredivisie",
-   "provisional": 1,
+   "provisional": 5,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -21519,6 +21557,16 @@
      "drawn": 4,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 2,
+       "home": true,
+       "league": "N1",
+       "opponent": "Excelsior",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-08",
        "ga": 5,
        "gf": 3,
@@ -21553,25 +21601,16 @@
        "league": "N1",
        "opponent": "Telstar",
        "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "N1",
-       "opponent": "AZ Alkmaar",
-       "result": "W"
       }
      ],
-     "ga": 17,
-     "gd": 19,
-     "gf": 36,
-     "lost": 1,
-     "played": 12,
+     "ga": 20,
+     "gd": 18,
+     "gf": 38,
+     "lost": 2,
+     "played": 13,
      "points": 25,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.8336061292850556,
      "team": "Feyenoord",
      "won": 7
@@ -21713,6 +21752,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "HEE",
+      "fg": "#FFFFFF",
+      "name": "Heerenveen"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 3,
+       "home": false,
+       "league": "N1",
+       "opponent": "Groningen",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 3,
+       "gf": 5,
+       "home": true,
+       "league": "N1",
+       "opponent": "Feyenoord",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "N1",
+       "opponent": "Nijmegen",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 3,
+       "home": false,
+       "league": "N1",
+       "opponent": "Den Haag",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-16",
+       "ga": 0,
+       "gf": 4,
+       "home": true,
+       "league": "N1",
+       "opponent": "Excelsior",
+       "result": "W"
+      }
+     ],
+     "ga": 17,
+     "gd": 10,
+     "gf": 27,
+     "lost": 3,
+     "played": 13,
+     "points": 24,
+     "position": 5,
+     "provisional": 1,
+     "rating": 0.2087166336262114,
+     "team": "Heerenveen",
+     "won": 7
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "AZA",
       "fg": "#FFFFFF",
       "name": "AZ Alkmaar"
@@ -21771,78 +21878,11 @@
      "lost": 3,
      "played": 12,
      "points": 23,
-     "position": 5,
+     "position": 6,
      "provisional": 0,
      "rating": 0.45895422214931925,
      "team": "AZ Alkmaar",
      "won": 7
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "HEE",
-      "fg": "#FFFFFF",
-      "name": "Heerenveen"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-08",
-       "ga": 3,
-       "gf": 5,
-       "home": true,
-       "league": "N1",
-       "opponent": "Feyenoord",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "N1",
-       "opponent": "Nijmegen",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 3,
-       "home": false,
-       "league": "N1",
-       "opponent": "Den Haag",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-16",
-       "ga": 0,
-       "gf": 4,
-       "home": true,
-       "league": "N1",
-       "opponent": "Excelsior",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-09",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "N1",
-       "opponent": "PSV Eindhoven",
-       "result": "L"
-      }
-     ],
-     "ga": 16,
-     "gd": 8,
-     "gf": 24,
-     "lost": 3,
-     "played": 12,
-     "points": 21,
-     "position": 6,
-     "provisional": 0,
-     "rating": 0.2087166336262114,
-     "team": "Heerenveen",
-     "won": 6
     },
     {
      "club": {
@@ -21914,6 +21954,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "CAM",
+      "fg": "#FFFFFF",
+      "name": "Cambuur"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 3,
+       "home": false,
+       "league": "N1",
+       "opponent": "Utrecht",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 5,
+       "gf": 2,
+       "home": true,
+       "league": "N1",
+       "opponent": "PSV Eindhoven",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 0,
+       "gf": 4,
+       "home": true,
+       "league": "N1",
+       "opponent": "Go Ahead Eagles",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 1,
+       "gf": 6,
+       "home": false,
+       "league": "N1",
+       "opponent": "Willem II",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "N1",
+       "opponent": "AZ Alkmaar",
+       "result": "D"
+      }
+     ],
+     "ga": 29,
+     "gd": -1,
+     "gf": 28,
+     "lost": 5,
+     "played": 13,
+     "points": 18,
+     "position": 8,
+     "provisional": 1,
+     "rating": -0.20908394981896516,
+     "team": "Cambuur",
+     "won": 5
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "GOA",
       "fg": "#FFFFFF",
       "name": "Go Ahead Eagles"
@@ -21972,7 +22080,7 @@
      "lost": 3,
      "played": 12,
      "points": 17,
-     "position": 8,
+     "position": 9,
      "provisional": 0,
      "rating": -0.18145480478494935,
      "team": "Go Ahead Eagles",
@@ -21987,6 +22095,16 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 1,
+       "home": true,
+       "league": "N1",
+       "opponent": "Heerenveen",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-08",
        "ga": 4,
@@ -22022,25 +22140,16 @@
        "league": "N1",
        "opponent": "Ajax",
        "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 5,
-       "home": false,
-       "league": "N1",
-       "opponent": "Excelsior",
-       "result": "W"
       }
      ],
-     "ga": 28,
-     "gd": 1,
-     "gf": 29,
-     "lost": 5,
-     "played": 12,
+     "ga": 31,
+     "gd": -1,
+     "gf": 30,
+     "lost": 6,
+     "played": 13,
      "points": 15,
-     "position": 9,
-     "provisional": 0,
+     "position": 10,
+     "provisional": 1,
      "rating": 0.1145714492810821,
      "team": "Groningen",
      "won": 4
@@ -22048,68 +22157,69 @@
     {
      "club": {
       "bg": "#5B6170",
-      "code": "CAM",
+      "code": "ZWO",
       "fg": "#FFFFFF",
-      "name": "Cambuur"
+      "name": "Zwolle"
      },
      "drawn": 3,
      "form": [
       {
-       "date": "2026-11-08",
-       "ga": 5,
-       "gf": 2,
-       "home": true,
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 3,
+       "home": false,
        "league": "N1",
-       "opponent": "PSV Eindhoven",
-       "result": "L"
+       "opponent": "Telstar",
+       "provisional": true,
+       "result": "W"
       },
       {
-       "date": "2026-10-31",
+       "date": "2026-11-06",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "N1",
+       "opponent": "Willem II",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-01",
        "ga": 0,
-       "gf": 4,
+       "gf": 1,
        "home": true,
        "league": "N1",
-       "opponent": "Go Ahead Eagles",
+       "opponent": "Den Haag",
        "result": "W"
       },
       {
        "date": "2026-10-24",
        "ga": 1,
-       "gf": 6,
-       "home": false,
-       "league": "N1",
-       "opponent": "Willem II",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "N1",
-       "opponent": "AZ Alkmaar",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 0,
        "gf": 1,
        "home": false,
        "league": "N1",
-       "opponent": "Zwolle",
+       "opponent": "Utrecht",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 1,
+       "gf": 4,
+       "home": true,
+       "league": "N1",
+       "opponent": "Go Ahead Eagles",
        "result": "W"
       }
      ],
-     "ga": 27,
-     "gd": -2,
-     "gf": 25,
-     "lost": 5,
-     "played": 12,
+     "ga": 25,
+     "gd": -9,
+     "gf": 16,
+     "lost": 6,
+     "played": 13,
      "points": 15,
-     "position": 10,
-     "provisional": 0,
-     "rating": -0.20908394981896516,
-     "team": "Cambuur",
+     "position": 11,
+     "provisional": 1,
+     "rating": -0.5408939454627835,
+     "team": "Zwolle",
      "won": 4
     },
     {
@@ -22174,11 +22284,79 @@
      "lost": 5,
      "played": 13,
      "points": 14,
-     "position": 11,
+     "position": 12,
      "provisional": 1,
      "rating": 0.2496632125182996,
      "team": "Nijmegen",
      "won": 3
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "EXC",
+      "fg": "#FFFFFF",
+      "name": "Excelsior"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 3,
+       "home": false,
+       "league": "N1",
+       "opponent": "Feyenoord",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "N1",
+       "opponent": "Go Ahead Eagles",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 9,
+       "gf": 0,
+       "home": true,
+       "league": "N1",
+       "opponent": "Twente",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "N1",
+       "opponent": "For Sittard",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-16",
+       "ga": 4,
+       "gf": 0,
+       "home": false,
+       "league": "N1",
+       "opponent": "Heerenveen",
+       "result": "L"
+      }
+     ],
+     "ga": 31,
+     "gd": -12,
+     "gf": 19,
+     "lost": 7,
+     "played": 13,
+     "points": 14,
+     "position": 13,
+     "provisional": 1,
+     "rating": -0.3713344082516996,
+     "team": "Excelsior",
+     "won": 4
     },
     {
      "club": {
@@ -22241,77 +22419,10 @@
      "lost": 6,
      "played": 12,
      "points": 12,
-     "position": 12,
+     "position": 14,
      "provisional": 0,
      "rating": -0.3375966089846516,
      "team": "Sparta Rotterdam",
-     "won": 3
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "ZWO",
-      "fg": "#FFFFFF",
-      "name": "Zwolle"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-06",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "N1",
-       "opponent": "Willem II",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "N1",
-       "opponent": "Den Haag",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "N1",
-       "opponent": "Utrecht",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 1,
-       "gf": 4,
-       "home": true,
-       "league": "N1",
-       "opponent": "Go Ahead Eagles",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "N1",
-       "opponent": "Cambuur",
-       "result": "L"
-      }
-     ],
-     "ga": 24,
-     "gd": -11,
-     "gf": 13,
-     "lost": 6,
-     "played": 12,
-     "points": 12,
-     "position": 13,
-     "provisional": 0,
-     "rating": -0.5408939454627835,
-     "team": "Zwolle",
      "won": 3
     },
     {
@@ -22323,6 +22434,16 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 2,
+       "home": true,
+       "league": "N1",
+       "opponent": "Cambuur",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-08",
        "ga": 3,
@@ -22358,94 +22479,18 @@
        "league": "N1",
        "opponent": "Twente",
        "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 3,
-       "home": true,
-       "league": "N1",
-       "opponent": "Willem II",
-       "result": "W"
       }
      ],
-     "ga": 34,
-     "gd": -13,
-     "gf": 21,
-     "lost": 6,
-     "played": 12,
+     "ga": 37,
+     "gd": -14,
+     "gf": 23,
+     "lost": 7,
+     "played": 13,
      "points": 12,
-     "position": 14,
-     "provisional": 0,
+     "position": 15,
+     "provisional": 1,
      "rating": -0.08492319332116605,
      "team": "Utrecht",
-     "won": 3
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "EXC",
-      "fg": "#FFFFFF",
-      "name": "Excelsior"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "N1",
-       "opponent": "Go Ahead Eagles",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 9,
-       "gf": 0,
-       "home": true,
-       "league": "N1",
-       "opponent": "Twente",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "N1",
-       "opponent": "For Sittard",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-16",
-       "ga": 4,
-       "gf": 0,
-       "home": false,
-       "league": "N1",
-       "opponent": "Heerenveen",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 5,
-       "gf": 1,
-       "home": true,
-       "league": "N1",
-       "opponent": "Groningen",
-       "result": "L"
-      }
-     ],
-     "ga": 29,
-     "gd": -13,
-     "gf": 16,
-     "lost": 7,
-     "played": 12,
-     "points": 11,
-     "position": 15,
-     "provisional": 0,
-     "rating": -0.3713344082516996,
-     "team": "Excelsior",
      "won": 3
     },
     {
@@ -22457,6 +22502,16 @@
      },
      "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 1,
+       "home": true,
+       "league": "N1",
+       "opponent": "Zwolle",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-07",
        "ga": 2,
@@ -22492,25 +22547,16 @@
        "league": "N1",
        "opponent": "Feyenoord",
        "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "N1",
-       "opponent": "Den Haag",
-       "result": "D"
       }
      ],
-     "ga": 25,
-     "gd": -7,
-     "gf": 18,
-     "lost": 6,
-     "played": 12,
+     "ga": 28,
+     "gd": -9,
+     "gf": 19,
+     "lost": 7,
+     "played": 13,
      "points": 10,
      "position": 16,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.32008874957705036,
      "team": "Telstar",
      "won": 2
@@ -22666,9 +22712,77 @@
    "label": "Pro League",
    "model_through": "2026-11-08",
    "name": "Pro League",
-   "provisional": 2,
+   "provisional": 5,
    "results_through": "2026-11-21",
    "rows": [
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "CLU",
+      "fg": "#FFFFFF",
+      "name": "Club Brugge"
+     },
+     "drawn": 1,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 5,
+       "home": false,
+       "league": "B1",
+       "opponent": "Mechelen",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "B1",
+       "opponent": "Anderlecht",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-30",
+       "ga": 2,
+       "gf": 4,
+       "home": false,
+       "league": "B1",
+       "opponent": "Waregem",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 2,
+       "gf": 3,
+       "home": true,
+       "league": "B1",
+       "opponent": "St Truiden",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-10",
+       "ga": 1,
+       "gf": 4,
+       "home": false,
+       "league": "B1",
+       "opponent": "RAAL La Louviere",
+       "result": "W"
+      }
+     ],
+     "ga": 10,
+     "gd": 22,
+     "gf": 32,
+     "lost": 1,
+     "played": 12,
+     "points": 31,
+     "position": 1,
+     "provisional": 1,
+     "rating": 0.8807711153345346,
+     "team": "Club Brugge",
+     "won": 10
+    },
     {
      "club": {
       "bg": "#5B6170",
@@ -22730,77 +22844,10 @@
      "lost": 0,
      "played": 11,
      "points": 29,
-     "position": 1,
+     "position": 2,
      "provisional": 0,
      "rating": 0.8525294983196653,
      "team": "St. Gilloise",
-     "won": 9
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "CLU",
-      "fg": "#FFFFFF",
-      "name": "Club Brugge"
-     },
-     "drawn": 1,
-     "form": [
-      {
-       "date": "2026-11-08",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "B1",
-       "opponent": "Anderlecht",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-30",
-       "ga": 2,
-       "gf": 4,
-       "home": false,
-       "league": "B1",
-       "opponent": "Waregem",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 2,
-       "gf": 3,
-       "home": true,
-       "league": "B1",
-       "opponent": "St Truiden",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 1,
-       "gf": 4,
-       "home": false,
-       "league": "B1",
-       "opponent": "RAAL La Louviere",
-       "result": "W"
-      },
-      {
-       "date": "2026-09-20",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "B1",
-       "opponent": "Genk",
-       "result": "W"
-      }
-     ],
-     "ga": 9,
-     "gd": 18,
-     "gf": 27,
-     "lost": 1,
-     "played": 11,
-     "points": 28,
-     "position": 2,
-     "provisional": 0,
-     "rating": 0.8807711153345346,
-     "team": "Club Brugge",
      "won": 9
     },
     {
@@ -23008,6 +23055,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "GEN",
+      "fg": "#FFFFFF",
+      "name": "Genk"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "B1",
+       "opponent": "RAAL La Louviere",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "B1",
+       "opponent": "St. Gilloise",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "B1",
+       "opponent": "Mechelen",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "B1",
+       "opponent": "Standard",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-10",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "B1",
+       "opponent": "Kortrijk",
+       "result": "W"
+      }
+     ],
+     "ga": 15,
+     "gd": 6,
+     "gf": 21,
+     "lost": 4,
+     "played": 12,
+     "points": 18,
+     "position": 6,
+     "provisional": 1,
+     "rating": 0.2514724832402262,
+     "team": "Genk",
+     "won": 5
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "LOM",
       "fg": "#FFFFFF",
       "name": "Lommel SK"
@@ -23066,77 +23181,10 @@
      "lost": 3,
      "played": 11,
      "points": 16,
-     "position": 6,
+     "position": 7,
      "provisional": 0,
      "rating": -0.21278897231181282,
      "team": "Lommel SK",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "GEN",
-      "fg": "#FFFFFF",
-      "name": "Genk"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-08",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "B1",
-       "opponent": "St. Gilloise",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "B1",
-       "opponent": "Mechelen",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "B1",
-       "opponent": "Standard",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "B1",
-       "opponent": "Kortrijk",
-       "result": "W"
-      },
-      {
-       "date": "2026-09-20",
-       "ga": 3,
-       "gf": 0,
-       "home": false,
-       "league": "B1",
-       "opponent": "Club Brugge",
-       "result": "L"
-      }
-     ],
-     "ga": 15,
-     "gd": 3,
-     "gf": 18,
-     "lost": 4,
-     "played": 11,
-     "points": 15,
-     "position": 7,
-     "provisional": 0,
-     "rating": 0.2514724832402262,
-     "team": "Genk",
      "won": 4
     },
     {
@@ -23412,6 +23460,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "ANT",
+      "fg": "#FFFFFF",
+      "name": "Antwerp"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "B1",
+       "opponent": "Waregem",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "B1",
+       "opponent": "Lommel SK",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "B1",
+       "opponent": "Cercle Brugge",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "B1",
+       "opponent": "Charleroi",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-11",
+       "ga": 5,
+       "gf": 1,
+       "home": false,
+       "league": "B1",
+       "opponent": "Westerlo",
+       "result": "L"
+      }
+     ],
+     "ga": 26,
+     "gd": -6,
+     "gf": 20,
+     "lost": 6,
+     "played": 12,
+     "points": 12,
+     "position": 12,
+     "provisional": 1,
+     "rating": -0.12976249619071356,
+     "team": "Antwerp",
+     "won": 3
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "CER",
       "fg": "#FFFFFF",
       "name": "Cercle Brugge"
@@ -23471,144 +23587,10 @@
      "lost": 6,
      "played": 12,
      "points": 12,
-     "position": 12,
+     "position": 13,
      "provisional": 1,
      "rating": -0.1255583048629918,
      "team": "Cercle Brugge",
-     "won": 3
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "MEC",
-      "fg": "#FFFFFF",
-      "name": "Mechelen"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "B1",
-       "opponent": "Oud-Heverlee Leuven",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-04",
-       "ga": 1,
-       "gf": 3,
-       "home": false,
-       "league": "B1",
-       "opponent": "Kortrijk",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "B1",
-       "opponent": "Genk",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 3,
-       "gf": 4,
-       "home": true,
-       "league": "B1",
-       "opponent": "St Truiden",
-       "result": "W"
-      },
-      {
-       "date": "2026-09-19",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "B1",
-       "opponent": "Lommel SK",
-       "result": "D"
-      }
-     ],
-     "ga": 20,
-     "gd": -7,
-     "gf": 13,
-     "lost": 5,
-     "played": 11,
-     "points": 12,
-     "position": 13,
-     "provisional": 0,
-     "rating": -0.3537737694333625,
-     "team": "Mechelen",
-     "won": 3
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "ANT",
-      "fg": "#FFFFFF",
-      "name": "Antwerp"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "B1",
-       "opponent": "Lommel SK",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "B1",
-       "opponent": "Cercle Brugge",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "B1",
-       "opponent": "Charleroi",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 5,
-       "gf": 1,
-       "home": false,
-       "league": "B1",
-       "opponent": "Westerlo",
-       "result": "L"
-      },
-      {
-       "date": "2026-09-20",
-       "ga": 2,
-       "gf": 0,
-       "home": true,
-       "league": "B1",
-       "opponent": "St. Gilloise",
-       "result": "L"
-      }
-     ],
-     "ga": 24,
-     "gd": -6,
-     "gf": 18,
-     "lost": 6,
-     "played": 11,
-     "points": 11,
-     "position": 14,
-     "provisional": 0,
-     "rating": -0.12976249619071356,
-     "team": "Antwerp",
      "won": 3
     },
     {
@@ -23618,8 +23600,18 @@
       "fg": "#FFFFFF",
       "name": "Waregem"
      },
-     "drawn": 2,
+     "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "B1",
+       "opponent": "Antwerp",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-08",
        "ga": 4,
@@ -23655,27 +23647,86 @@
        "league": "B1",
        "opponent": "Gent",
        "result": "L"
+      }
+     ],
+     "ga": 22,
+     "gd": -7,
+     "gf": 15,
+     "lost": 6,
+     "played": 12,
+     "points": 12,
+     "position": 14,
+     "provisional": 1,
+     "rating": -0.1480503907039059,
+     "team": "Waregem",
+     "won": 3
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "MEC",
+      "fg": "#FFFFFF",
+      "name": "Mechelen"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 5,
+       "gf": 1,
+       "home": true,
+       "league": "B1",
+       "opponent": "Club Brugge",
+       "provisional": true,
+       "result": "L"
       },
       {
-       "date": "2026-09-19",
-       "ga": 3,
+       "date": "2026-11-07",
+       "ga": 2,
        "gf": 0,
        "home": false,
        "league": "B1",
-       "opponent": "Anderlecht",
+       "opponent": "Oud-Heverlee Leuven",
        "result": "L"
+      },
+      {
+       "date": "2026-11-04",
+       "ga": 1,
+       "gf": 3,
+       "home": false,
+       "league": "B1",
+       "opponent": "Kortrijk",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "B1",
+       "opponent": "Genk",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-11",
+       "ga": 3,
+       "gf": 4,
+       "home": true,
+       "league": "B1",
+       "opponent": "St Truiden",
+       "result": "W"
       }
      ],
-     "ga": 20,
-     "gd": -7,
-     "gf": 13,
+     "ga": 25,
+     "gd": -11,
+     "gf": 14,
      "lost": 6,
-     "played": 11,
-     "points": 11,
+     "played": 12,
+     "points": 12,
      "position": 15,
-     "provisional": 0,
-     "rating": -0.1480503907039059,
-     "team": "Waregem",
+     "provisional": 1,
+     "rating": -0.3537737694333625,
+     "team": "Mechelen",
      "won": 3
     },
     {
@@ -23755,6 +23806,16 @@
      "drawn": 1,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 0,
+       "home": false,
+       "league": "B1",
+       "opponent": "Genk",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 1,
        "gf": 0,
@@ -23789,25 +23850,16 @@
        "league": "B1",
        "opponent": "Club Brugge",
        "result": "L"
-      },
-      {
-       "date": "2026-09-19",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "B1",
-       "opponent": "Oud-Heverlee Leuven",
-       "result": "L"
       }
      ],
-     "ga": 24,
-     "gd": -11,
+     "ga": 27,
+     "gd": -14,
      "gf": 13,
-     "lost": 8,
-     "played": 11,
+     "lost": 9,
+     "played": 12,
      "points": 7,
      "position": 17,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.4129881421346111,
      "team": "RAAL La Louviere",
      "won": 2
@@ -26356,8 +26408,8 @@
    "label": "Super League (Greece)",
    "model_through": "2026-11-08",
    "name": "Super League",
-   "provisional": 0,
-   "results_through": "2026-11-08",
+   "provisional": 1,
+   "results_through": "2026-11-21",
    "rows": [
     {
      "club": {
@@ -26429,6 +26481,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "AEK",
+      "fg": "#FFFFFF",
+      "name": "AEK"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "G1",
+       "opponent": "Kalamata",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "G1",
+       "opponent": "Levadeiakos",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "G1",
+       "opponent": "Panathinaikos",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 0,
+       "gf": 5,
+       "home": true,
+       "league": "G1",
+       "opponent": "Panetolikos",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-10",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "G1",
+       "opponent": "OFI Crete",
+       "result": "W"
+      }
+     ],
+     "ga": 6,
+     "gd": 18,
+     "gf": 24,
+     "lost": 1,
+     "played": 10,
+     "points": 23,
+     "position": 2,
+     "provisional": 1,
+     "rating": 0.8278789995351744,
+     "team": "AEK",
+     "won": 7
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "OLY",
       "fg": "#FFFFFF",
       "name": "Olympiakos"
@@ -26487,78 +26607,11 @@
      "lost": 1,
      "played": 10,
      "points": 23,
-     "position": 2,
+     "position": 3,
      "provisional": 0,
      "rating": 0.7734288766301052,
      "team": "Olympiakos",
      "won": 7
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "AEK",
-      "fg": "#FFFFFF",
-      "name": "AEK"
-     },
-     "drawn": 2,
-     "form": [
-      {
-       "date": "2026-11-08",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "G1",
-       "opponent": "Levadeiakos",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "G1",
-       "opponent": "Panathinaikos",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 0,
-       "gf": 5,
-       "home": true,
-       "league": "G1",
-       "opponent": "Panetolikos",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "G1",
-       "opponent": "OFI Crete",
-       "result": "W"
-      },
-      {
-       "date": "2026-09-20",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "G1",
-       "opponent": "Volos NFC",
-       "result": "W"
-      }
-     ],
-     "ga": 6,
-     "gd": 17,
-     "gf": 23,
-     "lost": 1,
-     "played": 9,
-     "points": 20,
-     "position": 3,
-     "provisional": 0,
-     "rating": 0.8278789995351744,
-     "team": "AEK",
-     "won": 6
     },
     {
      "club": {
@@ -26838,6 +26891,16 @@
      "drawn": 3,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "G1",
+       "opponent": "AEK",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-08",
        "ga": 1,
        "gf": 1,
@@ -26872,25 +26935,16 @@
        "league": "G1",
        "opponent": "OFI Crete",
        "result": "W"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 1,
-       "gf": 3,
-       "home": false,
-       "league": "G1",
-       "opponent": "PAOK",
-       "result": "W"
       }
      ],
-     "ga": 19,
-     "gd": -4,
+     "ga": 20,
+     "gd": -5,
      "gf": 15,
-     "lost": 4,
-     "played": 10,
+     "lost": 5,
+     "played": 11,
      "points": 12,
      "position": 8,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.26244365254654967,
      "team": "Kalamata",
      "won": 3
@@ -27317,8 +27371,8 @@
    "label": "Liga Profesional",
    "model_through": "2026-11-08",
    "name": "Liga Profesional",
-   "provisional": 0,
-   "results_through": "2026-11-08",
+   "provisional": 2,
+   "results_through": "2026-11-21",
    "rows": [
     {
      "club": {
@@ -27464,6 +27518,16 @@
      "drawn": 9,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "ARG",
+       "opponent": "Independiente",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 2,
        "gf": 0,
@@ -27498,25 +27562,16 @@
        "league": "ARG",
        "opponent": "Banfield",
        "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "ARG",
-       "opponent": "Platense",
-       "result": "D"
       }
      ],
-     "ga": 27,
-     "gd": 10,
-     "gf": 37,
-     "lost": 6,
-     "played": 32,
+     "ga": 29,
+     "gd": 9,
+     "gf": 38,
+     "lost": 7,
+     "played": 33,
      "points": 60,
      "position": 3,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.2538899249322646,
      "team": "Argentinos Jrs",
      "won": 17
@@ -27859,6 +27914,142 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "BAR",
+      "fg": "#FFFFFF",
+      "name": "Barracas Central"
+     },
+     "drawn": 11,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "ARG",
+       "opponent": "Defensa y Justicia",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-06",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "ARG",
+       "opponent": "Racing Club",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "ARG",
+       "opponent": "Belgrano",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-26",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "ARG",
+       "opponent": "Estudiantes Rio Cuarto",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-19",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "ARG",
+       "opponent": "Sarmiento Junin",
+       "result": "D"
+      }
+     ],
+     "ga": 28,
+     "gd": 5,
+     "gf": 33,
+     "lost": 9,
+     "played": 33,
+     "points": 50,
+     "position": 9,
+     "provisional": 1,
+     "rating": 0.013046971463908763,
+     "team": "Barracas Central",
+     "won": 13
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "INE",
+      "fg": "#FFFFFF",
+      "name": "Independiente"
+     },
+     "drawn": 11,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "ARG",
+       "opponent": "Argentinos Jrs",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-06",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "ARG",
+       "opponent": "Dep. Riestra",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-02",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "ARG",
+       "opponent": "Defensa y Justicia",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "ARG",
+       "opponent": "Boca Juniors",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-18",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "ARG",
+       "opponent": "Racing Club",
+       "result": "D"
+      }
+     ],
+     "ga": 37,
+     "gd": 4,
+     "gf": 41,
+     "lost": 9,
+     "played": 33,
+     "points": 50,
+     "position": 10,
+     "provisional": 1,
+     "rating": 0.14027636994395054,
+     "team": "Independiente",
+     "won": 13
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "BEL",
       "fg": "#FFFFFF",
       "name": "Belgrano"
@@ -27917,7 +28108,7 @@
      "lost": 9,
      "played": 32,
      "points": 49,
-     "position": 9,
+     "position": 11,
      "provisional": 0,
      "rating": 0.09235089180326206,
      "team": "Belgrano",
@@ -27984,7 +28175,7 @@
      "lost": 10,
      "played": 31,
      "points": 47,
-     "position": 10,
+     "position": 12,
      "provisional": 0,
      "rating": 0.18362067202100996,
      "team": "Estudiantes L.P.",
@@ -28051,77 +28242,10 @@
      "lost": 8,
      "played": 31,
      "points": 47,
-     "position": 11,
+     "position": 13,
      "provisional": 0,
      "rating": 0.15411523026585305,
      "team": "Lanus",
-     "won": 12
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "BAR",
-      "fg": "#FFFFFF",
-      "name": "Barracas Central"
-     },
-     "drawn": 11,
-     "form": [
-      {
-       "date": "2026-11-06",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "ARG",
-       "opponent": "Racing Club",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "ARG",
-       "opponent": "Belgrano",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-26",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "ARG",
-       "opponent": "Estudiantes Rio Cuarto",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-19",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "ARG",
-       "opponent": "Sarmiento Junin",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "ARG",
-       "opponent": "Huracan",
-       "result": "W"
-      }
-     ],
-     "ga": 28,
-     "gd": 4,
-     "gf": 32,
-     "lost": 9,
-     "played": 32,
-     "points": 47,
-     "position": 12,
-     "provisional": 0,
-     "rating": 0.013046971463908763,
-     "team": "Barracas Central",
      "won": 12
     },
     {
@@ -28133,6 +28257,16 @@
      },
      "drawn": 11,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "ARG",
+       "opponent": "Barracas Central",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-07",
        "ga": 1,
@@ -28168,94 +28302,18 @@
        "league": "ARG",
        "opponent": "Instituto",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "ARG",
-       "opponent": "Union de Santa Fe",
-       "result": "W"
       }
      ],
-     "ga": 36,
-     "gd": 3,
+     "ga": 37,
+     "gd": 2,
      "gf": 39,
-     "lost": 9,
-     "played": 32,
-     "points": 47,
-     "position": 13,
-     "provisional": 0,
-     "rating": 0.013273972961932001,
-     "team": "Defensa y Justicia",
-     "won": 12
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "INE",
-      "fg": "#FFFFFF",
-      "name": "Independiente"
-     },
-     "drawn": 11,
-     "form": [
-      {
-       "date": "2026-11-06",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "ARG",
-       "opponent": "Dep. Riestra",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-02",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "ARG",
-       "opponent": "Defensa y Justicia",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "ARG",
-       "opponent": "Boca Juniors",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "ARG",
-       "opponent": "Racing Club",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 0,
-       "gf": 0,
-       "home": false,
-       "league": "ARG",
-       "opponent": "Talleres Cordoba",
-       "result": "D"
-      }
-     ],
-     "ga": 36,
-     "gd": 3,
-     "gf": 39,
-     "lost": 9,
-     "played": 32,
+     "lost": 10,
+     "played": 33,
      "points": 47,
      "position": 14,
-     "provisional": 0,
-     "rating": 0.14027636994395054,
-     "team": "Independiente",
+     "provisional": 1,
+     "rating": 0.013273972961932001,
+     "team": "Defensa y Justicia",
      "won": 12
     },
     {
@@ -29349,7 +29407,7 @@
    "label": "Bundesliga (Austria)",
    "model_through": "2026-11-08",
    "name": "Bundesliga",
-   "provisional": 2,
+   "provisional": 3,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -29361,6 +29419,16 @@
      },
      "drawn": 0,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 3,
+       "home": false,
+       "league": "AUT",
+       "opponent": "Grazer AK",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-06",
        "ga": 0,
@@ -29396,28 +29464,19 @@
        "league": "AUT",
        "opponent": "Hartberg",
        "result": "W"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "AUT",
-       "opponent": "LASK",
-       "result": "W"
       }
      ],
      "ga": 9,
-     "gd": 30,
-     "gf": 39,
+     "gd": 33,
+     "gf": 42,
      "lost": 1,
-     "played": 12,
-     "points": 33,
+     "played": 13,
+     "points": 36,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.8559320789184981,
      "team": "SK Rapid",
-     "won": 11
+     "won": 12
     },
     {
      "club": {
@@ -29969,6 +30028,16 @@
      "drawn": 4,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "AUT",
+       "opponent": "SK Rapid",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 2,
        "gf": 1,
@@ -30003,25 +30072,16 @@
        "league": "AUT",
        "opponent": "Sturm Graz",
        "result": "L"
-      },
-      {
-       "date": "2026-10-10",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "AUT",
-       "opponent": "Salzburg",
-       "result": "D"
       }
      ],
-     "ga": 29,
-     "gd": -20,
+     "ga": 32,
+     "gd": -23,
      "gf": 9,
-     "lost": 6,
-     "played": 12,
+     "lost": 7,
+     "played": 13,
      "points": 10,
      "position": 10,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.6693582876168204,
      "team": "Grazer AK",
      "won": 2
@@ -30179,8 +30239,8 @@
    "label": "S\u00e9rie A",
    "model_through": "2026-11-20",
    "name": "S\u00e9rie A",
-   "provisional": 0,
-   "results_through": "2026-11-20",
+   "provisional": 3,
+   "results_through": "2026-11-22",
    "rows": [
     {
      "club": {
@@ -30189,8 +30249,18 @@
       "fg": "#FFFFFF",
       "name": "Flamengo RJ"
      },
-     "drawn": 7,
+     "drawn": 8,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Palmeiras",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-18",
        "ga": 1,
@@ -30226,25 +30296,16 @@
        "league": "BRA",
        "opponent": "Atletico-MG",
        "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 0,
-       "gf": 3,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Bahia",
-       "result": "W"
       }
      ],
-     "ga": 30,
+     "ga": 31,
      "gd": 43,
-     "gf": 73,
+     "gf": 74,
      "lost": 4,
-     "played": 35,
-     "points": 79,
+     "played": 36,
+     "points": 80,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.9702148877789909,
      "team": "Flamengo RJ",
      "won": 24
@@ -30256,8 +30317,18 @@
       "fg": "#FFFFFF",
       "name": "Palmeiras"
      },
-     "drawn": 10,
+     "drawn": 11,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Flamengo RJ",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-18",
        "ga": 2,
@@ -30293,25 +30364,16 @@
        "league": "BRA",
        "opponent": "Bragantino",
        "result": "W"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Athletico-PR",
-       "result": "W"
       }
      ],
-     "ga": 25,
+     "ga": 26,
      "gd": 38,
-     "gf": 63,
+     "gf": 64,
      "lost": 4,
-     "played": 35,
-     "points": 73,
+     "played": 36,
+     "points": 74,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.7885804085954724,
      "team": "Palmeiras",
      "won": 21
@@ -30325,6 +30387,16 @@
      },
      "drawn": 6,
      "form": [
+      {
+       "date": "2026-11-22",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Chapecoense-SC",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-18",
        "ga": 1,
@@ -30360,28 +30432,19 @@
        "league": "BRA",
        "opponent": "Remo",
        "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 2,
-       "gf": 4,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Gremio",
-       "result": "W"
       }
      ],
-     "ga": 49,
-     "gd": 8,
-     "gf": 57,
+     "ga": 50,
+     "gd": 9,
+     "gf": 59,
      "lost": 10,
-     "played": 35,
-     "points": 63,
+     "played": 36,
+     "points": 66,
      "position": 3,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.3281688083466421,
      "team": "Cruzeiro",
-     "won": 19
+     "won": 20
     },
     {
      "club": {
@@ -30527,6 +30590,16 @@
      "drawn": 12,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Coritiba",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-19",
        "ga": 0,
        "gf": 0,
@@ -30561,25 +30634,16 @@
        "league": "BRA",
        "opponent": "Santos",
        "result": "D"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 3,
-       "gf": 0,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Flamengo RJ",
-       "result": "L"
       }
      ],
-     "ga": 45,
-     "gd": 5,
+     "ga": 46,
+     "gd": 4,
      "gf": 50,
-     "lost": 9,
-     "played": 35,
+     "lost": 10,
+     "played": 36,
      "points": 54,
      "position": 6,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.08740399110419794,
      "team": "Bahia",
      "won": 14
@@ -30855,6 +30919,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "CRT",
+      "fg": "#FFFFFF",
+      "name": "Coritiba"
+     },
+     "drawn": 9,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Bahia",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-18",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Santos",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-04",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Internacional",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Vitoria",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-26",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Gremio",
+       "result": "L"
+      }
+     ],
+     "ga": 52,
+     "gd": -11,
+     "gf": 41,
+     "lost": 15,
+     "played": 36,
+     "points": 45,
+     "position": 11,
+     "provisional": 1,
+     "rating": -0.3058310940205007,
+     "team": "Coritiba",
+     "won": 12
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "SAO",
       "fg": "#FFFFFF",
       "name": "Sao Paulo"
@@ -30913,7 +31045,7 @@
      "lost": 15,
      "played": 35,
      "points": 44,
-     "position": 11,
+     "position": 12,
      "provisional": 0,
      "rating": -0.03764411039126958,
      "team": "Sao Paulo",
@@ -30980,77 +31112,10 @@
      "lost": 15,
      "played": 35,
      "points": 42,
-     "position": 12,
+     "position": 13,
      "provisional": 0,
      "rating": -0.09177714681642235,
      "team": "Botafogo RJ",
-     "won": 11
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "CRT",
-      "fg": "#FFFFFF",
-      "name": "Coritiba"
-     },
-     "drawn": 9,
-     "form": [
-      {
-       "date": "2026-11-18",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Santos",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-04",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Internacional",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Vitoria",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-26",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Gremio",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Atletico-MG",
-       "result": "L"
-      }
-     ],
-     "ga": 52,
-     "gd": -12,
-     "gf": 40,
-     "lost": 15,
-     "played": 35,
-     "points": 42,
-     "position": 13,
-     "provisional": 0,
-     "rating": -0.3058310940205007,
-     "team": "Coritiba",
      "won": 11
     },
     {
@@ -31465,6 +31530,16 @@
      "drawn": 9,
      "form": [
       {
+       "date": "2026-11-22",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Cruzeiro",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-18",
        "ga": 2,
        "gf": 0,
@@ -31499,25 +31574,16 @@
        "league": "BRA",
        "opponent": "Bragantino",
        "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Fluminense",
-       "result": "W"
       }
      ],
-     "ga": 72,
-     "gd": -39,
-     "gf": 33,
-     "lost": 22,
-     "played": 35,
+     "ga": 74,
+     "gd": -40,
+     "gf": 34,
+     "lost": 23,
+     "played": 36,
      "points": 21,
      "position": 20,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.7666712863140329,
      "team": "Chapecoense-SC",
      "won": 4
@@ -36362,7 +36428,7 @@
    "label": "Liga MX",
    "model_through": "2026-11-14",
    "name": "Liga MX",
-   "provisional": 3,
+   "provisional": 5,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -36644,6 +36710,16 @@
      "drawn": 6,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "MEX",
+       "opponent": "Pachuca",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-08",
        "ga": 0,
        "gf": 4,
@@ -36678,27 +36754,154 @@
        "league": "MEX",
        "opponent": "Club Tijuana",
        "result": "D"
+      }
+     ],
+     "ga": 23,
+     "gd": 12,
+     "gf": 35,
+     "lost": 4,
+     "played": 17,
+     "points": 27,
+     "position": 5,
+     "provisional": 1,
+     "rating": 0.6298954309966842,
+     "team": "Toluca",
+     "won": 7
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "CLE",
+      "fg": "#FFFFFF",
+      "name": "Club Leon"
+     },
+     "drawn": 5,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "MEX",
+       "opponent": "Santos Laguna",
+       "provisional": true,
+       "result": "W"
       },
       {
-       "date": "2026-10-18",
+       "date": "2026-11-09",
        "ga": 1,
        "gf": 1,
        "home": true,
        "league": "MEX",
-       "opponent": "Atl. San Luis",
+       "opponent": "Guadalajara Chivas",
        "result": "D"
+      },
+      {
+       "date": "2026-11-02",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "MEX",
+       "opponent": "Cruz Azul",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "MEX",
+       "opponent": "Toluca",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-21",
+       "ga": 0,
+       "gf": 2,
+       "home": false,
+       "league": "MEX",
+       "opponent": "Tigres UANL",
+       "result": "W"
       }
      ],
-     "ga": 21,
-     "gd": 14,
-     "gf": 35,
-     "lost": 3,
-     "played": 16,
-     "points": 27,
-     "position": 5,
-     "provisional": 0,
-     "rating": 0.6298954309966842,
-     "team": "Toluca",
+     "ga": 22,
+     "gd": 3,
+     "gf": 25,
+     "lost": 5,
+     "played": 17,
+     "points": 26,
+     "position": 6,
+     "provisional": 1,
+     "rating": -0.1322231808123442,
+     "team": "Club Leon",
+     "won": 7
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "PAC",
+      "fg": "#FFFFFF",
+      "name": "Pachuca"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "MEX",
+       "opponent": "Toluca",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 1,
+       "gf": 4,
+       "home": false,
+       "league": "MEX",
+       "opponent": "Atlas",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "MEX",
+       "opponent": "Tigres UANL",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-26",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "MEX",
+       "opponent": "Club America",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-22",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "MEX",
+       "opponent": "Cruz Azul",
+       "result": "L"
+      }
+     ],
+     "ga": 20,
+     "gd": 11,
+     "gf": 31,
+     "lost": 6,
+     "played": 17,
+     "points": 25,
+     "position": 7,
+     "provisional": 1,
+     "rating": 0.36024714823746795,
+     "team": "Pachuca",
      "won": 7
     },
     {
@@ -36763,7 +36966,7 @@
      "lost": 4,
      "played": 17,
      "points": 25,
-     "position": 6,
+     "position": 8,
      "provisional": 1,
      "rating": 0.14304897465877398,
      "team": "Club Tijuana",
@@ -36778,6 +36981,16 @@
      },
      "drawn": 1,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "MEX",
+       "opponent": "Club Leon",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-07",
        "ga": 0,
@@ -36813,25 +37026,16 @@
        "league": "MEX",
        "opponent": "UNAM Pumas",
        "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 0,
-       "gf": 5,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Queretaro",
-       "result": "W"
       }
      ],
-     "ga": 20,
-     "gd": 3,
-     "gf": 23,
-     "lost": 7,
-     "played": 16,
+     "ga": 22,
+     "gd": 2,
+     "gf": 24,
+     "lost": 8,
+     "played": 17,
      "points": 25,
-     "position": 7,
-     "provisional": 0,
+     "position": 9,
+     "provisional": 1,
      "rating": -0.17916306958996664,
      "team": "Santos Laguna",
      "won": 8
@@ -36897,145 +37101,11 @@
      "lost": 6,
      "played": 16,
      "points": 24,
-     "position": 8,
+     "position": 10,
      "provisional": 0,
      "rating": 0.1044573142329337,
      "team": "Monterrey",
      "won": 7
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "CLE",
-      "fg": "#FFFFFF",
-      "name": "Club Leon"
-     },
-     "drawn": 5,
-     "form": [
-      {
-       "date": "2026-11-09",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Guadalajara Chivas",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-02",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "MEX",
-       "opponent": "Cruz Azul",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Toluca",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "MEX",
-       "opponent": "Tigres UANL",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 5,
-       "gf": 3,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Club America",
-       "result": "L"
-      }
-     ],
-     "ga": 21,
-     "gd": 2,
-     "gf": 23,
-     "lost": 5,
-     "played": 16,
-     "points": 23,
-     "position": 9,
-     "provisional": 0,
-     "rating": -0.1322231808123442,
-     "team": "Club Leon",
-     "won": 6
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "PAC",
-      "fg": "#FFFFFF",
-      "name": "Pachuca"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 1,
-       "gf": 4,
-       "home": false,
-       "league": "MEX",
-       "opponent": "Atlas",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Tigres UANL",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-26",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "MEX",
-       "opponent": "Club America",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-22",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Cruz Azul",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-19",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "MEX",
-       "opponent": "Monterrey",
-       "result": "L"
-      }
-     ],
-     "ga": 20,
-     "gd": 9,
-     "gf": 29,
-     "lost": 6,
-     "played": 16,
-     "points": 22,
-     "position": 10,
-     "provisional": 0,
-     "rating": 0.36024714823746795,
-     "team": "Pachuca",
-     "won": 6
     },
     {
      "club": {
@@ -37596,7 +37666,7 @@
    "label": "Eliteserien",
    "model_through": "2026-11-09",
    "name": "Eliteserien",
-   "provisional": 3,
+   "provisional": 4,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -38082,6 +38152,16 @@
      "drawn": 5,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "NOR",
+       "opponent": "Start",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-09",
        "ga": 1,
        "gf": 0,
@@ -38116,25 +38196,16 @@
        "league": "NOR",
        "opponent": "Brann",
        "result": "W"
-      },
-      {
-       "date": "2026-10-12",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "NOR",
-       "opponent": "KFUM Oslo",
-       "result": "L"
       }
      ],
-     "ga": 47,
-     "gd": -4,
-     "gf": 43,
-     "lost": 12,
-     "played": 26,
+     "ga": 49,
+     "gd": -5,
+     "gf": 44,
+     "lost": 13,
+     "played": 27,
      "points": 32,
      "position": 8,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.008255039093627792,
      "team": "Valerenga",
      "won": 9
@@ -38620,6 +38691,16 @@
      "drawn": 4,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "NOR",
+       "opponent": "Valerenga",
+       "provisional": true,
+       "result": "W"
+      },
+      {
        "date": "2026-11-07",
        "ga": 4,
        "gf": 1,
@@ -38654,28 +38735,19 @@
        "league": "NOR",
        "opponent": "Molde",
        "result": "L"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 4,
-       "gf": 2,
-       "home": true,
-       "league": "NOR",
-       "opponent": "HamKam",
-       "result": "L"
       }
      ],
-     "ga": 59,
-     "gd": -32,
-     "gf": 27,
+     "ga": 60,
+     "gd": -31,
+     "gf": 29,
      "lost": 17,
-     "played": 26,
-     "points": 19,
+     "played": 27,
+     "points": 22,
      "position": 16,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.7380497534339285,
      "team": "Start",
-     "won": 5
+     "won": 6
     }
    ],
    "season": 2026,
@@ -41017,7 +41089,7 @@
    "label": "Allsvenskan",
    "model_through": "2026-11-08",
    "name": "Allsvenskan",
-   "provisional": 2,
+   "provisional": 3,
    "results_through": "2026-11-21",
    "rows": [
     {
@@ -41365,6 +41437,16 @@
      "drawn": 6,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 1,
+       "home": false,
+       "league": "SWE",
+       "opponent": "GAIS",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 0,
        "gf": 0,
@@ -41399,28 +41481,87 @@
        "league": "SWE",
        "opponent": "Halmstad",
        "result": "L"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "SWE",
-       "opponent": "Mjallby",
-       "result": "W"
       }
      ],
-     "ga": 38,
-     "gd": 2,
-     "gf": 40,
-     "lost": 9,
-     "played": 28,
+     "ga": 41,
+     "gd": 0,
+     "gf": 41,
+     "lost": 10,
+     "played": 29,
      "points": 45,
      "position": 6,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.013648876924290398,
      "team": "Vasteras SK",
      "won": 13
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "GAI",
+      "fg": "#FFFFFF",
+      "name": "GAIS"
+     },
+     "drawn": 7,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 1,
+       "gf": 3,
+       "home": true,
+       "league": "SWE",
+       "opponent": "Vasteras SK",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "SWE",
+       "opponent": "Degerfors",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-02",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "SWE",
+       "opponent": "AIK",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-29",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "SWE",
+       "opponent": "Kalmar",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "SWE",
+       "opponent": "Goteborg",
+       "result": "D"
+      }
+     ],
+     "ga": 29,
+     "gd": 10,
+     "gf": 39,
+     "lost": 10,
+     "played": 29,
+     "points": 43,
+     "position": 7,
+     "provisional": 1,
+     "rating": 0.24227976008392305,
+     "team": "GAIS",
+     "won": 12
     },
     {
      "club": {
@@ -41484,7 +41625,7 @@
      "lost": 11,
      "played": 29,
      "points": 42,
-     "position": 7,
+     "position": 8,
      "provisional": 1,
      "rating": 0.28481097733885097,
      "team": "Malmo FF",
@@ -41552,77 +41693,10 @@
      "lost": 9,
      "played": 29,
      "points": 42,
-     "position": 8,
+     "position": 9,
      "provisional": 1,
      "rating": 0.05767561150245326,
      "team": "AIK",
-     "won": 11
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "GAI",
-      "fg": "#FFFFFF",
-      "name": "GAIS"
-     },
-     "drawn": 7,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "SWE",
-       "opponent": "Degerfors",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-02",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "SWE",
-       "opponent": "AIK",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-29",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "SWE",
-       "opponent": "Kalmar",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "SWE",
-       "opponent": "Goteborg",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 4,
-       "gf": 2,
-       "home": false,
-       "league": "SWE",
-       "opponent": "Orgryte",
-       "result": "L"
-      }
-     ],
-     "ga": 28,
-     "gd": 8,
-     "gf": 36,
-     "lost": 10,
-     "played": 28,
-     "points": 40,
-     "position": 9,
-     "provisional": 0,
-     "rating": 0.24227976008392305,
-     "team": "GAIS",
      "won": 11
     },
     {
@@ -42942,8 +43016,8 @@
    "label": "MLS",
    "model_through": "2026-11-08",
    "name": "MLS",
-   "provisional": 1,
-   "results_through": "2026-11-20",
+   "provisional": 4,
+   "results_through": "2026-11-21",
    "rows": [
     {
      "club": {
@@ -43082,79 +43156,22 @@
     {
      "club": {
       "bg": "#5B6170",
-      "code": "INT",
-      "fg": "#FFFFFF",
-      "name": "Inter Miami"
-     },
-     "drawn": 12,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 3,
-       "gf": 3,
-       "home": true,
-       "league": "USA",
-       "opponent": "Charlotte",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-02",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "USA",
-       "opponent": "New England Revolution",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-28",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "USA",
-       "opponent": "FC Cincinnati",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "USA",
-       "opponent": "New York Red Bulls",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 1,
-       "gf": 3,
-       "home": false,
-       "league": "USA",
-       "opponent": "Atlanta Utd",
-       "result": "W"
-      }
-     ],
-     "ga": 59,
-     "gd": 21,
-     "gf": 80,
-     "lost": 6,
-     "played": 34,
-     "points": 60,
-     "position": 3,
-     "provisional": 0,
-     "rating": 0.5305439488667845,
-     "team": "Inter Miami",
-     "won": 16
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
       "code": "FCD",
       "fg": "#FFFFFF",
       "name": "FC Dallas"
      },
      "drawn": 10,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "USA",
+       "opponent": "Portland Timbers",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-08",
        "ga": 1,
@@ -43190,28 +43207,19 @@
        "league": "USA",
        "opponent": "San Jose Earthquakes",
        "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "USA",
-       "opponent": "Houston Dynamo",
-       "result": "D"
       }
      ],
      "ga": 51,
-     "gd": 11,
-     "gf": 62,
+     "gd": 14,
+     "gf": 65,
      "lost": 8,
-     "played": 34,
-     "points": 58,
-     "position": 4,
-     "provisional": 0,
+     "played": 35,
+     "points": 61,
+     "position": 3,
+     "provisional": 1,
      "rating": 0.19933977060418018,
      "team": "FC Dallas",
-     "won": 16
+     "won": 17
     },
     {
      "club": {
@@ -43222,6 +43230,16 @@
      },
      "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "USA",
+       "opponent": "Philadelphia Union",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-07",
        "ga": 1,
@@ -43257,28 +43275,87 @@
        "league": "USA",
        "opponent": "Philadelphia Union",
        "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "USA",
-       "opponent": "Chicago Fire",
-       "result": "W"
       }
      ],
      "ga": 47,
-     "gd": 8,
-     "gf": 55,
+     "gd": 10,
+     "gf": 57,
      "lost": 12,
-     "played": 34,
-     "points": 58,
-     "position": 5,
-     "provisional": 0,
+     "played": 35,
+     "points": 61,
+     "position": 4,
+     "provisional": 1,
      "rating": 0.01533302927901814,
      "team": "New England Revolution",
-     "won": 18
+     "won": 19
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "INT",
+      "fg": "#FFFFFF",
+      "name": "Inter Miami"
+     },
+     "drawn": 12,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "USA",
+       "opponent": "Columbus Crew",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 3,
+       "gf": 3,
+       "home": true,
+       "league": "USA",
+       "opponent": "Charlotte",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-02",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "USA",
+       "opponent": "New England Revolution",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-28",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "USA",
+       "opponent": "FC Cincinnati",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "USA",
+       "opponent": "New York Red Bulls",
+       "result": "L"
+      }
+     ],
+     "ga": 62,
+     "gd": 18,
+     "gf": 80,
+     "lost": 7,
+     "played": 35,
+     "points": 60,
+     "position": 5,
+     "provisional": 1,
+     "rating": 0.5305439488667845,
+     "team": "Inter Miami",
+     "won": 16
     },
     {
      "club": {
@@ -43625,6 +43702,16 @@
      "drawn": 8,
      "form": [
       {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "USA",
+       "opponent": "New England Revolution",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 1,
        "gf": 4,
@@ -43659,28 +43746,87 @@
        "league": "USA",
        "opponent": "New England Revolution",
        "result": "L"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "USA",
-       "opponent": "Charlotte",
-       "result": "D"
       }
      ],
-     "ga": 52,
-     "gd": 14,
+     "ga": 54,
+     "gd": 12,
      "gf": 66,
-     "lost": 12,
-     "played": 34,
+     "lost": 13,
+     "played": 35,
      "points": 50,
      "position": 11,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.4509025757685481,
      "team": "Philadelphia Union",
      "won": 14
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "CCR",
+      "fg": "#FFFFFF",
+      "name": "Columbus Crew"
+     },
+     "drawn": 5,
+     "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 3,
+       "home": false,
+       "league": "USA",
+       "opponent": "Inter Miami",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 3,
+       "gf": 4,
+       "home": false,
+       "league": "USA",
+       "opponent": "Chicago Fire",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "USA",
+       "opponent": "DC United",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-29",
+       "ga": 0,
+       "gf": 2,
+       "home": false,
+       "league": "USA",
+       "opponent": "FC Dallas",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-24",
+       "ga": 2,
+       "gf": 4,
+       "home": true,
+       "league": "USA",
+       "opponent": "Toronto FC",
+       "result": "W"
+      }
+     ],
+     "ga": 52,
+     "gd": 10,
+     "gf": 62,
+     "lost": 15,
+     "played": 35,
+     "points": 50,
+     "position": 12,
+     "provisional": 1,
+     "rating": 0.2682262228858199,
+     "team": "Columbus Crew",
+     "won": 15
     },
     {
      "club": {
@@ -43744,7 +43890,7 @@
      "lost": 12,
      "played": 35,
      "points": 49,
-     "position": 12,
+     "position": 13,
      "provisional": 1,
      "rating": -0.08804402083588925,
      "team": "FC Cincinnati",
@@ -43811,78 +43957,11 @@
      "lost": 11,
      "played": 34,
      "points": 47,
-     "position": 13,
+     "position": 14,
      "provisional": 0,
      "rating": 0.27914763389932795,
      "team": "Los Angeles FC",
      "won": 12
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "CCR",
-      "fg": "#FFFFFF",
-      "name": "Columbus Crew"
-     },
-     "drawn": 5,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 3,
-       "gf": 4,
-       "home": false,
-       "league": "USA",
-       "opponent": "Chicago Fire",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "USA",
-       "opponent": "DC United",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-29",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "USA",
-       "opponent": "FC Dallas",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 2,
-       "gf": 4,
-       "home": true,
-       "league": "USA",
-       "opponent": "Toronto FC",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 0,
-       "gf": 2,
-       "home": false,
-       "league": "USA",
-       "opponent": "FC Cincinnati",
-       "result": "W"
-      }
-     ],
-     "ga": 52,
-     "gd": 7,
-     "gf": 59,
-     "lost": 15,
-     "played": 34,
-     "points": 47,
-     "position": 14,
-     "provisional": 0,
-     "rating": 0.2682262228858199,
-     "team": "Columbus Crew",
-     "won": 14
     },
     {
      "club": {
@@ -43893,6 +43972,16 @@
      },
      "drawn": 7,
      "form": [
+      {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 0,
+       "home": false,
+       "league": "USA",
+       "opponent": "FC Dallas",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-08",
        "ga": 0,
@@ -43928,25 +44017,16 @@
        "league": "USA",
        "opponent": "Charlotte",
        "result": "W"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "USA",
-       "opponent": "Colorado Rapids",
-       "result": "D"
       }
      ],
-     "ga": 61,
-     "gd": 1,
+     "ga": 64,
+     "gd": -2,
      "gf": 62,
-     "lost": 14,
-     "played": 34,
+     "lost": 15,
+     "played": 35,
      "points": 46,
      "position": 15,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.05089680706379185,
      "team": "Portland Timbers",
      "won": 13
