@@ -4002,7 +4002,7 @@
    "day": "2026-11-22",
    "kind": "underdog_v2",
    "built_at": "2026-11-20T19:21:26Z",
-   "status": "pending",
+   "status": "superseded",
    "multiplier": 3.0267,
    "p": 0.285779,
    "p_market": 0.27394,
@@ -5503,6 +5503,90 @@
    },
    "paid": 0.0,
    "profit": -1.0
+  },
+  {
+   "day": "2026-11-22",
+   "kind": "underdog_v2",
+   "built_at": "2026-11-22T13:25:13Z",
+   "status": "pending",
+   "multiplier": 3.0833,
+   "p": 0.292474,
+   "p_market": 0.298497,
+   "first_start": "2026-11-22T18:00:00Z",
+   "last_start": "2026-11-22T18:00:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_11_BAL_CAR",
+     "event": "BAL @ CAR",
+     "pick": "BAL",
+     "opponent": "CAR",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 2.25,
+     "p": 0.40752900000000003,
+     "p_model": 0.36685500000000004,
+     "p_market": 0.42553191489361697,
+     "names": {
+      "game_id": "2026_11_BAL_CAR",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": true,
+     "bet": "1X2",
+     "bet_detail": null,
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": "2026_11_BAL_CAR",
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_11_JAX_NYG",
+     "event": "JAX @ NYG",
+     "pick": "JAX",
+     "opponent": "NYG",
+     "kickoff": "2026-11-22T18:00:00Z",
+     "decimal": 1.3703703703703702,
+     "p": 0.717677,
+     "p_model": 0.699612,
+     "p_market": 0.701468,
+     "names": {
+      "game_id": "2026_11_JAX_NYG",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "NFL:2026_11_BAL_CAR",
+    "pick": "BAL",
+    "lot_key": "2026_11_BAL_CAR",
+    "rank": 0,
+    "candidates": 36,
+    "salt": "sameday-dog-v2",
+    "version": 2
+   },
+   "version": 2,
+   "bets": [
+    "1X2"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
   }
  ]
 }

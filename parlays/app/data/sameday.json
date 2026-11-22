@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-22T02:25:40Z",
+ "generated": "2026-11-22T13:25:13Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -82,8 +82,8 @@
  "days": [
   {
    "day": "2026-11-21",
-   "today": true,
-   "past": false,
+   "today": false,
+   "past": true,
    "likeliest": {
     "day": "2026-11-21",
     "kind": "likeliest",
@@ -225,11 +225,7 @@
    },
    "cannot_both_win": false,
    "ufc_day": true,
-   "missing": {
-    "OU25": {
-     "no over/under 2.5 price posted": 1
-    }
-   },
+   "missing": {},
    "likeliest_v2": {
     "day": "2026-11-21",
     "kind": "likeliest_v2",
@@ -673,16 +669,16 @@
     "only_one": false
    },
    "v2_cannot_both_win": false,
-   "in_play": false
+   "in_play": true
   },
   {
    "day": "2026-11-22",
-   "today": false,
+   "today": true,
    "past": false,
    "likeliest": {
     "day": "2026-11-22",
     "kind": "likeliest",
-    "status": "open",
+    "status": "locked",
     "legs": [
      {
       "sport": "Soccer",
@@ -857,14 +853,14 @@
    "ufc_day": false,
    "missing": {
     "OU25": {
-     "no over/under 2.5 price posted": 33,
+     "no over/under 2.5 price posted": 27,
      "level prices": 1
     }
    },
    "likeliest_v2": {
     "day": "2026-11-22",
     "kind": "likeliest_v2",
-    "status": "open",
+    "status": "locked",
     "legs": [
      {
       "sport": "Soccer",
@@ -1061,64 +1057,39 @@
       "moneyline_source": null
      },
      {
-      "sport": "Soccer",
-      "event": "Ajax v Den Haag",
-      "pick": "Ajax",
-      "opponent": "N1",
-      "kickoff": "2026-11-22T13:30:00Z",
-      "decimal": 1.18,
-      "p": 0.8285814925513818,
-      "p_model": null,
-      "p_market": 0.7930637237816757,
-      "price_source": "average price",
-      "american": -556,
-      "reason": "Soccer: chance 83%, market 79%",
+      "sport": "NFL",
+      "event": "JAX @ NYG",
+      "pick": "JAX",
+      "opponent": "NYG",
+      "kickoff": "2026-11-22T18:00:00Z",
+      "decimal": 1.3703703703703702,
+      "p": 0.717677,
+      "p_model": 0.699612,
+      "p_market": 0.701468,
+      "price_source": "consensus moneyline",
+      "american": -270,
+      "reason": "NFL: chance 72%, model 70%, market 70%",
       "outcome": null,
       "void_reason": null,
       "dog": false,
       "bet": "1X2",
       "bet_detail": "winner",
-      "label": "Ajax to win",
-      "market": "1X2",
-      "estimated": false,
-      "error_pct": null,
-      "moneyline_source": null
-     },
-     {
-      "sport": "Soccer",
-      "event": "Trabzonspor v Eyupspor",
-      "pick": "Trabzonspor",
-      "opponent": "T1",
-      "kickoff": "2026-11-22T16:00:00Z",
-      "decimal": 1.14,
-      "p": 0.8463248849799275,
-      "p_model": null,
-      "p_market": 0.8117373321955973,
-      "price_source": "average price",
-      "american": -714,
-      "reason": "Soccer: chance 85%, market 81%",
-      "outcome": null,
-      "void_reason": null,
-      "dog": false,
-      "bet": "1X2",
-      "bet_detail": "winner",
-      "label": "Trabzonspor to win",
-      "market": "1X2",
+      "label": "JAX to win",
+      "market": "Moneyline",
       "estimated": false,
       "error_pct": null,
       "moneyline_source": null
      }
     ],
-    "multiplier": 3.0267,
-    "p": 0.285779,
-    "p_market": 0.27394,
+    "multiplier": 3.0833,
+    "p": 0.292474,
+    "p_market": 0.298497,
     "sports": [
-     "NFL",
-     "Soccer"
+     "NFL"
     ],
-    "first_start": "2026-11-22T13:30:00Z",
+    "first_start": "2026-11-22T18:00:00Z",
     "last_start": "2026-11-22T18:00:00Z",
-    "built_at": "2026-11-20T19:21:26Z",
+    "built_at": "2026-11-22T13:25:13Z",
     "paid": null,
     "profit": null,
     "missing_reason": null,
@@ -1133,11 +1104,11 @@
      "event": "BAL @ CAR",
      "sport": "NFL",
      "rank": 0,
-     "candidates": 48,
+     "candidates": 36,
      "salt": "sameday-dog-v2",
      "version": 2
     },
-    "lands_1_in": 4,
+    "lands_1_in": 3,
     "only_one": false,
     "best_of_books": false,
     "price_note": null
@@ -1145,7 +1116,7 @@
    "mixed": {
     "day": "2026-11-22",
     "kind": "mixed",
-    "status": "open",
+    "status": "locked",
     "legs": [
      {
       "sport": "Soccer",
@@ -1671,81 +1642,9 @@
  ],
  "tickets": [
   {
-   "day": "2026-11-21",
-   "kind": "likeliest",
-   "status": "locked",
-   "legs": [
-    {
-     "sport": "UFC",
-     "event": "Jared Cannonier vs Ikram Aliskerov",
-     "pick": "Ikram Aliskerov",
-     "opponent": "Jared Cannonier",
-     "kickoff": "2026-11-21T15:10:00Z",
-     "decimal": 1.350877,
-     "p": 0.742798,
-     "p_model": 0.799801,
-     "p_market": 0.7237965706354914,
-     "price_source": "best of books",
-     "american": -285,
-     "reason": "UFC: chance 74%, model 80%, market 72%",
-     "outcome": null,
-     "void_reason": null,
-     "dog": false
-    },
-    {
-     "sport": "UFC",
-     "event": "Jiri Prochazka vs Navajo Stirling",
-     "pick": "Navajo Stirling",
-     "opponent": "Jiri Prochazka",
-     "kickoff": "2026-11-21T15:10:00Z",
-     "decimal": 1.571429,
-     "p": 0.64679,
-     "p_model": 0.693428,
-     "p_market": 0.6312436508973868,
-     "price_source": "best of books",
-     "american": -175,
-     "reason": "UFC: chance 65%, model 69%, market 63%",
-     "outcome": null,
-     "void_reason": null,
-     "dog": false
-    },
-    {
-     "sport": "Soccer",
-     "event": "Nice v Paris Saint-Germain",
-     "pick": "Paris Saint-Germain",
-     "opponent": "F1",
-     "kickoff": "2026-11-21T16:15:00Z",
-     "decimal": 1.44,
-     "p": 0.6853844298144058,
-     "p_model": null,
-     "p_market": 0.6503127021781324,
-     "price_source": "average price",
-     "american": -227,
-     "reason": "Soccer: chance 69%, market 65%",
-     "outcome": "won",
-     "void_reason": null,
-     "dog": false
-    }
-   ],
-   "multiplier": 3.0568,
-   "p": 0.329282,
-   "p_market": 0.297123,
-   "sports": [
-    "Soccer",
-    "UFC"
-   ],
-   "first_start": "2026-11-21T15:10:00Z",
-   "last_start": "2026-11-21T16:15:00Z",
-   "built_at": "2026-11-21T11:39:28Z",
-   "paid": null,
-   "profit": null,
-   "missing_reason": null,
-   "none_reason": null
-  },
-  {
    "day": "2026-11-22",
    "kind": "likeliest",
-   "status": "open",
+   "status": "locked",
    "legs": [
     {
      "sport": "Soccer",
