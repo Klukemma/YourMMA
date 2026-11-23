@@ -359,12 +359,12 @@ def test_stakes_quote_gives_the_exact_payout_and_stays_on_the_phone(tmp_path):
 def test_the_apps_reading_of_typed_odds_matches_python(tmp_path):
     import nfl_sgp as sgp
     week, _ = _sgp_week(history=None)
-    signed = ["+450", "-120", "−120", "+100", "-100", "+99", "-99.5", "+1250"]
+    signed = ["+450", "-120", "\u2212120", "+100", "-100", "+99", "-99.5", "+1250", "+1,250"]
     plain = ["4.50", "4,5", "1.01", "1", "0.9", "12"]
     bad = ["abc", "4.5x", "++450"]
     parsed = _render(tmp_path, week, odds_inputs=signed + plain + bad + [""])["parsed"]
     for text, p in zip(signed, parsed):
-        want = sgp.decimal_from_american(float(text.replace("−", "-")))
+        want = sgp.decimal_from_american(float(text.replace("\u2212", "-").replace(",", "")))
         assert (p.get("decimal") is None) == (want is None) and (want is None or p["decimal"] == pytest.approx(want)), text
     for text, p in zip(plain, parsed[len(signed):]):
         v = float(text.replace(",", "."))

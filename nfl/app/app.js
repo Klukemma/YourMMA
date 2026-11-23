@@ -790,13 +790,15 @@ const tally = (n) => (n == null ? "—" : Number(n).toLocaleString());
 const americanOf = (dec) => (dec == null || !(dec > 1) ? null : dec >= 2 ? (dec - 1) * 100 : -100 / (dec - 1));
 
 // What the user types for Stake's quote: decimal as Stake shows it (4.50,
-// or 4,50), or American with its sign (+450, -120, or a typographic minus).
-// A bare number is read as decimal, and the reading is echoed back, so a
-// price is never silently taken the other way.
+// or 4,50), or American with its sign (+450, -120, or a typographic minus;
+// a comma there is a thousands separator). A bare number is read as
+// decimal, and the reading is echoed back, so a price is never silently
+// taken the other way.
 const ODDS_HELP = "That is not a price: type the odds as Stake shows them - decimal, or American with its sign (+ or −).";
 function parseOdds(text) {
-  const t = String(text ?? "").trim().replace(/[−‒–—]/g, "-").replace(/\s+/g, "").replace(",", ".");
+  let t = String(text ?? "").trim().replace(/[\u2212\u2012\u2013\u2014]/g, "-").replace(/\s+/g, "");
   if (!t) return null;
+  t = /^[+-]/.test(t) ? t.replace(/,/g, "") : t.replace(",", ".");
   if (/^[+-]\d+(\.\d+)?$/.test(t)) {
     const a = Number(t);
     if (Math.abs(a) < 100) return { error: ODDS_HELP };
@@ -1038,7 +1040,7 @@ function sgpMeters(d) {
     return `<div class="panel sgpm" data-kind="${esc(kind)}"><div class="eyebrow">${esc(kindName(kind))} · ${esc((s.legs || {})[kind] ?? "—")} legs</div>
       <div class="sgpm-l">History, ${esc(h.available ? spanLabel(span && span[1]) : "none yet")}</div>
       ${h.available ? sgpMeter(hm, false) : `<div class="mini">${esc(h.reason)}</div>`}
-      <div class="sgpm-l">${esc(d.season)} season, live</div>
+      <div class="sgpm-l">Live${live.first_kickoff ? ` since ${esc(dateOnly(live.first_kickoff))}` : ""}</div>
       ${sgpMeter(lm, true)}
       ${h.available ? DESK.sub("Every period", sgpPeriods(h, kind)) : ""}
     </div>`;
