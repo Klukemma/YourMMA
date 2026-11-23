@@ -136,6 +136,13 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
   no past touchdown prices, so its return is shown as missing with that reason. In the
   history a touchdown candidate is a player who took a snap, so it knows who was active;
   live, a pick who does not play is voided and the ticket graded on its other legs.
+- **In the app**: each game's detail has a Parlays section, and the Parlays tab lists every
+  game's tickets with each kind's meters on top - the history and this season live, the live
+  return marked est. Every figure there is read from week.json, and a missing one carries the
+  payload's reason. Each ticket has a box for the odds Stake's bet builder quotes for that slip
+  (decimal, or American with its sign) and the amount: the app shows the exact payout and
+  profit from them, and the fair odds at the product chance, with the note that the chance
+  assumes independent legs. What is typed stays in the phone's own storage and is never sent.
 - Nothing here is called a bet or an edge: the market is hard to beat, and a parlay
   multiplies the margin of every leg.
 

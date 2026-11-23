@@ -636,6 +636,42 @@ table.tdteams td.n .bar{margin:4px 0 0 auto;width:72px}
 .tdpeek{margin-top:6px;line-height:1.5}
 .tdgame .match-top{display:flex;gap:8px;align-items:center}
 .linkbtn{margin-top:8px;background:none;border:0;padding:6px 0;color:var(--accent);font:inherit;font-weight:600;cursor:pointer}
+/* Six tabs on a narrow phone: a pill shrinks before the bar overflows. */
+.tabbar button{min-width:0}
+.tabbar button .pill{width:100%;max-width:56px}
+/* YourNFL only: the same-game tickets. A ticket is a sunk card inside a
+   game's detail or a card; its legs a list, its chance and payout two rows,
+   and the box for Stake's quote under a dashed rule. "est." is the gold of a
+   caveat, so an estimated price never reads as a quoted one. */
+.tkts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:600px){.tkts{grid-template-columns:1fr}}
+.tkt{background:var(--sunk);border:1px solid var(--line-soft);border-radius:var(--radius-sm);
+  padding:11px 12px;display:flex;flex-direction:column;gap:7px;min-width:0}
+.tkt.off{background:none;border-style:dashed}
+.tkt-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tkt-head b{font:700 17px/1.1 "Barlow Condensed",sans-serif;letter-spacing:.04em;text-transform:uppercase}
+.tkt ul.legs li{padding:7px 0}
+.tkt ul.legs .who{flex:1 1 0;min-width:0}
+/* The price over its decimal, so a long name keeps the width on a narrow phone. */
+.tkt ul.legs .end{white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.tkt-row{display:grid;grid-template-columns:62px 1fr;gap:8px;font-size:13.5px;align-items:baseline}
+.tkt-row .k{color:var(--ink-3);font-size:12.5px}
+.est{font:700 10px/1 "IBM Plex Sans",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-ink);margin-left:2px;white-space:nowrap}
+.mini.warn{color:var(--gold-ink)}
+.stakebox{border-top:1px dashed var(--line);padding-top:9px;display:flex;flex-direction:column;gap:7px}
+.stakebox .sx{display:grid;grid-template-columns:3fr 2fr;gap:8px}
+.stakebox .field .lab{font:600 10.5px/1 "IBM Plex Sans",sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.stakebox .field input{min-height:44px;padding:9px 11px}
+.stakebox .sx-out{display:flex;flex-direction:column;gap:2px;font-size:14px;min-height:20px}
+.sgpm{gap:5px;min-width:0}
+.sgpm-l{font-size:12px;font-weight:600;color:var(--ink-2);margin-top:3px}
+.sgpm-v{display:flex;flex-direction:column;gap:3px;font-size:13.5px}
+.sgpm-v .bar{position:relative;display:block;height:6px;border-radius:9px;background:var(--sunk);
+  box-shadow:inset 0 0 0 1px var(--line-soft);margin:2px 0}
+.sgpm-v .bar i{display:block;height:100%;background:var(--blue);border-radius:9px}
+.sgpm-v .bar s{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--ink-2);border-radius:1px}
+.sgpm-v .bar.none{background:repeating-linear-gradient(90deg,var(--line-soft) 0 3px,transparent 3px 6px)}
+.sgpgame .match-top{display:flex;gap:8px;align-items:center}
 </style>
 </head>
 <body>
@@ -658,6 +694,7 @@ table.tdteams td.n .bar{margin:4px 0 0 auto;width:72px}
 <main class="wrap">
   <section class="view" id="view-week"><div class="loading">Loading the week…</div></section>
   <section class="view" id="view-td" hidden><div class="loading">Loading…</div></section>
+  <section class="view" id="view-parlays" hidden><div class="loading">Loading…</div></section>
   <section class="view" id="view-teams" hidden><div class="loading">Loading…</div></section>
   <section class="view" id="view-record" hidden><div class="loading">Loading…</div></section>
   <section class="view" id="view-method" hidden></section>
@@ -667,6 +704,7 @@ table.tdteams td.n .bar{margin:4px 0 0 auto;width:72px}
   <div class="tabbar-in" role="tablist">
     <button role="tab" id="tab-week" aria-selected="true" aria-controls="view-week"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>Week</button>
     <button role="tab" id="tab-td" aria-selected="false" aria-controls="view-td"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="12" rx="9.5" ry="5.5" transform="rotate(-35 12 12)"/><path d="M9.5 14.5l5-5M10.5 11l2.5 2.5M12 9.5l2.5 2.5"/></svg></span>TD</button>
+    <button role="tab" id="tab-parlays" aria-selected="false" aria-controls="view-parlays"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v4a2 2 0 000 4v4H4v-4a2 2 0 000-4z"/><path d="M14.5 7v10" stroke-dasharray="1.5 2.6"/></svg></span>Parlays</button>
     <button role="tab" id="tab-teams" aria-selected="false" aria-controls="view-teams"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/></svg></span>Teams</button>
     <button role="tab" id="tab-record" aria-selected="false" aria-controls="view-record"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Record</button>
     <button role="tab" id="tab-method" aria-selected="false" aria-controls="view-method"><span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></span>Method</button>
