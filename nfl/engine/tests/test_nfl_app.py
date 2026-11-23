@@ -277,6 +277,9 @@ def test_each_ticket_shows_its_legs_chance_and_est_payout_from_the_payload(tmp_p
         for leg in t["legs"]:
             assert f'<span class="num lead">{_pct(leg["chance"], 0)}</span>' in card
             assert f'<span class="mini num"> {leg["decimal"]:.2f}</span> <span class="est">est.</span>' in card
+            if leg.get("best_american") is not None:       # a book's own price is not Stake's either
+                best = int(leg["best_american"])
+                assert f'best {"+" if best > 0 else "−"}{abs(best)} <span class="est">est.</span>' in card
         # Beside the product: the kind's measured hit rate, from the history.
         h = s["history"]
         whole = max(h["periods"].items(), key=lambda p: p[1][1] - p[1][0])[0]

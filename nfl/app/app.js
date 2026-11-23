@@ -885,7 +885,7 @@ function legItem(leg, result) {
   if (leg.kind === "TD") notes.push("chance if he plays");
   if (leg.decimal == null) notes.push(`no price: ${esc(leg.price_missing || "none on file")}`);
   if (leg.kind === "TD" && leg.best_american != null) {
-    notes.push(`best ${esc(odds(leg.best_american))}${leg.best_book ? ` (${esc(leg.best_book)})` : ""}${leg.books ? ` of ${esc(leg.books)} books` : ""}`);
+    notes.push(`best ${esc(odds(leg.best_american))}${leg.est ? EST : ""}${leg.best_book ? ` (${esc(leg.best_book)})` : ""}${leg.books ? ` of ${esc(leg.books)} books` : ""}`);
   }
   if (leg.kind === "TD" && leg.price_as_of) notes.push(`priced ${esc(localStamp(leg.price_as_of))}`);
   const price = leg.decimal != null
