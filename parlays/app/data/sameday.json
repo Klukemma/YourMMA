@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-23T02:54:22Z",
+ "generated": "2026-11-23T16:05:15Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -673,8 +673,8 @@
   },
   {
    "day": "2026-11-22",
-   "today": true,
-   "past": false,
+   "today": false,
+   "past": true,
    "likeliest": {
     "day": "2026-11-22",
     "kind": "likeliest",
@@ -1282,11 +1282,11 @@
    },
    "props": null,
    "v2_cannot_both_win": false,
-   "in_play": false
+   "in_play": true
   },
   {
    "day": "2026-11-23",
-   "today": false,
+   "today": true,
    "past": false,
    "likeliest": {
     "day": "2026-11-23",
@@ -1297,7 +1297,8 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_fit",
-    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer."
+    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. No likeliest ticket in the next 7 days yet.",
+    "next_day": null
    },
    "underdog": {
     "day": "2026-11-23",
@@ -1509,7 +1510,7 @@
     ],
     "first_start": "2026-11-23T18:00:00Z",
     "last_start": "2026-11-23T18:00:00Z",
-    "built_at": "2026-11-20T19:21:26Z",
+    "built_at": "2026-11-23T16:05:15Z",
     "paid": null,
     "profit": null,
     "missing_reason": null,
@@ -1524,7 +1525,7 @@
      "event": "Wieczysta Krakow v Motor Lublin",
      "sport": "Soccer",
      "rank": 0,
-     "candidates": 15,
+     "candidates": 14,
      "salt": "sameday-dog-v2",
      "version": 2
     },
@@ -1638,95 +1639,6 @@
  ],
  "tickets": [
   {
-   "day": "2026-11-22",
-   "kind": "likeliest",
-   "status": "lost",
-   "legs": [
-    {
-     "sport": "Soccer",
-     "event": "Juventus v Venezia",
-     "pick": "Juventus",
-     "opponent": "I1",
-     "kickoff": "2026-11-22T11:30:00Z",
-     "decimal": 1.34,
-     "p": 0.733345742100269,
-     "p_model": null,
-     "p_market": 0.6994860329102535,
-     "price_source": "average price",
-     "american": -294,
-     "reason": "Soccer: chance 73%, market 70%",
-     "outcome": "won",
-     "void_reason": null,
-     "dog": false
-    },
-    {
-     "sport": "Soccer",
-     "event": "Hull City v Brighton",
-     "pick": "Brighton",
-     "opponent": "E0",
-     "kickoff": "2026-11-22T14:00:00Z",
-     "decimal": 1.48,
-     "p": 0.6687229785936124,
-     "p_model": null,
-     "p_market": 0.6355085189492756,
-     "price_source": "average price",
-     "american": -208,
-     "reason": "Soccer: chance 67%, market 64%",
-     "outcome": "lost",
-     "void_reason": null,
-     "dog": false
-    },
-    {
-     "sport": "Soccer",
-     "event": "Paris FC v Angers",
-     "pick": "Paris FC",
-     "opponent": "F1",
-     "kickoff": "2026-11-22T14:00:00Z",
-     "decimal": 1.31,
-     "p": 0.747791919707428,
-     "p_model": null,
-     "p_market": 0.7135046473482777,
-     "price_source": "average price",
-     "american": -323,
-     "reason": "Soccer: chance 75%, market 71%",
-     "outcome": "won",
-     "void_reason": null,
-     "dog": false
-    },
-    {
-     "sport": "NFL",
-     "event": "NO @ CHI",
-     "pick": "CHI",
-     "opponent": "NO",
-     "kickoff": "2026-11-22T18:00:00Z",
-     "decimal": 1.1626016260162602,
-     "p": 0.840826,
-     "p_model": 0.806463,
-     "p_market": 0.826803,
-     "price_source": "consensus moneyline",
-     "american": -615,
-     "reason": "NFL: chance 84%, model 81%, market 83%",
-     "outcome": "won",
-     "void_reason": null,
-     "dog": false
-    }
-   ],
-   "multiplier": 3.0204,
-   "p": 0.308349,
-   "p_market": 0.26224,
-   "sports": [
-    "NFL",
-    "Soccer"
-   ],
-   "first_start": "2026-11-22T11:30:00Z",
-   "last_start": "2026-11-22T18:00:00Z",
-   "built_at": "2026-11-20T19:21:26Z",
-   "paid": 0.0,
-   "profit": -1.0,
-   "missing_reason": null,
-   "none_reason": null
-  },
-  {
    "day": "2026-11-23",
    "kind": "likeliest",
    "status": "none",
@@ -1735,7 +1647,8 @@
    "p": null,
    "p_market": null,
    "none_reason": "no_fit",
-   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer."
+   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. No likeliest ticket in the next 7 days yet.",
+   "next_day": null
   }
  ],
  "record": {

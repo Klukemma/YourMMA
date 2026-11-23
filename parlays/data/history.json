@@ -4436,7 +4436,7 @@
    "day": "2026-11-23",
    "kind": "underdog_v2",
    "built_at": "2026-11-20T19:21:26Z",
-   "status": "pending",
+   "status": "superseded",
    "multiplier": 3.286,
    "p": 0.287171,
    "p_market": 0.276443,
@@ -5983,6 +5983,90 @@
     "lot_key": "2026_11_BAL_CAR",
     "rank": 0,
     "candidates": 21,
+    "salt": "sameday-dog-v2",
+    "version": 2
+   },
+   "version": 2,
+   "bets": [
+    "1X2"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-23",
+   "kind": "underdog_v2",
+   "built_at": "2026-11-23T16:05:15Z",
+   "status": "pending",
+   "multiplier": 3.286,
+   "p": 0.287171,
+   "p_market": 0.276443,
+   "first_start": "2026-11-23T18:00:00Z",
+   "last_start": "2026-11-23T18:00:00Z",
+   "sports": [
+    "Soccer"
+   ],
+   "legs": [
+    {
+     "sport": "Soccer",
+     "key": "Soccer:POL-20261123-wieczystakrakow-motorlublin",
+     "event": "Wieczysta Krakow v Motor Lublin",
+     "pick": "Motor Lublin",
+     "opponent": "POL",
+     "kickoff": "2026-11-23T18:00:00Z",
+     "decimal": 2.65,
+     "p": 0.353978792983847,
+     "p_model": null,
+     "p_market": 0.353978792983847,
+     "names": {
+      "match_id": "POL-20261123-wieczystakrakow-motorlublin",
+      "pick": "A"
+     },
+     "price_source": "average price",
+     "dog": true,
+     "bet": "1X2",
+     "bet_detail": null,
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": "POL-20261123-wieczystakrakow-motorlublin",
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "Soccer",
+     "key": "Soccer:SWE-20261123-hammarby-goteborg",
+     "event": "Hammarby v Goteborg",
+     "pick": "Hammarby",
+     "opponent": "SWE",
+     "kickoff": "2026-11-23T18:00:00Z",
+     "decimal": 1.24,
+     "p": 0.8112667259036827,
+     "p_model": null,
+     "p_market": 0.7809594644849387,
+     "names": {
+      "match_id": "SWE-20261123-hammarby-goteborg",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "Soccer:POL-20261123-wieczystakrakow-motorlublin",
+    "pick": "Motor Lublin",
+    "lot_key": "POL-20261123-wieczystakrakow-motorlublin",
+    "rank": 0,
+    "candidates": 14,
     "salt": "sameday-dog-v2",
     "version": 2
    },
