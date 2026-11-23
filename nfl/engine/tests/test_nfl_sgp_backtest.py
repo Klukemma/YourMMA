@@ -126,3 +126,22 @@ def test_the_history_on_file_has_every_kind_and_period_and_says_why_return_is_mi
             assert sum(m["not_built_why"].values()) == m["not_built"]
             if not h["td_prices"]["on_file"]:
                 assert m["roi"] is None and m["roi_reason"] == sgp.NO_TD_PRICE
+
+
+def test_the_history_is_replayed_only_when_a_new_final_has_its_box_score_and_snaps(tmp_path):
+    """The runner replays before every predict run with --if-stale: a game
+    without its box score and snap counts would replay to the same file."""
+    path = tmp_path / "h.json"
+    games = pd.DataFrame({"game_id": ["a", "b", "c"], "season": [2026, 2026, 2026],
+                          "played": [True, True, False],
+                          "kickoff": pd.to_datetime(["2026-11-01 18:00", "2026-11-08 18:00", "2026-11-15 18:00"])})
+    box, snaps = pd.DataFrame({"game_id": ["a"]}), pd.DataFrame({"game_id": ["a"]})
+    assert bk.stale(path, games, box, snaps) == "no history on file"
+    path.write_text(json.dumps({"version": "sgp-v0"}))
+    assert "sgp-v0" in bk.stale(path, games, box, snaps)
+    path.write_text(json.dumps({"version": sgp.VERSION, "through": "2026-11-01T18:00:00Z"}))
+    assert bk.stale(path, games, box, snaps) is None                   # b: no box score yet
+    box = pd.DataFrame({"game_id": ["a", "b", "c"]})
+    assert bk.stale(path, games, box, snaps) is None                   # nor snap counts
+    snaps = pd.DataFrame({"game_id": ["a", "b", "c"]})
+    assert bk.stale(path, games, box, snaps) == "games final since 2026-11-01T18:00:00Z not in it: 1"

@@ -6,6 +6,13 @@ game's kickoff, and graded from the final score and the box score.
     python nfl/engine/experiments/nfl_sgp_backtest.py
         -> nfl/data/sgp_backtest.json           the meters, per kind and period
            nfl/data/sgp_backtest_tickets.csv.gz  every ticket, for audit
+    python nfl/engine/experiments/nfl_sgp_backtest.py --if-stale
+        the same, only when stale() says the file on disk is behind
+
+The NFL runner calls it with --if-stale before each predict run (about 30
+seconds when it replays), so the app's history meter (week.json sgp.history,
+which shows `generated` and `through`) holds every game whose box score the
+snapshot has.
 
 THE INPUTS, point in time:
 
@@ -39,6 +46,8 @@ The current season's games are replayed only once final with their snap
 counts and box score on file; the rest are counted, not built.
 """
 
+import argparse
+import json
 import sys
 import time
 from pathlib import Path
@@ -259,6 +268,29 @@ def run(out_dir=nd.DATA, tickets_out=TICKETS_OUT, price_path=TD_PRICES):
     return payload
 
 
+def stale(path=None, games=None, player_games=None, snaps=None):
+    """Why the history on file needs replaying, or None when it is current:
+    no file, another version of the rule, or a game final after its
+    `through` that the snapshot holds the box score and snap counts of (a
+    game without them would replay to the same file)."""
+    path = Path(path) if path is not None else nd.DATA / f"{OUT_NAME}.json"
+    if not path.exists():
+        return "no history on file"
+    payload = json.loads(path.read_text())
+    if payload.get("version") != sgp.VERSION:
+        return f"the history on file is {payload.get('version')}, the rule is {sgp.VERSION}"
+    games = nd.load_games() if games is None else games
+    player_games = nd.load_player_games() if player_games is None else player_games
+    snaps = nd.load_snaps() if snaps is None else snaps
+    through = pd.Timestamp(payload["through"]).tz_localize(None) if payload.get("through") else None
+    new = games[games["played"] & (games["season"] >= sgp.HISTORY_FROM)
+                & games["game_id"].isin(set(player_games["game_id"]))
+                & games["game_id"].isin(set(snaps["game_id"]))]
+    if through is not None:
+        new = new[new["kickoff"] > through]
+    return f"games final since {payload.get('through')} not in it: {len(new)}" if len(new) else None
+
+
 def headline(payload):
     lines = [f"{payload['version']}: {payload['games']['all']:,} games, {payload['history_from']}-"
              f"{payload['current_season']}; left out: {payload['left_out']}"]
@@ -272,5 +304,21 @@ def headline(payload):
     return "\n".join(lines)
 
 
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--if-stale", action="store_true",
+                        help="replay only when the history on file is behind (stale())")
+    args = parser.parse_args(argv)
+    if args.if_stale:
+        why = stale()
+        if why is None:
+            print(f"{sgp.VERSION}: the history on file is current; not replayed")
+            return None
+        print(f"{sgp.VERSION}: replaying - {why}")
+    payload = run()
+    print(headline(payload))
+    return payload
+
+
 if __name__ == "__main__":
-    print(headline(run()))
+    main()

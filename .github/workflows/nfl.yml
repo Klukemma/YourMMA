@@ -21,7 +21,11 @@ name: NFL predictions
 # London and early games, and Monday before the night game. Thursday and
 # Sunday buy today's prices (3 credits each, from the free tier's 500 a
 # month); the others reuse prices on file unless a game has none - and every
-# run reads the news feeds, so news lands before each kickoff.
+# run reads the news feeds, so news lands before each kickoff. The same-game
+# tickets' anytime-TD prices are 1 credit a game, bought only for games
+# within nfl_odds.TD_WINDOW_HOURS of kickoff and at most once in
+# TD_STALE_HOURS - Thursday's and Sunday's refresh buys them again for the
+# games that day.
 on:
   workflow_dispatch:
     inputs:
@@ -132,7 +136,14 @@ jobs:
             if [ "${{ inputs.refresh_odds }}" = "true" ] || [ "${{ github.event.schedule }}" = "17 12 * 9-12,1-2 THU" ] || [ "${{ github.event.schedule }}" = "17 6 * 9-12,1-2 SUN" ]; then
               export ODDS_REFRESH=1
             fi
-            python nfl/engine/nfl_predict.py 2>&1 | tee nfl.log
+            # The same-game tickets' history (nfl_sgp_backtest.py, ~30 s),
+            # replayed only when a final game's box score is on file that
+            # it has not replayed yet, BEFORE the predict run so week.json's
+            # meter and the file it reads agree. A failure warns and keeps
+            # the file as it was: the app shows its generated date.
+            python nfl/engine/experiments/nfl_sgp_backtest.py --if-stale 2>&1 | tee nfl.log \
+              || echo "::warning::same-game ticket backtest failed; nfl/data/sgp_backtest.json kept as it was"
+            python nfl/engine/nfl_predict.py 2>&1 | tee -a nfl.log
           fi
 
       # A RUN THAT FAILS AFTER BUYING PRICES STILL KEEPS THEM. An exception

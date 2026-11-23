@@ -86,3 +86,16 @@ def test_sync_mode_refreshes_the_coaching_approach_with_the_full_flag():
     assert "tee -a nfl.log" in step[approach:]
     predict = (Path(__file__).resolve().parents[1] / "nfl_predict.py").read_text()
     assert "nap.sync(log=log)" in predict.split("def run(")[1].split("games = nd.load_games()")[0]
+
+
+def test_the_ticket_history_is_replayed_when_stale_before_each_predict_run():
+    """The same-game tickets' backtest (~30 s) runs in the predict mode only
+    when a final game's box score is not in it yet, before nfl_predict.py
+    reads it - and a failure warns rather than costing the week's picks."""
+    run = (WF / "nfl.yml").read_text().split("- name: Run")[1].split("- name:")[0]
+    predict = run.split("export ODDS_REFRESH=1")[1]
+    replay = predict.index("python nfl/engine/experiments/nfl_sgp_backtest.py --if-stale")
+    picks = predict.index("python nfl/engine/nfl_predict.py")
+    assert replay < picks
+    assert '|| echo "::warning::' in predict[replay:picks]
+    assert "tee -a nfl.log" in predict[picks:]

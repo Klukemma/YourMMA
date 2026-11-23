@@ -7,7 +7,9 @@ them. The MMA export's rules carry over unchanged:
     build, and a bare NaN makes JSON.parse throw on the phone - a blank
     screen). A missing number prints as a dash, never as 0 or 50%.
   * Every payload carries `schema` and `generated`.
-  * Every caveat the reader sees is written here, in one place.
+  * Every caveat the reader sees is written here, in one place - the
+    same-game tickets' words are assembled here (sgp_block) from the rule's
+    own wording in nfl_sgp, so the app and the rule cannot drift apart.
 """
 
 import json
@@ -19,10 +21,12 @@ import numpy as np
 import pandas as pd
 
 import nfl_data as nd
+import nfl_sgp as sgp
 
 APP = nd.NFL / "app"
 APP_DATA = APP / "data"
 SCHEMA = 1
+SGP_HISTORY = nd.DATA / "sgp_backtest.json"      # experiments/nfl_sgp_backtest.py writes it
 
 CAVEATS = {
     "model": (
@@ -365,3 +369,62 @@ def attach_td_meters(game, meters):
             game[key] = [dict(e, meters=by_id.get(e.get("gsis_id")) or _no_meters()) for e in game[key]]
     game["td_meters"] = {side: team_td_meters(meters, game[side]) for side in ("home", "away")}
     return game
+
+
+# ---------------------------------------------------------------- same-game tickets
+
+def load_sgp_history(path=SGP_HISTORY):
+    """The same-game tickets' backtest payload, or None when none is on file."""
+    path = Path(path)
+    return json.loads(path.read_text()) if path.exists() else None
+
+
+# What week.json's sgp.history keeps of the backtest's payload.
+SGP_HISTORY_KEYS = ("generated", "through", "history_from", "current_season", "periods", "games",
+                    "left_out", "roi_reason", "td_prices", "td_groups", "inputs", "kinds")
+
+
+def _sgp_history(payload):
+    """The backtest's meters as the app shows them, or why there are none:
+    no file, or one built by another version of the rule."""
+    if payload is None:
+        return {"available": False,
+                "reason": "no same-game ticket backtest on file (experiments/nfl_sgp_backtest.py)"}
+    if payload.get("version") != sgp.VERSION:
+        return {"available": False,
+                "reason": f"the backtest on file is {payload.get('version')}, the rule is {sgp.VERSION}"}
+    return dict({k: payload.get(k) for k in SGP_HISTORY_KEYS}, available=True, reason=None)
+
+
+def sgp_block(log, history=None):
+    """week.json's "sgp": each ticket kind's meters, history and live, and the
+    rule's words beside them.
+
+      history  the backtest's (nfl/data/sgp_backtest.json, `history`): per
+               kind, per period, its meters and chance bins, when it was
+               generated and the last game it replayed
+      live     nfl_sgp.summarise of every ticket of this rule's version logged
+               before kickoff (prediction_history.json), graded or pending -
+               return at the logged est. payout, an upper bound
+      caveats  the rule's own sentences (nfl_sgp): no edge claimed, the
+               product chance, est. prices and the exact payout, the
+               backtest's known bias, the meters, what v1 leaves out
+    """
+    logged = [p for p in (log.get("picks") or {}).values()
+              if any(t.get("version") == sgp.VERSION for t in p.get("tickets") or [])]
+    tickets = [t for p in logged for t in p["tickets"] if t.get("version") == sgp.VERSION]
+    return {
+        "version": sgp.VERSION, "rule": "nfl/engine/nfl_sgp.py", "kinds": list(sgp.KINDS),
+        "legs": dict(sgp.LEGS), "stake": sgp.STAKE_UNIT, "use_cap": sgp.USE_CAP,
+        "rookie_floor": sgp.ROOKIE_FLOOR,
+        "history": _sgp_history(history),
+        "live": {"games": len(logged), "graded_games": sum(bool(p.get("tickets_graded")) for p in logged),
+                 "first_kickoff": min((p["kickoff"] for p in logged), default=None),
+                 "kinds": sgp.summarise(tickets)},
+        "caveats": {
+            "edge": sgp.NO_EDGE, "chance": sgp.CHANCE_NOTE, "est": sgp.EST_PAYOUT,
+            "prices": sgp.PRICE_NOTE, "exact": sgp.EXACT_PAYOUT, "bias": sgp.KNOWN_BIAS,
+            "meters": sgp.METER_NOTE, "live": sgp.LIVE_ROI, "slots": sgp.SLOT_RULE,
+            "rookie": sgp.ROOKIE_RULE, "not_in_v1": sgp.NOT_IN_V1,
+            "legs": dict(sgp.LEG_RULES), "tickets": dict(sgp.TICKET_RULES)},
+    }

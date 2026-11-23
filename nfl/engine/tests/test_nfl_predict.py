@@ -8,6 +8,7 @@ import pandas as pd
 import pytest
 
 import nfl_predict as npd
+import nfl_sgp as sgp
 import nfl_standalone
 
 
@@ -236,6 +237,34 @@ def test_every_bettable_player_is_listed_logged_and_metered(run_output):
     teams = json.loads((out / "teams.json").read_text())
     assert all(set(t["td_meters"]) == {"top3", "rest"} for t in teams["teams"])
     assert "td_meters" in week["caveats"]
+
+
+def test_upcoming_games_carry_their_four_tickets_logged_and_the_meters(run_output):
+    out, log, _ = run_output
+    week = json.loads((out / "week.json").read_text())
+    picks = json.loads(log.read_text())["picks"]
+    upcoming = [g for g in week["games"] if g["status"] == "upcoming"]
+    for g in week["games"]:
+        if g["status"] == "upcoming":
+            assert [t["kind"] for t in g["tickets"]] == list(sgp.KINDS)
+            assert picks[g["game_id"]]["tickets"] == g["tickets"]          # logged as shown
+            for t in g["tickets"]:
+                assert t["version"] == sgp.VERSION and t["est"] is True
+                if not t["built"]:
+                    assert t["reason"] and not t["legs"]
+                    continue
+                assert len(t["legs"]) == sgp.LEGS[t["kind"]] and 0 < t["chance"] < 1
+                assert (t["est_payout"] is None) == (t["est_payout_reason"] is not None)
+                for leg in t["legs"]:
+                    assert 0 < leg["chance"] < 1
+                    assert (leg["decimal"] is None) == (leg["price_missing"] is not None)
+        elif g["game_id"] not in picks:
+            # A game that started before any run logged it: nothing built after kickoff.
+            assert g["tickets"] is None and g["tickets_reason"] == npd.NO_TICKETS_LOGGED
+    s = week["sgp"]
+    assert {"version", "kinds", "legs", "stake", "history", "live", "caveats"} <= set(s)
+    assert s["version"] == sgp.VERSION and set(s["live"]["kinds"]) == set(sgp.KINDS)
+    assert s["live"]["games"] == len(upcoming) and s["live"]["graded_games"] == 0
 
 
 def test_touchdown_picks_are_graded_from_the_box_score():

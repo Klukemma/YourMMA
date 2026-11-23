@@ -137,6 +137,52 @@ ROOKIE_IS_SMALL = (f"the only rookie TD leg at {ROOKIE_FLOOR:.0%} or more, with 
                    "is SMALL's ticket")
 NO_ROOKIE_WIN = "no WIN leg available for the rookie's own team"
 
+# The rule in the words the app shows beside the tickets and their meters
+# (nfl_export.sgp_block), each from the docstring above, its numbers from
+# the constants: one wording, live and history.
+LEG_RULES = {
+    "WIN": "a team to win, overtime included; chance: the pick's blend; a tie voids the leg",
+    "SPREAD": ("a team at the posted spread; chance: the market's no-vig at the consensus spread "
+               "prices, since the model does not beat the line; a push voids the leg"),
+    "TOTAL": ("over or under the posted game total; chance: the market's no-vig at the consensus "
+              "total prices; a push voids the leg"),
+    "TD": ("a player scores 1+ rushing or receiving touchdown, overtime included - passing, return "
+           "and fumble-recovery touchdowns do not count; chance: the touchdown model's, if he plays, "
+           "only where his usage group was measured as calibrated; a player who does not play voids "
+           "the leg"),
+}
+ROOKIE_RULE = ("A ROOKIE leg is a TD leg on a player in his first NFL season: no game in player_games "
+               "in any earlier season.")
+TICKET_RULES = {
+    "small": "the best TD + the best result leg (WIN or SPREAD)",
+    "rookie": (f"the best rookie TD with a chance of {ROOKIE_FLOOR:.0%} or more + WIN for the rookie's "
+               "own team"),
+    "medium": ("the best TD + the best result leg + the best of the TOTAL legs and the TD legs on "
+               "other players"),
+    "large": ("the best TD + the next-best TD (another player) + the best result leg + the best "
+              "TOTAL leg"),
+}
+SLOT_RULE = (f"Built in the order {', '.join(k.upper() for k in KINDS)}, each slot taking the "
+             f"highest-chance leg still available: a leg is in at most {USE_CAP} of a game's "
+             f"{len(KINDS)} tickets. A slot with nothing available leaves its ticket unbuilt, with "
+             "the reason.")
+CHANCE_NOTE = ("The chance is the product of the legs' chances - what the ticket would hit if its "
+               "legs were independent. Legs in one game are not (a team winning and its running back "
+               "scoring go together), so the backtest measures how often each kind actually hit "
+               "beside this product, and both are shown.")
+PRICE_NOTE = ("Every price is the books' consensus single price, not Stake's: an estimate, marked "
+              "est.")
+EXACT_PAYOUT = ("The exact payout is the price Stake quotes for the slip: enter it as typed and the "
+                "return on the stake is worked out from it.")
+METER_NOTE = (f"Each kind is metered on its own, as if ${STAKE_UNIT:.0f} had been bet on every ticket "
+              "of that kind: hit rate is won / (won + lost), beside the mean product chance of the "
+              "same tickets.")
+LIVE_ROI = ("Live: every ticket logged before kickoff, graded from the box score, its return at the "
+            "logged est. payout - so an upper bound, and marked so.")
+NOT_IN_V1 = ("Not in v1, because nothing on file measures them yet: QB pass attempts, yards over a "
+             "line, first/second-half points, team or game touchdown totals, alternate (\"Asian\") "
+             "lines.")
+
 
 # ---------------------------------------------------------------- numbers
 
