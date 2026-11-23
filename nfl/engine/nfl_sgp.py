@@ -116,6 +116,9 @@ KNOWN_BIAS = ("In the backtest a TD candidate is a player who took a snap, so th
               "who was active. Live, a pick who does not play is voided and the ticket is graded "
               "on its other legs.")
 NO_TD_PRICE = "no anytime-TD price history on file"
+NO_EDGE = ("Nothing here claims an edge. The market is hard to beat, and parlays multiply the "
+           "margin of every leg; these tickets are the legs the engine rates most likely to land, "
+           "not bets it rates profitable.")
 EST_PAYOUT = ("est. - the product of the legs' consensus single prices; Stake's bet builder prices "
               "correlated legs below it, so it is an upper bound on what Stake pays")
 
