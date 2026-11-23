@@ -28,11 +28,37 @@ different bet, and one side alone cannot be de-vigged. A price always comes
 from the same source as its line (the-odds-api's line with its price, the
 schedule's with the schedule's), and a missing price says why
 (PRICE_MISSING). The prices are read by no model and no pick.
+
+ANYTIME-TD PRICES. The same-game tickets (nfl_sgp) price a TD leg at the
+books' consensus "Yes" price for player_anytime_td. The odds endpoint above
+does not carry player markets: each game is its own call to the per-event
+endpoint, 1 credit a game (one market, one region), so the budget is per
+game. A game is bought only once it kicks off within TD_WINDOW_HOURS (the
+names a book lists settle late in the week), at most once in TD_STALE_HOURS
+unless ODDS_REFRESH=1 asks for game-day prices, never once it has started,
+and never when the last credits counted are below TD_RESERVE_CREDITS - the
+lines above are worth more than a TD price. The event ids come from the
+odds reply (kept as event_id) or, for a game cached before it was kept,
+from the events list, which costs no credit.
+
+Kept per game in the cache's "td" block: {feed name: consensus Yes price
+(the median across books in probability space, as consensus_price), the
+best price and its book, how many books}, and when it was seen. The feed
+names a player but not his team, so a price reaches a gsis id only through
+the names the game's own two rosters give him (td_prices_for): the exact
+name first, then a strict normalised one (case, accents, punctuation and a
+generational suffix - nothing looser, no nickname, no near spelling), and
+only where that name belongs to one player of the game and one feed entry.
+Anything else leaves him unpriced with the reason (TD_PRICE_MISSING): the
+MMA cache's lesson (engine/odds_cache.py, for_card) - a wrong price is
+worse than none, and a price is only ever the game's own.
 """
 
 import json
 import os
+import re
 import statistics
+import unicodedata
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -47,6 +73,14 @@ PARAMS = {"regions": "us", "markets": "h2h,spreads,totals", "oddsFormat": "ameri
 STALE_AFTER_DAYS = 3
 WINDOW_DAYS = 8          # only this week's games need a price
 MATCH_HOURS = 36         # a listed kickoff this close to the schedule's is the same game
+
+EVENTS_ENDPOINT = "https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events"
+EVENT_ODDS_ENDPOINT = EVENTS_ENDPOINT + "/{event_id}/odds"
+TD_MARKET = "player_anytime_td"
+TD_PARAMS = {"regions": "us", "markets": TD_MARKET, "oddsFormat": "american"}
+TD_WINDOW_HOURS = 36     # a game's anytime-TD prices are bought only this close to kickoff
+TD_STALE_HOURS = 20      # and at most once in this long, unless ODDS_REFRESH=1
+TD_RESERVE_CREDITS = 30  # credits left for the lines above: no TD call below this
 
 NAME_TO_CODE = {name: code for code, (name, *_rest) in nd.TEAMS.items()}
 NAME_TO_CODE.update({
@@ -75,7 +109,7 @@ def redact(text, key):
 
 
 def empty():
-    return {"schema": SCHEMA, "games": {}, "fetches": []}
+    return {"schema": SCHEMA, "games": {}, "fetches": [], "td": {}}
 
 
 def load(path=CACHE):
@@ -220,6 +254,8 @@ def parse_events(events):
         out[game_key(away, home, ev.get("commence_time"))] = {
             "home": home, "away": away,
             "commence_time": ev.get("commence_time"),
+            # The per-event endpoint's id: what an anytime-TD call is made with.
+            "event_id": ev.get("id"),
             "home_prob": statistics.median(probs) if probs else None,
             "home_ml": consensus_price([p for p, _ in home_prices]) if home_prices else None,
             "away_ml": consensus_price([p for p, _ in away_prices]) if away_prices else None,
@@ -265,9 +301,11 @@ def merge(cache, parsed, now=None):
     return added, refreshed, live
 
 
-def record_fetch(cache, status, events, remaining, now=None):
-    cache["fetches"].append({"at": _stamp(now or _now()), "status": status,
-                             "events": events, "credits_remaining": remaining})
+def record_fetch(cache, status, events, remaining, now=None, **extra):
+    """One line of the fetch log. `extra` says what else the call was (an
+    anytime-TD round: its market and how many calls it made)."""
+    cache["fetches"].append(dict({"at": _stamp(now or _now()), "status": status,
+                                  "events": events, "credits_remaining": remaining}, **extra))
     cache["fetches"] = cache["fetches"][-200:]
 
 
@@ -306,19 +344,26 @@ def needs_fetch(cache, upcoming, refresh=False, now=None):
     return None
 
 
-def fetch(api_key, log=print):
-    """One call. Returns (status, events or [], credits remaining)."""
+def _get(url, params, api_key, log, failed):
+    """One GET to the-odds-api: (status, the reply's JSON or `failed`,
+    credits remaining). The key goes in the query string, so every text
+    that could carry the URL is redacted before it is logged."""
     import requests
     try:
-        response = requests.get(ENDPOINT, params=dict(PARAMS, apiKey=api_key), timeout=20)
+        response = requests.get(url, params=dict(params, apiKey=api_key), timeout=20)
     except requests.RequestException as err:
         log(f"   [odds] request failed: {redact(err, api_key)[:200]}")
-        return None, [], None
+        return None, failed, None
     remaining = response.headers.get("x-requests-remaining")
     if response.status_code != 200:
         log(f"   [odds] HTTP {response.status_code}: {redact(response.text, api_key)[:200]}")
-        return response.status_code, [], remaining
+        return response.status_code, failed, remaining
     return 200, response.json(), remaining
+
+
+def fetch(api_key, log=print):
+    """One call. Returns (status, events or [], credits remaining)."""
+    return _get(ENDPOINT, PARAMS, api_key, log, [])
 
 
 def refresh(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=None):
@@ -342,6 +387,291 @@ def refresh(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=No
     log(f"   [odds] {reason}: {len(parsed)} games priced ({added} new, {refreshed} refreshed, "
         f"{live} in play skipped). Credits left: {remaining}")
     return "fetched" if status == 200 else f"failed ({status})"
+
+
+# ---------------------------------------------------------------- anytime TD
+
+def _credits(remaining):
+    """The credits-remaining header as a number, or None."""
+    try:
+        return float(remaining)
+    except (TypeError, ValueError):
+        return None
+
+
+def _last_credits(cache):
+    """The credits left as the newest fetch on file counted them, or None."""
+    for f in reversed(cache.get("fetches") or []):
+        left = _credits(f.get("credits_remaining"))
+        if left is not None:
+            return left
+    return None
+
+
+def parse_td_event(event):
+    """(key, entry) from one per-event reply for player_anytime_td, or
+    (None, None) for a team not in the table.
+
+    A book's price counts for a player only on its "Yes" outcome with the
+    player named (`description`) and a real American price; a book that
+    quotes one player at two different prices has neither counted. Per
+    player: `price`, the consensus across books (consensus_price - the
+    median in probability space), `best_price` and `best_book`, and `books`."""
+    home, away = NAME_TO_CODE.get(event.get("home_team")), NAME_TO_CODE.get(event.get("away_team"))
+    if not home or not away:
+        return None, None
+    quotes, books = {}, 0
+    for book in event.get("bookmakers") or []:
+        title = book.get("title") or book.get("key")
+        mine, torn = {}, set()
+        for market in book.get("markets") or []:
+            if market.get("key") != TD_MARKET:
+                continue
+            for o in market.get("outcomes") or []:
+                who, price = str(o.get("description") or "").strip(), o.get("price")
+                if str(o.get("name") or "").strip().lower() != "yes" or not who:
+                    continue
+                try:
+                    price = float(price)
+                except (TypeError, ValueError):
+                    continue
+                if abs(price) < 100:
+                    continue
+                if who in mine and mine[who] != price:
+                    torn.add(who)
+                mine[who] = price
+        for who in torn:
+            mine.pop(who)
+        books += bool(mine)
+        for who, price in mine.items():
+            quotes.setdefault(who, []).append((price, title))
+    players = {}
+    for who, q in quotes.items():
+        best = max(q, key=lambda x: _payout(x[0]))
+        players[who] = {"price": consensus_price([p for p, _ in q]), "best_price": best[0],
+                        "best_book": best[1], "books": len(q)}
+    return game_key(away, home, event.get("commence_time")), {
+        "event_id": event.get("id"), "home": home, "away": away,
+        "commence_time": event.get("commence_time"), "books": books, "players": players}
+
+
+def merge_td(cache, key, entry, now=None):
+    """Keep one game's anytime-TD prices, replacing any older ones. A game
+    that has started is skipped - its prices are in-play. True if kept."""
+    now = now or _now()
+    start = _parse_time(entry["commence_time"]) if entry.get("commence_time") else None
+    if start is None or start <= now:
+        return False
+    cache.setdefault("td", {})[key] = dict(entry, seen=_stamp(now))
+    return True
+
+
+def td_for_game(cache, away, home, kickoff):
+    """One game's anytime-TD entry, or None: the two teams and a kickoff
+    within MATCH_HOURS, as for_game() - never another game's."""
+    kickoff = pd.Timestamp(kickoff)
+    best = None
+    for entry in (cache.get("td") or {}).values():
+        if entry.get("home") != home or entry.get("away") != away or not entry.get("commence_time"):
+            continue
+        start = pd.Timestamp(_parse_time(entry["commence_time"]).replace(tzinfo=None))
+        gap = abs((start - kickoff).total_seconds()) / 3600
+        if gap <= MATCH_HOURS and (best is None or gap < best[0]):
+            best = (gap, entry)
+    return best[1] if best else None
+
+
+def td_due(cache, upcoming, refresh=False, now=None):
+    """The games worth a credit for anytime-TD prices now: (away, home,
+    kickoff) of each that kicks off within TD_WINDOW_HOURS and has not
+    started, whose prices on file are TD_STALE_HOURS old or more (or that
+    has none) - every game in the window when `refresh`."""
+    now = now or _now()
+    clock = pd.Timestamp(now.replace(tzinfo=None))
+    horizon = clock + pd.Timedelta(hours=TD_WINDOW_HOURS)
+    due = []
+    for g in upcoming.itertuples(index=False):
+        kickoff = pd.Timestamp(g.kickoff)
+        if not clock < kickoff <= horizon:
+            continue
+        entry = td_for_game(cache, g.away, g.home, kickoff)
+        if (refresh or entry is None
+                or now - _parse_time(entry["seen"]) >= timedelta(hours=TD_STALE_HOURS)):
+            due.append((g.away, g.home, kickoff))
+    return due
+
+
+def fetch_events(api_key, log=print):
+    """The events list - ids, teams, kickoffs. Costs no credit."""
+    return _get(EVENTS_ENDPOINT, {}, api_key, log, [])
+
+
+def fetch_td(api_key, event_id, log=print):
+    """One game's anytime-TD prices: 1 credit. (status, event or None,
+    credits remaining)."""
+    return _get(EVENT_ODDS_ENDPOINT.format(event_id=event_id), TD_PARAMS, api_key, log, None)
+
+
+def _event_index(events):
+    """{(away, home): [(kickoff, id)]} of an events list (or an odds reply)."""
+    out = {}
+    for ev in events or []:
+        home, away = NAME_TO_CODE.get(ev.get("home_team")), NAME_TO_CODE.get(ev.get("away_team"))
+        if home and away and ev.get("id") and ev.get("commence_time"):
+            start = pd.Timestamp(_parse_time(ev["commence_time"]).replace(tzinfo=None))
+            out.setdefault((away, home), []).append((start, ev["id"]))
+    return out
+
+
+def _event_id(index, away, home, kickoff):
+    best = None
+    for start, eid in index.get((away, home), []):
+        gap = abs((start - kickoff).total_seconds()) / 3600
+        if gap <= MATCH_HOURS and (best is None or gap < best[0]):
+            best = (gap, eid)
+    return best[1] if best else None
+
+
+def event_ids(cache, due, api_key, log=print):
+    """{(away, home, kickoff): event id} for the due games: from the odds
+    reply on file where it kept the id, else from the free events list -
+    called once, and only when a game needs it."""
+    out, missing = {}, []
+    for g in due:
+        entry = for_game(cache, *g)
+        eid = entry["latest"].get("event_id") if entry else None
+        if eid:
+            out[g] = eid
+        else:
+            missing.append(g)
+    if missing:
+        status, events, _ = fetch_events(api_key, log)
+        index = _event_index(events if status == 200 else [])
+        for g in missing:
+            eid = _event_id(index, *g)
+            if eid:
+                out[g] = eid
+    return out
+
+
+def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=None):
+    """Buy anytime-TD prices for the games td_due() names, one call each,
+    if a key exists. Returns what happened."""
+    api_key = (api_key if api_key is not None else os.environ.get("ODDS_API_KEY", "")).strip()
+    refresh_asked = os.environ.get("ODDS_REFRESH") == "1" if refresh_asked is None else refresh_asked
+    now = now or _now()
+    due = td_due(cache, upcoming, refresh_asked, now)
+    if not due:
+        log(f"   [odds] anytime TD: no game within {TD_WINDOW_HOURS} hours of kickoff needs a price; "
+            "no call made")
+        return "cached"
+    if not api_key:
+        log(f"   [odds] anytime TD: {len(due)} games due, but ODDS_API_KEY is not set: no TD prices")
+        return "no key"
+    ids = event_ids(cache, due, api_key, log)
+    remaining, status = _last_credits(cache), None
+    calls = priced = 0
+    for g in due:
+        if g not in ids:
+            continue
+        if remaining is not None and _credits(remaining) < TD_RESERVE_CREDITS:
+            log(f"   [odds] anytime TD: {remaining} credits left, under the {TD_RESERVE_CREDITS} kept "
+                "for the lines; no more TD calls")
+            break
+        status, event, left = fetch_td(api_key, ids[g], log)
+        calls += 1
+        remaining = left if left is not None else remaining
+        if status != 200 or not event:
+            continue
+        key, entry = parse_td_event(event)
+        if key is not None and merge_td(cache, key, entry, now):
+            priced += 1
+    if calls:
+        record_fetch(cache, status, priced, remaining, now, market=TD_MARKET, calls=calls)
+    log(f"   [odds] anytime TD: {len(due)} games due, {calls} calls ({len(due) - len(ids)} without an "
+        f"event id), {priced} games priced. Credits left: {remaining}")
+    return "fetched" if calls and status == 200 else ("no event id" if not calls else f"failed ({status})")
+
+
+# Why a TD leg has no price (td_prices_for).
+TD_PRICE_MISSING = {
+    "window": f"anytime-TD prices are bought only within {TD_WINDOW_HOURS} hours of kickoff",
+    "none": "no anytime-TD prices on file for this game",
+    "unposted": "no book had posted anytime-TD prices when they were fetched",
+    "unmatched": "no anytime-TD price under his name",
+    "ambiguous": "his name matches more than one player or price, so none rather than a wrong one",
+}
+_SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
+
+
+def td_name_key(name):
+    """A name as td_prices_for compares it when the exact name fails:
+    'D.J. Moore' and 'DJ Moore', 'Kenneth Walker III' and 'Kenneth Walker',
+    'Ja'Marr Chase' and 'JaMarr Chase' alike - accents, case, punctuation
+    and a generational suffix gone. Nothing looser: 'Gabe' is not 'Gabriel'."""
+    text = unicodedata.normalize("NFKD", str(name or "")).encode("ascii", "ignore").decode()
+    parts = re.sub(r"[^a-z ]", "", text.lower().replace("-", " ")).split()
+    while len(parts) > 2 and parts[-1] in _SUFFIXES:
+        parts.pop()
+    return " ".join(parts)
+
+
+def td_prices_for(cache, away, home, kickoff, players, now=None):
+    """{gsis_id: price} for one game's listed players, from that game's own
+    anytime-TD prices only (td_for_game) and only those seen before kickoff.
+
+    `players` is [(gsis_id, [the names he goes by])] - every player listed
+    for either team (the TD list's name, the roster's), so a feed name that
+    could be someone else of this game is seen to be ambiguous. Each price:
+    `price` (consensus American), `best_price`, `best_book`, `books`,
+    `as_of`, the `feed_name` it came under and `match` (exact or
+    normalised) - or `price` None and `missing`, why (TD_PRICE_MISSING).
+
+    A player is priced from one feed entry: the one carrying exactly a name
+    of his, else the one whose td_name_key() is his - and only when no other
+    player of the game shares that key, and (for the normalised match) no
+    other feed entry carries it. Two exact hits (his TD-list name and his
+    roster name both quoted) are ambiguous too.
+    """
+    now = now or _now()
+    kickoff = pd.Timestamp(kickoff)
+    players = [(g, sorted({n for n in names if n})) for g, names in players]
+
+    def missing(why):
+        return {g: {"price": None, "missing": TD_PRICE_MISSING[why]} for g, _ in players}
+
+    entry = td_for_game(cache, away, home, kickoff)
+    if entry is not None and pd.Timestamp(_parse_time(entry["seen"]).replace(tzinfo=None)) >= kickoff:
+        entry = None                                    # never an in-play price
+    if entry is None:
+        far = kickoff - pd.Timestamp(now.replace(tzinfo=None)) > pd.Timedelta(hours=TD_WINDOW_HOURS)
+        return missing("window" if far else "none")
+    feed = entry.get("players") or {}
+    if not feed:
+        return missing("unposted")
+    owners, feed_keys = {}, {}
+    for g, names in players:
+        for n in names:
+            owners.setdefault(td_name_key(n), set()).add(g)
+    for name in feed:
+        feed_keys.setdefault(td_name_key(name), set()).add(name)
+    out = {}
+    for g, names in players:
+        exact = {n for n in names if n in feed}
+        if exact:
+            hits, match = exact, "exact"
+        else:
+            hits, match = set().union(*(feed_keys.get(td_name_key(n), set()) for n in names)), "normalised"
+        if not hits:
+            out[g] = {"price": None, "missing": TD_PRICE_MISSING["unmatched"]}
+            continue
+        name = next(iter(hits))
+        key = td_name_key(name)
+        if len(hits) > 1 or owners.get(key) != {g} or (match == "normalised" and len(feed_keys[key]) > 1):
+            out[g] = {"price": None, "missing": TD_PRICE_MISSING["ambiguous"]}
+            continue
+        out[g] = dict(feed[name], as_of=entry["seen"], feed_name=name, match=match, missing=None)
+    return out
 
 
 # The two sides of each line's price, as market_for names them.
