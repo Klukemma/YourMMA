@@ -17,7 +17,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
-import pytest
 
 import nfl_odds as no
 
