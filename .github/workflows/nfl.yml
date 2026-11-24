@@ -24,8 +24,10 @@ name: NFL predictions
 # reuse prices on file unless a game has none or they are days old - and
 # every run reads the news feeds, so news lands before each kickoff. The
 # same-game tickets' and TD lists' anytime-TD prices are 1 credit a game,
-# bought once early - by the first run within nfl_odds.TD_EARLY_DAYS of
-# kickoff, if the game has no TD entry on file - and again for games within
+# bought early - by the first run within nfl_odds.TD_EARLY_DAYS of kickoff,
+# if the game has no TD entry on file, and again, spaced out and capped
+# (TD_EARLY_RETRY_HOURS, TD_EARLY_TRIES), while the books have not posted -
+# and again for games within
 # nfl_odds.TD_WINDOW_HOURS of kickoff, at most once in TD_STALE_HOURS -
 # Thursday's and Sunday's refresh buys them again for the games that day.
 # So every game needs a run inside that window, hours ahead

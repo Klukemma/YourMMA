@@ -130,9 +130,14 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
   single prices are not the consensus - so it is an estimate either way. The exact payout is
   the price Stake quotes for the slip, typed in by hand.
 - **Anytime-touchdown prices** are bought per game from the-odds-api's per-event endpoint
-  (one credit a game): once early, by the first run within `nfl_odds.TD_EARLY_DAYS` of
+  (one credit a game): early, by the first run within `nfl_odds.TD_EARLY_DAYS` of
   kickoff for a game with none on file (the books post these props early in the week; each
-  round's fetch log counts how many early calls found them posted), and again within
+  round's fetch log counts how many early calls found them posted). A game whose books had
+  not posted yet is asked again once its entry is `nfl_odds.TD_EARLY_RETRY_HOURS` old, while
+  it is still outside its window, up to `nfl_odds.TD_EARLY_TRIES` early calls - the first
+  run within those days of a Sunday game is Monday's, before the app lists that week, so one
+  call could miss the books by a day and leave the lists unpriced until the eve of the game
+  (a review found this; the fetch log counts the retries too). Then again within
   `nfl_odds.TD_WINDOW_HOURS` of kickoff, at most once in `nfl_odds.TD_STALE_HOURS` - never once
   the game has started, and never below `nfl_odds.TD_RESERVE_CREDITS` credits left, so the
   lines are bought first. A price is matched to a player only by an exact or strictly
@@ -150,7 +155,8 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
   runner's own slots over the last full season with exactly these purchase rules and prints
   each month's credits - lines, touchdown window, early touchdown calls - beside the most the
   other engines on the key were seen to spend in a month and the reserve, and what is left.
-  It is an estimate: every call is assumed answered and a manual refresh is not in it. The
+  It is an estimate: every call is assumed answered, every early retry is counted as if no
+  book posted early (the most the rules can spend), and a manual refresh is not in it. The
   workflow test holds its busiest month and the reserve under the allowance.
 - **The meters**, per kind: the history (`experiments/nfl_sgp_backtest.py`, replayed by the
   runner whenever a new final's box score is on file, its generated date shown) and the

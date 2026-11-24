@@ -41,23 +41,39 @@ lines above are worth more than a TD price. The event ids come from the
 odds reply (kept as event_id) or, for a game cached before it was kept,
 from the events list, which costs no credit.
 
-ONE EARLY CALL A GAME (added 2026-11-24, for the TD lists' odds). The books
-post anytime-TD props early in the week, and a price bought only within
-TD_WINDOW_HOURS left the week's TD lists and tickets unpriced from Tuesday
-to the eve of each game. So a game is also bought once as soon as it kicks
-off within TD_EARLY_DAYS and has no anytime-TD entry on file at all
-(td_early_due) - one call a game: an entry the books had not posted for
-yet counts as on file, and the game waits for its window round. The window
-rounds above are unchanged and come first in a run, so under the reserve an
-early call is the one left out. Every price is still the game's own and
-only ever pre-game; the newest one before kickoff is the one logged.
+EARLY CALLS, UP TO TD_EARLY_TRIES A GAME (added 2026-11-24, for the TD
+lists' odds). The books post anytime-TD props early in the week, and a
+price bought only within TD_WINDOW_HOURS left the week's TD lists and
+tickets unpriced from Tuesday to the eve of each game. So a game is also
+bought as soon as it kicks off within TD_EARLY_DAYS and has no anytime-TD
+entry on file (td_early_due). The window rounds above are unchanged and
+come first in a run, so under the reserve an early call is the one left
+out. Every price is still the game's own and only ever pre-game; the
+newest one before kickoff is the one logged.
+
+ASKED AGAIN WHEN NOT POSTED (review, 2026-11-24). The first version made one
+early call a game and let an entry the books had not posted for wait for
+the window. But the first run within TD_EARLY_DAYS of the Sunday slate is
+Monday's, about six days out - before the app lists that week, since the
+current one still has Monday night to play - so whether the lists showed
+odds midweek hung on the books posting six days ahead, which nothing on
+file shows they do. So an early entry with no player priced is asked again
+once it is TD_EARLY_RETRY_HOURS old, while the game is still outside its
+window, up to TD_EARLY_TRIES early calls in all (the entry's
+`early_calls`). The retry hours spread a game's tries over the week
+(Sunday's slate Monday, Wednesday and, with the Friday slot, Friday) rather
+than on the runner's consecutive slots, a day or less apart midweek; the
+cap bounds what a book that never posts early can cost. The fetch log
+counts the retries (`early_retries`) beside `early_posted`.
 
 THE MONTHLY BUDGET. The key is shared with the MMA engine, on the free
 tier's FREE_TIER_CREDITS a month: the line rounds cost 3 credits a call
 (PARAMS: three markets, one region), the MMA card one, every TD call one.
 replay_spend() replays the runner's slots over a schedule with exactly the
 rules here - needs_fetch, td_due, td_early_due - and counts each round's
-credits per month, assuming every call is answered; the workflow test runs
+credits per month, assuming every call is answered and no early one finds
+the books posted (so every early retry is counted: the most the rules can
+spend); the workflow test runs
 it over the last full season on file with the workflow's own crons and keeps
 the busiest month, with TD_RESERVE_CREDITS and the credits other engines
 were seen to spend on the same key (others_spend, from the credits-remaining
@@ -70,7 +86,8 @@ unpriced. The estimate itself is printed, month by month, by
 (budget(): the same replay at the same slots, runner_runs reading them
 off the workflow; no call is made). Each TD round's fetch-log line also
 counts its early calls and how many found the books' prices posted
-(`early`, `early_posted`) - how early "early in the week" is, measured.
+(`early`, `early_posted`, `early_retries`) - how early "early in the
+week" is, measured.
 
 Kept per game in the cache's "td" block: {feed name: consensus Yes price
 (the median across books in probability space, as consensus_price), the
@@ -112,7 +129,9 @@ TD_PARAMS = {"regions": "us", "markets": TD_MARKET, "oddsFormat": "american"}
 TD_WINDOW_HOURS = 36     # a game's anytime-TD prices are bought only this close to kickoff
 TD_STALE_HOURS = 20      # and at most once in this long, unless ODDS_REFRESH=1
 TD_RESERVE_CREDITS = 30  # credits left for the lines above: no TD call below this
-TD_EARLY_DAYS = 7        # and once, early: a game this close with no TD entry on file yet
+TD_EARLY_DAYS = 7        # and early: a game this close with no TD entry on file yet
+TD_EARLY_RETRY_HOURS = 36  # an early entry no book had posted for is asked again this old...
+TD_EARLY_TRIES = 3       # ...up to this many early calls a game in all
 FREE_TIER_CREDITS = 500  # the key's credits a month (the-odds-api's free tier), shared with MMA
 
 NAME_TO_CODE = {name: code for code, (name, *_rest) in nd.TEAMS.items()}
@@ -518,6 +537,14 @@ def merge_td(cache, key, entry, now=None):
     return True
 
 
+def note_early_calls(cache, key, n):
+    """Keep on a game's anytime-TD entry how many early calls it has had,
+    which a new reply replaces with the rest of the entry - so td_early_due
+    stops asking at TD_EARLY_TRIES. Nothing to keep when there were none."""
+    if n:
+        cache["td"][key]["early_calls"] = int(n)
+
+
 def td_for_game(cache, away, home, kickoff):
     """One game's anytime-TD entry, or None: the two teams and a kickoff
     within MATCH_HOURS, as for_game() - never another game's."""
@@ -553,11 +580,33 @@ def td_due(cache, upcoming, refresh=False, now=None):
     return due
 
 
+def early_tries(entry):
+    """How many early calls a game's anytime-TD entry has had: its
+    `early_calls`, one for an entry kept before they were counted (it was
+    bought once), none without an entry."""
+    if entry is None:
+        return 0
+    n = entry.get("early_calls")
+    return 1 if n is None else int(n)
+
+
+def _ask_again(entry, kickoff, now):
+    """An early entry the books had not posted for, worth another early
+    credit: no player priced, seen TD_EARLY_RETRY_HOURS ago or more, the
+    game still outside TD_WINDOW_HOURS (inside it, td_due's own staleness
+    rule buys it), and fewer than TD_EARLY_TRIES early calls so far."""
+    clock = pd.Timestamp(now.replace(tzinfo=None))
+    return (not entry.get("players")
+            and kickoff - clock > pd.Timedelta(hours=TD_WINDOW_HOURS)
+            and now - _parse_time(entry["seen"]) >= timedelta(hours=TD_EARLY_RETRY_HOURS)
+            and early_tries(entry) < TD_EARLY_TRIES)
+
+
 def td_early_due(cache, upcoming, now=None):
-    """The games worth their one early credit now: (away, home, kickoff) of
-    each that kicks off within TD_EARLY_DAYS and has not started, with no
-    anytime-TD entry on file at all - so each game is bought early once, and
-    an entry the books had not posted for yet waits for td_due's window. A
+    """The games worth an early credit now: (away, home, kickoff) of each
+    that kicks off within TD_EARLY_DAYS and has not started, with no
+    anytime-TD entry on file - or with one the books had not posted for,
+    asked again (_ask_again) up to TD_EARLY_TRIES early calls a game. A
     game td_due names is bought there, not here (refresh_td drops it)."""
     now = now or _now()
     clock = pd.Timestamp(now.replace(tzinfo=None))
@@ -565,7 +614,10 @@ def td_early_due(cache, upcoming, now=None):
     due = []
     for g in upcoming.itertuples(index=False):
         kickoff = pd.Timestamp(g.kickoff)
-        if clock < kickoff <= horizon and td_for_game(cache, g.away, g.home, kickoff) is None:
+        if not clock < kickoff <= horizon:
+            continue
+        entry = td_for_game(cache, g.away, g.home, kickoff)
+        if entry is None or _ask_again(entry, kickoff, now):
             due.append((g.away, g.home, kickoff))
     return due
 
@@ -625,7 +677,7 @@ def event_ids(cache, due, api_key, log=print):
 
 def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=None, clock=None):
     """Buy anytime-TD prices for the games td_due() names, then the ones
-    td_early_due() names (each game's one early call), one call each, if a
+    td_early_due() names (each game's early calls), one call each, if a
     key exists - the window's first, so the reserve leaves out an early call
     before a window one. Returns what happened. `now` (the run's clock)
     picks the games due; each reply is merged at the time it came back
@@ -649,7 +701,7 @@ def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now
         return "no key"
     ids = event_ids(cache, due, api_key, log)
     remaining, status, arrived = _last_credits(cache), None, now
-    calls = priced = early_calls = early_posted = 0
+    calls = priced = early_calls = early_posted = early_retries = 0
     for g in due:
         if g not in ids:
             continue
@@ -657,26 +709,29 @@ def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now
             log(f"   [odds] anytime TD: {remaining} credits left, under the {TD_RESERVE_CREDITS} kept "
                 "for the lines; no more TD calls")
             break
+        tries = early_tries(td_for_game(cache, *g))
         status, event, left = fetch_td(api_key, ids[g], log)
         arrived = _arrived(now, clock)
         calls += 1
         early_calls += g in early
+        early_retries += g in early and tries > 0
         remaining = left if left is not None else remaining
         if status != 200 or not event:
             continue
         key, entry = parse_td_event(event)
         if key is not None and merge_td(cache, key, entry, arrived):
             priced += 1
+            note_early_calls(cache, key, tries + (g in early))
             # Whether the books had posted by the early call: the log's
             # measure of how early "early in the week" is (a game whose early
-            # call found none waits for its window round).
+            # call found none is asked again, up to TD_EARLY_TRIES).
             early_posted += g in early and bool(entry.get("players"))
     if calls:
         record_fetch(cache, status, priced, remaining, arrived, market=TD_MARKET, calls=calls,
-                     early=early_calls, early_posted=early_posted)
+                     early=early_calls, early_posted=early_posted, early_retries=early_retries)
     log(f"   [odds] anytime TD: {len(due)} games due ({len(early)} early), {calls} calls ({early_calls} "
-        f"early, {early_posted} of them posted; {len(due) - len(ids)} without an event id), {priced} games "
-        f"priced. Credits left: {remaining}")
+        f"early, {early_posted} of them posted, {early_retries} of them retries; {len(due) - len(ids)} "
+        f"without an event id), {priced} games priced. Credits left: {remaining}")
     return "fetched" if calls and status == 200 else ("no event id" if not calls else f"failed ({status})")
 
 
@@ -810,8 +865,10 @@ def replay_spend(kickoffs, runs, refresh_runs=()):
     `refresh_runs` with ODDS_REFRESH=1) over a schedule of `kickoffs`, by
     exactly the rules here - needs_fetch for the lines (a call prices every
     game within WINDOW_DAYS), td_due and then td_early_due for the anytime
-    TD - assuming every call is answered and priced. The reserve is left
-    out: this is what the rules would spend, to hold against the key."""
+    TD - assuming every call is answered, and that no TD call finds the
+    books posted, so each game's early retries are all counted: the most the
+    rules can spend. The reserve is left out: this is what the rules would
+    spend, to hold against the key."""
     line_cost = len(PARAMS["markets"].split(",")) * len(PARAMS["regions"].split(","))
     td_cost = len(TD_PARAMS["markets"].split(",")) * len(TD_PARAMS["regions"].split(","))
     games = pd.DataFrame({"away": [f"A{i}" for i in range(len(kickoffs))],
@@ -832,8 +889,10 @@ def replay_spend(kickoffs, runs, refresh_runs=()):
         month["td_window"] += td_cost * len(window)
         month["td_early"] += td_cost * len(early)
         for away, home, kickoff in window + early:
-            cache["td"][game_key(away, home, kickoff)] = {"home": home, "away": away, "players": {},
-                                                          "commence_time": _stamp(kickoff), "seen": _stamp(now)}
+            key, tries = game_key(away, home, kickoff), early_tries(td_for_game(cache, away, home, kickoff))
+            cache["td"][key] = {"home": home, "away": away, "players": {},
+                                "commence_time": _stamp(kickoff), "seen": _stamp(now)}
+            note_early_calls(cache, key, tries + ((away, home, kickoff) in early))
         month["total"] = month["lines"] + month["td_window"] + month["td_early"]
     return out
 
@@ -902,7 +961,8 @@ def budget(games, cache=None, workflow=WORKFLOW):
     busiest of them; the most the other engines on the key (MMA) were seen
     to spend in a month (others_spend of `cache`, the committed one unless
     given); TD_RESERVE_CREDITS; and what is left of FREE_TIER_CREDITS after
-    all three. An estimate: every call is assumed answered, a manual
+    all three. An estimate: every call is assumed answered, every early
+    retry made (replay_spend's books never post early), a manual
     refresh_odds run is not in it, and the others' figure covers only the
     months this cache's counter has seen."""
     played = games.groupby("season")["played"].all()
@@ -931,7 +991,8 @@ def budget_lines(b):
     out.append(f"Other engines on the key, by the credits counter: {seen}.")
     out.append(f"Busiest month {b['busiest']}: {b['busiest_total']} + the others' most {b['others_most']:g} "
                f"+ the reserve {b['reserve']} = {b['busiest_total'] + b['others_most'] + b['reserve']:g} of "
-               f"{b['free_tier']}; {b['spare']:g} to spare (est.: every call answered, no manual refresh).")
+               f"{b['free_tier']}; {b['spare']:g} to spare (est.: every call answered, every early retry made as if "
+               "no book posted early, no manual refresh).")
     return out
 
 

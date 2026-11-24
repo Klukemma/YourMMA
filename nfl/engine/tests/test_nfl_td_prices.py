@@ -1,8 +1,9 @@
 """Anytime-TD prices for the same-game tickets and the TD lists (nfl_odds):
 the per-event reply parsed into a consensus Yes price, the credit budget
-kept (games near kickoff once per stale period, and each game once early,
-within TD_EARLY_DAYS; never in play, never under the reserve, an early call
-the first left out), the key kept quiet, a feed name reaching a player only
+kept (games near kickoff once per stale period, and each game early within
+TD_EARLY_DAYS - asked again, spaced out and capped, while the books have not
+posted; never in play, never under the reserve, an early call the first left
+out), the key kept quiet, a feed name reaching a player only
 when it can be no one else of that game, the price a TD list shows, and the
 runner's monthly spend replayed.
 
@@ -177,7 +178,7 @@ def test_the_event_id_comes_from_the_free_events_list_and_each_due_game_is_one_c
     cache = no.empty()
     assert no.refresh_td(cache, UPCOMING, api_key="SECRET123", refresh_asked=False,
                          log=lines.append, now=NOW, clock=lambda: NOW) == "fetched"
-    # LV @ KC in its window, then MIA @ BUF's one early call (DEN @ KC is
+    # LV @ KC in its window, then MIA @ BUF's first early call (DEN @ KC is
     # more than TD_EARLY_DAYS away).
     assert [url for url, _ in calls] == [no.EVENTS_ENDPOINT, no.EVENT_ODDS_ENDPOINT.format(event_id=EVENT_ID),
                                          no.EVENT_ODDS_ENDPOINT.format(event_id=MIA_BUF_ID)]
@@ -322,14 +323,15 @@ def test_a_price_seen_at_or_after_kickoff_is_never_read():
 
 # ---------------------------------------------------------------- the early call
 
-def test_each_game_is_due_early_once_within_td_early_days_and_never_once_started():
+def test_each_game_is_due_early_within_td_early_days_and_never_once_started():
     # Every game of the week within TD_EARLY_DAYS with no entry on file:
     # LV @ KC and MIA @ BUF, not DEN @ KC (8 days away).
     assert no.td_early_due(no.empty(), UPCOMING, now=NOW) == [
         ("LV", "KC", KICKOFF), ("MIA", "BUF", pd.Timestamp("2026-10-26 00:20"))]
     cache = _cache_with_prices()
     assert no.td_early_due(cache, UPCOMING, now=NOW) == [("MIA", "BUF", pd.Timestamp("2026-10-26 00:20"))]
-    # An entry the books had not posted for counts as on file: one early call a game.
+    # An entry the books had not posted for is on file: not asked again at
+    # once (test_an_unposted_early_entry_is_asked_again_spaced_out_and_capped).
     key, entry = no.parse_td_event(dict(_load("events.json")[1], bookmakers=[]))
     no.merge_td(cache, key, entry, now=NOW)
     assert no.td_early_due(cache, UPCOMING, now=NOW) == []
@@ -365,15 +367,69 @@ def test_an_early_call_alone_is_a_round_and_says_so(monkeypatch):
                          clock=lambda: NOW) == "fetched"
     assert [url for url, _ in calls][-1] == no.EVENT_ODDS_ENDPOINT.format(event_id=MIA_BUF_ID)
     assert cache["fetches"][-1]["calls"] == 1 and cache["fetches"][-1]["early"] == 1
-    assert cache["fetches"][-1]["early_posted"] == 0
-    assert "1 games due (1 early), 1 calls (1 early, 0 of them posted" in lines[-1]
-    # Not posted yet: the game says so until its window round, and is not bought early again.
+    assert cache["fetches"][-1]["early_posted"] == 0 and cache["fetches"][-1]["early_retries"] == 0
+    assert "1 games due (1 early), 1 calls (1 early, 0 of them posted, 0 of them retries" in lines[-1]
+    assert cache["td"]["2026-10-26|MIA|BUF"]["early_calls"] == 1
+    # Not posted yet: the game says so, and the same run's clock does not buy it again.
     got = _prices([("x", ["Someone"])], cache, away="MIA", home="BUF", kickoff=pd.Timestamp("2026-10-26 00:20"))
     assert got["x"]["missing"] == no.TD_PRICE_MISSING["unposted"]
     calls.clear()
     assert no.refresh_td(cache, UPCOMING, api_key="K", refresh_asked=False, log=lines.append, now=NOW,
                          clock=lambda: NOW) == "cached"
     assert calls == []
+
+
+DEN_KC = ("DEN", "KC", pd.Timestamp("2026-11-01 17:00"))
+DEN_KICKOFF = datetime(2026, 11, 1, 17, 0, tzinfo=timezone.utc)
+
+
+def test_an_unposted_early_entry_is_asked_again_spaced_out_and_capped(monkeypatch):
+    """DEN @ KC's books never post early: its first early call comes back
+    empty, and it is asked again once the entry is TD_EARLY_RETRY_HOURS old
+    - not on the next slot - until TD_EARLY_TRIES early calls, each counted
+    in the fetch log as a retry; then it waits for its window round."""
+    import requests
+    calls, lines = [], []
+    monkeypatch.setattr(requests, "get", _fake_get(calls))
+    upcoming = UPCOMING.iloc[2:]
+    first = DEN_KICKOFF - timedelta(days=no.TD_EARLY_DAYS)
+    cache = no.empty()
+    at = first
+    for n in range(1, no.TD_EARLY_TRIES + 1):
+        assert no.td_early_due(cache, upcoming, now=at) == [DEN_KC], n
+        assert no.refresh_td(cache, upcoming, api_key="K", refresh_asked=False, log=lines.append, now=at,
+                             clock=lambda: at) == "fetched"
+        f = cache["fetches"][-1]
+        assert (f["early"], f["early_posted"], f["early_retries"]) == (1, 0, int(n > 1)), n
+        assert cache["td"]["2026-11-01|DEN|KC"]["early_calls"] == n
+        # Not again until the entry is TD_EARLY_RETRY_HOURS old.
+        soon = at + timedelta(hours=no.TD_EARLY_RETRY_HOURS) - timedelta(minutes=1)
+        assert no.td_early_due(cache, upcoming, now=soon) == [], n
+        at += timedelta(hours=no.TD_EARLY_RETRY_HOURS)
+    assert "0 of them posted, 1 of them retries" in lines[-1]
+    assert at < DEN_KICKOFF - timedelta(hours=no.TD_WINDOW_HOURS)       # still outside the window: the cap stops it
+    assert no.td_early_due(cache, upcoming, now=at) == []
+
+
+def test_a_posted_early_entry_or_one_in_its_window_is_never_asked_again_early():
+    first = DEN_KICKOFF - timedelta(days=no.TD_EARLY_DAYS)
+    later = first + timedelta(hours=no.TD_EARLY_RETRY_HOURS)
+    upcoming = UPCOMING.iloc[2:]
+    posted = no.empty()
+    _, entry = no.parse_td_event(dict(_load("td_event.json"), id=_load("events.json")[2]["id"],
+                                      away_team="Denver Broncos", commence_time="2026-11-01T17:00:00Z"))
+    assert no.merge_td(posted, "2026-11-01|DEN|KC", entry, now=first) and entry["players"]
+    no.note_early_calls(posted, "2026-11-01|DEN|KC", 1)
+    assert no.td_early_due(posted, upcoming, now=later) == []
+    # Unposted, but its window has started: td_due buys it there, never early.
+    unposted = no.empty()
+    _, empty = no.parse_td_event(dict(_load("events.json")[2], bookmakers=[]))
+    in_window = DEN_KICKOFF - timedelta(hours=no.TD_WINDOW_HOURS)
+    assert no.merge_td(unposted, "2026-11-01|DEN|KC", empty, now=in_window - timedelta(hours=no.TD_EARLY_RETRY_HOURS))
+    assert no.td_early_due(unposted, upcoming, now=in_window) == []
+    assert no.td_due(unposted, upcoming, now=in_window) == [DEN_KC]
+    # An entry kept before early calls were counted counts as one.
+    assert no.early_tries(unposted["td"]["2026-11-01|DEN|KC"]) == 1 and no.early_tries(None) == 0
 
 
 def test_the_fetch_log_counts_the_early_calls_that_found_prices_posted(monkeypatch):
@@ -390,7 +446,7 @@ def test_the_fetch_log_counts_the_early_calls_that_found_prices_posted(monkeypat
                          clock=lambda: early) == "fetched"
     f = cache["fetches"][-1]
     assert (f["calls"], f["early"], f["early_posted"], f["events"]) == (2, 2, 1, 2)
-    assert "2 games due (2 early), 2 calls (2 early, 1 of them posted" in lines[-1]
+    assert "2 games due (2 early), 2 calls (2 early, 1 of them posted, 0 of them retries" in lines[-1]
     got = _prices([("kc2", ["Sam Tight"])], cache, now=early)
     assert got["kc2"]["price"] is not None and got["kc2"]["as_of"] == "2026-10-21T12:00:00Z"
 
@@ -450,7 +506,7 @@ def test_a_td_lists_missing_price_has_every_number_none_and_the_reason():
 
 def test_the_spend_replay_counts_each_round_by_the_rules():
     """One Sunday game, the runner's week: Tuesday (lines: none on file;
-    the game's one early TD call), Saturday (lines four days old; TD in the
+    the game's first early TD call), Saturday (lines four days old; TD in the
     window, Tuesday's price stale), Sunday morning with ODDS_REFRESH=1
     (lines and TD again) and Sunday afternoon (nothing: both fresh)."""
     kickoff = pd.Timestamp("2026-11-29 18:00")
@@ -461,6 +517,15 @@ def test_the_spend_replay_counts_each_round_by_the_rules():
     assert spend == {"2026-11": {"lines": 3 * line, "td_window": 2, "td_early": 1, "total": 3 * line + 3}}
     # A game first seen inside its window is bought there, never early too.
     assert no.replay_spend([kickoff], [sat])["2026-11"]["td_early"] == 0
+    # The replay's books never post early, so every retry is counted: with
+    # Monday's slot the game is first bought six days out, and asked again
+    # at Wednesday's and Friday's - TD_EARLY_RETRY_HOURS apart or more, not
+    # Tuesday's or Thursday's - until TD_EARLY_TRIES.
+    mon, wed = pd.Timestamp("2026-11-23 15:17"), pd.Timestamp("2026-11-25 06:17")
+    thu, fri = pd.Timestamp("2026-11-26 12:17"), pd.Timestamp("2026-11-27 13:17")
+    week = [mon, tue, wed, thu, fri, sat]
+    assert no.replay_spend([kickoff], week)["2026-11"]["td_early"] == no.TD_EARLY_TRIES == 3
+    assert no.replay_spend([kickoff], [mon, tue, sat])["2026-11"]["td_early"] == 1
 
 
 def test_the_credits_other_engines_spend_are_read_off_the_shared_counter():

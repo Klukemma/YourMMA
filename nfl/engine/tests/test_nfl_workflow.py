@@ -195,15 +195,16 @@ def _season_spend(games):
 
 
 def test_a_full_seasons_prices_fit_the_shared_key_with_the_reserve_to_spare(games):
-    """The line rounds, the TD window rounds and each game's one early TD
-    call, replayed at the workflow's slots over the last full season, leave
+    """The line rounds, the TD window rounds and each game's early TD calls
+    (every retry, as if no book posted early), replayed at the workflow's
+    slots over the last full season, leave
     every month TD_RESERVE_CREDITS or more of the key's allowance - which
     the MMA card shares (its observed share is the snapshot check below)."""
     spend, n_games = _season_spend(games)
     busiest = max(m["total"] for m in spend.values())
     assert busiest + no.TD_RESERVE_CREDITS <= no.FREE_TIER_CREDITS, spend
-    # One early call a game at most, and every game is bought early or in its window.
-    assert 0 < sum(m["td_early"] for m in spend.values()) <= n_games
+    # TD_EARLY_TRIES early calls a game at most.
+    assert 0 < sum(m["td_early"] for m in spend.values()) <= no.TD_EARLY_TRIES * n_games
     assert all(m["lines"] % 3 == 0 for m in spend.values())
 
 
