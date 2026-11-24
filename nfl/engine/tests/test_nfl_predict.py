@@ -7,8 +7,10 @@ import math
 import pandas as pd
 import pytest
 
+import nfl_odds as no
 import nfl_predict as npd
 import nfl_sgp as sgp
+import nfl_sgp2 as sgp2
 import nfl_standalone
 
 
@@ -246,13 +248,25 @@ def test_upcoming_games_carry_their_four_tickets_logged_and_the_meters(run_outpu
     upcoming = [g for g in week["games"] if g["status"] == "upcoming"]
     for g in week["games"]:
         if g["status"] == "upcoming":
-            assert [t["kind"] for t in g["tickets"]] == list(sgp.KINDS)
+            # The live rule's (v2) four, from the pick: unbuilt with the one
+            # reason where the game is not confident.
+            assert [t["kind"] for t in g["tickets"]] == list(sgp2.KINDS)
             assert picks[g["game_id"]]["tickets"] == g["tickets"]          # logged as shown
+            assert g["tickets_v1"] is None                                  # a fresh log: no v1 kept
+            confident = sgp2.eligible(g["pick_prob"])
+            if not confident:
+                assert g["tickets_reason"] == sgp2.not_confident(sgp2.CONFIDENT)
             for t in g["tickets"]:
-                assert t["version"] == sgp.VERSION and t["est"] is True
+                assert t["version"] == npd.LIVE_VERSION == sgp2.VERSION and t["est"] is True
+                assert t["pick"] == g["pick"] and t["confident_game"] is confident
+                assert (t["confident"], t["td_floor"]) == (sgp2.CONFIDENT, sgp2.TD_FLOOR)
                 if not t["built"]:
                     assert t["reason"] and not t["legs"]
                     continue
+                assert confident
+                assert all(leg["team"] == g["pick"] for leg in t["legs"] if leg["kind"] in ("WIN", "SPREAD"))
+                assert all(leg["chance"] >= sgp2.TD_FLOOR or (t["kind"] == "rookie" and leg["rookie"])
+                           for leg in t["legs"] if leg["kind"] == "TD")
                 assert len(t["legs"]) == sgp.LEGS[t["kind"]] and 0 < t["chance"] < 1
                 assert (t["est_payout"] is None) == (t["est_payout_reason"] is not None)
                 for leg in t["legs"]:
@@ -262,9 +276,31 @@ def test_upcoming_games_carry_their_four_tickets_logged_and_the_meters(run_outpu
             # A game that started before any run logged it: nothing built after kickoff.
             assert g["tickets"] is None and g["tickets_reason"] == npd.NO_TICKETS_LOGGED
     s = week["sgp"]
-    assert {"version", "kinds", "legs", "stake", "history", "live", "caveats"} <= set(s)
-    assert s["version"] == sgp.VERSION and set(s["live"]["kinds"]) == set(sgp.KINDS)
+    assert {"version", "kinds", "legs", "stake", "history", "live", "caveats", "v1"} <= set(s)
+    assert s["version"] == sgp2.VERSION and set(s["live"]["kinds"]) == set(sgp2.KINDS)
     assert s["live"]["games"] == len(upcoming) and s["live"]["graded_games"] == 0
+    assert s["live"]["confident_games"] == sum(sgp2.eligible(g["pick_prob"]) for g in upcoming)
+    assert (s["confident"], s["td_floor"]) == (sgp2.CONFIDENT, sgp2.TD_FLOOR)
+    assert s["v1"]["version"] == sgp.VERSION and s["v1"]["retired"] is True and s["v1"]["live"]["games"] == 0
+
+
+def test_every_td_candidate_carries_his_anytime_td_price_or_why_not(run_output):
+    """No key in the test run: nothing is bought, so every candidate's price
+    is missing with the reason td_prices_for gives - shown and logged."""
+    out, log, _ = run_output
+    week = json.loads((out / "week.json").read_text())
+    picks = json.loads(log.read_text())["picks"]
+    upcoming = [g for g in week["games"] if g["status"] == "upcoming"]
+    assert upcoming
+    reasons = set(no.TD_PRICE_MISSING.values())
+    for g in upcoming:
+        for side in npd.TD_LISTS:
+            assert g[side]
+            for p in g[side]:
+                assert p["price"]["american"] is None and p["price"]["missing"] in reasons
+                assert p["price"]["est"] is True
+            assert [p["price"] for p in picks[g["game_id"]][side]] == [p["price"] for p in g[side]]
+    assert week["caveats"]["td_odds"] == no.TD_ODDS_NOTE
 
 
 def test_touchdown_picks_are_graded_from_the_box_score():

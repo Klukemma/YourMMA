@@ -172,3 +172,48 @@ def test_the_ticket_history_is_replayed_when_stale_before_each_predict_run():
     assert replay < picks
     assert '|| echo "::warning::' in predict[replay:picks]
     assert "tee -a nfl.log" in predict[picks:]
+
+
+def _refresh_slots(runs):
+    """The runs that buy today's prices (ODDS_REFRESH=1): the schedules the
+    run step names."""
+    run = (WF / "nfl.yml").read_text().split("- name: Run")[1].split("- name:")[0]
+    named = re.findall(r'github\.event\.schedule \}\}" = "([^"]+)"', run)
+    assert named
+    keys = {(DAYS.index(c.split()[4]), int(c.split()[1]), int(c.split()[0])) for c in named}
+    return [t for t in runs if (t.day_of_week, t.hour, t.minute) in keys]
+
+
+def _season_spend(games):
+    """nfl_odds.replay_spend over the last full season on file, run at the
+    workflow's own slots."""
+    played = games.groupby("season")["played"].all()
+    season = games[games["season"] == played[played].index.max()]
+    kickoffs = list(season["kickoff"])
+    runs = _slots(min(kickoffs) - pd.Timedelta(days=no.WINDOW_DAYS), max(kickoffs))
+    return no.replay_spend(kickoffs, runs, _refresh_slots(runs)), len(kickoffs)
+
+
+def test_a_full_seasons_prices_fit_the_shared_key_with_the_reserve_to_spare(games):
+    """The line rounds, the TD window rounds and each game's one early TD
+    call, replayed at the workflow's slots over the last full season, leave
+    every month TD_RESERVE_CREDITS or more of the key's allowance - which
+    the MMA card shares (its observed share is the snapshot check below)."""
+    spend, n_games = _season_spend(games)
+    busiest = max(m["total"] for m in spend.values())
+    assert busiest + no.TD_RESERVE_CREDITS <= no.FREE_TIER_CREDITS, spend
+    # One early call a game at most, and every game is bought early or in its window.
+    assert 0 < sum(m["td_early"] for m in spend.values()) <= n_games
+    assert all(m["lines"] % 3 == 0 for m in spend.values())
+
+
+@pytest.mark.snapshot
+def test_the_season_and_what_other_engines_spent_on_the_key_fit_it(games):
+    """The same, with the credits the shared key's counter shows other
+    engines spending in their busiest month on file (nfl_odds.others_spend
+    of the committed cache) - a snapshot check: the runner's cache and the
+    MMA card's habits move, and a budget warning must never gate a run."""
+    spend, _ = _season_spend(games)
+    others = no.others_spend(no.load())
+    busiest = max(m["total"] for m in spend.values())
+    assert busiest + max(others.values(), default=0) + no.TD_RESERVE_CREDITS <= no.FREE_TIER_CREDITS, (spend, others)

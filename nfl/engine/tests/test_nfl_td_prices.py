@@ -15,7 +15,7 @@ players are fictional, each name there for one case of td_prices_for. No
 test touches the network."""
 
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -335,9 +335,9 @@ def test_each_game_is_due_early_once_within_td_early_days_and_never_once_started
     assert no.td_early_due(cache, UPCOMING, now=NOW) == []
     # DEN @ KC (2026-11-01 17:00) is due from exactly TD_EARLY_DAYS before kickoff.
     den = ("DEN", "KC", pd.Timestamp("2026-11-01 17:00"))
-    edge = datetime(2026, 11, 1, 17, 0, tzinfo=timezone.utc) - pd.Timedelta(days=no.TD_EARLY_DAYS)
-    assert den in no.td_early_due(cache, UPCOMING, now=edge.to_pydatetime())
-    assert den not in no.td_early_due(cache, UPCOMING, now=(edge - pd.Timedelta(minutes=1)).to_pydatetime())
+    edge = datetime(2026, 11, 1, 17, 0, tzinfo=timezone.utc) - timedelta(days=no.TD_EARLY_DAYS)
+    assert den in no.td_early_due(cache, UPCOMING, now=edge)
+    assert den not in no.td_early_due(cache, UPCOMING, now=edge - timedelta(minutes=1))
     kicked = datetime(2026, 11, 1, 17, 0, tzinfo=timezone.utc)
     assert den not in no.td_early_due(no.empty(), UPCOMING, now=kicked)
 
