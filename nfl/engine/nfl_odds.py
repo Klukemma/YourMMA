@@ -63,7 +63,14 @@ the busiest month, with TD_RESERVE_CREDITS and the credits other engines
 were seen to spend on the same key (others_spend, from the credits-remaining
 counter between this cache's own calls), under FREE_TIER_CREDITS. Should
 that ever fail, the reserve still stops TD calls before the lines go
-unpriced.
+unpriced. The estimate itself is printed, month by month, by
+
+    python nfl/engine/nfl_odds.py --budget
+
+(budget(): the same replay at the same slots, runner_runs reading them
+off the workflow; no call is made). Each TD round's fetch-log line also
+counts its early calls and how many found the books' prices posted
+(`early`, `early_posted`) - how early "early in the week" is, measured.
 
 Kept per game in the cache's "td" block: {feed name: consensus Yes price
 (the median across books in probability space, as consensus_price), the

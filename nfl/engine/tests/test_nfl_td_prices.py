@@ -365,7 +365,8 @@ def test_an_early_call_alone_is_a_round_and_says_so(monkeypatch):
                          clock=lambda: NOW) == "fetched"
     assert [url for url, _ in calls][-1] == no.EVENT_ODDS_ENDPOINT.format(event_id=MIA_BUF_ID)
     assert cache["fetches"][-1]["calls"] == 1 and cache["fetches"][-1]["early"] == 1
-    assert "1 games due (1 early), 1 calls (1 early" in lines[-1]
+    assert cache["fetches"][-1]["early_posted"] == 0
+    assert "1 games due (1 early), 1 calls (1 early, 0 of them posted" in lines[-1]
     # Not posted yet: the game says so until its window round, and is not bought early again.
     got = _prices([("x", ["Someone"])], cache, away="MIA", home="BUF", kickoff=pd.Timestamp("2026-10-26 00:20"))
     assert got["x"]["missing"] == no.TD_PRICE_MISSING["unposted"]
@@ -373,6 +374,25 @@ def test_an_early_call_alone_is_a_round_and_says_so(monkeypatch):
     assert no.refresh_td(cache, UPCOMING, api_key="K", refresh_asked=False, log=lines.append, now=NOW,
                          clock=lambda: NOW) == "cached"
     assert calls == []
+
+
+def test_the_fetch_log_counts_the_early_calls_that_found_prices_posted(monkeypatch):
+    """Four days out, both games of the weekend are bought early: LV @ KC's
+    books had posted, MIA @ BUF's had not - the log keeps both counts, so
+    how early the books post is measured, not assumed."""
+    import requests
+    calls, lines = [], []
+    monkeypatch.setattr(requests, "get", _fake_get(calls))
+    early = datetime(2026, 10, 21, 12, 0, tzinfo=timezone.utc)
+    cache = no.empty()
+    assert no.td_due(cache, UPCOMING, now=early) == []
+    assert no.refresh_td(cache, UPCOMING, api_key="K", refresh_asked=False, log=lines.append, now=early,
+                         clock=lambda: early) == "fetched"
+    f = cache["fetches"][-1]
+    assert (f["calls"], f["early"], f["early_posted"], f["events"]) == (2, 2, 1, 2)
+    assert "2 games due (2 early), 2 calls (2 early, 1 of them posted" in lines[-1]
+    got = _prices([("kc2", ["Sam Tight"])], cache, now=early)
+    assert got["kc2"]["price"] is not None and got["kc2"]["as_of"] == "2026-10-21T12:00:00Z"
 
 
 def test_without_a_key_the_early_games_are_counted_not_bought(monkeypatch):

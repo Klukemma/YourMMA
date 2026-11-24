@@ -207,6 +207,28 @@ def test_a_full_seasons_prices_fit_the_shared_key_with_the_reserve_to_spare(game
     assert all(m["lines"] % 3 == 0 for m in spend.values())
 
 
+def test_the_budget_command_replays_the_same_slots_as_this_test(games):
+    """nfl_odds.budget() (what `nfl_odds.py --budget` prints) reads the
+    runner's slots off the workflow itself: the same runs and the same
+    months as this file's own reading of the crons, and the spare credits
+    are the allowance less the busiest month, the others' most and the
+    reserve."""
+    spend, n_games = _season_spend(games)
+    cache = no.empty()
+    b = no.budget(games, cache=cache)
+    assert b["months"] == spend and b["games"] == n_games
+    assert b["busiest_total"] == max(m["total"] for m in spend.values()) == spend[b["busiest"]]["total"]
+    assert (b["others"], b["others_most"]) == ({}, 0)
+    assert b["spare"] == no.FREE_TIER_CREDITS - b["busiest_total"] - no.TD_RESERVE_CREDITS >= 0
+    played = games.groupby("season")["played"].all()
+    season = games[games["season"] == played[played].index.max()]
+    start = season["kickoff"].min() - pd.Timedelta(days=no.WINDOW_DAYS)
+    runs, refreshed = no.runner_runs(start, season["kickoff"].max())
+    assert runs == _slots(start, season["kickoff"].max()) and refreshed == _refresh_slots(runs)
+    lines = no.budget_lines(b)
+    assert len(lines) == len(spend) + 3 and f"{b['spare']:g} to spare" in lines[-1]
+
+
 @pytest.mark.snapshot
 def test_the_season_and_what_other_engines_spent_on_the_key_fit_it(games):
     """The same, with the credits the shared key's counter shows other
