@@ -3822,7 +3822,7 @@
    "day": "2026-11-22",
    "kind": "likeliest_v2",
    "built_at": "2026-11-20T19:21:26Z",
-   "status": "pending",
+   "status": "won",
    "multiplier": 3.0329,
    "p": 0.277991,
    "p_market": 0.22773,
@@ -3987,7 +3987,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "won"
     }
    ],
    "version": 2,
@@ -3995,8 +3995,8 @@
     "1X2"
    ],
    "estimated": false,
-   "paid": null,
-   "profit": null
+   "paid": 3.032935004878049,
+   "profit": 2.032935004878049
   },
   {
    "day": "2026-11-22",
@@ -4436,7 +4436,7 @@
    "day": "2026-11-23",
    "kind": "underdog_v2",
    "built_at": "2026-11-20T19:21:26Z",
-   "status": "pending",
+   "status": "superseded",
    "multiplier": 3.286,
    "p": 0.287171,
    "p_market": 0.276443,
@@ -4555,7 +4555,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "won"
     },
     {
      "sport": "Soccer",
@@ -4581,7 +4581,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "won"
     },
     {
      "sport": "Soccer",
@@ -5913,7 +5913,7 @@
    "day": "2026-11-22",
    "kind": "underdog_v2",
    "built_at": "2026-11-22T15:31:21Z",
-   "status": "pending",
+   "status": "lost",
    "multiplier": 3.15,
    "p": 0.300853,
    "p_market": 0.293784,
@@ -5948,7 +5948,7 @@
      "error_pct": null,
      "lot_key": "2026_11_BAL_CAR",
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "lost"
     },
     {
      "sport": "Soccer",
@@ -5989,6 +5989,920 @@
    "version": 2,
    "bets": [
     "1X2"
+   ],
+   "estimated": false,
+   "paid": 0.0,
+   "profit": -1.0
+  },
+  {
+   "day": "2026-11-23",
+   "kind": "underdog_v2",
+   "built_at": "2026-11-23T16:05:15Z",
+   "status": "pending",
+   "multiplier": 3.286,
+   "p": 0.287171,
+   "p_market": 0.276443,
+   "first_start": "2026-11-23T18:00:00Z",
+   "last_start": "2026-11-23T18:00:00Z",
+   "sports": [
+    "Soccer"
+   ],
+   "legs": [
+    {
+     "sport": "Soccer",
+     "key": "Soccer:POL-20261123-wieczystakrakow-motorlublin",
+     "event": "Wieczysta Krakow v Motor Lublin",
+     "pick": "Motor Lublin",
+     "opponent": "POL",
+     "kickoff": "2026-11-23T18:00:00Z",
+     "decimal": 2.65,
+     "p": 0.353978792983847,
+     "p_model": null,
+     "p_market": 0.353978792983847,
+     "names": {
+      "match_id": "POL-20261123-wieczystakrakow-motorlublin",
+      "pick": "A"
+     },
+     "price_source": "average price",
+     "dog": true,
+     "bet": "1X2",
+     "bet_detail": null,
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": "POL-20261123-wieczystakrakow-motorlublin",
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "Soccer",
+     "key": "Soccer:SWE-20261123-hammarby-goteborg",
+     "event": "Hammarby v Goteborg",
+     "pick": "Hammarby",
+     "opponent": "SWE",
+     "kickoff": "2026-11-23T18:00:00Z",
+     "decimal": 1.24,
+     "p": 0.8112667259036827,
+     "p_model": null,
+     "p_market": 0.7809594644849387,
+     "names": {
+      "match_id": "SWE-20261123-hammarby-goteborg",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": "won"
+    }
+   ],
+   "dog": {
+    "key": "Soccer:POL-20261123-wieczystakrakow-motorlublin",
+    "pick": "Motor Lublin",
+    "lot_key": "POL-20261123-wieczystakrakow-motorlublin",
+    "rank": 0,
+    "candidates": 14,
+    "salt": "sameday-dog-v2",
+    "version": 2
+   },
+   "version": 2,
+   "bets": [
+    "1X2"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-26",
+   "kind": "likeliest",
+   "built_at": "2026-11-24T02:24:48Z",
+   "status": "pending",
+   "multiplier": 3.3295,
+   "p": 0.269019,
+   "p_market": 0.265072,
+   "first_start": "2026-11-26T18:00:00Z",
+   "last_start": "2026-11-27T01:20:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_CHI_DET",
+     "event": "CHI @ DET",
+     "pick": "CHI",
+     "opponent": "DET",
+     "kickoff": "2026-11-26T18:00:00Z",
+     "decimal": 1.6756756756756757,
+     "p": 0.589035,
+     "p_model": 0.40413699999999997,
+     "p_market": 0.574234,
+     "names": {
+      "game_id": "2026_12_CHI_DET",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_PHI_DAL",
+     "event": "PHI @ DAL",
+     "pick": "DAL",
+     "opponent": "PHI",
+     "kickoff": "2026-11-26T21:30:00Z",
+     "decimal": 1.2197802197802199,
+     "p": 0.762492,
+     "p_model": 0.719658,
+     "p_market": 0.782949,
+     "names": {
+      "game_id": "2026_12_PHI_DAL",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_KC_BUF",
+     "event": "KC @ BUF",
+     "pick": "BUF",
+     "opponent": "KC",
+     "kickoff": "2026-11-27T01:20:00Z",
+     "decimal": 1.6289308176100628,
+     "p": 0.598973,
+     "p_model": 0.688417,
+     "p_market": 0.589579,
+     "names": {
+      "game_id": "2026_12_KC_BUF",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    }
+   ],
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-26",
+   "kind": "underdog",
+   "built_at": "2026-11-24T02:24:48Z",
+   "status": "pending",
+   "multiplier": 3.9211,
+   "p": 0.236219,
+   "p_market": 0.235677,
+   "first_start": "2026-11-26T18:00:00Z",
+   "last_start": "2026-11-27T01:20:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_KC_BUF",
+     "event": "KC @ BUF",
+     "pick": "KC",
+     "opponent": "BUF",
+     "kickoff": "2026-11-27T01:20:00Z",
+     "decimal": 2.34,
+     "p": 0.401027,
+     "p_model": 0.31158300000000005,
+     "p_market": 0.4104205622286312,
+     "names": {
+      "game_id": "2026_12_KC_BUF",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": true,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_CHI_DET",
+     "event": "CHI @ DET",
+     "pick": "CHI",
+     "opponent": "DET",
+     "kickoff": "2026-11-26T18:00:00Z",
+     "decimal": 1.6756756756756757,
+     "p": 0.589035,
+     "p_model": 0.40413699999999997,
+     "p_market": 0.574234,
+     "names": {
+      "game_id": "2026_12_CHI_DET",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "NFL:2026_12_KC_BUF",
+    "pick": "KC",
+    "lot_key": "2026_12_KC_BUF",
+    "rank": 0,
+    "candidates": 2,
+    "salt": "sameday-dog-v1",
+    "version": 1
+   },
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-26",
+   "kind": "likeliest_v2",
+   "built_at": "2026-11-24T02:24:48Z",
+   "status": "pending",
+   "multiplier": 3.3295,
+   "p": 0.269019,
+   "p_market": 0.265072,
+   "first_start": "2026-11-26T18:00:00Z",
+   "last_start": "2026-11-27T01:20:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_CHI_DET",
+     "event": "CHI @ DET",
+     "pick": "CHI",
+     "opponent": "DET",
+     "kickoff": "2026-11-26T18:00:00Z",
+     "decimal": 1.6756756756756757,
+     "p": 0.589035,
+     "p_model": 0.40413699999999997,
+     "p_market": 0.574234,
+     "names": {
+      "game_id": "2026_12_CHI_DET",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_PHI_DAL",
+     "event": "PHI @ DAL",
+     "pick": "DAL",
+     "opponent": "PHI",
+     "kickoff": "2026-11-26T21:30:00Z",
+     "decimal": 1.2197802197802199,
+     "p": 0.762492,
+     "p_model": 0.719658,
+     "p_market": 0.782949,
+     "names": {
+      "game_id": "2026_12_PHI_DAL",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_KC_BUF",
+     "event": "KC @ BUF",
+     "pick": "BUF",
+     "opponent": "KC",
+     "kickoff": "2026-11-27T01:20:00Z",
+     "decimal": 1.6289308176100628,
+     "p": 0.598973,
+     "p_model": 0.688417,
+     "p_market": 0.589579,
+     "names": {
+      "game_id": "2026_12_KC_BUF",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "version": 2,
+   "bets": [
+    "1X2"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-26",
+   "kind": "underdog_v2",
+   "built_at": "2026-11-24T02:24:48Z",
+   "status": "pending",
+   "multiplier": 3.6814,
+   "p": 0.246157,
+   "p_market": 0.251023,
+   "first_start": "2026-11-26T18:00:00Z",
+   "last_start": "2026-11-27T01:20:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_CHI_DET",
+     "event": "CHI @ DET",
+     "pick": "DET",
+     "opponent": "CHI",
+     "kickoff": "2026-11-26T18:00:00Z",
+     "decimal": 2.26,
+     "p": 0.410965,
+     "p_model": 0.595863,
+     "p_market": 0.4257656915258893,
+     "names": {
+      "game_id": "2026_12_CHI_DET",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": true,
+     "bet": "1X2",
+     "bet_detail": null,
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": "2026_12_CHI_DET",
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_KC_BUF",
+     "event": "KC @ BUF",
+     "pick": "BUF",
+     "opponent": "KC",
+     "kickoff": "2026-11-27T01:20:00Z",
+     "decimal": 1.6289308176100628,
+     "p": 0.598973,
+     "p_model": 0.688417,
+     "p_market": 0.589579,
+     "names": {
+      "game_id": "2026_12_KC_BUF",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "NFL:2026_12_CHI_DET",
+    "pick": "DET",
+    "lot_key": "2026_12_CHI_DET",
+    "rank": 0,
+    "candidates": 2,
+    "salt": "sameday-dog-v2",
+    "version": 2
+   },
+   "version": 2,
+   "bets": [
+    "1X2"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-26",
+   "kind": "mixed",
+   "built_at": "2026-11-24T02:24:48Z",
+   "status": "pending",
+   "multiplier": 3.0332,
+   "p": 0.310182,
+   "p_market": 0.305318,
+   "first_start": "2026-11-26T18:00:00Z",
+   "last_start": "2026-11-27T01:20:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_CHI_DET",
+     "event": "CHI @ DET",
+     "pick": "CHI -2.5",
+     "opponent": "DET",
+     "kickoff": "2026-11-26T18:00:00Z",
+     "decimal": 1.8620689655172413,
+     "p": 0.517857142857143,
+     "p_model": null,
+     "p_market": 0.517857142857143,
+     "names": {
+      "game_id": "2026_12_CHI_DET",
+      "home": false,
+      "line": -2.5
+     },
+     "price_source": "consensus price at the consensus line",
+     "dog": null,
+     "bet": "SPREAD",
+     "bet_detail": "CHI -2.5",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_KC_BUF",
+     "event": "KC @ BUF",
+     "pick": "BUF",
+     "opponent": "KC",
+     "kickoff": "2026-11-27T01:20:00Z",
+     "decimal": 1.6289308176100628,
+     "p": 0.598973,
+     "p_model": 0.688417,
+     "p_market": 0.589579,
+     "names": {
+      "game_id": "2026_12_KC_BUF",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "version": 2,
+   "bets": [
+    "1X2",
+    "SPREAD"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-29",
+   "kind": "likeliest",
+   "built_at": "2026-11-24T02:24:48Z",
+   "status": "pending",
+   "multiplier": 3.0493,
+   "p": 0.289991,
+   "p_market": 0.28868,
+   "first_start": "2026-11-29T18:00:00Z",
+   "last_start": "2026-11-29T21:25:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_ATL_MIN",
+     "event": "ATL @ MIN",
+     "pick": "MIN",
+     "opponent": "ATL",
+     "kickoff": "2026-11-29T18:00:00Z",
+     "decimal": 1.3012048192771084,
+     "p": 0.730297,
+     "p_model": 0.714709,
+     "p_market": 0.736923,
+     "names": {
+      "game_id": "2026_12_ATL_MIN",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_NYG_IND",
+     "event": "NYG @ IND",
+     "pick": "NYG",
+     "opponent": "IND",
+     "kickoff": "2026-11-29T18:00:00Z",
+     "decimal": 1.3333333333333333,
+     "p": 0.727778,
+     "p_model": 0.61148,
+     "p_market": 0.716505,
+     "names": {
+      "game_id": "2026_12_NYG_IND",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_SEA_SF",
+     "event": "SEA @ SF",
+     "pick": "SF",
+     "opponent": "SEA",
+     "kickoff": "2026-11-29T21:25:00Z",
+     "decimal": 1.7575757575757576,
+     "p": 0.545615,
+     "p_model": 0.615906,
+     "p_market": 0.546733,
+     "names": {
+      "game_id": "2026_12_SEA_SF",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    }
+   ],
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-29",
+   "kind": "underdog",
+   "built_at": "2026-11-24T02:24:48Z",
+   "status": "pending",
+   "multiplier": 3.201,
+   "p": 0.280603,
+   "p_market": 0.287615,
+   "first_start": "2026-11-29T18:00:00Z",
+   "last_start": "2026-11-29T18:00:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_NYJ_MIA",
+     "event": "NYJ @ MIA",
+     "pick": "MIA",
+     "opponent": "NYJ",
+     "kickoff": "2026-11-29T18:00:00Z",
+     "decimal": 2.46,
+     "p": 0.384231,
+     "p_model": 0.482264,
+     "p_market": 0.390291151501339,
+     "names": {
+      "game_id": "2026_12_NYJ_MIA",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": true,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_ATL_MIN",
+     "event": "ATL @ MIN",
+     "pick": "MIN",
+     "opponent": "ATL",
+     "kickoff": "2026-11-29T18:00:00Z",
+     "decimal": 1.3012048192771084,
+     "p": 0.730297,
+     "p_model": 0.714709,
+     "p_market": 0.736923,
+     "names": {
+      "game_id": "2026_12_ATL_MIN",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "NFL:2026_12_NYJ_MIA",
+    "pick": "MIA",
+    "lot_key": "2026_12_NYJ_MIA",
+    "rank": 0,
+    "candidates": 8,
+    "salt": "sameday-dog-v1",
+    "version": 1
+   },
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-29",
+   "kind": "likeliest_v2",
+   "built_at": "2026-11-24T02:24:48Z",
+   "status": "pending",
+   "multiplier": 3.0493,
+   "p": 0.289991,
+   "p_market": 0.28868,
+   "first_start": "2026-11-29T18:00:00Z",
+   "last_start": "2026-11-29T21:25:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_ATL_MIN",
+     "event": "ATL @ MIN",
+     "pick": "MIN",
+     "opponent": "ATL",
+     "kickoff": "2026-11-29T18:00:00Z",
+     "decimal": 1.3012048192771084,
+     "p": 0.730297,
+     "p_model": 0.714709,
+     "p_market": 0.736923,
+     "names": {
+      "game_id": "2026_12_ATL_MIN",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_NYG_IND",
+     "event": "NYG @ IND",
+     "pick": "NYG",
+     "opponent": "IND",
+     "kickoff": "2026-11-29T18:00:00Z",
+     "decimal": 1.3333333333333333,
+     "p": 0.727778,
+     "p_model": 0.61148,
+     "p_market": 0.716505,
+     "names": {
+      "game_id": "2026_12_NYG_IND",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_SEA_SF",
+     "event": "SEA @ SF",
+     "pick": "SF",
+     "opponent": "SEA",
+     "kickoff": "2026-11-29T21:25:00Z",
+     "decimal": 1.7575757575757576,
+     "p": 0.545615,
+     "p_model": 0.615906,
+     "p_market": 0.546733,
+     "names": {
+      "game_id": "2026_12_SEA_SF",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "version": 2,
+   "bets": [
+    "1X2"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-29",
+   "kind": "underdog_v2",
+   "built_at": "2026-11-24T02:24:48Z",
+   "status": "pending",
+   "multiplier": 3.0622,
+   "p": 0.296862,
+   "p_market": 0.286139,
+   "first_start": "2026-11-29T18:00:00Z",
+   "last_start": "2026-11-29T21:25:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_SEA_SF",
+     "event": "SEA @ SF",
+     "pick": "SEA",
+     "opponent": "SF",
+     "kickoff": "2026-11-29T21:25:00Z",
+     "decimal": 2.12,
+     "p": 0.45438500000000004,
+     "p_model": 0.38409400000000005,
+     "p_market": 0.45326664582682086,
+     "names": {
+      "game_id": "2026_12_SEA_SF",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": true,
+     "bet": "1X2",
+     "bet_detail": null,
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": "2026_12_SEA_SF",
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_NYG_IND",
+     "event": "NYG @ IND",
+     "pick": "NYG",
+     "opponent": "IND",
+     "kickoff": "2026-11-29T18:00:00Z",
+     "decimal": 1.3333333333333333,
+     "p": 0.727778,
+     "p_model": 0.61148,
+     "p_market": 0.716505,
+     "names": {
+      "game_id": "2026_12_NYG_IND",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_TEN_JAX",
+     "event": "TEN @ JAX",
+     "pick": "JAX",
+     "opponent": "TEN",
+     "kickoff": "2026-11-29T18:00:00Z",
+     "decimal": 1.0833333333333333,
+     "p": 0.897701,
+     "p_model": 0.892894,
+     "p_market": 0.881057,
+     "names": {
+      "game_id": "2026_12_TEN_JAX",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "NFL:2026_12_SEA_SF",
+    "pick": "SEA",
+    "lot_key": "2026_12_SEA_SF",
+    "rank": 0,
+    "candidates": 8,
+    "salt": "sameday-dog-v2",
+    "version": 2
+   },
+   "version": 2,
+   "bets": [
+    "1X2"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-29",
+   "kind": "mixed",
+   "built_at": "2026-11-24T02:24:48Z",
+   "status": "pending",
+   "multiplier": 3.0063,
+   "p": 0.30958,
+   "p_market": 0.306533,
+   "first_start": "2026-11-29T18:00:00Z",
+   "last_start": "2026-11-29T18:00:00Z",
+   "sports": [
+    "NFL"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_ATL_MIN",
+     "event": "ATL @ MIN",
+     "pick": "ATL +7",
+     "opponent": "MIN",
+     "kickoff": "2026-11-29T18:00:00Z",
+     "decimal": 1.9090909090909092,
+     "p": 0.5027533039647578,
+     "p_model": null,
+     "p_market": 0.5027533039647578,
+     "names": {
+      "game_id": "2026_12_ATL_MIN",
+      "home": false,
+      "line": 7.0
+     },
+     "price_source": "consensus price at the consensus line",
+     "dog": null,
+     "bet": "SPREAD",
+     "bet_detail": "ATL +7",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_NYJ_MIA",
+     "event": "NYJ @ MIA",
+     "pick": "NYJ",
+     "opponent": "MIA",
+     "kickoff": "2026-11-29T18:00:00Z",
+     "decimal": 1.5747126436781609,
+     "p": 0.615769,
+     "p_model": 0.517736,
+     "p_market": 0.6097090000000001,
+     "names": {
+      "game_id": "2026_12_NYJ_MIA",
+      "home": false
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "version": 2,
+   "bets": [
+    "1X2",
+    "SPREAD"
    ],
    "estimated": false,
    "paid": null,
