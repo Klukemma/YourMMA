@@ -1,8 +1,51 @@
 """The runner: the NFL workflow's wiring, read as text."""
 
+import re
 from pathlib import Path
 
+import pandas as pd
+import pytest
+
+import nfl_odds as no
+
 WF = Path(__file__).resolve().parents[3] / ".github" / "workflows"
+DAYS = ("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
+# GitHub starts scheduled runs late under load: the first Tuesday run began
+# five hours after its slot (the workflow's own note), so a game's TD prices
+# need a slot at least this far ahead of kickoff.
+LATE_HOURS = 5
+
+
+def _months(spec):
+    out = set()
+    for part in spec.split(","):
+        lo, _, hi = part.partition("-")
+        out |= set(range(int(lo), int(hi or lo) + 1))
+    return out
+
+
+def _slots(start, end):
+    """Every scheduled run's start, naive UTC as the schedule's kickoffs are,
+    from the workflow's crons ("M H * months DAY") between two days."""
+    crons = re.findall(r'- cron: "([^"]+)"', (WF / "nfl.yml").read_text())
+    out = []
+    for day in pd.date_range(pd.Timestamp(start).normalize(), pd.Timestamp(end).normalize()):
+        for cron in crons:
+            minute, hour, dom, months, dow = cron.split()
+            assert dom == "*", cron
+            if day.month in _months(months) and DAYS[day.day_of_week] == dow:
+                out.append(day + pd.Timedelta(hours=int(hour), minutes=int(minute)))
+    return sorted(out)
+
+
+def _without_a_td_run(kickoffs):
+    """The kickoffs no slot buys anytime-TD prices for in time: none starts
+    within nfl_odds.TD_WINDOW_HOURS of kickoff and LATE_HOURS or more ahead
+    of it (nfl_odds.td_due's window, read at a run's start)."""
+    kickoffs = [pd.Timestamp(k) for k in kickoffs]
+    slots = _slots(min(kickoffs) - pd.Timedelta(days=3), max(kickoffs))
+    window, late = pd.Timedelta(hours=no.TD_WINDOW_HOURS), pd.Timedelta(hours=LATE_HOURS)
+    return [k for k in kickoffs if not any(k - window <= t <= k - late for t in slots)]
 
 
 def test_it_has_its_own_queue():
@@ -42,8 +85,38 @@ def test_the_refresh_schedules_are_the_ones_named_in_the_run_step():
 
 def test_every_game_day_has_a_run_before_it():
     nfl = (WF / "nfl.yml").read_text()
-    for day in ("TUE", "THU", "SAT", "SUN", "MON"):
+    for day in ("TUE", "WED", "THU", "SAT", "SUN", "MON"):
         assert f"9-12,1-2 {day}" in nfl, day
+
+
+# One kickoff of each day and time the 2026 schedule and the 2025 playoffs
+# use (UTC): the opener and the Thanksgiving eve game on a Wednesday night,
+# Thanksgiving, Black Friday, Christmas, London, Saturday, Sunday, Monday.
+KICKOFF_KINDS = ("2026-09-10 00:20", "2026-09-11 00:35", "2026-09-13 17:00", "2026-09-13 20:25",
+                 "2026-09-14 00:20", "2026-09-15 00:15", "2026-09-18 00:15", "2026-09-20 20:05",
+                 "2026-10-04 13:30", "2026-11-01 18:00", "2026-11-01 21:05", "2026-11-01 21:25",
+                 "2026-11-02 01:20", "2026-11-03 01:15", "2026-11-06 01:15", "2026-11-08 14:30",
+                 "2026-11-26 01:00", "2026-11-26 18:00", "2026-11-26 21:30", "2026-11-27 01:20",
+                 "2026-11-27 20:00", "2026-12-19 22:00", "2026-12-20 01:20", "2026-12-25 18:00",
+                 "2026-12-25 21:30", "2026-12-26 01:15", "2026-01-03 21:30", "2026-01-10 21:30",
+                 "2026-01-11 01:15", "2026-01-12 01:15")
+
+
+def test_every_kind_of_kickoff_gets_a_run_inside_the_td_window():
+    """A game with no run within TD_WINDOW_HOURS of kickoff has its tickets
+    logged with every TD leg unpriced, and one unpriced graded ticket blanks
+    its kind's live return. GB @ LA on Thanksgiving eve (01:00 UTC
+    Thursday) had none: Tuesday's run is 38.7 hours ahead, Thursday's after it."""
+    assert _without_a_td_run(KICKOFF_KINDS) == []
+
+
+@pytest.mark.snapshot
+def test_every_game_of_the_season_on_file_gets_a_run_inside_the_td_window(games):
+    """The same over the newest season's schedule as nflverse has it now -
+    a snapshot check, so a game moved to a new slot warns in the snapshot
+    step and never gates a run."""
+    season = games[games["season"] == games["season"].max()]
+    assert _without_a_td_run(season["kickoff"]) == []
 
 
 def test_a_failed_run_keeps_the_prices_it_paid_for():

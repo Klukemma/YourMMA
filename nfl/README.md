@@ -204,8 +204,9 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
     python nfl/engine/nfl_backtest.py         # the walk-forward report
     python -m pytest nfl/engine/tests
 
-On GitHub, the **NFL predictions** workflow runs `predict` on Tuesday mornings, Thursday
-afternoons and Sunday mornings during the season, and commits the app data. The Thursday and
+On GitHub, the **NFL predictions** workflow runs `predict` ahead of every game day during the
+season - Tuesday mornings, Thursday afternoons and Sunday mornings among them, and a Wednesday
+run for a Wednesday night or Thanksgiving game - and commits the app data. The Thursday and
 Sunday runs buy fresh prices (3 credits each). Run it by hand from the Actions tab with
 `refresh_odds` to price the slate now.
 

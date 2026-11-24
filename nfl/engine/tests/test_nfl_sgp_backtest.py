@@ -117,6 +117,8 @@ def test_the_history_on_file_has_every_kind_and_period_and_says_why_return_is_mi
         pytest.skip("no history on file yet")
     h = json.loads(path.read_text())
     assert h["version"] == sgp.VERSION and h["known_bias"] == sgp.KNOWN_BIAS
+    # The seasons the shipped usage groups were chosen on are nfl_td's own periods, not typed.
+    assert f" chosen on {nt.DEV[0]}-{nt.CONFIRM[1]} walk-forward " in h["td_groups"]["note"]
     assert set(h["periods"]) == set(sgp.PERIODS) | {str(h["current_season"]), "all"}
     assert set(h["kinds"]) == set(sgp.KINDS)
     for kind, k in h["kinds"].items():

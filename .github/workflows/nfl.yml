@@ -16,16 +16,23 @@ name: NFL predictions
 #             into nfl/data/ncaa/
 #
 # On a schedule it runs predict through the season: Tuesday after Monday
-# night (grade the week, post the next one), Thursday before the night game,
-# Saturday after Friday's final injury report, Sunday morning before the
-# London and early games, and Monday before the night game. Thursday and
-# Sunday buy today's prices (3 credits each, from the free tier's 500 a
-# month); the others reuse prices on file unless a game has none - and every
-# run reads the news feeds, so news lands before each kickoff. The same-game
-# tickets' anytime-TD prices are 1 credit a game, bought only for games
-# within nfl_odds.TD_WINDOW_HOURS of kickoff and at most once in
+# night (grade the week, post the next one), Wednesday before a Wednesday
+# night or Thanksgiving game, Thursday before the night game, Saturday after
+# Friday's final injury report, Sunday morning before the London and early
+# games, and Monday before the night game. Thursday and Sunday buy today's
+# prices (3 credits each, from the free tier's 500 a month); the others
+# reuse prices on file unless a game has none or they are days old - and
+# every run reads the news feeds, so news lands before each kickoff. The
+# same-game tickets' anytime-TD prices are 1 credit a game, bought only for
+# games within nfl_odds.TD_WINDOW_HOURS of kickoff and at most once in
 # TD_STALE_HOURS - Thursday's and Sunday's refresh buys them again for the
-# games that day.
+# games that day. So every game needs a run inside that window, hours ahead
+# of kickoff: a game with none has its tickets logged with every TD leg
+# unpriced (test_nfl_workflow checks the slots against the schedule). The
+# Wednesday slot is that run for a Wednesday night game (Tuesday's is too
+# early for it) and for Thanksgiving's first game. It comes before Thursday
+# night is in the window, so it buys no TD price for that game; Sunday's
+# lines are about three days old by then, so it may buy those (3 credits).
 on:
   workflow_dispatch:
     inputs:
@@ -47,6 +54,7 @@ on:
     # began five hours after its slot - so every game-day run sits hours
     # ahead of the first kickoff it has to beat.
     - cron: "17 10 * 9-12,1-2 TUE"   # after Monday night: grade, post the next week
+    - cron: "17 6 * 9-12,1-2 WED"    # before a Wednesday night or Thanksgiving game: its TD prices
     - cron: "17 12 * 9-12,1-2 THU"   # before Thursday night, fresh prices
     - cron: "17 13 * 9-12,1-2 SAT"   # after Friday's final injury report (and Saturday games)
     - cron: "17 6 * 9-12,1-2 SUN"    # before the London and 1pm games, fresh prices
