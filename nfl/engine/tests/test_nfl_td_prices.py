@@ -95,6 +95,42 @@ def test_an_in_play_reply_is_never_kept():
     assert no.merge_td(cache, key, entry, now=NOW) and cache["td"][key]["seen"] == "2026-10-24T12:00:00Z"
 
 
+def test_a_reply_that_comes_back_after_kickoff_is_in_play_and_not_kept(monkeypatch):
+    """The run reads its clock once, at the start; a TD call made later can
+    come back after kickoff with in-play prices. Those are judged - and
+    stamped - by when the reply came back, never by the run's clock."""
+    import requests
+    kicked = datetime(2026, 10, 25, 20, 25, tzinfo=timezone.utc)
+    run_clock = datetime(2026, 10, 25, 20, 23, 30, tzinfo=timezone.utc)     # 90 s before kickoff
+    late = datetime(2026, 10, 25, 20, 26, tzinfo=timezone.utc)              # the reply, 60 s after it
+    calls = []
+    monkeypatch.setattr(requests, "get", _fake_get(calls))
+    cache = no.empty()
+    no.refresh_td(cache, UPCOMING, api_key="K", refresh_asked=False, log=lambda *_: None,
+                  now=run_clock, clock=lambda: late)
+    assert calls and cache["td"] == {}
+    # The game counts as due by the run's clock, yet nothing in-play reaches a ticket.
+    prices = no.td_prices_for(cache, "LV", "KC", KICKOFF, [("tight", ["Sam Tight"])], now=run_clock)
+    assert prices["tight"]["price"] is None and prices["tight"]["missing"] == no.TD_PRICE_MISSING["none"]
+    # A pre-game price already on file stays, as it was seen.
+    cache = _cache_with_prices()
+    no.refresh_td(cache, UPCOMING, api_key="K", refresh_asked=True, log=lambda *_: None,
+                  now=run_clock, clock=lambda: late)
+    assert cache["td"]["2026-10-25|LV|KC"]["seen"] == "2026-10-24T12:00:00Z"
+    # A reply that came back before kickoff is stamped when it came back.
+    just_before = kicked.replace(minute=24, second=10)
+    cache = no.empty()
+    no.refresh_td(cache, UPCOMING, api_key="K", refresh_asked=False, log=lambda *_: None,
+                  now=run_clock, clock=lambda: just_before)
+    assert cache["td"]["2026-10-25|LV|KC"]["seen"] == "2026-10-25T20:24:10Z"
+    assert cache["fetches"][-1]["at"] == "2026-10-25T20:24:10Z"
+    # And a clock that reads earlier than the run's never stamps before the run.
+    cache = no.empty()
+    no.refresh_td(cache, UPCOMING, api_key="K", refresh_asked=False, log=lambda *_: None,
+                  now=run_clock, clock=lambda: NOW)
+    assert cache["td"]["2026-10-25|LV|KC"]["seen"] == "2026-10-25T20:23:30Z"
+
+
 # ---------------------------------------------------------------- the budget
 
 def test_one_call_is_one_market_in_one_region_on_the_per_event_endpoint():
@@ -130,7 +166,7 @@ def test_the_event_id_comes_from_the_free_events_list_and_each_due_game_is_one_c
     monkeypatch.setattr(requests, "get", _fake_get(calls))
     cache = no.empty()
     assert no.refresh_td(cache, UPCOMING, api_key="SECRET123", refresh_asked=False,
-                         log=lines.append, now=NOW) == "fetched"
+                         log=lines.append, now=NOW, clock=lambda: NOW) == "fetched"
     assert [url for url, _ in calls] == [no.EVENTS_ENDPOINT, no.EVENT_ODDS_ENDPOINT.format(event_id=EVENT_ID)]
     assert calls[1][1] == dict(no.TD_PARAMS, apiKey="SECRET123")
     assert set(cache["td"]) == {"2026-10-25|LV|KC"}
@@ -140,7 +176,7 @@ def test_the_event_id_comes_from_the_free_events_list_and_each_due_game_is_one_c
     # Bought: the next run makes no call.
     calls.clear()
     assert no.refresh_td(cache, UPCOMING, api_key="SECRET123", refresh_asked=False,
-                         log=lines.append, now=NOW) == "cached"
+                         log=lines.append, now=NOW, clock=lambda: NOW) == "cached"
     assert calls == []
 
 
@@ -157,7 +193,7 @@ def test_an_event_id_the_odds_reply_kept_needs_no_events_call(monkeypatch):
     parsed, _ = no.parse_events([odds_event])
     no.merge(cache, parsed, now=NOW)
     assert no.refresh_td(cache, UPCOMING, api_key="K", refresh_asked=False, log=lambda *_: None,
-                         now=NOW) == "fetched"
+                         now=NOW, clock=lambda: NOW) == "fetched"
     assert [url for url, _ in calls] == [no.EVENT_ODDS_ENDPOINT.format(event_id=EVENT_ID)]
 
 
@@ -179,7 +215,8 @@ def test_no_td_call_below_the_credits_kept_for_the_lines(monkeypatch):
     monkeypatch.setattr(requests, "get", _fake_get(calls))
     cache = no.empty()
     no.record_fetch(cache, 200, 28, str(no.TD_RESERVE_CREDITS - 1), now=NOW)
-    no.refresh_td(cache, UPCOMING, api_key="K", refresh_asked=False, log=lines.append, now=NOW)
+    no.refresh_td(cache, UPCOMING, api_key="K", refresh_asked=False, log=lines.append, now=NOW,
+                  clock=lambda: NOW)
     assert [url for url, _ in calls] == [no.EVENTS_ENDPOINT]          # the free list only
     assert cache["td"] == {} and any("no more TD calls" in line for line in lines)
 

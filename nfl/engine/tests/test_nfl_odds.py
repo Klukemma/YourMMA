@@ -60,6 +60,36 @@ def test_in_play_lines_are_never_stored_and_the_opening_line_is_kept():
     assert no.merge(cache, parsed, now=started) == (0, 0, 1)
 
 
+def test_a_line_that_comes_back_after_kickoff_is_in_play_and_not_kept(monkeypatch):
+    """The run reads its clock once, at the start, and the odds call comes a
+    minute or more later: a reply that lands after kickoff carries an
+    in-play line, and the SPREAD / TOTAL legs read their chance from the
+    line on file. It is judged by when the reply came back."""
+    import requests
+
+    class Reply:
+        status_code, headers, text = 200, {"x-requests-remaining": "400"}, ""
+
+        def json(self):
+            return [_event()]
+    monkeypatch.setattr(requests, "get", lambda *a, **k: Reply())
+    upcoming = pd.DataFrame({"away": ["LV"], "home": ["KC"], "kickoff": [pd.Timestamp("2026-10-25 20:25")]})
+    run_clock = datetime(2026, 10, 25, 20, 23, 30, tzinfo=timezone.utc)
+    late = datetime(2026, 10, 25, 20, 26, tzinfo=timezone.utc)
+    cache = no.empty()
+    no.refresh(cache, upcoming, api_key="K", refresh_asked=True, log=lambda *_: None, now=run_clock,
+               clock=lambda: late)
+    assert cache["games"] == {} and cache["fetches"][-1]["at"] == "2026-10-25T20:26:00Z"
+    before = datetime(2026, 10, 25, 20, 24, 10, tzinfo=timezone.utc)
+    no.refresh(cache, upcoming, api_key="K", refresh_asked=True, log=lambda *_: None, now=run_clock,
+               clock=lambda: before)
+    assert next(iter(cache["games"].values()))["latest"]["seen"] == "2026-10-25T20:24:10Z"
+    # A later in-play reply leaves that pre-game line as it was.
+    no.refresh(cache, upcoming, api_key="K", refresh_asked=True, log=lambda *_: None, now=run_clock,
+               clock=lambda: late)
+    assert next(iter(cache["games"].values()))["latest"]["seen"] == "2026-10-25T20:24:10Z"
+
+
 def test_a_call_is_made_only_when_needed():
     cache = no.empty()
     upcoming = pd.DataFrame({"away": ["LV"], "home": ["KC"], "kickoff": [pd.Timestamp("2026-10-25 20:25")]})

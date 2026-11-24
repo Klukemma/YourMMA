@@ -102,6 +102,17 @@ def _parse_time(text):
     return datetime.strptime(str(text)[:19].replace("Z", ""), "%Y-%m-%dT%H:%M:%S").replace(tzinfo=timezone.utc)
 
 
+def _arrived(now=None, clock=None):
+    """When a reply came back: `clock` read then (the wall clock unless a
+    test fixes it), never earlier than the run's `now`. The run reads its
+    clock once, at the start, and a call made a minute or more later can
+    come back after a kickoff - with in-play prices. So the in-play guard
+    and the `seen` stamp read this, the time the prices were actually
+    seen, not the run's clock."""
+    t = (clock or _now)()
+    return t if now is None or t > now else now
+
+
 def redact(text, key):
     """The key out of any string that might be printed (requests puts the
     full URL, query string and all, into its exception text)."""
@@ -283,6 +294,8 @@ def merge(cache, parsed, now=None):
     The first price ever seen for a game is kept as its opening line; every
     later one replaces `latest`. A game that has already kicked off is
     skipped - its line is in-play and says nothing about the pre-game market.
+    `now` is when the reply came back (refresh passes _arrived), not when
+    the run started.
     """
     now = now or _now()
     added = refreshed = live = 0
@@ -366,9 +379,12 @@ def fetch(api_key, log=print):
     return _get(ENDPOINT, PARAMS, api_key, log, [])
 
 
-def refresh(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=None):
+def refresh(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=None, clock=None):
     """Buy prices if they are needed and a key exists. Returns the reason a
-    call was made, or why not."""
+    call was made, or why not. `now` (the run's clock) says whether a call
+    is needed; the reply is merged at the time it came back (_arrived, with
+    `clock` - the wall clock unless a test fixes it), so a line that came
+    back after its game's kickoff is in play and is not kept."""
     api_key = (api_key if api_key is not None else os.environ.get("ODDS_API_KEY", "")).strip()
     refresh_asked = os.environ.get("ODDS_REFRESH") == "1" if refresh_asked is None else refresh_asked
     reason = needs_fetch(cache, upcoming, refresh_asked, now)
@@ -379,11 +395,12 @@ def refresh(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=No
         log(f"   [odds] {reason}, but ODDS_API_KEY is not set: using the schedule's posted lines")
         return "no key"
     status, events, remaining = fetch(api_key, log)
+    arrived = _arrived(now, clock)
     parsed, unknown = parse_events(events)
     if unknown:
         log(f"   [odds] team names not recognised: {unknown}")
-    added, refreshed, live = merge(cache, parsed, now)
-    record_fetch(cache, status, len(parsed), remaining, now)
+    added, refreshed, live = merge(cache, parsed, arrived)
+    record_fetch(cache, status, len(parsed), remaining, arrived)
     log(f"   [odds] {reason}: {len(parsed)} games priced ({added} new, {refreshed} refreshed, "
         f"{live} in play skipped). Credits left: {remaining}")
     return "fetched" if status == 200 else f"failed ({status})"
@@ -457,7 +474,9 @@ def parse_td_event(event):
 
 def merge_td(cache, key, entry, now=None):
     """Keep one game's anytime-TD prices, replacing any older ones. A game
-    that has started is skipped - its prices are in-play. True if kept."""
+    that has started is skipped - its prices are in-play. True if kept.
+    `now` is when the reply came back (refresh_td passes _arrived), so an
+    older pre-game entry stays when a late reply is dropped."""
     now = now or _now()
     start = _parse_time(entry["commence_time"]) if entry.get("commence_time") else None
     if start is None or start <= now:
@@ -554,9 +573,13 @@ def event_ids(cache, due, api_key, log=print):
     return out
 
 
-def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=None):
+def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=None, clock=None):
     """Buy anytime-TD prices for the games td_due() names, one call each,
-    if a key exists. Returns what happened."""
+    if a key exists. Returns what happened. `now` (the run's clock) picks
+    the games due; each reply is merged at the time it came back (_arrived,
+    with `clock` - the wall clock unless a test fixes it), so prices that
+    came back after the game's kickoff are in play and are not kept, and
+    the `seen` td_prices_for checks against kickoff is when they were seen."""
     api_key = (api_key if api_key is not None else os.environ.get("ODDS_API_KEY", "")).strip()
     refresh_asked = os.environ.get("ODDS_REFRESH") == "1" if refresh_asked is None else refresh_asked
     now = now or _now()
@@ -569,7 +592,7 @@ def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now
         log(f"   [odds] anytime TD: {len(due)} games due, but ODDS_API_KEY is not set: no TD prices")
         return "no key"
     ids = event_ids(cache, due, api_key, log)
-    remaining, status = _last_credits(cache), None
+    remaining, status, arrived = _last_credits(cache), None, now
     calls = priced = 0
     for g in due:
         if g not in ids:
@@ -579,15 +602,16 @@ def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now
                 "for the lines; no more TD calls")
             break
         status, event, left = fetch_td(api_key, ids[g], log)
+        arrived = _arrived(now, clock)
         calls += 1
         remaining = left if left is not None else remaining
         if status != 200 or not event:
             continue
         key, entry = parse_td_event(event)
-        if key is not None and merge_td(cache, key, entry, now):
+        if key is not None and merge_td(cache, key, entry, arrived):
             priced += 1
     if calls:
-        record_fetch(cache, status, priced, remaining, now, market=TD_MARKET, calls=calls)
+        record_fetch(cache, status, priced, remaining, arrived, market=TD_MARKET, calls=calls)
     log(f"   [odds] anytime TD: {len(due)} games due, {calls} calls ({len(due) - len(ids)} without an "
         f"event id), {priced} games priced. Credits left: {remaining}")
     return "fetched" if calls and status == 200 else ("no event id" if not calls else f"failed ({status})")
