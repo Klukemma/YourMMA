@@ -402,6 +402,28 @@ def test_the_week_tabs_tickets_carry_the_backtests_known_bias(tmp_path):
 
 
 @needs_node
+def test_the_est_payouts_correction_is_shown_wherever_v1_calls_it_an_upper_bound(tmp_path):
+    """v1's words call the est. payout and the live return an upper bound on
+    what Stake pays; legs that pull against each other can be priced above
+    the product, so the correction found after the rule was fixed is shown
+    beside those words, which stay as they were registered."""
+    import nfl_sgp as sgp
+    week, _ = _sgp_week()
+    out = _render(tmp_path, week)
+    cav = week["sgp"]["caveats"]
+    assert cav["est"] == sgp.EST_PAYOUT and cav["live"] == sgp.LIVE_ROI and cav["est_erratum"] == sgp.EST_ERRATUM
+    esc = lambda x: x.replace("'", "&#39;")   # noqa: E731
+    for view in ("week", "parlays"):
+        page = out[view]
+        assert esc(sgp.EST_PAYOUT) in page, view
+        assert page.count(esc(sgp.EST_ERRATUM)) >= page.count(esc(sgp.EST_PAYOUT)), view
+    meters = out["parlays"].split('id="sgp-meters"')[1]
+    live = meters.index(esc(sgp.LIVE_ROI))
+    assert esc(sgp.EST_ERRATUM) in meters[live:]
+    assert "upper bound" not in (APP / "app.js").read_text()
+
+
+@needs_node
 def test_a_chance_bins_edges_are_printed_exactly(tmp_path):
     """A bin edge of 2.5% reads 2.5%, not a rounded 3% that a ticket shown
     at 2.6% would contradict."""

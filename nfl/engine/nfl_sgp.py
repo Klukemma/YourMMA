@@ -183,6 +183,25 @@ NOT_IN_V1 = ("Not in v1, because nothing on file measures them yet: QB pass atte
              "line, first/second-half points, team or game touchdown totals, alternate (\"Asian\") "
              "lines.")
 
+# FOUND AFTER THE RULE WAS FIXED (review, 2026-11-24). The docstring's v1
+# words - and EST_PAYOUT and LIVE_ROI, which repeat them - call the est.
+# payout an upper bound on what Stake pays. That holds for legs that go
+# together, which a bet builder prices below the product of the singles. It
+# does not hold for legs that pull against each other (a TD on one team
+# beside the other team's result, or a TD beside the UNDER), which a builder
+# that prices correlation can price ABOVE that product; and the singles here
+# are the books' consensus, not Stake's own. The rule is unchanged and v1
+# keeps its words, since changing them quietly would undo the
+# pre-registration; this correction is shown beside them wherever they are
+# (nfl_export.sgp_block's est_erratum), until a new version states it in
+# the rule's own words.
+EST_ERRATUM = ("Correction, found after the rule was fixed: the est. payout is not an upper bound. A bet "
+               "builder prices legs that go together below the product of the singles, but can price legs "
+               "that pull against each other above it (a touchdown on one team beside the other team's "
+               "result, or beside the under), and Stake's single prices are not the books' consensus - so "
+               "the est. payout, and the live return read at it, is an estimate that Stake's quote can beat "
+               "or fall short of.")
+
 
 # ---------------------------------------------------------------- numbers
 
@@ -571,5 +590,6 @@ def summarise(tickets, no_price_reason=None):
     returns the stake), profit and roi = profit / staked - only when every
     graded ticket has every leg's price, else None with `roi_reason`
     (`no_price_reason` when the caller knows it, e.g. NO_TD_PRICE). A
-    ticket's payout is its est. one, so the return is an upper bound."""
+    ticket's payout is its est. one, so the return is an estimate - not the
+    upper bound v1's words call it (EST_ERRATUM)."""
     return {kind: meter([t for t in tickets if t["kind"] == kind], no_price_reason) for kind in KINDS}

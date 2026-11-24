@@ -973,7 +973,7 @@ function sgpRules(s, shown = []) {
     .map((k) => `<dt><b>${esc(k)}</b></dt><dd>${esc(c.legs[k])}</dd>`).join("");
   const tickets = sgpOrder(s && s.kinds).filter((k) => (c.tickets || {})[k])
     .map((k) => `<dt><b>${esc(kindName(k))}</b></dt><dd>${esc(c.tickets[k])}</dd>`).join("");
-  const body = ["slots", "chance", "est", "prices", "exact", "rookie", "not_in_v1"].filter((k) => c[k] && !shown.includes(k))
+  const body = ["slots", "chance", "est", "est_erratum", "prices", "exact", "rookie", "not_in_v1"].filter((k) => c[k] && !shown.includes(k))
     .map((k) => c[k])
     .map((x) => `<p style="margin:0">${esc(x)}</p>`).join("");
   return fold(`How the tickets are built${s && s.version ? ` (rule ${s.version})` : ""}: the legs, the slots, the chance and the price.`,
@@ -981,14 +981,15 @@ function sgpRules(s, shown = []) {
 }
 
 // The game's detail: its tickets, the no-edge line and the est. caveat
-// beside them - and the backtest's known bias, since each card quotes the
-// backtest's hit rate for its kind and the bias is said wherever a meter is.
+// (with the correction found after the rule was fixed) beside them - and the
+// backtest's known bias, since each card quotes the backtest's hit rate for
+// its kind and the bias is said wherever a meter is.
 function sgpSection(g, d) {
   const s = d && d.sgp;
   const body = ticketsHtml(g, s);
   if (!body || !g.tickets) return body;
   const c = (s && s.caveats) || {};
-  return `${body}${c.edge ? `<div class="note">${esc(c.edge)}</div>` : ""}${c.bias ? `<div class="mini">${esc(c.bias)}</div>` : ""}${c.est ? `<div class="mini">${esc(c.est)}</div>` : ""}${sgpRules(s, ["est"])}`;
+  return `${body}${c.edge ? `<div class="note">${esc(c.edge)}</div>` : ""}${c.bias ? `<div class="mini">${esc(c.bias)}</div>` : ""}${c.est ? `<div class="mini">${esc(c.est)}</div>` : ""}${c.est_erratum ? `<div class="mini">${esc(c.est_erratum)}</div>` : ""}${sgpRules(s, ["est", "est_erratum"])}`;
 }
 const sgpTitle = (g) => {
   const t = g.tickets || [];
@@ -1064,7 +1065,7 @@ function sgpMeters(d) {
   const inputs = Object.entries(h.inputs || {}).map(([k, v]) => `<dt><b>${esc(k)}</b></dt><dd>${esc(v)}</dd>`).join("");
   const g = h.td_groups || {};
   const groups = g.note ? `${g.note}${g.tickets != null ? ` - here ${tally(g.changed)} of ${tally(g.tickets)} built tickets${(g.shipped || []).length ? `; groups given a chance: ${g.shipped.join(", ")}` : ""}` : ""}.` : "";
-  const more = [c.live, groups].filter(Boolean).map((x) => `<p style="margin:0">${esc(x)}</p>`).join("")
+  const more = [c.live, c.est_erratum, groups].filter(Boolean).map((x) => `<p style="margin:0">${esc(x)}</p>`).join("")
     + (inputs ? `<dl class="gloss">${inputs}</dl>` : "");
   return `<div class="card" id="sgp-meters"><h2>How each kind has done</h2>
     ${histHead}${liveHead}
@@ -1342,6 +1343,7 @@ const BOOT = {
       ${filter}
       ${cards || `<div class="empty">${s ? "No tickets this week yet." : "No tickets in this week's file."}</div>`}
       ${c.est ? `<div class="mini">${esc(c.est)}</div>` : ""}
+      ${c.est_erratum ? `<div class="mini">${esc(c.est_erratum)}</div>` : ""}
       ${c.exact ? `<div class="mini">${esc(c.exact)}</div>` : ""}
       ${s ? sgpRules(s, ["est", "exact"]) : ""}`;
     const show = (k) => {
@@ -1833,8 +1835,9 @@ const METHOD_HTML = `
       <li><b>The chance</b> - the product of the legs' chances: what the ticket would hit if its legs were
         independent. Legs in one game are not, so the history measures how often each kind actually landed.</li>
       <li><b>The price</b> - every price shown is the books' consensus single price, marked est.; Stake's bet
-        builder prices legs that go together below it. Type the odds Stake quotes into a ticket's box for the exact
-        payout. What you type stays on your phone and is never sent anywhere.</li>
+        builder prices legs that go together below it, can price legs that pull against each other above it, and
+        has its own single prices, so the est. payout is an estimate, not a bound. Type the odds Stake quotes into a
+        ticket's box for the exact payout. What you type stays on your phone and is never sent anywhere.</li>
     </ul></div>
   <div class="card"><h2>Every number is point-in-time</h2>
     <ul class="plain">

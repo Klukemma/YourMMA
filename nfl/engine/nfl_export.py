@@ -405,10 +405,13 @@ def sgp_block(log, history=None):
                generated and the last game it replayed
       live     nfl_sgp.summarise of every ticket of this rule's version logged
                before kickoff (prediction_history.json), graded or pending -
-               return at the logged est. payout, an upper bound
+               return at the logged est. payout (an estimate, not a bound:
+               est_erratum)
       caveats  the rule's own sentences (nfl_sgp): no edge claimed, the
                product chance, est. prices and the exact payout, the
-               backtest's known bias, the meters, what v1 leaves out
+               backtest's known bias, the meters, what v1 leaves out - and
+               est_erratum, the correction found after the rule was fixed,
+               shown beside v1's words on the est. payout and live return
     """
     logged = [p for p in (log.get("picks") or {}).values()
               if any(t.get("version") == sgp.VERSION for t in p.get("tickets") or [])]
@@ -423,7 +426,7 @@ def sgp_block(log, history=None):
                  "kinds": sgp.summarise(tickets)},
         "caveats": {
             "edge": sgp.NO_EDGE, "chance": sgp.CHANCE_NOTE, "est": sgp.EST_PAYOUT,
-            "prices": sgp.PRICE_NOTE, "exact": sgp.EXACT_PAYOUT, "bias": sgp.KNOWN_BIAS,
+            "est_erratum": sgp.EST_ERRATUM, "prices": sgp.PRICE_NOTE, "exact": sgp.EXACT_PAYOUT, "bias": sgp.KNOWN_BIAS,
             "meters": sgp.METER_NOTE, "live": sgp.LIVE_ROI, "slots": sgp.SLOT_RULE,
             "rookie": sgp.ROOKIE_RULE, "not_in_v1": sgp.NOT_IN_V1,
             "legs": dict(sgp.LEG_RULES), "tickets": dict(sgp.TICKET_RULES)},

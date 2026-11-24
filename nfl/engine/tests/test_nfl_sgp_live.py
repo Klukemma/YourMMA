@@ -283,6 +283,7 @@ def test_the_meters_read_the_backtest_and_the_log_and_say_the_rules_words():
     cav = block["caveats"]
     assert cav["edge"] == sgp.NO_EDGE and cav["bias"] == sgp.KNOWN_BIAS and cav["est"] == sgp.EST_PAYOUT
     assert cav["exact"] == sgp.EXACT_PAYOUT and cav["live"] == sgp.LIVE_ROI
+    assert cav["est_erratum"] == sgp.EST_ERRATUM          # the correction beside v1's est. words
     assert set(cav["tickets"]) == set(sgp.KINDS) and set(cav["legs"]) == set(sgp.LEG_KINDS)
     assert f"{sgp.ROOKIE_FLOOR:.0%}" in cav["tickets"]["rookie"]
 

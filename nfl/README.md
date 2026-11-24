@@ -124,8 +124,11 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
 - **The chance** shown is the product of the legs' chances. Legs in one game are not
   independent, so the backtest measures how often each kind actually landed beside it.
 - **The est. payout** is the product of the legs' consensus single prices, marked est.:
-  Stake's bet builder prices correlated legs below it, so it is an upper bound. The exact
-  payout is the price Stake quotes for the slip, typed in by hand.
+  Stake's bet builder prices correlated legs below it, so v1's words call it an upper bound.
+  It is not one (`nfl_sgp.EST_ERRATUM`, found after the rule was fixed and shown beside those
+  words): legs that pull against each other can be priced above the product, and Stake's
+  single prices are not the consensus - so it is an estimate either way. The exact payout is
+  the price Stake quotes for the slip, typed in by hand.
 - **Anytime-touchdown prices** are bought per game from the-odds-api's per-event endpoint
   (one credit a game), only within `nfl_odds.TD_WINDOW_HOURS` of kickoff, and matched to a
   player only by an exact or strictly normalised name of that game's own rosters. A player
