@@ -642,7 +642,7 @@ def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now
         return "no key"
     ids = event_ids(cache, due, api_key, log)
     remaining, status, arrived = _last_credits(cache), None, now
-    calls = priced = early_calls = 0
+    calls = priced = early_calls = early_posted = 0
     for g in due:
         if g not in ids:
             continue
@@ -660,12 +660,16 @@ def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now
         key, entry = parse_td_event(event)
         if key is not None and merge_td(cache, key, entry, arrived):
             priced += 1
+            # Whether the books had posted by the early call: the log's
+            # measure of how early "early in the week" is (a game whose early
+            # call found none waits for its window round).
+            early_posted += g in early and bool(entry.get("players"))
     if calls:
         record_fetch(cache, status, priced, remaining, arrived, market=TD_MARKET, calls=calls,
-                     early=early_calls)
+                     early=early_calls, early_posted=early_posted)
     log(f"   [odds] anytime TD: {len(due)} games due ({len(early)} early), {calls} calls ({early_calls} "
-        f"early; {len(due) - len(ids)} without an event id), {priced} games priced. "
-        f"Credits left: {remaining}")
+        f"early, {early_posted} of them posted; {len(due) - len(ids)} without an event id), {priced} games "
+        f"priced. Credits left: {remaining}")
     return "fetched" if calls and status == 200 else ("no event id" if not calls else f"failed ({status})")
 
 
@@ -849,6 +853,82 @@ def others_spend(cache):
     return out
 
 
+# The runner whose slots budget() replays, read as text: its crons, and the
+# schedules its run step names for ODDS_REFRESH=1.
+WORKFLOW = nd.NFL.parent / ".github" / "workflows" / "nfl.yml"
+_DAYS = ("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
+
+
+def _cron_months(spec):
+    out = set()
+    for part in spec.split(","):
+        lo, _, hi = part.partition("-")
+        out |= set(range(int(lo), int(hi or lo) + 1))
+    return out
+
+
+def runner_runs(start, end, workflow=WORKFLOW):
+    """(every scheduled run's start between two days, the ones of them that
+    buy today's prices) - naive UTC, as the schedule's kickoffs are - from
+    the workflow's crons ("M H * months DAY") and the schedules its run step
+    names for ODDS_REFRESH=1. A manual run is not in it."""
+    text = Path(workflow).read_text()
+    crons = re.findall(r'- cron: "([^"]+)"', text)
+    refresh = set(re.findall(r'github\.event\.schedule \}\}" = "([^"]+)"', text))
+    runs, refreshed = [], []
+    for day in pd.date_range(pd.Timestamp(start).normalize(), pd.Timestamp(end).normalize()):
+        for cron in crons:
+            minute, hour, dom, months, dow = cron.split()
+            if dom != "*" or day.month not in _cron_months(months) or _DAYS[day.day_of_week] != dow:
+                continue
+            t = day + pd.Timedelta(hours=int(hour), minutes=int(minute))
+            runs.append(t)
+            if cron in refresh:
+                refreshed.append(t)
+    return sorted(runs), sorted(refreshed)
+
+
+def budget(games, cache=None, workflow=WORKFLOW):
+    """The key's monthly estimate: replay_spend over the last full season on
+    file (`games`, nfl_data.load_games) at the runner's own slots
+    (runner_runs), each month's line, TD-window and early-TD credits; the
+    busiest of them; the most the other engines on the key (MMA) were seen
+    to spend in a month (others_spend of `cache`, the committed one unless
+    given); TD_RESERVE_CREDITS; and what is left of FREE_TIER_CREDITS after
+    all three. An estimate: every call is assumed answered, a manual
+    refresh_odds run is not in it, and the others' figure covers only the
+    months this cache's counter has seen."""
+    played = games.groupby("season")["played"].all()
+    season = int(played[played].index.max())
+    kickoffs = list(games.loc[games["season"] == season, "kickoff"])
+    runs, refreshed = runner_runs(min(kickoffs) - pd.Timedelta(days=WINDOW_DAYS), max(kickoffs), workflow)
+    months = replay_spend(kickoffs, runs, refreshed)
+    busiest = max(months, key=lambda m: months[m]["total"])
+    others = others_spend(load() if cache is None else cache)
+    others_most = max(others.values(), default=0)
+    return {"season": season, "games": len(kickoffs), "runs": len(runs), "refresh_runs": len(refreshed),
+            "months": months, "busiest": busiest, "busiest_total": months[busiest]["total"],
+            "others": others, "others_most": others_most, "reserve": TD_RESERVE_CREDITS,
+            "free_tier": FREE_TIER_CREDITS,
+            "spare": FREE_TIER_CREDITS - months[busiest]["total"] - others_most - TD_RESERVE_CREDITS}
+
+
+def budget_lines(b):
+    """budget() as the --budget command prints it."""
+    out = [f"The {b['season']} season ({b['games']} games), replayed at the runner's {b['runs']} scheduled runs "
+           f"({b['refresh_runs']} with ODDS_REFRESH=1), credits a month:"]
+    for month, m in sorted(b["months"].items()):
+        out.append(f"  {month}: lines {m['lines']} + TD window {m['td_window']} + TD early {m['td_early']} "
+                   f"= {m['total']}")
+    seen = ", ".join(f"{k} {v:g}" for k, v in sorted(b["others"].items())) or "none seen"
+    out.append(f"Other engines on the key, by the credits counter: {seen}.")
+    out.append(f"Busiest month {b['busiest']}: {b['busiest_total']} + the others' most {b['others_most']:g} "
+               f"+ the reserve {b['reserve']} = {b['busiest_total'] + b['others_most'] + b['reserve']:g} of "
+               f"{b['free_tier']}; {b['spare']:g} to spare (est.: every call answered, no manual refresh).")
+    return out
+
+
+
 # The two sides of each line's price, as market_for names them.
 PRICE_SIDES = {"spread": ("home", "away"), "total": ("over", "under")}
 # The schedule's columns for those prices (nflverse; nfl_data.load_games).
@@ -963,3 +1043,15 @@ def market_for(cache, game, now=None):
         "total": lines["total"],
         **_schedule_prices(game, lines),
     }
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="NFL prices: the odds key's monthly credit estimate.")
+    parser.add_argument("--budget", action="store_true",
+                        help="replay the runner's slots over the last full season and print each month's credits")
+    args = parser.parse_args()
+    if not args.budget:
+        parser.error("nothing asked: --budget prints the monthly estimate (no call is made)")
+    print("\n".join(budget_lines(budget(nd.load_games()))))
