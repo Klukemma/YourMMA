@@ -291,3 +291,32 @@ def rules(confident=CONFIDENT, td_floor=TD_FLOOR):
         "chosen": (f"{confident:.0%} and {td_floor:.0%} were chosen on {DEV[0]}-{DEV[1]} only, by "
                    f"{OBJECTIVE}; measured untouched on {CONFIRM[0]}-{CONFIRM[1]} and the current season"),
     }
+
+
+def ticket_rules(td_floor=TD_FLOOR):
+    """Each ticket's slots in v2's words, as nfl_sgp.TICKET_RULES gives v1's:
+    v1's shapes with the docstring's narrowing - TD legs at `td_floor` or
+    more, the result leg on the pick's side, the rookie on the pick's team
+    with the pick's WIN, SMALL's TD from the pick's team first. None until
+    the floor is chosen."""
+    if td_floor is None:
+        return None
+    td = f"the best TD at {td_floor:.0%} or more"
+    result = "the best result leg on the pick's side (its WIN or SPREAD)"
+    return {
+        "small": (f"the pick's best TD scorer - the best TD at {td_floor:.0%} or more on the pick's team, "
+                  f"else the game's best at {td_floor:.0%} or more - + {result}"),
+        "rookie": (f"the best rookie TD on the pick's team with a chance of {sgp.ROOKIE_FLOOR:.0%} or more + "
+                   "the pick's WIN"),
+        "medium": (f"{td} + {result} + the best of the TOTAL legs and the TD legs at {td_floor:.0%} or more "
+                   "on other players"),
+        "large": (f"{td} + the next-best TD at {td_floor:.0%} or more (another player) + {result} + the "
+                  "best TOTAL leg"),
+    }
+
+
+# Grading is v1's, unchanged (the docstring: "voids (tie, push, did not
+# play) and payout on the remaining legs"), so a logged v2 ticket is graded
+# by nfl_sgp.grade_ticket under its own version's name.
+grade_ticket = sgp.grade_ticket
+summarise = sgp.summarise

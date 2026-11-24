@@ -110,7 +110,10 @@ def test_the_shared_design_is_the_mma_apps_too():
 # functions build: an upcoming game priced from the TD fixture, one with no
 # TD price bought, a final game whose logged tickets are graded, and one with
 # none logged. The page runs with a stub document; what it would put on the
-# screen is read back as each view's HTML.
+# screen is read back as each view's HTML. The tickets are the live rule's
+# (nfl_predict.LIVE_VERSION, sgp-v2): KC is a confident pick, three of its
+# and LV's players clear the TD floor, and KC's rookie Sam Tight is the
+# pick's team's rookie, so all four are built.
 
 TICKETS_FIX = Path(__file__).resolve().parent / "fixtures" / "odds"
 TICKETS_CLOCK = datetime(2026, 10, 24, 12, 0, tzinfo=timezone.utc)
@@ -119,9 +122,9 @@ TICKETS_MARKET = {"source": "the-odds-api", "home_ml": -250.0, "away_ml": 205.0,
                   "spread": 6.5, "spread_price_home": -110.0, "spread_price_away": -110.0,
                   "spread_price_source": "the-odds-api", "total": 47.5, "total_price_over": -108.0,
                   "total_price_under": -112.0, "total_price_source": "the-odds-api"}
-TICKETS_HOME = [("kc1", "Tom Runner", 0.48), ("kc2", "Sam Tight", 0.36), ("kc3", "Nicholas Name", 0.22)]
-TICKETS_AWAY = [("lv1", "Max Wide", 0.33), ("lv2", "DJ Catcher", 0.27)]
-TICKETS_FIRST = {"kc1": 2020, "kc2": 2019, "kc3": 2023, "lv1": 2026, "lv2": 2022}   # lv1: a rookie
+TICKETS_HOME = [("kc1", "Tom Runner", 0.58), ("kc2", "Sam Tight", 0.49), ("kc3", "Nicholas Name", 0.22)]
+TICKETS_AWAY = [("lv1", "Max Wide", 0.46), ("lv2", "DJ Catcher", 0.27)]
+TICKETS_FIRST = {"kc1": 2020, "kc2": 2026, "kc3": 2023, "lv1": 2026, "lv2": 2022}   # kc2, lv1: rookies
 
 RENDER_JS = r"""
 const fs = require("fs"), vm = require("vm");
@@ -184,7 +187,8 @@ def _sgp_week(history="committed"):
     prices = no.td_prices_for(cache, "LV", "KC", TICKETS_KICKOFF, npd._td_names(priced, {}), now=TICKETS_CLOCK)
     priced["tickets"] = npd.game_tickets(priced, priced["market"], prices, TICKETS_FIRST)
     # No TD price bought for this one, and no rookie on either side.
-    unpriced = _ticket_game("2026_07_LV_KC2", away_td_all=_ticket_list(TICKETS_AWAY[1:]))
+    unpriced = _ticket_game("2026_07_LV_KC2", home_td_all=_ticket_list(TICKETS_HOME[::2]),
+                            away_td_all=_ticket_list(TICKETS_AWAY[1:]))
     unpriced["tickets"] = npd.game_tickets(unpriced, unpriced["market"], {}, TICKETS_FIRST)
     final = _ticket_game("2026_06_LV_KC", status="final", score={"home": 27, "away": 20}, week=6,
                          kickoff="2026-10-18T20:25:00Z")
@@ -197,9 +201,10 @@ def _sgp_week(history="committed"):
     log = {"picks": {g["game_id"]: {"kickoff": g["kickoff"], "tickets": g["tickets"],
                                     "tickets_graded": g.get("tickets_graded", False)}
                      for g in (priced, unpriced, final)}}
-    hist = nx.load_sgp_history() if history == "committed" else history
+    hist = nx.load_sgp_history(nx.SGP2_HISTORY) if history == "committed" else history
+    v1 = nx.load_sgp_history() if history == "committed" else None
     week = {"season": 2026, "week": 7, "label": "Week 7", "games": [final, none, priced, unpriced],
-            "caveats": {}, "sgp": json.loads(json.dumps(nx.sgp_block(log, hist)))}
+            "caveats": {}, "sgp": json.loads(json.dumps(nx.sgp_block(log, hist, v1)))}
     return json.loads(json.dumps(week)), {"priced": priced, "unpriced": unpriced, "final": final, "none": none}
 
 
@@ -227,8 +232,8 @@ def _signed(x, d=1):
 
 def _ticket_html(html, game_id, kind):
     """One ticket card's HTML: from its card to the next."""
-    import nfl_sgp as sgp
-    marker = f'data-sgp-id="{game_id}|{kind}|{sgp.VERSION}|'
+    import nfl_sgp2 as sgp2
+    marker = f'data-sgp-id="{game_id}|{kind}|{sgp2.VERSION}|'
     assert marker in html, (game_id, kind)
     at = html.index(marker)
     starts = [m.start() for m in re.finditer(r'<div class="tkt(?: off)?" data-kind="', html)]
@@ -289,9 +294,9 @@ def test_each_ticket_shows_its_legs_chance_and_est_payout_from_the_payload(tmp_p
     # Every price on the page is marked est.: none is Stake's.
     prices = page.split('<span class="mini num"> ')[1:]
     assert prices and all(chunk.split("</span>", 1)[1].startswith(' <span class="est">est.</span>') for chunk in prices)
-    # The rookie ticket is the rookie's TD and his own team's win.
+    # The rookie ticket is the pick's team's rookie's TD and the pick's win.
     rookie = _ticket_html(page, "2026_07_LV_KC", "rookie")
-    assert "Max Wide" in rookie and '<span class="tag accent">Rookie</span>' in rookie and "LV to win" in rookie
+    assert "Sam Tight" in rookie and '<span class="tag accent">Rookie</span>' in rookie and "KC to win" in rookie
     assert sgp.NO_EDGE.replace("'", "&#39;") in page
 
 
@@ -344,9 +349,10 @@ def test_a_graded_ticket_shows_each_legs_result_and_the_live_meters_mark_their_r
 @needs_node
 def test_stakes_quote_gives_the_exact_payout_and_stays_on_the_phone(tmp_path):
     import nfl_sgp as sgp
+    import nfl_sgp2 as sgp2
     week, games = _sgp_week()
     t = next(x for x in games["priced"]["tickets"] if x["kind"] == "small")
-    key = "|".join(["2026_07_LV_KC", "small", sgp.VERSION, "+".join(leg["key"] for leg in t["legs"])])
+    key = "|".join(["2026_07_LV_KC", "small", sgp2.VERSION, "+".join(leg["key"] for leg in t["legs"])])
     page = _render(tmp_path, week, store={f"yournfl.sgp.{key}": json.dumps({"odds": "+450", "stake": "20"})})["parlays"]
     card = _ticket_html(page, "2026_07_LV_KC", "small")
     dec = sgp.decimal_from_american(450)
@@ -426,8 +432,14 @@ def test_the_est_payouts_correction_is_shown_wherever_v1_calls_it_an_upper_bound
 @needs_node
 def test_a_chance_bins_edges_are_printed_exactly(tmp_path):
     """A bin edge of 2.5% reads 2.5%, not a rounded 3% that a ticket shown
-    at 2.6% would contradict."""
-    week, _ = _sgp_week()
+    at 2.6% would contradict. v2's history on file has no such edge among
+    its bins (its tickets are the likelier ones), so one is added to a copy
+    of it: what is tested is the printing, not the data."""
+    import nfl_export as nx
+    hist = nx.load_sgp_history(nx.SGP2_HISTORY)
+    large = hist["kinds"]["large"]
+    large["chance_bins"] = [dict(large["chance_bins"][0], lo=0.0, hi=0.025)] + large["chance_bins"]
+    week, _ = _sgp_week(history=hist)
     page = _render(tmp_path, week)["parlays"]
 
     def edge(x):

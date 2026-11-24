@@ -1,9 +1,12 @@
-"""The same-game tickets live (nfl_predict): built before kickoff from what
-the pick was made with, as the backtest builds them; logged with the pick
-and never rebuilt after kickoff; graded from the score and the box score,
-a player who took no snap voiding his leg; a TD leg priced only from its
-own game's matched price, else missing with the reason; and each kind
-metered beside the backtest, with the rule's own words."""
+"""The same-game tickets live (nfl_predict), v1's (sgp-v1, retired since
+v2 builds the live tickets - tests/test_nfl_sgp2_live.py): built before
+kickoff from what the pick was made with, as the backtest builds them;
+logged with the pick and never rebuilt after kickoff; graded from the score
+and the box score, a player who took no snap voiding his leg; a TD leg
+priced only from its own game's matched price, else missing with the
+reason; and each kind metered beside the backtest, with the rule's own
+words. v1's tickets already logged are still graded, so all of it still
+holds for them; they are built here with version=sgp.VERSION."""
 
 import copy
 import json
@@ -63,7 +66,7 @@ def _td_prices(game, aliases=None):
 
 def _tickets(game=None):
     game = game or _game()
-    return npd.game_tickets(game, game["market"], _td_prices(game), FIRST)
+    return npd.game_tickets(game, game["market"], _td_prices(game), FIRST, version=sgp.VERSION)
 
 
 def _keys(t):
@@ -118,8 +121,8 @@ def test_an_unmatched_td_price_stays_missing_with_its_reason():
 def test_with_no_td_price_bought_yet_every_td_leg_says_why():
     game = _game()
     far = no.td_prices_for(no.empty(), "LV", "KC", KICKOFF, npd._td_names(game, {}),
-                           now=datetime(2026, 10, 20, 12, 0, tzinfo=timezone.utc))
-    tickets = npd.game_tickets(game, game["market"], far, FIRST)
+                           now=datetime(2026, 10, 15, 12, 0, tzinfo=timezone.utc))   # before TD_EARLY_DAYS
+    tickets = npd.game_tickets(game, game["market"], far, FIRST, version=sgp.VERSION)
     tds = [leg for t in tickets for leg in t["legs"] if leg["kind"] == "TD"]
     assert tds and all(leg["price_missing"] == no.TD_PRICE_MISSING["window"] for leg in tds)
     assert all(t["est_payout"] is None for t in tickets)
@@ -156,7 +159,7 @@ def test_live_reads_what_the_backtest_read():
 
 def test_no_market_means_no_spread_or_total_legs_and_an_unpriced_win():
     game = _game(market=None)
-    t = _by_kind(npd.game_tickets(game, None, _td_prices(game), FIRST))
+    t = _by_kind(npd.game_tickets(game, None, _td_prices(game), FIRST, version=sgp.VERSION))
     assert _keys(t["small"]) == ["TD:kc1", "WIN:KC"]
     assert t["small"]["legs"][1]["price_missing"] == npd.NO_PRICE
     assert not t["large"]["built"] and t["large"]["reason"] == sgp.NO_TOTAL
@@ -175,9 +178,12 @@ def test_a_ticket_logged_before_kickoff_is_never_rebuilt_after_it():
     assert _keys(rebuilt[0]) != _keys(logged[0])
     assert not npd.log_pick(log, _game(tickets=rebuilt), after)
     assert log["picks"][game["game_id"]]["tickets"] == logged
-    # A game under way or over shows the logged tickets themselves.
+    # A game under way or over shows the logged tickets themselves - v1's
+    # beside the live version's, retired, and why it has none of those.
     shown = npd.show_logged({"home": "KC", "away": "LV"}, log["picks"][game["game_id"]], {})
-    assert shown["tickets"] is log["picks"][game["game_id"]]["tickets"]
+    assert len(shown["tickets_v1"]) == len(logged)
+    assert all(a is b for a, b in zip(shown["tickets_v1"], log["picks"][game["game_id"]]["tickets"]))
+    assert shown["tickets"] is None and shown["tickets_reason"] == npd.NO_LIVE_TICKETS_LOGGED
     # And with nothing logged, nothing is built: no tickets, and why.
     none = npd.show_logged({"home": "KC", "away": "LV"}, None, {})
     assert none["tickets"] is None and none["tickets_reason"] == npd.NO_TICKETS_LOGGED
@@ -272,8 +278,10 @@ def test_the_meters_read_the_backtest_and_the_log_and_say_the_rules_words():
     history = nx.load_sgp_history()
     if history is None:
         pytest.skip("no history on file yet")
-    block = nx.sgp_block(log, history)
+    block = nx.sgp_v1_block(log, history)
     assert block["version"] == sgp.VERSION and block["kinds"] == list(sgp.KINDS)
+    assert block["retired"] is True and block["retired_note"] == nx.SGP_V1_RETIRED
+    assert nx.sgp_block(log, None, history)["v1"] == block        # under the live block's "v1"
     assert block["live"]["games"] == 2 and block["live"]["graded_games"] == 1
     live = block["live"]["kinds"]
     assert live["small"]["won"] == 1 and live["small"]["pending"] == 1 and live["rookie"]["lost"] == 1
@@ -290,15 +298,16 @@ def test_the_meters_read_the_backtest_and_the_log_and_say_the_rules_words():
 
 def test_without_a_backtest_of_this_rule_the_history_meter_says_why():
     log = {"schema": 1, "picks": {}}
-    none = nx.sgp_block(log, None)["history"]
+    none = nx.sgp_v1_block(log, None)["history"]
     assert none["available"] is False and "no same-game ticket backtest" in none["reason"]
-    other = nx.sgp_block(log, {"version": "sgp-v0"})["history"]
+    other = nx.sgp_v1_block(log, {"version": "sgp-v0"})["history"]
     assert other["available"] is False and "sgp-v0" in other["reason"]
-    live = nx.sgp_block(log, None)["live"]
+    live = nx.sgp_v1_block(log, None)["live"]
     assert live["games"] == 0 and live["kinds"]["small"]["roi_reason"] == "no ticket graded yet"
 
 
 def test_the_block_is_json_safe(tmp_path):
     log = _logged(27, 20)
-    path = nx.write("w", {"sgp": nx.sgp_block(log, nx.load_sgp_history())}, tmp_path)
-    assert "NaN" not in path.read_text() and json.loads(path.read_text())["sgp"]["version"] == sgp.VERSION
+    path = nx.write("w", {"sgp": nx.sgp_block(log, nx.load_sgp_history(nx.SGP2_HISTORY), nx.load_sgp_history())},
+                    tmp_path)
+    assert "NaN" not in path.read_text() and json.loads(path.read_text())["sgp"]["v1"]["version"] == sgp.VERSION
