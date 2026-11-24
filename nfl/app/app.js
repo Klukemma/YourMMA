@@ -691,18 +691,43 @@ const tdMeters = (ms, cls = "") => !ms ? ""
 const UNPRICED = { "no history": "no NFL game yet, not priced" };
 const unpricedWhy = (p) => UNPRICED[p.group] || "too little used to price";
 
-function tdItem(p) {
+// The books' anytime-TD price beside our chance (nfl_odds.td_price, logged
+// with the pick): the consensus American odds, marked est. because it is
+// the books' and not Stake's, over the chance it implies with the books'
+// margin left in. Nothing when he has none - tdItem says why, or tdList
+// once for a whole list missing them for one reason.
+function tdOdds(p) {
+  const o = p.price;
+  if (!o || o.american == null) return "";
+  const more = [o.best_american != null ? `best ${odds(o.best_american)}${o.best_book ? ` (${o.best_book})` : ""}` : "",
+    o.books ? `${o.books} books` : "", o.as_of ? `seen ${localStamp(o.as_of)}` : ""].filter(Boolean).join(" · ");
+  return `<span class="end tdodds"${more ? ` title="${esc(more)}"` : ""}><span class="nowrap"><span class="num">${esc(odds(o.american))}</span>${o.est ? EST : ""}</span>
+    <span class="mini nowrap">books <span class="num">${pct(o.implied)}</span></span></span>`;
+}
+// Why a player has no odds beside him: the payload's reason, unless his
+// whole list shares it and says it once (`shared`).
+const noOddsWhy = (p, shared) => {
+  const o = p.price;
+  return o && o.american == null && o.missing && o.missing !== shared ? `no odds: ${esc(o.missing)}` : "";
+};
+function oddsShared(list) {
+  const why = new Set(list.map((p) => (p.price && p.price.american == null ? p.price.missing || "" : null)));
+  const [only] = why;
+  return list.length && why.size === 1 && only ? only : null;
+}
+
+function tdItem(p, shared = null) {
   const result = p.played === false ? ` <span class="st questionable">Did not play</span>`
     : p.scored === true ? ` <span class="st scored">Scored</span>`
     : p.scored === false ? ` <span class="st questionable">No TD</span>` : "";
   const season = p.games_season ? `${esc(p.tds_season)} TD in ${esc(p.games_season)} games this season` : "";
   const why = p.prob == null ? unpricedWhy(p) : "";
-  const note = [season, why].filter(Boolean).join(" · ");
+  const note = [season, why, noOddsWhy(p, shared)].filter(Boolean).join(" · ");
   const chance = p.prob == null ? `<span class="num lead dim" title="${esc(unpricedWhy(p))}">—</span>`
     : `<span class="num lead">${pct(p.prob)}</span>`;
   return `<li class="tdp">${chance}
     <span class="who"><b>${esc(p.name)}</b> <span class="mini">${esc(p.position)}</span>${statusBadge(p)}${result}${note ? `<div class="mini">${note}</div>` : ""}</span>
-    ${tdMeters(p.meters)}</li>`;
+    ${tdOdds(p)}${tdMeters(p.meters)}</li>`;
 }
 
 const tdCount = (g) => ["away", "home"].reduce((n, s) => n + (g[`${s}_td_all`] || g[`${s}_td`] || []).length, 0);
@@ -710,10 +735,19 @@ const tdCount = (g) => ["away", "home"].reduce((n, s) => n + (g[`${s}_td_all`] |
 const TD_LEGEND = `Top 3 → scored: of the games a player was in our top 3 and played, how many he scored in.
   Not top 3 → no TD: of the games he played outside it, how many he did not score in. From the live record,
   picks logged before kickoff; a dash means no such game yet.`;
+// Beside each player, left to right: our chance, then the books' odds and
+// the chance they imply - with the payload's note that the odds are not
+// Stake's and the model was never measured against them (caveats.td_odds).
+// A file written before the lists carried odds says so instead.
+const TD_ODDS_LEGEND = `Left of each player, our chance if he plays; right, the books' anytime-TD odds,
+  est., and the chance they imply.`;
+const TD_ODDS_NONE = "This week's file was written before the touchdown lists carried the books' odds; the next run adds them.";
 function tdLegend(c) {
   c = c || {};
   const body = [c.td, c.td_meters].filter(Boolean).map((t) => `<p style="margin:0">${esc(t)}</p>`).join("");
-  return `<div class="mini tdlegend">${esc(TD_LEGEND)}</div>${fold(c.td_list || c.td, body)}`;
+  const oddsNote = c.td_odds ? `<div class="mini tdlegend">${esc(TD_ODDS_LEGEND)} ${esc(c.td_odds)}</div>`
+    : `<div class="mini tdlegend">${esc(TD_ODDS_NONE)}</div>`;
+  return `<div class="mini tdlegend">${esc(TD_LEGEND)}</div>${oddsNote}${fold(c.td_list || c.td, body)}`;
 }
 
 // One team's touchdown list: our top 3 first, then - folded, so the card
@@ -722,15 +756,19 @@ function tdList(code, top, all, team, open = false) {
   if (!top || !top.length) return "";
   const ids = new Set(top.map((p) => p.gsis_id));
   const rest = (all || []).filter((p) => !ids.has(p.gsis_id));
+  // One reason for the whole list (no odds bought for this game yet) is said once, above it.
+  const shared = oddsShared([...top, ...rest]);
+  const item = (p) => tdItem(p, shared);
   const more = rest.length
     ? (open
-      ? `<div class="tdhead mini">Everyone else you can bet on · ${rest.length}</div><ul class="list">${rest.map(tdItem).join("")}</ul>`
+      ? `<div class="tdhead mini">Everyone else you can bet on · ${rest.length}</div><ul class="list">${rest.map(item).join("")}</ul>`
       : `<details class="tdmore"><summary><span>${rest.length} more you can bet on</span><span class="more">Show</span></summary>
-        <ul class="list">${rest.map(tdItem).join("")}</ul></details>`)
+        <ul class="list">${rest.map(item).join("")}</ul></details>`)
     : all ? "" : `<div class="mini">Only our top 3 were logged for this game.</div>`;
   const teamLine = team ? `<div class="tdteam"><span class="mini">${esc(code)}, every game so far</span>${tdMeters(team)}</div>` : "";
-  return `<div class="panel"><div class="eyebrow">${esc(code)} · touchdown</div>${teamLine}
-    <div class="tdhead mini">Our top 3</div><ul class="list">${top.map(tdItem).join("")}</ul>${more}</div>`;
+  const oddsLine = shared ? `<div class="mini tdnoodds">Odds: ${esc(shared)}</div>` : "";
+  return `<div class="panel"><div class="eyebrow">${esc(code)} · touchdown</div>${teamLine}${oddsLine}
+    <div class="tdhead mini">Our top 3</div><ul class="list">${top.map(item).join("")}</ul>${more}</div>`;
 }
 
 // One line on the closed card: each team's likeliest scorer.
@@ -756,11 +794,14 @@ function newsList(items) {
 }
 
 // ---------------------------------------------------------------- same-game tickets
-// sgp:begin - the four same-game tickets of a game (nfl_sgp), in its detail and on
-// the Parlays tab. Every number is read from week.json - its "sgp" block and
-// each game's "tickets" - and a number that is missing is shown with the
-// payload's own reason. Nothing is typed here that the payload could say, so
-// the rule and the app cannot drift apart. test_nfl_app.py renders this in node.
+// sgp:begin - the four same-game tickets of a game, in its detail and on the
+// Parlays tab: v2's (nfl_sgp2) - only a confident game's, from the pick's side
+// and the players the model rates very likely - with v1's (nfl_sgp, retired)
+// kept and folded under them. Every number is read from week.json - its "sgp"
+// block (v2's, v1's under sgp.v1) and each game's "tickets" and "tickets_v1" -
+// and a number that is missing is shown with the payload's own reason.
+// Nothing is typed here that the payload could say, so the rule and the app
+// cannot drift apart. test_nfl_app.py renders this in node.
 
 // The order the tickets read in, smallest first. The rule builds them in its
 // own order (sgp.kinds), which the slot caveat states.
@@ -894,8 +935,11 @@ function legItem(leg, result) {
     notes.push(`best ${esc(odds(leg.best_american))}${leg.est ? EST : ""}${leg.best_book ? ` (${esc(leg.best_book)})` : ""}${leg.books ? ` of ${esc(leg.books)} books` : ""}`);
   }
   if (leg.kind === "TD" && leg.price_as_of) notes.push(`priced ${esc(localStamp(leg.price_as_of))}`);
+  // A TD leg's price also says the chance the books' price implies (margin
+  // left in), as the touchdown lists do beside each scorer.
   const price = leg.decimal != null
-    ? `<span class="num">${esc(odds(leg.american))}</span><span class="dec"><span class="mini num"> ${num(leg.decimal)}</span>${leg.est ? EST : ""}</span>`
+    ? `<span class="num">${esc(odds(leg.american))}</span><span class="dec"><span class="mini num"> ${num(leg.decimal)}</span>${leg.est ? EST : ""}</span>${
+      leg.kind === "TD" && leg.implied != null ? `<span class="mini nowrap">books ${pct(leg.implied)}</span>` : ""}`
     : `<span class="mini">no price</span>`;
   return `<li><span class="num lead">${pct(leg.chance)}</span>
     <span class="who">${who}${resultChip(result)}${notes.length ? `<div class="mini">${notes.join(" · ")}</div>` : ""}</span>
@@ -935,9 +979,10 @@ function kindRecord(kind, chance, s) {
 function ticketCard(g, t, s) {
   const n = (s && s.legs && s.legs[t.kind]) || (t.legs || []).length;
   const rule = ((s && s.caveats && s.caveats.tickets) || {})[t.kind];
-  const head = `<div class="tkt-head"><b>${esc(kindName(t.kind))}</b><span class="mini">${esc(n)} legs</span>${resultChip(t.result)}</div>
-    ${rule ? `<div class="mini">${esc(rule)}</div>` : ""}`;
-  if (!t.built) return `<div class="tkt off" data-kind="${esc(t.kind)}">${head}<div class="mini"><b>Not built:</b> ${esc(t.reason)}</div></div>`;
+  const top = `<div class="tkt-head"><b>${esc(kindName(t.kind))}</b><span class="mini">${esc(n)} legs</span>${resultChip(t.result)}</div>`;
+  // An unbuilt ticket is its name and why: the slot's words are in the rule's fold.
+  if (!t.built) return `<div class="tkt off" data-kind="${esc(t.kind)}">${top}<div class="mini"><b>Not built:</b> ${esc(t.reason)}</div></div>`;
+  const head = `${top}${rule ? `<div class="mini">${esc(rule)}</div>` : ""}`;
   const results = t.leg_results || {};
   const stake = s && s.stake;
   const est = t.est_payout != null && stake != null
@@ -946,28 +991,75 @@ function ticketCard(g, t, s) {
   const paid = t.result === "won" && t.payout != null && stake != null
     ? `<div class="mini">Graded: returned ${money(stake * t.payout)}${EST} on the legs that stood</div>`
     : t.result === "void" ? `<div class="mini">Graded: every leg voided, stake back</div>` : "";
+  // A v2 ticket logged with other bars than the rule holds now says so.
+  const bars = t.confident != null && s && s.confident != null && (t.confident !== s.confident || t.td_floor !== s.td_floor)
+    ? `<div class="mini">Built with the bars ${pct(t.confident)} and ${pct(t.td_floor)}; the rule now holds ${pct(s.confident)} and ${pct(s.td_floor)}.</div>` : "";
   return `<div class="tkt" data-kind="${esc(t.kind)}">${head}
     <ul class="list legs">${t.legs.map((leg) => legItem(leg, results[leg.key])).join("")}</ul>
     <div class="tkt-row"><span class="k">Chance</span><span><b class="num">${pct(t.chance, 1)}</b> <span class="mini">the product of the legs' chances</span>${kindRecord(t.kind, t.chance, s)}</span></div>
     <div class="tkt-row"><span class="k">Payout</span><span>${est}${paid}</span></div>
     ${t.version && s && s.version && t.version !== s.version ? `<div class="mini">Built by rule ${esc(t.version)}; this week's rule is ${esc(s.version)}.</div>` : ""}
+    ${bars}
     ${stakeBox(g, t, s)}
   </div>`;
 }
 
-// A game's tickets in reading order, or why it has none.
-function ticketsHtml(g, s) {
-  if (!g.tickets) return g.tickets_reason ? `<div class="mini">${esc(g.tickets_reason)}</div>` : "";
+const byKind = (tickets, s) => {
   const order = sgpOrder(s && s.kinds);
-  const sorted = [...g.tickets].sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind));
-  return `<div class="tkts">${sorted.map((t) => ticketCard(g, t, s)).join("")}</div>`;
+  return [...tickets].sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind));
+};
+// A game whose tickets the payload sums up in one reason - not a confident
+// game, or none logged - says it once instead of drawing four empty tickets.
+const ticketsOnce = (g) => !!g.tickets_reason && !(g.tickets || []).some((t) => t.built);
+// Whether a game has ticket cards to draw: its v2 tickets, or v1's kept ones.
+const ticketsDrawn = (g) => !!((!ticketsOnce(g) && (g.tickets || []).length) || (g.tickets_v1 || []).length);
+// A v2 game cleared the rule's bar (each v2 ticket logs whether it did); a
+// ticket from before v2 has no such flag, and a built one stands in for it.
+const confidentGame = (g) => (g.tickets || []).some((t) => t.confident_game || (t.confident_game == null && t.built));
+// The Parlays tab's order: confident games with a ticket built, then
+// confident games with none, then the rest - each in kickoff order.
+const ticketRank = (g) => (confidentGame(g) ? ((g.tickets || []).some((t) => t.built) ? 0 : 1) : 2);
+
+// The pick a game's v2 tickets ride and the two bars they were built with:
+// what a confident game and a very likely scorer mean here.
+function pickLine(tickets) {
+  const t = (tickets || []).find((x) => x.pick);
+  if (!t) return "";
+  return `<div class="mini sgppick">Pick <b>${esc(t.pick)}</b> <span class="num">${pct(t.pick_prob, 1)}</span>${
+    t.confident != null ? ` · confident from ${pct(t.confident)}` : ""}${t.td_floor != null ? ` · TD legs from ${pct(t.td_floor)}` : ""}</div>`;
 }
 
-// The rule's own words: how each leg's chance and price are read, how the
-// slots are filled, what v1 leaves out.
+// The v1 tickets logged before v1 was retired: kept as they were logged,
+// graded by v1's own rule, and read beside v1's own meters (sgp.v1).
+function v1Tickets(g, s) {
+  const t = g.tickets_v1 || [];
+  if (!t.length) return "";
+  const v1 = (s && s.v1) || null;
+  const note = v1 && v1.retired_note ? `<div class="mini">${esc(v1.retired_note)}</div>` : "";
+  return DESK.sub(`v1 (retired) · ${t.filter((x) => x.built).length} of ${t.length} built`,
+    `${note}<div class="tkts">${byKind(t, v1).map((x) => ticketCard(g, x, v1)).join("")}</div>`);
+}
+
+// A game's tickets in reading order - or the payload's one reason for all
+// of them, said once - and, folded under them, v1's tickets for the game.
+function ticketsHtml(g, s) {
+  const t = g.tickets || [];
+  const live = ticketsOnce(g) ? `<div class="mini">${esc(g.tickets_reason)}</div>${pickLine(t)}`
+    : t.length ? `${pickLine(t)}<div class="tkts">${byKind(t, s).map((x) => ticketCard(g, x, s)).join("")}</div>` : "";
+  return `${live}${v1Tickets(g, s)}`;
+}
+
+// The rule's own words: which games get tickets and from which legs (v2's
+// narrowing), how each leg's chance and price are read, how the slots are
+// filled, what v1 leaves out.
 const LEG_SHOWN = ["WIN", "SPREAD", "TOTAL", "TD"];
+const RULE_SHOWN = [["games", "Games"], ["result", "Result legs"], ["td", "TD legs"], ["small", "Small"],
+  ["total", "Total"], ["chosen", "The two numbers"]];
 function sgpRules(s, shown = []) {
   const c = (s && s.caveats) || {};
+  const r = c.rules || {};
+  const narrowing = [...RULE_SHOWN.filter(([k]) => r[k]), ...Object.keys(r).filter((k) => !RULE_SHOWN.some(([x]) => x === k)).map((k) => [k, k])]
+    .map(([k, label]) => `<dt><b>${esc(label)}</b></dt><dd>${esc(r[k])}</dd>`).join("");
   const legKinds = Object.keys(c.legs || {});
   const legs = [...LEG_SHOWN.filter((k) => legKinds.includes(k)), ...legKinds.filter((k) => !LEG_SHOWN.includes(k))]
     .map((k) => `<dt><b>${esc(k)}</b></dt><dd>${esc(c.legs[k])}</dd>`).join("");
@@ -976,29 +1068,34 @@ function sgpRules(s, shown = []) {
   const body = ["slots", "chance", "est", "est_erratum", "prices", "exact", "rookie", "not_in_v1"].filter((k) => c[k] && !shown.includes(k))
     .map((k) => c[k])
     .map((x) => `<p style="margin:0">${esc(x)}</p>`).join("");
-  return fold(`How the tickets are built${s && s.version ? ` (rule ${s.version})` : ""}: the legs, the slots, the chance and the price.`,
-    `${tickets ? `<dl class="gloss">${tickets}</dl>` : ""}${legs ? `<dl class="gloss">${legs}</dl>` : ""}${body}`);
+  return fold(`How the tickets are built${s && s.version ? ` (rule ${s.version})` : ""}: ${narrowing ? "the games, " : ""}the legs, the slots, the chance and the price.`,
+    `${narrowing ? `<dl class="gloss">${narrowing}</dl>` : ""}${tickets ? `<dl class="gloss">${tickets}</dl>` : ""}${legs ? `<dl class="gloss">${legs}</dl>` : ""}${body}`);
 }
 
-// The game's detail: its tickets, the no-edge line and the est. caveat
+// The game's detail: its tickets, the no-edge lines and the est. caveat
 // (with the correction found after the rule was fixed) beside them - and the
 // backtest's known bias, since each card quotes the backtest's hit rate for
-// its kind and the bias is said wherever a meter is.
+// its kind and the bias is said wherever a meter is. A game with only a
+// reason shows the reason alone.
 function sgpSection(g, d) {
   const s = d && d.sgp;
   const body = ticketsHtml(g, s);
-  if (!body || !g.tickets) return body;
+  if (!body || !ticketsDrawn(g)) return body;
   const c = (s && s.caveats) || {};
-  return `${body}${c.edge ? `<div class="note">${esc(c.edge)}</div>` : ""}${c.bias ? `<div class="mini">${esc(c.bias)}</div>` : ""}${c.est ? `<div class="mini">${esc(c.est)}</div>` : ""}${c.est_erratum ? `<div class="mini">${esc(c.est_erratum)}</div>` : ""}${sgpRules(s, ["est", "est_erratum"])}`;
+  return `${body}${c.edge ? `<div class="note">${esc(c.edge)}</div>` : ""}${c.edge_v2 ? `<div class="mini">${esc(c.edge_v2)}</div>` : ""}${c.bias ? `<div class="mini">${esc(c.bias)}</div>` : ""}${c.est ? `<div class="mini">${esc(c.est)}</div>` : ""}${c.est_erratum ? `<div class="mini">${esc(c.est_erratum)}</div>` : ""}${sgpRules(s, ["est", "est_erratum"])}`;
 }
 const sgpTitle = (g) => {
   const t = g.tickets || [];
-  return t.length ? `Parlays · ${t.filter((x) => x.built).length} of ${t.length} built` : "Parlays";
+  const built = t.filter((x) => x.built).length;
+  const v1 = (g.tickets_v1 || []).length;
+  return ["Parlays", t.length ? (built ? `${built} of ${t.length} built` : "none built") : "", v1 ? "v1 retired" : ""]
+    .filter(Boolean).join(" · ");
 };
 
 // One kind's meter: won of built, the hit rate beside the product chance,
-// and the return at the stake per ticket - or each one's reason.
-function sgpMeter(m, estimated) {
+// the share of games it was built in (the history's coverage), and the
+// return at the stake per ticket - or each one's reason.
+function sgpMeter(m, estimated, cov = null) {
   if (!m) return `<div class="mini">—</div>`;
   const extra = [m.lost ? `${tally(m.lost)} lost` : "", m.void ? `${tally(m.void)} void` : "",
     m.pending ? `${tally(m.pending)} to grade` : ""].filter(Boolean).join(" · ");
@@ -1008,71 +1105,188 @@ function sgpMeter(m, estimated) {
   const hit = m.hit_rate != null
     ? `hit <b>${pct(m.hit_rate, 1)}</b> <span class="mini">· product said ${pct(m.mean_chance, 1)}</span>`
     : `<span class="mini">hit rate: ${esc(m.hit_rate_reason)}</span>`;
+  const covered = cov && cov.share != null
+    ? `<span class="mini">built in ${pct(cov.share, 1)} of ${tally(cov.games)} games</span>` : "";
   const roi = m.roi != null
     ? `profit <b class="num">${signedMoney(m.profit)}</b> · ROI <b class="num">${signed(m.roi * 100, 1)}%</b>${estimated ? EST : ""}${
       m.roi_note ? ` <span class="mini">· ${esc(m.roi_note)}</span>` : ""}`
     : `<span class="mini">no return: ${esc(m.roi_reason)}</span>`;
   const why = Object.entries(m.not_built_why || {}).map(([w, n]) => `${esc(w)} (${tally(n)})`).join("; ");
   return `<div class="sgpm-v"><span><b class="num">${tally(m.won)}</b> won of <b class="num">${tally(m.tickets)}</b> built${extra ? ` <span class="mini">· ${extra}</span>` : ""}</span>
-    ${bar}<span>${hit}</span>
+    ${bar}<span>${hit}</span>${covered}
     <span>${esc(stakeWord(m.stake))} a ticket: ${roi}</span>
     ${m.not_built ? `<span class="mini">Not built ${tally(m.not_built)}: ${why}</span>` : ""}</div>`;
 }
 
+const sameSpan = (a, b) => !!(a && b) && a[0] === b[0] && a[1] === b[1];
+// Which seasons chose v2's two numbers and which measure them untouched.
+const spanMark = (lohi, s) => {
+  const g = (s && s.grids) || {};
+  return sameSpan(lohi, g.dev) ? "chose the pair" : sameSpan(lohi, g.confirm) ? "untouched" : "";
+};
+
 // Every period of the history for one kind, and its product chance against
 // how often it hit.
-function sgpPeriods(h, kind) {
+function sgpPeriods(h, kind, s) {
   const k = (h.kinds || {})[kind] || {};
+  const cov = k.coverage || null;
   const whole = (widestPeriod(h.periods) || [])[0];
   const spans = Object.entries(h.periods || {}).sort((a, b) => (a[0] === whole) - (b[0] === whole) || a[1][0] - b[1][0] || a[1][1] - b[1][1]);
   const rows = spans.map(([name, lohi]) => {
     const m = (k.meters || {})[name];
     if (!m) return "";
-    return `<tr><td class="nowrap">${esc(spanLabel(lohi))}</td><td class="n">${tally(m.tickets)}</td><td class="n">${tally(m.won)}</td>
+    const mark = spanMark(lohi, s);
+    return `<tr><td class="nowrap">${esc(spanLabel(lohi))}${mark ? `<div class="mini">${esc(mark)}</div>` : ""}</td><td class="n">${tally(m.tickets)}</td>${
+      cov ? `<td class="n">${pct(cov[name], 1)}</td>` : ""}<td class="n">${tally(m.won)}</td>
       <td class="n">${pct(m.hit_rate, 1)}</td><td class="n">${pct(m.mean_chance, 1)}</td><td class="n">${m.roi == null ? "—" : `${signed(m.roi * 100, 1)}%`}</td></tr>`;
   }).join("");
   const reasons = [...new Set(spans.map(([name]) => ((k.meters || {})[name] || {}).roi_reason).filter(Boolean))];
   const bins = (k.chance_bins || []).map((b) => `<tr><td class="n">${edgePct(b.lo)}-${edgePct(b.hi)}</td><td class="n">${tally(b.tickets)}</td>
     <td class="n">${pct(b.mean_chance, 1)}</td><td class="n">${pct(b.hit_rate, 1)}</td></tr>`).join("");
-  return `${rows ? `<div class="scroll"><table class="tight"><thead><tr><th>Seasons</th><th class="n">Built</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Said</th><th class="n">ROI</th></tr></thead><tbody>${rows}</tbody></table></div>` : ""}
+  return `${rows ? `<div class="scroll"><table class="tight"><thead><tr><th>Seasons</th><th class="n">Built</th>${cov ? `<th class="n">Of games</th>` : ""}<th class="n">Won</th><th class="n">Hit</th><th class="n">Said</th><th class="n">ROI</th></tr></thead><tbody>${rows}</tbody></table></div>` : ""}
     ${reasons.length ? `<div class="mini">ROI: ${reasons.map(esc).join("; ")}.</div>` : ""}
     ${bins ? `<div class="eyebrow" style="margin-top:4px">Product chance against hits, ${esc(spanLabel((widestPeriod(h.periods) || [])[1]))}</div>
       <div class="scroll"><table class="tight"><thead><tr><th class="n">Product</th><th class="n">Tickets</th><th class="n">Said</th><th class="n">Hit</th></tr></thead><tbody>${bins}</tbody></table></div>` : ""}`;
 }
 
-// The four meters: each kind on its own, the history replay and this season live.
-function sgpMeters(d) {
-  const s = d.sgp;
-  if (!s) return `<div class="card"><h2>How each kind has done</h2>
-    <div class="note">This week's file was written before the same-game tickets existed, so it has none; the next run adds them.</div></div>`;
-  const h = s.history || {}, live = s.live || {}, c = s.caveats || {};
+// One version's four meters - each kind on its own, the history replay and
+// this season live: v2's on top of the Parlays tab, v1's folded under them.
+function meterPanels(s) {
+  const h = s.history || {}, live = s.live || {};
   const span = h.available ? widestPeriod(h.periods) : null;
+  const games = span ? (h.games || {})[span[0]] : null;
+  const conf = span && h.confident_games ? h.confident_games[span[0]] : null;
   const left = Object.entries(h.left_out || {}).map(([w, n]) => `${esc(w)} (${tally(n)})`).join("; ");
   const histHead = h.available
-    ? `<div class="mini">History: the backtest replay of ${tally((h.games || {})[span ? span[0] : ""])} games, ${esc(spanLabel(span && span[1]))}, through the games of ${esc(dateOnly(h.through))} · replayed ${esc(DESK.ago(h.generated))}${left ? ` · left out: ${left}` : ""}.</div>`
+    ? `<div class="mini">History: the backtest replay of ${tally(games)} games${conf != null ? `, ${tally(conf)} of them confident` : ""}, ${esc(spanLabel(span && span[1]))}, through the games of ${esc(dateOnly(h.through))} · replayed ${esc(DESK.ago(h.generated))}${left ? ` · left out: ${left}` : ""}.</div>`
     : `<div class="note">No history yet: ${esc(h.reason)}.</div>`;
-  const liveHead = `<div class="mini">Live: ${tally(live.games)} games' tickets logged before kickoff${live.first_kickoff ? ` since ${esc(localStamp(live.first_kickoff))}` : ""}, ${tally(live.graded_games)} graded.</div>`;
+  const liveHead = `<div class="mini">Live: ${tally(live.games)} games' tickets logged before kickoff${live.first_kickoff ? ` since ${esc(localStamp(live.first_kickoff))}` : ""}${
+    live.confident_games != null ? `, ${tally(live.confident_games)} of them confident` : ""}, ${tally(live.graded_games)} graded.</div>`;
   const panels = sgpOrder(s.kinds).map((kind) => {
-    const hm = h.available && span ? (((h.kinds || {})[kind] || {}).meters || {})[span[0]] : null;
+    const k = (h.kinds || {})[kind] || {};
+    const hm = span ? (k.meters || {})[span[0]] : null;
+    const cov = span && k.coverage ? { share: k.coverage[span[0]], games } : null;
     const lm = (live.kinds || {})[kind];
     return `<div class="panel sgpm" data-kind="${esc(kind)}"><div class="eyebrow">${esc(kindName(kind))} · ${esc((s.legs || {})[kind] ?? "—")} legs</div>
       <div class="sgpm-l">History, ${esc(h.available ? spanLabel(span && span[1]) : "none yet")}</div>
-      ${h.available ? sgpMeter(hm, false) : `<div class="mini">${esc(h.reason)}</div>`}
+      ${h.available ? sgpMeter(hm, false, cov) : `<div class="mini">${esc(h.reason)}</div>`}
       <div class="sgpm-l">Live${live.first_kickoff ? ` since ${esc(dateOnly(live.first_kickoff))}` : ""}</div>
       ${sgpMeter(lm, true)}
-      ${h.available ? DESK.sub("Every period", sgpPeriods(h, kind)) : ""}
+      ${h.available ? DESK.sub("Every period", sgpPeriods(h, kind, s)) : ""}
     </div>`;
   }).join("");
+  return `${histHead}${liveHead}<div class="two">${panels}</div>`;
+}
+
+// What the meters are, and what the history read: folded to its first line.
+function meterNotes(s) {
+  const h = s.history || {}, c = s.caveats || {};
   const inputs = Object.entries(h.inputs || {}).map(([k, v]) => `<dt><b>${esc(k)}</b></dt><dd>${esc(v)}</dd>`).join("");
   const g = h.td_groups || {};
   const groups = g.note ? `${g.note}${g.tickets != null ? ` - here ${tally(g.changed)} of ${tally(g.tickets)} built tickets${(g.shipped || []).length ? `; groups given a chance: ${g.shipped.join(", ")}` : ""}` : ""}.` : "";
   const more = [c.live, c.roi_priced, c.est_erratum, groups].filter(Boolean).map((x) => `<p style="margin:0">${esc(x)}</p>`).join("")
     + (inputs ? `<dl class="gloss">${inputs}</dl>` : "");
+  return fold(c.meters || "", more);
+}
+
+const cap = (x) => String(x || "").charAt(0).toUpperCase() + String(x || "").slice(1);
+
+// v2's two numbers as the payload states them: the bars, the rule's own
+// sentence on how they were chosen, the DEV figures that chose them, and
+// v2's own no-edge words - narrowing trades payout for hit rate.
+function sgpChosen(s) {
+  if (s.confident == null || s.td_floor == null) return "";
+  const c = s.caveats || {};
+  const r = c.rules || {};
+  const h = s.history || {};
+  const ch = h.available ? h.chosen || null : null;
+  const dev = ch && ch.dev && ch.dev.small;
+  const figs = dev
+    ? `On ${esc(spanLabel(ch.on))}, ${esc(kindName("small"))} was built in ${pct(dev.coverage, 1)} of ${tally(ch.dev.games)} games and hit ${pct(dev.hit_rate, 1)} (${tally(dev.won)} of ${tally(dev.won + dev.lost)}); ${tally(ch.cleared)} of ${tally(ch.pairs)} pairs built it in ${pct(ch.coverage_min)} or more of them.`
+    : "";
+  const again = ch && ch.reproduced === false
+    ? `<div class="note warnbox">Replayed on the history on file, the objective would not choose this pair again; the rule keeps it as registered.</div>` : "";
+  return `<div class="panel sgpchosen"><div class="eyebrow">How confident, how likely${s.chosen_on ? ` · chosen ${esc(dateOnly(s.chosen_on))}` : ""}</div>
+    <div>Tickets only where the pick's chance is <b class="num">${pct(s.confident)}</b> or more; TD legs only at <b class="num">${pct(s.td_floor)}</b> or more${
+      s.rookie_floor != null ? ` (the rookie's at ${pct(s.rookie_floor)})` : ""}.</div>
+    ${r.chosen ? `<div class="mini">${esc(cap(r.chosen))}.</div>` : ""}${figs ? `<div class="mini">${figs}</div>` : ""}${again}
+    ${c.edge_v2 ? `<div class="mini">${esc(c.edge_v2)}</div>` : ""}</div>`;
+}
+
+// Every pair of the grid, per period - report-only: only DEV's figures
+// chose, and only by the objective - and what the rule reports beside v2:
+// SMALL with the game's best scorer, and v1's tickets on the same games.
+function sgpGrid(s) {
+  const h = s.history || {};
+  const grid = h.grid;
+  if (!h.available || !grid || !(grid.rows || []).length) return "";
+  const whole = (widestPeriod(h.periods) || [])[0];
+  const spans = Object.entries(h.periods || {}).filter(([n]) => n !== whole).sort((a, b) => a[1][0] - b[1][0] || a[1][1] - b[1][1]);
+  const g = s.grids || {};
+  const dev = (spans.find(([, lohi]) => sameSpan(lohi, g.dev)) || [])[0];
+  const v2m = (kind, n) => ((((h.kinds || {})[kind] || {}).meters || {})[n]) || null;
+  const head = spans.map(([, lohi]) => `<th class="n">${esc(spanLabel(lohi))}</th>`).join("");
+  const rows = grid.rows.map((r) => {
+    const chosen = r.confident === s.confident && r.td_floor === s.td_floor;
+    const cells = spans.map(([n]) => {
+      const sm = ((r.periods || {})[n] || {}).small;
+      if (!sm) return `<td class="n">—</td>`;
+      const under = n === dev && g.coverage_min != null && sm.coverage != null && sm.coverage < g.coverage_min;
+      return `<td class="n${under ? " dim" : ""}">${pct(sm.hit_rate, 1)}<div class="mini">in ${pct(sm.coverage, 0)}</div></td>`;
+    }).join("");
+    return `<tr${chosen ? ` class="chosen"` : ""}><td class="nowrap">${pct(r.confident)} · ${pct(r.td_floor)}${chosen ? `<div class="mini">chosen</div>` : ""}</td>${cells}</tr>`;
+  }).join("");
+  const legend = `<div class="mini">Each pair: how confident a game must be · the TD chance a player needs. Each cell: ${esc(kindName("small"))}'s hit rate, and the share of games it was built in${
+    dev && g.coverage_min != null ? `; greyed where ${esc(spanLabel(g.dev))} built it in under ${pct(g.coverage_min)} of them` : ""}.</div>`;
+  const alt = h.alt_small;
+  const altRows = alt && alt.periods ? spans.map(([n, lohi]) => {
+    const a = alt.periods[n];
+    if (!a || !a.meter) return "";
+    const mine = v2m("small", n);
+    return `<tr><td class="nowrap">${esc(spanLabel(lohi))}</td><td class="n">${pct(mine && mine.hit_rate, 1)}</td><td class="n">${pct(a.meter.hit_rate, 1)}</td><td class="n">${tally(a.differs)}</td></tr>`;
+  }).join("") : "";
+  const altHtml = altRows ? `<div class="eyebrow" style="margin-top:8px">${esc(kindName("small"))} the other way · report-only</div>
+    ${alt.rule ? `<div class="mini">${esc(cap(alt.rule))}.</div>` : ""}
+    <div class="scroll"><table class="tight"><thead><tr><th>Seasons</th><th class="n">v2</th><th class="n">That way</th><th class="n">Tickets differ</th></tr></thead><tbody>${altRows}</tbody></table></div>` : "";
+  const same = h.v1_same_games;
+  const sameRows = same && same.kinds ? sgpOrder(s.kinds).map((kind) => {
+    const v1k = same.kinds[kind] || {};
+    return `<tr><td>${esc(kindName(kind))}</td>${spans.map(([n]) => {
+      const mine = v2m(kind, n), v1m = v1k[n];
+      return `<td class="n">${pct(mine && mine.hit_rate, 1)}<div class="mini">v1 ${pct(v1m && v1m.hit_rate, 1)}</div></td>`;
+    }).join("")}</tr>`;
+  }).join("") : "";
+  const sameHtml = sameRows ? `<div class="eyebrow" style="margin-top:8px">v1 on the same games · report-only</div>
+    ${same.note ? `<div class="mini">${esc(cap(same.note))}. Each cell: v2's hit rate, v1's under it.</div>` : ""}
+    <div class="scroll"><table class="tight"><thead><tr><th>Kind</th>${head}</tr></thead><tbody>${sameRows}</tbody></table></div>` : "";
+  return DESK.sub("Every pair of the grid, and v2 beside v1 · report-only",
+    `${grid.note ? `<div class="mini">${esc(cap(grid.note))}.</div>` : ""}${legend}
+    <div class="scroll"><table class="tight sgpgrid"><thead><tr><th>Pair</th>${head}</tr></thead><tbody>${rows}</tbody></table></div>${altHtml}${sameHtml}`);
+}
+
+// v1, retired: its meters as they were, folded under v2's.
+function sgpV1(s) {
+  const v1 = s.v1;
+  if (!v1) return "";
+  const c = v1.caveats || {};
+  return DESK.sub(`v1 (retired) · how its tickets have done`,
+    `${v1.retired_note ? `<div class="note">${esc(v1.retired_note)}</div>` : ""}${meterPanels(v1)}${
+      c.bias ? `<div class="mini">${esc(c.bias)}</div>` : ""}${meterNotes(v1)}`);
+}
+
+// The four meters, the two numbers and how they were chosen, the grid, and v1.
+function sgpMeters(d) {
+  const s = d.sgp;
+  if (!s) return `<div class="card"><h2>How each kind has done</h2>
+    <div class="note">This week's file was written before the same-game tickets existed, so it has none; the next run adds them.</div></div>`;
+  const c = s.caveats || {};
   return `<div class="card" id="sgp-meters"><h2>How each kind has done</h2>
-    ${histHead}${liveHead}
-    <div class="two">${panels}</div>
+    ${meterPanels(s)}
     ${c.bias ? `<div class="note warnbox">${esc(c.bias)}</div>` : ""}
-    ${fold(c.meters || "", more)}
+    ${sgpChosen(s)}
+    ${meterNotes(s)}
+    ${sgpGrid(s)}
+    ${sgpV1(s)}
   </div>`;
 }
 // sgp:end
@@ -1312,9 +1526,10 @@ const BOOT = {
     if (go) go.addEventListener("click", () => document.getElementById("tab-record").click());
   },
 
-  // Every game's four same-game tickets, the kinds' meters on top: the
-  // history replay and this season live, each with its reason when a
-  // number is missing.
+  // Every game's same-game tickets, the kinds' meters on top: the confident
+  // games' first, then the others the payload drew tickets for (v1's kept
+  // ones), in kickoff order; a game with only a reason is one line of the
+  // list under them. Each number missing says the payload's reason.
   async parlays() {
     const el = $("view-parlays");
     el.innerHTML = DESK.skeleton(3);
@@ -1322,27 +1537,46 @@ const BOOT = {
     try { d = WEEK || await load("week"); } catch (e) { return fail(el, e, "the week", () => BOOT.parlays()); }
     const s = d.sgp;
     const c = (s && s.caveats) || {};
-    const games = (d.games || []).filter((g) => g.tickets || g.tickets_reason);
+    const games = (d.games || []).filter((g) => g.tickets || g.tickets_reason || (g.tickets_v1 || []).length);
     const upcoming = games.filter((g) => phase(g) === "upcoming").length;
-    const cards = games.map((g) => {
+    const full = games.filter(ticketsDrawn).sort((a, b) => ticketRank(a) - ticketRank(b));
+    const brief = games.filter((g) => !ticketsDrawn(g));
+    const confident = games.filter(confidentGame).length;
+    const when = (g, ph) => `<span class="when">${esc(kickTime(g.kickoff))}</span>${STATUS_WORD[ph] ? `<span class="badge ${ph === "final" ? "" : "live"}">${esc(STATUS_WORD[ph])}</span>` : ""}`;
+    const cards = full.map((g) => {
       const ph = phase(g);
       const score = ph === "upcoming" || !g.score ? "" : ` · <span class="num">${esc(g.score.away)}-${esc(g.score.home)}</span>`;
       return `<div class="card sgpgame" data-status="${esc(ph)}">
-        <div class="match-top"><span class="when">${esc(kickTime(g.kickoff))}</span>${STATUS_WORD[ph] ? `<span class="badge ${ph === "final" ? "" : "live"}">${esc(STATUS_WORD[ph])}</span>` : ""}</div>
+        <div class="match-top">${when(g, ph)}${s && s.confident != null && confidentGame(g) ? `<span class="tag good">Confident</span>` : ""}</div>
         <h2 style="margin:4px 0 2px">${teamChip(g.away)} <span class="mini">at</span> ${teamChip(g.home)}${score}</h2>
         ${ticketsHtml(g, s)}
       </div>`;
     }).join("");
+    const rows = brief.map((g) => {
+      const ph = phase(g);
+      const t = (g.tickets || []).find((x) => x.pick);
+      const pick = t ? [t.pick, t.pick_prob] : [g.pick, g.pick_prob];
+      return `<li class="sgpgame" data-status="${esc(ph)}"><span class="who"><b>${esc(g.away)}</b> <span class="mini">at</span> <b>${esc(g.home)}</b>
+          <span class="mini nowrap">${esc(kickTime(g.kickoff))}${STATUS_WORD[ph] ? ` · ${esc(STATUS_WORD[ph])}` : ""}</span>
+          ${g.tickets_reason ? `<div class="mini">${esc(g.tickets_reason)}</div>` : ""}</span>
+        ${pick[0] && pick[1] != null ? `<span class="end nowrap"><span class="mini">pick</span> <b>${esc(pick[0])}</b> <span class="num">${pct(pick[1], 1)}</span></span>` : ""}</li>`;
+    }).join("");
+    const others = rows ? `<div class="card sgpothers"><h2>No tickets</h2><ul class="list">${rows}</ul></div>` : "";
     const filter = games.length ? `<div class="seg" role="group" aria-label="Show games">${[["upcoming", "Still to play", upcoming], ["all", "All", games.length]]
       .map(([k, label, n]) => `<button type="button" data-sgpf="${k}" aria-pressed="${k === (upcoming ? "upcoming" : "all")}">${label} <span class="num">${n}</span></button>`).join("")}</div>` : "";
     const kinds = s ? sgpOrder(s.kinds) : [];
+    const lede = s && s.confident != null
+      ? `Same-game tickets only in confident games - the pick's chance ${esc(pct(s.confident))} or more - from the pick's side and the players the model rates most likely to score: ${
+        esc(kinds.map(kindName).join(", "))}, built before kickoff, every leg from that one game. ${esc(confident)} of ${esc(games.length)} games here are confident.`
+      : `${kinds.length ? `${esc(kinds.length)} same-game tickets a game - ${esc(kinds.map(kindName).join(", "))} - ` : "Same-game tickets "}built before kickoff from the engine's own chances, every leg from that one game, and how each kind has done.`;
     el.innerHTML = `
       <div class="hero"><div class="eyebrow">${esc(d.season)} season · ${esc(d.label)}</div><h1>Parlays</h1>
-        <p class="lede">${kinds.length ? `${esc(kinds.length)} same-game tickets a game - ${esc(kinds.map(kindName).join(", "))} - ` : "Same-game tickets "}built before kickoff from the engine's own chances, every leg from that one game, and how each kind has done.</p></div>
+        <p class="lede">${lede}</p></div>
       ${c.edge ? `<div class="note warnbox">${esc(c.edge)}</div>` : ""}
       ${sgpMeters(d)}
       ${filter}
-      ${cards || `<div class="empty">${s ? "No tickets this week yet." : "No tickets in this week's file."}</div>`}
+      ${cards}${others}
+      ${cards || others ? "" : `<div class="empty">${s ? "No tickets this week yet." : "No tickets in this week's file."}</div>`}
       ${c.est ? `<div class="mini">${esc(c.est)}</div>` : ""}
       ${c.est_erratum ? `<div class="mini">${esc(c.est_erratum)}</div>` : ""}
       ${c.exact ? `<div class="mini">${esc(c.exact)}</div>` : ""}
@@ -1350,6 +1584,7 @@ const BOOT = {
     const show = (k) => {
       el.querySelectorAll("[data-sgpf]").forEach((b) => b.setAttribute("aria-pressed", String(b.getAttribute("data-sgpf") === k)));
       el.querySelectorAll(".sgpgame").forEach((x) => { x.hidden = k === "upcoming" && x.getAttribute("data-status") !== "upcoming"; });
+      el.querySelectorAll(".sgpothers").forEach((x) => { x.hidden = ![...x.querySelectorAll(".sgpgame")].some((r) => !r.hidden); });
     };
     show(upcoming ? "upcoming" : "all");
     el.querySelectorAll("[data-sgpf]").forEach((b) => b.addEventListener("click", () => show(b.getAttribute("data-sgpf"))));
@@ -1830,15 +2065,22 @@ const METHOD_HTML = `
     </ul></div>
   <div class="card"><h2>Same-game tickets</h2>
     <ul class="plain">
-      <li><b>The tickets</b> - every game still to come gets same-game parlays, every leg from that one game,
-        built by a rule fixed before any ticket was built or measured: each slot takes the likeliest leg the rule
-        allows. The Parlays tab shows the rule in its own words and how each kind has done.</li>
+      <li><b>The tickets</b> - every confident game still to come gets same-game parlays, every leg from that one
+        game, built by a rule fixed before any ticket was built or measured: result legs only on the pick's side,
+        touchdown legs only for the players the model rates very likely to score, and each slot takes the likeliest
+        leg the rule allows. Any other game shows why it has none. How confident a game must be and how likely a
+        scorer must be were chosen once, on the history's earlier seasons alone, and are measured untouched on the seasons
+        after. The Parlays tab shows the rule in its own words, how its two numbers were chosen and how each kind
+        has done; the first version's tickets, now retired, stay beside it and are still graded.</li>
       <li><b>The chance</b> - the product of the legs' chances: what the ticket would hit if its legs were
         independent. Legs in one game are not, so the history measures how often each kind actually landed.</li>
       <li><b>The price</b> - every price shown is the books' consensus single price, marked est.; Stake's bet
         builder prices legs that go together below it, can price legs that pull against each other above it, and
         has its own single prices, so the est. payout is an estimate, not a bound. Type the odds Stake quotes into a
         ticket's box for the exact payout. What you type stays on your phone and is never sent anywhere.</li>
+      <li><b>The odds beside each scorer</b> - every touchdown candidate shows the books' anytime-TD odds,
+        est., and the chance they imply beside ours, or why there are none. They are not Stake's, and the model
+        has never been measured against them, so a gap between the two is not an edge.</li>
     </ul></div>
   <div class="card"><h2>Every number is point-in-time</h2>
     <ul class="plain">
