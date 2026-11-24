@@ -195,6 +195,20 @@ NOT_IN_V1 = ("Not in v1, because nothing on file measures them yet: QB pass atte
 # pre-registration; this correction is shown beside them wherever they are
 # (nfl_export.sgp_block's est_erratum), until a new version states it in
 # the rule's own words.
+# CLARIFIED 2026-11-24, before any live ticket was graded (review). The
+# docstring says return "needs every leg's price" and that live tickets are
+# returned "at the logged est. payout"; it does not say what a ticket with
+# an unpriced leg does to a kind's return. Read strictly (the first
+# implementation), one unpriced ticket - a prop the books had not posted, a
+# name that did not match, the credit reserve - would blank the kind's live
+# return for the rest of the version. So: the return is over the graded
+# tickets that have every leg's price, and the meter says how many of the
+# graded tickets that is (roi_tickets of graded). With none priced, it is
+# missing with its reason, as before. Whether a ticket is priced is decided
+# before kickoff, never by its result.
+ROI_PRICED = ("The return is over the graded tickets that had every leg's price; a ticket with a leg "
+              "the books had not priced is counted in the hit rate but not in the return.")
+
 EST_ERRATUM = ("Correction, found after the rule was fixed: the est. payout is not an upper bound. A bet "
                "builder prices legs that go together below the product of the singles, but can price legs "
                "that pull against each other above it (a touchdown on one team beside the other team's "
@@ -567,15 +581,20 @@ def meter(tickets, no_price_reason=None):
         "hit_rate_reason": None if decided else "no ticket decided yet",
         "stake": STAKE_UNIT, "profit": None, "roi": None, "roi_reason": None,
     }
-    unpriced = [t for t in graded if t.get("est_payout") is None]
+    # The return is over the graded tickets with every leg priced (ROI_PRICED).
+    priced = [t for t in graded if t.get("est_payout") is not None]
+    out["roi_tickets"], out["roi_note"] = len(priced), None
     if not graded:
         out["roi_reason"] = "no ticket graded yet"
-    elif unpriced:
+    elif not priced:
         out["roi_reason"] = no_price_reason or (
-            f"{len(unpriced)} of {len(graded)} graded tickets have a leg with no price on file")
+            f"none of the {len(graded)} graded tickets has every leg's price on file")
     else:
-        profit = sum(_profit(t) for t in graded)
-        out["profit"], out["roi"] = profit, profit / (STAKE_UNIT * len(graded))
+        profit = sum(_profit(t) for t in priced)
+        out["profit"], out["roi"] = profit, profit / (STAKE_UNIT * len(priced))
+        if len(priced) < len(graded):
+            out["roi_note"] = (f"over the {len(priced)} of {len(graded)} graded tickets with every "
+                               f"leg priced; {len(graded) - len(priced)} had a leg with no price on file")
     return out
 
 
@@ -587,9 +606,11 @@ def summarise(tickets, no_price_reason=None):
     mean_chance_graded = the product over the legs that stood (a voided leg
     drops out of a ticket, so its hit rate is measured against this one);
     and, as if STAKE_UNIT had been bet on every graded ticket (a void
-    returns the stake), profit and roi = profit / staked - only when every
-    graded ticket has every leg's price, else None with `roi_reason`
-    (`no_price_reason` when the caller knows it, e.g. NO_TD_PRICE). A
+    returns the stake), profit and roi = profit / staked over the graded
+    tickets with every leg's price (ROI_PRICED: roi_tickets of graded, and
+    roi_note when that is not all of them); with none priced, None with
+    `roi_reason` (`no_price_reason` when the caller knows it, e.g.
+    NO_TD_PRICE). A
     ticket's payout is its est. one, so the return is an estimate - not the
     upper bound v1's words call it (EST_ERRATUM)."""
     return {kind: meter([t for t in tickets if t["kind"] == kind], no_price_reason) for kind in KINDS}

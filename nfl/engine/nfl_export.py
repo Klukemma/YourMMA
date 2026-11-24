@@ -426,7 +426,7 @@ def sgp_block(log, history=None):
                  "kinds": sgp.summarise(tickets)},
         "caveats": {
             "edge": sgp.NO_EDGE, "chance": sgp.CHANCE_NOTE, "est": sgp.EST_PAYOUT,
-            "est_erratum": sgp.EST_ERRATUM, "prices": sgp.PRICE_NOTE, "exact": sgp.EXACT_PAYOUT, "bias": sgp.KNOWN_BIAS,
+            "est_erratum": sgp.EST_ERRATUM, "roi_priced": sgp.ROI_PRICED, "prices": sgp.PRICE_NOTE, "exact": sgp.EXACT_PAYOUT, "bias": sgp.KNOWN_BIAS,
             "meters": sgp.METER_NOTE, "live": sgp.LIVE_ROI, "slots": sgp.SLOT_RULE,
             "rookie": sgp.ROOKIE_RULE, "not_in_v1": sgp.NOT_IN_V1,
             "legs": dict(sgp.LEG_RULES), "tickets": dict(sgp.TICKET_RULES)},

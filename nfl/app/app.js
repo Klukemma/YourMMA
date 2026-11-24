@@ -1009,7 +1009,8 @@ function sgpMeter(m, estimated) {
     ? `hit <b>${pct(m.hit_rate, 1)}</b> <span class="mini">· product said ${pct(m.mean_chance, 1)}</span>`
     : `<span class="mini">hit rate: ${esc(m.hit_rate_reason)}</span>`;
   const roi = m.roi != null
-    ? `profit <b class="num">${signedMoney(m.profit)}</b> · ROI <b class="num">${signed(m.roi * 100, 1)}%</b>${estimated ? EST : ""}`
+    ? `profit <b class="num">${signedMoney(m.profit)}</b> · ROI <b class="num">${signed(m.roi * 100, 1)}%</b>${estimated ? EST : ""}${
+      m.roi_note ? ` <span class="mini">· ${esc(m.roi_note)}</span>` : ""}`
     : `<span class="mini">no return: ${esc(m.roi_reason)}</span>`;
   const why = Object.entries(m.not_built_why || {}).map(([w, n]) => `${esc(w)} (${tally(n)})`).join("; ");
   return `<div class="sgpm-v"><span><b class="num">${tally(m.won)}</b> won of <b class="num">${tally(m.tickets)}</b> built${extra ? ` <span class="mini">· ${extra}</span>` : ""}</span>
@@ -1065,7 +1066,7 @@ function sgpMeters(d) {
   const inputs = Object.entries(h.inputs || {}).map(([k, v]) => `<dt><b>${esc(k)}</b></dt><dd>${esc(v)}</dd>`).join("");
   const g = h.td_groups || {};
   const groups = g.note ? `${g.note}${g.tickets != null ? ` - here ${tally(g.changed)} of ${tally(g.tickets)} built tickets${(g.shipped || []).length ? `; groups given a chance: ${g.shipped.join(", ")}` : ""}` : ""}.` : "";
-  const more = [c.live, c.est_erratum, groups].filter(Boolean).map((x) => `<p style="margin:0">${esc(x)}</p>`).join("")
+  const more = [c.live, c.roi_priced, c.est_erratum, groups].filter(Boolean).map((x) => `<p style="margin:0">${esc(x)}</p>`).join("")
     + (inputs ? `<dl class="gloss">${inputs}</dl>` : "");
   return `<div class="card" id="sgp-meters"><h2>How each kind has done</h2>
     ${histHead}${liveHead}

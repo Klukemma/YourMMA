@@ -296,13 +296,22 @@ def test_the_meters_count_hit_rate_chance_and_return_per_kind():
     assert m["rookie"]["roi"] is None and m["rookie"]["roi_reason"] == "no ticket graded yet"
 
 
-def test_return_is_missing_with_its_reason_unless_every_graded_ticket_has_a_price():
-    rows = [_graded("small", sgp.WON), _graded("small", sgp.LOST, priced=False)]
-    m = sgp.summarise(rows, no_price_reason=sgp.NO_TD_PRICE)["small"]
+def test_return_is_over_the_priced_tickets_and_says_how_many_of_the_graded_they_are():
+    """ROI_PRICED: one unpriced ticket no longer blanks a kind's return; with
+    none priced the return is missing with its reason."""
+    none = [_graded("small", sgp.WON, priced=False), _graded("small", sgp.LOST, priced=False)]
+    m = sgp.summarise(none, no_price_reason=sgp.NO_TD_PRICE)["small"]
     assert m["roi"] is None and m["profit"] is None and m["roi_reason"] == sgp.NO_TD_PRICE
+    assert m["roi_tickets"] == 0
+    m = sgp.summarise(none)["small"]
+    assert m["roi"] is None and m["roi_reason"] == "none of the 2 graded tickets has every leg's price on file"
+    rows = [_graded("small", sgp.WON, 0.3, 3.0), _graded("small", sgp.LOST, priced=False)]
     m = sgp.summarise(rows)["small"]
-    assert m["roi"] is None and m["roi_reason"].startswith("1 of 2 graded tickets")
+    assert m["roi_tickets"] == 1 and m["profit"] == pytest.approx(20.0) and m["roi"] == pytest.approx(2.0)
+    assert m["roi_note"] == "over the 1 of 2 graded tickets with every leg priced; 1 had a leg with no price on file"
     assert m["hit_rate"] == pytest.approx(0.5)         # hits are measured without prices
+    m = sgp.summarise([_graded("small", sgp.WON, 0.3, 3.0)])["small"]
+    assert m["roi_note"] is None and m["roi_tickets"] == 1
 
 
 # ---------------------------------------------------------------- helpers
