@@ -250,6 +250,23 @@ def test_the_rules_words_take_their_numbers_from_the_constants_and_claim_no_edge
     assert "Nothing here claims an edge" in sgp2.NO_EDGE and "not bets it rates profitable" in sgp2.NO_EDGE
 
 
+def test_untouched_says_it_covers_the_two_numbers_and_why_not_smalls_clause():
+    """FOUND AFTER THE RULE WAS FIXED: SMALL's pick's-team clause rests on
+    the docstring's P(TD | won) figures, whose seasons (SMALL_RESEARCH, as
+    the docstring gives them) overlap CONFIRM - so the note says CONFIRM is
+    not a clean holdout for that clause, every span from the constants."""
+    doc = " ".join(sgp2.__doc__.split())
+    lo, hi = sgp2.SMALL_RESEARCH
+    assert "P(TD | his team won) was" in doc and f"({lo}-{hi}, the research before v1)" in doc
+    note = sgp2.UNTOUCHED_NOTE
+    assert note == sgp2.untouched_note() and note.startswith("Untouched means the two numbers")
+    assert f"{sgp2.DEV[0]}-{sgp2.DEV[1]} alone" in note and f"a {lo}-{hi} statistic" in note
+    both = f"{max(lo, sgp2.CONFIRM[0])}-{min(hi, sgp2.CONFIRM[1])}"
+    assert f"for that clause {both} is not a clean holdout" in note
+    # Research that does not overlap the seasons measured says nothing.
+    assert sgp2.untouched_note(research=(2010, 2013)) is None
+
+
 # ---------------------------------------------------------------- helpers
 
 def _random_game(rng):

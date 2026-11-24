@@ -699,10 +699,24 @@ const unpricedWhy = (p) => UNPRICED[p.group] || "too little used to price";
 function tdOdds(p) {
   const o = p.price;
   if (!o || o.american == null) return "";
-  const more = [o.best_american != null ? `best ${odds(o.best_american)}${o.best_book ? ` (${o.best_book})` : ""}` : "",
-    o.books ? `${o.books} books` : "", o.as_of ? `seen ${localStamp(o.as_of)}` : ""].filter(Boolean).join(" · ");
-  return `<span class="end tdodds"${more ? ` title="${esc(more)}"` : ""}><span class="nowrap"><span class="num">${esc(odds(o.american))}</span>${o.est ? EST : ""}</span>
+  return `<span class="end tdodds"><span class="nowrap"><span class="num">${esc(odds(o.american))}</span>${o.est ? EST : ""}</span>
     <span class="mini nowrap">books <span class="num">${pct(o.implied)}</span></span></span>`;
+}
+// Where that price came from, in plain view under his name (a tooltip is
+// not seen on a phone): how many books quoted him - one book's price said in
+// words, since it is not a consensus - the best price, marked est. as a
+// ticket leg's is, and when it was seen, so a price bought days early shows
+// its age.
+function tdOddsFrom(p) {
+  const o = p.price;
+  if (!o || o.american == null) return "";
+  const book = o.best_book ? ` (${esc(o.best_book)})` : "";
+  const one = o.books === 1;
+  const parts = [
+    one ? `one book's price, not a consensus${book}` : o.books ? `${esc(o.books)} books` : "",
+    !one && o.best_american != null ? `best <span class="num">${esc(odds(o.best_american))}</span>${o.est ? EST : ""}${book}` : "",
+    o.as_of ? `seen ${esc(localStamp(o.as_of))}` : ""].filter(Boolean);
+  return parts.length ? `<span class="tdfrom">odds: ${parts.join(" · ")}</span>` : "";
 }
 // Why a player has no odds beside him: the payload's reason, unless his
 // whole list shares it and says it once (`shared`).
@@ -722,7 +736,7 @@ function tdItem(p, shared = null) {
     : p.scored === false ? ` <span class="st questionable">No TD</span>` : "";
   const season = p.games_season ? `${esc(p.tds_season)} TD in ${esc(p.games_season)} games this season` : "";
   const why = p.prob == null ? unpricedWhy(p) : "";
-  const note = [season, why, noOddsWhy(p, shared)].filter(Boolean).join(" · ");
+  const note = [season, why, noOddsWhy(p, shared), tdOddsFrom(p)].filter(Boolean).join(" · ");
   const chance = p.prob == null ? `<span class="num lead dim" title="${esc(unpricedWhy(p))}">—</span>`
     : `<span class="num lead">${pct(p.prob)}</span>`;
   return `<li class="tdp">${chance}
@@ -1141,10 +1155,15 @@ function sgpPeriods(h, kind, s) {
       <td class="n">${pct(m.hit_rate, 1)}</td><td class="n">${pct(m.mean_chance, 1)}</td><td class="n">${m.roi == null ? "—" : `${signed(m.roi * 100, 1)}%`}</td></tr>`;
   }).join("");
   const reasons = [...new Set(spans.map(([name]) => ((k.meters || {})[name] || {}).roi_reason).filter(Boolean))];
+  // SMALL's pick's-team clause was motivated by seasons the "untouched"
+  // ones overlap: said under SMALL's table, where that row is.
+  const untouched = kind === "small" && spans.some(([, lohi]) => spanMark(lohi, s) === "untouched")
+    ? ((s && s.caveats) || {}).untouched || ((h.chosen || {}).untouched) : null;
   const bins = (k.chance_bins || []).map((b) => `<tr><td class="n">${edgePct(b.lo)}-${edgePct(b.hi)}</td><td class="n">${tally(b.tickets)}</td>
     <td class="n">${pct(b.mean_chance, 1)}</td><td class="n">${pct(b.hit_rate, 1)}</td></tr>`).join("");
   return `${rows ? `<div class="scroll"><table class="tight"><thead><tr><th>Seasons</th><th class="n">Built</th>${cov ? `<th class="n">Of games</th>` : ""}<th class="n">Won</th><th class="n">Hit</th><th class="n">Said</th><th class="n">ROI</th></tr></thead><tbody>${rows}</tbody></table></div>` : ""}
     ${reasons.length ? `<div class="mini">ROI: ${reasons.map(esc).join("; ")}.</div>` : ""}
+    ${untouched ? `<div class="mini sgpuntouched">${esc(untouched)}</div>` : ""}
     ${bins ? `<div class="eyebrow" style="margin-top:4px">Product chance against hits, ${esc(spanLabel((widestPeriod(h.periods) || [])[1]))}</div>
       <div class="scroll"><table class="tight"><thead><tr><th class="n">Product</th><th class="n">Tickets</th><th class="n">Said</th><th class="n">Hit</th></tr></thead><tbody>${bins}</tbody></table></div>` : ""}`;
 }
@@ -1211,10 +1230,15 @@ function sgpChosen(s) {
     : "";
   const again = ch && ch.reproduced === false
     ? `<div class="note warnbox">Replayed on the history on file, the objective would not choose this pair again; the rule keeps it as registered.</div>` : "";
+  // Found after the rule was fixed, both in the payload's own words: the
+  // rule's claim that hit rate always rises with the bars, against DEV's
+  // grid, and what "untouched" covers.
+  const rises = ch && ch.rises && ch.rises.note ? `<div class="mini sgprises">${esc(ch.rises.note)}</div>` : "";
+  const untouched = c.untouched || (ch && ch.untouched);
   return `<div class="panel sgpchosen"><div class="eyebrow">How confident, how likely${s.chosen_on ? ` · chosen ${esc(dateOnly(s.chosen_on))}` : ""}</div>
     <div>Tickets only where the pick's chance is <b class="num">${pct(s.confident)}</b> or more; TD legs only at <b class="num">${pct(s.td_floor)}</b> or more${
       s.rookie_floor != null ? ` (the rookie's at ${pct(s.rookie_floor)})` : ""}.</div>
-    ${r.chosen ? `<div class="mini">${esc(cap(r.chosen))}.</div>` : ""}${figs ? `<div class="mini">${figs}</div>` : ""}${again}
+    ${r.chosen ? `<div class="mini">${esc(cap(r.chosen))}.</div>` : ""}${untouched ? `<div class="mini sgpuntouched">${esc(untouched)}</div>` : ""}${figs ? `<div class="mini">${figs}</div>` : ""}${rises}${again}
     ${c.edge_v2 ? `<div class="mini">${esc(c.edge_v2)}</div>` : ""}</div>`;
 }
 
@@ -1251,7 +1275,7 @@ function sgpGrid(s) {
     return `<tr><td class="nowrap">${esc(spanLabel(lohi))}</td><td class="n">${pct(mine && mine.hit_rate, 1)}</td><td class="n">${pct(a.meter.hit_rate, 1)}</td><td class="n">${tally(a.differs)}</td></tr>`;
   }).join("") : "";
   const altHtml = altRows ? `<div class="eyebrow" style="margin-top:8px">${esc(kindName("small"))} the other way · report-only</div>
-    ${alt.rule ? `<div class="mini">${esc(cap(alt.rule))}.</div>` : ""}
+    ${alt.rule ? `<div class="mini">${esc(cap(alt.rule))}.</div>` : ""}${alt.untouched || (s.caveats || {}).untouched ? `<div class="mini sgpuntouched">${esc(alt.untouched || s.caveats.untouched)}</div>` : ""}
     <div class="scroll"><table class="tight"><thead><tr><th>Seasons</th><th class="n">v2</th><th class="n">That way</th><th class="n">Differ</th></tr></thead><tbody>${altRows}</tbody></table></div>` : "";
   const same = h.v1_same_games;
   const sameRows = same && same.kinds ? sgpOrder(s.kinds).map((kind) => {

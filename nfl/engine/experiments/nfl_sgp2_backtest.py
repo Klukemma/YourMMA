@@ -29,7 +29,13 @@ chance in.
 WHAT IS REPORTED, beside the chosen pair's meters (report-only - none of it
 can move the choice): every pair of the grid, per period; v1's tickets on
 the same confident games; and SMALL with the game's best TD instead of the
-pick's team's first (nfl_sgp2.game_best_small).
+pick's team's first (nfl_sgp2.game_best_small). And two things found after
+the rule was fixed, with the chosen pair: `rises`, the docstring's "hit
+rate always rises as the bars rise" against DEV's own grid (counted here,
+never typed), and `untouched` (nfl_sgp2.UNTOUCHED_NOTE), that "untouched"
+covers the two numbers, not SMALL's pick's-team clause, whose motivating
+statistic's seasons overlap CONFIRM - said beside the SMALL-the-other-way
+comparison too.
 
 No anytime-TD price is on file for the past, so the return is missing with
 nfl_sgp.NO_TD_PRICE, as in v1; and every TD candidate here took a snap
@@ -165,6 +171,51 @@ def dev_cells(rows):
     return [dict(r["periods"][DEV_NAME], confident=r["confident"], td_floor=r["td_floor"]) for r in rows]
 
 
+def _rate(cell_):
+    s = cell_["small"]
+    return Fraction(s["won"], s["won"] + s["lost"]) if s["won"] + s["lost"] else None
+
+
+def rises(cells):
+    """nfl_sgp2.RISES_CLAIM against `cells` (dev_cells: one per pair), found
+    after the rule was fixed and report-only - it cannot move the choice.
+    Every step of the grid (one bar raised one grid step, the other held)
+    whose two SMALL hit rates are on file, compared as exact fractions:
+    how many fell (and which), how many stayed level; the best pair with no
+    coverage floor, by the objective's own tie-breaks; and whether the floor
+    stopped the choice (that pair is not the chosen one). With the words
+    nfl_sgp2.rises_note makes of them."""
+    by = {(c["confident"], c["td_floor"]): c for c in cells}
+    conf, tds = sgp2.CONFIDENT_GRID, sgp2.TD_FLOOR_GRID
+    steps, level, fell = 0, 0, []
+    for i, c in enumerate(conf):
+        for j, t in enumerate(tds):
+            for a, b in ((i + 1, j), (i, j + 1)):
+                if a >= len(conf) or b >= len(tds) or (c, t) not in by or (conf[a], tds[b]) not in by:
+                    continue
+                lo, hi = _rate(by[(c, t)]), _rate(by[(conf[a], tds[b])])
+                if lo is None or hi is None:
+                    continue
+                steps += 1
+                if hi < lo:
+                    fell.append({"from": [c, t], "to": [conf[a], tds[b]],
+                                 "hit_rates": [float(lo), float(hi)]})
+                level += hi == lo
+    rated = [c for c in cells if c["games"] and _rate(c) is not None]
+    best = max(rated, key=lambda c: (_rate(c), Fraction(c["small"]["tickets"], c["games"]),
+                                     -Fraction(str(c["confident"])), -Fraction(str(c["td_floor"])))) if rated else None
+    chosen, _ = objective(cells)
+    out = {"report_only": True, "claim": sgp2.RISES_CLAIM, "period": DEV_NAME, "steps": steps,
+           "falls": len(fell), "level": level, "fell": fell,
+           "best_without_floor": None if best is None else {
+               "confident": best["confident"], "td_floor": best["td_floor"],
+               "coverage": best["small"]["tickets"] / best["games"], "hit_rate": float(_rate(best))},
+           "floor_binds": (best is not None and chosen is not None
+                           and (best["confident"], best["td_floor"]) != (chosen["confident"], chosen["td_floor"]))}
+    out["note"] = sgp2.rises_note(out)
+    return out
+
+
 def choose(recs):
     """The two numbers from DEV ALONE: the records of seasons outside
     nfl_sgp2.DEV are dropped before any ticket is built, so nothing of 2020
@@ -248,7 +299,8 @@ def payload_of(data, recs, left_out, confident, td_floor, chosen_on, every_recs=
         "grids": {"confident": list(sgp2.CONFIDENT_GRID), "td_floor": list(sgp2.TD_FLOOR_GRID)},
         "dev": {k: v for k, v in dev.items() if k not in ("confident", "td_floor")},
         "cleared": cleared, "pairs": len(rows),
-        "reproduced": now is not None and (now["confident"], now["td_floor"]) == (confident, td_floor)}
+        "reproduced": now is not None and (now["confident"], now["td_floor"]) == (confident, td_floor),
+        "rises": rises(dev_cells(rows)), "untouched": sgp2.UNTOUCHED_NOTE}
     out["grid"] = {"report_only": True, "rows": rows,
                    "note": "every pair of the grid, per period; only the DEV figures chose, and only by "
                            "the objective"}
@@ -261,6 +313,7 @@ def payload_of(data, recs, left_out, confident, td_floor, chosen_on, every_recs=
     out["alt_small"] = {"report_only": True,
                         "rule": f"SMALL with the game's best TD at {td_floor:.0%} or more, whichever team, "
                                 "instead of the pick's team's first",
+                        "untouched": sgp2.UNTOUCHED_NOTE,
                         "periods": alternative(recs, built, alt_small(recs, confident, td_floor), spans,
                                                no_price)}
     groups = {"shipped": data["ships"], "note": bk.groups_note()}
@@ -340,6 +393,7 @@ def headline(payload):
              f"  chosen on {DEV_NAME} ({c['chosen_on']}): CONFIDENT {c['confident']}, TD_FLOOR "
              f"{c['td_floor']} - SMALL in {s['coverage']:.1%} of {c['dev']['games']:,} games, hit "
              f"{s['hit_rate']:.1%}; {c['cleared']} of {c['pairs']} pairs cleared; reproduced: {c['reproduced']}",
+             f"  {c['rises']['note']}" if (c.get("rises") or {}).get("note") else "",
              "  coverage: " + "; ".join(f"{k} " + ", ".join(f"{n} {v:.1%}" for n, v in x["coverage"].items()
                                                                if v is not None)
                                          for k, x in payload["kinds"].items()),
@@ -348,7 +402,7 @@ def headline(payload):
         lines.append(f"    {kind:7s} " + "  ".join(
             f"{name} {m['tickets']}/{'-' if m['hit_rate'] is None else format(m['hit_rate'], '.1%')}"
             for name, m in meters.items()))
-    return "\n".join(lines)
+    return "\n".join(line for line in lines if line)
 
 
 def main(argv=None):

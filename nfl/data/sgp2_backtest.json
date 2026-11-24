@@ -111,7 +111,8 @@
    }
   },
   "report_only": true,
-  "rule": "SMALL with the game's best TD at 45% or more, whichever team, instead of the pick's team's first"
+  "rule": "SMALL with the game's best TD at 45% or more, whichever team, instead of the pick's team's first",
+  "untouched": "Untouched means the two numbers: they were chosen on 2014-2019 alone. SMALL's taking the pick's own team's scorer first is a clause of the rule, motivated by a 2016-2025 statistic (how often a player scored when his team won against when it lost, the research before v1), so for that clause 2020-2025 is not a clean holdout; SMALL with the game's best TD, beside it, is the comparison that shows the clause's effect."
  },
  "chosen": {
   "chosen_on": "2026-11-24",
@@ -186,7 +187,110 @@
   ],
   "pairs": 16,
   "reproduced": true,
-  "td_floor": 0.45
+  "rises": {
+   "best_without_floor": {
+    "confident": 0.7,
+    "coverage": 0.147316,
+    "hit_rate": 0.478814,
+    "td_floor": 0.5
+   },
+   "claim": "Hit rate always rises as the bars rise",
+   "falls": 6,
+   "fell": [
+    {
+     "from": [
+      0.7,
+      0.35
+     ],
+     "hit_rates": [
+      0.438433,
+      0.437288
+     ],
+     "to": [
+      0.75,
+      0.35
+     ]
+    },
+    {
+     "from": [
+      0.7,
+      0.35
+     ],
+     "hit_rates": [
+      0.438433,
+      0.438326
+     ],
+     "to": [
+      0.7,
+      0.4
+     ]
+    },
+    {
+     "from": [
+      0.7,
+      0.4
+     ],
+     "hit_rates": [
+      0.438326,
+      0.424125
+     ],
+     "to": [
+      0.75,
+      0.4
+     ]
+    },
+    {
+     "from": [
+      0.7,
+      0.45
+     ],
+     "hit_rates": [
+      0.458824,
+      0.45641
+     ],
+     "to": [
+      0.75,
+      0.45
+     ]
+    },
+    {
+     "from": [
+      0.7,
+      0.5
+     ],
+     "hit_rates": [
+      0.478814,
+      0.478261
+     ],
+     "to": [
+      0.75,
+      0.5
+     ]
+    },
+    {
+     "from": [
+      0.75,
+      0.35
+     ],
+     "hit_rates": [
+      0.437288,
+      0.424125
+     ],
+     "to": [
+      0.75,
+      0.4
+     ]
+    }
+   ],
+   "floor_binds": true,
+   "level": 0,
+   "note": "Found after the rule was fixed: the rule's words say \"Hit rate always rises as the bars rise\", but on 2014-2019 SMALL's hit rate fell at 6 of the grid's 24 steps (one bar raised a step, the other held). The choice does not rest on that sentence: the objective takes the best hit rate among the pairs that clear the coverage floor (25%). The floor did stop the choice: without it the best would be 70% and 50%, which hit 47.9% but was built in 14.7% of the games.",
+   "period": "2014-2019",
+   "report_only": true,
+   "steps": 24
+  },
+  "td_floor": 0.45,
+  "untouched": "Untouched means the two numbers: they were chosen on 2014-2019 alone. SMALL's taking the pick's own team's scorer first is a clause of the rule, motivated by a 2016-2025 statistic (how often a player scored when his team won against when it lost, the research before v1), so for that clause 2020-2025 is not a clean holdout; SMALL with the game's best TD, beside it, is the comparison that shows the clause's effect."
  },
  "confident_games": {
   "2014-2019": 785,
@@ -202,7 +306,7 @@
   "2026": 163,
   "all": 3458
  },
- "generated": "2026-11-24T14:24:58Z",
+ "generated": "2026-11-24T19:15:36Z",
  "grid": {
   "note": "every pair of the grid, per period; only the DEV figures chose, and only by the objective",
   "report_only": true,

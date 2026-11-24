@@ -645,6 +645,35 @@ def test_v2s_meters_carry_the_coverage_and_the_chosen_pair_is_the_payloads(tmp_p
         assert _esc(sentence) in page, k
 
 
+@needs_node
+def test_what_was_found_after_v2s_rule_was_fixed_is_said_beside_the_choice_in_the_payloads_words(tmp_path):
+    """The rule's "hit rate always rises" claim, counted against DEV's grid,
+    beside the pair it chose; and what "untouched" covers - beside the rule's
+    sentence, under SMALL's period table (where the untouched row is) and
+    beside SMALL the other way."""
+    import nfl_sgp2 as sgp2
+    week, _ = _v2_week()
+    page = _render(tmp_path, week)["parlays"]
+    s = week["sgp"]
+    h, c = s["history"], s["caveats"]
+    assert c["untouched"] == sgp2.UNTOUCHED_NOTE
+    chosen = page.split('<div class="panel sgpchosen">')[1].split('<div class="panel')[0]
+    assert f'<div class="mini sgprises">{_esc(h["chosen"]["rises"]["note"])}</div>' in chosen
+    untouched = f'<div class="mini sgpuntouched">{_esc(c["untouched"])}</div>'
+    assert untouched in chosen
+    meters = page.split('id="sgp-meters"')[1].split('<div class="panel sgpchosen">')[0]
+    panel = lambda kind: meters.split(f'<div class="panel sgpm" data-kind="{kind}">')[1].split(  # noqa: E731
+        '<div class="panel sgpm"')[0]
+    assert untouched in panel("small")
+    for kind in ("rookie", "medium", "large"):
+        assert "sgpuntouched" not in panel(kind), kind
+    alt = page.split("the other way · report-only")[1].split("</table>")[0]
+    assert untouched in alt
+    # v1's retired meters have no "untouched" span, so no such note.
+    v1 = page.split("v1 (retired) · how its tickets have done")[1]
+    assert "sgpuntouched" not in v1 and "sgprises" not in v1
+
+
 def _odds_week():
     """The v2 week with each game's TD lists as nfl_predict.run shows them:
     the top 3 beside the whole list, each player's anytime-TD price - the
@@ -713,6 +742,44 @@ def test_every_td_scorer_shows_his_odds_beside_our_chance_or_why_not(tmp_path):
         for leg in t["legs"]:
             if leg["kind"] == "TD" and leg.get("implied") is not None:
                 assert f'books {_pct(leg["implied"], 0)}' in card
+
+
+def _local_stamp(iso):
+    """app.js's localStamp in the same node, locale and time zone as _render."""
+    script = ("console.log(new Date(process.argv[1]).toLocaleString(undefined, "
+              "{ weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }))")
+    return subprocess.run(["node", "-e", script, iso], capture_output=True, text=True, check=True).stdout.strip()
+
+
+@needs_node
+def test_each_scorers_odds_say_in_plain_view_how_many_books_the_best_price_and_when_seen(tmp_path):
+    """A tooltip is never seen on a phone, the app's main screen: how many
+    books quoted him, the best price (marked est., as a ticket leg's is) and
+    when the price was seen are mini text under his name - and a price from
+    one book says in words that it is not a consensus."""
+    week, _ = _odds_week()
+    game = next(g for g in week["games"] if g["game_id"] == "2026_07_LV_KC")
+    priced = [p for p in game["away_td_all"] if p["price"]["american"] is not None]
+    many, one = priced[0], priced[1]                # one list, so one panel holds both
+    assert many["price"]["books"] >= 2
+    for lst in ("away_td_all", "home_td_all", "away_td", "home_td"):
+        for p in game[lst]:
+            if p["gsis_id"] == one["gsis_id"]:
+                p["price"].update(books=1, best_american=p["price"]["american"], best_book="One Book")
+    out = _render(tmp_path, week)
+    for view in ("td", "week"):
+        # The priced game's own touchdown list: the one panel with the one-book price in it.
+        card = next(c for c in out[view].split('<div class="panel"><div class="eyebrow">') if "One Book" in c)
+        row = _td_row(card, many["name"])
+        o = many["price"]
+        assert "title=" not in row.split('<span class="end tdodds"')[1].split(">")[0], view
+        assert f"odds: {o['books']} books" in row, view
+        assert (f'best <span class="num">{_american(o["best_american"])}</span> <span class="est">est.</span>'
+                f' ({_esc(o["best_book"])})') in row, view
+        assert f"seen {_esc(_local_stamp(o['as_of']))}" in row, view
+        single = _td_row(card, one["name"])
+        assert "odds: one book's price, not a consensus (One Book)" in single, view
+        assert "best <span" not in single and f"seen {_esc(_local_stamp(one['price']['as_of']))}" in single, view
 
 
 @needs_node

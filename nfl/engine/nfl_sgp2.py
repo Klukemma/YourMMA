@@ -83,6 +83,31 @@ CHOSEN_ON = "2026-11-24"
 KINDS = sgp.KINDS              # v1's build order and ticket shapes, unchanged
 LEGS = sgp.LEGS
 
+# FOUND AFTER THE RULE WAS FIXED (review, 2026-11-24). The docstring says
+# "Hit rate always rises as the bars rise, so the coverage floor is what
+# stops the choice at a usable pair." That is a claim about the data, not a
+# clause of the rule, and on DEV it does not hold at every step of the grid:
+# raising one bar a grid step, the other held, lowered SMALL's hit rate at
+# some steps. The choice never rested on it - the objective takes the best
+# SMALL hit rate among the pairs that clear COVERAGE_MIN, whatever the
+# grid's shape - so the rule keeps its words, since changing them quietly
+# would undo the pre-registration. How many steps fell, and whether the
+# floor did stop the choice (a pair under it hit more often), are counted by
+# the backtest from its own grid (nfl_sgp2_backtest.rises, the payload's
+# chosen.rises) and said by rises_note - never typed here.
+RISES_CLAIM = "Hit rate always rises as the bars rise"
+
+# FOUND AFTER THE RULE WAS FIXED (review, 2026-11-24). The two numbers are
+# chosen on DEV alone and measured untouched on CONFIRM - but one clause of
+# the rule's structure was motivated by data that overlaps CONFIRM: SMALL
+# takes the pick's own team's scorer first because of the docstring's
+# P(TD | his team won) figures, measured on SMALL_RESEARCH (the research
+# before v1). So "untouched" is about the two numbers only, and for that
+# clause the overlapping seasons are not a clean holdout; SMALL with the
+# game's best TD (game_best_small, report-only) is the comparison that shows
+# the clause's effect. UNTOUCHED_NOTE says so beside those meters.
+SMALL_RESEARCH = (2016, 2025)  # the docstring's SMALL clause: the seasons of its P(TD | won) figures
+
 # The objective in the words the payload shows beside the chosen pair.
 OBJECTIVE = (f"the highest SMALL hit rate (won / (won + lost)) among the pairs that build a SMALL "
              f"ticket in at least {COVERAGE_MIN:.0%} of {DEV[0]}-{DEV[1]}'s games; ties to the larger "
@@ -90,6 +115,64 @@ OBJECTIVE = (f"the highest SMALL hit rate (won / (won + lost)) among the pairs t
 NO_EDGE = ("Nothing here claims an edge. Narrowing to likely legs raises the hit rate and lowers the "
            "payout; the market prices both. These are the legs the engine rates most likely to land, "
            "not bets it rates profitable.")
+
+
+def _span(lohi):
+    return f"{lohi[0]}-{lohi[1]}" if lohi[0] != lohi[1] else str(lohi[0])
+
+
+def _overlap(a, b):
+    lo, hi = max(a[0], b[0]), min(a[1], b[1])
+    return (lo, hi) if lo <= hi else None
+
+
+def untouched_note(research=SMALL_RESEARCH, confirm=CONFIRM, dev=DEV):
+    """What "untouched" covers, from the constants: the two numbers, chosen
+    on DEV alone - and where SMALL's pick's-team clause was motivated by
+    seasons that overlap CONFIRM, that those seasons are not a clean holdout
+    for the clause. None when they do not overlap."""
+    both = _overlap(research, confirm)
+    if both is None:
+        return None
+    return (f"Untouched means the two numbers: they were chosen on {_span(dev)} alone. SMALL's taking the "
+            f"pick's own team's scorer first is a clause of the rule, motivated by a {_span(research)} "
+            f"statistic (how often a player scored when his team won against when it lost, the research "
+            f"before v1), so for that clause {_span(both)} is not a clean holdout; SMALL with the game's "
+            "best TD, beside it, is the comparison that shows the clause's effect.")
+
+
+UNTOUCHED_NOTE = untouched_note()
+
+
+def rises_note(check):
+    """The docstring's RISES_CLAIM against the DEV grid, in words, from the
+    counts nfl_sgp2_backtest.rises takes off the grid: how many of its
+    steps (one bar raised a grid step, the other held) fell or stayed
+    level, that the choice does not rest on the claim, and whether the
+    coverage floor did stop the choice. None without a check."""
+    if not check or not check.get("steps"):
+        return None
+    dev, steps, falls, level = check["period"], check["steps"], check["falls"], check["level"]
+    if not falls and not level:
+        head = (f"Checked after the rule was fixed: on {dev}, SMALL's hit rate rose at every one of the "
+                f"grid's {steps} steps (one bar raised a step, the other held), as the rule's words say "
+                f"(\"{RISES_CLAIM}\").")
+    else:
+        flat = f" and stayed level at {level}" if level else ""
+        head = (f"Found after the rule was fixed: the rule's words say \"{RISES_CLAIM}\", but on {dev} "
+                f"SMALL's hit rate fell at {falls} of the grid's {steps} steps (one bar raised a step, the "
+                f"other held){flat}. The choice does not rest on that sentence: the objective takes the best "
+                f"hit rate among the pairs that clear the coverage floor ({COVERAGE_MIN:.0%}).")
+    best = check.get("best_without_floor")
+    if best is None:
+        return head
+    if check.get("floor_binds"):
+        tail = (f" The floor did stop the choice: without it the best would be {best['confident']:.0%} and "
+                f"{best['td_floor']:.0%}, which hit {best['hit_rate']:.1%} but was built in "
+                f"{best['coverage']:.1%} of the games.")
+    else:
+        tail = " The floor did not stop the choice: no pair under it hit more often."
+    return head + tail
 
 # ---------------------------------------------------------------- why no ticket
 #

@@ -182,7 +182,11 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
 - **The odds in the app**: every touchdown candidate in a game's lists and on the TD tab shows
   the books' anytime-TD odds, marked est., and the chance they imply beside the model's - or
   the payload's reason, said once above a list that has none for one reason - with
-  `caveats.td_odds` beside them. A ticket's touchdown leg shows the implied chance too.
+  `caveats.td_odds` beside them. Under his name, in plain text rather than a tooltip a phone
+  never shows, is where the price came from: how many books quoted him (a single book's price
+  says in words that it is not a consensus), the best price, marked est., and when it was
+  seen, so a price bought early in the week shows its age. A ticket's touchdown leg shows the
+  implied chance too.
 - **v2** (`nfl/engine/nfl_sgp2.py`, sgp-v2, pre-registered while v1 stays as it is and is
   measured beside it): tickets only in confident games, result legs only on the pick's side,
   and touchdown legs only for players the model rates very likely, SMALL taking the pick's own
@@ -193,7 +197,13 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
   history (`nfl/data/sgp2_backtest.json`) is refreshed by the runner as v1's is, never
   re-chosen, and reports beside v2 the whole grid, v1 on the same games and SMALL with the
   game's best scorer instead. As in v1 it has no past touchdown prices, so its return is
-  missing with that reason, and it carries v1's known bias.
+  missing with that reason, and it carries v1's known bias. Two things found after the rule
+  was fixed are said beside the choice in the payload's own words, the rule's words left as
+  registered: its sentence that the hit rate always rises as the bars rise is a claim about
+  the data, counted against DEV's own grid (`chosen.rises`; the choice does not rest on it),
+  and "untouched" covers the two numbers only - SMALL's taking the pick's own scorer first was
+  motivated by a statistic whose seasons overlap the seasons after
+  (`nfl_sgp2.UNTOUCHED_NOTE`, also beside SMALL's table and SMALL the other way).
 - **Live, v2 builds the tickets** (`nfl_predict.LIVE_VERSION`): each game still to come gets
   v2's four from its pick, the pick's chance and the same legs v1 reads, logged before kickoff
   as sgp-v2 with the two numbers they were built with. A game that is not confident shows its

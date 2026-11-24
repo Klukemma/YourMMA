@@ -492,7 +492,9 @@ def sgp_block(log, history=None, v1_history=None):
       history  v2's backtest (nfl/data/sgp2_backtest.json): per kind, per
                period, its meters, coverage and chance bins; the confident
                games per period; `chosen` (the pair, the objective, its DEV
-               figures, how many pairs cleared the coverage floor) and
+               figures, how many pairs cleared the coverage floor, and
+               `rises` - the rule's "hit rate always rises" claim counted
+               against DEV's grid, found after the rule was fixed) and
                `grid` (every pair, per period - report-only); SMALL with the
                game's best TD and v1 on the same games (report-only) - or
                missing, and why, when the file is not this rule's or
@@ -506,8 +508,11 @@ def sgp_block(log, history=None, v1_history=None):
                `rules`, v2's narrowing (confident games only, the pick's
                side only, the TD floor, SMALL's preference, how the two
                numbers were chosen on DEV and measured on the seasons
-               after); `objective`; and `tickets`, each ticket's slots as v2
-               fills them
+               after); `objective`; `tickets`, each ticket's slots as v2
+               fills them; and `untouched` (nfl_sgp2.UNTOUCHED_NOTE, found
+               after the rule was fixed): "untouched" covers the two
+               numbers, not SMALL's pick's-team clause, whose motivating
+               seasons overlap CONFIRM
       v1       sgp_v1_block: v1's history and live meters, retired
     """
     logged, live = _live(log, sgp2)
@@ -515,7 +520,7 @@ def sgp_block(log, history=None, v1_history=None):
         1 for p in logged if any(t.get("confident_game") for t in p["tickets"] if t.get("version") == sgp2.VERSION))
     caveats = _v1_caveats()
     caveats.update(edge_v2=sgp2.NO_EDGE, rules=sgp2.rules(), objective=sgp2.OBJECTIVE,
-                   tickets=sgp2.ticket_rules())
+                   tickets=sgp2.ticket_rules(), untouched=sgp2.UNTOUCHED_NOTE)
     return {
         "version": sgp2.VERSION, "rule": "nfl/engine/nfl_sgp2.py", "kinds": list(sgp2.KINDS),
         "legs": dict(sgp2.LEGS), "stake": sgp.STAKE_UNIT, "use_cap": sgp.USE_CAP,
