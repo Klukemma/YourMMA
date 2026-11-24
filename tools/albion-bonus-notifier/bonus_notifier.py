@@ -6,24 +6,26 @@ when one of them is potions (alchemy). Run once a day, after server downtime
 (10:00 UTC), from cron or any scheduler. Standard library only.
 
 Config (environment variables):
-  BONUS_SOURCE_URL   page listing today's bonuses (default: albiondatabase.com/events)
+  BONUS_API_URL      JSON feed of today's bonuses (default: Albion Free Market's feed)
+  SERVER_ID          only check this server's entry (feed "serverId"); unset = any server
   NTFY_TOPIC         ntfy.sh topic to push to (install the ntfy app, subscribe to it)
   DISCORD_WEBHOOK    optional Discord webhook URL, used in addition to / instead of ntfy
   BONUS_KEYWORDS     comma-separated match words (default: potion,alchemy)
   STATE_FILE         where the last-notified date is kept (default: ~/.albion_bonus_state)
 """
 import datetime as dt
-import html
 import json
 import os
-import re
 import sys
 import urllib.request
 
-SOURCE_URL = os.environ.get("BONUS_SOURCE_URL", "https://albiondatabase.com/events")
+API_URL = os.environ.get("BONUS_API_URL",
+                         "https://api.albionfreemarket.com/be/dataclient/festivities/current")
+SERVER_ID = os.environ.get("SERVER_ID", "")
 NTFY_TOPIC = os.environ.get("NTFY_TOPIC", "")
 DISCORD_WEBHOOK = os.environ.get("DISCORD_WEBHOOK", "")
 KEYWORDS = [k.strip().lower() for k in os.environ.get("BONUS_KEYWORDS", "potion,alchemy").split(",") if k.strip()]
+PRODUCTION_KIND = 2  # event "kind" the feed uses for daily production bonuses
 STATE_FILE = os.path.expanduser(os.environ.get("STATE_FILE", "~/.albion_bonus_state"))
 UA = "albion-bonus-notifier/1.0"
 
@@ -34,20 +36,32 @@ def http(url, data=None, headers=None):
         return r.read().decode("utf-8", "replace")
 
 
-def page_text(raw):
-    raw = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", raw)
-    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", raw)))
+def parse_time(value):
+    return dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
-def todays_bonus_text():
-    # UNVERIFIED: the source page's layout hasn't been inspected yet. This takes
-    # the text following the first "daily bonus" heading. Replace it with a
-    # proper selector / JSON field once the page structure is known.
-    text = page_text(http(SOURCE_URL))
-    m = re.search(r"(?i)daily\s+(crafting\s+|production\s+)?bonus", text)
-    if not m:
-        raise RuntimeError(f"no daily-bonus section found on {SOURCE_URL}")
-    return text[m.start():m.start() + 400]
+def active_production_bonuses(feed, now):
+    """Return the uniqueNames of production bonuses active right now.
+
+    Feed shape (as read by albionfreemarket.com's own front end):
+      {"servers": [{"serverId": ..., "updatedAt": ...,
+                    "events": [{"uniqueName": "COMMON_POTION", "kind": 2,
+                                "startTime": "...", "endTime": "..."}]}]}
+    uniqueName is COMMON_<category> or RARE_<category>.
+    """
+    names = []
+    for server in feed.get("servers") or []:
+        if SERVER_ID and str(server.get("serverId")) != SERVER_ID:
+            continue
+        for ev in server.get("events") or []:
+            if ev.get("kind") != PRODUCTION_KIND or not isinstance(ev.get("uniqueName"), str):
+                continue
+            try:
+                if parse_time(ev["startTime"]) <= now < parse_time(ev["endTime"]):
+                    names.append(ev["uniqueName"])
+            except (KeyError, ValueError):
+                continue
+    return names
 
 
 def notify(title, body):
@@ -72,15 +86,20 @@ def main():
         pass
 
     try:
-        section = todays_bonus_text()
+        feed = json.loads(http(API_URL, headers={"Origin": "https://albionfreemarket.com"}))
+        bonuses = active_production_bonuses(feed, dt.datetime.now(dt.timezone.utc))
     except Exception as e:
         notify("Albion bonus check failed", f"{e}")
         return 1
+    if not bonuses:
+        notify("Albion bonus check failed", "feed returned no active production bonuses")
+        return 1
 
-    hit = [k for k in KEYWORDS if k in section.lower()]
-    print(f"{today}: {section[:200]!r} -> match={hit}")
+    hit = [b for b in bonuses if any(k in b.lower() for k in KEYWORDS)]
+    print(f"{today}: active={bonuses} potion_match={hit}")
     if hit:
-        notify("Potion bonus today", "Daily production bonus is on potions. Start potion crafting.")
+        notify("Potion bonus today",
+               f"Daily production bonus: {', '.join(hit)}. Start potion crafting.")
         with open(STATE_FILE, "w") as f:
             f.write(today)
     return 0
