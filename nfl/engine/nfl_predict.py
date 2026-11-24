@@ -20,6 +20,14 @@ One run:
      (nfl_export.td_meters), and writes nfl/app/data/{week,teams,
      performance}.json and the standalone page.
 
+Each game still to come also gets its four same-game tickets (nfl_sgp,
+sgp-v1: small, rookie, medium, large), built from what its pick was made
+with - the blend, the market's consensus prices, the TD list's chances, a
+rookie flag from player_games and the anytime-TD prices nfl_odds bought for
+it - logged with the pick, and graded from the score and the box score once
+the game is over (grade_tickets). week.json's "sgp" block carries each
+kind's meters: the backtest's (nfl/data/sgp_backtest.json) and the log's.
+
 A PICK IS LOGGED ONLY BEFORE KICKOFF. Re-running before a game updates its
 entry (the last line before kickoff is the one that counts); once the game
 has started the entry is frozen, and a game that started before any run
@@ -47,6 +55,7 @@ import nfl_news as nnews
 import nfl_odds as no
 import nfl_players as nplayers
 import nfl_props as nprops
+import nfl_sgp as sgp
 import nfl_td as ntd
 
 LOG = Path(os.environ.get("NFL_PREDICTIONS_LOG") or (nd.DATA / "prediction_history.json"))
@@ -59,6 +68,8 @@ POSITION_ORDER = ["QB", "RB", "FB", "WR", "TE", "T", "OT", "G", "OG", "C", "OL",
                   "CB", "S", "FS", "SS", "DB", "K", "P", "LS"]
 INJURIES_PER_TEAM = 8
 TD_SHOWN = 3            # most likely scorers shown per team
+NO_TICKETS_LOGGED = "No tickets were logged before kickoff."
+NO_PRICE = "no price on file"
 WEEK_NAMES = {"WC": "Wild Card", "DIV": "Divisional round",
               "CON": "Conference championships", "SB": "Super Bowl"}
 
@@ -118,10 +129,48 @@ def log_pick(log, game, now):
               "pick", "pick_prob", "home_prob", "model_prob", "market_prob", "market_source",
               "tier", "model_spread", "market_spread", "spread_pick", "model_total",
               "market_total", "total_pick", "home_qb", "away_qb", "market", "home_td", "away_td",
-              "home_td_all", "away_td_all", "home_leaders", "away_leaders")
+              "home_td_all", "away_td_all", "home_leaders", "away_leaders", "tickets")
     log["picks"][game["game_id"]] = dict(
         {k: game.get(k) for k in fields}, **keep, last_logged=stamp(now))
     return True
+
+
+def show_logged(game, logged, tiers):
+    """A game under way or over, as its pick was logged before kickoff -
+    or with no pick, and why, when none was. Its same-game tickets are the
+    logged ones (graded once the box score is in), never rebuilt: a ticket
+    built after kickoff could know the game."""
+    if not logged:
+        game["pick"] = None
+        game["no_pick_reason"] = "No pick was logged before kickoff."
+        game["tickets"], game["tickets_reason"] = None, NO_TICKETS_LOGGED
+        return game
+    game.update({k: logged.get(k) for k in (
+        "pick", "pick_prob", "home_prob", "model_prob", "market_prob", "market_source",
+        "tier", "model_spread", "market_spread", "spread_pick", "model_total",
+        "market_total", "total_pick")})
+    # The price the pick was made against, not today's - a market
+    # logged before the spread and total prices were kept shows
+    # them as missing, and why (nfl_odds.with_price_fields).
+    if logged.get("market"):
+        game["market"] = no.with_price_fields(logged["market"])
+    for side in ("home_td", "away_td", "home_td_all", "away_td_all", "home_leaders",
+                 "away_leaders"):
+        if logged.get(side):
+            game[side] = logged[side]
+    # The quarterbacks the logged pick was computed with - a
+    # replaced starter must not reappear once the game is on.
+    for side in ("home", "away"):
+        if logged.get(f"{side}_qb"):
+            game[f"{side}_qb"] = logged[f"{side}_qb"]
+    game["tier_hit_rate"] = (tiers.get(logged.get("tier")) or {}).get("hit_rate")
+    game["logged_at"] = logged.get("last_logged")
+    # The same objects as the log's, so grade_tickets() later in the run
+    # reaches what is shown.
+    game["tickets"] = logged.get("tickets") or None
+    if game["tickets"] is None:
+        game["tickets_reason"] = NO_TICKETS_LOGGED
+    return game
 
 
 def _snap_index(snaps, player_ids=None):
@@ -213,6 +262,41 @@ def grade_touchdown_lists(log, player_games, snaps=None, player_ids=None):
         if not _grade_td([t for entries in lists for t in entries], tds, snap_index, gid):
             continue
         p["td_all_graded"] = True
+        graded += 1
+    return graded
+
+
+def grade_tickets(log, player_games, snaps=None, player_ids=None):
+    """Grade every logged same-game ticket (nfl_sgp.grade_ticket) once its
+    game is final and the box score and snap counts are in: WIN, SPREAD and
+    TOTAL from the final score (a tie or a push voids), TD from the box
+    score's rushing + receiving touchdowns - nfl_td's label - and a TD leg
+    on a player who took no snap voided, as Stake voids a player listed
+    inactive: his chance was IF HE PLAYS. A ticket is then graded on the
+    legs that stand, at their logged prices (`payout`). Each ticket gets
+    result (won / lost / void), leg_results, payout and chance_graded, in
+    place; the game its own flag, tickets_graded, so it is graded once."""
+    if player_games is None or not len(player_games):
+        return 0
+    by_game = player_games.groupby("game_id")
+    snap_index = _snap_index(snaps, player_ids)
+    graded = 0
+    for gid, p in log["picks"].items():
+        tickets = p.get("tickets")
+        if not tickets or not p.get("final") or p.get("tickets_graded") or gid not in by_game.groups:
+            continue
+        box = by_game.get_group(gid)
+        tds = dict(zip(box["player_id"], box["rushing_tds"].fillna(0) + box["receiving_tds"].fillna(0)))
+        legs = {leg["gsis_id"]: leg for t in tickets for leg in t.get("legs") or [] if leg["kind"] == "TD"}
+        played = {g: True if g in tds else _played(snap_index, gid, leg) for g, leg in legs.items()}
+        if any(v is None for v in played.values()):
+            continue                  # no box line and no snap counts yet: wait
+        # nfl_sgp.outcome's players: everyone who played; one absent did not.
+        players = {g: float(tds.get(g, 0.0)) for g, v in played.items() if v}
+        result = sgp.outcome(p["home"], p["away"], p["final"]["home"], p["final"]["away"], players)
+        for t in tickets:
+            t.update(sgp.grade_ticket(t, result))
+        p["tickets_graded"] = True
         graded += 1
     return graded
 
@@ -398,7 +482,7 @@ def predict_game(row, models, market, tiers):
 # ---------------------------------------------------------------- the run
 
 def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
-        cache_path=no.CACHE, api_key=None, news_path=nnews.CACHE):
+        cache_path=no.CACHE, api_key=None, news_path=nnews.CACHE, sgp_history=nx.SGP_HISTORY):
     now = naive_utc(now) if now is not None else now_utc()
     if sync:
         try:
@@ -425,12 +509,15 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
     upcoming = frame[~frame["played"] & (frame["kickoff"] > now)][["away", "home", "kickoff"]]
     clock = now.tz_localize("UTC").to_pydatetime()
     no.refresh(cache, upcoming, api_key=api_key, log=log, now=clock)
+    no.refresh_td(cache, upcoming, api_key=api_key, log=log, now=clock)
     no.save(cache, cache_path)
 
     qb_names = _qb_names(games)
     injuries = nd.load_injuries()
     players = nplayers.PlayerData(injuries=injuries)
     players.set_schedule(games)
+    first_seasons = sgp.first_seasons(players.offense)      # the rookie flag (nfl_sgp.is_rookie)
+    aliases = _roster_names_by_id(players.rosters, season)  # the names a TD price is matched on
     td_built = ntd.build_with_state(games, ntd.load_lines())
     td_report = ntd.report(td_built[0], ntd.walk_forward(td_built[0]))
     td_live = ntd.fit_live(season, games=games, built=td_built)
@@ -501,33 +588,12 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
                 for p in game[f"{side}_players"]["offense"] + game[f"{side}_td"]:
                     if p.get("gsis_id") in proj:
                         p["proj"] = proj[p["gsis_id"]]
+            td_prices = no.td_prices_for(cache, row["away"], row["home"], kickoff,
+                                         _td_names(game, aliases), now=clock)
+            game["tickets"] = game_tickets(game, market, td_prices, first_seasons)
             log_pick(history, game, now)
         else:
-            logged = history["picks"].get(row["game_id"])
-            if logged:
-                game.update({k: logged.get(k) for k in (
-                    "pick", "pick_prob", "home_prob", "model_prob", "market_prob", "market_source",
-                    "tier", "model_spread", "market_spread", "spread_pick", "model_total",
-                    "market_total", "total_pick")})
-                # The price the pick was made against, not today's - a market
-                # logged before the spread and total prices were kept shows
-                # them as missing, and why (nfl_odds.with_price_fields).
-                if logged.get("market"):
-                    game["market"] = no.with_price_fields(logged["market"])
-                for side in ("home_td", "away_td", "home_td_all", "away_td_all", "home_leaders",
-                             "away_leaders"):
-                    if logged.get(side):
-                        game[side] = logged[side]
-                # The quarterbacks the logged pick was computed with - a
-                # replaced starter must not reappear once the game is on.
-                for side in ("home", "away"):
-                    if logged.get(f"{side}_qb"):
-                        game[f"{side}_qb"] = logged[f"{side}_qb"]
-                game["tier_hit_rate"] = (tiers.get(logged.get("tier")) or {}).get("hit_rate")
-                game["logged_at"] = logged.get("last_logged")
-            else:
-                game["pick"] = None
-                game["no_pick_reason"] = "No pick was logged before kickoff."
+            show_logged(game, history["picks"].get(row["game_id"]), tiers)
         for side in ("home", "away"):
             qb = game[f"{side}_qb"]
             if qb:
@@ -542,11 +608,13 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
     player_ids = nd.load_player_ids()
     grade_touchdown_lists(history, players.offense, players.snaps, player_ids)
     grade_yards(history, players.offense, players.snaps)
+    tickets_graded = grade_tickets(history, players.offense, players.snaps, player_ids)
     save_log(history, log_path)
     td_meters = nx.td_meters(history, td_record_lines(history, players.offense, players.snaps, player_ids))
     for game in out_games:
         nx.attach_td_meters(game, td_meters)
-    log(f"   logged {sum(1 for g in out_games if g['status'] == 'upcoming')} picks, graded {graded}")
+    log(f"   logged {sum(1 for g in out_games if g['status'] == 'upcoming')} picks, graded {graded}; "
+        f"same-game tickets graded for {tickets_graded} games")
 
     last_played = games[games["played"]]["kickoff"].max()
     trained_on = models[season].trained_on
@@ -557,6 +625,7 @@ def run(sync=True, now=None, out_dir=nx.APP_DATA, log_path=LOG, log=print,
         "byes": byes(slate, game_type),
         "tiers": tiers, "value_enabled_at": backtest["value"]["enabled_at"],
         "caveats": cav, "as_of": stamp(now),
+        "sgp": nx.sgp_block(history, nx.load_sgp_history(sgp_history)),
     }, out_dir)
     teams = teams_payload(games, state, qb_names, now, season, players)
     for t in teams["teams"]:
@@ -596,6 +665,88 @@ def touchdown_picks(live, players, row, side, game, market, injuries, off, seaso
     # The top three are priced players only: a team with fewer than three
     # chances shows fewer picks, as predict_team() always gave.
     return [e for e in entries if e["prob"] is not None][:TD_SHOWN], every
+
+
+def game_tickets(game, market, td_prices, first):
+    """The four same-game tickets (nfl_sgp.build_tickets) of a game still to
+    come, from what its pick was made with - the inputs the backtest
+    (experiments/nfl_sgp_backtest.py) replays, read live:
+
+      WIN     the blend's home_prob; its price the market's moneyline
+      SPREAD  the market's spread and its consensus prices at that line
+      TOTAL   the market's total and its consensus prices at that line
+      TD      every listed player's chance (home_td_all, away_td_all: a
+              chance only where his usage group ships), his rookie flag
+              (nfl_sgp.is_rookie on `first`, nfl_sgp.first_seasons of
+              player_games) and his anytime-TD price (`td_prices`,
+              nfl_odds.td_prices_for)
+
+    American prices are converted to decimal for the rule. Each leg also
+    carries its price as posted (`american`), where it came from and, where
+    there is none, why (`price_missing`); a TD leg also the best price and
+    book, the books and when it was seen. Every price is the books'
+    consensus, not Stake's, so every one is flagged `est`, as is each
+    ticket's est_payout. Each ticket says which rule built it (`version`)."""
+    m = market or {}
+    dec = sgp.decimal_from_american
+    td = []
+    for side in ("home", "away"):
+        for p in game.get(f"{side}_td_all") or []:
+            td.append({"gsis_id": p["gsis_id"], "name": p["name"], "position": p["position"],
+                       "team": game[side], "prob": p["prob"],
+                       "rookie": sgp.is_rookie(first, p["gsis_id"], game["season"]),
+                       "decimal": dec((td_prices.get(p["gsis_id"]) or {}).get("price"))})
+    legs = sgp.game_legs(game["home"], game["away"], p_home=game.get("home_prob"),
+                         spread_line=m.get("spread"),
+                         home_spread_price=dec(m.get("spread_price_home")),
+                         away_spread_price=dec(m.get("spread_price_away")),
+                         total_line=m.get("total"), over_price=dec(m.get("total_price_over")),
+                         under_price=dec(m.get("total_price_under")),
+                         home_ml=dec(m.get("home_ml")), away_ml=dec(m.get("away_ml")), td=td)
+    tickets = sgp.build_tickets(legs)
+    for t in tickets:
+        t.update(version=sgp.VERSION, est=True)
+        for leg in t["legs"]:
+            leg.update(_leg_price(leg, game, m, td_prices))
+    return tickets
+
+
+def _leg_price(leg, game, market, td_prices):
+    """A ticket leg's price as posted, its source and why it is missing."""
+    priced = leg["decimal"] is not None
+    if leg["kind"] == "TD":
+        p = td_prices.get(leg["gsis_id"]) or {"missing": no.TD_PRICE_MISSING["none"]}
+        return {"american": p.get("price"), "price_source": "the-odds-api" if priced else None,
+                "price_missing": None if priced else (p.get("missing") or NO_PRICE),
+                "best_american": p.get("best_price"), "best_book": p.get("best_book"),
+                "books": p.get("books"), "price_as_of": p.get("as_of"), "price_match": p.get("match"),
+                "est": True}
+    if leg["kind"] == "TOTAL":
+        field, source = f"total_price_{leg['side'].lower()}", market.get("total_price_source")
+    else:
+        side = "home" if leg["team"] == game["home"] else "away"
+        field, source = ((f"{side}_ml", market.get("source")) if leg["kind"] == "WIN" else
+                         (f"spread_price_{side}", market.get("spread_price_source")))
+    return {"american": market.get(field), "price_source": source if priced else None,
+            "price_missing": None if priced else NO_PRICE, "est": True}
+
+
+def _td_names(game, aliases):
+    """[(gsis_id, names)] of every player listed for either team: the TD
+    list's name and the roster's - what nfl_odds.td_prices_for matches."""
+    return [(p["gsis_id"], [p.get("name"), *sorted(aliases.get(p["gsis_id"], ()))])
+            for side in ("home", "away") for p in game.get(f"{side}_td_all") or []]
+
+
+def _roster_names_by_id(rosters, season):
+    """{gsis_id: the full names this season's weekly rosters give him}."""
+    if rosters is None or not len(rosters):
+        return {}
+    r = rosters[(rosters["season"] == season)].dropna(subset=["gsis_id", "full_name"])
+    out = {}
+    for g, n in zip(r["gsis_id"], r["full_name"]):
+        out.setdefault(g, set()).add(n)
+    return out
 
 
 def byes(slate, game_type):

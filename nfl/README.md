@@ -112,6 +112,43 @@ choose on 2006-2015, and ship only what does not make 2016-2025 worse for the pi
   - recency weighting, rolling windows, gradient boosting, calibration;
   - roughly 200 spread and total configurations. None beats -110 in both periods.
 
+## Same-game tickets
+
+Each game still to come gets four same-game parlays - small, rookie, medium and large - built
+by a pre-registered rule, `nfl/engine/nfl_sgp.py` (sgp-v1; its docstring is the rule, and a
+change to it is a new version measured beside this one). Every leg is from that one game:
+a team to win (the pick's blend), the spread and the total (the market's no-vig chance at
+the consensus prices), and a player's anytime touchdown (the touchdown model, if he plays).
+A rookie leg is a touchdown leg on a player in his first NFL season.
+
+- **The chance** shown is the product of the legs' chances. Legs in one game are not
+  independent, so the backtest measures how often each kind actually landed beside it.
+- **The est. payout** is the product of the legs' consensus single prices, marked est.:
+  Stake's bet builder prices correlated legs below it, so v1's words call it an upper bound.
+  It is not one (`nfl_sgp.EST_ERRATUM`, found after the rule was fixed and shown beside those
+  words): legs that pull against each other can be priced above the product, and Stake's
+  single prices are not the consensus - so it is an estimate either way. The exact payout is
+  the price Stake quotes for the slip, typed in by hand.
+- **Anytime-touchdown prices** are bought per game from the-odds-api's per-event endpoint
+  (one credit a game), only within `nfl_odds.TD_WINDOW_HOURS` of kickoff, and matched to a
+  player only by an exact or strictly normalised name of that game's own rosters. A player
+  with no safe match has no price, and the reason is shown.
+- **The meters**, per kind: the history (`experiments/nfl_sgp_backtest.py`, replayed by the
+  runner whenever a new final's box score is on file, its generated date shown) and the
+  live record (tickets logged before kickoff, graded from the box score). The history has
+  no past touchdown prices, so its return is shown as missing with that reason. In the
+  history a touchdown candidate is a player who took a snap, so it knows who was active;
+  live, a pick who does not play is voided and the ticket graded on its other legs.
+- **In the app**: each game's detail has a Parlays section, and the Parlays tab lists every
+  game's tickets with each kind's meters on top - the history and this season live, the live
+  return marked est. Every figure there is read from week.json, and a missing one carries the
+  payload's reason. Each ticket has a box for the odds Stake's bet builder quotes for that slip
+  (decimal, or American with its sign) and the amount: the app shows the exact payout and
+  profit from them, and the fair odds at the product chance, with the note that the chance
+  assumes independent legs. What is typed stays in the phone's own storage and is never sent.
+- Nothing here is called a bet or an edge: the market is hard to beat, and a parlay
+  multiplies the margin of every leg.
+
 ## The rules it keeps
 
 - **Point in time.** Games are replayed in kickoff order. A game reads every team's and
@@ -142,7 +179,10 @@ choose on 2006-2015, and ship only what does not make 2016-2025 worse for the pi
     nfl/engine/nfl_td.py          anytime-touchdown model, walk-forward and live
     nfl/engine/nfl_props.py       passing/rushing/receiving yard projections
     nfl/engine/nfl_news.py        player news from public RSS feeds
-    nfl/engine/nfl_predict.py     the weekly run: picks, log, grading, app data
+    nfl/engine/nfl_sgp.py         same-game tickets: the pre-registered rule (sgp-v1), grading, meters
+    nfl/engine/experiments/nfl_sgp_backtest.py
+                                  the tickets' history -> nfl/data/sgp_backtest.json
+    nfl/engine/nfl_predict.py     the weekly run: picks, tickets, log, grading, app data
     nfl/engine/nfl_export.py      app payloads and caveats
     nfl/engine/nfl_standalone.py  the offline single-file app
     nfl/engine/ncaa_data.py       college football (FBS), data only so far: sportsdataverse schedules
@@ -167,8 +207,9 @@ choose on 2006-2015, and ship only what does not make 2016-2025 worse for the pi
     python nfl/engine/nfl_backtest.py         # the walk-forward report
     python -m pytest nfl/engine/tests
 
-On GitHub, the **NFL predictions** workflow runs `predict` on Tuesday mornings, Thursday
-afternoons and Sunday mornings during the season, and commits the app data. The Thursday and
+On GitHub, the **NFL predictions** workflow runs `predict` ahead of every game day during the
+season - Tuesday mornings, Thursday afternoons and Sunday mornings among them, and a Wednesday
+run for a Wednesday night or Thanksgiving game - and commits the app data. The Thursday and
 Sunday runs buy fresh prices (3 credits each). Run it by hand from the Actions tab with
 `refresh_odds` to price the slate now.
 

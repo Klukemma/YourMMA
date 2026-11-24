@@ -755,6 +755,328 @@ function newsList(items) {
   return `<div class="panel news"><div class="eyebrow">Player news · shown, not applied</div><ul class="list">${li}</ul></div>`;
 }
 
+// ---------------------------------------------------------------- same-game tickets
+// sgp:begin - the four same-game tickets of a game (nfl_sgp), in its detail and on
+// the Parlays tab. Every number is read from week.json - its "sgp" block and
+// each game's "tickets" - and a number that is missing is shown with the
+// payload's own reason. Nothing is typed here that the payload could say, so
+// the rule and the app cannot drift apart. test_nfl_app.py renders this in node.
+
+// The order the tickets read in, smallest first. The rule builds them in its
+// own order (sgp.kinds), which the slot caveat states.
+const SGP_SHOWN = ["small", "medium", "large", "rookie"];
+function sgpOrder(kinds) {
+  const k = kinds && kinds.length ? kinds : SGP_SHOWN;
+  return [...SGP_SHOWN.filter((x) => k.includes(x)), ...k.filter((x) => !SGP_SHOWN.includes(x))];
+}
+const kindName = (k) => String(k).charAt(0).toUpperCase() + String(k).slice(1);
+// Every price the tickets carry is the books' consensus, not Stake's.
+const EST = ` <span class="est">est.</span>`;
+const money = (x) => (x == null ? "—" : `$${Number(x).toFixed(2)}`);
+// Rounded before the sign is taken, as signed() does.
+const signedMoney = (x) => {
+  if (x == null) return "—";
+  const r = Number(Number(x).toFixed(2));
+  return r === 0 ? money(0) : `${r > 0 ? "+" : "−"}${money(Math.abs(r))}`;
+};
+// The stake a meter or a ticket is priced at, as the payload gives it.
+const stakeWord = (x) => (x == null ? "—" : `$${Number.isInteger(Number(x)) ? Number(x) : Number(x).toFixed(2)}`);
+const dateOnly = (iso) => {
+  const t = new Date(iso);
+  return Number.isNaN(t.getTime()) ? String(iso || "") : t.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+};
+const tally = (n) => (n == null ? "—" : Number(n).toLocaleString());
+// A decimal price as American odds: what nfl_sgp.decimal_from_american undoes.
+const americanOf = (dec) => (dec == null || !(dec > 1) ? null : dec >= 2 ? (dec - 1) * 100 : -100 / (dec - 1));
+
+// What the user types for Stake's quote: decimal as Stake shows it (4.50,
+// or 4,50), or American with its sign (+450, -120, or a typographic minus;
+// a comma there is a thousands separator). A bare number is read as
+// decimal, and the reading is echoed back, so a price is never silently
+// taken the other way.
+const ODDS_HELP = "That is not a price: type the odds as Stake shows them - decimal, or American with its sign (+ or −).";
+function parseOdds(text) {
+  let t = String(text ?? "").trim().replace(/[\u2212\u2012\u2013\u2014]/g, "-").replace(/\s+/g, "");
+  if (!t) return null;
+  t = /^[+-]/.test(t) ? t.replace(/,/g, "") : t.replace(",", ".");
+  if (/^[+-]\d+(\.\d+)?$/.test(t)) {
+    const a = Number(t);
+    if (Math.abs(a) < 100) return { error: ODDS_HELP };
+    return { decimal: 1 + (a > 0 ? a / 100 : 100 / -a), american: a };
+  }
+  if (/^(\d+\.?\d*|\.\d+)$/.test(t)) {
+    const d = Number(t);
+    return d > 1 ? { decimal: d, american: americanOf(d) } : { error: ODDS_HELP };
+  }
+  return { error: ODDS_HELP };
+}
+// The amount, in dollars: a comma before groups of exactly three digits is
+// a thousands separator, as in a dollar figure ("1,000", "$2,500.50"); any
+// other single comma is a decimal point ("10,50"), as some keypads type it.
+// Anything else is not an amount, and the box says so.
+function parseStake(text) {
+  let t = String(text ?? "").trim().replace(/^\$/, "").replace(/\s+/g, "");
+  if (/^[1-9]\d{0,2}(,\d{3})+(\.\d*)?$/.test(t)) t = t.replace(/,/g, "");
+  else if (/^\d*,\d*$/.test(t)) t = t.replace(",", ".");
+  if (!/^(\d+\.?\d*|\.\d+)$/.test(t)) return null;
+  const v = Number(t);
+  return v > 0 && Number.isFinite(v) ? v : null;
+}
+
+// What the user typed for a ticket stays on this phone (localStorage, through
+// DESK.store, which survives private mode) and is never sent anywhere. The
+// key carries the ticket's legs: a slip rebuilt before kickoff starts empty.
+const sgpId = (g, t) => [g.game_id, t.kind, t.version || "", (t.legs || []).map((l) => l.key).join("+")].join("|");
+function sgpSaved(id) {
+  try { return JSON.parse(DESK.store.get(`yournfl.sgp.${id}`) || "null"); } catch (e) { return null; }
+}
+const sgpSave = (id, v) => DESK.store.set(`yournfl.sgp.${id}`, JSON.stringify(v));
+
+// The exact return of the slip at the odds typed: the stake times Stake's
+// decimal price. Exact because it is Stake's own quote, not an estimate.
+function stakeResult(oddsText, stakeText) {
+  const o = parseOdds(oddsText);
+  if (!o) return `<span class="mini">Type the odds Stake's bet builder quotes for this slip to see what it pays.</span>`;
+  if (o.error) return `<span class="mini warn">${esc(o.error)}</span>`;
+  const st = parseStake(stakeText);
+  if (st == null) return `<span class="mini warn">Type an amount above zero.</span>`;
+  const pays = st * o.decimal;
+  return `<span>Pays <b class="num">${money(pays)}</b> · profit <b class="num">${signedMoney(pays - st)}</b> <span class="mini">exact</span></span>
+    <span class="mini">${money(st)} at ${num(o.decimal)} decimal (${esc(odds(o.american))}) · Stake's price implies ${pct(1 / o.decimal, 1)}</span>`;
+}
+
+function stakeBox(g, t, s) {
+  const id = sgpId(g, t);
+  const saved = sgpSaved(id) || {};
+  const amount = saved.stake != null ? saved.stake : (s && s.stake != null ? String(s.stake) : "");
+  const fair = t.chance ? 1 / t.chance : null;
+  return `<div class="stakebox" data-sgp-id="${esc(id)}">
+    <div class="sx">
+      <label class="field"><span class="lab">Odds on Stake</span><input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" data-sgp-odds value="${esc(saved.odds || "")}"></label>
+      <label class="field"><span class="lab">Amount ($)</span><input type="text" inputmode="decimal" autocomplete="off" enterkeyhint="done" data-sgp-stake value="${esc(amount)}"></label>
+    </div>
+    <div class="sx-out" data-sgp-out aria-live="polite">${stakeResult(saved.odds, amount)}</div>
+    <div class="mini">Fair odds at the product chance: <b class="num">${num(fair)}</b> (${esc(odds(americanOf(fair)))}). The chance assumes the legs are independent; legs in one game are not. What you type stays on this phone.</div>
+  </div>`;
+}
+
+// One box per ticket, maybe drawn twice (the game's detail and the Parlays
+// tab): typing in one saves it and redraws every box of the same ticket.
+document.addEventListener("input", (e) => {
+  const box = e.target && e.target.closest && e.target.closest(".stakebox");
+  if (!box) return;
+  const id = box.getAttribute("data-sgp-id");
+  const oddsText = box.querySelector("[data-sgp-odds]").value;
+  const stakeText = box.querySelector("[data-sgp-stake]").value;
+  sgpSave(id, { odds: oddsText, stake: stakeText });
+  document.querySelectorAll(".stakebox").forEach((b) => {
+    if (b.getAttribute("data-sgp-id") !== id) return;
+    if (b !== box) {
+      b.querySelector("[data-sgp-odds]").value = oddsText;
+      b.querySelector("[data-sgp-stake]").value = stakeText;
+    }
+    b.querySelector("[data-sgp-out]").innerHTML = stakeResult(oddsText, stakeText);
+  });
+});
+
+const SGP_RESULT = { won: ["good", "Won"], lost: ["bad", "Lost"], void: ["flat", "Void"] };
+const resultChip = (r) => (SGP_RESULT[r] ? ` <span class="tag ${SGP_RESULT[r][0]}">${SGP_RESULT[r][1]}</span>` : "");
+
+function legItem(leg, result) {
+  const who = leg.kind === "TD"
+    ? `<b>${esc(leg.name)}</b> <span class="mini">${esc([leg.position, leg.team].filter(Boolean).join(" · "))} · anytime TD</span>${leg.rookie ? ` <span class="tag accent">Rookie</span>` : ""}`
+    : leg.kind === "WIN" ? `<b>${esc(leg.label)}</b>`
+    : `<b>${leg.kind === "SPREAD" ? esc(line(leg.team, leg.line)) : esc(leg.label)}</b> <span class="mini">${esc(String(leg.kind).toLowerCase())}</span>`;
+  const notes = [];
+  if (leg.kind === "TD") notes.push("chance if he plays");
+  if (leg.decimal == null) notes.push(`no price: ${esc(leg.price_missing || "none on file")}`);
+  if (leg.kind === "TD" && leg.best_american != null) {
+    notes.push(`best ${esc(odds(leg.best_american))}${leg.est ? EST : ""}${leg.best_book ? ` (${esc(leg.best_book)})` : ""}${leg.books ? ` of ${esc(leg.books)} books` : ""}`);
+  }
+  if (leg.kind === "TD" && leg.price_as_of) notes.push(`priced ${esc(localStamp(leg.price_as_of))}`);
+  const price = leg.decimal != null
+    ? `<span class="num">${esc(odds(leg.american))}</span><span class="dec"><span class="mini num"> ${num(leg.decimal)}</span>${leg.est ? EST : ""}</span>`
+    : `<span class="mini">no price</span>`;
+  return `<li><span class="num lead">${pct(leg.chance)}</span>
+    <span class="who">${who}${resultChip(result)}${notes.length ? `<div class="mini">${notes.join(" · ")}</div>` : ""}</span>
+    <span class="end">${price}</span></li>`;
+}
+
+// The kind's measured record beside a ticket's product chance: over the
+// history's widest span, and in the chance bin the ticket falls in.
+function widestPeriod(periods) {
+  const all = Object.entries(periods || {});
+  return all.reduce((best, p) => (!best || (p[1][1] - p[1][0]) > (best[1][1] - best[1][0]) ? p : best), null);
+}
+const spanLabel = (lohi) => (!lohi ? "" : lohi[0] === lohi[1] ? String(lohi[0]) : `${lohi[0]}-${lohi[1]}`);
+// A chance bin's edge exactly, in as few decimals as show it: 2.5%, not a
+// rounded 3% that a ticket at 2.6% would contradict.
+function edgePct(x) {
+  if (x == null) return pct(x);
+  let d = 0;
+  while (d < 3 && Math.abs(Number((x * 100).toFixed(d)) - x * 100) > 1e-9) d += 1;
+  return pct(x, d);
+}
+function kindRecord(kind, chance, s) {
+  const h = s && s.history;
+  if (!h) return "";
+  if (!h.available) return `<div class="mini">Measured hit rate: none yet - ${esc(h.reason)}</div>`;
+  const span = widestPeriod(h.periods);
+  const k = (h.kinds || {})[kind] || {};
+  const m = span && (k.meters || {})[span[0]];
+  if (!m) return "";
+  if (m.hit_rate == null) return `<div class="mini">Measured hit rate: ${esc(m.hit_rate_reason)}</div>`;
+  const bins = k.chance_bins || [];
+  const bin = chance == null ? null : bins.find((b, i) => chance >= b.lo && (chance < b.hi || (i === bins.length - 1 && chance <= b.hi)));
+  return `<div class="mini">${esc(kindName(kind))} tickets hit <b>${pct(m.hit_rate, 1)}</b> of ${tally(m.won + m.lost)} in the ${esc(spanLabel(span[1]))} replay, where their product said ${pct(m.mean_chance, 1)}${
+    bin ? `; at a product of ${edgePct(bin.lo)}-${edgePct(bin.hi)} they hit ${pct(bin.hit_rate, 1)} of ${tally(bin.tickets)}` : ""}.</div>`;
+}
+
+function ticketCard(g, t, s) {
+  const n = (s && s.legs && s.legs[t.kind]) || (t.legs || []).length;
+  const rule = ((s && s.caveats && s.caveats.tickets) || {})[t.kind];
+  const head = `<div class="tkt-head"><b>${esc(kindName(t.kind))}</b><span class="mini">${esc(n)} legs</span>${resultChip(t.result)}</div>
+    ${rule ? `<div class="mini">${esc(rule)}</div>` : ""}`;
+  if (!t.built) return `<div class="tkt off" data-kind="${esc(t.kind)}">${head}<div class="mini"><b>Not built:</b> ${esc(t.reason)}</div></div>`;
+  const results = t.leg_results || {};
+  const stake = s && s.stake;
+  const est = t.est_payout != null && stake != null
+    ? `${esc(stakeWord(stake))} returns <b class="num">${money(stake * t.est_payout)}</b>${EST} <span class="mini">at ${num(t.est_payout)} decimal (${esc(odds(americanOf(t.est_payout)))}), the product of the legs' prices</span>`
+    : `<span class="mini">${t.est_payout != null ? `${num(t.est_payout)} decimal${EST}` : `no est. payout: ${esc(t.est_payout_reason)}`}</span>`;
+  const paid = t.result === "won" && t.payout != null && stake != null
+    ? `<div class="mini">Graded: returned ${money(stake * t.payout)}${EST} on the legs that stood</div>`
+    : t.result === "void" ? `<div class="mini">Graded: every leg voided, stake back</div>` : "";
+  return `<div class="tkt" data-kind="${esc(t.kind)}">${head}
+    <ul class="list legs">${t.legs.map((leg) => legItem(leg, results[leg.key])).join("")}</ul>
+    <div class="tkt-row"><span class="k">Chance</span><span><b class="num">${pct(t.chance, 1)}</b> <span class="mini">the product of the legs' chances</span>${kindRecord(t.kind, t.chance, s)}</span></div>
+    <div class="tkt-row"><span class="k">Payout</span><span>${est}${paid}</span></div>
+    ${t.version && s && s.version && t.version !== s.version ? `<div class="mini">Built by rule ${esc(t.version)}; this week's rule is ${esc(s.version)}.</div>` : ""}
+    ${stakeBox(g, t, s)}
+  </div>`;
+}
+
+// A game's tickets in reading order, or why it has none.
+function ticketsHtml(g, s) {
+  if (!g.tickets) return g.tickets_reason ? `<div class="mini">${esc(g.tickets_reason)}</div>` : "";
+  const order = sgpOrder(s && s.kinds);
+  const sorted = [...g.tickets].sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind));
+  return `<div class="tkts">${sorted.map((t) => ticketCard(g, t, s)).join("")}</div>`;
+}
+
+// The rule's own words: how each leg's chance and price are read, how the
+// slots are filled, what v1 leaves out.
+const LEG_SHOWN = ["WIN", "SPREAD", "TOTAL", "TD"];
+function sgpRules(s, shown = []) {
+  const c = (s && s.caveats) || {};
+  const legKinds = Object.keys(c.legs || {});
+  const legs = [...LEG_SHOWN.filter((k) => legKinds.includes(k)), ...legKinds.filter((k) => !LEG_SHOWN.includes(k))]
+    .map((k) => `<dt><b>${esc(k)}</b></dt><dd>${esc(c.legs[k])}</dd>`).join("");
+  const tickets = sgpOrder(s && s.kinds).filter((k) => (c.tickets || {})[k])
+    .map((k) => `<dt><b>${esc(kindName(k))}</b></dt><dd>${esc(c.tickets[k])}</dd>`).join("");
+  const body = ["slots", "chance", "est", "est_erratum", "prices", "exact", "rookie", "not_in_v1"].filter((k) => c[k] && !shown.includes(k))
+    .map((k) => c[k])
+    .map((x) => `<p style="margin:0">${esc(x)}</p>`).join("");
+  return fold(`How the tickets are built${s && s.version ? ` (rule ${s.version})` : ""}: the legs, the slots, the chance and the price.`,
+    `${tickets ? `<dl class="gloss">${tickets}</dl>` : ""}${legs ? `<dl class="gloss">${legs}</dl>` : ""}${body}`);
+}
+
+// The game's detail: its tickets, the no-edge line and the est. caveat
+// (with the correction found after the rule was fixed) beside them - and the
+// backtest's known bias, since each card quotes the backtest's hit rate for
+// its kind and the bias is said wherever a meter is.
+function sgpSection(g, d) {
+  const s = d && d.sgp;
+  const body = ticketsHtml(g, s);
+  if (!body || !g.tickets) return body;
+  const c = (s && s.caveats) || {};
+  return `${body}${c.edge ? `<div class="note">${esc(c.edge)}</div>` : ""}${c.bias ? `<div class="mini">${esc(c.bias)}</div>` : ""}${c.est ? `<div class="mini">${esc(c.est)}</div>` : ""}${c.est_erratum ? `<div class="mini">${esc(c.est_erratum)}</div>` : ""}${sgpRules(s, ["est", "est_erratum"])}`;
+}
+const sgpTitle = (g) => {
+  const t = g.tickets || [];
+  return t.length ? `Parlays · ${t.filter((x) => x.built).length} of ${t.length} built` : "Parlays";
+};
+
+// One kind's meter: won of built, the hit rate beside the product chance,
+// and the return at the stake per ticket - or each one's reason.
+function sgpMeter(m, estimated) {
+  if (!m) return `<div class="mini">—</div>`;
+  const extra = [m.lost ? `${tally(m.lost)} lost` : "", m.void ? `${tally(m.void)} void` : "",
+    m.pending ? `${tally(m.pending)} to grade` : ""].filter(Boolean).join(" · ");
+  const bar = m.hit_rate == null ? `<span class="bar none" aria-hidden="true"></span>`
+    : `<span class="bar" aria-hidden="true"><i style="width:${Math.round(m.hit_rate * 100)}%"></i>${
+      m.mean_chance != null ? `<s style="left:${Math.round(m.mean_chance * 100)}%"></s>` : ""}</span>`;
+  const hit = m.hit_rate != null
+    ? `hit <b>${pct(m.hit_rate, 1)}</b> <span class="mini">· product said ${pct(m.mean_chance, 1)}</span>`
+    : `<span class="mini">hit rate: ${esc(m.hit_rate_reason)}</span>`;
+  const roi = m.roi != null
+    ? `profit <b class="num">${signedMoney(m.profit)}</b> · ROI <b class="num">${signed(m.roi * 100, 1)}%</b>${estimated ? EST : ""}${
+      m.roi_note ? ` <span class="mini">· ${esc(m.roi_note)}</span>` : ""}`
+    : `<span class="mini">no return: ${esc(m.roi_reason)}</span>`;
+  const why = Object.entries(m.not_built_why || {}).map(([w, n]) => `${esc(w)} (${tally(n)})`).join("; ");
+  return `<div class="sgpm-v"><span><b class="num">${tally(m.won)}</b> won of <b class="num">${tally(m.tickets)}</b> built${extra ? ` <span class="mini">· ${extra}</span>` : ""}</span>
+    ${bar}<span>${hit}</span>
+    <span>${esc(stakeWord(m.stake))} a ticket: ${roi}</span>
+    ${m.not_built ? `<span class="mini">Not built ${tally(m.not_built)}: ${why}</span>` : ""}</div>`;
+}
+
+// Every period of the history for one kind, and its product chance against
+// how often it hit.
+function sgpPeriods(h, kind) {
+  const k = (h.kinds || {})[kind] || {};
+  const whole = (widestPeriod(h.periods) || [])[0];
+  const spans = Object.entries(h.periods || {}).sort((a, b) => (a[0] === whole) - (b[0] === whole) || a[1][0] - b[1][0] || a[1][1] - b[1][1]);
+  const rows = spans.map(([name, lohi]) => {
+    const m = (k.meters || {})[name];
+    if (!m) return "";
+    return `<tr><td class="nowrap">${esc(spanLabel(lohi))}</td><td class="n">${tally(m.tickets)}</td><td class="n">${tally(m.won)}</td>
+      <td class="n">${pct(m.hit_rate, 1)}</td><td class="n">${pct(m.mean_chance, 1)}</td><td class="n">${m.roi == null ? "—" : `${signed(m.roi * 100, 1)}%`}</td></tr>`;
+  }).join("");
+  const reasons = [...new Set(spans.map(([name]) => ((k.meters || {})[name] || {}).roi_reason).filter(Boolean))];
+  const bins = (k.chance_bins || []).map((b) => `<tr><td class="n">${edgePct(b.lo)}-${edgePct(b.hi)}</td><td class="n">${tally(b.tickets)}</td>
+    <td class="n">${pct(b.mean_chance, 1)}</td><td class="n">${pct(b.hit_rate, 1)}</td></tr>`).join("");
+  return `${rows ? `<div class="scroll"><table class="tight"><thead><tr><th>Seasons</th><th class="n">Built</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Said</th><th class="n">ROI</th></tr></thead><tbody>${rows}</tbody></table></div>` : ""}
+    ${reasons.length ? `<div class="mini">ROI: ${reasons.map(esc).join("; ")}.</div>` : ""}
+    ${bins ? `<div class="eyebrow" style="margin-top:4px">Product chance against hits, ${esc(spanLabel((widestPeriod(h.periods) || [])[1]))}</div>
+      <div class="scroll"><table class="tight"><thead><tr><th class="n">Product</th><th class="n">Tickets</th><th class="n">Said</th><th class="n">Hit</th></tr></thead><tbody>${bins}</tbody></table></div>` : ""}`;
+}
+
+// The four meters: each kind on its own, the history replay and this season live.
+function sgpMeters(d) {
+  const s = d.sgp;
+  if (!s) return `<div class="card"><h2>How each kind has done</h2>
+    <div class="note">This week's file was written before the same-game tickets existed, so it has none; the next run adds them.</div></div>`;
+  const h = s.history || {}, live = s.live || {}, c = s.caveats || {};
+  const span = h.available ? widestPeriod(h.periods) : null;
+  const left = Object.entries(h.left_out || {}).map(([w, n]) => `${esc(w)} (${tally(n)})`).join("; ");
+  const histHead = h.available
+    ? `<div class="mini">History: the backtest replay of ${tally((h.games || {})[span ? span[0] : ""])} games, ${esc(spanLabel(span && span[1]))}, through the games of ${esc(dateOnly(h.through))} · replayed ${esc(DESK.ago(h.generated))}${left ? ` · left out: ${left}` : ""}.</div>`
+    : `<div class="note">No history yet: ${esc(h.reason)}.</div>`;
+  const liveHead = `<div class="mini">Live: ${tally(live.games)} games' tickets logged before kickoff${live.first_kickoff ? ` since ${esc(localStamp(live.first_kickoff))}` : ""}, ${tally(live.graded_games)} graded.</div>`;
+  const panels = sgpOrder(s.kinds).map((kind) => {
+    const hm = h.available && span ? (((h.kinds || {})[kind] || {}).meters || {})[span[0]] : null;
+    const lm = (live.kinds || {})[kind];
+    return `<div class="panel sgpm" data-kind="${esc(kind)}"><div class="eyebrow">${esc(kindName(kind))} · ${esc((s.legs || {})[kind] ?? "—")} legs</div>
+      <div class="sgpm-l">History, ${esc(h.available ? spanLabel(span && span[1]) : "none yet")}</div>
+      ${h.available ? sgpMeter(hm, false) : `<div class="mini">${esc(h.reason)}</div>`}
+      <div class="sgpm-l">Live${live.first_kickoff ? ` since ${esc(dateOnly(live.first_kickoff))}` : ""}</div>
+      ${sgpMeter(lm, true)}
+      ${h.available ? DESK.sub("Every period", sgpPeriods(h, kind)) : ""}
+    </div>`;
+  }).join("");
+  const inputs = Object.entries(h.inputs || {}).map(([k, v]) => `<dt><b>${esc(k)}</b></dt><dd>${esc(v)}</dd>`).join("");
+  const g = h.td_groups || {};
+  const groups = g.note ? `${g.note}${g.tickets != null ? ` - here ${tally(g.changed)} of ${tally(g.tickets)} built tickets${(g.shipped || []).length ? `; groups given a chance: ${g.shipped.join(", ")}` : ""}` : ""}.` : "";
+  const more = [c.live, c.roi_priced, c.est_erratum, groups].filter(Boolean).map((x) => `<p style="margin:0">${esc(x)}</p>`).join("")
+    + (inputs ? `<dl class="gloss">${inputs}</dl>` : "");
+  return `<div class="card" id="sgp-meters"><h2>How each kind has done</h2>
+    ${histHead}${liveHead}
+    <div class="two">${panels}</div>
+    ${c.bias ? `<div class="note warnbox">${esc(c.bias)}</div>` : ""}
+    ${fold(c.meters || "", more)}
+  </div>`;
+}
+// sgp:end
+
 function gameRow(g, d) {
   const p = g.home_prob;
   const bar = p == null
@@ -858,6 +1180,7 @@ function gameRow(g, d) {
         ${tdLegend(d.caveats)}`)}
       ${DESK.sub("Projected yards", (g.away_leaders || g.home_leaders) && `<div class="two">${leadersList(g.away, g.away_leaders)}${leadersList(g.home, g.home_leaders)}</div>
         <div class="mini">${esc((d.caveats && d.caveats.props) || "")}</div>`)}
+      ${DESK.sub(esc(sgpTitle(g)), sgpSection(g, d))}
       ${DESK.sub("Last 5 games", forms && `<div class="two">${forms}</div>`)}
       ${DESK.closer(`${g.away} at ${g.home}`)}
     </div>
@@ -960,7 +1283,7 @@ const BOOT = {
     const cards = games.map((g) => {
       const ph = phase(g);
       const tm = g.td_meters || {};
-      const score = ph === "upcoming" ? "" : ` · <span class="num">${esc(g.away_score ?? "")}-${esc(g.home_score ?? "")}</span>`;
+      const score = ph === "upcoming" || !g.score ? "" : ` · <span class="num">${esc(g.score.away)}-${esc(g.score.home)}</span>`;
       return `<div class="card tdgame" data-status="${esc(ph)}">
         <div class="match-top"><span class="when">${esc(kickTime(g.kickoff))}</span>${STATUS_WORD[ph] ? `<span class="badge ${ph === "final" ? "" : "live"}">${esc(STATUS_WORD[ph])}</span>` : ""}</div>
         <h2 style="margin:4px 0 8px">${teamChip(g.away)} <span class="mini">at</span> ${teamChip(g.home)}${score}</h2>
@@ -987,6 +1310,49 @@ const BOOT = {
     el.querySelectorAll("[data-tdf]").forEach((b) => b.addEventListener("click", () => show(b.getAttribute("data-tdf"))));
     const go = el.querySelector("[data-goto-record]");
     if (go) go.addEventListener("click", () => document.getElementById("tab-record").click());
+  },
+
+  // Every game's four same-game tickets, the kinds' meters on top: the
+  // history replay and this season live, each with its reason when a
+  // number is missing.
+  async parlays() {
+    const el = $("view-parlays");
+    el.innerHTML = DESK.skeleton(3);
+    let d;
+    try { d = WEEK || await load("week"); } catch (e) { return fail(el, e, "the week", () => BOOT.parlays()); }
+    const s = d.sgp;
+    const c = (s && s.caveats) || {};
+    const games = (d.games || []).filter((g) => g.tickets || g.tickets_reason);
+    const upcoming = games.filter((g) => phase(g) === "upcoming").length;
+    const cards = games.map((g) => {
+      const ph = phase(g);
+      const score = ph === "upcoming" || !g.score ? "" : ` · <span class="num">${esc(g.score.away)}-${esc(g.score.home)}</span>`;
+      return `<div class="card sgpgame" data-status="${esc(ph)}">
+        <div class="match-top"><span class="when">${esc(kickTime(g.kickoff))}</span>${STATUS_WORD[ph] ? `<span class="badge ${ph === "final" ? "" : "live"}">${esc(STATUS_WORD[ph])}</span>` : ""}</div>
+        <h2 style="margin:4px 0 2px">${teamChip(g.away)} <span class="mini">at</span> ${teamChip(g.home)}${score}</h2>
+        ${ticketsHtml(g, s)}
+      </div>`;
+    }).join("");
+    const filter = games.length ? `<div class="seg" role="group" aria-label="Show games">${[["upcoming", "Still to play", upcoming], ["all", "All", games.length]]
+      .map(([k, label, n]) => `<button type="button" data-sgpf="${k}" aria-pressed="${k === (upcoming ? "upcoming" : "all")}">${label} <span class="num">${n}</span></button>`).join("")}</div>` : "";
+    const kinds = s ? sgpOrder(s.kinds) : [];
+    el.innerHTML = `
+      <div class="hero"><div class="eyebrow">${esc(d.season)} season · ${esc(d.label)}</div><h1>Parlays</h1>
+        <p class="lede">${kinds.length ? `${esc(kinds.length)} same-game tickets a game - ${esc(kinds.map(kindName).join(", "))} - ` : "Same-game tickets "}built before kickoff from the engine's own chances, every leg from that one game, and how each kind has done.</p></div>
+      ${c.edge ? `<div class="note warnbox">${esc(c.edge)}</div>` : ""}
+      ${sgpMeters(d)}
+      ${filter}
+      ${cards || `<div class="empty">${s ? "No tickets this week yet." : "No tickets in this week's file."}</div>`}
+      ${c.est ? `<div class="mini">${esc(c.est)}</div>` : ""}
+      ${c.est_erratum ? `<div class="mini">${esc(c.est_erratum)}</div>` : ""}
+      ${c.exact ? `<div class="mini">${esc(c.exact)}</div>` : ""}
+      ${s ? sgpRules(s, ["est", "exact"]) : ""}`;
+    const show = (k) => {
+      el.querySelectorAll("[data-sgpf]").forEach((b) => b.setAttribute("aria-pressed", String(b.getAttribute("data-sgpf") === k)));
+      el.querySelectorAll(".sgpgame").forEach((x) => { x.hidden = k === "upcoming" && x.getAttribute("data-status") !== "upcoming"; });
+    };
+    show(upcoming ? "upcoming" : "all");
+    el.querySelectorAll("[data-sgpf]").forEach((b) => b.addEventListener("click", () => show(b.getAttribute("data-sgpf"))));
   },
 
   async teams() {
@@ -1462,6 +1828,18 @@ const METHOD_HTML = `
         then graded; a player who did not play is left out, since both were "if he plays". The
         most-valuable list describes this season so far.</li>
     </ul></div>
+  <div class="card"><h2>Same-game tickets</h2>
+    <ul class="plain">
+      <li><b>The tickets</b> - every game still to come gets same-game parlays, every leg from that one game,
+        built by a rule fixed before any ticket was built or measured: each slot takes the likeliest leg the rule
+        allows. The Parlays tab shows the rule in its own words and how each kind has done.</li>
+      <li><b>The chance</b> - the product of the legs' chances: what the ticket would hit if its legs were
+        independent. Legs in one game are not, so the history measures how often each kind actually landed.</li>
+      <li><b>The price</b> - every price shown is the books' consensus single price, marked est.; Stake's bet
+        builder prices legs that go together below it, can price legs that pull against each other above it, and
+        has its own single prices, so the est. payout is an estimate, not a bound. Type the odds Stake quotes into a
+        ticket's box for the exact payout. What you type stays on your phone and is never sent anywhere.</li>
+    </ul></div>
   <div class="card"><h2>Every number is point-in-time</h2>
     <ul class="plain">
       <li>Each game's features are read before kickoff and the games are replayed in kickoff order, so no
@@ -1493,5 +1871,5 @@ DESK.init({
   stamp: () => (WEEK && WEEK.generated ? `Picks updated ${DESK.ago(WEEK.generated)}` : "Fetch the latest picks"),
   onReload: () => location.reload(),
 });
-DESK.tabs(["week", "td", "teams", "record", "method"], BOOT, "yournfl.tab", "week");
+DESK.tabs(["week", "td", "parlays", "teams", "record", "method"], BOOT, "yournfl.tab", "week");
 setInterval(stamp, 60000);

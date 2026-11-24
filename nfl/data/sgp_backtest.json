@@ -1,0 +1,617 @@
+{
+ "current_season": 2026,
+ "games": {
+  "2014-2019": 1602,
+  "2020-2025": 1693,
+  "2026": 151,
+  "all": 3446
+ },
+ "generated": "2026-11-24T13:13:38Z",
+ "history_from": 2014,
+ "inputs": {
+  "SPREAD": "closing spread_line and its prices, games.csv.gz, proportional no-vig",
+  "TD": "nfl_td walk-forward prob (season S fitted on seasons before S), shipped usage groups only; graded on box-score rushing + receiving TDs",
+  "TOTAL": "closing total_line and its prices, games.csv.gz, proportional no-vig",
+  "WIN": "nfl_model walk-forward blend_prob (season S fitted on seasons before S)",
+  "rookie": "no player_games row in an earlier season"
+ },
+ "kinds": {
+  "large": {
+   "chance_bins": [
+    {
+     "hi": 0.025,
+     "hit_rate": 0.038961,
+     "lo": 0.0,
+     "mean_chance": 0.020972,
+     "mean_chance_graded": 0.021791,
+     "tickets": 770
+    },
+    {
+     "hi": 0.05,
+     "hit_rate": 0.033548,
+     "lo": 0.025,
+     "mean_chance": 0.035411,
+     "mean_chance_graded": 0.03653,
+     "tickets": 2325
+    },
+    {
+     "hi": 0.1,
+     "hit_rate": 0.077143,
+     "lo": 0.05,
+     "mean_chance": 0.057966,
+     "mean_chance_graded": 0.059892,
+     "tickets": 350
+    }
+   ],
+   "meters": {
+    "2014-2019": {
+     "graded": 1601,
+     "hit_rate": 0.036227,
+     "hit_rate_reason": null,
+     "lost": 1543,
+     "mean_chance": 0.034023,
+     "mean_chance_graded": 0.035275,
+     "not_built": 1,
+     "not_built_why": {
+      "no TOTAL leg available": 1
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1601,
+     "void": 0,
+     "won": 58
+    },
+    "2020-2025": {
+     "graded": 1693,
+     "hit_rate": 0.041347,
+     "hit_rate_reason": null,
+     "lost": 1623,
+     "mean_chance": 0.035049,
+     "mean_chance_graded": 0.036066,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1693,
+     "void": 0,
+     "won": 70
+    },
+    "2026": {
+     "graded": 151,
+     "hit_rate": 0.046358,
+     "hit_rate_reason": null,
+     "lost": 144,
+     "mean_chance": 0.032836,
+     "mean_chance_graded": 0.034025,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 151,
+     "void": 0,
+     "won": 7
+    },
+    "all": {
+     "graded": 3445,
+     "hit_rate": 0.039187,
+     "hit_rate_reason": null,
+     "lost": 3310,
+     "mean_chance": 0.034475,
+     "mean_chance_graded": 0.035609,
+     "not_built": 1,
+     "not_built_why": {
+      "no TOTAL leg available": 1
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 3445,
+     "void": 0,
+     "won": 135
+    }
+   }
+  },
+  "medium": {
+   "chance_bins": [
+    {
+     "hi": 0.1,
+     "hit_rate": 0.084806,
+     "lo": 0.05,
+     "mean_chance": 0.090883,
+     "mean_chance_graded": 0.092808,
+     "tickets": 283
+    },
+    {
+     "hi": 0.15,
+     "hit_rate": 0.125,
+     "lo": 0.1,
+     "mean_chance": 0.125267,
+     "mean_chance_graded": 0.126931,
+     "tickets": 1592
+    },
+    {
+     "hi": 0.2,
+     "hit_rate": 0.185,
+     "lo": 0.15,
+     "mean_chance": 0.170923,
+     "mean_chance_graded": 0.172953,
+     "tickets": 1000
+    },
+    {
+     "hi": 0.25,
+     "hit_rate": 0.263285,
+     "lo": 0.2,
+     "mean_chance": 0.21985,
+     "mean_chance_graded": 0.222015,
+     "tickets": 414
+    },
+    {
+     "hi": 0.3,
+     "hit_rate": 0.260163,
+     "lo": 0.25,
+     "mean_chance": 0.270886,
+     "mean_chance_graded": 0.270886,
+     "tickets": 123
+    },
+    {
+     "hi": 0.4,
+     "hit_rate": 0.235294,
+     "lo": 0.3,
+     "mean_chance": 0.326914,
+     "mean_chance_graded": 0.326914,
+     "tickets": 34
+    }
+   ],
+   "meters": {
+    "2014-2019": {
+     "graded": 1602,
+     "hit_rate": 0.155431,
+     "hit_rate_reason": null,
+     "lost": 1353,
+     "mean_chance": 0.151666,
+     "mean_chance_graded": 0.153452,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1602,
+     "void": 0,
+     "won": 249
+    },
+    "2020-2025": {
+     "graded": 1693,
+     "hit_rate": 0.165978,
+     "hit_rate_reason": null,
+     "lost": 1412,
+     "mean_chance": 0.155955,
+     "mean_chance_graded": 0.157841,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1693,
+     "void": 0,
+     "won": 281
+    },
+    "2026": {
+     "graded": 151,
+     "hit_rate": 0.178808,
+     "hit_rate_reason": null,
+     "lost": 124,
+     "mean_chance": 0.16238,
+     "mean_chance_graded": 0.162817,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 151,
+     "void": 0,
+     "won": 27
+    },
+    "all": {
+     "graded": 3446,
+     "hit_rate": 0.161637,
+     "hit_rate_reason": null,
+     "lost": 2889,
+     "mean_chance": 0.154243,
+     "mean_chance_graded": 0.156018,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 3446,
+     "void": 0,
+     "won": 557
+    }
+   }
+  },
+  "rookie": {
+   "chance_bins": [
+    {
+     "hi": 0.025,
+     "hit_rate": 0.0,
+     "lo": 0.0,
+     "mean_chance": 0.021531,
+     "mean_chance_graded": 0.021531,
+     "tickets": 5
+    },
+    {
+     "hi": 0.05,
+     "hit_rate": 0.074074,
+     "lo": 0.025,
+     "mean_chance": 0.040471,
+     "mean_chance_graded": 0.040471,
+     "tickets": 27
+    },
+    {
+     "hi": 0.1,
+     "hit_rate": 0.096916,
+     "lo": 0.05,
+     "mean_chance": 0.07959,
+     "mean_chance_graded": 0.080523,
+     "tickets": 227
+    },
+    {
+     "hi": 0.15,
+     "hit_rate": 0.156425,
+     "lo": 0.1,
+     "mean_chance": 0.124124,
+     "mean_chance_graded": 0.124124,
+     "tickets": 358
+    },
+    {
+     "hi": 0.2,
+     "hit_rate": 0.215976,
+     "lo": 0.15,
+     "mean_chance": 0.174425,
+     "mean_chance_graded": 0.17477,
+     "tickets": 338
+    },
+    {
+     "hi": 0.25,
+     "hit_rate": 0.24498,
+     "lo": 0.2,
+     "mean_chance": 0.221968,
+     "mean_chance_graded": 0.222247,
+     "tickets": 249
+    },
+    {
+     "hi": 0.3,
+     "hit_rate": 0.330645,
+     "lo": 0.25,
+     "mean_chance": 0.269909,
+     "mean_chance_graded": 0.269909,
+     "tickets": 124
+    },
+    {
+     "hi": 0.4,
+     "hit_rate": 0.34375,
+     "lo": 0.3,
+     "mean_chance": 0.337005,
+     "mean_chance_graded": 0.337005,
+     "tickets": 64
+    },
+    {
+     "hi": 1.0,
+     "hit_rate": 0.666667,
+     "lo": 0.4,
+     "mean_chance": 0.457314,
+     "mean_chance_graded": 0.457314,
+     "tickets": 3
+    }
+   ],
+   "meters": {
+    "2014-2019": {
+     "graded": 663,
+     "hit_rate": 0.20362,
+     "hit_rate_reason": null,
+     "lost": 528,
+     "mean_chance": 0.168286,
+     "mean_chance_graded": 0.168605,
+     "not_built": 939,
+     "not_built_why": {
+      "no rookie TD leg with a chance of 25% or more available": 853,
+      "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 86
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 663,
+     "void": 0,
+     "won": 135
+    },
+    "2020-2025": {
+     "graded": 700,
+     "hit_rate": 0.198571,
+     "hit_rate_reason": null,
+     "lost": 561,
+     "mean_chance": 0.1688,
+     "mean_chance_graded": 0.169066,
+     "not_built": 993,
+     "not_built_why": {
+      "no rookie TD leg with a chance of 25% or more available": 917,
+      "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 76
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 700,
+     "void": 0,
+     "won": 139
+    },
+    "2026": {
+     "graded": 32,
+     "hit_rate": 0.15625,
+     "hit_rate_reason": null,
+     "lost": 27,
+     "mean_chance": 0.143899,
+     "mean_chance_graded": 0.143899,
+     "not_built": 119,
+     "not_built_why": {
+      "no rookie TD leg with a chance of 25% or more available": 118,
+      "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 1
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 32,
+     "void": 0,
+     "won": 5
+    },
+    "all": {
+     "graded": 1395,
+     "hit_rate": 0.2,
+     "hit_rate_reason": null,
+     "lost": 1116,
+     "mean_chance": 0.167984,
+     "mean_chance_graded": 0.16827,
+     "not_built": 2051,
+     "not_built_why": {
+      "no rookie TD leg with a chance of 25% or more available": 1888,
+      "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 163
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1395,
+     "void": 0,
+     "won": 279
+    }
+   }
+  },
+  "small": {
+   "chance_bins": [
+    {
+     "hi": 0.15,
+     "hit_rate": 0.0,
+     "lo": 0.1,
+     "mean_chance": 0.142733,
+     "mean_chance_graded": 0.142733,
+     "tickets": 8
+    },
+    {
+     "hi": 0.2,
+     "hit_rate": 0.172043,
+     "lo": 0.15,
+     "mean_chance": 0.185202,
+     "mean_chance_graded": 0.185202,
+     "tickets": 186
+    },
+    {
+     "hi": 0.25,
+     "hit_rate": 0.230294,
+     "lo": 0.2,
+     "mean_chance": 0.227807,
+     "mean_chance_graded": 0.228438,
+     "tickets": 647
+    },
+    {
+     "hi": 0.3,
+     "hit_rate": 0.282113,
+     "lo": 0.25,
+     "mean_chance": 0.274198,
+     "mean_chance_graded": 0.274882,
+     "tickets": 833
+    },
+    {
+     "hi": 0.4,
+     "hit_rate": 0.362369,
+     "lo": 0.3,
+     "mean_chance": 0.343207,
+     "mean_chance_graded": 0.343671,
+     "tickets": 1148
+    },
+    {
+     "hi": 1.0,
+     "hit_rate": 0.498397,
+     "lo": 0.4,
+     "mean_chance": 0.467197,
+     "mean_chance_graded": 0.467997,
+     "tickets": 624
+    }
+   ],
+   "meters": {
+    "2014-2019": {
+     "graded": 1602,
+     "hit_rate": 0.3196,
+     "hit_rate_reason": null,
+     "lost": 1090,
+     "mean_chance": 0.313834,
+     "mean_chance_graded": 0.31451,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1602,
+     "void": 0,
+     "won": 512
+    },
+    "2020-2025": {
+     "graded": 1693,
+     "hit_rate": 0.339634,
+     "hit_rate_reason": null,
+     "lost": 1118,
+     "mean_chance": 0.321967,
+     "mean_chance_graded": 0.322437,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1693,
+     "void": 0,
+     "won": 575
+    },
+    "2026": {
+     "graded": 151,
+     "hit_rate": 0.370861,
+     "hit_rate_reason": null,
+     "lost": 95,
+     "mean_chance": 0.324954,
+     "mean_chance_graded": 0.325822,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 151,
+     "void": 0,
+     "won": 56
+    },
+    "all": {
+     "graded": 3446,
+     "hit_rate": 0.331689,
+     "hit_rate_reason": null,
+     "lost": 2303,
+     "mean_chance": 0.318317,
+     "mean_chance_graded": 0.3189,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 3446,
+     "void": 0,
+     "won": 1143
+    }
+   }
+  }
+ },
+ "known_bias": "In the backtest a TD candidate is a player who took a snap, so the replay knows who was active. Live, a pick who does not play is voided and the ticket is graded on its other legs.",
+ "left_out": {
+  "not played yet": 115,
+  "snap counts or box score not on file": 6
+ },
+ "no_edge": "Nothing here claims an edge. The market is hard to beat, and parlays multiply the margin of every leg; these tickets are the legs the engine rates most likely to land, not bets it rates profitable.",
+ "payout_basis": "est. - the product of the legs' consensus single prices; Stake's bet builder prices correlated legs below it, so it is an upper bound on what Stake pays",
+ "periods": {
+  "2014-2019": [
+   2014,
+   2019
+  ],
+  "2020-2025": [
+   2020,
+   2025
+  ],
+  "2026": [
+   2026,
+   2026
+  ],
+  "all": [
+   2014,
+   2026
+  ]
+ },
+ "roi_reason": "no anytime-TD price history on file",
+ "rule": "nfl/engine/nfl_sgp.py",
+ "schema": 1,
+ "stake": 10.0,
+ "td_groups": {
+  "changed": 0,
+  "note": "the usage groups given a chance were chosen on 2014-2025 walk-forward calibration (nfl_td.shipped_groups); `changed` is how many built tickets would differ with every group's chance in",
+  "shipped": [
+   "1-3",
+   "3+"
+  ],
+  "tickets": 11732
+ },
+ "td_prices": {
+  "file": "nfl/data/td_price_history.csv.gz",
+  "on_file": false,
+  "rows": 0
+ },
+ "through": "2026-11-20T01:15:00Z",
+ "version": "sgp-v1"
+}
