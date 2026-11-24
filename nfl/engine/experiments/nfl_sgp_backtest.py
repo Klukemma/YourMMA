@@ -136,11 +136,13 @@ def game_outcome(game, candidates):
 
 # ---------------------------------------------------------------- the replay
 
-def replay(games, blend, td_rows, prices=None, start=sgp.HISTORY_FROM):
-    """Every graded ticket of every game from `start` that is final with its
-    box score on file, plus the count of games left out and why."""
+def replayable(games, blend, td_rows, prices=None, start=sgp.HISTORY_FROM):
+    """Every game from `start` that is final with its box score on file, as
+    (schedule row, its legs, its outcome, its meta), plus the count of games
+    left out and why - what replay() builds and grades, and what the v2
+    history (nfl_sgp2_backtest.py) builds its own tickets from."""
     by_game = {gid: rows for gid, rows in td_rows.groupby("game_id", sort=False)}
-    tickets, left_out = [], {}
+    out, left_out = [], {}
     for g in games[games["season"] >= start].itertuples(index=False):
         candidates = by_game.get(g.game_id)
         if not g.played:
@@ -152,12 +154,19 @@ def replay(games, blend, td_rows, prices=None, start=sgp.HISTORY_FROM):
         if why:
             left_out[why] = left_out.get(why, 0) + 1
             continue
-        legs = game_legs(g, blend.get(g.game_id), candidates, prices)
-        result = game_outcome(g, candidates)
         meta = {"game_id": g.game_id, "season": int(g.season), "week": int(g.week),
                 "game_type": g.game_type, "home": g.home, "away": g.away}
-        for t in sgp.build_tickets(legs):
-            tickets.append(dict(sgp.grade_ticket(t, result), **meta))
+        out.append((g, game_legs(g, blend.get(g.game_id), candidates, prices),
+                    game_outcome(g, candidates), meta))
+    return out, left_out
+
+
+def replay(games, blend, td_rows, prices=None, start=sgp.HISTORY_FROM):
+    """Every graded ticket of every game from `start` that is final with its
+    box score on file, plus the count of games left out and why."""
+    on_file, left_out = replayable(games, blend, td_rows, prices, start)
+    tickets = [dict(sgp.grade_ticket(t, result), **meta)
+               for _, legs, result, meta in on_file for t in sgp.build_tickets(legs)]
     return tickets, left_out
 
 
@@ -226,7 +235,21 @@ def ticket_rows(tickets):
 
 # ---------------------------------------------------------------- run
 
-def run(out_dir=nd.DATA, tickets_out=TICKETS_OUT, price_path=TD_PRICES):
+# What each leg's history reads, as the payload says it.
+INPUTS = {"WIN": "nfl_model walk-forward blend_prob (season S fitted on seasons before S)",
+          "SPREAD": "closing spread_line and its prices, games.csv.gz, proportional no-vig",
+          "TOTAL": "closing total_line and its prices, games.csv.gz, proportional no-vig",
+          "TD": "nfl_td walk-forward prob (season S fitted on seasons before S), shipped usage "
+                "groups only; graded on box-score rushing + receiving TDs",
+          "rookie": "no player_games row in an earlier season"}
+
+
+def inputs(price_path=TD_PRICES):
+    """Everything the replay reads, each point in time (the module's
+    docstring): the schedule, player_games, the walk-forward blend, the TD
+    frame and its walk-forward chances, the usage groups that ship, the TD
+    candidates of every game and any TD price history. The v2 history
+    (nfl_sgp2_backtest.py) reads the same."""
     t0 = time.time()
     games, player_games = nd.load_games(), nd.load_player_games()
     frame = nm.feature_frame(games)
@@ -238,6 +261,22 @@ def run(out_dir=nd.DATA, tickets_out=TICKETS_OUT, price_path=TD_PRICES):
     prices = td_prices(price_path)
     print(f"inputs in {time.time() - t0:.0f}s; TD groups shipped: {', '.join(ships)}; "
           f"TD prices on file: {'yes' if prices is not None else 'no'}")
+    return dict(games=games, player_games=player_games, blend=blend, td_frame=td_frame, preds=preds,
+                ships=ships, td_rows=td_rows, prices=prices)
+
+
+def groups_note():
+    """Why `td_groups` is reported: the one input chosen with hindsight."""
+    return (f"the usage groups given a chance were chosen on {nt.DEV[0]}-{nt.CONFIRM[1]} walk-forward "
+            "calibration (nfl_td.shipped_groups); `changed` is how many built tickets would differ with "
+            "every group's chance in")
+
+
+def run(out_dir=nd.DATA, tickets_out=TICKETS_OUT, price_path=TD_PRICES):
+    t0 = time.time()
+    data = inputs(price_path)
+    games, player_games, blend, prices = data["games"], data["player_games"], data["blend"], data["prices"]
+    td_frame, preds, ships, td_rows = data["td_frame"], data["preds"], data["ships"], data["td_rows"]
 
     tickets, left_out = replay(games, blend, td_rows, prices)
     current = int(games["season"].max())
@@ -253,33 +292,26 @@ def run(out_dir=nd.DATA, tickets_out=TICKETS_OUT, price_path=TD_PRICES):
         payout_basis=sgp.EST_PAYOUT,
         td_prices={"file": str(TD_PRICES.relative_to(nd.NFL.parent)), "on_file": prices is not None,
                    "rows": 0 if prices is None else len(prices)},
-        td_groups=dict(changed_by_groups(tickets, every_group), shipped=ships,
-                       note=f"the usage groups given a chance were chosen on {nt.DEV[0]}-{nt.CONFIRM[1]} "
-                            "walk-forward calibration (nfl_td.shipped_groups); `changed` is how many built "
-                            "tickets would differ with every group's chance in"),
-        inputs={"WIN": "nfl_model walk-forward blend_prob (season S fitted on seasons before S)",
-                "SPREAD": "closing spread_line and its prices, games.csv.gz, proportional no-vig",
-                "TOTAL": "closing total_line and its prices, games.csv.gz, proportional no-vig",
-                "TD": "nfl_td walk-forward prob (season S fitted on seasons before S), shipped usage "
-                      "groups only; graded on box-score rushing + receiving TDs",
-                "rookie": "no player_games row in an earlier season"})
+        td_groups=dict(changed_by_groups(tickets, every_group), shipped=ships, note=groups_note()),
+        inputs=dict(INPUTS))
     path = ne.write(OUT_NAME, payload, out_dir=out_dir)
     ticket_rows(tickets).to_csv(tickets_out, index=False, compression="gzip")
     print(f"wrote {path} and {tickets_out} in {time.time() - t0:.0f}s")
     return payload
 
 
-def stale(path=None, games=None, player_games=None, snaps=None):
+def stale(path=None, games=None, player_games=None, snaps=None, version=sgp.VERSION):
     """Why the history on file needs replaying, or None when it is current:
-    no file, another version of the rule, or a game final after its
-    `through` that the snapshot holds the box score and snap counts of (a
-    game without them would replay to the same file)."""
+    no file, another version of the rule (`version`: the v2 history passes
+    its own), or a game final after its `through` that the snapshot holds
+    the box score and snap counts of (a game without them would replay to
+    the same file)."""
     path = Path(path) if path is not None else nd.DATA / f"{OUT_NAME}.json"
     if not path.exists():
         return "no history on file"
     payload = json.loads(path.read_text())
-    if payload.get("version") != sgp.VERSION:
-        return f"the history on file is {payload.get('version')}, the rule is {sgp.VERSION}"
+    if payload.get("version") != version:
+        return f"the history on file is {payload.get('version')}, the rule is {version}"
     games = nd.load_games() if games is None else games
     player_games = nd.load_player_games() if player_games is None else player_games
     snaps = nd.load_snaps() if snaps is None else snaps

@@ -62,6 +62,8 @@ and lowers the payout; the market prices both. These are the legs the
 engine rates most likely to land, not bets it rates profitable.
 """
 
+import nfl_sgp as sgp          # v1's legs, slots, grading, meters and constants
+
 VERSION = "sgp-v2"
 CONFIDENT_GRID = (0.60, 0.65, 0.70, 0.75)
 TD_FLOOR_GRID = (0.35, 0.40, 0.45, 0.50)
@@ -73,3 +75,216 @@ CONFIRM = (2020, 2025)
 # date they were chosen; until then v2 builds no live tickets.
 CONFIDENT = None
 TD_FLOOR = None
+CHOSEN_ON = None
+
+KINDS = sgp.KINDS              # v1's build order and ticket shapes, unchanged
+LEGS = sgp.LEGS
+
+# The objective in the words the payload shows beside the chosen pair.
+OBJECTIVE = (f"the highest SMALL hit rate (won / (won + lost)) among the pairs that build a SMALL "
+             f"ticket in at least {COVERAGE_MIN:.0%} of {DEV[0]}-{DEV[1]}'s games; ties to the larger "
+             "coverage, then the lower CONFIDENT, then the lower TD_FLOOR")
+NO_EDGE = ("Nothing here claims an edge. Narrowing to likely legs raises the hit rate and lowers the "
+           "payout; the market prices both. These are the legs the engine rates most likely to land, "
+           "not bets it rates profitable.")
+
+# ---------------------------------------------------------------- why no ticket
+#
+# v1's reasons where v2 keeps v1's words (a TOTAL, the rookie's WIN); v2's
+# own where the docstring narrows a slot, each with the bar it used - the
+# grid's pairs are replayed side by side, so a reason names its own floor.
+
+NOT_CHOSEN = ("v2's two numbers (CONFIDENT, TD_FLOOR) are not chosen yet "
+              "(experiments/nfl_sgp2_backtest.py --choose)")
+NO_PICK = "not a confident game: no chance on file for the pick"
+NO_RESULT = "no result leg on the pick's side (its WIN or SPREAD) available"
+NO_TOTAL = sgp.NO_TOTAL
+NO_ROOKIE = (f"no rookie TD leg on the pick's team with a chance of {sgp.ROOKIE_FLOOR:.0%} or more "
+             "available")
+ROOKIE_IS_SMALL = (f"the only rookie TD leg on the pick's team at {sgp.ROOKIE_FLOOR:.0%} or more, with "
+                   "the pick's WIN, is SMALL's ticket")
+NO_ROOKIE_WIN = sgp.NO_ROOKIE_WIN
+
+
+def not_confident(confident):
+    """The one reason a game below the bar shows for all four tickets."""
+    return f"not a confident game: the pick's chance is below {confident:.0%}"
+
+
+def no_td(td_floor):
+    return f"no TD leg with a chance of {td_floor:.0%} or more available"
+
+
+def no_second_td(td_floor):
+    return f"no TD leg with a chance of {td_floor:.0%} or more on a second player available"
+
+
+def no_third(td_floor):
+    return f"no TOTAL leg or TD leg with a chance of {td_floor:.0%} or more on another player available"
+
+
+# ---------------------------------------------------------------- the game
+
+def pick_of(home, away, p_home):
+    """(the pick's team, the pick's blend chance) - nfl_predict's pick: the
+    home side when P(home) is 0.5 or more, else the away side at 1 - it.
+    (None, None) without a chance."""
+    p = sgp._chance(p_home)
+    if p is None:
+        return None, None
+    return (home, p) if p >= 0.5 else (away, 1.0 - p)
+
+
+def eligible(p_pick, confident=CONFIDENT):
+    """GAMES: a confident game - the pick's blend chance is `confident` or
+    more. A missing chance, or a bar not chosen yet, is not confident."""
+    p, bar = sgp._chance(p_pick), sgp._number(confident)
+    return p is not None and bar is not None and p >= bar
+
+
+def _floor_td(td_floor):
+    """TD: a TD leg the model rates very likely - TD_FLOOR or more."""
+    return lambda leg: sgp._is_td(leg) and leg["chance"] >= td_floor
+
+
+def _rookie_td(pick_team):
+    """The rookie leg: v1's ROOKIE_FLOOR, on the pick's team only."""
+    return lambda leg: (sgp._is_td(leg) and bool(leg.get("rookie")) and leg.get("team") == pick_team
+                        and leg["chance"] >= sgp.ROOKIE_FLOOR)
+
+
+def pool(legs, pick_team, td_floor=TD_FLOOR):
+    """The legs v2 may use, of a game's legs (nfl_sgp.game_legs), highest
+    chance first: the pick's WIN and SPREAD (RESULT - never the other
+    team's), every TOTAL (v1's), TD legs at `td_floor` or more, and rookie
+    TD legs at nfl_sgp.ROOKIE_FLOOR or more on the pick's team - which only
+    the ROOKIE ticket may take when they are under `td_floor`."""
+    floor, rookie = _floor_td(td_floor), _rookie_td(pick_team)
+    keep = []
+    for leg in legs:
+        if sgp._is_result(leg):
+            ok = leg["team"] == pick_team
+        elif sgp._is_total(leg):
+            ok = True
+        else:
+            ok = floor(leg) or rookie(leg)
+        if ok:
+            keep.append(leg)
+    return sgp._ranked(keep)
+
+
+def _gate(pick_team, p_pick, confident, td_floor):
+    """Why the game gets no tickets at all, or None when it gets them."""
+    if confident is None or td_floor is None:
+        return NOT_CHOSEN
+    if pick_team is None or sgp._chance(p_pick) is None:
+        return NO_PICK
+    return None if eligible(p_pick, confident) else not_confident(confident)
+
+
+# ---------------------------------------------------------------- the tickets
+
+def _small_td(pool_, floor, pick_team):
+    """SMALL's TD: the best on the pick's team clearing the floor, else the
+    game's best that does."""
+    return pool_.best(lambda leg: floor(leg) and leg["team"] == pick_team) or pool_.best(floor)
+
+
+def _small(pool_, small, floor, pick_team, td_floor):
+    return sgp._slots((_small_td(pool_, floor, pick_team), no_td(td_floor)),
+                      (pool_.best(sgp._is_result), NO_RESULT))
+
+
+def _rookie(pool_, small, floor, pick_team, td_floor):
+    """v1's ROOKIE on the pick's team: the best rookie there at ROOKIE_FLOOR
+    or more with the pick's WIN; the next one when that pair is SMALL's."""
+    small_keys = None if small is None else {leg["key"] for leg in small}
+    held = False
+    for td in pool_.all(_rookie_td(pick_team)):
+        win = pool_.find(f"WIN:{td['team']}")
+        if win is not None and {td["key"], win["key"]} == small_keys:
+            held = True
+            continue
+        if win is None or not pool_.available(win):
+            return None, NO_ROOKIE_WIN
+        return [td, win], None
+    return None, ROOKIE_IS_SMALL if held else NO_ROOKIE
+
+
+def _medium(pool_, small, floor, pick_team, td_floor):
+    td = pool_.best(floor)
+    return sgp._slots((td, no_td(td_floor)), (pool_.best(sgp._is_result), NO_RESULT),
+                      (lambda: pool_.best(lambda leg: sgp._is_total(leg) or (
+                          floor(leg) and leg["gsis_id"] != td["gsis_id"])), no_third(td_floor)))
+
+
+def _large(pool_, small, floor, pick_team, td_floor):
+    td = pool_.best(floor)
+    return sgp._slots((td, no_td(td_floor)),
+                      (lambda: pool_.best(lambda leg: floor(leg) and leg["gsis_id"] != td["gsis_id"]),
+                       no_second_td(td_floor)),
+                      (pool_.best(sgp._is_result), NO_RESULT), (pool_.best(sgp._is_total), NO_TOTAL))
+
+
+_FILL = {"small": _small, "rookie": _rookie, "medium": _medium, "large": _large}
+
+
+def build_tickets(legs, pick_team, p_pick, confident=CONFIDENT, td_floor=TD_FLOOR):
+    """The game's four v2 tickets, in v1's KINDS order: a game whose pick's
+    chance is under `confident` (or has none) gets four unbuilt tickets with
+    one reason; a confident one builds from pool() as v1 builds - each slot
+    the highest-chance leg still available (in fewer than nfl_sgp.USE_CAP of
+    the tickets built so far; ties by key), SMALL's TD from the pick's team
+    first, ROOKIE moved off a ticket identical to SMALL's, and a ticket with
+    an empty slot unbuilt with why. Tickets are nfl_sgp's (_ticket: legs,
+    product chance, est_payout), so nfl_sgp grades and meters them."""
+    why = _gate(pick_team, p_pick, confident, td_floor)
+    if why is not None:
+        return [sgp._unbuilt(kind, why) for kind in KINDS]
+    pool_, floor, small, out = sgp._Pool(pool(legs, pick_team, td_floor)), _floor_td(td_floor), None, []
+    for kind in KINDS:
+        chosen, reason = _FILL[kind](pool_, small, floor, pick_team, td_floor)
+        if chosen is None:
+            out.append(sgp._unbuilt(kind, reason))
+            continue
+        assert len(chosen) == LEGS[kind], (kind, chosen)
+        pool_.take(chosen)
+        if kind == "small":
+            small = chosen
+        out.append(sgp._ticket(kind, chosen))
+    return out
+
+
+def game_best_small(legs, pick_team, p_pick, confident=CONFIDENT, td_floor=TD_FLOOR):
+    """REPORTED BESIDE V2 (report-only): SMALL with the game's best TD at
+    `td_floor` or more, whichever team, instead of the pick's team's first -
+    the same game gate, the same result leg. It never builds a live ticket."""
+    why = _gate(pick_team, p_pick, confident, td_floor)
+    if why is not None:
+        return sgp._unbuilt("small", why)
+    pool_ = sgp._Pool(pool(legs, pick_team, td_floor))
+    chosen, reason = sgp._slots((pool_.best(_floor_td(td_floor)), no_td(td_floor)),
+                                (pool_.best(sgp._is_result), NO_RESULT))
+    return sgp._unbuilt("small", reason) if chosen is None else sgp._ticket("small", chosen)
+
+
+# ---------------------------------------------------------------- the rule's words
+
+def rules(confident=CONFIDENT, td_floor=TD_FLOOR):
+    """The docstring's narrowing in the words the app can show beside v2's
+    tickets, each number from the constants (None until they are chosen)."""
+    if confident is None or td_floor is None:
+        return None
+    return {
+        "games": (f"only a confident game gets tickets: the pick's chance is {confident:.0%} or more; "
+                  "every other game shows no tickets, and why"),
+        "result": "result legs only on the pick's side: the pick's WIN and the pick's SPREAD",
+        "td": (f"only players the model rates very likely: a TD chance of {td_floor:.0%} or more (the "
+               f"rookie leg keeps v1's {sgp.ROOKIE_FLOOR:.0%} and must be on the pick's team)"),
+        "small": (f"the pick's best TD scorer: the best TD leg on the pick's team at {td_floor:.0%} or "
+                  "more, else the game's best that clears it, + the best result leg on the pick's side"),
+        "total": ("unchanged from v1 (the market's no-vig side): MEDIUM's third slot competes with the "
+                  "TD legs, LARGE's fourth slot is a total"),
+        "chosen": (f"{confident:.0%} and {td_floor:.0%} were chosen on {DEV[0]}-{DEV[1]} only, by "
+                   f"{OBJECTIVE}; measured untouched on {CONFIRM[0]}-{CONFIRM[1]} and the current season"),
+    }
