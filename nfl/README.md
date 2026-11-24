@@ -146,6 +146,17 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
   (decimal, or American with its sign) and the amount: the app shows the exact payout and
   profit from them, and the fair odds at the product chance, with the note that the chance
   assumes independent legs. What is typed stays in the phone's own storage and is never sent.
+- **v2** (`nfl/engine/nfl_sgp2.py`, sgp-v2, pre-registered while v1 stays as it is and is
+  measured beside it): tickets only in confident games, result legs only on the pick's side,
+  and touchdown legs only for players the model rates very likely, SMALL taking the pick's own
+  best scorer first. Its two numbers - how confident a game must be, and the touchdown chance a
+  player needs - were chosen once from the rule's pre-registered grids on its DEV seasons alone
+  (`experiments/nfl_sgp2_backtest.py --choose`, which writes them into the rule with the date
+  and the figures that chose them) and are measured untouched on the seasons after. Its
+  history (`nfl/data/sgp2_backtest.json`) is refreshed by the runner as v1's is, never
+  re-chosen, and reports beside v2 the whole grid, v1 on the same games and SMALL with the
+  game's best scorer instead. As in v1 it has no past touchdown prices, so its return is
+  missing with that reason, and it carries v1's known bias.
 - Nothing here is called a bet or an edge: the market is hard to beat, and a parlay
   multiplies the margin of every leg.
 
@@ -182,6 +193,10 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
     nfl/engine/nfl_sgp.py         same-game tickets: the pre-registered rule (sgp-v1), grading, meters
     nfl/engine/experiments/nfl_sgp_backtest.py
                                   the tickets' history -> nfl/data/sgp_backtest.json
+    nfl/engine/nfl_sgp2.py        same-game tickets v2: confident games, the pick's side, likely
+                                  scorers (sgp-v2; its two numbers chosen on its DEV seasons only)
+    nfl/engine/experiments/nfl_sgp2_backtest.py
+                                  v2's history and its choice -> nfl/data/sgp2_backtest.json
     nfl/engine/nfl_predict.py     the weekly run: picks, tickets, log, grading, app data
     nfl/engine/nfl_export.py      app payloads and caveats
     nfl/engine/nfl_standalone.py  the offline single-file app
