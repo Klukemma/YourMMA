@@ -1,5 +1,5 @@
 {
- "as_of": "2026-11-24T02:22:14Z",
+ "as_of": "2026-11-24T13:24:31Z",
  "byes": [],
  "caveats": {
   "injuries": "Injury report from the league's official practice reports via nflverse: shown, not applied. The model reads only who starts at quarterback.",
@@ -15,7 +15,7 @@
   "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
   "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
  },
- "data_through": "2026-11-22",
+ "data_through": "2026-11-23",
  "game_type": "REG",
  "games": [
   {
@@ -1261,9 +1261,25 @@
    "market_total": 45.0,
    "model_prob": 0.661385,
    "model_spread": 5.164034,
-   "model_total": 49.018273,
+   "model_total": 49.030069,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.profootballrumors.com/2026/11/sean-mcvay-rams-have-talked-about-adding-wr-depth",
+     "players": [
+      "Davante Adams",
+      "Puka Nacua"
+     ],
+     "published": "2026-11-24T02:50:47Z",
+     "source": "Pro Football Rumors",
+     "summary": "With Puka Nacua done for the season and Davante Adams operating without a definitive return timeline, the Rams\u2019 pass-catching corps could certainly use some ...",
+     "teams": [
+      "LA"
+     ],
+     "title": "Sean McVay: Rams Have \u201cTalked About\u201d Adding WR Depth"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -1374,19 +1390,6 @@
       "LA"
      ],
      "title": "Micah Parsons is cleared to play vs. the Rams"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/micah-parsons-cleared-to-play-wednesday-night",
-     "players": [
-      "Micah Parsons"
-     ],
-     "published": "2026-11-23T22:51:52Z",
-     "source": "ProFootballTalk",
-     "summary": "Parsons is set to make his first game appearance since last year's torn ACL.",
-     "teams": [],
-     "title": "Micah Parsons cleared to play Wednesday night"
     }
    ],
    "pick": "LA",
@@ -1426,10 +1429,206 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.269649,
+     "est": true,
+     "est_payout": 3.208459,
+     "est_payout_reason": null,
+     "kind": "small",
+     "legs": [
+      {
+       "american": -100.0,
+       "best_american": 115.0,
+       "best_book": "FanDuel",
+       "books": 5,
+       "chance": 0.449951,
+       "decimal": 2.0,
+       "est": true,
+       "gsis_id": "00-0037840",
+       "key": "TD:00-0037840",
+       "kind": "TD",
+       "label": "Kyren Williams anytime TD",
+       "name": "Kyren Williams",
+       "position": "RB",
+       "price_as_of": "2026-11-24T13:24:39Z",
+       "price_match": "exact",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "rookie": false,
+       "team": "LA"
+      },
+      {
+       "american": -165.5,
+       "chance": 0.599285,
+       "decimal": 1.60423,
+       "est": true,
+       "key": "WIN:LA",
+       "kind": "WIN",
+       "label": "LA to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "LA"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "no rookie TD leg with a chance of 25% or more available",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.134825,
+     "est": true,
+     "est_payout": 6.12524,
+     "est_payout_reason": null,
+     "kind": "medium",
+     "legs": [
+      {
+       "american": -100.0,
+       "best_american": 115.0,
+       "best_book": "FanDuel",
+       "books": 5,
+       "chance": 0.449951,
+       "decimal": 2.0,
+       "est": true,
+       "gsis_id": "00-0037840",
+       "key": "TD:00-0037840",
+       "kind": "TD",
+       "label": "Kyren Williams anytime TD",
+       "name": "Kyren Williams",
+       "position": "RB",
+       "price_as_of": "2026-11-24T13:24:39Z",
+       "price_match": "exact",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "rookie": false,
+       "team": "LA"
+      },
+      {
+       "american": -165.5,
+       "chance": 0.599285,
+       "decimal": 1.60423,
+       "est": true,
+       "key": "WIN:LA",
+       "kind": "WIN",
+       "label": "LA to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "LA"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 45",
+       "line": 45.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.033436,
+     "est": true,
+     "est_payout": 21.430413,
+     "est_payout_reason": null,
+     "kind": "large",
+     "legs": [
+      {
+       "american": 110.0,
+       "best_american": 135.0,
+       "best_book": "DraftKings",
+       "books": 5,
+       "chance": 0.375378,
+       "decimal": 2.1,
+       "est": true,
+       "gsis_id": "00-0039738",
+       "key": "TD:00-0039738",
+       "kind": "TD",
+       "label": "Blake Corum anytime TD",
+       "name": "Blake Corum",
+       "position": "RB",
+       "price_as_of": "2026-11-24T13:24:39Z",
+       "price_match": "exact",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "rookie": false,
+       "team": "LA"
+      },
+      {
+       "american": 180.0,
+       "best_american": 195.0,
+       "best_book": "DraftKings",
+       "books": 5,
+       "chance": 0.356291,
+       "decimal": 2.8,
+       "est": true,
+       "gsis_id": "00-0040667",
+       "key": "TD:00-0040667",
+       "kind": "TD",
+       "label": "Matthew Golden anytime TD",
+       "name": "Matthew Golden",
+       "position": "WR",
+       "price_as_of": "2026-11-24T13:24:39Z",
+       "price_match": "exact",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "rookie": false,
+       "team": "GB"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:GB",
+       "kind": "SPREAD",
+       "label": "GB +3",
+       "line": 3.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "GB"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 45",
+       "line": 45.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 4.018273,
+    "edge": 4.030069,
     "line": 45.0,
     "side": "OVER"
    },
@@ -2660,9 +2859,22 @@
    "market_total": 55.5,
    "model_prob": 0.595863,
    "model_spread": 2.537522,
-   "model_total": 50.651481,
+   "model_total": 50.663277,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-12-predictions-colston-loveland-thanksgiving/",
+     "players": [
+      "Colston Loveland"
+     ],
+     "published": "2026-11-24T12:42:05Z",
+     "source": "CBS Sports",
+     "summary": "Our five bold calls for Week 12 include a career day for Quinshon Judkins and mounting pressure on the Seahawks to play Drew Lock",
+     "teams": [],
+     "title": "It wouldn't shock me if ... for NFL Week 12: Colston Loveland feasts on Thanksgiving, Browns RB shines"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -2682,13 +2894,13 @@
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/theo-benedet-kyler-gordon-listed-as-out-of-bears-practice",
+     "link": "https://sports.yahoo.com/articles/theo-benedet-kyler-gordon-listed-015606243.html",
      "players": [
       "Kyler Gordon",
       "Theo Benedet"
      ],
      "published": "2026-11-24T01:56:06Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "The Bears listed three players as out of practice on their first injury report ahead of Thursday afternoon's game in Detroit.",
      "teams": [
       "CHI"
@@ -2768,21 +2980,6 @@
       "DET"
      ],
      "title": "Lions stretch lead to 10 with 57-yard touchdown from Jameson Williams"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T21:19:30Z",
-     "link": "https://sports.yahoo.com/articles/watch-bears-te-colston-loveland-193817816.html",
-     "players": [
-      "Colston Loveland"
-     ],
-     "published": "2026-11-22T19:38:17Z",
-     "source": "Yahoo Sports",
-     "summary": "Chicago Bears tight end Colston Loveland makes highlight-worthy play by leapfrogging an opponent for a touchdown catch.",
-     "teams": [
-      "CHI"
-     ],
-     "title": "Watch Bears TE Colston Loveland hurdle defender on way to end zone"
     }
    ],
    "pick": "CHI",
@@ -2822,10 +3019,206 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.456791,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Jahmyr Gibbs anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.775491,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0039139",
+       "key": "TD:00-0039139",
+       "kind": "TD",
+       "label": "Jahmyr Gibbs anytime TD",
+       "name": "Jahmyr Gibbs",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "DET"
+      },
+      {
+       "american": -148.0,
+       "chance": 0.589035,
+       "decimal": 1.675676,
+       "est": true,
+       "key": "WIN:CHI",
+       "kind": "WIN",
+       "label": "CHI to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "CHI"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "no rookie TD leg with a chance of 25% or more available",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.228396,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Jahmyr Gibbs anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.775491,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0039139",
+       "key": "TD:00-0039139",
+       "kind": "TD",
+       "label": "Jahmyr Gibbs anytime TD",
+       "name": "Jahmyr Gibbs",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "DET"
+      },
+      {
+       "american": -148.0,
+       "chance": 0.589035,
+       "decimal": 1.675676,
+       "est": true,
+       "key": "WIN:CHI",
+       "kind": "WIN",
+       "label": "CHI to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "CHI"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 55.5",
+       "line": 55.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.048559,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for D'Andre Swift anytime TD, Amon-Ra St. Brown anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.473276,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036275",
+       "key": "TD:00-0036275",
+       "kind": "TD",
+       "label": "D'Andre Swift anytime TD",
+       "name": "D'Andre Swift",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CHI"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.396257,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036963",
+       "key": "TD:00-0036963",
+       "kind": "TD",
+       "label": "Amon-Ra St. Brown anytime TD",
+       "name": "Amon-Ra St. Brown",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "DET"
+      },
+      {
+       "american": -116.0,
+       "chance": 0.517857,
+       "decimal": 1.862069,
+       "est": true,
+       "key": "SPREAD:CHI",
+       "kind": "SPREAD",
+       "label": "CHI -2.5",
+       "line": -2.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "CHI"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 55.5",
+       "line": 55.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 4.848519,
+    "edge": 4.836723,
     "line": 55.5,
     "side": "UNDER"
    },
@@ -4120,127 +4513,131 @@
    "market_total": 47.5,
    "model_prob": 0.719658,
    "model_spread": 6.41591,
-   "model_total": 50.413136,
+   "model_total": 50.424933,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://sports.yahoo.com/articles/cowboys-injuries-dak-prescott-hand-230513565.html",
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/eagles-injury-report-zack-baun-123614956.html",
      "players": [
-      "Dak Prescott"
+      "Dontayvion Wicks",
+      "Zack Baun"
      ],
-     "published": "2026-11-23T23:05:13Z",
+     "published": "2026-11-24T07:00:00Z",
      "source": "Yahoo Sports",
-     "summary": "Here is Monday\u2019s injury report for the Dallas Cowboys.",
-     "teams": [
-      "DAL"
-     ],
-     "title": "Cowboys injuries: Dak Prescott (hand) full participant Monday"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://sports.yahoo.com/articles/limited-practice-dallas-goedert-223251496.html",
-     "players": [
-      "Dallas Goedert"
-     ],
-     "published": "2026-11-23T22:32:51Z",
-     "source": "Yahoo Sports",
-     "summary": "Eagles TE Dallas Goedert dealing with shin injury and is listed as limited on estimated report",
+     "summary": "Here's the latest Eagles injury report on Friday as the Eagles get ready to host the Steelers on Sunday.",
      "teams": [
       "PHI"
      ],
-     "title": "Limited practice for Dallas Goedert"
+     "title": "Eagles injury report: Zack Baun, Dontayvion Wicks ruled out vs. Steelers"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/saquon-barkley-among-eagles-listed-as-limited-on-monday",
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/eagles-notebook-nolan-smith-reacts-070000193.html",
+     "players": [
+      "Nolan Smith"
+     ],
+     "published": "2026-11-24T07:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "In the latest Eagles notebook: Nolan Smith reacts to the Jordan Davis trade, we go through nicknames and Sean Mannion gets a vote of confidence.",
+     "teams": [
+      "PHI"
+     ],
+     "title": "Eagles notebook: Nolan Smith reacts to the Jordan Davis trade"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/saquon-barkley-healthier-bye-hoping-070000520.html",
      "players": [
       "Saquon Barkley"
      ],
-     "published": "2026-11-23T22:09:10Z",
-     "source": "ProFootballTalk",
-     "summary": "After defeating the Steelers on Sunday for their third victory of the season, the Eagles have several players on their first injury report of a short week as they'll play the Cowboys on Thanksgiving.",
+     "published": "2026-11-24T07:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "Eagles running back Saquon Barkley isn't 100% after the bye week but he is feeling better for the second half of the season.",
+     "teams": [
+      "PHI"
+     ],
+     "title": "Saquon Barkley healthier after bye, hoping to salvage his season"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/eagles-snap-counts-eli-stowers-070000388.html",
+     "players": [
+      "Eli Stowers"
+     ],
+     "published": "2026-11-24T07:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "Here's a look at how the Eagles divvied up snaps for five tight ends against the Steelers",
+     "teams": [
+      "PHI"
+     ],
+     "title": "Eagles snap counts: Eli Stowers doesn't play on offense vs. Steelers"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/eagles-place-zack-baun-dontayvion-111708760.html",
+     "players": [
+      "Dontayvion Wicks",
+      "Zack Baun"
+     ],
+     "published": "2026-11-24T07:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "The Eagles continue to deal with injury setbacks.",
+     "teams": [
+      "PHI"
+     ],
+     "title": "Eagles place Zack Baun, Dontayvion Wicks on IR in roster flurry"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/eagles-injury-quinyon-mitchell-dnp-170757654.html",
+     "players": [
+      "Quinyon Mitchell"
+     ],
+     "published": "2026-11-24T07:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "The Eagles released their first injury report of a short week before playing the Cowboys on Thanksgiving.",
      "teams": [
       "DAL",
       "PHI"
      ],
-     "title": "Saquon Barkley among Eagles listed as limited on Monday"
+     "title": "Eagles injury update: Quinyon Mitchell a DNP to start Thanksgiving week"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.cbssports.com/nfl/news/steelers-dk-metcalf-denies-poke-eagles-cooper-dejean-eye/",
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/nfl-not-suspending-dk-metcalf-161404906.html",
      "players": [
       "Cooper DeJean"
      ],
-     "published": "2026-11-23T18:31:52Z",
-     "source": "CBS Sports",
-     "summary": "Metcalf was ejected from the game and will likely face further discipline from the NFL",
+     "published": "2026-11-24T07:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "The NFL is reportedly not suspending DK Metcalf for trying to poke Cooper DeJean in the eye.",
      "teams": [
       "PHI"
      ],
-     "title": "Steelers' DK Metcalf denies trying to poke Eagles' Cooper DeJean in the eye"
+     "title": "NFL not suspending DK Metcalf for his actions vs. Eagles on Sunday"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.profootballrumors.com/2026/11/eagles-rb-saquon-barkley-not-fully-healthy-intends-to-continue-playing",
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/please-welcome-braden-mann-wonderful-070000226.html",
      "players": [
-      "Saquon Barkley"
+      "Braden Mann"
      ],
-     "published": "2026-11-23T17:48:24Z",
-     "source": "Pro Football Rumors",
-     "summary": "Saquon Barkley is not currently at full strength. That will remain the case through the closing weeks of the season, but he has no plans ...",
+     "published": "2026-11-24T07:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "The defining stats after the Eagles' third win of the season.",
      "teams": [
       "PHI"
      ],
-     "title": "Eagles RB Saquon Barkley Not Fully Healthy, Intends To Continue Playing"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.cbssports.com/nfl/news/why-steelers-regretting-dk-metcalf-150-million-contract-trading-george-pickens/",
-     "players": [
-      "George Pickens"
-     ],
-     "published": "2026-11-23T16:39:02Z",
-     "source": "CBS Sports",
-     "summary": "The Steelers wanted a more dependable receiver. Instead, Metcalf has delivered disappointing production and familiar distractions.",
-     "teams": [],
-     "title": "Steelers gave DK Metcalf $150 million, traded George Pickens. Now they're paying for both decisions"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.rotowire.com//football/player/jake-ferguson-15947",
-     "players": [
-      "Jake Ferguson"
-     ],
-     "published": "2026-11-23T03:02:00Z",
-     "source": "RotoWire",
-     "summary": "Ferguson (knee/ankle) was listed as a non-participant on Monday's practice estimate, Tommy Yarrish of the Cowboys' official site reports. Visit RotoWire.com for more analysis on this update.",
-     "teams": [
-      "DAL"
-     ],
-     "title": "Jake Ferguson: Estimated as 'DNP' Monday"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T21:19:30Z",
-     "link": "https://www.cbssports.com/nfl/news/eagles-jalen-hurts-update-super-bowl-mvp-qb-team-facility-good-spirits/",
-     "players": [
-      "Jalen Hurts"
-     ],
-     "published": "2026-11-22T21:09:22Z",
-     "source": "CBS Sports",
-     "summary": "Hurts has stayed close with his teammates and coaches despite being sidelined with blood clots",
-     "teams": [
-      "PHI"
-     ],
-     "title": "Eagles' Jalen Hurts update: Super Bowl MVP QB has been in team facility, 'in good spirits'"
+     "title": "Please welcome Braden Mann to the wonderful world of Roob's Eagles Stats"
     }
    ],
    "pick": "DAL",
@@ -4280,10 +4677,214 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.428749,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Javonte Williams anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.5623,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036997",
+       "key": "TD:00-0036997",
+       "kind": "TD",
+       "label": "Javonte Williams anytime TD",
+       "name": "Javonte Williams",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "DAL"
+      },
+      {
+       "american": -455.0,
+       "chance": 0.762492,
+       "decimal": 1.21978,
+       "est": true,
+       "key": "WIN:DAL",
+       "kind": "WIN",
+       "label": "DAL to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "DAL"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "no rookie TD leg with a chance of 25% or more available",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.217232,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Javonte Williams anytime TD, CeeDee Lamb anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.5623,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036997",
+       "key": "TD:00-0036997",
+       "kind": "TD",
+       "label": "Javonte Williams anytime TD",
+       "name": "Javonte Williams",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "DAL"
+      },
+      {
+       "american": -455.0,
+       "chance": 0.762492,
+       "decimal": 1.21978,
+       "est": true,
+       "key": "WIN:DAL",
+       "kind": "WIN",
+       "label": "DAL to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "DAL"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.506666,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036358",
+       "key": "TD:00-0036358",
+       "kind": "TD",
+       "label": "CeeDee Lamb anytime TD",
+       "name": "CeeDee Lamb",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "DAL"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.055945,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for CeeDee Lamb anytime TD, George Pickens anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.506666,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036358",
+       "key": "TD:00-0036358",
+       "kind": "TD",
+       "label": "CeeDee Lamb anytime TD",
+       "name": "CeeDee Lamb",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "DAL"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.432304,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0037247",
+       "key": "TD:00-0037247",
+       "kind": "TD",
+       "label": "George Pickens anytime TD",
+       "name": "George Pickens",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "DAL"
+      },
+      {
+       "american": -115.0,
+       "chance": 0.510834,
+       "decimal": 1.869565,
+       "est": true,
+       "key": "SPREAD:DAL",
+       "kind": "SPREAD",
+       "label": "DAL -8",
+       "line": -8.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "DAL"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 47.5",
+       "line": 47.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 2.913136,
+    "edge": 2.924933,
     "line": 47.5,
     "side": "OVER"
    },
@@ -5596,9 +6197,22 @@
    "market_total": 51.5,
    "model_prob": 0.688417,
    "model_spread": 5.511829,
-   "model_total": 47.927834,
+   "model_total": 47.939631,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-12-upset-picks-thanksgiving-games-chiefs-bills/",
+     "players": [
+      "Patrick Mahomes"
+     ],
+     "published": "2026-11-24T12:40:57Z",
+     "source": "CBS Sports",
+     "summary": "Patrick Mahomes is heating up, Detroit owns its Thanksgiving opponent and three other underdogs have compelling paths",
+     "teams": [],
+     "title": "NFL Week 12 upset alert: Don't count out Patrick Mahomes, Fernando Mendoza and these underdogs"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -5617,13 +6231,13 @@
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/bills-list-greg-rousseau-dalton-kincaid-as-limited-on-mondays-practice-report",
+     "link": "https://sports.yahoo.com/articles/bills-list-greg-rousseau-dalton-223321622.html",
      "players": [
       "Dalton Kincaid",
       "Greg Rousseau"
      ],
      "published": "2026-11-23T22:33:21Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "The Bills did not hold a practice on Monday, but they did issue an estimated injury report ahead of Thursday's game against the Chiefs.",
      "teams": [
       "BUF",
@@ -5703,19 +6317,6 @@
       "BUF"
      ],
      "title": "James Cook goes over 1,000 rushing yards, puts Bills up 20-3"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T21:19:30Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/travis-kelce-moves-past-rob-gronkowski-for-no-3-all-time-in-td-catches-by-a-tight-end",
-     "players": [
-      "Travis Kelce"
-     ],
-     "published": "2026-11-22T18:17:38Z",
-     "source": "ProFootballTalk",
-     "summary": "For the first time since Sept. 27, Travis Kelce has gotten back into the end zone.",
-     "teams": [],
-     "title": "Travis Kelce moves past Rob Gronkowski for No. 3 all-time in TD catches by a tight end"
     }
    ],
    "pick": "BUF",
@@ -5755,10 +6356,248 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.370822,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for James Cook anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.619097,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0037248",
+       "key": "TD:00-0037248",
+       "kind": "TD",
+       "label": "James Cook anytime TD",
+       "name": "James Cook",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "BUF"
+      },
+      {
+       "american": -159.0,
+       "chance": 0.598973,
+       "decimal": 1.628931,
+       "est": true,
+       "key": "WIN:BUF",
+       "kind": "WIN",
+       "label": "BUF to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "BUF"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.178608,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Emmett Johnson anytime TD",
+     "kind": "rookie",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.445378,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0041013",
+       "key": "TD:00-0041013",
+       "kind": "TD",
+       "label": "Emmett Johnson anytime TD",
+       "name": "Emmett Johnson",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": true,
+       "team": "KC"
+      },
+      {
+       "american": 134.0,
+       "chance": 0.401027,
+       "decimal": 2.34,
+       "est": true,
+       "key": "WIN:KC",
+       "kind": "WIN",
+       "label": "KC to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "KC"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.213416,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for James Cook anytime TD, Kenneth Walker III anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.619097,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0037248",
+       "key": "TD:00-0037248",
+       "kind": "TD",
+       "label": "James Cook anytime TD",
+       "name": "James Cook",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "BUF"
+      },
+      {
+       "american": -159.0,
+       "chance": 0.598973,
+       "decimal": 1.628931,
+       "est": true,
+       "key": "WIN:BUF",
+       "kind": "WIN",
+       "label": "BUF to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "BUF"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.575521,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038134",
+       "key": "TD:00-0038134",
+       "kind": "TD",
+       "label": "Kenneth Walker III anytime TD",
+       "name": "Kenneth Walker III",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "KC"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.065684,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Kenneth Walker III anytime TD, Emmett Johnson anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.575521,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038134",
+       "key": "TD:00-0038134",
+       "kind": "TD",
+       "label": "Kenneth Walker III anytime TD",
+       "name": "Kenneth Walker III",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "KC"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.445378,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0041013",
+       "key": "TD:00-0041013",
+       "kind": "TD",
+       "label": "Emmett Johnson anytime TD",
+       "name": "Emmett Johnson",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": true,
+       "team": "KC"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.50164,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:KC",
+       "kind": "SPREAD",
+       "label": "KC +3",
+       "line": 3.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "KC"
+      },
+      {
+       "american": -115.0,
+       "chance": 0.510834,
+       "decimal": 1.869565,
+       "est": true,
+       "key": "TOTAL:UNDER",
+       "kind": "TOTAL",
+       "label": "Under 51.5",
+       "line": 51.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "UNDER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 3.572166,
+    "edge": 3.560369,
     "line": 51.5,
     "side": "UNDER"
    },
@@ -7158,18 +7997,31 @@
    "market_total": 40.5,
    "model_prob": 0.437213,
    "model_spread": -3.819073,
-   "model_total": 42.931662,
+   "model_total": 42.943459,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/nfl-not-suspending-dk-metcalf-161404906.html",
+     "players": [
+      "DK Metcalf"
+     ],
+     "published": "2026-11-24T07:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "The NFL is reportedly not suspending DK Metcalf for trying to poke Cooper DeJean in the eye.",
+     "teams": [],
+     "title": "NFL not suspending DK Metcalf for his actions vs. Eagles on Sunday"
+    },
+    {
+     "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mike-mccarthy-aaron-rodgers-is-our-quarterback",
+     "link": "https://sports.yahoo.com/articles/mike-mccarthy-aaron-rodgers-quarterback-013441691.html",
      "players": [
       "Aaron Rodgers"
      ],
      "published": "2026-11-24T01:34:41Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "Before an NFL team benches its starting quarterback, someone asks the coach whether the quarterback could be benched.",
      "teams": [],
      "title": "Mike McCarthy: Aaron Rodgers is our quarterback"
@@ -7263,19 +8115,6 @@
       "PIT"
      ],
      "title": "Steelers gave DK Metcalf $150 million, traded George Pickens. Now they're paying for both decisions"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.cbssports.com/nfl/news/cover-32-afc-contender-risk-missing-playoffs-entirely-plus-game-balls-gaffes-week-11/",
-     "players": [
-      "DK Metcalf"
-     ],
-     "published": "2026-11-23T13:49:38Z",
-     "source": "CBS Sports",
-     "summary": "Tyler Sullivan dives into all of the biggest items from Week 11 in the NFL, including DK Metcalf's ejection and Brock Purdy's stellar day against the Vikings defense",
-     "teams": [],
-     "title": "Cover 32: AFC contender is at risk of missing playoffs entirely, plus game balls, biggest gaffes from Week 11"
     }
    ],
    "pick": "DEN",
@@ -7315,10 +8154,206 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.318421,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Jonah Coleman anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.539071,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0041496",
+       "key": "TD:00-0041496",
+       "kind": "TD",
+       "label": "Jonah Coleman anytime TD",
+       "name": "Jonah Coleman",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": true,
+       "team": "DEN"
+      },
+      {
+       "american": -130.0,
+       "chance": 0.590684,
+       "decimal": 1.769231,
+       "est": true,
+       "key": "WIN:DEN",
+       "kind": "WIN",
+       "label": "DEN to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "DEN"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.15921,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Jonah Coleman anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.539071,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0041496",
+       "key": "TD:00-0041496",
+       "kind": "TD",
+       "label": "Jonah Coleman anytime TD",
+       "name": "Jonah Coleman",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": true,
+       "team": "DEN"
+      },
+      {
+       "american": -130.0,
+       "chance": 0.590684,
+       "decimal": 1.769231,
+       "est": true,
+       "key": "WIN:DEN",
+       "kind": "WIN",
+       "label": "DEN to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "DEN"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 40.5",
+       "line": 40.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.018447,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Jaylen Warren anytime TD, D.K. Metcalf anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.340812,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0037228",
+       "key": "TD:00-0037228",
+       "kind": "TD",
+       "label": "Jaylen Warren anytime TD",
+       "name": "Jaylen Warren",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "PIT"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.216505,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0035640",
+       "key": "TD:00-0035640",
+       "kind": "TD",
+       "label": "D.K. Metcalf anytime TD",
+       "name": "D.K. Metcalf",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "PIT"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:DEN",
+       "kind": "SPREAD",
+       "label": "DEN -2.5",
+       "line": -2.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "DEN"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 40.5",
+       "line": 40.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 2.431662,
+    "edge": 2.443459,
     "line": 40.5,
     "side": "OVER"
    },
@@ -8654,7 +9689,7 @@
    "market_total": 42.5,
    "model_prob": 0.714709,
    "model_spread": 6.852423,
-   "model_total": 43.984955,
+   "model_total": 43.996752,
    "neutral": false,
    "news": [
     {
@@ -8809,10 +9844,206 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.316484,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Bijan Robinson anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.433364,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038542",
+       "key": "TD:00-0038542",
+       "kind": "TD",
+       "label": "Bijan Robinson anytime TD",
+       "name": "Bijan Robinson",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "ATL"
+      },
+      {
+       "american": -332.0,
+       "chance": 0.730297,
+       "decimal": 1.301205,
+       "est": true,
+       "key": "WIN:MIN",
+       "kind": "WIN",
+       "label": "MIN to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "MIN"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "no rookie TD leg with a chance of 25% or more available",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.158414,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Bijan Robinson anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.433364,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038542",
+       "key": "TD:00-0038542",
+       "kind": "TD",
+       "label": "Bijan Robinson anytime TD",
+       "name": "Bijan Robinson",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "ATL"
+      },
+      {
+       "american": -332.0,
+       "chance": 0.730297,
+       "decimal": 1.301205,
+       "est": true,
+       "key": "WIN:MIN",
+       "kind": "WIN",
+       "label": "MIN to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "MIN"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.500543,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 42.5",
+       "line": 42.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.030309,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Justin Jefferson anytime TD, Aaron Jones anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.349841,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036322",
+       "key": "TD:00-0036322",
+       "kind": "TD",
+       "label": "Justin Jefferson anytime TD",
+       "name": "Justin Jefferson",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "MIN"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.344279,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0033293",
+       "key": "TD:00-0033293",
+       "kind": "TD",
+       "label": "Aaron Jones anytime TD",
+       "name": "Aaron Jones",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "MIN"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.502753,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:ATL",
+       "kind": "SPREAD",
+       "label": "ATL +7",
+       "line": 7.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "ATL"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.500543,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 42.5",
+       "line": 42.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 1.484955,
+    "edge": 1.496752,
     "line": 42.5,
     "side": "OVER"
    },
@@ -10157,7 +11388,7 @@
    "market_total": 44.5,
    "model_prob": 0.732706,
    "model_spread": 8.008211,
-   "model_total": 48.040804,
+   "model_total": 48.0526,
    "neutral": false,
    "news": [
     {
@@ -10317,10 +11548,206 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.28457,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Derrick Henry anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.397391,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0032764",
+       "key": "TD:00-0032764",
+       "kind": "TD",
+       "label": "Derrick Henry anytime TD",
+       "name": "Derrick Henry",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "BAL"
+      },
+      {
+       "american": -305.0,
+       "chance": 0.716097,
+       "decimal": 1.327869,
+       "est": true,
+       "key": "WIN:HOU",
+       "kind": "WIN",
+       "label": "HOU to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "HOU"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "no rookie TD leg with a chance of 25% or more available",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.143826,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Derrick Henry anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.397391,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0032764",
+       "key": "TD:00-0032764",
+       "kind": "TD",
+       "label": "Derrick Henry anytime TD",
+       "name": "Derrick Henry",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "BAL"
+      },
+      {
+       "american": -305.0,
+       "chance": 0.716097,
+       "decimal": 1.327869,
+       "est": true,
+       "key": "WIN:HOU",
+       "kind": "WIN",
+       "label": "HOU to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "HOU"
+      },
+      {
+       "american": -112.5,
+       "chance": 0.505413,
+       "decimal": 1.888889,
+       "est": true,
+       "key": "TOTAL:UNDER",
+       "kind": "TOTAL",
+       "label": "Under 44.5",
+       "line": 44.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "UNDER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.03337,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Nico Collins anytime TD, Woody Marks anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.36974,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036554",
+       "key": "TD:00-0036554",
+       "kind": "TD",
+       "label": "Nico Collins anytime TD",
+       "name": "Nico Collins",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "HOU"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.357139,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040583",
+       "key": "TD:00-0040583",
+       "kind": "TD",
+       "label": "Woody Marks anytime TD",
+       "name": "Woody Marks",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "HOU"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:BAL",
+       "kind": "SPREAD",
+       "label": "BAL +6.5",
+       "line": 6.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "BAL"
+      },
+      {
+       "american": -112.5,
+       "chance": 0.505413,
+       "decimal": 1.888889,
+       "est": true,
+       "key": "TOTAL:UNDER",
+       "kind": "TOTAL",
+       "label": "Under 44.5",
+       "line": 44.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "UNDER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 3.540804,
+    "edge": 3.5526,
     "line": 44.5,
     "side": "OVER"
    },
@@ -10940,13 +12367,25 @@
    "div_game": false,
    "elo": {
     "away": 1396.889424,
-    "home": 1614.707989
+    "home": 1599.246933
    },
    "game_id": "2026_12_NO_CIN",
    "game_type": "REG",
    "home": "CIN",
    "home_form": {
     "last5": [
+     {
+      "code": "2",
+      "date": "2026-11-23",
+      "game_type": "REG",
+      "home": false,
+      "neutral": false,
+      "opponent": "WAS",
+      "result": "L",
+      "score": "20-22",
+      "season": 2026,
+      "week": 11
+     },
      {
       "code": "20",
       "date": "2026-11-15",
@@ -10994,22 +12433,10 @@
       "score": "35-13",
       "season": 2026,
       "week": 7
-     },
-     {
-      "code": "7",
-      "date": "2026-10-11",
-      "game_type": "REG",
-      "home": false,
-      "neutral": false,
-      "opponent": "MIA",
-      "result": "W",
-      "score": "31-24",
-      "season": 2026,
-      "week": 5
      }
     ],
     "record": {
-     "losses": 2,
+     "losses": 3,
      "ties": 0,
      "wins": 7
     }
@@ -11022,39 +12449,39 @@
      "name": "Joe Burrow",
      "position": "QB",
      "status": "active",
-     "yards": 307.116385
+     "yards": 307.344679
     },
     "receiving": {
      "gsis_id": "00-0036900",
      "name": "Ja'Marr Chase",
      "position": "WR",
      "status": "active",
-     "yards": 83.684975
+     "yards": 80.755665
     },
     "rushing": {
      "gsis_id": "00-0038597",
      "name": "Chase Brown",
      "position": "RB",
      "status": "active",
-     "yards": 49.45302
+     "yards": 43.717933
     }
    },
    "home_name": "Cincinnati Bengals",
    "home_players": {
     "defense": [
      {
-      "games": 9,
+      "games": 10,
       "gsis_id": "00-0038133",
-      "line": "6.5 sacks, 2 FF, 1 PD",
+      "line": "9.5 sacks, 2 FF, 1 PD",
       "name": "Boye Mafe",
       "position": "DE",
       "rank": 1,
       "reason": null,
       "status": "active",
-      "value": 11.0
+      "value": 14.75
      },
      {
-      "games": 9,
+      "games": 10,
       "gsis_id": "00-0038560",
       "line": "3 INT, 1 FF, 8 PD",
       "name": "Jordan Battle",
@@ -11067,95 +12494,69 @@
     ],
     "offense": [
      {
-      "games": 9,
+      "games": 10,
       "gsis_id": "00-0036442",
-      "line": "2,795 pass yds, 27 TD, 6 INT",
+      "line": "3,095 pass yds, 29 TD, 6 INT",
       "name": "Joe Burrow",
       "position": "QB",
       "proj": {
-       "pass_yds": 307.116385,
+       "pass_yds": 307.344679,
        "rec_yds": null,
-       "rush_yds": 6.459778
+       "rush_yds": 5.873936
       },
       "rank": 1,
       "reason": null,
       "status": "active",
-      "value": 90.841273
+      "value": 96.49322
      },
      {
-      "games": 9,
+      "games": 10,
       "gsis_id": "00-0036410",
-      "line": "53 rec, 824 yds, 6 TD",
+      "line": "55 rec, 867 yds, 7 TD",
       "name": "Tee Higgins",
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 56.956703,
-       "rush_yds": 0.003513
+       "rec_yds": 56.034846,
+       "rush_yds": 0.013421
       },
       "rank": 2,
       "reason": null,
       "status": "active",
-      "value": 50.260636
+      "value": 53.871813
      },
      {
-      "games": 9,
+      "games": 10,
       "gsis_id": "00-0036900",
-      "line": "64 rec, 878 yds, 7 TD",
+      "line": "69 rec, 909 yds, 7 TD",
       "name": "Ja'Marr Chase",
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 83.684975,
-       "rush_yds": 0.009798
+       "rec_yds": 80.755665,
+       "rush_yds": 0.018111
       },
       "rank": 3,
       "reason": null,
       "status": "active",
-      "value": 48.029014
+      "value": 45.364832
      }
     ]
    },
-   "home_prob": 0.813137,
+   "home_prob": 0.812561,
    "home_qb": {
     "change": false,
     "id": "00-0036442",
     "injury_status": null,
     "name": "Joe Burrow",
-    "rating": 0.158262,
+    "rating": 0.153452,
     "source": "projected",
-    "starts": 93
+    "starts": 94
    },
    "home_rest": 5.697917,
    "home_td": [
     {
-     "games_season": 9,
-     "gsis_id": "00-0036900",
-     "meters": {
-      "rest": {
-       "n": 0,
-       "no_td": 0,
-       "rate": null
-      },
-      "top3": {
-       "n": 4,
-       "rate": 0.75,
-       "scored": 3
-      }
-     },
-     "name": "Ja'Marr Chase",
-     "position": "WR",
-     "prob": 0.592533,
-     "proj": {
-      "pass_yds": null,
-      "rec_yds": 83.684975,
-      "rush_yds": 0.009798
-     },
-     "status": "active",
-     "tds_season": 7
-    },
-    {
-     "games_season": 9,
+     "games_season": 10,
      "gsis_id": "00-0038597",
      "meters": {
       "rest": {
@@ -11164,24 +12565,50 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.25,
+       "n": 5,
+       "rate": 0.2,
        "scored": 1
       }
      },
      "name": "Chase Brown",
      "position": "RB",
-     "prob": 0.580971,
+     "prob": 0.561549,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 39.550097,
-      "rush_yds": 49.45302
+      "rec_yds": 40.135969,
+      "rush_yds": 43.717933
      },
      "status": "active",
      "tds_season": 3
     },
     {
-     "games_season": 9,
+     "games_season": 10,
+     "gsis_id": "00-0036900",
+     "meters": {
+      "rest": {
+       "n": 0,
+       "no_td": 0,
+       "rate": null
+      },
+      "top3": {
+       "n": 5,
+       "rate": 0.6,
+       "scored": 3
+      }
+     },
+     "name": "Ja'Marr Chase",
+     "position": "WR",
+     "prob": 0.545076,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 80.755665,
+      "rush_yds": 0.018111
+     },
+     "status": "active",
+     "tds_season": 7
+    },
+    {
+     "games_season": 10,
      "gsis_id": "00-0036410",
      "meters": {
       "rest": {
@@ -11190,49 +12617,26 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.75,
-       "scored": 3
+       "n": 5,
+       "rate": 0.8,
+       "scored": 4
       }
      },
      "name": "Tee Higgins",
      "position": "WR",
-     "prob": 0.443145,
+     "prob": 0.422494,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 56.956703,
-      "rush_yds": 0.003513
+      "rec_yds": 56.034846,
+      "rush_yds": 0.013421
      },
      "status": "active",
-     "tds_season": 6
+     "tds_season": 7
     }
    ],
    "home_td_all": [
     {
-     "games_season": 9,
-     "group": "3+",
-     "gsis_id": "00-0036900",
-     "meters": {
-      "rest": {
-       "n": 0,
-       "no_td": 0,
-       "rate": null
-      },
-      "top3": {
-       "n": 4,
-       "rate": 0.75,
-       "scored": 3
-      }
-     },
-     "name": "Ja'Marr Chase",
-     "position": "WR",
-     "prob": 0.592533,
-     "rank": 1,
-     "status": "active",
-     "tds_season": 7
-    },
-    {
-     "games_season": 9,
+     "games_season": 10,
      "group": "3+",
      "gsis_id": "00-0038597",
      "meters": {
@@ -11242,20 +12646,43 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.25,
+       "n": 5,
+       "rate": 0.2,
        "scored": 1
       }
      },
      "name": "Chase Brown",
      "position": "RB",
-     "prob": 0.580971,
-     "rank": 2,
+     "prob": 0.561549,
+     "rank": 1,
      "status": "active",
      "tds_season": 3
     },
     {
-     "games_season": 9,
+     "games_season": 10,
+     "group": "3+",
+     "gsis_id": "00-0036900",
+     "meters": {
+      "rest": {
+       "n": 0,
+       "no_td": 0,
+       "rate": null
+      },
+      "top3": {
+       "n": 5,
+       "rate": 0.6,
+       "scored": 3
+      }
+     },
+     "name": "Ja'Marr Chase",
+     "position": "WR",
+     "prob": 0.545076,
+     "rank": 2,
+     "status": "active",
+     "tds_season": 7
+    },
+    {
+     "games_season": 10,
      "group": "3+",
      "gsis_id": "00-0036410",
      "meters": {
@@ -11265,27 +12692,27 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.75,
-       "scored": 3
+       "n": 5,
+       "rate": 0.8,
+       "scored": 4
       }
      },
      "name": "Tee Higgins",
      "position": "WR",
-     "prob": 0.443145,
+     "prob": 0.422494,
      "rank": 3,
      "status": "active",
-     "tds_season": 6
+     "tds_season": 7
     },
     {
-     "games_season": 9,
+     "games_season": 10,
      "group": "3+",
      "gsis_id": "00-0033526",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 2,
-       "rate": 0.5
+       "n": 5,
+       "no_td": 3,
+       "rate": 0.6
       },
       "top3": {
        "n": 0,
@@ -11295,43 +12722,20 @@
      },
      "name": "Samaje Perine",
      "position": "RB",
-     "prob": 0.289792,
+     "prob": 0.309824,
      "rank": 4,
      "status": "active",
      "tds_season": 3
     },
     {
-     "games_season": 9,
-     "group": "1-3",
-     "gsis_id": "00-0036442",
-     "meters": {
-      "rest": {
-       "n": 4,
-       "no_td": 2,
-       "rate": 0.5
-      },
-      "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
-      }
-     },
-     "name": "Joe Burrow",
-     "position": "QB",
-     "prob": 0.192074,
-     "rank": 5,
-     "status": "active",
-     "tds_season": 3
-    },
-    {
-     "games_season": 9,
-     "group": "1-3",
+     "games_season": 10,
+     "group": "3+",
      "gsis_id": "00-0034829",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 2,
-       "rate": 0.5
+       "n": 5,
+       "no_td": 3,
+       "rate": 0.6
       },
       "top3": {
        "n": 0,
@@ -11341,20 +12745,43 @@
      },
      "name": "Mike Gesicki",
      "position": "TE",
-     "prob": 0.187575,
-     "rank": 6,
+     "prob": 0.216375,
+     "rank": 5,
      "status": "active",
      "tds_season": 6
     },
     {
-     "games_season": 9,
-     "group": "3+",
+     "games_season": 10,
+     "group": "1-3",
+     "gsis_id": "00-0036442",
+     "meters": {
+      "rest": {
+       "n": 5,
+       "no_td": 3,
+       "rate": 0.6
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "name": "Joe Burrow",
+     "position": "QB",
+     "prob": 0.1871,
+     "rank": 6,
+     "status": "active",
+     "tds_season": 3
+    },
+    {
+     "games_season": 10,
+     "group": "1-3",
      "gsis_id": "00-0040785",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 3,
-       "rate": 0.75
+       "n": 5,
+       "no_td": 4,
+       "rate": 0.8
       },
       "top3": {
        "n": 0,
@@ -11364,43 +12791,20 @@
      },
      "name": "Dohnte Meyers",
      "position": "WR",
-     "prob": 0.183796,
+     "prob": 0.160443,
      "rank": 7,
      "status": "active",
      "tds_season": 1
     },
     {
-     "games_season": 9,
-     "group": "1-3",
-     "gsis_id": "00-0035631",
-     "meters": {
-      "rest": {
-       "n": 4,
-       "no_td": 2,
-       "rate": 0.5
-      },
-      "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
-      }
-     },
-     "name": "Drew Sample",
-     "position": "TE",
-     "prob": 0.129886,
-     "rank": 8,
-     "status": "active",
-     "tds_season": 2
-    },
-    {
-     "games_season": 5,
+     "games_season": 6,
      "group": "1-3",
      "gsis_id": "00-0041116",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 3,
-       "rate": 0.75
+       "n": 5,
+       "no_td": 4,
+       "rate": 0.8
       },
       "top3": {
        "n": 0,
@@ -11410,20 +12814,20 @@
      },
      "name": "Jack Endries",
      "position": "TE",
-     "prob": 0.10938,
-     "rank": 9,
+     "prob": 0.142583,
+     "rank": 8,
      "status": "active",
      "tds_season": 1
     },
     {
-     "games_season": 5,
+     "games_season": 10,
      "group": "1-3",
-     "gsis_id": "00-0038839",
+     "gsis_id": "00-0035631",
      "meters": {
       "rest": {
-       "n": 3,
+       "n": 5,
        "no_td": 3,
-       "rate": 1.0
+       "rate": 0.6
       },
       "top3": {
        "n": 0,
@@ -11431,21 +12835,21 @@
        "scored": 0
       }
      },
-     "name": "Mitchell Tinsley",
-     "position": "WR",
-     "prob": 0.083576,
-     "rank": 10,
+     "name": "Drew Sample",
+     "position": "TE",
+     "prob": 0.124324,
+     "rank": 9,
      "status": "active",
-     "tds_season": 0
+     "tds_season": 2
     },
     {
-     "games_season": 7,
-     "group": "1-3",
+     "games_season": 8,
+     "group": "0.5-1",
      "gsis_id": "00-0040208",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 3,
+       "n": 4,
+       "no_td": 4,
        "rate": 1.0
       },
       "top3": {
@@ -11456,10 +12860,56 @@
      },
      "name": "Tahj Brooks",
      "position": "RB",
-     "prob": 0.075741,
+     "prob": null,
+     "rank": 10,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 6,
+     "group": "0.5-1",
+     "gsis_id": "00-0038839",
+     "meters": {
+      "rest": {
+       "n": 4,
+       "no_td": 4,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "name": "Mitchell Tinsley",
+     "position": "WR",
+     "prob": null,
      "rank": 11,
      "status": "active",
      "tds_season": 0
+    },
+    {
+     "games_season": 8,
+     "group": "0.5-1",
+     "gsis_id": "00-0041069",
+     "meters": {
+      "rest": {
+       "n": 5,
+       "no_td": 4,
+       "rate": 0.8
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "name": "Colbie Young",
+     "position": "WR",
+     "prob": null,
+     "rank": 12,
+     "status": "active",
+     "tds_season": 1
     },
     {
      "games_season": 2,
@@ -11479,29 +12929,6 @@
      },
      "name": "Joe Flacco",
      "position": "QB",
-     "prob": null,
-     "rank": 12,
-     "status": "active",
-     "tds_season": 0
-    },
-    {
-     "games_season": 7,
-     "group": "under 0.5",
-     "gsis_id": "00-0041069",
-     "meters": {
-      "rest": {
-       "n": 4,
-       "no_td": 4,
-       "rate": 1.0
-      },
-      "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
-      }
-     },
-     "name": "Colbie Young",
-     "position": "WR",
      "prob": null,
      "rank": 13,
      "status": "active",
@@ -11562,11 +12989,54 @@
    "market_source": "the-odds-api",
    "market_spread": 10.0,
    "market_total": 52.5,
-   "model_prob": 0.807351,
-   "model_spread": 10.639268,
-   "model_total": 48.378532,
+   "model_prob": 0.796342,
+   "model_spread": 10.113796,
+   "model_total": 48.015224,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jamarr-chase-losing-when-you-know-youre-better-is-the-worst",
+     "players": [
+      "Ja'Marr Chase"
+     ],
+     "published": "2026-11-24T12:12:11Z",
+     "source": "ProFootballTalk",
+     "summary": "The Bengals came into Monday night's game with the Commanders on a five-game winning streak fueled by explosive offensive performances, but both runs came to an end in Washington.",
+     "teams": [
+      "CIN"
+     ],
+     "title": "Ja'Marr Chase: Losing when you know you're better is the worst"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/monday-night-football-joe-burrows-second-td-pass-puts-bengals-up-17-10",
+     "players": [
+      "Joe Burrow"
+     ],
+     "published": "2026-11-24T03:20:20Z",
+     "source": "ProFootballTalk",
+     "summary": "The lights are back on and both offenses have put up points in the third quarter.",
+     "teams": [
+      "CIN"
+     ],
+     "title": "Monday Night Football: Joe Burrow's second TD pass puts Bengals up 17-10"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/tee-higgins-touchdown-highlights-inconsistency-of-replay-review",
+     "players": [
+      "Tee Higgins"
+     ],
+     "published": "2026-11-24T02:45:29Z",
+     "source": "ProFootballTalk",
+     "summary": "Just when we thought we were out when it comes to not knowing what a catch is, they pull us back in.",
+     "teams": [],
+     "title": "Tee Higgins touchdown highlights inconsistency of replay review"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -11613,83 +13083,41 @@
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-22T14:39:16Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/tyler-shough-is-the-saints-leading-rusher-with-187-yards-this-season",
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.rotowire.com//football/player/mike-gesicki-12764",
      "players": [
-      "Tyler Shough"
+      "Mike Gesicki"
      ],
-     "published": "2026-11-22T14:35:29Z",
-     "source": "ProFootballTalk",
-     "summary": "As Saints quarterback Tyler Shough struggles through his second season, a good running attack could help take some pressure off him.",
-     "teams": [
-      "NO"
-     ],
-     "title": "Tyler Shough is the Saints' leading rusher, with 187 yards this season"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T14:39:16Z",
-     "link": "https://sports.yahoo.com/articles/falcoholic-reacts-pressure-heating-j-130000502.html",
-     "players": [
-      "Joe Burrow"
-     ],
-     "published": "2026-11-22T13:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "After a tremendous defensive start to the season, Jeff Ulbrich\u2019s unit has endured some tough losses in recent weeks. Some of it can be attributed to facing two elite quarterbacks in Joe Burrow and Patrick Mahomes. Much of it comes down to the team\u2019s personnel limitations. As hard as they compete and cause chaos, it\u2019s [",
-     "teams": [],
-     "title": "The Falcoholic Reacts: The pressure is heating up on A.J. Terrell"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T21:19:30Z",
-     "link": "https://www.rotowire.com//football/player/juwan-johnson-14630",
-     "players": [
-      "Juwan Johnson"
-     ],
-     "published": "2026-11-22T12:21:00Z",
+     "published": "2026-11-23T09:01:00Z",
      "source": "RotoWire",
-     "summary": "Johnson injured his hamstring during Sunday's game in Chicago, Jeff Nowak of WWL Radio reports. Visit RotoWire.com for more analysis on this update.",
-     "teams": [],
-     "title": "Juwan Johnson: Sustains hamstring injury"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T14:39:16Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/bengals-rule-out-dalton-risner-list-dax-hill-and-dylan-fairchild-as-questionable",
-     "players": [
-      "Dalton Risner",
-      "Dylan Fairchild"
-     ],
-     "published": "2026-11-21T21:46:22Z",
-     "source": "ProFootballTalk",
-     "summary": "The Bengals may be without both of their starting guards on Monday night.",
+     "summary": "Gesicki brought in five of six targets for 77 yards in the Bengals' 22-20 loss to the Commanders on Monday night. Visit RotoWire.com for more analysis on this update.",
      "teams": [
       "CIN"
      ],
-     "title": "Bengals rule out Dalton Risner, list Dax Hill and Dylan Fairchild as questionable"
+     "title": "Mike Gesicki: Team-high yardage total in loss"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-21T20:09:04Z",
-     "link": "https://www.profootballrumors.com/2026/11/saints-sign-k-charlie-smyth-to-2-year-deal",
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.rotowire.com//football/player/chase-brown-16934",
      "players": [
-      "Charlie Smyth"
+      "Chase Brown"
      ],
-     "published": "2026-11-21T17:03:12Z",
-     "source": "Pro Football Rumors",
-     "summary": "The Saints signed practice squad kicker Charlie Smyth to their active roster on Saturday, per NewOrleans.Football. With the promotion comes a two-year contract that ...",
+     "published": "2026-11-23T08:56:00Z",
+     "source": "RotoWire",
+     "summary": "Brown rushed six times for six yards and brought in five of eight targets for 30 yards in the Bengals' 22-20 loss to the Commanders on Monday night. Visit RotoWire.com for more analysis on this update.",
      "teams": [
-      "NO"
+      "CIN"
      ],
-     "title": "Saints Sign K Charlie Smyth To 2-Year Deal"
+     "title": "Chase Brown: Forgettable rushing night in loss"
     }
    ],
    "pick": "CIN",
-   "pick_prob": 0.813137,
+   "pick_prob": 0.812561,
    "roof": "outdoors",
    "season": 2026,
    "spread_pick": {
-    "edge": 0.639268,
+    "edge": 0.113796,
     "line": -10.0,
     "team": "CIN"
    },
@@ -11710,21 +13138,225 @@
     },
     "home": {
      "rest": {
-      "n": 40,
-      "no_td": 30,
-      "rate": 0.75
+      "n": 49,
+      "no_td": 38,
+      "rate": 0.77551
      },
      "top3": {
-      "n": 12,
-      "rate": 0.583333,
-      "scored": 7
+      "n": 15,
+      "rate": 0.533333,
+      "scored": 8
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.456293,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Chase Brown anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.561549,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038597",
+       "key": "TD:00-0038597",
+       "kind": "TD",
+       "label": "Chase Brown anytime TD",
+       "name": "Chase Brown",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CIN"
+      },
+      {
+       "american": -590.0,
+       "chance": 0.812561,
+       "decimal": 1.169492,
+       "est": true,
+       "key": "WIN:CIN",
+       "kind": "WIN",
+       "label": "CIN to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "CIN"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "no rookie TD leg with a chance of 25% or more available",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.248714,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Chase Brown anytime TD, Ja'Marr Chase anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.561549,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038597",
+       "key": "TD:00-0038597",
+       "kind": "TD",
+       "label": "Chase Brown anytime TD",
+       "name": "Chase Brown",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CIN"
+      },
+      {
+       "american": -590.0,
+       "chance": 0.812561,
+       "decimal": 1.169492,
+       "est": true,
+       "key": "WIN:CIN",
+       "kind": "WIN",
+       "label": "CIN to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "CIN"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.545076,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036900",
+       "key": "TD:00-0036900",
+       "kind": "TD",
+       "label": "Ja'Marr Chase anytime TD",
+       "name": "Ja'Marr Chase",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CIN"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.057635,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Ja'Marr Chase anytime TD, Tee Higgins anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.545076,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036900",
+       "key": "TD:00-0036900",
+       "kind": "TD",
+       "label": "Ja'Marr Chase anytime TD",
+       "name": "Ja'Marr Chase",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CIN"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.422494,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036410",
+       "key": "TD:00-0036410",
+       "kind": "TD",
+       "label": "Tee Higgins anytime TD",
+       "name": "Tee Higgins",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CIN"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.500543,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:NO",
+       "kind": "SPREAD",
+       "label": "NO +10",
+       "line": 10.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "NO"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 52.5",
+       "line": 52.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 4.121468,
+    "edge": 4.484776,
     "line": 52.5,
     "side": "UNDER"
    },
@@ -13023,9 +14655,24 @@
    "market_total": 43.5,
    "model_prob": 0.38852,
    "model_spread": -2.552559,
-   "model_total": 44.188691,
+   "model_total": 44.200487,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/anthony-richardson-getting-raw-deal-123000406.html",
+     "players": [
+      "Anthony Richardson"
+     ],
+     "published": "2026-11-24T12:30:00Z",
+     "source": "Yahoo Sports",
+     "summary": "Richardson is getting one more go with the Colts.",
+     "teams": [
+      "IND"
+     ],
+     "title": "Is Anthony Richardson getting a raw deal or a rare second chance with the Colts?"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -13129,19 +14776,6 @@
       "IND"
      ],
      "title": "The Colts, as expected, won't activate WR Alec Pierce from injured reserve"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T14:39:16Z",
-     "link": "https://www.rotowire.com//football/player/alec-pierce-16022",
-     "players": [
-      "Alec Pierce"
-     ],
-     "published": "2026-11-22T04:53:00Z",
-     "source": "RotoWire",
-     "summary": "Pierce's season \"is almost certainly over\" due to the heel injury that landed the wideout on IR on Sept. 26, according to Ian Rapoport of NFL Network. Visit RotoWire.com for more analysis on this update.",
-     "teams": [],
-     "title": "Alec Pierce: Expected to be shut down for the season"
     }
    ],
    "pick": "NYG",
@@ -13181,10 +14815,206 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.358863,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Cam Skattebo anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.493095,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040715",
+       "key": "TD:00-0040715",
+       "kind": "TD",
+       "label": "Cam Skattebo anytime TD",
+       "name": "Cam Skattebo",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "NYG"
+      },
+      {
+       "american": -300.0,
+       "chance": 0.727778,
+       "decimal": 1.333333,
+       "est": true,
+       "key": "WIN:NYG",
+       "kind": "WIN",
+       "label": "NYG to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "NYG"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "no rookie TD leg with a chance of 25% or more available",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.180016,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Cam Skattebo anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.493095,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040715",
+       "key": "TD:00-0040715",
+       "kind": "TD",
+       "label": "Cam Skattebo anytime TD",
+       "name": "Cam Skattebo",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "NYG"
+      },
+      {
+       "american": -300.0,
+       "chance": 0.727778,
+       "decimal": 1.333333,
+       "est": true,
+       "key": "WIN:NYG",
+       "kind": "WIN",
+       "label": "NYG to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "NYG"
+      },
+      {
+       "american": -110.5,
+       "chance": 0.501629,
+       "decimal": 1.904977,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 43.5",
+       "line": 43.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.035876,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Jonathan Taylor anytime TD, Malik Nabers anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.391127,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036223",
+       "key": "TD:00-0036223",
+       "kind": "TD",
+       "label": "Jonathan Taylor anytime TD",
+       "name": "Jonathan Taylor",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "IND"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.365706,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0039337",
+       "key": "TD:00-0039337",
+       "kind": "TD",
+       "label": "Malik Nabers anytime TD",
+       "name": "Malik Nabers",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "NYG"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:IND",
+       "kind": "SPREAD",
+       "label": "IND +6.5",
+       "line": 6.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "IND"
+      },
+      {
+       "american": -110.5,
+       "chance": 0.501629,
+       "decimal": 1.904977,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 43.5",
+       "line": 43.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 0.688691,
+    "edge": 0.700487,
     "line": 43.5,
     "side": "OVER"
    },
@@ -14543,9 +16373,55 @@
    "market_total": 41.5,
    "model_prob": 0.482264,
    "model_spread": -0.301065,
-   "model_total": 40.701979,
+   "model_total": 40.713775,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/dolphins-considering-offensive-line-change-131223294.html",
+     "players": [
+      "Austin Jackson"
+     ],
+     "published": "2026-11-24T13:12:23Z",
+     "source": "Yahoo Sports",
+     "summary": "Could changes to the offensive line be coming?",
+     "teams": [
+      "MIA"
+     ],
+     "title": "Dolphins considering offensive line change as Austin Jackson struggles"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/miami-dolphins-news-roundup-miami-124835344.html",
+     "players": [
+      "Kadyn Proctor"
+     ],
+     "published": "2026-11-24T12:48:35Z",
+     "source": "Yahoo Sports",
+     "summary": "A collection of Miami Dolphins news from around the web takes a look back at the Bills game, ahead to Week 12\u2019s Jets game, and a possible move for guard Kadyn Proctor.",
+     "teams": [
+      "MIA",
+      "NYJ"
+     ],
+     "title": "Miami Dolphins news roundup: Miami Dolphins news roundup: Bills review, Jets preview, and possible Kadyn Proctor move"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/york-jets-news-put-more-120000519.html",
+     "players": [
+      "Geno Smith"
+     ],
+     "published": "2026-11-24T12:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "Your daily links to the New York Jets",
+     "teams": [
+      "NYJ"
+     ],
+     "title": "New York Jets News: Put Some More Respect on Geno Smith\u2019s Name"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -14622,50 +16498,6 @@
       "NYJ"
      ],
      "title": "Geno Smith had a full practice Friday, has no injury designation"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://sports.yahoo.com/articles/york-jets-news-gimpy-geno-120000420.html",
-     "players": [
-      "Geno Smith"
-     ],
-     "published": "2026-11-19T12:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Your daily links to the New York Jets",
-     "teams": [
-      "NYJ"
-     ],
-     "title": "New York Jets News: \u2018Gimpy\u2019 Geno Smith set to Start vs. Chargers? Yikes."
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T18:40:34Z",
-     "link": "https://www.rotowire.com//football/player/caleb-douglas-19343",
-     "players": [
-      "Caleb Douglas"
-     ],
-     "published": "2026-11-19T10:09:00Z",
-     "source": "RotoWire",
-     "summary": "Douglas (shoulder) continued to don a non-contact jersey during Thursday's practice, Barry Jackson of the Miami Herald reports. Visit RotoWire.com for more analysis on this update.",
-     "teams": [],
-     "title": "Caleb Douglas: Still in non-contact jersey"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-19T14:02:48Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/dolphins-sign-max-llewellyn-from-practice-squad-sign-jack-browning-to-practice-squad",
-     "players": [
-      "Jack Browning",
-      "Max Llewellyn"
-     ],
-     "published": "2026-11-18T21:02:07Z",
-     "source": "ProFootballTalk",
-     "summary": "The Dolphins signed edge rusher Max Llewellyn to the active roster from the practice squad. the team announced Wednesday.",
-     "teams": [
-      "MIA"
-     ],
-     "title": "Dolphins sign Max Llewellyn from practice squad, sign Jack Browning to practice squad"
     }
    ],
    "pick": "NYJ",
@@ -14705,10 +16537,240 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.230109,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Breece Hall anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.373694,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038120",
+       "key": "TD:00-0038120",
+       "kind": "TD",
+       "label": "Breece Hall anytime TD",
+       "name": "Breece Hall",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "NYJ"
+      },
+      {
+       "american": -174.0,
+       "chance": 0.615769,
+       "decimal": 1.574713,
+       "est": true,
+       "key": "WIN:NYJ",
+       "kind": "WIN",
+       "label": "NYJ to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "NYJ"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.106631,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Caleb Douglas anytime TD",
+     "kind": "rookie",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.277519,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0041523",
+       "key": "TD:00-0041523",
+       "kind": "TD",
+       "label": "Caleb Douglas anytime TD",
+       "name": "Caleb Douglas",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": true,
+       "team": "MIA"
+      },
+      {
+       "american": 146.0,
+       "chance": 0.384231,
+       "decimal": 2.46,
+       "est": true,
+       "key": "WIN:MIA",
+       "kind": "WIN",
+       "label": "MIA to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "MIA"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.117314,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Breece Hall anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.373694,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038120",
+       "key": "TD:00-0038120",
+       "kind": "TD",
+       "label": "Breece Hall anytime TD",
+       "name": "Breece Hall",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "NYJ"
+      },
+      {
+       "american": -174.0,
+       "chance": 0.615769,
+       "decimal": 1.574713,
+       "est": true,
+       "key": "WIN:NYJ",
+       "kind": "WIN",
+       "label": "NYJ to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "NYJ"
+      },
+      {
+       "american": -114.0,
+       "chance": 0.509817,
+       "decimal": 1.877193,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 41.5",
+       "line": 41.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.032786,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Ollie Gordon anytime TD, Braelon Allen anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.358989,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040198",
+       "key": "TD:00-0040198",
+       "kind": "TD",
+       "label": "Ollie Gordon anytime TD",
+       "name": "Ollie Gordon",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "MIA"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.358279,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0039794",
+       "key": "TD:00-0039794",
+       "kind": "TD",
+       "label": "Braelon Allen anytime TD",
+       "name": "Braelon Allen",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "NYJ"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:MIA",
+       "kind": "SPREAD",
+       "label": "MIA +3",
+       "line": 3.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "MIA"
+      },
+      {
+       "american": -114.0,
+       "chance": 0.509817,
+       "decimal": 1.877193,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 41.5",
+       "line": 41.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 0.798021,
+    "edge": 0.786225,
     "line": 41.5,
     "side": "UNDER"
    },
@@ -15998,9 +18060,22 @@
    "market_total": 47.0,
    "model_prob": 0.892894,
    "model_spread": 16.254419,
-   "model_total": 47.24366,
+   "model_total": 47.255457,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/eagles-notebook-nolan-smith-reacts-070000193.html",
+     "players": [
+      "Jordan Davis"
+     ],
+     "published": "2026-11-24T07:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "In the latest Eagles notebook: Nolan Smith reacts to the Jordan Davis trade, we go through nicknames and Sean Mannion gets a vote of confidence.",
+     "teams": [],
+     "title": "Eagles notebook: Nolan Smith reacts to the Jordan Davis trade"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -16102,21 +18177,6 @@
       "TEN"
      ],
      "title": "Titans place RB Tyjae Spears on injured reserve"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-21T20:09:04Z",
-     "link": "https://www.cbssports.com/nfl/news/titans-jaylen-harrell-car-accident-hospital-tampa/",
-     "players": [
-      "Jaylen Harrell"
-     ],
-     "published": "2026-11-21T18:09:36Z",
-     "source": "CBS Sports",
-     "summary": "The Titans said edge defender Jaylen Harrell remains hospitalized and is receiving care after a serious car accident Friday night in his hometown of Tampa",
-     "teams": [
-      "TEN"
-     ],
-     "title": "Titans' Jaylen Harrell hospitalized after serious car accident, remains in hospital in Tampa"
     }
    ],
    "pick": "JAX",
@@ -16156,10 +18216,214 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.502465,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Bhayshul Tuten anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.559724,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040719",
+       "key": "TD:00-0040719",
+       "kind": "TD",
+       "label": "Bhayshul Tuten anytime TD",
+       "name": "Bhayshul Tuten",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "JAX"
+      },
+      {
+       "american": -1200.0,
+       "chance": 0.897701,
+       "decimal": 1.083333,
+       "est": true,
+       "key": "WIN:JAX",
+       "kind": "WIN",
+       "label": "JAX to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "JAX"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "no rookie TD leg with a chance of 25% or more available",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.258025,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Bhayshul Tuten anytime TD, Parker Washington anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.559724,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040719",
+       "key": "TD:00-0040719",
+       "kind": "TD",
+       "label": "Bhayshul Tuten anytime TD",
+       "name": "Bhayshul Tuten",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "JAX"
+      },
+      {
+       "american": -1200.0,
+       "chance": 0.897701,
+       "decimal": 1.083333,
+       "est": true,
+       "key": "WIN:JAX",
+       "kind": "WIN",
+       "label": "JAX to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "JAX"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.513519,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038606",
+       "key": "TD:00-0038606",
+       "kind": "TD",
+       "label": "Parker Washington anytime TD",
+       "name": "Parker Washington",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "JAX"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.043406,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Parker Washington anytime TD, Jakobi Meyers anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.513519,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038606",
+       "key": "TD:00-0038606",
+       "kind": "TD",
+       "label": "Parker Washington anytime TD",
+       "name": "Parker Washington",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "JAX"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.331594,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0034960",
+       "key": "TD:00-0034960",
+       "kind": "TD",
+       "label": "Jakobi Meyers anytime TD",
+       "name": "Jakobi Meyers",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "JAX"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:JAX",
+       "kind": "SPREAD",
+       "label": "JAX -14.5",
+       "line": -14.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "JAX"
+      },
+      {
+       "american": -114.0,
+       "chance": 0.509817,
+       "decimal": 1.877193,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 47",
+       "line": 47.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 0.24366,
+    "edge": 0.255457,
     "line": 47.0,
     "side": "OVER"
    },
@@ -17449,9 +19713,25 @@
    "market_total": 39.0,
    "model_prob": 0.296979,
    "model_spread": -6.490089,
-   "model_total": 47.299465,
+   "model_total": 47.311261,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://sports.yahoo.com/articles/veteran-offseason-pickups-yet-prove-120000643.html",
+     "players": [
+      "A.J. Brown",
+      "Romeo Doubs"
+     ],
+     "published": "2026-11-24T12:00:00Z",
+     "source": "Yahoo Sports",
+     "summary": "Headlined by A.J. Brown and Romeo Doubs, a look at how the Patriots\u2019 veteran additions have performed so far.",
+     "teams": [
+      "NE"
+     ],
+     "title": "Veteran offseason pickups have yet to prove their value to the Patriots"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -17499,6 +19779,21 @@
     },
     {
      "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.cbssports.com/nfl/news/justin-herbert-concussion-protocol-update-jets/",
+     "players": [
+      "Justin Herbert"
+     ],
+     "published": "2026-11-23T01:05:39Z",
+     "source": "CBS Sports",
+     "summary": "Herbert took some big shots late in the game but did not exit",
+     "teams": [
+      "LAC"
+     ],
+     "title": "Justin Herbert in concussion protocol after loss to Jets: Chargers QB played entire game"
+    },
+    {
+     "dated_by_feed": true,
      "gathered": "2026-11-22T21:19:30Z",
      "link": "https://www.profootballrumors.com/2026/11/chargers-daiyan-henley-out-for-week-11",
      "players": [
@@ -17541,36 +19836,6 @@
       "NE"
      ],
      "title": "Aidan Hutchinson wasn't fined for sack that injured Drake Maye"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-21T20:09:04Z",
-     "link": "https://sports.yahoo.com/articles/newfound-momentum-chargers-aim-second-174433937.html",
-     "players": [
-      "Daiyan Henley"
-     ],
-     "published": "2026-11-21T17:44:33Z",
-     "source": "Yahoo Sports",
-     "summary": "The Chargers are in prime position to pick up a second straight win Sunday against the New York Jets, but they'll have to do it without Daiyan Henley.",
-     "teams": [
-      "LAC"
-     ],
-     "title": "With newfound momentum, Chargers aim for second straight win against reeling Jets"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-21T20:09:04Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/daiyan-henley-being-out-with-a-knee-injury-changes-nothing-about-the-failed-trade-to-broncos",
-     "players": [
-      "Daiyan Henley"
-     ],
-     "published": "2026-11-21T13:58:19Z",
-     "source": "ProFootballTalk",
-     "summary": "The failed trade of Chargers linebacker Daiyan Henley returned to the front burner on Friday, with the news that Henley will miss Sunday's game against the Jets due to a knee injury.",
-     "teams": [
-      "LAC"
-     ],
-     "title": "Daiyan Henley being out with a knee injury changes nothing about the failed trade to Broncos"
     }
    ],
    "pick": "LAC",
@@ -17610,10 +19875,206 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.205713,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Omarion Hampton anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.342831,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040666",
+       "key": "TD:00-0040666",
+       "kind": "TD",
+       "label": "Omarion Hampton anytime TD",
+       "name": "Omarion Hampton",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "LAC"
+      },
+      {
+       "american": -193.0,
+       "chance": 0.600042,
+       "decimal": 1.518135,
+       "est": true,
+       "key": "WIN:LAC",
+       "kind": "WIN",
+       "label": "LAC to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "LAC"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "no rookie TD leg with a chance of 25% or more available",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.102857,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Omarion Hampton anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.342831,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040666",
+       "key": "TD:00-0040666",
+       "kind": "TD",
+       "label": "Omarion Hampton anytime TD",
+       "name": "Omarion Hampton",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "LAC"
+      },
+      {
+       "american": -193.0,
+       "chance": 0.600042,
+       "decimal": 1.518135,
+       "est": true,
+       "key": "WIN:LAC",
+       "kind": "WIN",
+       "label": "LAC to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "LAC"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 39",
+       "line": 39.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.01465,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Ladd McConkey anytime TD, Rhamondre Stevenson anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.24609,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0039915",
+       "key": "TD:00-0039915",
+       "kind": "TD",
+       "label": "Ladd McConkey anytime TD",
+       "name": "Ladd McConkey",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "LAC"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.238131,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036875",
+       "key": "TD:00-0036875",
+       "kind": "TD",
+       "label": "Rhamondre Stevenson anytime TD",
+       "name": "Rhamondre Stevenson",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "NE"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:LAC",
+       "kind": "SPREAD",
+       "label": "LAC -3.5",
+       "line": -3.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "LAC"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 39",
+       "line": 39.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 8.299465,
+    "edge": 8.311261,
     "line": 39.0,
     "side": "OVER"
    },
@@ -18926,9 +21387,39 @@
    "market_total": 46.5,
    "model_prob": 0.615906,
    "model_spread": 3.529294,
-   "model_total": 47.558574,
+   "model_total": 47.570371,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mike-macdonald-everythings-positive-with-sam-darnold-but-nothing-official-yet",
+     "players": [
+      "Sam Darnold"
+     ],
+     "published": "2026-11-24T13:07:46Z",
+     "source": "ProFootballTalk",
+     "summary": "Seahawks head coach Mike Macdonald said at the start of the team's bye week that he was \"really optimistic\" about quarterback Sam Darnold returning in Week 12 and that view didn't change after the team's return to work on Monday.",
+     "teams": [
+      "SEA"
+     ],
+     "title": "Mike Macdonald: \"Everything's positive\" with Sam Darnold, but nothing official yet"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-12-predictions-colston-loveland-thanksgiving/",
+     "players": [
+      "Drew Lock"
+     ],
+     "published": "2026-11-24T12:42:05Z",
+     "source": "CBS Sports",
+     "summary": "Our five bold calls for Week 12 include a career day for Quinshon Judkins and mounting pressure on the Seahawks to play Drew Lock",
+     "teams": [
+      "SEA"
+     ],
+     "title": "It wouldn't shock me if ... for NFL Week 12: Colston Loveland feasts on Thanksgiving, Browns RB shines"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -19015,35 +21506,6 @@
       "SF"
      ],
      "title": "49ers WR Mike Evans is \"set for his return\" on Sunday"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-21T20:09:04Z",
-     "link": "https://sports.yahoo.com/articles/seahawks-hold-quenton-nelson-49ers-170000545.html",
-     "players": [
-      "Quenton Nelson"
-     ],
-     "published": "2026-11-21T17:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "If Quenton Nelson is healthy, he should play against San Francisco, right? Maybe not.",
-     "teams": [
-      "SEA",
-      "SF"
-     ],
-     "title": "Should the Seahawks hold Quenton Nelson out of the 49ers game?"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-21T20:09:04Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-11-injury-report-kenneth-walker-iii-mike-evans-baker-mayfield/",
-     "players": [
-      "Mike Evans"
-     ],
-     "published": "2026-11-20T22:42:12Z",
-     "source": "CBS Sports",
-     "summary": "A look at the game status for each team leading up to Week 11",
-     "teams": [],
-     "title": "NFL Week 11 injury report: Latest updates on Kenneth Walker III, Mike Evans, Baker Mayfield and more"
     }
    ],
    "pick": "SF",
@@ -19083,10 +21545,240 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.300847,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Christian McCaffrey anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.55139,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0033280",
+       "key": "TD:00-0033280",
+       "kind": "TD",
+       "label": "Christian McCaffrey anytime TD",
+       "name": "Christian McCaffrey",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "SF"
+      },
+      {
+       "american": -132.0,
+       "chance": 0.545615,
+       "decimal": 1.757576,
+       "est": true,
+       "key": "WIN:SF",
+       "kind": "WIN",
+       "label": "SF to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "SF"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.118362,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Jadarian Price anytime TD",
+     "kind": "rookie",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.260488,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0041512",
+       "key": "TD:00-0041512",
+       "kind": "TD",
+       "label": "Jadarian Price anytime TD",
+       "name": "Jadarian Price",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": true,
+       "team": "SEA"
+      },
+      {
+       "american": 112.0,
+       "chance": 0.454385,
+       "decimal": 2.12,
+       "est": true,
+       "key": "WIN:SEA",
+       "kind": "WIN",
+       "label": "SEA to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "SEA"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.150423,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Christian McCaffrey anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.55139,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0033280",
+       "key": "TD:00-0033280",
+       "kind": "TD",
+       "label": "Christian McCaffrey anytime TD",
+       "name": "Christian McCaffrey",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "SF"
+      },
+      {
+       "american": -132.0,
+       "chance": 0.545615,
+       "decimal": 1.757576,
+       "est": true,
+       "key": "WIN:SF",
+       "kind": "WIN",
+       "label": "SF to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "SF"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 46.5",
+       "line": 46.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.04378,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Jaxon Smith-Njigba anytime TD, Zach Charbonnet anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.483439,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0038543",
+       "key": "TD:00-0038543",
+       "kind": "TD",
+       "label": "Jaxon Smith-Njigba anytime TD",
+       "name": "Jaxon Smith-Njigba",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "SEA"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.360657,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0039165",
+       "key": "TD:00-0039165",
+       "kind": "TD",
+       "label": "Zach Charbonnet anytime TD",
+       "name": "Zach Charbonnet",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "SEA"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.502195,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:SF",
+       "kind": "SPREAD",
+       "label": "SF -1.5",
+       "line": -1.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "SF"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 46.5",
+       "line": 46.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "TOSS-UP",
    "tier_hit_rate": 0.487705,
    "total_pick": {
-    "edge": 1.058574,
+    "edge": 1.070371,
     "line": 46.5,
     "side": "OVER"
    },
@@ -19125,6 +21817,18 @@
    "away": "WAS",
    "away_form": {
     "last5": [
+     {
+      "code": "2",
+      "date": "2026-11-23",
+      "game_type": "REG",
+      "home": true,
+      "neutral": false,
+      "opponent": "CIN",
+      "result": "W",
+      "score": "22-20",
+      "season": 2026,
+      "week": 11
+     },
      {
       "code": "3",
       "date": "2026-11-12",
@@ -19172,24 +21876,12 @@
       "score": "17-23",
       "season": 2026,
       "week": 6
-     },
-     {
-      "code": "T",
-      "date": "2026-10-11",
-      "game_type": "REG",
-      "home": true,
-      "neutral": false,
-      "opponent": "NYG",
-      "result": "T",
-      "score": "27-27",
-      "season": 2026,
-      "week": 5
      }
     ],
     "record": {
      "losses": 5,
      "ties": 1,
-     "wins": 3
+     "wins": 4
     }
    },
    "away_injuries": [],
@@ -19200,81 +21892,81 @@
      "name": "Jayden Daniels",
      "position": "QB",
      "status": "active",
-     "yards": 216.161318
+     "yards": 217.758644
     },
     "receiving": {
-     "gsis_id": "00-0031588",
-     "name": "Stefon Diggs",
+     "gsis_id": "00-0041040",
+     "name": "Antonio Williams",
      "position": "WR",
      "status": "active",
-     "yards": 41.886534
+     "yards": 45.188174
     },
     "rushing": {
-     "gsis_id": "00-0037256",
-     "name": "Rachaad White",
-     "position": "RB",
+     "gsis_id": "00-0039910",
+     "name": "Jayden Daniels",
+     "position": "QB",
      "status": "active",
-     "yards": 27.794126
+     "yards": 27.23004
     }
    },
    "away_name": "Washington Commanders",
    "away_players": {
     "defense": [
      {
-      "games": 9,
+      "games": 10,
       "gsis_id": "00-0036286",
-      "line": "3.5 sacks, 3 FF, 4 TFL",
+      "line": "4 sacks, 3 FF, 4 TFL",
       "name": "K'Lavon Chaisson",
       "position": "LB",
       "rank": 1,
       "reason": null,
       "status": "active",
-      "value": 7.5
+      "value": 8.0
      },
      {
-      "games": 9,
-      "gsis_id": "00-0036940",
-      "line": "5 sacks, 1 FF, 6 TFL",
-      "name": "Odafe Oweh",
-      "position": "LB",
+      "games": 10,
+      "gsis_id": "00-0033551",
+      "line": "3 INT, 9 PD, 2 TFL",
+      "name": "Rasul Douglas",
+      "position": "CB",
       "rank": 2,
       "reason": null,
       "status": "active",
-      "value": 7.5
+      "value": 8.0
      }
     ],
     "offense": [
      {
-      "games": 7,
+      "games": 8,
       "gsis_id": "00-0039910",
-      "line": "1,499 pass yds, 10 TD, 2 INT, 280 rush yds",
+      "line": "1,788 pass yds, 10 TD, 2 INT, 335 rush yds",
       "name": "Jayden Daniels",
       "position": "QB",
       "proj": {
-       "pass_yds": 216.161318,
+       "pass_yds": 217.758644,
        "rec_yds": null,
-       "rush_yds": 24.893674
+       "rush_yds": 27.23004
       },
       "rank": 1,
       "reason": null,
       "status": "active",
-      "value": 15.324676
+      "value": 16.807398
      },
      {
-      "games": 9,
+      "games": 10,
       "gsis_id": "00-0041040",
-      "line": "28 rec, 326 yds, 2 TD",
+      "line": "37 rec, 448 yds, 2 TD",
       "name": "Antonio Williams",
       "position": "WR",
       "proj": {
        "pass_yds": null,
-       "rec_yds": 35.291353,
-       "rush_yds": 0.06849
+       "rec_yds": 45.188174,
+       "rush_yds": 0.061962
       },
       "rank": 2,
       "reason": null,
       "status": "active",
-      "value": 10.929369
+      "value": 14.134916
      },
      {
       "games": 5,
@@ -19294,20 +21986,20 @@
     "id": "00-0039910",
     "injury_status": null,
     "name": "Jayden Daniels",
-    "rating": 0.037465,
+    "rating": 0.035412,
     "source": "projected",
-    "starts": 31
+    "starts": 32
    },
    "away_rest": 5.840278,
    "away_td": [
     {
-     "games_season": 8,
-     "gsis_id": "00-0037256",
+     "games_season": 10,
+     "gsis_id": "00-0041040",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 0,
-       "rate": 0.0
+       "n": 2,
+       "no_td": 2,
+       "rate": 1.0
       },
       "top3": {
        "n": 3,
@@ -19315,19 +22007,19 @@
        "scored": 1
       }
      },
-     "name": "Rachaad White",
-     "position": "RB",
-     "prob": 0.275031,
+     "name": "Antonio Williams",
+     "position": "WR",
+     "prob": 0.280887,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 10.802064,
-      "rush_yds": 27.794126
+      "rec_yds": 45.188174,
+      "rush_yds": 0.061962
      },
      "status": "active",
-     "tds_season": 3
+     "tds_season": 2
     },
     {
-     "games_season": 8,
+     "games_season": 9,
      "gsis_id": "00-0031588",
      "meters": {
       "rest": {
@@ -19336,17 +22028,17 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.75,
+       "n": 5,
+       "rate": 0.6,
        "scored": 3
       }
      },
      "name": "Stefon Diggs",
      "position": "WR",
-     "prob": 0.273904,
+     "prob": 0.265034,
      "proj": {
       "pass_yds": null,
-      "rec_yds": 41.886534,
+      "rec_yds": 41.587754,
       "rush_yds": 0.0
      },
      "status": "active",
@@ -19354,35 +22046,6 @@
     },
     {
      "games_season": 9,
-     "gsis_id": "00-0041040",
-     "meters": {
-      "rest": {
-       "n": 2,
-       "no_td": 2,
-       "rate": 1.0
-      },
-      "top3": {
-       "n": 2,
-       "rate": 0.5,
-       "scored": 1
-      }
-     },
-     "name": "Antonio Williams",
-     "position": "WR",
-     "prob": 0.230146,
-     "proj": {
-      "pass_yds": null,
-      "rec_yds": 35.291353,
-      "rush_yds": 0.06849
-     },
-     "status": "active",
-     "tds_season": 2
-    }
-   ],
-   "away_td_all": [
-    {
-     "games_season": 8,
-     "group": "3+",
      "gsis_id": "00-0037256",
      "meters": {
       "rest": {
@@ -19391,20 +22054,49 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 3,
-       "rate": 0.333333,
+       "n": 4,
+       "rate": 0.25,
        "scored": 1
       }
      },
      "name": "Rachaad White",
      "position": "RB",
-     "prob": 0.275031,
-     "rank": 1,
+     "prob": 0.216092,
+     "proj": {
+      "pass_yds": null,
+      "rec_yds": 7.854571,
+      "rush_yds": 20.191221
+     },
      "status": "active",
      "tds_season": 3
+    }
+   ],
+   "away_td_all": [
+    {
+     "games_season": 10,
+     "group": "3+",
+     "gsis_id": "00-0041040",
+     "meters": {
+      "rest": {
+       "n": 2,
+       "no_td": 2,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 3,
+       "rate": 0.333333,
+       "scored": 1
+      }
+     },
+     "name": "Antonio Williams",
+     "position": "WR",
+     "prob": 0.280887,
+     "rank": 1,
+     "status": "active",
+     "tds_season": 2
     },
     {
-     "games_season": 8,
+     "games_season": 9,
      "group": "3+",
      "gsis_id": "00-0031588",
      "meters": {
@@ -19414,14 +22106,14 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.75,
+       "n": 5,
+       "rate": 0.6,
        "scored": 3
       }
      },
      "name": "Stefon Diggs",
      "position": "WR",
-     "prob": 0.273904,
+     "prob": 0.265034,
      "rank": 2,
      "status": "active",
      "tds_season": 6
@@ -19429,34 +22121,34 @@
     {
      "games_season": 9,
      "group": "3+",
-     "gsis_id": "00-0041040",
+     "gsis_id": "00-0037256",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
-       "rate": 1.0
+       "n": 1,
+       "no_td": 0,
+       "rate": 0.0
       },
       "top3": {
-       "n": 2,
-       "rate": 0.5,
+       "n": 4,
+       "rate": 0.25,
        "scored": 1
       }
      },
-     "name": "Antonio Williams",
-     "position": "WR",
-     "prob": 0.230146,
+     "name": "Rachaad White",
+     "position": "RB",
+     "prob": 0.216092,
      "rank": 3,
      "status": "active",
-     "tds_season": 2
+     "tds_season": 3
     },
     {
-     "games_season": 7,
+     "games_season": 8,
      "group": "3+",
      "gsis_id": "00-0039910",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -19467,19 +22159,19 @@
      },
      "name": "Jayden Daniels",
      "position": "QB",
-     "prob": 0.206937,
+     "prob": 0.210213,
      "rank": 4,
      "status": "active",
      "tds_season": 2
     },
     {
-     "games_season": 7,
+     "games_season": 8,
      "group": "3+",
      "gsis_id": "00-0037809",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -19490,15 +22182,38 @@
      },
      "name": "Chig Okonkwo",
      "position": "TE",
-     "prob": 0.201921,
+     "prob": 0.204271,
      "rank": 5,
      "status": "active",
      "tds_season": 0
     },
     {
-     "games_season": 6,
+     "games_season": 7,
      "group": "3+",
      "gsis_id": "00-0033699",
+     "meters": {
+      "rest": {
+       "n": 5,
+       "no_td": 5,
+       "rate": 1.0
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "name": "Austin Ekeler",
+     "position": "RB",
+     "prob": 0.196404,
+     "rank": 6,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
+     "games_season": 8,
+     "group": "3+",
+     "gsis_id": "00-0037742",
      "meters": {
       "rest": {
        "n": 4,
@@ -19511,32 +22226,9 @@
        "scored": 0
       }
      },
-     "name": "Austin Ekeler",
-     "position": "RB",
-     "prob": 0.200005,
-     "rank": 6,
-     "status": "active",
-     "tds_season": 0
-    },
-    {
-     "games_season": 7,
-     "group": "3+",
-     "gsis_id": "00-0037742",
-     "meters": {
-      "rest": {
-       "n": 3,
-       "no_td": 3,
-       "rate": 1.0
-      },
-      "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
-      }
-     },
      "name": "Treylon Burks",
      "position": "WR",
-     "prob": 0.176713,
+     "prob": 0.172787,
      "rank": 7,
      "status": "active",
      "tds_season": 2
@@ -19565,32 +22257,9 @@
      "tds_season": 0
     },
     {
-     "games_season": 4,
+     "games_season": 5,
      "group": "1-3",
      "gsis_id": "00-0036415",
-     "meters": {
-      "rest": {
-       "n": 3,
-       "no_td": 2,
-       "rate": 0.666667
-      },
-      "top3": {
-       "n": 0,
-       "rate": null,
-       "scored": 0
-      }
-     },
-     "name": "Van Jefferson",
-     "position": "WR",
-     "prob": 0.10795,
-     "rank": 9,
-     "status": "active",
-     "tds_season": 1
-    },
-    {
-     "games_season": 9,
-     "group": "1-3",
-     "gsis_id": "00-0039912",
      "meters": {
       "rest": {
        "n": 4,
@@ -19603,10 +22272,10 @@
        "scored": 0
       }
      },
-     "name": "Ben Sinnott",
-     "position": "TE",
-     "prob": 0.102915,
-     "rank": 10,
+     "name": "Van Jefferson",
+     "position": "WR",
+     "prob": 0.08706,
+     "rank": 9,
      "status": "active",
      "tds_season": 1
     },
@@ -19629,7 +22298,7 @@
      "name": "Marcus Mariota",
      "position": "QB",
      "prob": 0.085342,
-     "rank": 11,
+     "rank": 10,
      "status": "active",
      "tds_season": 0
     },
@@ -19652,18 +22321,41 @@
      "name": "Robert Henry",
      "position": "RB",
      "prob": 0.073467,
-     "rank": 12,
+     "rank": 11,
      "status": "active",
      "tds_season": 0
     },
     {
-     "games_season": 8,
+     "games_season": 10,
      "group": "0.5-1",
+     "gsis_id": "00-0039912",
+     "meters": {
+      "rest": {
+       "n": 5,
+       "no_td": 4,
+       "rate": 0.8
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "name": "Ben Sinnott",
+     "position": "TE",
+     "prob": null,
+     "rank": 12,
+     "status": "active",
+     "tds_season": 1
+    },
+    {
+     "games_season": 9,
+     "group": "under 0.5",
      "gsis_id": "00-0039686",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 3,
+       "n": 4,
+       "no_td": 4,
        "rate": 1.0
       },
       "top3": {
@@ -19680,13 +22372,13 @@
      "tds_season": 0
     },
     {
-     "games_season": 6,
+     "games_season": 7,
      "group": "under 0.5",
      "gsis_id": "00-0039355",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -19703,13 +22395,13 @@
      "tds_season": 0
     },
     {
-     "games_season": 9,
+     "games_season": 10,
      "group": "under 0.5",
      "gsis_id": "00-0036628",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -19728,7 +22420,7 @@
    ],
    "div_game": false,
    "elo": {
-    "away": 1447.244026,
+    "away": 1462.705082,
     "home": 1363.358759
    },
    "game_id": "2026_12_WAS_ARI",
@@ -19895,7 +22587,7 @@
      }
     ]
    },
-   "home_prob": 0.269818,
+   "home_prob": 0.269243,
    "home_qb": {
     "change": false,
     "id": "00-0026300",
@@ -20365,11 +23057,54 @@
    "market_source": "the-odds-api",
    "market_spread": -6.5,
    "market_total": 42.0,
-   "model_prob": 0.424884,
-   "model_spread": -2.209615,
-   "model_total": 47.399793,
+   "model_prob": 0.411852,
+   "model_spread": -2.619028,
+   "model_total": 47.276276,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jayden-daniels-passed-for-146-yards-in-fourth-quarter-after-totaling-143-in-first-three",
+     "players": [
+      "Jayden Daniels"
+     ],
+     "published": "2026-11-24T10:02:45Z",
+     "source": "ProFootballTalk",
+     "summary": "When the fourth quarter started on Monday night, the Commanders trailed the Bengals 17-13.",
+     "teams": [
+      "WAS"
+     ],
+     "title": "Jayden Daniels passed for 146 yards in fourth quarter after totaling 143 in first three"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/dan-quinn-scars-from-our-late-game-losses-run-deep-glad-jayden-daniels-won-it-for-us",
+     "players": [
+      "Jayden Daniels"
+     ],
+     "published": "2026-11-24T09:18:11Z",
+     "source": "ProFootballTalk",
+     "summary": "\"I couldn't have been more proud of Jayden at the end of the game,\" Quinn said after the Commanders' 22-20 win.",
+     "teams": [
+      "WAS"
+     ],
+     "title": "Dan Quinn: Scars from our late-game losses run deep, glad Jayden Daniels won it for us"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/stefon-diggs-is-getting-frustrated",
+     "players": [
+      "Stefon Diggs"
+     ],
+     "published": "2026-11-24T02:52:26Z",
+     "source": "ProFootballTalk",
+     "summary": "Stefon Diggs is getting upset.",
+     "teams": [],
+     "title": "Stefon Diggs is getting frustrated"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -20443,55 +23178,14 @@
      "summary": "Daniels and Burrow meet for the second time on 'Monday Night Football'",
      "teams": [],
      "title": "Jayden Daniels on relationship with fellow LSU alum Joe Burrow amid jersey number complaint"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T14:39:16Z",
-     "link": "https://sports.yahoo.com/articles/rasul-douglas-adam-peters-best-133000194.html",
-     "players": [
-      "Rasul Douglas"
-     ],
-     "published": "2026-11-22T13:30:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Adam Peters' late free agent signing may be his best.",
-     "teams": [],
-     "title": "Has Rasul Douglas been Adam Peters\u2019 best off season addition?"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T14:39:16Z",
-     "link": "https://sports.yahoo.com/articles/stefon-diggs-250-000-extra-120000419.html",
-     "players": [
-      "Stefon Diggs"
-     ],
-     "published": "2026-11-22T12:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Stefon Diggs sits two TDs shy of a $250k incentive as Washington preps for a Monday night stadium blackout against the Bengals.",
-     "teams": [],
-     "title": "Stefon Diggs has 250,000 extra reasons to find the end zone against Cincinnati - Daily Slop"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T14:39:16Z",
-     "link": "https://www.profootballrumors.com/2026/11/commanders-designate-rb-jacory-croskey-merritt-for-return",
-     "players": [
-      "Jacory Croskey-Merritt"
-     ],
-     "published": "2026-11-22T00:44:46Z",
-     "source": "Pro Football Rumors",
-     "summary": "NOVEMBER 21: Croskey-Merritt is expected to be available for Week 11, CBS Sports\u2019 Matt Zenitz reports. Activation from IR prior to Monday night\u2019s game will ...",
-     "teams": [
-      "WAS"
-     ],
-     "title": "Commanders Designate RB Jacory Croskey-Merritt For Return"
     }
    ],
    "pick": "WAS",
-   "pick_prob": 0.730182,
+   "pick_prob": 0.730757,
    "roof": "retractable",
    "season": 2026,
    "spread_pick": {
-    "edge": 4.290385,
+    "edge": 3.880972,
     "line": 6.5,
     "team": "ARI"
    },
@@ -20500,13 +23194,13 @@
    "td_meters": {
     "away": {
      "rest": {
-      "n": 39,
-      "no_td": 36,
-      "rate": 0.923077
+      "n": 48,
+      "no_td": 45,
+      "rate": 0.9375
      },
      "top3": {
-      "n": 12,
-      "rate": 0.416667,
+      "n": 15,
+      "rate": 0.333333,
       "scored": 5
      }
     },
@@ -20523,10 +23217,206 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.20526,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Antonio Williams anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.280887,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0041040",
+       "key": "TD:00-0041040",
+       "kind": "TD",
+       "label": "Antonio Williams anytime TD",
+       "name": "Antonio Williams",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": true,
+       "team": "WAS"
+      },
+      {
+       "american": -332.0,
+       "chance": 0.730757,
+       "decimal": 1.301205,
+       "est": true,
+       "key": "WIN:WAS",
+       "kind": "WIN",
+       "label": "WAS to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "WAS"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.10263,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Antonio Williams anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.280887,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0041040",
+       "key": "TD:00-0041040",
+       "kind": "TD",
+       "label": "Antonio Williams anytime TD",
+       "name": "Antonio Williams",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": true,
+       "team": "WAS"
+      },
+      {
+       "american": -332.0,
+       "chance": 0.730757,
+       "decimal": 1.301205,
+       "est": true,
+       "key": "WIN:WAS",
+       "kind": "WIN",
+       "label": "WAS to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "WAS"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 42",
+       "line": 42.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.019025,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Trey McBride anytime TD, Stefon Diggs anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.276701,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0037744",
+       "key": "TD:00-0037744",
+       "kind": "TD",
+       "label": "Trey McBride anytime TD",
+       "name": "Trey McBride",
+       "position": "TE",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "ARI"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.265034,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0031588",
+       "key": "TD:00-0031588",
+       "kind": "TD",
+       "label": "Stefon Diggs anytime TD",
+       "name": "Stefon Diggs",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "WAS"
+      },
+      {
+       "american": -117.0,
+       "chance": 0.518847,
+       "decimal": 1.854701,
+       "est": true,
+       "key": "SPREAD:WAS",
+       "kind": "SPREAD",
+       "label": "WAS -6.5",
+       "line": -6.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "WAS"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 42",
+       "line": 42.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 5.399793,
+    "edge": 5.276276,
     "line": 42.0,
     "side": "OVER"
    },
@@ -21834,9 +24724,37 @@
    "market_total": 41.0,
    "model_prob": 0.713618,
    "model_spread": 6.967431,
-   "model_total": 42.363862,
+   "model_total": 42.375659,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-12-predictions-colston-loveland-thanksgiving/",
+     "players": [
+      "Quinshon Judkins"
+     ],
+     "published": "2026-11-24T12:42:05Z",
+     "source": "CBS Sports",
+     "summary": "Our five bold calls for Week 12 include a career day for Quinshon Judkins and mounting pressure on the Seahawks to play Drew Lock",
+     "teams": [
+      "CLE"
+     ],
+     "title": "It wouldn't shock me if ... for NFL Week 12: Colston Loveland feasts on Thanksgiving, Browns RB shines"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-24T13:24:31Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-12-upset-picks-thanksgiving-games-chiefs-bills/",
+     "players": [
+      "Fernando Mendoza"
+     ],
+     "published": "2026-11-24T12:40:57Z",
+     "source": "CBS Sports",
+     "summary": "Patrick Mahomes is heating up, Detroit owns its Thanksgiving opponent and three other underdogs have compelling paths",
+     "teams": [],
+     "title": "NFL Week 12 upset alert: Don't count out Patrick Mahomes, Fernando Mendoza and these underdogs"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-24T02:22:14Z",
@@ -21927,34 +24845,6 @@
       "LV"
      ],
      "title": "Raiders Mailbag: How will Fernando Mendoza look in 2nd career start against Denver Broncos\u2019 defense?"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-21T20:09:04Z",
-     "link": "https://sports.yahoo.com/articles/browns-roster-6-players-ir-170658806.html",
-     "players": [
-      "Raheim Sanders"
-     ],
-     "published": "2026-11-21T17:06:58Z",
-     "source": "Yahoo Sports",
-     "summary": "The Cleveland Browns roster includes 6 players on IR, including RB Raheim Sanders and 2 others who could return",
-     "teams": [
-      "CLE"
-     ],
-     "title": "Browns roster: 6 players on IR, 3 who could return in 2026 after the bye week"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-21T20:09:04Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-11-games-joe-burrow-bengals-commanders/",
-     "players": [
-      "Fernando Mendoza"
-     ],
-     "published": "2026-11-21T14:04:41Z",
-     "source": "CBS Sports",
-     "summary": "Joe Burrow's historic MVP push, Tampa Bay's dominant rushing attack and Fernando Mendoza's second NFL start highlight three overlooked Week 11 games worth watching",
-     "teams": [],
-     "title": "Don't sleep on these three NFL Week 11 games, from Joe Burrow's historic run to a rookie QB encore"
     }
    ],
    "pick": "CLE",
@@ -21994,10 +24884,241 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.237764,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Quinshon Judkins anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.370952,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040784",
+       "key": "TD:00-0040784",
+       "kind": "TD",
+       "label": "Quinshon Judkins anytime TD",
+       "name": "Quinshon Judkins",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CLE"
+      },
+      {
+       "american": -215.0,
+       "chance": 0.640958,
+       "decimal": 1.465116,
+       "est": true,
+       "key": "WIN:CLE",
+       "kind": "WIN",
+       "label": "CLE to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "CLE"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.190984,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for KC Concepcion anytime TD",
+     "kind": "rookie",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.297967,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0041547",
+       "key": "TD:00-0041547",
+       "kind": "TD",
+       "label": "KC Concepcion anytime TD",
+       "name": "KC Concepcion",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": true,
+       "team": "CLE"
+      },
+      {
+       "american": -215.0,
+       "chance": 0.640958,
+       "decimal": 1.465116,
+       "est": true,
+       "key": "WIN:CLE",
+       "kind": "WIN",
+       "label": "CLE to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "CLE"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.092738,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Quinshon Judkins anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.370952,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040784",
+       "key": "TD:00-0040784",
+       "kind": "TD",
+       "label": "Quinshon Judkins anytime TD",
+       "name": "Quinshon Judkins",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CLE"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:CLE",
+       "kind": "SPREAD",
+       "label": "CLE -4",
+       "line": -4.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "CLE"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 41",
+       "line": 41.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.030488,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Ashton Jeanty anytime TD, Harold Fannin anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.368458,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040122",
+       "key": "TD:00-0040122",
+       "kind": "TD",
+       "label": "Ashton Jeanty anytime TD",
+       "name": "Ashton Jeanty",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "LV"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.330983,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040663",
+       "key": "TD:00-0040663",
+       "kind": "TD",
+       "label": "Harold Fannin anytime TD",
+       "name": "Harold Fannin",
+       "position": "TE",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CLE"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:CLE",
+       "kind": "SPREAD",
+       "label": "CLE -4",
+       "line": -4.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "CLE"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.5,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "TOTAL:OVER",
+       "kind": "TOTAL",
+       "label": "Over 41",
+       "line": 41.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "OVER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 1.363862,
+    "edge": 1.375659,
     "line": 41.0,
     "side": "OVER"
    },
@@ -23310,7 +26431,7 @@
    "market_total": 43.0,
    "model_prob": 0.60473,
    "model_spread": 3.322858,
-   "model_total": 43.846113,
+   "model_total": 43.857909,
    "neutral": false,
    "news": [
     {
@@ -23466,20 +26587,971 @@
      }
     }
    },
+   "tickets": [
+    {
+     "built": true,
+     "chance": 0.305192,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Bucky Irving anytime TD",
+     "kind": "small",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.531798,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0039361",
+       "key": "TD:00-0039361",
+       "kind": "TD",
+       "label": "Bucky Irving anytime TD",
+       "name": "Bucky Irving",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "TB"
+      },
+      {
+       "american": -138.0,
+       "chance": 0.573887,
+       "decimal": 1.724638,
+       "est": true,
+       "key": "WIN:TB",
+       "kind": "WIN",
+       "label": "TB to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "TB"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": false,
+     "chance": null,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no ticket",
+     "kind": "rookie",
+     "legs": [],
+     "reason": "no rookie TD leg with a chance of 25% or more available",
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.156438,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Bucky Irving anytime TD, Chuba Hubbard anytime TD",
+     "kind": "medium",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.531798,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0039361",
+       "key": "TD:00-0039361",
+       "kind": "TD",
+       "label": "Bucky Irving anytime TD",
+       "name": "Bucky Irving",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "TB"
+      },
+      {
+       "american": -138.0,
+       "chance": 0.573887,
+       "decimal": 1.724638,
+       "est": true,
+       "key": "WIN:TB",
+       "kind": "WIN",
+       "label": "TB to win",
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "TB"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.51259,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036555",
+       "key": "TD:00-0036555",
+       "kind": "TD",
+       "label": "Chuba Hubbard anytime TD",
+       "name": "Chuba Hubbard",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CAR"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    },
+    {
+     "built": true,
+     "chance": 0.038822,
+     "est": true,
+     "est_payout": null,
+     "est_payout_reason": "no price on file for Chuba Hubbard anytime TD, Tetairoa McMillan anytime TD",
+     "kind": "large",
+     "legs": [
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.51259,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0036555",
+       "key": "TD:00-0036555",
+       "kind": "TD",
+       "label": "Chuba Hubbard anytime TD",
+       "name": "Chuba Hubbard",
+       "position": "RB",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CAR"
+      },
+      {
+       "american": null,
+       "best_american": null,
+       "best_book": null,
+       "books": null,
+       "chance": 0.295875,
+       "decimal": null,
+       "est": true,
+       "gsis_id": "00-0040124",
+       "key": "TD:00-0040124",
+       "kind": "TD",
+       "label": "Tetairoa McMillan anytime TD",
+       "name": "Tetairoa McMillan",
+       "position": "WR",
+       "price_as_of": null,
+       "price_match": null,
+       "price_missing": "anytime-TD prices are bought only within 36 hours of kickoff",
+       "price_source": null,
+       "rookie": false,
+       "team": "CAR"
+      },
+      {
+       "american": -110.0,
+       "chance": 0.50109,
+       "decimal": 1.909091,
+       "est": true,
+       "key": "SPREAD:CAR",
+       "kind": "SPREAD",
+       "label": "CAR +2.5",
+       "line": 2.5,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "team": "CAR"
+      },
+      {
+       "american": -115.0,
+       "chance": 0.510834,
+       "decimal": 1.869565,
+       "est": true,
+       "key": "TOTAL:UNDER",
+       "kind": "TOTAL",
+       "label": "Under 43",
+       "line": 43.0,
+       "price_missing": null,
+       "price_source": "the-odds-api",
+       "side": "UNDER"
+      }
+     ],
+     "reason": null,
+     "version": "sgp-v1"
+    }
+   ],
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 0.846113,
+    "edge": 0.857909,
     "line": 43.0,
     "side": "OVER"
    },
    "week": 12
   }
  ],
- "generated": "2026-11-24T02:23:36Z",
+ "generated": "2026-11-24T13:25:43Z",
  "label": "Week 12",
  "schema": 1,
  "season": 2026,
+ "sgp": {
+  "caveats": {
+   "bias": "In the backtest a TD candidate is a player who took a snap, so the replay knows who was active. Live, a pick who does not play is voided and the ticket is graded on its other legs.",
+   "chance": "The chance is the product of the legs' chances - what the ticket would hit if its legs were independent. Legs in one game are not (a team winning and its running back scoring go together), so the backtest measures how often each kind actually hit beside this product, and both are shown.",
+   "edge": "Nothing here claims an edge. The market is hard to beat, and parlays multiply the margin of every leg; these tickets are the legs the engine rates most likely to land, not bets it rates profitable.",
+   "est": "est. - the product of the legs' consensus single prices; Stake's bet builder prices correlated legs below it, so it is an upper bound on what Stake pays",
+   "est_erratum": "Correction, found after the rule was fixed: the est. payout is not an upper bound. A bet builder prices legs that go together below the product of the singles, but can price legs that pull against each other above it (a touchdown on one team beside the other team's result, or beside the under), and Stake's single prices are not the books' consensus - so the est. payout, and the live return read at it, is an estimate that Stake's quote can beat or fall short of.",
+   "exact": "The exact payout is the price Stake quotes for the slip: enter it as typed and the return on the stake is worked out from it.",
+   "legs": {
+    "SPREAD": "a team at the posted spread; chance: the market's no-vig at the consensus spread prices, since the model does not beat the line; a push voids the leg",
+    "TD": "a player scores 1+ rushing or receiving touchdown, overtime included - passing, return and fumble-recovery touchdowns do not count; chance: the touchdown model's, if he plays, only where his usage group was measured as calibrated; a player who does not play voids the leg",
+    "TOTAL": "over or under the posted game total; chance: the market's no-vig at the consensus total prices; a push voids the leg",
+    "WIN": "a team to win, overtime included; chance: the pick's blend; a tie voids the leg"
+   },
+   "live": "Live: every ticket logged before kickoff, graded from the box score, its return at the logged est. payout - so an upper bound, and marked so.",
+   "meters": "Each kind is metered on its own, as if $10 had been bet on every ticket of that kind: hit rate is won / (won + lost), beside the mean product chance of the same tickets.",
+   "not_in_v1": "Not in v1, because nothing on file measures them yet: QB pass attempts, yards over a line, first/second-half points, team or game touchdown totals, alternate (\"Asian\") lines.",
+   "prices": "Every price is the books' consensus single price, not Stake's: an estimate, marked est.",
+   "roi_priced": "The return is over the graded tickets that had every leg's price; a ticket with a leg the books had not priced is counted in the hit rate but not in the return.",
+   "rookie": "A ROOKIE leg is a TD leg on a player in his first NFL season: no game in player_games in any earlier season.",
+   "slots": "Built in the order SMALL, ROOKIE, MEDIUM, LARGE, each slot taking the highest-chance leg still available: a leg is in at most 2 of a game's 4 tickets. A slot with nothing available leaves its ticket unbuilt, with the reason.",
+   "tickets": {
+    "large": "the best TD + the next-best TD (another player) + the best result leg + the best TOTAL leg",
+    "medium": "the best TD + the best result leg + the best of the TOTAL legs and the TD legs on other players",
+    "rookie": "the best rookie TD with a chance of 25% or more + WIN for the rookie's own team",
+    "small": "the best TD + the best result leg (WIN or SPREAD)"
+   }
+  },
+  "history": {
+   "available": true,
+   "current_season": 2026,
+   "games": {
+    "2014-2019": 1602,
+    "2020-2025": 1693,
+    "2026": 162,
+    "all": 3457
+   },
+   "generated": "2026-11-24T13:24:30Z",
+   "history_from": 2014,
+   "inputs": {
+    "SPREAD": "closing spread_line and its prices, games.csv.gz, proportional no-vig",
+    "TD": "nfl_td walk-forward prob (season S fitted on seasons before S), shipped usage groups only; graded on box-score rushing + receiving TDs",
+    "TOTAL": "closing total_line and its prices, games.csv.gz, proportional no-vig",
+    "WIN": "nfl_model walk-forward blend_prob (season S fitted on seasons before S)",
+    "rookie": "no player_games row in an earlier season"
+   },
+   "kinds": {
+    "large": {
+     "chance_bins": [
+      {
+       "hi": 0.025,
+       "hit_rate": 0.03881,
+       "lo": 0.0,
+       "mean_chance": 0.020966,
+       "mean_chance_graded": 0.021782,
+       "tickets": 773
+      },
+      {
+       "hi": 0.05,
+       "hit_rate": 0.033462,
+       "lo": 0.025,
+       "mean_chance": 0.035414,
+       "mean_chance_graded": 0.036529,
+       "tickets": 2331
+      },
+      {
+       "hi": 0.1,
+       "hit_rate": 0.076705,
+       "lo": 0.05,
+       "mean_chance": 0.057987,
+       "mean_chance_graded": 0.059902,
+       "tickets": 352
+      }
+     ],
+     "meters": {
+      "2014-2019": {
+       "graded": 1601,
+       "hit_rate": 0.036227,
+       "hit_rate_reason": null,
+       "lost": 1543,
+       "mean_chance": 0.034023,
+       "mean_chance_graded": 0.035275,
+       "not_built": 1,
+       "not_built_why": {
+        "no TOTAL leg available": 1
+       },
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 1601,
+       "void": 0,
+       "won": 58
+      },
+      "2020-2025": {
+       "graded": 1693,
+       "hit_rate": 0.041347,
+       "hit_rate_reason": null,
+       "lost": 1623,
+       "mean_chance": 0.035049,
+       "mean_chance_graded": 0.036066,
+       "not_built": 0,
+       "not_built_why": {},
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 1693,
+       "void": 0,
+       "won": 70
+      },
+      "2026": {
+       "graded": 162,
+       "hit_rate": 0.04321,
+       "hit_rate_reason": null,
+       "lost": 155,
+       "mean_chance": 0.033074,
+       "mean_chance_graded": 0.034182,
+       "not_built": 0,
+       "not_built_why": {},
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 162,
+       "void": 0,
+       "won": 7
+      },
+      "all": {
+       "graded": 3456,
+       "hit_rate": 0.039062,
+       "hit_rate_reason": null,
+       "lost": 3321,
+       "mean_chance": 0.034481,
+       "mean_chance_graded": 0.035611,
+       "not_built": 1,
+       "not_built_why": {
+        "no TOTAL leg available": 1
+       },
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 3456,
+       "void": 0,
+       "won": 135
+      }
+     }
+    },
+    "medium": {
+     "chance_bins": [
+      {
+       "hi": 0.1,
+       "hit_rate": 0.084806,
+       "lo": 0.05,
+       "mean_chance": 0.090883,
+       "mean_chance_graded": 0.092808,
+       "tickets": 283
+      },
+      {
+       "hi": 0.15,
+       "hit_rate": 0.124765,
+       "lo": 0.1,
+       "mean_chance": 0.125276,
+       "mean_chance_graded": 0.126937,
+       "tickets": 1595
+      },
+      {
+       "hi": 0.2,
+       "hit_rate": 0.184447,
+       "lo": 0.15,
+       "mean_chance": 0.170969,
+       "mean_chance_graded": 0.172993,
+       "tickets": 1003
+      },
+      {
+       "hi": 0.25,
+       "hit_rate": 0.263789,
+       "lo": 0.2,
+       "mean_chance": 0.219917,
+       "mean_chance_graded": 0.222066,
+       "tickets": 417
+      },
+      {
+       "hi": 0.3,
+       "hit_rate": 0.266129,
+       "lo": 0.25,
+       "mean_chance": 0.270775,
+       "mean_chance_graded": 0.270775,
+       "tickets": 124
+      },
+      {
+       "hi": 0.4,
+       "hit_rate": 0.257143,
+       "lo": 0.3,
+       "mean_chance": 0.326565,
+       "mean_chance_graded": 0.326565,
+       "tickets": 35
+      }
+     ],
+     "meters": {
+      "2014-2019": {
+       "graded": 1602,
+       "hit_rate": 0.155431,
+       "hit_rate_reason": null,
+       "lost": 1353,
+       "mean_chance": 0.151666,
+       "mean_chance_graded": 0.153452,
+       "not_built": 0,
+       "not_built_why": {},
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 1602,
+       "void": 0,
+       "won": 249
+      },
+      "2020-2025": {
+       "graded": 1693,
+       "hit_rate": 0.165978,
+       "hit_rate_reason": null,
+       "lost": 1412,
+       "mean_chance": 0.155955,
+       "mean_chance_graded": 0.157841,
+       "not_built": 0,
+       "not_built_why": {},
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 1693,
+       "void": 0,
+       "won": 281
+      },
+      "2026": {
+       "graded": 162,
+       "hit_rate": 0.185185,
+       "hit_rate_reason": null,
+       "lost": 132,
+       "mean_chance": 0.164989,
+       "mean_chance_graded": 0.165397,
+       "not_built": 0,
+       "not_built_why": {},
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 162,
+       "void": 0,
+       "won": 30
+      },
+      "all": {
+       "graded": 3457,
+       "hit_rate": 0.16199,
+       "hit_rate_reason": null,
+       "lost": 2897,
+       "mean_chance": 0.154391,
+       "mean_chance_graded": 0.156161,
+       "not_built": 0,
+       "not_built_why": {},
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 3457,
+       "void": 0,
+       "won": 560
+      }
+     }
+    },
+    "rookie": {
+     "chance_bins": [
+      {
+       "hi": 0.025,
+       "hit_rate": 0.0,
+       "lo": 0.0,
+       "mean_chance": 0.021531,
+       "mean_chance_graded": 0.021531,
+       "tickets": 5
+      },
+      {
+       "hi": 0.05,
+       "hit_rate": 0.074074,
+       "lo": 0.025,
+       "mean_chance": 0.040471,
+       "mean_chance_graded": 0.040471,
+       "tickets": 27
+      },
+      {
+       "hi": 0.1,
+       "hit_rate": 0.096491,
+       "lo": 0.05,
+       "mean_chance": 0.079593,
+       "mean_chance_graded": 0.080522,
+       "tickets": 228
+      },
+      {
+       "hi": 0.15,
+       "hit_rate": 0.156425,
+       "lo": 0.1,
+       "mean_chance": 0.124124,
+       "mean_chance_graded": 0.124124,
+       "tickets": 358
+      },
+      {
+       "hi": 0.2,
+       "hit_rate": 0.215339,
+       "lo": 0.15,
+       "mean_chance": 0.174438,
+       "mean_chance_graded": 0.174782,
+       "tickets": 339
+      },
+      {
+       "hi": 0.25,
+       "hit_rate": 0.24498,
+       "lo": 0.2,
+       "mean_chance": 0.221968,
+       "mean_chance_graded": 0.222247,
+       "tickets": 249
+      },
+      {
+       "hi": 0.3,
+       "hit_rate": 0.330645,
+       "lo": 0.25,
+       "mean_chance": 0.269909,
+       "mean_chance_graded": 0.269909,
+       "tickets": 124
+      },
+      {
+       "hi": 0.4,
+       "hit_rate": 0.34375,
+       "lo": 0.3,
+       "mean_chance": 0.337005,
+       "mean_chance_graded": 0.337005,
+       "tickets": 64
+      },
+      {
+       "hi": 1.0,
+       "hit_rate": 0.666667,
+       "lo": 0.4,
+       "mean_chance": 0.457314,
+       "mean_chance_graded": 0.457314,
+       "tickets": 3
+      }
+     ],
+     "meters": {
+      "2014-2019": {
+       "graded": 663,
+       "hit_rate": 0.20362,
+       "hit_rate_reason": null,
+       "lost": 528,
+       "mean_chance": 0.168286,
+       "mean_chance_graded": 0.168605,
+       "not_built": 939,
+       "not_built_why": {
+        "no rookie TD leg with a chance of 25% or more available": 853,
+        "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 86
+       },
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 663,
+       "void": 0,
+       "won": 135
+      },
+      "2020-2025": {
+       "graded": 700,
+       "hit_rate": 0.198571,
+       "hit_rate_reason": null,
+       "lost": 561,
+       "mean_chance": 0.1688,
+       "mean_chance_graded": 0.169066,
+       "not_built": 993,
+       "not_built_why": {
+        "no rookie TD leg with a chance of 25% or more available": 917,
+        "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 76
+       },
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 700,
+       "void": 0,
+       "won": 139
+      },
+      "2026": {
+       "graded": 34,
+       "hit_rate": 0.147059,
+       "hit_rate_reason": null,
+       "lost": 29,
+       "mean_chance": 0.14305,
+       "mean_chance_graded": 0.14305,
+       "not_built": 128,
+       "not_built_why": {
+        "no rookie TD leg with a chance of 25% or more available": 125,
+        "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 3
+       },
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 34,
+       "void": 0,
+       "won": 5
+      },
+      "all": {
+       "graded": 1397,
+       "hit_rate": 0.199714,
+       "hit_rate_reason": null,
+       "lost": 1118,
+       "mean_chance": 0.167929,
+       "mean_chance_graded": 0.168214,
+       "not_built": 2060,
+       "not_built_why": {
+        "no rookie TD leg with a chance of 25% or more available": 1895,
+        "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 165
+       },
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 1397,
+       "void": 0,
+       "won": 279
+      }
+     }
+    },
+    "small": {
+     "chance_bins": [
+      {
+       "hi": 0.15,
+       "hit_rate": 0.0,
+       "lo": 0.1,
+       "mean_chance": 0.142733,
+       "mean_chance_graded": 0.142733,
+       "tickets": 8
+      },
+      {
+       "hi": 0.2,
+       "hit_rate": 0.172043,
+       "lo": 0.15,
+       "mean_chance": 0.185202,
+       "mean_chance_graded": 0.185202,
+       "tickets": 186
+      },
+      {
+       "hi": 0.25,
+       "hit_rate": 0.229584,
+       "lo": 0.2,
+       "mean_chance": 0.227836,
+       "mean_chance_graded": 0.228466,
+       "tickets": 649
+      },
+      {
+       "hi": 0.3,
+       "hit_rate": 0.282113,
+       "lo": 0.25,
+       "mean_chance": 0.274199,
+       "mean_chance_graded": 0.274883,
+       "tickets": 833
+      },
+      {
+       "hi": 0.4,
+       "hit_rate": 0.363715,
+       "lo": 0.3,
+       "mean_chance": 0.343291,
+       "mean_chance_graded": 0.343754,
+       "tickets": 1152
+      },
+      {
+       "hi": 1.0,
+       "hit_rate": 0.502385,
+       "lo": 0.4,
+       "mean_chance": 0.467349,
+       "mean_chance_graded": 0.468142,
+       "tickets": 629
+      }
+     ],
+     "meters": {
+      "2014-2019": {
+       "graded": 1602,
+       "hit_rate": 0.3196,
+       "hit_rate_reason": null,
+       "lost": 1090,
+       "mean_chance": 0.313834,
+       "mean_chance_graded": 0.31451,
+       "not_built": 0,
+       "not_built_why": {},
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 1602,
+       "void": 0,
+       "won": 512
+      },
+      "2020-2025": {
+       "graded": 1693,
+       "hit_rate": 0.339634,
+       "hit_rate_reason": null,
+       "lost": 1118,
+       "mean_chance": 0.321967,
+       "mean_chance_graded": 0.322437,
+       "not_built": 0,
+       "not_built_why": {},
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 1693,
+       "void": 0,
+       "won": 575
+      },
+      "2026": {
+       "graded": 162,
+       "hit_rate": 0.395062,
+       "hit_rate_reason": null,
+       "lost": 98,
+       "mean_chance": 0.329903,
+       "mean_chance_graded": 0.330712,
+       "not_built": 0,
+       "not_built_why": {},
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 162,
+       "void": 0,
+       "won": 64
+      },
+      "all": {
+       "graded": 3457,
+       "hit_rate": 0.332948,
+       "hit_rate_reason": null,
+       "lost": 2306,
+       "mean_chance": 0.31857,
+       "mean_chance_graded": 0.319152,
+       "not_built": 0,
+       "not_built_why": {},
+       "pending": 0,
+       "profit": null,
+       "roi": null,
+       "roi_note": null,
+       "roi_reason": "no anytime-TD price history on file",
+       "roi_tickets": 0,
+       "stake": 10.0,
+       "tickets": 3457,
+       "void": 0,
+       "won": 1151
+      }
+     }
+    }
+   },
+   "left_out": {
+    "not played yet": 110
+   },
+   "periods": {
+    "2014-2019": [
+     2014,
+     2019
+    ],
+    "2020-2025": [
+     2020,
+     2025
+    ],
+    "2026": [
+     2026,
+     2026
+    ],
+    "all": [
+     2014,
+     2026
+    ]
+   },
+   "reason": null,
+   "roi_reason": "no anytime-TD price history on file",
+   "td_groups": {
+    "changed": 0,
+    "note": "the usage groups given a chance were chosen on 2014-2025 walk-forward calibration (nfl_td.shipped_groups); `changed` is how many built tickets would differ with every group's chance in",
+    "shipped": [
+     "1-3",
+     "3+"
+    ],
+    "tickets": 11767
+   },
+   "td_prices": {
+    "file": "nfl/data/td_price_history.csv.gz",
+    "on_file": false,
+    "rows": 0
+   },
+   "through": "2026-11-23T01:20:00Z"
+  },
+  "kinds": [
+   "small",
+   "rookie",
+   "medium",
+   "large"
+  ],
+  "legs": {
+   "large": 4,
+   "medium": 3,
+   "rookie": 2,
+   "small": 2
+  },
+  "live": {
+   "first_kickoff": "2026-11-26T01:00:00Z",
+   "games": 16,
+   "graded_games": 0,
+   "kinds": {
+    "large": {
+     "graded": 0,
+     "hit_rate": null,
+     "hit_rate_reason": "no ticket decided yet",
+     "lost": 0,
+     "mean_chance": null,
+     "mean_chance_graded": null,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 16,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no ticket graded yet",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 16,
+     "void": 0,
+     "won": 0
+    },
+    "medium": {
+     "graded": 0,
+     "hit_rate": null,
+     "hit_rate_reason": "no ticket decided yet",
+     "lost": 0,
+     "mean_chance": null,
+     "mean_chance_graded": null,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 16,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no ticket graded yet",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 16,
+     "void": 0,
+     "won": 0
+    },
+    "rookie": {
+     "graded": 0,
+     "hit_rate": null,
+     "hit_rate_reason": "no ticket decided yet",
+     "lost": 0,
+     "mean_chance": null,
+     "mean_chance_graded": null,
+     "not_built": 12,
+     "not_built_why": {
+      "no rookie TD leg with a chance of 25% or more available": 10,
+      "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 2
+     },
+     "pending": 4,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no ticket graded yet",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 4,
+     "void": 0,
+     "won": 0
+    },
+    "small": {
+     "graded": 0,
+     "hit_rate": null,
+     "hit_rate_reason": "no ticket decided yet",
+     "lost": 0,
+     "mean_chance": null,
+     "mean_chance_graded": null,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 16,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no ticket graded yet",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 16,
+     "void": 0,
+     "won": 0
+    }
+   }
+  },
+  "rookie_floor": 0.25,
+  "rule": "nfl/engine/nfl_sgp.py",
+  "stake": 10.0,
+  "use_cap": 2,
+  "version": "sgp-v1"
+ },
  "tiers": {
   "LEAN": {
    "hit_rate": 0.584192,
