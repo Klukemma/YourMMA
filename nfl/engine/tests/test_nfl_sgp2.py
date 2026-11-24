@@ -109,7 +109,7 @@ def test_a_td_leg_needs_the_floor():
     t = _build(_game([_td("a", "KC", 0.6), _td("b", "BUF", 0.5), _td("c", "KC", 0.39)]))
     assert t["large"]["reason"] == sgp2.no_second_td(FLOOR)   # c is under the floor
     for f in sgp2.TD_FLOOR_GRID:                            # each reason names the bar it used
-        assert f"{f:.0%}" in sgp2.no_td(f) and f"{f:.0%}" in sgp2.no_second_td(f) and f"{f:.0%}" in sgp2.no_third(f)
+        assert all(f"{f:.0%}" in why(f) for why in (sgp2.no_td, sgp2.no_second_td, sgp2.no_third))
 
 
 def test_the_rookie_leg_keeps_v1s_floor_and_is_on_the_picks_team():
@@ -143,7 +143,8 @@ def test_small_takes_the_picks_best_td_scorer_else_the_games_best():
     # None clears it: no SMALL, and why.
     t = _build(_game([_td("kc", "KC", 0.38)]))
     assert not t["small"]["built"] and t["small"]["reason"] == sgp2.no_td(FLOOR)
-    assert sgp2.game_best_small(_game([_td("kc", "KC", 0.38)]), "KC", 0.7, CONF, FLOOR)["reason"] == sgp2.no_td(FLOOR)
+    alt = sgp2.game_best_small(_game([_td("kc", "KC", 0.38)]), "KC", 0.7, CONF, FLOOR)
+    assert not alt["built"] and alt["reason"] == sgp2.no_td(FLOOR)
 
 
 # ---------------------------------------------------------------- TOTAL

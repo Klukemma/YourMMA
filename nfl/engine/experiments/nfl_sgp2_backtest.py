@@ -61,6 +61,8 @@ OUT_NAME = "sgp2_backtest"
 TICKETS_OUT = nd.DATA / "sgp2_backtest_tickets.csv.gz"
 RULE = ENGINE / "nfl_sgp2.py"
 DEV_NAME = f"{sgp2.DEV[0]}-{sgp2.DEV[1]}"
+# v1's bins, with its top one (40% and up) split: v2's tickets are the likelier ones.
+CHANCE_EDGES = bk.CHANCE_EDGES[:-1] + (0.45, 0.50, 0.60, 1.0)
 META = ("game_id", "season", "week", "game_type", "home", "away", "pick", "p_pick")
 # The lines --choose writes (and rewrites) in nfl_sgp2.py: its comment, then the three constants.
 CHOSEN_BLOCK = re.compile(r"(?:# CHOSEN [^\n]*\n(?:#   [^\n]*\n)*)?"
@@ -232,7 +234,7 @@ def payload_of(data, recs, left_out, confident, td_floor, chosen_on, every_recs=
     spans = bk.periods(current)
     no_price = sgp.NO_TD_PRICE if prices is None else None
     built = tickets(recs, confident, td_floor)
-    out = bk.measure(built, current, no_price)
+    out = bk.measure(built, current, no_price, CHANCE_EDGES)
     for kind, k in out["kinds"].items():
         k["coverage"] = _coverage(k["meters"], out["games"])
     out["confident_games"] = {name: sum(sgp2.eligible(r["p_pick"], confident) for r in _in(recs, span))
@@ -251,7 +253,7 @@ def payload_of(data, recs, left_out, confident, td_floor, chosen_on, every_recs=
                    "note": "every pair of the grid, per period; only the DEV figures chose, and only by "
                            "the objective"}
     same = [r for r in recs if sgp2.eligible(r["p_pick"], confident)]
-    v1 = bk.measure(v1_tickets(same), current, no_price)
+    v1 = bk.measure(v1_tickets(same), current, no_price, CHANCE_EDGES)
     out["v1_same_games"] = {"report_only": True, "version": sgp.VERSION, "games": v1["games"],
                             "kinds": {k: v["meters"] for k, v in v1["kinds"].items()},
                             "note": f"v1's four tickets of the games v2 builds in (the pick's chance "
@@ -338,7 +340,7 @@ def headline(payload):
              f"  chosen on {DEV_NAME} ({c['chosen_on']}): CONFIDENT {c['confident']}, TD_FLOOR "
              f"{c['td_floor']} - SMALL in {s['coverage']:.1%} of {c['dev']['games']:,} games, hit "
              f"{s['hit_rate']:.1%}; {c['cleared']} of {c['pairs']} pairs cleared; reproduced: {c['reproduced']}",
-             f"  coverage: " + "; ".join(f"{k} " + ", ".join(f"{n} {v:.1%}" for n, v in x["coverage"].items()
+             "  coverage: " + "; ".join(f"{k} " + ", ".join(f"{n} {v:.1%}" for n, v in x["coverage"].items()
                                                                if v is not None)
                                          for k, x in payload["kinds"].items()),
              "  v1 on the same games (report-only):"]

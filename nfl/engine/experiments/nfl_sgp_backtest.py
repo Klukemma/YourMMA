@@ -191,15 +191,16 @@ def periods(current):
     return out
 
 
-def measure(tickets, current, no_price_reason=None):
-    """The payload's meters: per kind, per period, and the chance bins."""
+def measure(tickets, current, no_price_reason=None, edges=CHANCE_EDGES):
+    """The payload's meters: per kind, per period, and the chance bins
+    (`edges`: v2's history splits the likelier tickets finer)."""
     spans = periods(current)
     by_period = {name: sgp.summarise([t for t in tickets if lo <= t["season"] <= hi], no_price_reason)
                  for name, (lo, hi) in spans.items()}
     games = {name: len({t["game_id"] for t in tickets if lo <= t["season"] <= hi})
              for name, (lo, hi) in spans.items()}
     kinds = {kind: {"meters": {name: by_period[name][kind] for name in spans},
-                    "chance_bins": _bins([t for t in tickets if t["kind"] == kind])}
+                    "chance_bins": _bins([t for t in tickets if t["kind"] == kind], edges)}
              for kind in sgp.KINDS}
     return {"periods": spans, "games": games, "kinds": kinds}
 
