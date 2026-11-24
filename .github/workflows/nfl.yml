@@ -151,6 +151,11 @@ jobs:
             # the file as it was: the app shows its generated date.
             python nfl/engine/experiments/nfl_sgp_backtest.py --if-stale 2>&1 | tee nfl.log \
               || echo "::warning::same-game ticket backtest failed; nfl/data/sgp_backtest.json kept as it was"
+            # v2's history (nfl_sgp2_backtest.py), refreshed the same way and
+            # for the same reason; it replays with the pair nfl_sgp2.py holds
+            # and never re-chooses it: the choice is made by hand, once.
+            python nfl/engine/experiments/nfl_sgp2_backtest.py --if-stale 2>&1 | tee -a nfl.log \
+              || echo "::warning::same-game ticket v2 backtest failed; nfl/data/sgp2_backtest.json kept as it was"
             python nfl/engine/nfl_predict.py 2>&1 | tee -a nfl.log
           fi
 
