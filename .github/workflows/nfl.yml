@@ -23,16 +23,23 @@ name: NFL predictions
 # prices (3 credits each, from the free tier's 500 a month); the others
 # reuse prices on file unless a game has none or they are days old - and
 # every run reads the news feeds, so news lands before each kickoff. The
-# same-game tickets' anytime-TD prices are 1 credit a game, bought only for
-# games within nfl_odds.TD_WINDOW_HOURS of kickoff and at most once in
-# TD_STALE_HOURS - Thursday's and Sunday's refresh buys them again for the
-# games that day. So every game needs a run inside that window, hours ahead
+# same-game tickets' and TD lists' anytime-TD prices are 1 credit a game,
+# bought once early - by the first run within nfl_odds.TD_EARLY_DAYS of
+# kickoff, if the game has no TD entry on file - and again for games within
+# nfl_odds.TD_WINDOW_HOURS of kickoff, at most once in TD_STALE_HOURS -
+# Thursday's and Sunday's refresh buys them again for the games that day.
+# So every game needs a run inside that window, hours ahead
 # of kickoff: a game with none has its tickets logged with every TD leg
 # unpriced (test_nfl_workflow checks the slots against the schedule). The
 # Wednesday slot is that run for a Wednesday night game (Tuesday's is too
 # early for it) and for Thanksgiving's first game. It comes before Thursday
 # night is in the window, so it buys no TD price for that game; Sunday's
 # lines are about three days old by then, so it may buy those (3 credits).
+# What these slots cost a month is printed by
+# `python nfl/engine/nfl_odds.py --budget` (no call made): the key is shared
+# with the MMA card, and test_nfl_workflow holds the busiest month and the
+# reserve under the free tier - with the MMA card's share as the credits
+# counter saw it, in the snapshot check, which warns and never gates a run.
 on:
   workflow_dispatch:
     inputs:

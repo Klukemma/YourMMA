@@ -130,9 +130,28 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
   single prices are not the consensus - so it is an estimate either way. The exact payout is
   the price Stake quotes for the slip, typed in by hand.
 - **Anytime-touchdown prices** are bought per game from the-odds-api's per-event endpoint
-  (one credit a game), only within `nfl_odds.TD_WINDOW_HOURS` of kickoff, and matched to a
-  player only by an exact or strictly normalised name of that game's own rosters. A player
-  with no safe match has no price, and the reason is shown.
+  (one credit a game): once early, by the first run within `nfl_odds.TD_EARLY_DAYS` of
+  kickoff for a game with none on file (the books post these props early in the week; each
+  round's fetch log counts how many early calls found them posted), and again within
+  `nfl_odds.TD_WINDOW_HOURS` of kickoff, at most once in `nfl_odds.TD_STALE_HOURS` - never once
+  the game has started, and never below `nfl_odds.TD_RESERVE_CREDITS` credits left, so the
+  lines are bought first. A price is matched to a player only by an exact or strictly
+  normalised name of that game's own rosters. A player with no safe match has no price, and
+  the reason is shown.
+- **The odds beside each scorer**: every touchdown candidate in a game's lists carries his
+  anytime-TD price - the consensus and its decimal, the chance it implies with the books'
+  margin left in, the best price and its book, how many books and when it was seen - or why
+  there is none. It is the books' consensus, not Stake's, so it is marked est.; the touchdown
+  model's chance has never been measured against these prices (none from past seasons is on
+  file), so a gap between the two is not an edge. A pick logged before kickoff keeps the
+  price it was logged with.
+- **The odds key's budget**: the key is shared with the MMA card, on the free tier's
+  `nfl_odds.FREE_TIER_CREDITS` a month. `python nfl/engine/nfl_odds.py --budget` replays the
+  runner's own slots over the last full season with exactly these purchase rules and prints
+  each month's credits - lines, touchdown window, early touchdown calls - beside the most the
+  other engines on the key were seen to spend in a month and the reserve, and what is left.
+  It is an estimate: every call is assumed answered and a manual refresh is not in it. The
+  workflow test holds its busiest month and the reserve under the allowance.
 - **The meters**, per kind: the history (`experiments/nfl_sgp_backtest.py`, replayed by the
   runner whenever a new final's box score is on file, its generated date shown) and the
   live record (tickets logged before kickoff, graded from the box score). The history has
@@ -157,6 +176,14 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
   re-chosen, and reports beside v2 the whole grid, v1 on the same games and SMALL with the
   game's best scorer instead. As in v1 it has no past touchdown prices, so its return is
   missing with that reason, and it carries v1's known bias.
+- **Live, v2 builds the tickets** (`nfl_predict.LIVE_VERSION`): each game still to come gets
+  v2's four from its pick, the pick's chance and the same legs v1 reads, logged before kickoff
+  as sgp-v2 with the two numbers they were built with. A game that is not confident shows its
+  four tickets unbuilt with the one reason. v1 is retired: it builds no new ticket, but every
+  v1 ticket logged before kickoff stays in the log as it was logged and is graded by its own
+  version's rule, beside the game's v2 tickets. week.json's `sgp` block is v2's - its history,
+  the chosen pair and the whole grid, its live meters and its rule's sentences - with v1's
+  history and live meters under `sgp.v1`, labelled retired.
 - Nothing here is called a bet or an edge: the market is hard to beat, and a parlay
   multiplies the margin of every leg.
 
@@ -220,6 +247,7 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
     python nfl/engine/nfl_data.py --full      # rebuild every season's snapshot
     python nfl/engine/nfl_predict.py          # sync this season, predict the week, write the app
     python nfl/engine/nfl_backtest.py         # the walk-forward report
+    python nfl/engine/nfl_odds.py --budget    # the odds key's monthly credits, replayed (no call)
     python -m pytest nfl/engine/tests
 
 On GitHub, the **NFL predictions** workflow runs `predict` ahead of every game day during the
