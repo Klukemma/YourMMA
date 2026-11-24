@@ -1189,7 +1189,12 @@ function meterNotes(s) {
   return fold(c.meters || "", more);
 }
 
-const cap = (x) => String(x || "").charAt(0).toUpperCase() + String(x || "").slice(1);
+// A payload sentence opening a line: its first letter raised, unless it
+// opens on a rule's name ("v1's four tickets").
+const cap = (x) => {
+  const t = String(x || "");
+  return /^v\d/.test(t) ? t : t.charAt(0).toUpperCase() + t.slice(1);
+};
 
 // v2's two numbers as the payload states them: the bars, the rule's own
 // sentence on how they were chosen, the DEV figures that chose them, and
@@ -1247,7 +1252,7 @@ function sgpGrid(s) {
   }).join("") : "";
   const altHtml = altRows ? `<div class="eyebrow" style="margin-top:8px">${esc(kindName("small"))} the other way · report-only</div>
     ${alt.rule ? `<div class="mini">${esc(cap(alt.rule))}.</div>` : ""}
-    <div class="scroll"><table class="tight"><thead><tr><th>Seasons</th><th class="n">v2</th><th class="n">That way</th><th class="n">Tickets differ</th></tr></thead><tbody>${altRows}</tbody></table></div>` : "";
+    <div class="scroll"><table class="tight"><thead><tr><th>Seasons</th><th class="n">v2</th><th class="n">That way</th><th class="n">Differ</th></tr></thead><tbody>${altRows}</tbody></table></div>` : "";
   const same = h.v1_same_games;
   const sameRows = same && same.kinds ? sgpOrder(s.kinds).map((kind) => {
     const v1k = same.kinds[kind] || {};

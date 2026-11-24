@@ -165,6 +165,18 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
   (decimal, or American with its sign) and the amount: the app shows the exact payout and
   profit from them, and the fair odds at the product chance, with the note that the chance
   assumes independent legs. What is typed stays in the phone's own storage and is never sent.
+  With v2 live, the tab lists the confident games first, each with the pick and the two bars
+  its tickets were built with; a game whose tickets share one reason (not a confident game)
+  says it once, with its pick and chance, in a list under them. On top are v2's four meters -
+  the history's share of games built beside its hit rate - then the two numbers in the rule's
+  own sentence with the DEV figures that chose them, the whole grid with SMALL the other way
+  and v1 on the same games (all report-only), and v1's meters in a fold marked retired. A
+  game's v1 tickets logged before v1 was retired are folded under its v2 ones, read beside
+  v1's own history.
+- **The odds in the app**: every touchdown candidate in a game's lists and on the TD tab shows
+  the books' anytime-TD odds, marked est., and the chance they imply beside the model's - or
+  the payload's reason, said once above a list that has none for one reason - with
+  `caveats.td_odds` beside them. A ticket's touchdown leg shows the implied chance too.
 - **v2** (`nfl/engine/nfl_sgp2.py`, sgp-v2, pre-registered while v1 stays as it is and is
   measured beside it): tickets only in confident games, result legs only on the pick's side,
   and touchdown legs only for players the model rates very likely, SMALL taking the pick's own

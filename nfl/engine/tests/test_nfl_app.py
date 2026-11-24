@@ -486,7 +486,7 @@ def _esc(x):
 
 
 def _cap(x):
-    return x[:1].upper() + x[1:]
+    return x if re.match(r"v\d", x) else x[:1].upper() + x[1:]
 
 
 def _american(x):
