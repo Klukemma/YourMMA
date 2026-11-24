@@ -1,0 +1,4272 @@
+{
+ "alt_small": {
+  "periods": {
+   "2014-2019": {
+    "coverage": 0.273408,
+    "differs": 14,
+    "meter": {
+     "graded": 438,
+     "hit_rate": 0.440639,
+     "hit_rate_reason": null,
+     "lost": 245,
+     "mean_chance": 0.42083,
+     "mean_chance_graded": 0.421126,
+     "not_built": 1164,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 347,
+      "not a confident game: the pick's chance is below 65%": 817
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 438,
+     "void": 0,
+     "won": 193
+    }
+   },
+   "2020-2025": {
+    "coverage": 0.31896,
+    "differs": 15,
+    "meter": {
+     "graded": 540,
+     "hit_rate": 0.440741,
+     "hit_rate_reason": null,
+     "lost": 302,
+     "mean_chance": 0.418841,
+     "mean_chance_graded": 0.420017,
+     "not_built": 1153,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 279,
+      "not a confident game: the pick's chance is below 65%": 874
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 540,
+     "void": 0,
+     "won": 238
+    }
+   },
+   "2026": {
+    "coverage": 0.300613,
+    "differs": 1,
+    "meter": {
+     "graded": 49,
+     "hit_rate": 0.612245,
+     "hit_rate_reason": null,
+     "lost": 19,
+     "mean_chance": 0.439955,
+     "mean_chance_graded": 0.439955,
+     "not_built": 114,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 24,
+      "not a confident game: the pick's chance is below 65%": 90
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 49,
+     "void": 0,
+     "won": 30
+    }
+   },
+   "all": {
+    "coverage": 0.296992,
+    "differs": 30,
+    "meter": {
+     "graded": 1027,
+     "hit_rate": 0.44888,
+     "hit_rate_reason": null,
+     "lost": 566,
+     "mean_chance": 0.420697,
+     "mean_chance_graded": 0.421441,
+     "not_built": 2431,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 650,
+      "not a confident game: the pick's chance is below 65%": 1781
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1027,
+     "void": 0,
+     "won": 461
+    }
+   }
+  },
+  "report_only": true,
+  "rule": "SMALL with the game's best TD at 45% or more, whichever team, instead of the pick's team's first"
+ },
+ "chosen": {
+  "chosen_on": "2026-11-24",
+  "cleared": 9,
+  "confident": 0.65,
+  "coverage_min": 0.25,
+  "dev": {
+   "confident_games": 785,
+   "games": 1602,
+   "kinds": {
+    "large": {
+     "hit_rate": 0.083333,
+     "lost": 33,
+     "mean_chance": 0.063474,
+     "tickets": 36,
+     "void": 0,
+     "won": 3
+    },
+    "medium": {
+     "hit_rate": 0.217391,
+     "lost": 342,
+     "mean_chance": 0.197789,
+     "tickets": 437,
+     "void": 0,
+     "won": 95
+    },
+    "rookie": {
+     "hit_rate": 0.251121,
+     "lost": 167,
+     "mean_chance": 0.252076,
+     "tickets": 223,
+     "void": 0,
+     "won": 56
+    },
+    "small": {
+     "hit_rate": 0.445205,
+     "lost": 243,
+     "mean_chance": 0.419534,
+     "tickets": 438,
+     "void": 0,
+     "won": 195
+    }
+   },
+   "small": {
+    "coverage": 0.273408,
+    "hit_rate": 0.445205,
+    "lost": 243,
+    "mean_chance": 0.419534,
+    "tickets": 438,
+    "void": 0,
+    "won": 195
+   }
+  },
+  "grids": {
+   "confident": [
+    0.6,
+    0.65,
+    0.7,
+    0.75
+   ],
+   "td_floor": [
+    0.35,
+    0.4,
+    0.45,
+    0.5
+   ]
+  },
+  "objective": "the highest SMALL hit rate (won / (won + lost)) among the pairs that build a SMALL ticket in at least 25% of 2014-2019's games; ties to the larger coverage, then the lower CONFIDENT, then the lower TD_FLOOR",
+  "on": [
+   2014,
+   2019
+  ],
+  "pairs": 16,
+  "reproduced": true,
+  "td_floor": 0.45
+ },
+ "confident_games": {
+  "2014-2019": 785,
+  "2020-2025": 819,
+  "2026": 73,
+  "all": 1677
+ },
+ "current_season": 2026,
+ "est_erratum": "Correction, found after the rule was fixed: the est. payout is not an upper bound. A bet builder prices legs that go together below the product of the singles, but can price legs that pull against each other above it (a touchdown on one team beside the other team's result, or beside the under), and Stake's single prices are not the books' consensus - so the est. payout, and the live return read at it, is an estimate that Stake's quote can beat or fall short of.",
+ "games": {
+  "2014-2019": 1602,
+  "2020-2025": 1693,
+  "2026": 163,
+  "all": 3458
+ },
+ "generated": "2026-11-24T14:20:47Z",
+ "grid": {
+  "note": "every pair of the grid, per period; only the DEV figures chose, and only by the objective",
+  "report_only": true,
+  "rows": [
+   {
+    "confident": 0.6,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 1149,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.058468,
+        "lost": 467,
+        "mean_chance": 0.045456,
+        "tickets": 496,
+        "void": 0,
+        "won": 29
+       },
+       "medium": {
+        "hit_rate": 0.17767,
+        "lost": 847,
+        "mean_chance": 0.165707,
+        "tickets": 1030,
+        "void": 0,
+        "won": 183
+       },
+       "rookie": {
+        "hit_rate": 0.265957,
+        "lost": 207,
+        "mean_chance": 0.231351,
+        "tickets": 282,
+        "void": 0,
+        "won": 75
+       },
+       "small": {
+        "hit_rate": 0.381553,
+        "lost": 637,
+        "mean_chance": 0.345146,
+        "tickets": 1030,
+        "void": 0,
+        "won": 393
+       }
+      },
+      "small": {
+       "coverage": 0.642946,
+       "hit_rate": 0.381553,
+       "lost": 637,
+       "mean_chance": 0.345146,
+       "tickets": 1030,
+       "void": 0,
+       "won": 393
+      }
+     },
+     "2020-2025": {
+      "confident_games": 1196,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.044803,
+        "lost": 533,
+        "mean_chance": 0.047309,
+        "tickets": 558,
+        "void": 0,
+        "won": 25
+       },
+       "medium": {
+        "hit_rate": 0.190731,
+        "lost": 908,
+        "mean_chance": 0.170889,
+        "tickets": 1122,
+        "void": 0,
+        "won": 214
+       },
+       "rookie": {
+        "hit_rate": 0.268199,
+        "lost": 191,
+        "mean_chance": 0.241583,
+        "tickets": 261,
+        "void": 0,
+        "won": 70
+       },
+       "small": {
+        "hit_rate": 0.393939,
+        "lost": 680,
+        "mean_chance": 0.353272,
+        "tickets": 1122,
+        "void": 0,
+        "won": 442
+       }
+      },
+      "small": {
+       "coverage": 0.662729,
+       "hit_rate": 0.393939,
+       "lost": 680,
+       "mean_chance": 0.353272,
+       "tickets": 1122,
+       "void": 0,
+       "won": 442
+      }
+     },
+     "2026": {
+      "confident_games": 117,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.066667,
+        "lost": 42,
+        "mean_chance": 0.04966,
+        "tickets": 45,
+        "void": 0,
+        "won": 3
+       },
+       "medium": {
+        "hit_rate": 0.229358,
+        "lost": 84,
+        "mean_chance": 0.182354,
+        "tickets": 109,
+        "void": 0,
+        "won": 25
+       },
+       "rookie": {
+        "hit_rate": 0.153846,
+        "lost": 11,
+        "mean_chance": 0.205437,
+        "tickets": 13,
+        "void": 0,
+        "won": 2
+       },
+       "small": {
+        "hit_rate": 0.513761,
+        "lost": 53,
+        "mean_chance": 0.364613,
+        "tickets": 109,
+        "void": 0,
+        "won": 56
+       }
+      },
+      "small": {
+       "coverage": 0.668712,
+       "hit_rate": 0.513761,
+       "lost": 53,
+       "mean_chance": 0.364613,
+       "tickets": 109,
+       "void": 0,
+       "won": 56
+      }
+     },
+     "all": {
+      "confident_games": 2462,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.051865,
+        "lost": 1042,
+        "mean_chance": 0.046569,
+        "tickets": 1099,
+        "void": 0,
+        "won": 57
+       },
+       "medium": {
+        "hit_rate": 0.186643,
+        "lost": 1839,
+        "mean_chance": 0.169081,
+        "tickets": 2261,
+        "void": 0,
+        "won": 422
+       },
+       "rookie": {
+        "hit_rate": 0.264388,
+        "lost": 409,
+        "mean_chance": 0.235548,
+        "tickets": 556,
+        "void": 0,
+        "won": 147
+       },
+       "small": {
+        "hit_rate": 0.394073,
+        "lost": 1370,
+        "mean_chance": 0.350117,
+        "tickets": 2261,
+        "void": 0,
+        "won": 891
+       }
+      },
+      "small": {
+       "coverage": 0.653846,
+       "hit_rate": 0.394073,
+       "lost": 1370,
+       "mean_chance": 0.350117,
+       "tickets": 2261,
+       "void": 0,
+       "won": 891
+      }
+     }
+    },
+    "td_floor": 0.35
+   },
+   {
+    "confident": 0.6,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 1149,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.059701,
+        "lost": 189,
+        "mean_chance": 0.053989,
+        "tickets": 201,
+        "void": 0,
+        "won": 12
+       },
+       "medium": {
+        "hit_rate": 0.180825,
+        "lost": 675,
+        "mean_chance": 0.175991,
+        "tickets": 824,
+        "void": 0,
+        "won": 149
+       },
+       "rookie": {
+        "hit_rate": 0.268707,
+        "lost": 215,
+        "mean_chance": 0.232766,
+        "tickets": 294,
+        "void": 0,
+        "won": 79
+       },
+       "small": {
+        "hit_rate": 0.391515,
+        "lost": 502,
+        "mean_chance": 0.369382,
+        "tickets": 825,
+        "void": 0,
+        "won": 323
+       }
+      },
+      "small": {
+       "coverage": 0.514981,
+       "hit_rate": 0.391515,
+       "lost": 502,
+       "mean_chance": 0.369382,
+       "tickets": 825,
+       "void": 0,
+       "won": 323
+      }
+     },
+     "2020-2025": {
+      "confident_games": 1196,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.066406,
+        "lost": 239,
+        "mean_chance": 0.055229,
+        "tickets": 256,
+        "void": 0,
+        "won": 17
+       },
+       "medium": {
+        "hit_rate": 0.198133,
+        "lost": 773,
+        "mean_chance": 0.178699,
+        "tickets": 964,
+        "void": 0,
+        "won": 191
+       },
+       "rookie": {
+        "hit_rate": 0.283154,
+        "lost": 200,
+        "mean_chance": 0.242906,
+        "tickets": 279,
+        "void": 0,
+        "won": 79
+       },
+       "small": {
+        "hit_rate": 0.401452,
+        "lost": 577,
+        "mean_chance": 0.370262,
+        "tickets": 964,
+        "void": 0,
+        "won": 387
+       }
+      },
+      "small": {
+       "coverage": 0.569403,
+       "hit_rate": 0.401452,
+       "lost": 577,
+       "mean_chance": 0.370262,
+       "tickets": 964,
+       "void": 0,
+       "won": 387
+      }
+     },
+     "2026": {
+      "confident_games": 117,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.086957,
+        "lost": 21,
+        "mean_chance": 0.056608,
+        "tickets": 23,
+        "void": 0,
+        "won": 2
+       },
+       "medium": {
+        "hit_rate": 0.257732,
+        "lost": 72,
+        "mean_chance": 0.190099,
+        "tickets": 97,
+        "void": 0,
+        "won": 25
+       },
+       "rookie": {
+        "hit_rate": 0.153846,
+        "lost": 11,
+        "mean_chance": 0.205437,
+        "tickets": 13,
+        "void": 0,
+        "won": 2
+       },
+       "small": {
+        "hit_rate": 0.515464,
+        "lost": 47,
+        "mean_chance": 0.380787,
+        "tickets": 97,
+        "void": 0,
+        "won": 50
+       }
+      },
+      "small": {
+       "coverage": 0.595092,
+       "hit_rate": 0.515464,
+       "lost": 47,
+       "mean_chance": 0.380787,
+       "tickets": 97,
+       "void": 0,
+       "won": 50
+      }
+     },
+     "all": {
+      "confident_games": 2462,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.064583,
+        "lost": 449,
+        "mean_chance": 0.054776,
+        "tickets": 480,
+        "void": 0,
+        "won": 31
+       },
+       "medium": {
+        "hit_rate": 0.193634,
+        "lost": 1520,
+        "mean_chance": 0.178102,
+        "tickets": 1885,
+        "void": 0,
+        "won": 365
+       },
+       "rookie": {
+        "hit_rate": 0.273038,
+        "lost": 426,
+        "mean_chance": 0.236987,
+        "tickets": 586,
+        "void": 0,
+        "won": 160
+       },
+       "small": {
+        "hit_rate": 0.402969,
+        "lost": 1126,
+        "mean_chance": 0.370418,
+        "tickets": 1886,
+        "void": 0,
+        "won": 760
+       }
+      },
+      "small": {
+       "coverage": 0.545402,
+       "hit_rate": 0.402969,
+       "lost": 1126,
+       "mean_chance": 0.370418,
+       "tickets": 1886,
+       "void": 0,
+       "won": 760
+      }
+     }
+    },
+    "td_floor": 0.4
+   },
+   {
+    "confident": 0.6,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 1149,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.076923,
+        "lost": 48,
+        "mean_chance": 0.064731,
+        "tickets": 52,
+        "void": 0,
+        "won": 4
+       },
+       "medium": {
+        "hit_rate": 0.199664,
+        "lost": 477,
+        "mean_chance": 0.189409,
+        "tickets": 596,
+        "void": 0,
+        "won": 119
+       },
+       "rookie": {
+        "hit_rate": 0.259615,
+        "lost": 231,
+        "mean_chance": 0.238555,
+        "tickets": 312,
+        "void": 0,
+        "won": 81
+       },
+       "small": {
+        "hit_rate": 0.410385,
+        "lost": 352,
+        "mean_chance": 0.397601,
+        "tickets": 597,
+        "void": 0,
+        "won": 245
+       }
+      },
+      "small": {
+       "coverage": 0.372659,
+       "hit_rate": 0.410385,
+       "lost": 352,
+       "mean_chance": 0.397601,
+       "tickets": 597,
+       "void": 0,
+       "won": 245
+      }
+     },
+     "2020-2025": {
+      "confident_games": 1196,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.074468,
+        "lost": 87,
+        "mean_chance": 0.063795,
+        "tickets": 94,
+        "void": 0,
+        "won": 7
+       },
+       "medium": {
+        "hit_rate": 0.216931,
+        "lost": 592,
+        "mean_chance": 0.189725,
+        "tickets": 756,
+        "void": 0,
+        "won": 164
+       },
+       "rookie": {
+        "hit_rate": 0.27551,
+        "lost": 213,
+        "mean_chance": 0.24544,
+        "tickets": 294,
+        "void": 0,
+        "won": 81
+       },
+       "small": {
+        "hit_rate": 0.424603,
+        "lost": 435,
+        "mean_chance": 0.392224,
+        "tickets": 756,
+        "void": 0,
+        "won": 321
+       }
+      },
+      "small": {
+       "coverage": 0.446545,
+       "hit_rate": 0.424603,
+       "lost": 435,
+       "mean_chance": 0.392224,
+       "tickets": 756,
+       "void": 0,
+       "won": 321
+      }
+     },
+     "2026": {
+      "confident_games": 117,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.125,
+        "lost": 7,
+        "mean_chance": 0.06421,
+        "tickets": 8,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.319444,
+        "lost": 49,
+        "mean_chance": 0.204259,
+        "tickets": 72,
+        "void": 0,
+        "won": 23
+       },
+       "rookie": {
+        "hit_rate": 0.266667,
+        "lost": 11,
+        "mean_chance": 0.221031,
+        "tickets": 15,
+        "void": 0,
+        "won": 4
+       },
+       "small": {
+        "hit_rate": 0.569444,
+        "lost": 31,
+        "mean_chance": 0.410418,
+        "tickets": 72,
+        "void": 0,
+        "won": 41
+       }
+      },
+      "small": {
+       "coverage": 0.441718,
+       "hit_rate": 0.569444,
+       "lost": 31,
+       "mean_chance": 0.410418,
+       "tickets": 72,
+       "void": 0,
+       "won": 41
+      }
+     },
+     "all": {
+      "confident_games": 2462,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.077922,
+        "lost": 142,
+        "mean_chance": 0.064133,
+        "tickets": 154,
+        "void": 0,
+        "won": 12
+       },
+       "medium": {
+        "hit_rate": 0.214888,
+        "lost": 1118,
+        "mean_chance": 0.190328,
+        "tickets": 1424,
+        "void": 0,
+        "won": 306
+       },
+       "rookie": {
+        "hit_rate": 0.267311,
+        "lost": 455,
+        "mean_chance": 0.241391,
+        "tickets": 621,
+        "void": 0,
+        "won": 166
+       },
+       "small": {
+        "hit_rate": 0.425965,
+        "lost": 818,
+        "mean_chance": 0.395396,
+        "tickets": 1425,
+        "void": 0,
+        "won": 607
+       }
+      },
+      "small": {
+       "coverage": 0.412088,
+       "hit_rate": 0.425965,
+       "lost": 818,
+       "mean_chance": 0.395396,
+       "tickets": 1425,
+       "void": 0,
+       "won": 607
+      }
+     }
+    },
+    "td_floor": 0.45
+   },
+   {
+    "confident": 0.6,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 1149,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 6,
+        "mean_chance": 0.069162,
+        "tickets": 6,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.215827,
+        "lost": 327,
+        "mean_chance": 0.201962,
+        "tickets": 417,
+        "void": 0,
+        "won": 90
+       },
+       "rookie": {
+        "hit_rate": 0.26087,
+        "lost": 238,
+        "mean_chance": 0.243318,
+        "tickets": 322,
+        "void": 0,
+        "won": 84
+       },
+       "small": {
+        "hit_rate": 0.426859,
+        "lost": 239,
+        "mean_chance": 0.424423,
+        "tickets": 417,
+        "void": 0,
+        "won": 178
+       }
+      },
+      "small": {
+       "coverage": 0.2603,
+       "hit_rate": 0.426859,
+       "lost": 239,
+       "mean_chance": 0.424423,
+       "tickets": 417,
+       "void": 0,
+       "won": 178
+      }
+     },
+     "2020-2025": {
+      "confident_games": 1196,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.066667,
+        "lost": 14,
+        "mean_chance": 0.074317,
+        "tickets": 15,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.234,
+        "lost": 383,
+        "mean_chance": 0.204518,
+        "tickets": 500,
+        "void": 0,
+        "won": 117
+       },
+       "rookie": {
+        "hit_rate": 0.277419,
+        "lost": 224,
+        "mean_chance": 0.252592,
+        "tickets": 310,
+        "void": 0,
+        "won": 86
+       },
+       "small": {
+        "hit_rate": 0.456,
+        "lost": 272,
+        "mean_chance": 0.421136,
+        "tickets": 500,
+        "void": 0,
+        "won": 228
+       }
+      },
+      "small": {
+       "coverage": 0.295334,
+       "hit_rate": 0.456,
+       "lost": 272,
+       "mean_chance": 0.421136,
+       "tickets": 500,
+       "void": 0,
+       "won": 228
+      }
+     },
+     "2026": {
+      "confident_games": 117,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 1,
+        "mean_chance": 0.074193,
+        "tickets": 1,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.320755,
+        "lost": 36,
+        "mean_chance": 0.219203,
+        "tickets": 53,
+        "void": 0,
+        "won": 17
+       },
+       "rookie": {
+        "hit_rate": 0.266667,
+        "lost": 11,
+        "mean_chance": 0.221031,
+        "tickets": 15,
+        "void": 0,
+        "won": 4
+       },
+       "small": {
+        "hit_rate": 0.641509,
+        "lost": 19,
+        "mean_chance": 0.439626,
+        "tickets": 53,
+        "void": 0,
+        "won": 34
+       }
+      },
+      "small": {
+       "coverage": 0.325153,
+       "hit_rate": 0.641509,
+       "lost": 19,
+       "mean_chance": 0.439626,
+       "tickets": 53,
+       "void": 0,
+       "won": 34
+      }
+     },
+     "all": {
+      "confident_games": 2462,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.045455,
+        "lost": 21,
+        "mean_chance": 0.072906,
+        "tickets": 22,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.230928,
+        "lost": 746,
+        "mean_chance": 0.204222,
+        "tickets": 970,
+        "void": 0,
+        "won": 224
+       },
+       "rookie": {
+        "hit_rate": 0.268934,
+        "lost": 473,
+        "mean_chance": 0.247245,
+        "tickets": 647,
+        "void": 0,
+        "won": 174
+       },
+       "small": {
+        "hit_rate": 0.453608,
+        "lost": 530,
+        "mean_chance": 0.423559,
+        "tickets": 970,
+        "void": 0,
+        "won": 440
+       }
+      },
+      "small": {
+       "coverage": 0.280509,
+       "hit_rate": 0.453608,
+       "lost": 530,
+       "mean_chance": 0.423559,
+       "tickets": 970,
+       "void": 0,
+       "won": 440
+      }
+     }
+    },
+    "td_floor": 0.5
+   },
+   {
+    "confident": 0.65,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 785,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.051873,
+        "lost": 329,
+        "mean_chance": 0.045504,
+        "tickets": 347,
+        "void": 0,
+        "won": 18
+       },
+       "medium": {
+        "hit_rate": 0.193593,
+        "lost": 579,
+        "mean_chance": 0.174658,
+        "tickets": 718,
+        "void": 0,
+        "won": 139
+       },
+       "rookie": {
+        "hit_rate": 0.265,
+        "lost": 147,
+        "mean_chance": 0.244767,
+        "tickets": 200,
+        "void": 0,
+        "won": 53
+       },
+       "small": {
+        "hit_rate": 0.420613,
+        "lost": 416,
+        "mean_chance": 0.369545,
+        "tickets": 718,
+        "void": 0,
+        "won": 302
+       }
+      },
+      "small": {
+       "coverage": 0.44819,
+       "hit_rate": 0.420613,
+       "lost": 416,
+       "mean_chance": 0.369545,
+       "tickets": 718,
+       "void": 0,
+       "won": 302
+      }
+     },
+     "2020-2025": {
+      "confident_games": 819,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.034121,
+        "lost": 368,
+        "mean_chance": 0.046263,
+        "tickets": 381,
+        "void": 0,
+        "won": 13
+       },
+       "medium": {
+        "hit_rate": 0.199234,
+        "lost": 627,
+        "mean_chance": 0.180634,
+        "tickets": 783,
+        "void": 0,
+        "won": 156
+       },
+       "rookie": {
+        "hit_rate": 0.256831,
+        "lost": 136,
+        "mean_chance": 0.257876,
+        "tickets": 183,
+        "void": 0,
+        "won": 47
+       },
+       "small": {
+        "hit_rate": 0.416347,
+        "lost": 457,
+        "mean_chance": 0.379051,
+        "tickets": 783,
+        "void": 0,
+        "won": 326
+       }
+      },
+      "small": {
+       "coverage": 0.462493,
+       "hit_rate": 0.416347,
+       "lost": 457,
+       "mean_chance": 0.379051,
+       "tickets": 783,
+       "void": 0,
+       "won": 326
+      }
+     },
+     "2026": {
+      "confident_games": 73,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.086957,
+        "lost": 21,
+        "mean_chance": 0.048704,
+        "tickets": 23,
+        "void": 0,
+        "won": 2
+       },
+       "medium": {
+        "hit_rate": 0.279412,
+        "lost": 49,
+        "mean_chance": 0.199148,
+        "tickets": 68,
+        "void": 0,
+        "won": 19
+       },
+       "rookie": {
+        "hit_rate": 0.125,
+        "lost": 7,
+        "mean_chance": 0.222568,
+        "tickets": 8,
+        "void": 0,
+        "won": 1
+       },
+       "small": {
+        "hit_rate": 0.529412,
+        "lost": 32,
+        "mean_chance": 0.402463,
+        "tickets": 68,
+        "void": 0,
+        "won": 36
+       }
+      },
+      "small": {
+       "coverage": 0.417178,
+       "hit_rate": 0.529412,
+       "lost": 32,
+       "mean_chance": 0.402463,
+       "tickets": 68,
+       "void": 0,
+       "won": 36
+      }
+     },
+     "all": {
+      "confident_games": 1677,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.043941,
+        "lost": 718,
+        "mean_chance": 0.045987,
+        "tickets": 751,
+        "void": 0,
+        "won": 33
+       },
+       "medium": {
+        "hit_rate": 0.200127,
+        "lost": 1255,
+        "mean_chance": 0.178701,
+        "tickets": 1569,
+        "void": 0,
+        "won": 314
+       },
+       "rookie": {
+        "hit_rate": 0.258312,
+        "lost": 290,
+        "mean_chance": 0.250448,
+        "tickets": 391,
+        "void": 0,
+        "won": 101
+       },
+       "small": {
+        "hit_rate": 0.423199,
+        "lost": 905,
+        "mean_chance": 0.375715,
+        "tickets": 1569,
+        "void": 0,
+        "won": 664
+       }
+      },
+      "small": {
+       "coverage": 0.45373,
+       "hit_rate": 0.423199,
+       "lost": 905,
+       "mean_chance": 0.375715,
+       "tickets": 1569,
+       "void": 0,
+       "won": 664
+      }
+     }
+    },
+    "td_floor": 0.35
+   },
+   {
+    "confident": 0.65,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 785,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.042553,
+        "lost": 135,
+        "mean_chance": 0.053901,
+        "tickets": 141,
+        "void": 0,
+        "won": 6
+       },
+       "medium": {
+        "hit_rate": 0.194872,
+        "lost": 471,
+        "mean_chance": 0.184998,
+        "tickets": 585,
+        "void": 0,
+        "won": 114
+       },
+       "rookie": {
+        "hit_rate": 0.271429,
+        "lost": 153,
+        "mean_chance": 0.245994,
+        "tickets": 210,
+        "void": 0,
+        "won": 57
+       },
+       "small": {
+        "hit_rate": 0.426621,
+        "lost": 336,
+        "mean_chance": 0.393404,
+        "tickets": 586,
+        "void": 0,
+        "won": 250
+       }
+      },
+      "small": {
+       "coverage": 0.365793,
+       "hit_rate": 0.426621,
+       "lost": 336,
+       "mean_chance": 0.393404,
+       "tickets": 586,
+       "void": 0,
+       "won": 250
+      }
+     },
+     "2020-2025": {
+      "confident_games": 819,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.04908,
+        "lost": 155,
+        "mean_chance": 0.054352,
+        "tickets": 163,
+        "void": 0,
+        "won": 8
+       },
+       "medium": {
+        "hit_rate": 0.209677,
+        "lost": 539,
+        "mean_chance": 0.18834,
+        "tickets": 682,
+        "void": 0,
+        "won": 143
+       },
+       "rookie": {
+        "hit_rate": 0.262887,
+        "lost": 143,
+        "mean_chance": 0.259065,
+        "tickets": 194,
+        "void": 0,
+        "won": 51
+       },
+       "small": {
+        "hit_rate": 0.429619,
+        "lost": 389,
+        "mean_chance": 0.395619,
+        "tickets": 682,
+        "void": 0,
+        "won": 293
+       }
+      },
+      "small": {
+       "coverage": 0.402835,
+       "hit_rate": 0.429619,
+       "lost": 389,
+       "mean_chance": 0.395619,
+       "tickets": 682,
+       "void": 0,
+       "won": 293
+      }
+     },
+     "2026": {
+      "confident_games": 73,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.1,
+        "lost": 9,
+        "mean_chance": 0.057138,
+        "tickets": 10,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.296875,
+        "lost": 45,
+        "mean_chance": 0.203554,
+        "tickets": 64,
+        "void": 0,
+        "won": 19
+       },
+       "rookie": {
+        "hit_rate": 0.125,
+        "lost": 7,
+        "mean_chance": 0.222568,
+        "tickets": 8,
+        "void": 0,
+        "won": 1
+       },
+       "small": {
+        "hit_rate": 0.53125,
+        "lost": 30,
+        "mean_chance": 0.410839,
+        "tickets": 64,
+        "void": 0,
+        "won": 34
+       }
+      },
+      "small": {
+       "coverage": 0.392638,
+       "hit_rate": 0.53125,
+       "lost": 30,
+       "mean_chance": 0.410839,
+       "tickets": 64,
+       "void": 0,
+       "won": 34
+      }
+     },
+     "all": {
+      "confident_games": 1677,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.047771,
+        "lost": 299,
+        "mean_chance": 0.054238,
+        "tickets": 314,
+        "void": 0,
+        "won": 15
+       },
+       "medium": {
+        "hit_rate": 0.207363,
+        "lost": 1055,
+        "mean_chance": 0.187603,
+        "tickets": 1331,
+        "void": 0,
+        "won": 276
+       },
+       "rookie": {
+        "hit_rate": 0.264563,
+        "lost": 303,
+        "mean_chance": 0.251694,
+        "tickets": 412,
+        "void": 0,
+        "won": 109
+       },
+       "small": {
+        "hit_rate": 0.433183,
+        "lost": 755,
+        "mean_chance": 0.395376,
+        "tickets": 1332,
+        "void": 0,
+        "won": 577
+       }
+      },
+      "small": {
+       "coverage": 0.385194,
+       "hit_rate": 0.433183,
+       "lost": 755,
+       "mean_chance": 0.395376,
+       "tickets": 1332,
+       "void": 0,
+       "won": 577
+      }
+     }
+    },
+    "td_floor": 0.4
+   },
+   {
+    "confident": 0.65,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 785,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.083333,
+        "lost": 33,
+        "mean_chance": 0.063474,
+        "tickets": 36,
+        "void": 0,
+        "won": 3
+       },
+       "medium": {
+        "hit_rate": 0.217391,
+        "lost": 342,
+        "mean_chance": 0.197789,
+        "tickets": 437,
+        "void": 0,
+        "won": 95
+       },
+       "rookie": {
+        "hit_rate": 0.251121,
+        "lost": 167,
+        "mean_chance": 0.252076,
+        "tickets": 223,
+        "void": 0,
+        "won": 56
+       },
+       "small": {
+        "hit_rate": 0.445205,
+        "lost": 243,
+        "mean_chance": 0.419534,
+        "tickets": 438,
+        "void": 0,
+        "won": 195
+       }
+      },
+      "small": {
+       "coverage": 0.273408,
+       "hit_rate": 0.445205,
+       "lost": 243,
+       "mean_chance": 0.419534,
+       "tickets": 438,
+       "void": 0,
+       "won": 195
+      }
+     },
+     "2020-2025": {
+      "confident_games": 819,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.035088,
+        "lost": 55,
+        "mean_chance": 0.062913,
+        "tickets": 57,
+        "void": 0,
+        "won": 2
+       },
+       "medium": {
+        "hit_rate": 0.224074,
+        "lost": 419,
+        "mean_chance": 0.200221,
+        "tickets": 540,
+        "void": 0,
+        "won": 121
+       },
+       "rookie": {
+        "hit_rate": 0.261307,
+        "lost": 147,
+        "mean_chance": 0.260967,
+        "tickets": 199,
+        "void": 0,
+        "won": 52
+       },
+       "small": {
+        "hit_rate": 0.444444,
+        "lost": 300,
+        "mean_chance": 0.41795,
+        "tickets": 540,
+        "void": 0,
+        "won": 240
+       }
+      },
+      "small": {
+       "coverage": 0.31896,
+       "hit_rate": 0.444444,
+       "lost": 300,
+       "mean_chance": 0.41795,
+       "tickets": 540,
+       "void": 0,
+       "won": 240
+      }
+     },
+     "2026": {
+      "confident_games": 73,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 2,
+        "mean_chance": 0.063342,
+        "tickets": 2,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.367347,
+        "lost": 31,
+        "mean_chance": 0.217005,
+        "tickets": 49,
+        "void": 0,
+        "won": 18
+       },
+       "rookie": {
+        "hit_rate": 0.222222,
+        "lost": 7,
+        "mean_chance": 0.241602,
+        "tickets": 9,
+        "void": 0,
+        "won": 2
+       },
+       "small": {
+        "hit_rate": 0.612245,
+        "lost": 19,
+        "mean_chance": 0.438428,
+        "tickets": 49,
+        "void": 0,
+        "won": 30
+       }
+      },
+      "small": {
+       "coverage": 0.300613,
+       "hit_rate": 0.612245,
+       "lost": 19,
+       "mean_chance": 0.438428,
+       "tickets": 49,
+       "void": 0,
+       "won": 30
+      }
+     },
+     "all": {
+      "confident_games": 1677,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.052632,
+        "lost": 90,
+        "mean_chance": 0.063134,
+        "tickets": 95,
+        "void": 0,
+        "won": 5
+       },
+       "medium": {
+        "hit_rate": 0.22807,
+        "lost": 792,
+        "mean_chance": 0.199987,
+        "tickets": 1026,
+        "void": 0,
+        "won": 234
+       },
+       "rookie": {
+        "hit_rate": 0.25522,
+        "lost": 321,
+        "mean_chance": 0.255963,
+        "tickets": 431,
+        "void": 0,
+        "won": 110
+       },
+       "small": {
+        "hit_rate": 0.452775,
+        "lost": 562,
+        "mean_chance": 0.419602,
+        "tickets": 1027,
+        "void": 0,
+        "won": 465
+       }
+      },
+      "small": {
+       "coverage": 0.296992,
+       "hit_rate": 0.452775,
+       "lost": 562,
+       "mean_chance": 0.419602,
+       "tickets": 1027,
+       "void": 0,
+       "won": 465
+      }
+     }
+    },
+    "td_floor": 0.45
+   },
+   {
+    "confident": 0.65,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 785,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 5,
+        "mean_chance": 0.069147,
+        "tickets": 5,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.237013,
+        "lost": 235,
+        "mean_chance": 0.210575,
+        "tickets": 308,
+        "void": 0,
+        "won": 73
+       },
+       "rookie": {
+        "hit_rate": 0.25431,
+        "lost": 173,
+        "mean_chance": 0.257396,
+        "tickets": 232,
+        "void": 0,
+        "won": 59
+       },
+       "small": {
+        "hit_rate": 0.467532,
+        "lost": 164,
+        "mean_chance": 0.446205,
+        "tickets": 308,
+        "void": 0,
+        "won": 144
+       }
+      },
+      "small": {
+       "coverage": 0.19226,
+       "hit_rate": 0.467532,
+       "lost": 164,
+       "mean_chance": 0.446205,
+       "tickets": 308,
+       "void": 0,
+       "won": 144
+      }
+     },
+     "2020-2025": {
+      "confident_games": 819,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.1,
+        "lost": 9,
+        "mean_chance": 0.073567,
+        "tickets": 10,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.25419,
+        "lost": 267,
+        "mean_chance": 0.217076,
+        "tickets": 358,
+        "void": 0,
+        "won": 91
+       },
+       "rookie": {
+        "hit_rate": 0.261905,
+        "lost": 155,
+        "mean_chance": 0.268771,
+        "tickets": 210,
+        "void": 0,
+        "won": 55
+       },
+       "small": {
+        "hit_rate": 0.488827,
+        "lost": 183,
+        "mean_chance": 0.449307,
+        "tickets": 358,
+        "void": 0,
+        "won": 175
+       }
+      },
+      "small": {
+       "coverage": 0.211459,
+       "hit_rate": 0.488827,
+       "lost": 183,
+       "mean_chance": 0.449307,
+       "tickets": 358,
+       "void": 0,
+       "won": 175
+      }
+     },
+     "2026": {
+      "confident_games": 73,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": null,
+        "lost": 0,
+        "mean_chance": null,
+        "tickets": 0,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.342105,
+        "lost": 25,
+        "mean_chance": 0.228998,
+        "tickets": 38,
+        "void": 0,
+        "won": 13
+       },
+       "rookie": {
+        "hit_rate": 0.222222,
+        "lost": 7,
+        "mean_chance": 0.241602,
+        "tickets": 9,
+        "void": 0,
+        "won": 2
+       },
+       "small": {
+        "hit_rate": 0.631579,
+        "lost": 14,
+        "mean_chance": 0.461888,
+        "tickets": 38,
+        "void": 0,
+        "won": 24
+       }
+      },
+      "small": {
+       "coverage": 0.233129,
+       "hit_rate": 0.631579,
+       "lost": 14,
+       "mean_chance": 0.461888,
+       "tickets": 38,
+       "void": 0,
+       "won": 24
+      }
+     },
+     "all": {
+      "confident_games": 1677,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.066667,
+        "lost": 14,
+        "mean_chance": 0.072094,
+        "tickets": 15,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.25142,
+        "lost": 527,
+        "mean_chance": 0.214875,
+        "tickets": 704,
+        "void": 0,
+        "won": 177
+       },
+       "rookie": {
+        "hit_rate": 0.257206,
+        "lost": 335,
+        "mean_chance": 0.262377,
+        "tickets": 451,
+        "void": 0,
+        "won": 116
+       },
+       "small": {
+        "hit_rate": 0.487216,
+        "lost": 361,
+        "mean_chance": 0.448629,
+        "tickets": 704,
+        "void": 0,
+        "won": 343
+       }
+      },
+      "small": {
+       "coverage": 0.203586,
+       "hit_rate": 0.487216,
+       "lost": 361,
+       "mean_chance": 0.448629,
+       "tickets": 704,
+       "void": 0,
+       "won": 343
+      }
+     }
+    },
+    "td_floor": 0.5
+   },
+   {
+    "confident": 0.7,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 571,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.055762,
+        "lost": 254,
+        "mean_chance": 0.045364,
+        "tickets": 269,
+        "void": 0,
+        "won": 15
+       },
+       "medium": {
+        "hit_rate": 0.195896,
+        "lost": 431,
+        "mean_chance": 0.181321,
+        "tickets": 536,
+        "void": 0,
+        "won": 105
+       },
+       "rookie": {
+        "hit_rate": 0.270833,
+        "lost": 105,
+        "mean_chance": 0.257616,
+        "tickets": 144,
+        "void": 0,
+        "won": 39
+       },
+       "small": {
+        "hit_rate": 0.438433,
+        "lost": 301,
+        "mean_chance": 0.387832,
+        "tickets": 536,
+        "void": 0,
+        "won": 235
+       }
+      },
+      "small": {
+       "coverage": 0.334582,
+       "hit_rate": 0.438433,
+       "lost": 301,
+       "mean_chance": 0.387832,
+       "tickets": 536,
+       "void": 0,
+       "won": 235
+      }
+     },
+     "2020-2025": {
+      "confident_games": 627,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.034364,
+        "lost": 281,
+        "mean_chance": 0.046287,
+        "tickets": 291,
+        "void": 0,
+        "won": 10
+       },
+       "medium": {
+        "hit_rate": 0.20268,
+        "lost": 476,
+        "mean_chance": 0.188534,
+        "tickets": 597,
+        "void": 0,
+        "won": 121
+       },
+       "rookie": {
+        "hit_rate": 0.276119,
+        "lost": 97,
+        "mean_chance": 0.27158,
+        "tickets": 134,
+        "void": 0,
+        "won": 37
+       },
+       "small": {
+        "hit_rate": 0.440536,
+        "lost": 334,
+        "mean_chance": 0.397676,
+        "tickets": 597,
+        "void": 0,
+        "won": 263
+       }
+      },
+      "small": {
+       "coverage": 0.352628,
+       "hit_rate": 0.440536,
+       "lost": 334,
+       "mean_chance": 0.397676,
+       "tickets": 597,
+       "void": 0,
+       "won": 263
+      }
+     },
+     "2026": {
+      "confident_games": 55,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.055556,
+        "lost": 17,
+        "mean_chance": 0.047656,
+        "tickets": 18,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.296296,
+        "lost": 38,
+        "mean_chance": 0.204766,
+        "tickets": 54,
+        "void": 0,
+        "won": 16
+       },
+       "rookie": {
+        "hit_rate": 0.166667,
+        "lost": 5,
+        "mean_chance": 0.235328,
+        "tickets": 6,
+        "void": 0,
+        "won": 1
+       },
+       "small": {
+        "hit_rate": 0.555556,
+        "lost": 24,
+        "mean_chance": 0.416182,
+        "tickets": 54,
+        "void": 0,
+        "won": 30
+       }
+      },
+      "small": {
+       "coverage": 0.331288,
+       "hit_rate": 0.555556,
+       "lost": 24,
+       "mean_chance": 0.416182,
+       "tickets": 54,
+       "void": 0,
+       "won": 30
+      }
+     },
+     "all": {
+      "confident_games": 1253,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.044983,
+        "lost": 552,
+        "mean_chance": 0.0459,
+        "tickets": 578,
+        "void": 0,
+        "won": 26
+       },
+       "medium": {
+        "hit_rate": 0.203875,
+        "lost": 945,
+        "mean_chance": 0.186015,
+        "tickets": 1187,
+        "void": 0,
+        "won": 242
+       },
+       "rookie": {
+        "hit_rate": 0.271127,
+        "lost": 207,
+        "mean_chance": 0.263734,
+        "tickets": 284,
+        "void": 0,
+        "won": 77
+       },
+       "small": {
+        "hit_rate": 0.444819,
+        "lost": 659,
+        "mean_chance": 0.394073,
+        "tickets": 1187,
+        "void": 0,
+        "won": 528
+       }
+      },
+      "small": {
+       "coverage": 0.343262,
+       "hit_rate": 0.444819,
+       "lost": 659,
+       "mean_chance": 0.394073,
+       "tickets": 1187,
+       "void": 0,
+       "won": 528
+      }
+     }
+    },
+    "td_floor": 0.35
+   },
+   {
+    "confident": 0.7,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 571,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.045045,
+        "lost": 106,
+        "mean_chance": 0.053572,
+        "tickets": 111,
+        "void": 0,
+        "won": 5
+       },
+       "medium": {
+        "hit_rate": 0.196468,
+        "lost": 364,
+        "mean_chance": 0.189966,
+        "tickets": 453,
+        "void": 0,
+        "won": 89
+       },
+       "rookie": {
+        "hit_rate": 0.28,
+        "lost": 108,
+        "mean_chance": 0.258358,
+        "tickets": 150,
+        "void": 0,
+        "won": 42
+       },
+       "small": {
+        "hit_rate": 0.438326,
+        "lost": 255,
+        "mean_chance": 0.407433,
+        "tickets": 454,
+        "void": 0,
+        "won": 199
+       }
+      },
+      "small": {
+       "coverage": 0.283396,
+       "hit_rate": 0.438326,
+       "lost": 255,
+       "mean_chance": 0.407433,
+       "tickets": 454,
+       "void": 0,
+       "won": 199
+      }
+     },
+     "2020-2025": {
+      "confident_games": 627,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.055556,
+        "lost": 119,
+        "mean_chance": 0.054098,
+        "tickets": 126,
+        "void": 0,
+        "won": 7
+       },
+       "medium": {
+        "hit_rate": 0.207156,
+        "lost": 421,
+        "mean_chance": 0.195373,
+        "tickets": 531,
+        "void": 0,
+        "won": 110
+       },
+       "rookie": {
+        "hit_rate": 0.284722,
+        "lost": 103,
+        "mean_chance": 0.271713,
+        "tickets": 144,
+        "void": 0,
+        "won": 41
+       },
+       "small": {
+        "hit_rate": 0.448211,
+        "lost": 293,
+        "mean_chance": 0.412474,
+        "tickets": 531,
+        "void": 0,
+        "won": 238
+       }
+      },
+      "small": {
+       "coverage": 0.313644,
+       "hit_rate": 0.448211,
+       "lost": 293,
+       "mean_chance": 0.412474,
+       "tickets": 531,
+       "void": 0,
+       "won": 238
+      }
+     },
+     "2026": {
+      "confident_games": 55,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 7,
+        "mean_chance": 0.056247,
+        "tickets": 7,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.313725,
+        "lost": 35,
+        "mean_chance": 0.208535,
+        "tickets": 51,
+        "void": 0,
+        "won": 16
+       },
+       "rookie": {
+        "hit_rate": 0.166667,
+        "lost": 5,
+        "mean_chance": 0.235328,
+        "tickets": 6,
+        "void": 0,
+        "won": 1
+       },
+       "small": {
+        "hit_rate": 0.568627,
+        "lost": 22,
+        "mean_chance": 0.424352,
+        "tickets": 51,
+        "void": 0,
+        "won": 29
+       }
+      },
+      "small": {
+       "coverage": 0.312883,
+       "hit_rate": 0.568627,
+       "lost": 22,
+       "mean_chance": 0.424352,
+       "tickets": 51,
+       "void": 0,
+       "won": 29
+      }
+     },
+     "all": {
+      "confident_games": 1253,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.04918,
+        "lost": 232,
+        "mean_chance": 0.05392,
+        "tickets": 244,
+        "void": 0,
+        "won": 12
+       },
+       "medium": {
+        "hit_rate": 0.207729,
+        "lost": 820,
+        "mean_chance": 0.193655,
+        "tickets": 1035,
+        "void": 0,
+        "won": 215
+       },
+       "rookie": {
+        "hit_rate": 0.28,
+        "lost": 216,
+        "mean_chance": 0.264308,
+        "tickets": 300,
+        "void": 0,
+        "won": 84
+       },
+       "small": {
+        "hit_rate": 0.449807,
+        "lost": 570,
+        "mean_chance": 0.41085,
+        "tickets": 1036,
+        "void": 0,
+        "won": 466
+       }
+      },
+      "small": {
+       "coverage": 0.299595,
+       "hit_rate": 0.449807,
+       "lost": 570,
+       "mean_chance": 0.41085,
+       "tickets": 1036,
+       "void": 0,
+       "won": 466
+      }
+     }
+    },
+    "td_floor": 0.4
+   },
+   {
+    "confident": 0.7,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 571,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.068966,
+        "lost": 27,
+        "mean_chance": 0.063089,
+        "tickets": 29,
+        "void": 0,
+        "won": 2
+       },
+       "medium": {
+        "hit_rate": 0.215339,
+        "lost": 266,
+        "mean_chance": 0.203452,
+        "tickets": 339,
+        "void": 0,
+        "won": 73
+       },
+       "rookie": {
+        "hit_rate": 0.26087,
+        "lost": 119,
+        "mean_chance": 0.264762,
+        "tickets": 161,
+        "void": 0,
+        "won": 42
+       },
+       "small": {
+        "hit_rate": 0.458824,
+        "lost": 184,
+        "mean_chance": 0.433582,
+        "tickets": 340,
+        "void": 0,
+        "won": 156
+       }
+      },
+      "small": {
+       "coverage": 0.212235,
+       "hit_rate": 0.458824,
+       "lost": 184,
+       "mean_chance": 0.433582,
+       "tickets": 340,
+       "void": 0,
+       "won": 156
+      }
+     },
+     "2020-2025": {
+      "confident_games": 627,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.044444,
+        "lost": 43,
+        "mean_chance": 0.062198,
+        "tickets": 45,
+        "void": 0,
+        "won": 2
+       },
+       "medium": {
+        "hit_rate": 0.215777,
+        "lost": 338,
+        "mean_chance": 0.206483,
+        "tickets": 431,
+        "void": 0,
+        "won": 93
+       },
+       "rookie": {
+        "hit_rate": 0.278912,
+        "lost": 106,
+        "mean_chance": 0.272948,
+        "tickets": 147,
+        "void": 0,
+        "won": 41
+       },
+       "small": {
+        "hit_rate": 0.459397,
+        "lost": 233,
+        "mean_chance": 0.433396,
+        "tickets": 431,
+        "void": 0,
+        "won": 198
+       }
+      },
+      "small": {
+       "coverage": 0.254578,
+       "hit_rate": 0.459397,
+       "lost": 233,
+       "mean_chance": 0.433396,
+       "tickets": 431,
+       "void": 0,
+       "won": 198
+      }
+     },
+     "2026": {
+      "confident_games": 55,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 2,
+        "mean_chance": 0.063342,
+        "tickets": 2,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.384615,
+        "lost": 24,
+        "mean_chance": 0.221959,
+        "tickets": 39,
+        "void": 0,
+        "won": 15
+       },
+       "rookie": {
+        "hit_rate": 0.285714,
+        "lost": 5,
+        "mean_chance": 0.257977,
+        "tickets": 7,
+        "void": 0,
+        "won": 2
+       },
+       "small": {
+        "hit_rate": 0.641026,
+        "lost": 14,
+        "mean_chance": 0.451918,
+        "tickets": 39,
+        "void": 0,
+        "won": 25
+       }
+      },
+      "small": {
+       "coverage": 0.239264,
+       "hit_rate": 0.641026,
+       "lost": 14,
+       "mean_chance": 0.451918,
+       "tickets": 39,
+       "void": 0,
+       "won": 25
+      }
+     },
+     "all": {
+      "confident_games": 1253,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.052632,
+        "lost": 72,
+        "mean_chance": 0.062568,
+        "tickets": 76,
+        "void": 0,
+        "won": 4
+       },
+       "medium": {
+        "hit_rate": 0.223733,
+        "lost": 628,
+        "mean_chance": 0.205959,
+        "tickets": 809,
+        "void": 0,
+        "won": 181
+       },
+       "rookie": {
+        "hit_rate": 0.269841,
+        "lost": 230,
+        "mean_chance": 0.268432,
+        "tickets": 315,
+        "void": 0,
+        "won": 85
+       },
+       "small": {
+        "hit_rate": 0.467901,
+        "lost": 431,
+        "mean_chance": 0.434366,
+        "tickets": 810,
+        "void": 0,
+        "won": 379
+       }
+      },
+      "small": {
+       "coverage": 0.234239,
+       "hit_rate": 0.467901,
+       "lost": 431,
+       "mean_chance": 0.434366,
+       "tickets": 810,
+       "void": 0,
+       "won": 379
+      }
+     }
+    },
+    "td_floor": 0.45
+   },
+   {
+    "confident": 0.7,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 571,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 5,
+        "mean_chance": 0.069147,
+        "tickets": 5,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.237288,
+        "lost": 180,
+        "mean_chance": 0.218035,
+        "tickets": 236,
+        "void": 0,
+        "won": 56
+       },
+       "rookie": {
+        "hit_rate": 0.263473,
+        "lost": 123,
+        "mean_chance": 0.270441,
+        "tickets": 167,
+        "void": 0,
+        "won": 44
+       },
+       "small": {
+        "hit_rate": 0.478814,
+        "lost": 123,
+        "mean_chance": 0.462593,
+        "tickets": 236,
+        "void": 0,
+        "won": 113
+       }
+      },
+      "small": {
+       "coverage": 0.147316,
+       "hit_rate": 0.478814,
+       "lost": 123,
+       "mean_chance": 0.462593,
+       "tickets": 236,
+       "void": 0,
+       "won": 113
+      }
+     },
+     "2020-2025": {
+      "confident_games": 627,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.125,
+        "lost": 7,
+        "mean_chance": 0.072311,
+        "tickets": 8,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.244068,
+        "lost": 223,
+        "mean_chance": 0.222497,
+        "tickets": 295,
+        "void": 0,
+        "won": 72
+       },
+       "rookie": {
+        "hit_rate": 0.280255,
+        "lost": 113,
+        "mean_chance": 0.282142,
+        "tickets": 157,
+        "void": 0,
+        "won": 44
+       },
+       "small": {
+        "hit_rate": 0.501695,
+        "lost": 147,
+        "mean_chance": 0.462958,
+        "tickets": 295,
+        "void": 0,
+        "won": 148
+       }
+      },
+      "small": {
+       "coverage": 0.174247,
+       "hit_rate": 0.501695,
+       "lost": 147,
+       "mean_chance": 0.462958,
+       "tickets": 295,
+       "void": 0,
+       "won": 148
+      }
+     },
+     "2026": {
+      "confident_games": 55,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": null,
+        "lost": 0,
+        "mean_chance": null,
+        "tickets": 0,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.366667,
+        "lost": 19,
+        "mean_chance": 0.234657,
+        "tickets": 30,
+        "void": 0,
+        "won": 11
+       },
+       "rookie": {
+        "hit_rate": 0.285714,
+        "lost": 5,
+        "mean_chance": 0.257977,
+        "tickets": 7,
+        "void": 0,
+        "won": 2
+       },
+       "small": {
+        "hit_rate": 0.666667,
+        "lost": 10,
+        "mean_chance": 0.477335,
+        "tickets": 30,
+        "void": 0,
+        "won": 20
+       }
+      },
+      "small": {
+       "coverage": 0.184049,
+       "hit_rate": 0.666667,
+       "lost": 10,
+       "mean_chance": 0.477335,
+       "tickets": 30,
+       "void": 0,
+       "won": 20
+      }
+     },
+     "all": {
+      "confident_games": 1253,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.076923,
+        "lost": 12,
+        "mean_chance": 0.071094,
+        "tickets": 13,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.247772,
+        "lost": 422,
+        "mean_chance": 0.22127,
+        "tickets": 561,
+        "void": 0,
+        "won": 139
+       },
+       "rookie": {
+        "hit_rate": 0.271903,
+        "lost": 241,
+        "mean_chance": 0.275727,
+        "tickets": 331,
+        "void": 0,
+        "won": 90
+       },
+       "small": {
+        "hit_rate": 0.500891,
+        "lost": 280,
+        "mean_chance": 0.463574,
+        "tickets": 561,
+        "void": 0,
+        "won": 281
+       }
+      },
+      "small": {
+       "coverage": 0.162233,
+       "hit_rate": 0.500891,
+       "lost": 280,
+       "mean_chance": 0.463574,
+       "tickets": 561,
+       "void": 0,
+       "won": 281
+      }
+     }
+    },
+    "td_floor": 0.5
+   },
+   {
+    "confident": 0.75,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 307,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.045161,
+        "lost": 148,
+        "mean_chance": 0.045655,
+        "tickets": 155,
+        "void": 0,
+        "won": 7
+       },
+       "medium": {
+        "hit_rate": 0.186441,
+        "lost": 240,
+        "mean_chance": 0.19154,
+        "tickets": 295,
+        "void": 0,
+        "won": 55
+       },
+       "rookie": {
+        "hit_rate": 0.2875,
+        "lost": 57,
+        "mean_chance": 0.273981,
+        "tickets": 80,
+        "void": 0,
+        "won": 23
+       },
+       "small": {
+        "hit_rate": 0.437288,
+        "lost": 166,
+        "mean_chance": 0.415937,
+        "tickets": 295,
+        "void": 0,
+        "won": 129
+       }
+      },
+      "small": {
+       "coverage": 0.184145,
+       "hit_rate": 0.437288,
+       "lost": 166,
+       "mean_chance": 0.415937,
+       "tickets": 295,
+       "void": 0,
+       "won": 129
+      }
+     },
+     "2020-2025": {
+      "confident_games": 366,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.043956,
+        "lost": 174,
+        "mean_chance": 0.046098,
+        "tickets": 182,
+        "void": 0,
+        "won": 8
+       },
+       "medium": {
+        "hit_rate": 0.202817,
+        "lost": 283,
+        "mean_chance": 0.198312,
+        "tickets": 355,
+        "void": 0,
+        "won": 72
+       },
+       "rookie": {
+        "hit_rate": 0.3,
+        "lost": 63,
+        "mean_chance": 0.282031,
+        "tickets": 90,
+        "void": 0,
+        "won": 27
+       },
+       "small": {
+        "hit_rate": 0.459155,
+        "lost": 192,
+        "mean_chance": 0.425882,
+        "tickets": 355,
+        "void": 0,
+        "won": 163
+       }
+      },
+      "small": {
+       "coverage": 0.209687,
+       "hit_rate": 0.459155,
+       "lost": 192,
+       "mean_chance": 0.425882,
+       "tickets": 355,
+       "void": 0,
+       "won": 163
+      }
+     },
+     "2026": {
+      "confident_games": 29,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.125,
+        "lost": 7,
+        "mean_chance": 0.044057,
+        "tickets": 8,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.310345,
+        "lost": 20,
+        "mean_chance": 0.209957,
+        "tickets": 29,
+        "void": 0,
+        "won": 9
+       },
+       "rookie": {
+        "hit_rate": 0.0,
+        "lost": 5,
+        "mean_chance": 0.244829,
+        "tickets": 5,
+        "void": 0,
+        "won": 0
+       },
+       "small": {
+        "hit_rate": 0.655172,
+        "lost": 10,
+        "mean_chance": 0.43536,
+        "tickets": 29,
+        "void": 0,
+        "won": 19
+       }
+      },
+      "small": {
+       "coverage": 0.177914,
+       "hit_rate": 0.655172,
+       "lost": 10,
+       "mean_chance": 0.43536,
+       "tickets": 29,
+       "void": 0,
+       "won": 19
+      }
+     },
+     "all": {
+      "confident_games": 702,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.046377,
+        "lost": 329,
+        "mean_chance": 0.045852,
+        "tickets": 345,
+        "void": 0,
+        "won": 16
+       },
+       "medium": {
+        "hit_rate": 0.200295,
+        "lost": 543,
+        "mean_chance": 0.195867,
+        "tickets": 679,
+        "void": 0,
+        "won": 136
+       },
+       "rookie": {
+        "hit_rate": 0.285714,
+        "lost": 125,
+        "mean_chance": 0.277288,
+        "tickets": 175,
+        "void": 0,
+        "won": 50
+       },
+       "small": {
+        "hit_rate": 0.458027,
+        "lost": 368,
+        "mean_chance": 0.421966,
+        "tickets": 679,
+        "void": 0,
+        "won": 311
+       }
+      },
+      "small": {
+       "coverage": 0.196356,
+       "hit_rate": 0.458027,
+       "lost": 368,
+       "mean_chance": 0.421966,
+       "tickets": 679,
+       "void": 0,
+       "won": 311
+      }
+     }
+    },
+    "td_floor": 0.35
+   },
+   {
+    "confident": 0.75,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 307,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.028986,
+        "lost": 67,
+        "mean_chance": 0.053892,
+        "tickets": 69,
+        "void": 0,
+        "won": 2
+       },
+       "medium": {
+        "hit_rate": 0.175781,
+        "lost": 211,
+        "mean_chance": 0.199228,
+        "tickets": 256,
+        "void": 0,
+        "won": 45
+       },
+       "rookie": {
+        "hit_rate": 0.296296,
+        "lost": 57,
+        "mean_chance": 0.274314,
+        "tickets": 81,
+        "void": 0,
+        "won": 24
+       },
+       "small": {
+        "hit_rate": 0.424125,
+        "lost": 148,
+        "mean_chance": 0.433875,
+        "tickets": 257,
+        "void": 0,
+        "won": 109
+       }
+      },
+      "small": {
+       "coverage": 0.160424,
+       "hit_rate": 0.424125,
+       "lost": 148,
+       "mean_chance": 0.433875,
+       "tickets": 257,
+       "void": 0,
+       "won": 109
+      }
+     },
+     "2020-2025": {
+      "confident_games": 366,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.075949,
+        "lost": 73,
+        "mean_chance": 0.053491,
+        "tickets": 79,
+        "void": 0,
+        "won": 6
+       },
+       "medium": {
+        "hit_rate": 0.20625,
+        "lost": 254,
+        "mean_chance": 0.205254,
+        "tickets": 320,
+        "void": 0,
+        "won": 66
+       },
+       "rookie": {
+        "hit_rate": 0.301075,
+        "lost": 65,
+        "mean_chance": 0.282219,
+        "tickets": 93,
+        "void": 0,
+        "won": 28
+       },
+       "small": {
+        "hit_rate": 0.465625,
+        "lost": 171,
+        "mean_chance": 0.439939,
+        "tickets": 320,
+        "void": 0,
+        "won": 149
+       }
+      },
+      "small": {
+       "coverage": 0.189014,
+       "hit_rate": 0.465625,
+       "lost": 171,
+       "mean_chance": 0.439939,
+       "tickets": 320,
+       "void": 0,
+       "won": 149
+      }
+     },
+     "2026": {
+      "confident_games": 29,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 2,
+        "mean_chance": 0.058216,
+        "tickets": 2,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.321429,
+        "lost": 19,
+        "mean_chance": 0.212149,
+        "tickets": 28,
+        "void": 0,
+        "won": 9
+       },
+       "rookie": {
+        "hit_rate": 0.0,
+        "lost": 5,
+        "mean_chance": 0.244829,
+        "tickets": 5,
+        "void": 0,
+        "won": 0
+       },
+       "small": {
+        "hit_rate": 0.642857,
+        "lost": 10,
+        "mean_chance": 0.440653,
+        "tickets": 28,
+        "void": 0,
+        "won": 18
+       }
+      },
+      "small": {
+       "coverage": 0.171779,
+       "hit_rate": 0.642857,
+       "lost": 10,
+       "mean_chance": 0.440653,
+       "tickets": 28,
+       "void": 0,
+       "won": 18
+      }
+     },
+     "all": {
+      "confident_games": 702,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.053333,
+        "lost": 142,
+        "mean_chance": 0.053739,
+        "tickets": 150,
+        "void": 0,
+        "won": 8
+       },
+       "medium": {
+        "hit_rate": 0.198675,
+        "lost": 484,
+        "mean_chance": 0.20302,
+        "tickets": 604,
+        "void": 0,
+        "won": 120
+       },
+       "rookie": {
+        "hit_rate": 0.290503,
+        "lost": 127,
+        "mean_chance": 0.277597,
+        "tickets": 179,
+        "void": 0,
+        "won": 52
+       },
+       "small": {
+        "hit_rate": 0.456198,
+        "lost": 329,
+        "mean_chance": 0.437396,
+        "tickets": 605,
+        "void": 0,
+        "won": 276
+       }
+      },
+      "small": {
+       "coverage": 0.174957,
+       "hit_rate": 0.456198,
+       "lost": 329,
+       "mean_chance": 0.437396,
+       "tickets": 605,
+       "void": 0,
+       "won": 276
+      }
+     }
+    },
+    "td_floor": 0.4
+   },
+   {
+    "confident": 0.75,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 307,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.047619,
+        "lost": 20,
+        "mean_chance": 0.06396,
+        "tickets": 21,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.185567,
+        "lost": 158,
+        "mean_chance": 0.212473,
+        "tickets": 194,
+        "void": 0,
+        "won": 36
+       },
+       "rookie": {
+        "hit_rate": 0.270588,
+        "lost": 62,
+        "mean_chance": 0.281064,
+        "tickets": 85,
+        "void": 0,
+        "won": 23
+       },
+       "small": {
+        "hit_rate": 0.45641,
+        "lost": 106,
+        "mean_chance": 0.460252,
+        "tickets": 195,
+        "void": 0,
+        "won": 89
+       }
+      },
+      "small": {
+       "coverage": 0.121723,
+       "hit_rate": 0.45641,
+       "lost": 106,
+       "mean_chance": 0.460252,
+       "tickets": 195,
+       "void": 0,
+       "won": 89
+      }
+     },
+     "2020-2025": {
+      "confident_games": 366,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.037037,
+        "lost": 26,
+        "mean_chance": 0.061257,
+        "tickets": 27,
+        "void": 0,
+        "won": 1
+       },
+       "medium": {
+        "hit_rate": 0.220532,
+        "lost": 205,
+        "mean_chance": 0.217803,
+        "tickets": 263,
+        "void": 0,
+        "won": 58
+       },
+       "rookie": {
+        "hit_rate": 0.297872,
+        "lost": 66,
+        "mean_chance": 0.28292,
+        "tickets": 94,
+        "void": 0,
+        "won": 28
+       },
+       "small": {
+        "hit_rate": 0.479087,
+        "lost": 137,
+        "mean_chance": 0.460992,
+        "tickets": 263,
+        "void": 0,
+        "won": 126
+       }
+      },
+      "small": {
+       "coverage": 0.155346,
+       "hit_rate": 0.479087,
+       "lost": 137,
+       "mean_chance": 0.460992,
+       "tickets": 263,
+       "void": 0,
+       "won": 126
+      }
+     },
+     "2026": {
+      "confident_games": 29,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": null,
+        "lost": 0,
+        "mean_chance": null,
+        "tickets": 0,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.380952,
+        "lost": 13,
+        "mean_chance": 0.22706,
+        "tickets": 21,
+        "void": 0,
+        "won": 8
+       },
+       "rookie": {
+        "hit_rate": 0.166667,
+        "lost": 5,
+        "mean_chance": 0.26967,
+        "tickets": 6,
+        "void": 0,
+        "won": 1
+       },
+       "small": {
+        "hit_rate": 0.714286,
+        "lost": 6,
+        "mean_chance": 0.47183,
+        "tickets": 21,
+        "void": 0,
+        "won": 15
+       }
+      },
+      "small": {
+       "coverage": 0.128834,
+       "hit_rate": 0.714286,
+       "lost": 6,
+       "mean_chance": 0.47183,
+       "tickets": 21,
+       "void": 0,
+       "won": 15
+      }
+     },
+     "all": {
+      "confident_games": 702,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.041667,
+        "lost": 46,
+        "mean_chance": 0.062439,
+        "tickets": 48,
+        "void": 0,
+        "won": 2
+       },
+       "medium": {
+        "hit_rate": 0.213389,
+        "lost": 376,
+        "mean_chance": 0.216047,
+        "tickets": 478,
+        "void": 0,
+        "won": 102
+       },
+       "rookie": {
+        "hit_rate": 0.281081,
+        "lost": 133,
+        "mean_chance": 0.281638,
+        "tickets": 185,
+        "void": 0,
+        "won": 52
+       },
+       "small": {
+        "hit_rate": 0.480167,
+        "lost": 249,
+        "mean_chance": 0.461166,
+        "tickets": 479,
+        "void": 0,
+        "won": 230
+       }
+      },
+      "small": {
+       "coverage": 0.138519,
+       "hit_rate": 0.480167,
+       "lost": 249,
+       "mean_chance": 0.461166,
+       "tickets": 479,
+       "void": 0,
+       "won": 230
+      }
+     }
+    },
+    "td_floor": 0.45
+   },
+   {
+    "confident": 0.75,
+    "periods": {
+     "2014-2019": {
+      "confident_games": 307,
+      "games": 1602,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 5,
+        "mean_chance": 0.069147,
+        "tickets": 5,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.210145,
+        "lost": 109,
+        "mean_chance": 0.226883,
+        "tickets": 138,
+        "void": 0,
+        "won": 29
+       },
+       "rookie": {
+        "hit_rate": 0.269663,
+        "lost": 65,
+        "mean_chance": 0.288617,
+        "tickets": 89,
+        "void": 0,
+        "won": 24
+       },
+       "small": {
+        "hit_rate": 0.478261,
+        "lost": 72,
+        "mean_chance": 0.489543,
+        "tickets": 138,
+        "void": 0,
+        "won": 66
+       }
+      },
+      "small": {
+       "coverage": 0.086142,
+       "hit_rate": 0.478261,
+       "lost": 72,
+       "mean_chance": 0.489543,
+       "tickets": 138,
+       "void": 0,
+       "won": 66
+      }
+     },
+     "2020-2025": {
+      "confident_games": 366,
+      "games": 1693,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 5,
+        "mean_chance": 0.070395,
+        "tickets": 5,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.236559,
+        "lost": 142,
+        "mean_chance": 0.233103,
+        "tickets": 186,
+        "void": 0,
+        "won": 44
+       },
+       "rookie": {
+        "hit_rate": 0.29703,
+        "lost": 71,
+        "mean_chance": 0.293245,
+        "tickets": 101,
+        "void": 0,
+        "won": 30
+       },
+       "small": {
+        "hit_rate": 0.516129,
+        "lost": 90,
+        "mean_chance": 0.489567,
+        "tickets": 186,
+        "void": 0,
+        "won": 96
+       }
+      },
+      "small": {
+       "coverage": 0.109864,
+       "hit_rate": 0.516129,
+       "lost": 90,
+       "mean_chance": 0.489567,
+       "tickets": 186,
+       "void": 0,
+       "won": 96
+      }
+     },
+     "2026": {
+      "confident_games": 29,
+      "games": 163,
+      "kinds": {
+       "large": {
+        "hit_rate": null,
+        "lost": 0,
+        "mean_chance": null,
+        "tickets": 0,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.3125,
+        "lost": 11,
+        "mean_chance": 0.237291,
+        "tickets": 16,
+        "void": 0,
+        "won": 5
+       },
+       "rookie": {
+        "hit_rate": 0.166667,
+        "lost": 5,
+        "mean_chance": 0.26967,
+        "tickets": 6,
+        "void": 0,
+        "won": 1
+       },
+       "small": {
+        "hit_rate": 0.75,
+        "lost": 4,
+        "mean_chance": 0.498998,
+        "tickets": 16,
+        "void": 0,
+        "won": 12
+       }
+      },
+      "small": {
+       "coverage": 0.09816,
+       "hit_rate": 0.75,
+       "lost": 4,
+       "mean_chance": 0.498998,
+       "tickets": 16,
+       "void": 0,
+       "won": 12
+      }
+     },
+     "all": {
+      "confident_games": 702,
+      "games": 3458,
+      "kinds": {
+       "large": {
+        "hit_rate": 0.0,
+        "lost": 10,
+        "mean_chance": 0.069771,
+        "tickets": 10,
+        "void": 0,
+        "won": 0
+       },
+       "medium": {
+        "hit_rate": 0.229412,
+        "lost": 262,
+        "mean_chance": 0.230776,
+        "tickets": 340,
+        "void": 0,
+        "won": 78
+       },
+       "rookie": {
+        "hit_rate": 0.280612,
+        "lost": 141,
+        "mean_chance": 0.290422,
+        "tickets": 196,
+        "void": 0,
+        "won": 55
+       },
+       "small": {
+        "hit_rate": 0.511765,
+        "lost": 166,
+        "mean_chance": 0.490001,
+        "tickets": 340,
+        "void": 0,
+        "won": 174
+       }
+      },
+      "small": {
+       "coverage": 0.098323,
+       "hit_rate": 0.511765,
+       "lost": 166,
+       "mean_chance": 0.490001,
+       "tickets": 340,
+       "void": 0,
+       "won": 174
+      }
+     }
+    },
+    "td_floor": 0.5
+   }
+  ]
+ },
+ "history_from": 2014,
+ "inputs": {
+  "SPREAD": "closing spread_line and its prices, games.csv.gz, proportional no-vig",
+  "TD": "nfl_td walk-forward prob (season S fitted on seasons before S), shipped usage groups only; graded on box-score rushing + receiving TDs",
+  "TOTAL": "closing total_line and its prices, games.csv.gz, proportional no-vig",
+  "WIN": "nfl_model walk-forward blend_prob (season S fitted on seasons before S)",
+  "pick": "nfl_predict's pick of the same blend: the home side at P(home) 0.5 or more",
+  "rookie": "no player_games row in an earlier season"
+ },
+ "kinds": {
+  "large": {
+   "chance_bins": [
+    {
+     "hi": 0.1,
+     "hit_rate": 0.052632,
+     "lo": 0.05,
+     "mean_chance": 0.063134,
+     "mean_chance_graded": 0.064425,
+     "tickets": 95
+    }
+   ],
+   "coverage": {
+    "2014-2019": 0.022472,
+    "2020-2025": 0.033668,
+    "2026": 0.01227,
+    "all": 0.027473
+   },
+   "meters": {
+    "2014-2019": {
+     "graded": 36,
+     "hit_rate": 0.083333,
+     "hit_rate_reason": null,
+     "lost": 33,
+     "mean_chance": 0.063474,
+     "mean_chance_graded": 0.063474,
+     "not_built": 1566,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 637,
+      "no TD leg with a chance of 45% or more on a second player available": 112,
+      "not a confident game: the pick's chance is below 65%": 817
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 36,
+     "void": 0,
+     "won": 3
+    },
+    "2020-2025": {
+     "graded": 57,
+     "hit_rate": 0.035088,
+     "hit_rate_reason": null,
+     "lost": 55,
+     "mean_chance": 0.062913,
+     "mean_chance_graded": 0.065063,
+     "not_built": 1636,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 653,
+      "no TD leg with a chance of 45% or more on a second player available": 109,
+      "not a confident game: the pick's chance is below 65%": 874
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 57,
+     "void": 0,
+     "won": 2
+    },
+    "2026": {
+     "graded": 2,
+     "hit_rate": 0.0,
+     "hit_rate_reason": null,
+     "lost": 2,
+     "mean_chance": 0.063342,
+     "mean_chance_graded": 0.063342,
+     "not_built": 161,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 57,
+      "no TD leg with a chance of 45% or more on a second player available": 14,
+      "not a confident game: the pick's chance is below 65%": 90
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 2,
+     "void": 0,
+     "won": 0
+    },
+    "all": {
+     "graded": 95,
+     "hit_rate": 0.052632,
+     "hit_rate_reason": null,
+     "lost": 90,
+     "mean_chance": 0.063134,
+     "mean_chance_graded": 0.064425,
+     "not_built": 3363,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 1347,
+      "no TD leg with a chance of 45% or more on a second player available": 235,
+      "not a confident game: the pick's chance is below 65%": 1781
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 95,
+     "void": 0,
+     "won": 5
+    }
+   }
+  },
+  "medium": {
+   "chance_bins": [
+    {
+     "hi": 0.15,
+     "hit_rate": 0.171779,
+     "lo": 0.1,
+     "mean_chance": 0.12862,
+     "mean_chance_graded": 0.130069,
+     "tickets": 163
+    },
+    {
+     "hi": 0.2,
+     "hit_rate": 0.197297,
+     "lo": 0.15,
+     "mean_chance": 0.177989,
+     "mean_chance_graded": 0.179792,
+     "tickets": 370
+    },
+    {
+     "hi": 0.25,
+     "hit_rate": 0.269006,
+     "lo": 0.2,
+     "mean_chance": 0.220848,
+     "mean_chance_graded": 0.223468,
+     "tickets": 342
+    },
+    {
+     "hi": 0.3,
+     "hit_rate": 0.273504,
+     "lo": 0.25,
+     "mean_chance": 0.27123,
+     "mean_chance_graded": 0.27123,
+     "tickets": 117
+    },
+    {
+     "hi": 0.4,
+     "hit_rate": 0.264706,
+     "lo": 0.3,
+     "mean_chance": 0.326508,
+     "mean_chance_graded": 0.326508,
+     "tickets": 34
+    }
+   ],
+   "coverage": {
+    "2014-2019": 0.272784,
+    "2020-2025": 0.31896,
+    "2026": 0.300613,
+    "all": 0.296703
+   },
+   "meters": {
+    "2014-2019": {
+     "graded": 437,
+     "hit_rate": 0.217391,
+     "hit_rate_reason": null,
+     "lost": 342,
+     "mean_chance": 0.197789,
+     "mean_chance_graded": 0.199119,
+     "not_built": 1165,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 347,
+      "no TOTAL leg or TD leg with a chance of 45% or more on another player available": 1,
+      "not a confident game: the pick's chance is below 65%": 817
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 437,
+     "void": 0,
+     "won": 95
+    },
+    "2020-2025": {
+     "graded": 540,
+     "hit_rate": 0.224074,
+     "hit_rate_reason": null,
+     "lost": 419,
+     "mean_chance": 0.200221,
+     "mean_chance_graded": 0.202477,
+     "not_built": 1153,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 279,
+      "not a confident game: the pick's chance is below 65%": 874
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 540,
+     "void": 0,
+     "won": 121
+    },
+    "2026": {
+     "graded": 49,
+     "hit_rate": 0.367347,
+     "hit_rate_reason": null,
+     "lost": 31,
+     "mean_chance": 0.217005,
+     "mean_chance_graded": 0.217005,
+     "not_built": 114,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 24,
+      "not a confident game: the pick's chance is below 65%": 90
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 49,
+     "void": 0,
+     "won": 18
+    },
+    "all": {
+     "graded": 1026,
+     "hit_rate": 0.22807,
+     "hit_rate_reason": null,
+     "lost": 792,
+     "mean_chance": 0.199987,
+     "mean_chance_graded": 0.20174,
+     "not_built": 2432,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 650,
+      "no TOTAL leg or TD leg with a chance of 45% or more on another player available": 1,
+      "not a confident game: the pick's chance is below 65%": 1781
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1026,
+     "void": 0,
+     "won": 234
+    }
+   }
+  },
+  "rookie": {
+   "chance_bins": [
+    {
+     "hi": 0.2,
+     "hit_rate": 0.214286,
+     "lo": 0.15,
+     "mean_chance": 0.183999,
+     "mean_chance_graded": 0.183999,
+     "tickets": 56
+    },
+    {
+     "hi": 0.25,
+     "hit_rate": 0.196319,
+     "lo": 0.2,
+     "mean_chance": 0.223795,
+     "mean_chance_graded": 0.224683,
+     "tickets": 163
+    },
+    {
+     "hi": 0.3,
+     "hit_rate": 0.299213,
+     "lo": 0.25,
+     "mean_chance": 0.271711,
+     "mean_chance_graded": 0.271711,
+     "tickets": 127
+    },
+    {
+     "hi": 0.4,
+     "hit_rate": 0.308642,
+     "lo": 0.3,
+     "mean_chance": 0.336248,
+     "mean_chance_graded": 0.336248,
+     "tickets": 81
+    },
+    {
+     "hi": 1.0,
+     "hit_rate": 0.75,
+     "lo": 0.4,
+     "mean_chance": 0.448525,
+     "mean_chance_graded": 0.448525,
+     "tickets": 4
+    }
+   ],
+   "coverage": {
+    "2014-2019": 0.139201,
+    "2020-2025": 0.117543,
+    "2026": 0.055215,
+    "all": 0.124639
+   },
+   "meters": {
+    "2014-2019": {
+     "graded": 223,
+     "hit_rate": 0.251121,
+     "hit_rate_reason": null,
+     "lost": 167,
+     "mean_chance": 0.252076,
+     "mean_chance_graded": 0.252414,
+     "not_built": 1379,
+     "not_built_why": {
+      "no rookie TD leg on the pick's team with a chance of 25% or more available": 527,
+      "not a confident game: the pick's chance is below 65%": 817,
+      "the only rookie TD leg on the pick's team at 25% or more, with the pick's WIN, is SMALL's ticket": 35
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 223,
+     "void": 0,
+     "won": 56
+    },
+    "2020-2025": {
+     "graded": 199,
+     "hit_rate": 0.261307,
+     "hit_rate_reason": null,
+     "lost": 147,
+     "mean_chance": 0.260967,
+     "mean_chance_graded": 0.261316,
+     "not_built": 1494,
+     "not_built_why": {
+      "no rookie TD leg on the pick's team with a chance of 25% or more available": 586,
+      "not a confident game: the pick's chance is below 65%": 874,
+      "the only rookie TD leg on the pick's team at 25% or more, with the pick's WIN, is SMALL's ticket": 34
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 199,
+     "void": 0,
+     "won": 52
+    },
+    "2026": {
+     "graded": 9,
+     "hit_rate": 0.222222,
+     "hit_rate_reason": null,
+     "lost": 7,
+     "mean_chance": 0.241602,
+     "mean_chance_graded": 0.241602,
+     "not_built": 154,
+     "not_built_why": {
+      "no rookie TD leg on the pick's team with a chance of 25% or more available": 63,
+      "not a confident game: the pick's chance is below 65%": 90,
+      "the only rookie TD leg on the pick's team at 25% or more, with the pick's WIN, is SMALL's ticket": 1
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 9,
+     "void": 0,
+     "won": 2
+    },
+    "all": {
+     "graded": 431,
+     "hit_rate": 0.25522,
+     "hit_rate_reason": null,
+     "lost": 321,
+     "mean_chance": 0.255963,
+     "mean_chance_graded": 0.256299,
+     "not_built": 3027,
+     "not_built_why": {
+      "no rookie TD leg on the pick's team with a chance of 25% or more available": 1176,
+      "not a confident game: the pick's chance is below 65%": 1781,
+      "the only rookie TD leg on the pick's team at 25% or more, with the pick's WIN, is SMALL's ticket": 70
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 431,
+     "void": 0,
+     "won": 110
+    }
+   }
+  },
+  "small": {
+   "chance_bins": [
+    {
+     "hi": 0.3,
+     "hit_rate": 0.666667,
+     "lo": 0.25,
+     "mean_chance": 0.297635,
+     "mean_chance_graded": 0.297635,
+     "tickets": 6
+    },
+    {
+     "hi": 0.4,
+     "hit_rate": 0.376623,
+     "lo": 0.3,
+     "mean_chance": 0.357754,
+     "mean_chance_graded": 0.358327,
+     "tickets": 462
+    },
+    {
+     "hi": 1.0,
+     "hit_rate": 0.513417,
+     "lo": 0.4,
+     "mean_chance": 0.472028,
+     "mean_chance_graded": 0.472921,
+     "tickets": 559
+    }
+   ],
+   "coverage": {
+    "2014-2019": 0.273408,
+    "2020-2025": 0.31896,
+    "2026": 0.300613,
+    "all": 0.296992
+   },
+   "meters": {
+    "2014-2019": {
+     "graded": 438,
+     "hit_rate": 0.445205,
+     "hit_rate_reason": null,
+     "lost": 243,
+     "mean_chance": 0.419534,
+     "mean_chance_graded": 0.41983,
+     "not_built": 1164,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 347,
+      "not a confident game: the pick's chance is below 65%": 817
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 438,
+     "void": 0,
+     "won": 195
+    },
+    "2020-2025": {
+     "graded": 540,
+     "hit_rate": 0.444444,
+     "hit_rate_reason": null,
+     "lost": 300,
+     "mean_chance": 0.41795,
+     "mean_chance_graded": 0.419125,
+     "not_built": 1153,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 279,
+      "not a confident game: the pick's chance is below 65%": 874
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 540,
+     "void": 0,
+     "won": 240
+    },
+    "2026": {
+     "graded": 49,
+     "hit_rate": 0.612245,
+     "hit_rate_reason": null,
+     "lost": 19,
+     "mean_chance": 0.438428,
+     "mean_chance_graded": 0.438428,
+     "not_built": 114,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 24,
+      "not a confident game: the pick's chance is below 65%": 90
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 49,
+     "void": 0,
+     "won": 30
+    },
+    "all": {
+     "graded": 1027,
+     "hit_rate": 0.452775,
+     "hit_rate_reason": null,
+     "lost": 562,
+     "mean_chance": 0.419602,
+     "mean_chance_graded": 0.420347,
+     "not_built": 2431,
+     "not_built_why": {
+      "no TD leg with a chance of 45% or more available": 650,
+      "not a confident game: the pick's chance is below 65%": 1781
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1027,
+     "void": 0,
+     "won": 465
+    }
+   }
+  }
+ },
+ "known_bias": "In the backtest a TD candidate is a player who took a snap, so the replay knows who was active. Live, a pick who does not play is voided and the ticket is graded on its other legs.",
+ "left_out": {
+  "not played yet": 109
+ },
+ "no_edge": "Nothing here claims an edge. The market is hard to beat, and parlays multiply the margin of every leg; these tickets are the legs the engine rates most likely to land, not bets it rates profitable.",
+ "no_edge_v2": "Nothing here claims an edge. Narrowing to likely legs raises the hit rate and lowers the payout; the market prices both. These are the legs the engine rates most likely to land, not bets it rates profitable.",
+ "payout_basis": "est. - the product of the legs' consensus single prices; Stake's bet builder prices correlated legs below it, so it is an upper bound on what Stake pays",
+ "periods": {
+  "2014-2019": [
+   2014,
+   2019
+  ],
+  "2020-2025": [
+   2020,
+   2025
+  ],
+  "2026": [
+   2026,
+   2026
+  ],
+  "all": [
+   2014,
+   2026
+  ]
+ },
+ "roi_reason": "no anytime-TD price history on file",
+ "rule": "nfl/engine/nfl_sgp2.py",
+ "schema": 1,
+ "stake": 10.0,
+ "td_groups": {
+  "changed": 0,
+  "dev_choice_with_every_group": {
+   "confident": 0.65,
+   "td_floor": 0.45
+  },
+  "note": "the usage groups given a chance were chosen on 2014-2025 walk-forward calibration (nfl_td.shipped_groups); `changed` is how many built tickets would differ with every group's chance in",
+  "shipped": [
+   "1-3",
+   "3+"
+  ],
+  "tickets": 2579
+ },
+ "td_prices": {
+  "file": "nfl/data/td_price_history.csv.gz",
+  "on_file": false,
+  "rows": 0
+ },
+ "through": "2026-11-24T01:15:00Z",
+ "v1_rule": "nfl/engine/nfl_sgp.py",
+ "v1_same_games": {
+  "games": {
+   "2014-2019": 785,
+   "2020-2025": 819,
+   "2026": 73,
+   "all": 1677
+  },
+  "kinds": {
+   "large": {
+    "2014-2019": {
+     "graded": 784,
+     "hit_rate": 0.040816,
+     "hit_rate_reason": null,
+     "lost": 752,
+     "mean_chance": 0.035381,
+     "mean_chance_graded": 0.036497,
+     "not_built": 1,
+     "not_built_why": {
+      "no TOTAL leg available": 1
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 784,
+     "void": 0,
+     "won": 32
+    },
+    "2020-2025": {
+     "graded": 819,
+     "hit_rate": 0.03663,
+     "hit_rate_reason": null,
+     "lost": 789,
+     "mean_chance": 0.036247,
+     "mean_chance_graded": 0.037223,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 819,
+     "void": 0,
+     "won": 30
+    },
+    "2026": {
+     "graded": 73,
+     "hit_rate": 0.041096,
+     "hit_rate_reason": null,
+     "lost": 70,
+     "mean_chance": 0.032815,
+     "mean_chance_graded": 0.034094,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 73,
+     "void": 0,
+     "won": 3
+    },
+    "all": {
+     "graded": 1676,
+     "hit_rate": 0.038783,
+     "hit_rate_reason": null,
+     "lost": 1611,
+     "mean_chance": 0.035692,
+     "mean_chance_graded": 0.036747,
+     "not_built": 1,
+     "not_built_why": {
+      "no TOTAL leg available": 1
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1676,
+     "void": 0,
+     "won": 65
+    }
+   },
+   "medium": {
+    "2014-2019": {
+     "graded": 785,
+     "hit_rate": 0.189809,
+     "hit_rate_reason": null,
+     "lost": 636,
+     "mean_chance": 0.171628,
+     "mean_chance_graded": 0.172799,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 785,
+     "void": 0,
+     "won": 149
+    },
+    "2020-2025": {
+     "graded": 819,
+     "hit_rate": 0.202686,
+     "hit_rate_reason": null,
+     "lost": 653,
+     "mean_chance": 0.179263,
+     "mean_chance_graded": 0.181272,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 819,
+     "void": 0,
+     "won": 166
+    },
+    "2026": {
+     "graded": 73,
+     "hit_rate": 0.260274,
+     "hit_rate_reason": null,
+     "lost": 54,
+     "mean_chance": 0.194193,
+     "mean_chance_graded": 0.194193,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 73,
+     "void": 0,
+     "won": 19
+    },
+    "all": {
+     "graded": 1677,
+     "hit_rate": 0.199165,
+     "hit_rate_reason": null,
+     "lost": 1343,
+     "mean_chance": 0.176339,
+     "mean_chance_graded": 0.177868,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1677,
+     "void": 0,
+     "won": 334
+    }
+   },
+   "rookie": {
+    "2014-2019": {
+     "graded": 322,
+     "hit_rate": 0.167702,
+     "hit_rate_reason": null,
+     "lost": 268,
+     "mean_chance": 0.171868,
+     "mean_chance_graded": 0.172526,
+     "not_built": 463,
+     "not_built_why": {
+      "no rookie TD leg with a chance of 25% or more available": 414,
+      "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 49
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 322,
+     "void": 0,
+     "won": 54
+    },
+    "2020-2025": {
+     "graded": 336,
+     "hit_rate": 0.190476,
+     "hit_rate_reason": null,
+     "lost": 272,
+     "mean_chance": 0.170962,
+     "mean_chance_graded": 0.171169,
+     "not_built": 483,
+     "not_built_why": {
+      "no rookie TD leg with a chance of 25% or more available": 442,
+      "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 41
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 336,
+     "void": 0,
+     "won": 64
+    },
+    "2026": {
+     "graded": 18,
+     "hit_rate": 0.111111,
+     "hit_rate_reason": null,
+     "lost": 16,
+     "mean_chance": 0.137666,
+     "mean_chance_graded": 0.137666,
+     "not_built": 55,
+     "not_built_why": {
+      "no rookie TD leg with a chance of 25% or more available": 53,
+      "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 2
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 18,
+     "void": 0,
+     "won": 2
+    },
+    "all": {
+     "graded": 676,
+     "hit_rate": 0.177515,
+     "hit_rate_reason": null,
+     "lost": 556,
+     "mean_chance": 0.170507,
+     "mean_chance_graded": 0.170923,
+     "not_built": 1001,
+     "not_built_why": {
+      "no rookie TD leg with a chance of 25% or more available": 909,
+      "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 92
+     },
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 676,
+     "void": 0,
+     "won": 120
+    }
+   },
+   "small": {
+    "2014-2019": {
+     "graded": 785,
+     "hit_rate": 0.389809,
+     "hit_rate_reason": null,
+     "lost": 479,
+     "mean_chance": 0.361821,
+     "mean_chance_graded": 0.362135,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 785,
+     "void": 0,
+     "won": 306
+    },
+    "2020-2025": {
+     "graded": 819,
+     "hit_rate": 0.395604,
+     "hit_rate_reason": null,
+     "lost": 495,
+     "mean_chance": 0.375456,
+     "mean_chance_graded": 0.376231,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 819,
+     "void": 0,
+     "won": 324
+    },
+    "2026": {
+     "graded": 73,
+     "hit_rate": 0.506849,
+     "hit_rate_reason": null,
+     "lost": 36,
+     "mean_chance": 0.391209,
+     "mean_chance_graded": 0.391209,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 73,
+     "void": 0,
+     "won": 37
+    },
+    "all": {
+     "graded": 1677,
+     "hit_rate": 0.397734,
+     "hit_rate_reason": null,
+     "lost": 1010,
+     "mean_chance": 0.369759,
+     "mean_chance_graded": 0.370285,
+     "not_built": 0,
+     "not_built_why": {},
+     "pending": 0,
+     "profit": null,
+     "roi": null,
+     "roi_note": null,
+     "roi_reason": "no anytime-TD price history on file",
+     "roi_tickets": 0,
+     "stake": 10.0,
+     "tickets": 1677,
+     "void": 0,
+     "won": 667
+    }
+   }
+  },
+  "note": "v1's four tickets of the games v2 builds in (the pick's chance 65% or more), measured as v1's own history is",
+  "report_only": true,
+  "version": "sgp-v1"
+ },
+ "version": "sgp-v2"
+}

@@ -73,9 +73,12 @@ CONFIRM = (2020, 2025)
 # CONFIDENT and TD_FLOOR are set from the DEV choice, once, by the backtest
 # (experiments/nfl_sgp2_backtest.py --choose) and written here with the
 # date they were chosen; until then v2 builds no live tickets.
-CONFIDENT = None
-TD_FLOOR = None
-CHOSEN_ON = None
+# CHOSEN 2026-11-24 by experiments/nfl_sgp2_backtest.py --choose, on 2014-2019 alone:
+#   SMALL built in 27.3% of the 1,602 games (438 tickets), hit 44.5% (won 195, lost 243);
+#   9 of the 16 pairs built SMALL in 25% or more of the games.
+CONFIDENT = 0.65
+TD_FLOOR = 0.45
+CHOSEN_ON = "2026-11-24"
 
 KINDS = sgp.KINDS              # v1's build order and ticket shapes, unchanged
 LEGS = sgp.LEGS
