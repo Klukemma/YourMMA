@@ -26,9 +26,10 @@ THE INPUTS, point in time:
           nfl_td.TRAIN_FROM to S - 1, each row's features read from the
           player's state before kickoff. A chance only in the usage groups
           nfl_td.shipped_groups() ships - the live rule (predict_roster gives
-          the others None). Which groups ship was measured on 2014-2025
-          walk-forward rows, so it is the one input chosen with hindsight;
-          `td_groups` in the output measures how many tickets it changes.
+          the others None). Which groups ship was measured on the
+          nfl_td.DEV and CONFIRM walk-forward rows, so it is the one input
+          chosen with hindsight; `td_groups` in the output measures how many
+          tickets it changes.
   rookie  no player_games row in any season before S (nfl_sgp.is_rookie).
   prices  the closing moneylines and spread/total prices. No anytime-TD
           price is on file, so a TD leg has no price, every ticket holds one,
@@ -253,9 +254,9 @@ def run(out_dir=nd.DATA, tickets_out=TICKETS_OUT, price_path=TD_PRICES):
         td_prices={"file": str(TD_PRICES.relative_to(nd.NFL.parent)), "on_file": prices is not None,
                    "rows": 0 if prices is None else len(prices)},
         td_groups=dict(changed_by_groups(tickets, every_group), shipped=ships,
-                       note="the usage groups given a chance were chosen on 2014-2025 walk-forward "
-                            "calibration (nfl_td.shipped_groups); `changed` is how many built tickets "
-                            "would differ with every group's chance in"),
+                       note=f"the usage groups given a chance were chosen on {nt.DEV[0]}-{nt.CONFIRM[1]} "
+                            "walk-forward calibration (nfl_td.shipped_groups); `changed` is how many built "
+                            "tickets would differ with every group's chance in"),
         inputs={"WIN": "nfl_model walk-forward blend_prob (season S fitted on seasons before S)",
                 "SPREAD": "closing spread_line and its prices, games.csv.gz, proportional no-vig",
                 "TOTAL": "closing total_line and its prices, games.csv.gz, proportional no-vig",

@@ -810,8 +810,14 @@ function parseOdds(text) {
   }
   return { error: ODDS_HELP };
 }
+// The amount, in dollars: a comma before groups of exactly three digits is
+// a thousands separator, as in a dollar figure ("1,000", "$2,500.50"); any
+// other single comma is a decimal point ("10,50"), as some keypads type it.
+// Anything else is not an amount, and the box says so.
 function parseStake(text) {
-  const t = String(text ?? "").trim().replace(/^\$/, "").replace(",", ".");
+  let t = String(text ?? "").trim().replace(/^\$/, "").replace(/\s+/g, "");
+  if (/^[1-9]\d{0,2}(,\d{3})+(\.\d*)?$/.test(t)) t = t.replace(/,/g, "");
+  else if (/^\d*,\d*$/.test(t)) t = t.replace(",", ".");
   if (!/^(\d+\.?\d*|\.\d+)$/.test(t)) return null;
   const v = Number(t);
   return v > 0 && Number.isFinite(v) ? v : null;
@@ -903,6 +909,14 @@ function widestPeriod(periods) {
   return all.reduce((best, p) => (!best || (p[1][1] - p[1][0]) > (best[1][1] - best[1][0]) ? p : best), null);
 }
 const spanLabel = (lohi) => (!lohi ? "" : lohi[0] === lohi[1] ? String(lohi[0]) : `${lohi[0]}-${lohi[1]}`);
+// A chance bin's edge exactly, in as few decimals as show it: 2.5%, not a
+// rounded 3% that a ticket at 2.6% would contradict.
+function edgePct(x) {
+  if (x == null) return pct(x);
+  let d = 0;
+  while (d < 3 && Math.abs(Number((x * 100).toFixed(d)) - x * 100) > 1e-9) d += 1;
+  return pct(x, d);
+}
 function kindRecord(kind, chance, s) {
   const h = s && s.history;
   if (!h) return "";
@@ -915,7 +929,7 @@ function kindRecord(kind, chance, s) {
   const bins = k.chance_bins || [];
   const bin = chance == null ? null : bins.find((b, i) => chance >= b.lo && (chance < b.hi || (i === bins.length - 1 && chance <= b.hi)));
   return `<div class="mini">${esc(kindName(kind))} tickets hit <b>${pct(m.hit_rate, 1)}</b> of ${tally(m.won + m.lost)} in the ${esc(spanLabel(span[1]))} replay, where their product said ${pct(m.mean_chance, 1)}${
-    bin ? `; at a product of ${pct(bin.lo)}-${pct(bin.hi)} they hit ${pct(bin.hit_rate, 1)} of ${tally(bin.tickets)}` : ""}.</div>`;
+    bin ? `; at a product of ${edgePct(bin.lo)}-${edgePct(bin.hi)} they hit ${pct(bin.hit_rate, 1)} of ${tally(bin.tickets)}` : ""}.</div>`;
 }
 
 function ticketCard(g, t, s) {
@@ -966,13 +980,15 @@ function sgpRules(s, shown = []) {
     `${tickets ? `<dl class="gloss">${tickets}</dl>` : ""}${legs ? `<dl class="gloss">${legs}</dl>` : ""}${body}`);
 }
 
-// The game's detail: its tickets, the no-edge line and the est. caveat beside them.
+// The game's detail: its tickets, the no-edge line and the est. caveat
+// beside them - and the backtest's known bias, since each card quotes the
+// backtest's hit rate for its kind and the bias is said wherever a meter is.
 function sgpSection(g, d) {
   const s = d && d.sgp;
   const body = ticketsHtml(g, s);
   if (!body || !g.tickets) return body;
   const c = (s && s.caveats) || {};
-  return `${body}${c.edge ? `<div class="note">${esc(c.edge)}</div>` : ""}${c.est ? `<div class="mini">${esc(c.est)}</div>` : ""}${sgpRules(s, ["est"])}`;
+  return `${body}${c.edge ? `<div class="note">${esc(c.edge)}</div>` : ""}${c.bias ? `<div class="mini">${esc(c.bias)}</div>` : ""}${c.est ? `<div class="mini">${esc(c.est)}</div>` : ""}${sgpRules(s, ["est"])}`;
 }
 const sgpTitle = (g) => {
   const t = g.tickets || [];
@@ -1014,7 +1030,7 @@ function sgpPeriods(h, kind) {
       <td class="n">${pct(m.hit_rate, 1)}</td><td class="n">${pct(m.mean_chance, 1)}</td><td class="n">${m.roi == null ? "—" : `${signed(m.roi * 100, 1)}%`}</td></tr>`;
   }).join("");
   const reasons = [...new Set(spans.map(([name]) => ((k.meters || {})[name] || {}).roi_reason).filter(Boolean))];
-  const bins = (k.chance_bins || []).map((b) => `<tr><td class="n">${pct(b.lo)}-${pct(b.hi)}</td><td class="n">${tally(b.tickets)}</td>
+  const bins = (k.chance_bins || []).map((b) => `<tr><td class="n">${edgePct(b.lo)}-${edgePct(b.hi)}</td><td class="n">${tally(b.tickets)}</td>
     <td class="n">${pct(b.mean_chance, 1)}</td><td class="n">${pct(b.hit_rate, 1)}</td></tr>`).join("");
   return `${rows ? `<div class="scroll"><table class="tight"><thead><tr><th>Seasons</th><th class="n">Built</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Said</th><th class="n">ROI</th></tr></thead><tbody>${rows}</tbody></table></div>` : ""}
     ${reasons.length ? `<div class="mini">ROI: ${reasons.map(esc).join("; ")}.</div>` : ""}

@@ -149,8 +149,9 @@ vm.runInContext(fs.readFileSync(appPath, "utf8"), ctx, { filename: "app.js" });
   await vm.runInContext("BOOT.parlays()", ctx);
   const inputs = JSON.parse(process.env.ODDS_INPUTS || "[]");
   const parsed = vm.runInContext(`(${JSON.stringify(inputs)}).map(parseOdds)`, ctx);
+  const stakes = vm.runInContext(`(${process.env.STAKE_INPUTS || "[]"}).map(parseStake)`, ctx);
   process.stdout.write(JSON.stringify({ week: els["view-week"].innerHTML, parlays: els["view-parlays"].innerHTML,
-    parsed }));
+    parsed, stakes }));
 })().catch((e) => { console.error(e); process.exit(1); });
 """
 
@@ -202,11 +203,11 @@ def _sgp_week(history="committed"):
     return json.loads(json.dumps(week)), {"priced": priced, "unpriced": unpriced, "final": final, "none": none}
 
 
-def _render(tmp_path, week, store=None, no_storage=False, odds_inputs=()):
+def _render(tmp_path, week, store=None, no_storage=False, odds_inputs=(), stake_inputs=()):
     (tmp_path / "week.json").write_text(json.dumps(week))
     (tmp_path / "store.json").write_text(json.dumps(store or {}))
     (tmp_path / "render.js").write_text(RENDER_JS)
-    env = dict(os.environ, ODDS_INPUTS=json.dumps(list(odds_inputs)))
+    env = dict(os.environ, ODDS_INPUTS=json.dumps(list(odds_inputs)), STAKE_INPUTS=json.dumps(list(stake_inputs)))
     if no_storage:
         env["NO_STORAGE"] = "1"
     out = subprocess.run(["node", str(tmp_path / "render.js"), str(APP / "app.js"), str(tmp_path / "week.json"),
@@ -373,6 +374,48 @@ def test_the_apps_reading_of_typed_odds_matches_python(tmp_path):
         v = float(text.replace(",", "."))
         assert (p.get("decimal") == pytest.approx(v)) if v > 1 else ("error" in p), text
     assert all("error" in p for p in parsed[len(signed) + len(plain):-1]) and parsed[-1] is None
+
+
+@needs_node
+def test_a_typed_amount_reads_a_thousands_comma_as_dollars(tmp_path):
+    """The amount box is in dollars: "1,000" is a thousand, not one. Only a
+    comma before groups of exactly three digits is a thousands separator;
+    any other single comma is a decimal point, and anything else is refused."""
+    week, _ = _sgp_week(history=None)
+    cases = {"20": 20, "$20": 20, "20.50": 20.5, "10,50": 10.5, "1,5": 1.5, "1,000": 1000, "2,500": 2500,
+             "$1,000.50": 1000.5, "12,345,678": 12345678, "0,500": 0.5, "1,00": 1.0,
+             "1,0000": 1.0, "1,000,00": None, "1,2,3": None, "0": None, "abc": None, "": None}
+    stakes = _render(tmp_path, week, stake_inputs=list(cases))["stakes"]
+    for (text, want), got in zip(cases.items(), stakes):
+        assert got == (pytest.approx(want) if want is not None else None), text
+
+
+@needs_node
+def test_the_week_tabs_tickets_carry_the_backtests_known_bias(tmp_path):
+    """Each card quotes the backtest's hit rate for its kind, so the bias
+    the rule says goes where the meter is is said in the game's detail too."""
+    week, _ = _sgp_week()
+    out = _render(tmp_path, week)
+    bias = week["sgp"]["caveats"]["bias"]
+    assert "tickets hit <b>" in out["week"]
+    assert bias in out["week"] and bias in out["parlays"]
+
+
+@needs_node
+def test_a_chance_bins_edges_are_printed_exactly(tmp_path):
+    """A bin edge of 2.5% reads 2.5%, not a rounded 3% that a ticket shown
+    at 2.6% would contradict."""
+    week, _ = _sgp_week()
+    page = _render(tmp_path, week)["parlays"]
+
+    def edge(x):
+        d = next(d for d in range(3) if abs(round(x * 100, d) - x * 100) < 1e-9)
+        return f"{x * 100:.{d}f}%"
+    kinds = week["sgp"]["history"]["kinds"]
+    bins = [b for k in kinds.values() for b in k.get("chance_bins") or []]
+    assert any(abs(b["hi"] * 1000 - round(b["hi"] * 1000)) < 1e-9 and round(b["hi"] * 1000) % 10 for b in bins)
+    for b in bins:
+        assert f'<td class="n">{edge(b["lo"])}-{edge(b["hi"])}</td>' in page, b
 
 
 @needs_node
