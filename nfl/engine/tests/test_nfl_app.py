@@ -110,7 +110,10 @@ def test_the_shared_design_is_the_mma_apps_too():
 # functions build: an upcoming game priced from the TD fixture, one with no
 # TD price bought, a final game whose logged tickets are graded, and one with
 # none logged. The page runs with a stub document; what it would put on the
-# screen is read back as each view's HTML.
+# screen is read back as each view's HTML. The tickets are the live rule's
+# (nfl_predict.LIVE_VERSION, sgp-v2): KC is a confident pick, three of its
+# and LV's players clear the TD floor, and KC's rookie Sam Tight is the
+# pick's team's rookie, so all four are built.
 
 TICKETS_FIX = Path(__file__).resolve().parent / "fixtures" / "odds"
 TICKETS_CLOCK = datetime(2026, 10, 24, 12, 0, tzinfo=timezone.utc)
@@ -119,9 +122,9 @@ TICKETS_MARKET = {"source": "the-odds-api", "home_ml": -250.0, "away_ml": 205.0,
                   "spread": 6.5, "spread_price_home": -110.0, "spread_price_away": -110.0,
                   "spread_price_source": "the-odds-api", "total": 47.5, "total_price_over": -108.0,
                   "total_price_under": -112.0, "total_price_source": "the-odds-api"}
-TICKETS_HOME = [("kc1", "Tom Runner", 0.48), ("kc2", "Sam Tight", 0.36), ("kc3", "Nicholas Name", 0.22)]
-TICKETS_AWAY = [("lv1", "Max Wide", 0.33), ("lv2", "DJ Catcher", 0.27)]
-TICKETS_FIRST = {"kc1": 2020, "kc2": 2019, "kc3": 2023, "lv1": 2026, "lv2": 2022}   # lv1: a rookie
+TICKETS_HOME = [("kc1", "Tom Runner", 0.58), ("kc2", "Sam Tight", 0.49), ("kc3", "Nicholas Name", 0.22)]
+TICKETS_AWAY = [("lv1", "Max Wide", 0.46), ("lv2", "DJ Catcher", 0.27)]
+TICKETS_FIRST = {"kc1": 2020, "kc2": 2026, "kc3": 2023, "lv1": 2026, "lv2": 2022}   # kc2, lv1: rookies
 
 RENDER_JS = r"""
 const fs = require("fs"), vm = require("vm");
@@ -147,11 +150,12 @@ vm.runInContext(fs.readFileSync(appPath, "utf8"), ctx, { filename: "app.js" });
 (async () => {
   await vm.runInContext("BOOT.week()", ctx);
   await vm.runInContext("BOOT.parlays()", ctx);
+  await vm.runInContext("BOOT.td()", ctx);
   const inputs = JSON.parse(process.env.ODDS_INPUTS || "[]");
   const parsed = vm.runInContext(`(${JSON.stringify(inputs)}).map(parseOdds)`, ctx);
   const stakes = vm.runInContext(`(${process.env.STAKE_INPUTS || "[]"}).map(parseStake)`, ctx);
   process.stdout.write(JSON.stringify({ week: els["view-week"].innerHTML, parlays: els["view-parlays"].innerHTML,
-    parsed, stakes }));
+    td: els["view-td"].innerHTML, parsed, stakes }));
 })().catch((e) => { console.error(e); process.exit(1); });
 """
 
@@ -171,20 +175,28 @@ def _ticket_game(game_id, home="KC", away="LV", **kw):
     return g
 
 
-def _sgp_week(history="committed"):
-    """(week.json, the four games) with same-game tickets, as nfl_predict.run writes them."""
-    import nfl_export as nx
+def _td_fixture_prices(game):
+    """The anytime-TD prices nfl_odds matches to a KC-LV game's listed
+    players from the fixture event: four priced, one with none under his name."""
     import nfl_odds as no
     import nfl_predict as npd
-    import nfl_sgp as sgp
-    priced = _ticket_game("2026_07_LV_KC")
     cache = no.empty()
     key, entry = no.parse_td_event(json.loads((TICKETS_FIX / "td_event.json").read_text()))
     no.merge_td(cache, key, entry, now=TICKETS_CLOCK)
-    prices = no.td_prices_for(cache, "LV", "KC", TICKETS_KICKOFF, npd._td_names(priced, {}), now=TICKETS_CLOCK)
+    return no.td_prices_for(cache, "LV", "KC", TICKETS_KICKOFF, npd._td_names(game, {}), now=TICKETS_CLOCK)
+
+
+def _sgp_week(history="committed"):
+    """(week.json, the four games) with same-game tickets, as nfl_predict.run writes them."""
+    import nfl_export as nx
+    import nfl_predict as npd
+    import nfl_sgp as sgp
+    priced = _ticket_game("2026_07_LV_KC")
+    prices = _td_fixture_prices(priced)
     priced["tickets"] = npd.game_tickets(priced, priced["market"], prices, TICKETS_FIRST)
     # No TD price bought for this one, and no rookie on either side.
-    unpriced = _ticket_game("2026_07_LV_KC2", away_td_all=_ticket_list(TICKETS_AWAY[1:]))
+    unpriced = _ticket_game("2026_07_LV_KC2", home_td_all=_ticket_list(TICKETS_HOME[::2]),
+                            away_td_all=_ticket_list(TICKETS_AWAY[1:]))
     unpriced["tickets"] = npd.game_tickets(unpriced, unpriced["market"], {}, TICKETS_FIRST)
     final = _ticket_game("2026_06_LV_KC", status="final", score={"home": 27, "away": 20}, week=6,
                          kickoff="2026-10-18T20:25:00Z")
@@ -197,9 +209,10 @@ def _sgp_week(history="committed"):
     log = {"picks": {g["game_id"]: {"kickoff": g["kickoff"], "tickets": g["tickets"],
                                     "tickets_graded": g.get("tickets_graded", False)}
                      for g in (priced, unpriced, final)}}
-    hist = nx.load_sgp_history() if history == "committed" else history
+    hist = nx.load_sgp_history(nx.SGP2_HISTORY) if history == "committed" else history
+    v1 = nx.load_sgp_history() if history == "committed" else None
     week = {"season": 2026, "week": 7, "label": "Week 7", "games": [final, none, priced, unpriced],
-            "caveats": {}, "sgp": json.loads(json.dumps(nx.sgp_block(log, hist)))}
+            "caveats": {}, "sgp": json.loads(json.dumps(nx.sgp_block(log, hist, v1)))}
     return json.loads(json.dumps(week)), {"priced": priced, "unpriced": unpriced, "final": final, "none": none}
 
 
@@ -227,8 +240,8 @@ def _signed(x, d=1):
 
 def _ticket_html(html, game_id, kind):
     """One ticket card's HTML: from its card to the next."""
-    import nfl_sgp as sgp
-    marker = f'data-sgp-id="{game_id}|{kind}|{sgp.VERSION}|'
+    import nfl_sgp2 as sgp2
+    marker = f'data-sgp-id="{game_id}|{kind}|{sgp2.VERSION}|'
     assert marker in html, (game_id, kind)
     at = html.index(marker)
     starts = [m.start() for m in re.finditer(r'<div class="tkt(?: off)?" data-kind="', html)]
@@ -289,9 +302,9 @@ def test_each_ticket_shows_its_legs_chance_and_est_payout_from_the_payload(tmp_p
     # Every price on the page is marked est.: none is Stake's.
     prices = page.split('<span class="mini num"> ')[1:]
     assert prices and all(chunk.split("</span>", 1)[1].startswith(' <span class="est">est.</span>') for chunk in prices)
-    # The rookie ticket is the rookie's TD and his own team's win.
+    # The rookie ticket is the pick's team's rookie's TD and the pick's win.
     rookie = _ticket_html(page, "2026_07_LV_KC", "rookie")
-    assert "Max Wide" in rookie and '<span class="tag accent">Rookie</span>' in rookie and "LV to win" in rookie
+    assert "Sam Tight" in rookie and '<span class="tag accent">Rookie</span>' in rookie and "KC to win" in rookie
     assert sgp.NO_EDGE.replace("'", "&#39;") in page
 
 
@@ -344,9 +357,10 @@ def test_a_graded_ticket_shows_each_legs_result_and_the_live_meters_mark_their_r
 @needs_node
 def test_stakes_quote_gives_the_exact_payout_and_stays_on_the_phone(tmp_path):
     import nfl_sgp as sgp
+    import nfl_sgp2 as sgp2
     week, games = _sgp_week()
     t = next(x for x in games["priced"]["tickets"] if x["kind"] == "small")
-    key = "|".join(["2026_07_LV_KC", "small", sgp.VERSION, "+".join(leg["key"] for leg in t["legs"])])
+    key = "|".join(["2026_07_LV_KC", "small", sgp2.VERSION, "+".join(leg["key"] for leg in t["legs"])])
     page = _render(tmp_path, week, store={f"yournfl.sgp.{key}": json.dumps({"odds": "+450", "stake": "20"})})["parlays"]
     card = _ticket_html(page, "2026_07_LV_KC", "small")
     dec = sgp.decimal_from_american(450)
@@ -426,8 +440,14 @@ def test_the_est_payouts_correction_is_shown_wherever_v1_calls_it_an_upper_bound
 @needs_node
 def test_a_chance_bins_edges_are_printed_exactly(tmp_path):
     """A bin edge of 2.5% reads 2.5%, not a rounded 3% that a ticket shown
-    at 2.6% would contradict."""
-    week, _ = _sgp_week()
+    at 2.6% would contradict. v2's history on file has no such edge among
+    its bins (its tickets are the likelier ones), so one is added to a copy
+    of it: what is tested is the printing, not the data."""
+    import nfl_export as nx
+    hist = nx.load_sgp_history(nx.SGP2_HISTORY)
+    large = hist["kinds"]["large"]
+    large["chance_bins"] = [dict(large["chance_bins"][0], lo=0.0, hi=0.025)] + large["chance_bins"]
+    week, _ = _sgp_week(history=hist)
     page = _render(tmp_path, week)["parlays"]
 
     def edge(x):
@@ -450,3 +470,339 @@ def test_with_no_backtest_or_no_tickets_the_page_says_why(tmp_path):
     old.pop("sgp")
     out = _render(tmp_path, old)
     assert "before the same-game tickets existed" in out["parlays"] and "Parlays ·" not in out["week"]
+
+
+# ---------------------------------------------------------------- v2 in the app
+#
+# The same week grown by the games v2 changes: one not confident (its four
+# v2 tickets unbuilt for the one reason), one not confident with v1's tickets
+# logged before v1 was retired, and a final whose only tickets are v1's,
+# graded - each as nfl_predict.show_tickets shows it, the sgp block built
+# from a log of all of them.
+
+def _esc(x):
+    return str(x).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;") \
+        .replace("'", "&#39;")
+
+
+def _cap(x):
+    return x if re.match(r"v\d", x) else x[:1].upper() + x[1:]
+
+
+def _american(x):
+    """American odds as app.js's odds() prints them (Math.round, a typographic minus)."""
+    import math
+    r = math.floor(x + 0.5)
+    return f"+{r}" if r > 0 else f"−{abs(r)}" if r < 0 else "0"
+
+
+def _v2_week():
+    import nfl_export as nx
+    import nfl_predict as npd
+    import nfl_sgp as sgp
+    _, base = _sgp_week()
+    games = dict(base)
+    shaky = _ticket_game("2026_07_NYJ_BUF", home="BUF", away="NYJ", home_prob=0.55, pick="BUF", pick_prob=0.55)
+    npd.show_tickets(shaky, npd.game_tickets(shaky, shaky["market"], {}, TICKETS_FIRST))
+    both = _ticket_game("2026_07_MIA_NE", home="NE", away="MIA", home_prob=0.4, pick="MIA", pick_prob=0.6)
+    npd.show_tickets(both, npd.game_tickets(both, both["market"], {}, TICKETS_FIRST, version=sgp.VERSION)
+                     + npd.game_tickets(both, both["market"], {}, TICKETS_FIRST))
+    old = _ticket_game("2026_06_SEA_SF", home="SF", away="SEA", status="final", week=6,
+                       kickoff="2026-10-18T23:05:00Z", score={"home": 24, "away": 17})
+    result = sgp.outcome("SF", "SEA", 24, 17, players={"kc1": 1, "kc2": 0, "kc3": 0, "lv1": 0, "lv2": 0})
+    npd.show_tickets(old, [sgp.grade_ticket(t, result) for t in npd.game_tickets(
+        old, old["market"], {}, TICKETS_FIRST, version=sgp.VERSION)])
+    old["tickets_graded"] = True
+    games.update(shaky=shaky, both=both, old=old)
+    for g in (games["priced"], games["unpriced"], games["final"]):
+        npd.show_tickets(g, g["tickets"])
+    log = {"picks": {g["game_id"]: {"kickoff": g["kickoff"], "tickets": (g.get("tickets") or []) + (g.get("tickets_v1") or []),
+                                    "tickets_graded": g.get("tickets_graded", False)}
+                     for g in games.values() if g.get("tickets") or g.get("tickets_v1")}}
+    order = ["final", "old", "none", "priced", "both", "shaky", "unpriced"]
+    week = {"season": 2026, "week": 7, "label": "Week 7", "games": [games[k] for k in order], "caveats": {},
+            "sgp": nx.sgp_block(log, nx.load_sgp_history(nx.SGP2_HISTORY), nx.load_sgp_history())}
+    return json.loads(json.dumps(week)), json.loads(json.dumps(games))
+
+
+def _card_of(html, game_id, kind, version):
+    """One ticket card of a given rule's version: from its card to the next."""
+    marker = f'data-sgp-id="{game_id}|{kind}|{version}|'
+    assert marker in html, (game_id, kind, version)
+    at = html.index(marker)
+    starts = [m.start() for m in re.finditer(r'<div class="tkt(?: off)?" data-kind="', html)]
+    start = max(i for i in starts if i < at)
+    nxt = min((i for i in starts if i > at), default=None)
+    return html[start:nxt]
+
+
+@needs_node
+def test_a_game_that_is_not_confident_says_why_once_and_the_confident_ones_come_first(tmp_path):
+    import nfl_sgp2 as sgp2
+    week, games = _v2_week()
+    out = _render(tmp_path, week)
+    page, wk = out["parlays"], out["week"]
+    reason = sgp2.not_confident(sgp2.CONFIDENT)
+    assert games["shaky"]["tickets_reason"] == reason == games["both"]["tickets_reason"]
+    assert not any(t["built"] for t in games["shaky"]["tickets"])
+    for view in (page, wk):
+        # Once for each of the two games, never as four unbuilt tickets.
+        assert view.count(f'<div class="mini">{_esc(reason)}</div>') == 2
+        assert f"<b>Not built:</b> {_esc(reason)}" not in view
+        assert 'data-sgp-id="2026_07_NYJ_BUF|' not in view and 'data-sgp-id="2026_07_MIA_NE|small|sgp-v2|' not in view
+    assert "Parlays · none built" in wk and "Parlays · none built · v1 retired" in wk
+    # The pick beside the reason, from the tickets the payload logged.
+    t = games["shaky"]["tickets"][0]
+    assert f'pick</span> <b>{t["pick"]}</b> <span class="num">{_pct(t["pick_prob"])}</span>' in page
+    assert f'Pick <b>{t["pick"]}</b> <span class="num">{_pct(t["pick_prob"])}</span> · confident from {_pct(t["confident"], 0)}' in wk
+    # Confident games first, then the other cards, then the one-line list.
+    confident = page.index('data-sgp-id="2026_07_LV_KC|small|sgp-v2|')
+    v1_only = page.index('data-sgp-id="2026_07_MIA_NE|small|sgp-v1|')
+    listed = page.index('<div class="card sgpothers">')
+    assert confident < v1_only < listed < page.index(f'<div class="mini">{_esc(reason)}</div>', listed)
+    n_confident = sum(any(t.get("confident_game") for t in g.get("tickets") or []) for g in week["games"])
+    assert page.count('<span class="tag good">Confident</span>') == n_confident
+    assert f"{n_confident} of {len(week['games'])} games here are confident" in page
+
+
+@needs_node
+def test_v1s_kept_tickets_are_folded_under_v2s_and_read_beside_v1s_meters(tmp_path):
+    import nfl_predict as npd
+    import nfl_sgp as sgp
+    week, games = _v2_week()
+    out = _render(tmp_path, week)
+    page = out["parlays"]
+    v1 = week["sgp"]["v1"]
+    assert v1["retired"] and _esc(v1["retired_note"]) in page and _esc(v1["retired_note"]) in out["week"]
+    for key in ("both", "old"):
+        kept = games[key]["tickets_v1"]
+        assert f"v1 (retired) · {sum(t['built'] for t in kept)} of {len(kept)} built" in page
+    # A v1 ticket quotes v1's history, not v2's, and carries no "built by another rule" line.
+    h = v1["history"]
+    whole = max(h["periods"].items(), key=lambda p: p[1][1] - p[1][0])[0]
+    m = h["kinds"]["small"]["meters"][whole]
+    card = _card_of(page, "2026_07_MIA_NE", "small", sgp.VERSION)
+    assert f'tickets hit <b>{_pct(m["hit_rate"])}</b> of {m["won"] + m["lost"]:,}' in card
+    assert "Built by rule" not in card
+    # The final with only v1's tickets: the payload's reason, and v1's graded ticket under it.
+    assert games["old"]["tickets"] is None and games["old"]["tickets_reason"] == npd.NO_LIVE_TICKETS_LOGGED
+    assert f'<div class="mini">{_esc(npd.NO_LIVE_TICKETS_LOGGED)}</div>' in page
+    small = next(t for t in games["old"]["tickets_v1"] if t["kind"] == "small")
+    chip = {sgp.WON: "Won", sgp.LOST: "Lost"}[small["result"]]
+    assert f">{chip}</span>" in _card_of(page, "2026_06_SEA_SF", "small", sgp.VERSION)
+    # v1's own meters, folded under v2's: its live record of these logged tickets.
+    meters = page.split('id="sgp-meters"')[1]
+    assert "v1 (retired) · how its tickets have done" in meters
+    for kind in sgp.KINDS:
+        lm = v1["live"]["kinds"][kind]
+        panel = meters.split(f'<div class="panel sgpm" data-kind="{kind}">')[2].split('<div class="panel sgpm"')[0]
+        assert f'<b class="num">{lm["won"]}</b> won of <b class="num">{lm["tickets"]}</b> built' in panel
+
+
+@needs_node
+def test_v2s_meters_carry_the_coverage_and_the_chosen_pair_is_the_payloads(tmp_path):
+    week, _ = _v2_week()
+    page = _render(tmp_path, week)["parlays"]
+    s = week["sgp"]
+    h, c = s["history"], s["caveats"]
+    whole = max(h["periods"].items(), key=lambda p: p[1][1] - p[1][0])[0]
+    for kind in s["kinds"]:
+        panel = page.split(f'<div class="panel sgpm" data-kind="{kind}">')[1].split('<div class="panel sgpm"')[0]
+        cov = h["kinds"][kind]["coverage"][whole]
+        assert f"built in {_pct(cov)} of {h['games'][whole]:,} games" in panel
+        m = h["kinds"][kind]["meters"][whole]
+        assert f'hit <b>{_pct(m["hit_rate"])}</b> <span class="mini">· product said {_pct(m["mean_chance"])}</span>' in panel
+        assert f"no return: {_esc(m['roi_reason'])}" in panel
+    assert f", {h['confident_games'][whole]:,} of them confident" in page
+    assert f", {s['live']['confident_games']:,} of them confident" in page
+    # The pair, the rule's sentence on how it was chosen, and the DEV figures that chose it.
+    ch = h["chosen"]
+    dev = ch["dev"]["small"]
+    assert (s["confident"], s["td_floor"]) == (ch["confident"], ch["td_floor"])
+    assert f'the pick\'s chance is <b class="num">{_pct(s["confident"], 0)}</b> or more' in page
+    assert f'only at <b class="num">{_pct(s["td_floor"], 0)}</b> or more' in page
+    assert _esc(_cap(c["rules"]["chosen"])) in page and _esc(c["edge_v2"]) in page
+    assert (f"built in {_pct(dev['coverage'])} of {ch['dev']['games']:,} games and hit {_pct(dev['hit_rate'])} "
+            f"({dev['won']} of {dev['won'] + dev['lost']})") in page
+    assert f"{ch['cleared']} of {ch['pairs']} pairs built it in {_pct(ch['coverage_min'], 0)} or more" in page
+    assert "chose the pair" in page and "untouched" in page
+    # Every pair of the grid, per period - the chosen one marked - report-only.
+    grid = page.split("Every pair of the grid, and v2 beside v1")[1]
+    periods = [n for n in h["periods"] if n != whole]
+    table = grid.split('class="tight sgpgrid"')[1].split("</table>")[0]
+    assert table.count("<tr") == len(h["grid"]["rows"]) + 1
+    for r in h["grid"]["rows"]:
+        label = f"{_pct(r['confident'], 0)} · {_pct(r['td_floor'], 0)}"
+        row = table.split(f'<td class="nowrap">{label}')[1].split("</tr>")[0]
+        for n in periods:
+            sm = r["periods"][n]["small"]
+            assert f'{_pct(sm["hit_rate"])}<div class="mini">in {_pct(sm["coverage"], 0)}</div>' in row, (label, n)
+    chosen = f'<tr class="chosen"><td class="nowrap">{_pct(s["confident"], 0)} · {_pct(s["td_floor"], 0)}'
+    assert table.count('<tr class="chosen">') == 1 and chosen in table
+    assert _esc(_cap(h["alt_small"]["rule"])) in grid and _esc(_cap(h["v1_same_games"]["note"])) in grid
+    # v2's rule sentences in the rule's fold.
+    for k, sentence in c["rules"].items():
+        assert _esc(sentence) in page, k
+
+
+@needs_node
+def test_what_was_found_after_v2s_rule_was_fixed_is_said_beside_the_choice_in_the_payloads_words(tmp_path):
+    """The rule's "hit rate always rises" claim, counted against DEV's grid,
+    beside the pair it chose; and what "untouched" covers - beside the rule's
+    sentence, under SMALL's period table (where the untouched row is) and
+    beside SMALL the other way."""
+    import nfl_sgp2 as sgp2
+    week, _ = _v2_week()
+    page = _render(tmp_path, week)["parlays"]
+    s = week["sgp"]
+    h, c = s["history"], s["caveats"]
+    assert c["untouched"] == sgp2.UNTOUCHED_NOTE
+    chosen = page.split('<div class="panel sgpchosen">')[1].split('<div class="panel')[0]
+    assert f'<div class="mini sgprises">{_esc(h["chosen"]["rises"]["note"])}</div>' in chosen
+    untouched = f'<div class="mini sgpuntouched">{_esc(c["untouched"])}</div>'
+    assert untouched in chosen
+    meters = page.split('id="sgp-meters"')[1].split('<div class="panel sgpchosen">')[0]
+    panel = lambda kind: meters.split(f'<div class="panel sgpm" data-kind="{kind}">')[1].split(  # noqa: E731
+        '<div class="panel sgpm"')[0]
+    assert untouched in panel("small")
+    for kind in ("rookie", "medium", "large"):
+        assert "sgpuntouched" not in panel(kind), kind
+    alt = page.split("the other way · report-only")[1].split("</table>")[0]
+    assert untouched in alt
+    # v1's retired meters have no "untouched" span, so no such note.
+    v1 = page.split("v1 (retired) · how its tickets have done")[1]
+    assert "sgpuntouched" not in v1 and "sgprises" not in v1
+
+
+def _odds_week():
+    """The v2 week with each game's TD lists as nfl_predict.run shows them:
+    the top 3 beside the whole list, each player's anytime-TD price - the
+    priced game's from the fixture, none bought for the other - and the
+    final's logged before the lists kept one."""
+    import nfl_export as nx
+    import nfl_predict as npd
+    week, _ = _v2_week()
+    by_id = {g["game_id"]: g for g in week["games"]}
+    for gid in ("2026_07_LV_KC", "2026_07_LV_KC2", "2026_06_LV_KC"):
+        g = by_id[gid]
+        for side in ("home", "away"):
+            g[f"{side}_td"] = [dict(p) for p in g[f"{side}_td_all"][:npd.TD_SHOWN]]
+    npd.attach_td_prices(by_id["2026_07_LV_KC"], _td_fixture_prices(by_id["2026_07_LV_KC"]))
+    npd.attach_td_prices(by_id["2026_07_LV_KC2"], {})
+    npd.show_td_prices(by_id["2026_06_LV_KC"])
+    week["caveats"] = {"td_odds": nx.CAVEATS["td_odds"]}
+    return json.loads(json.dumps(week)), by_id
+
+
+def _td_row(html, name):
+    at = html.index(f"<b>{_esc(name)}</b>")
+    start = html.rindex('<li class="tdp">', 0, at)
+    end = html.find('<li class="tdp">', at)
+    return html[start:end if end > 0 else None]
+
+
+@needs_node
+def test_every_td_scorer_shows_his_odds_beside_our_chance_or_why_not(tmp_path):
+    import nfl_odds as no
+    import nfl_predict as npd
+    week, games = _odds_week()
+    out = _render(tmp_path, week)
+    td = out["td"]
+    cards = td.split('<div class="card tdgame"')[1:]
+    shown = [g for g in week["games"] if g.get("home_td") or g.get("away_td")]
+    assert len(cards) == len(shown)
+    by_card = dict(zip((g["game_id"] for g in shown), cards))
+    priced = games["2026_07_LV_KC"]
+    for side in ("home", "away"):
+        for p in priced[f"{side}_td_all"]:
+            row = _td_row(by_card[priced["game_id"]], p["name"])
+            assert f'<span class="num lead">{_pct(p["prob"], 0)}</span>' in row
+            o = p["price"]
+            if o["american"] is not None:
+                assert f'<span class="num">{_american(o["american"])}</span> <span class="est">est.</span>' in row
+                assert f'books <span class="num">{_pct(o["implied"], 0)}</span>' in row
+                assert "no odds" not in row
+            else:
+                assert f"no odds: {_esc(o['missing'])}" in row and "books" not in row
+    assert any(p["price"]["american"] is None for p in priced["home_td_all"])
+    assert all(p["price"]["american"] is not None for p in priced["away_td_all"])
+    # One reason for a whole list is said once above it, not beside every player.
+    for gid, why in (("2026_07_LV_KC2", no.TD_PRICE_MISSING["none"]), ("2026_06_LV_KC", npd.NO_TD_PRICE_LOGGED)):
+        card = by_card[gid]
+        assert card.count(f'<div class="mini tdnoodds">Odds: {_esc(why)}</div>') == 2, gid
+        assert "no odds:" not in card and "books <span" not in card and "tdodds" not in card
+    # Every price beside a scorer is marked est., and the note beside the odds is the payload's.
+    for view in ("td", "week"):
+        chunks = out[view].split('<span class="end tdodds"')[1:]
+        assert chunks and all('<span class="est">est.</span>' in c.split("</li>")[0] for c in chunks), view
+        assert _esc(week["caveats"]["td_odds"]) in out[view], view
+    # A ticket's TD leg says the chance its price implies, as the lists do.
+    for t in priced["tickets"]:
+        card = _card_of(out["parlays"], priced["game_id"], t["kind"], t["version"])
+        for leg in t["legs"]:
+            if leg["kind"] == "TD" and leg.get("implied") is not None:
+                assert f'books {_pct(leg["implied"], 0)}' in card
+
+
+def _local_stamp(iso):
+    """app.js's localStamp in the same node, locale and time zone as _render."""
+    script = ("console.log(new Date(process.argv[1]).toLocaleString(undefined, "
+              "{ weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }))")
+    return subprocess.run(["node", "-e", script, iso], capture_output=True, text=True, check=True).stdout.strip()
+
+
+@needs_node
+def test_each_scorers_odds_say_in_plain_view_how_many_books_the_best_price_and_when_seen(tmp_path):
+    """A tooltip is never seen on a phone, the app's main screen: how many
+    books quoted him, the best price (marked est., as a ticket leg's is) and
+    when the price was seen are mini text under his name - and a price from
+    one book says in words that it is not a consensus."""
+    week, _ = _odds_week()
+    game = next(g for g in week["games"] if g["game_id"] == "2026_07_LV_KC")
+    priced = [p for p in game["away_td_all"] if p["price"]["american"] is not None]
+    many, one = priced[0], priced[1]                # one list, so one panel holds both
+    assert many["price"]["books"] >= 2
+    for lst in ("away_td_all", "home_td_all", "away_td", "home_td"):
+        for p in game[lst]:
+            if p["gsis_id"] == one["gsis_id"]:
+                p["price"].update(books=1, best_american=p["price"]["american"], best_book="One Book")
+    out = _render(tmp_path, week)
+    for view in ("td", "week"):
+        # The priced game's own touchdown list: the one panel with the one-book price in it.
+        card = next(c for c in out[view].split('<div class="panel"><div class="eyebrow">') if "One Book" in c)
+        row = _td_row(card, many["name"])
+        o = many["price"]
+        assert "title=" not in row.split('<span class="end tdodds"')[1].split(">")[0], view
+        assert f"odds: {o['books']} books" in row, view
+        assert (f'best <span class="num">{_american(o["best_american"])}</span> <span class="est">est.</span>'
+                f' ({_esc(o["best_book"])})') in row, view
+        assert f"seen {_esc(_local_stamp(o['as_of']))}" in row, view
+        single = _td_row(card, one["name"])
+        assert "odds: one book's price, not a consensus (One Book)" in single, view
+        assert "best <span" not in single and f"seen {_esc(_local_stamp(one['price']['as_of']))}" in single, view
+
+
+@needs_node
+def test_a_week_written_before_the_odds_or_v2_still_draws_and_says_so(tmp_path):
+    """The committed week.json may be the runner's output from before v2 and
+    the TD odds: the app draws it, and says the odds are not in the file."""
+    week = json.loads((APP / "data" / "week.json").read_text())
+    out = _render(tmp_path, week)
+    assert "Parlays" in out["parlays"] and "Touchdowns" in out["td"]
+    lists = [p for g in week["games"] for k in ("home_td_all", "away_td_all") for p in g.get(k) or []]
+    if not any("price" in p for p in lists):
+        assert "written before the touchdown lists carried the books" in out["td"]
+    old, _ = _sgp_week()
+    assert "written before the touchdown lists carried the books" in _render(tmp_path, old)["td"]
+
+
+def test_the_odds_and_parlays_tab_code_types_no_number_the_payload_could_give():
+    """The odds beside each scorer and the Parlays tab's own lines read every
+    figure from week.json, as the tickets' block does."""
+    js = (APP / "app.js").read_text()
+    odds = js.split("// The books' anytime-TD price beside our chance")[1].split("// One line on the closed card")[0]
+    tab = js.split("async parlays() {")[1].split("async teams() {")[0]
+    for name, block in (("odds", odds), ("parlays", tab)):
+        code = re.sub(r"^\s*//.*$", "", block, flags=re.M)
+        assert not re.findall(r"\d%|\$\d|\b(?:19|20)\d\d\b|[+−-]\d{3}\b", code), name
+        assert "fetch(" not in code and "localStorage" not in code, name

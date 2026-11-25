@@ -130,9 +130,34 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
   single prices are not the consensus - so it is an estimate either way. The exact payout is
   the price Stake quotes for the slip, typed in by hand.
 - **Anytime-touchdown prices** are bought per game from the-odds-api's per-event endpoint
-  (one credit a game), only within `nfl_odds.TD_WINDOW_HOURS` of kickoff, and matched to a
-  player only by an exact or strictly normalised name of that game's own rosters. A player
-  with no safe match has no price, and the reason is shown.
+  (one credit a game): early, by the first run within `nfl_odds.TD_EARLY_DAYS` of
+  kickoff for a game with none on file (the books post these props early in the week; each
+  round's fetch log counts how many early calls found them posted). A game whose books had
+  not posted yet is asked again once its entry is `nfl_odds.TD_EARLY_RETRY_HOURS` old, while
+  it is still outside its window, up to `nfl_odds.TD_EARLY_TRIES` early calls - the first
+  run within those days of a Sunday game is Monday's, before the app lists that week, so one
+  call could miss the books by a day and leave the lists unpriced until the eve of the game
+  (a review found this; the fetch log counts the retries too). Then again within
+  `nfl_odds.TD_WINDOW_HOURS` of kickoff, at most once in `nfl_odds.TD_STALE_HOURS` - never once
+  the game has started, and never below `nfl_odds.TD_RESERVE_CREDITS` credits left, so the
+  lines are bought first. A price is matched to a player only by an exact or strictly
+  normalised name of that game's own rosters. A player with no safe match has no price, and
+  the reason is shown.
+- **The odds beside each scorer**: every touchdown candidate in a game's lists carries his
+  anytime-TD price - the consensus and its decimal, the chance it implies with the books'
+  margin left in, the best price and its book, how many books and when it was seen - or why
+  there is none. It is the books' consensus, not Stake's, so it is marked est.; the touchdown
+  model's chance has never been measured against these prices (none from past seasons is on
+  file), so a gap between the two is not an edge. A pick logged before kickoff keeps the
+  price it was logged with.
+- **The odds key's budget**: the key is shared with the MMA card, on the free tier's
+  `nfl_odds.FREE_TIER_CREDITS` a month. `python nfl/engine/nfl_odds.py --budget` replays the
+  runner's own slots over the last full season with exactly these purchase rules and prints
+  each month's credits - lines, touchdown window, early touchdown calls - beside the most the
+  other engines on the key were seen to spend in a month and the reserve, and what is left.
+  It is an estimate: every call is assumed answered, every early retry is counted as if no
+  book posted early (the most the rules can spend), and a manual refresh is not in it. The
+  workflow test holds its busiest month and the reserve under the allowance.
 - **The meters**, per kind: the history (`experiments/nfl_sgp_backtest.py`, replayed by the
   runner whenever a new final's box score is on file, its generated date shown) and the
   live record (tickets logged before kickoff, graded from the box score). The history has
@@ -146,6 +171,47 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
   (decimal, or American with its sign) and the amount: the app shows the exact payout and
   profit from them, and the fair odds at the product chance, with the note that the chance
   assumes independent legs. What is typed stays in the phone's own storage and is never sent.
+  With v2 live, the tab lists the confident games first, each with the pick and the two bars
+  its tickets were built with; a game whose tickets share one reason (not a confident game)
+  says it once, with its pick and chance, in a list under them. On top are v2's four meters -
+  the history's share of games built beside its hit rate - then the two numbers in the rule's
+  own sentence with the DEV figures that chose them, the whole grid with SMALL the other way
+  and v1 on the same games (all report-only), and v1's meters in a fold marked retired. A
+  game's v1 tickets logged before v1 was retired are folded under its v2 ones, read beside
+  v1's own history.
+- **The odds in the app**: every touchdown candidate in a game's lists and on the TD tab shows
+  the books' anytime-TD odds, marked est., and the chance they imply beside the model's - or
+  the payload's reason, said once above a list that has none for one reason - with
+  `caveats.td_odds` beside them. Under his name, in plain text rather than a tooltip a phone
+  never shows, is where the price came from: how many books quoted him (a single book's price
+  says in words that it is not a consensus), the best price, marked est., and when it was
+  seen, so a price bought early in the week shows its age. A ticket's touchdown leg shows the
+  implied chance too.
+- **v2** (`nfl/engine/nfl_sgp2.py`, sgp-v2, pre-registered while v1 stays as it is and is
+  measured beside it): tickets only in confident games, result legs only on the pick's side,
+  and touchdown legs only for players the model rates very likely, SMALL taking the pick's own
+  best scorer first. Its two numbers - how confident a game must be, and the touchdown chance a
+  player needs - were chosen once from the rule's pre-registered grids on its DEV seasons alone
+  (`experiments/nfl_sgp2_backtest.py --choose`, which writes them into the rule with the date
+  and the figures that chose them) and are measured untouched on the seasons after. Its
+  history (`nfl/data/sgp2_backtest.json`) is refreshed by the runner as v1's is, never
+  re-chosen, and reports beside v2 the whole grid, v1 on the same games and SMALL with the
+  game's best scorer instead. As in v1 it has no past touchdown prices, so its return is
+  missing with that reason, and it carries v1's known bias. Two things found after the rule
+  was fixed are said beside the choice in the payload's own words, the rule's words left as
+  registered: its sentence that the hit rate always rises as the bars rise is a claim about
+  the data, counted against DEV's own grid (`chosen.rises`; the choice does not rest on it),
+  and "untouched" covers the two numbers only - SMALL's taking the pick's own scorer first was
+  motivated by a statistic whose seasons overlap the seasons after
+  (`nfl_sgp2.UNTOUCHED_NOTE`, also beside SMALL's table and SMALL the other way).
+- **Live, v2 builds the tickets** (`nfl_predict.LIVE_VERSION`): each game still to come gets
+  v2's four from its pick, the pick's chance and the same legs v1 reads, logged before kickoff
+  as sgp-v2 with the two numbers they were built with. A game that is not confident shows its
+  four tickets unbuilt with the one reason. v1 is retired: it builds no new ticket, but every
+  v1 ticket logged before kickoff stays in the log as it was logged and is graded by its own
+  version's rule, beside the game's v2 tickets. week.json's `sgp` block is v2's - its history,
+  the chosen pair and the whole grid, its live meters and its rule's sentences - with v1's
+  history and live meters under `sgp.v1`, labelled retired.
 - Nothing here is called a bet or an edge: the market is hard to beat, and a parlay
   multiplies the margin of every leg.
 
@@ -182,6 +248,10 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
     nfl/engine/nfl_sgp.py         same-game tickets: the pre-registered rule (sgp-v1), grading, meters
     nfl/engine/experiments/nfl_sgp_backtest.py
                                   the tickets' history -> nfl/data/sgp_backtest.json
+    nfl/engine/nfl_sgp2.py        same-game tickets v2: confident games, the pick's side, likely
+                                  scorers (sgp-v2; its two numbers chosen on its DEV seasons only)
+    nfl/engine/experiments/nfl_sgp2_backtest.py
+                                  v2's history and its choice -> nfl/data/sgp2_backtest.json
     nfl/engine/nfl_predict.py     the weekly run: picks, tickets, log, grading, app data
     nfl/engine/nfl_export.py      app payloads and caveats
     nfl/engine/nfl_standalone.py  the offline single-file app
@@ -205,6 +275,7 @@ A rookie leg is a touchdown leg on a player in his first NFL season.
     python nfl/engine/nfl_data.py --full      # rebuild every season's snapshot
     python nfl/engine/nfl_predict.py          # sync this season, predict the week, write the app
     python nfl/engine/nfl_backtest.py         # the walk-forward report
+    python nfl/engine/nfl_odds.py --budget    # the odds key's monthly credits, replayed (no call)
     python -m pytest nfl/engine/tests
 
 On GitHub, the **NFL predictions** workflow runs `predict` ahead of every game day during the

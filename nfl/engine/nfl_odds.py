@@ -41,6 +41,54 @@ lines above are worth more than a TD price. The event ids come from the
 odds reply (kept as event_id) or, for a game cached before it was kept,
 from the events list, which costs no credit.
 
+EARLY CALLS, UP TO TD_EARLY_TRIES A GAME (added 2026-11-24, for the TD
+lists' odds). The books post anytime-TD props early in the week, and a
+price bought only within TD_WINDOW_HOURS left the week's TD lists and
+tickets unpriced from Tuesday to the eve of each game. So a game is also
+bought as soon as it kicks off within TD_EARLY_DAYS and has no anytime-TD
+entry on file (td_early_due). The window rounds above are unchanged and
+come first in a run, so under the reserve an early call is the one left
+out. Every price is still the game's own and only ever pre-game; the
+newest one before kickoff is the one logged.
+
+ASKED AGAIN WHEN NOT POSTED (review, 2026-11-24). The first version made one
+early call a game and let an entry the books had not posted for wait for
+the window. But the first run within TD_EARLY_DAYS of the Sunday slate is
+Monday's, about six days out - before the app lists that week, since the
+current one still has Monday night to play - so whether the lists showed
+odds midweek hung on the books posting six days ahead, which nothing on
+file shows they do. So an early entry with no player priced is asked again
+once it is TD_EARLY_RETRY_HOURS old, while the game is still outside its
+window, up to TD_EARLY_TRIES early calls in all (the entry's
+`early_calls`). The retry hours spread a game's tries over the week
+(Sunday's slate Monday, Wednesday and, with the Friday slot, Friday) rather
+than on the runner's consecutive slots, a day or less apart midweek; the
+cap bounds what a book that never posts early can cost. The fetch log
+counts the retries (`early_retries`) beside `early_posted`.
+
+THE MONTHLY BUDGET. The key is shared with the MMA engine, on the free
+tier's FREE_TIER_CREDITS a month: the line rounds cost 3 credits a call
+(PARAMS: three markets, one region), the MMA card one, every TD call one.
+replay_spend() replays the runner's slots over a schedule with exactly the
+rules here - needs_fetch, td_due, td_early_due - and counts each round's
+credits per month, assuming every call is answered and no early one finds
+the books posted (so every early retry is counted: the most the rules can
+spend); the workflow test runs
+it over the last full season on file with the workflow's own crons and keeps
+the busiest month, with TD_RESERVE_CREDITS and the credits other engines
+were seen to spend on the same key (others_spend, from the credits-remaining
+counter between this cache's own calls), under FREE_TIER_CREDITS. Should
+that ever fail, the reserve still stops TD calls before the lines go
+unpriced. The estimate itself is printed, month by month, by
+
+    python nfl/engine/nfl_odds.py --budget
+
+(budget(): the same replay at the same slots, runner_runs reading them
+off the workflow; no call is made). Each TD round's fetch-log line also
+counts its early calls and how many found the books' prices posted
+(`early`, `early_posted`, `early_retries`) - how early "early in the
+week" is, measured.
+
 Kept per game in the cache's "td" block: {feed name: consensus Yes price
 (the median across books in probability space, as consensus_price), the
 best price and its book, how many books}, and when it was seen. The feed
@@ -81,6 +129,10 @@ TD_PARAMS = {"regions": "us", "markets": TD_MARKET, "oddsFormat": "american"}
 TD_WINDOW_HOURS = 36     # a game's anytime-TD prices are bought only this close to kickoff
 TD_STALE_HOURS = 20      # and at most once in this long, unless ODDS_REFRESH=1
 TD_RESERVE_CREDITS = 30  # credits left for the lines above: no TD call below this
+TD_EARLY_DAYS = 7        # and early: a game this close with no TD entry on file yet
+TD_EARLY_RETRY_HOURS = 36  # an early entry no book had posted for is asked again this old...
+TD_EARLY_TRIES = 3       # ...up to this many early calls a game in all
+FREE_TIER_CREDITS = 500  # the key's credits a month (the-odds-api's free tier), shared with MMA
 
 NAME_TO_CODE = {name: code for code, (name, *_rest) in nd.TEAMS.items()}
 NAME_TO_CODE.update({
@@ -485,6 +537,14 @@ def merge_td(cache, key, entry, now=None):
     return True
 
 
+def note_early_calls(cache, key, n):
+    """Keep on a game's anytime-TD entry how many early calls it has had,
+    which a new reply replaces with the rest of the entry - so td_early_due
+    stops asking at TD_EARLY_TRIES. Nothing to keep when there were none."""
+    if n:
+        cache["td"][key]["early_calls"] = int(n)
+
+
 def td_for_game(cache, away, home, kickoff):
     """One game's anytime-TD entry, or None: the two teams and a kickoff
     within MATCH_HOURS, as for_game() - never another game's."""
@@ -516,6 +576,48 @@ def td_due(cache, upcoming, refresh=False, now=None):
         entry = td_for_game(cache, g.away, g.home, kickoff)
         if (refresh or entry is None
                 or now - _parse_time(entry["seen"]) >= timedelta(hours=TD_STALE_HOURS)):
+            due.append((g.away, g.home, kickoff))
+    return due
+
+
+def early_tries(entry):
+    """How many early calls a game's anytime-TD entry has had: its
+    `early_calls`, one for an entry kept before they were counted (it was
+    bought once), none without an entry."""
+    if entry is None:
+        return 0
+    n = entry.get("early_calls")
+    return 1 if n is None else int(n)
+
+
+def _ask_again(entry, kickoff, now):
+    """An early entry the books had not posted for, worth another early
+    credit: no player priced, seen TD_EARLY_RETRY_HOURS ago or more, the
+    game still outside TD_WINDOW_HOURS (inside it, td_due's own staleness
+    rule buys it), and fewer than TD_EARLY_TRIES early calls so far."""
+    clock = pd.Timestamp(now.replace(tzinfo=None))
+    return (not entry.get("players")
+            and kickoff - clock > pd.Timedelta(hours=TD_WINDOW_HOURS)
+            and now - _parse_time(entry["seen"]) >= timedelta(hours=TD_EARLY_RETRY_HOURS)
+            and early_tries(entry) < TD_EARLY_TRIES)
+
+
+def td_early_due(cache, upcoming, now=None):
+    """The games worth an early credit now: (away, home, kickoff) of each
+    that kicks off within TD_EARLY_DAYS and has not started, with no
+    anytime-TD entry on file - or with one the books had not posted for,
+    asked again (_ask_again) up to TD_EARLY_TRIES early calls a game. A
+    game td_due names is bought there, not here (refresh_td drops it)."""
+    now = now or _now()
+    clock = pd.Timestamp(now.replace(tzinfo=None))
+    horizon = clock + pd.Timedelta(days=TD_EARLY_DAYS)
+    due = []
+    for g in upcoming.itertuples(index=False):
+        kickoff = pd.Timestamp(g.kickoff)
+        if not clock < kickoff <= horizon:
+            continue
+        entry = td_for_game(cache, g.away, g.home, kickoff)
+        if entry is None or _ask_again(entry, kickoff, now):
             due.append((g.away, g.home, kickoff))
     return due
 
@@ -574,26 +676,32 @@ def event_ids(cache, due, api_key, log=print):
 
 
 def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now=None, clock=None):
-    """Buy anytime-TD prices for the games td_due() names, one call each,
-    if a key exists. Returns what happened. `now` (the run's clock) picks
-    the games due; each reply is merged at the time it came back (_arrived,
-    with `clock` - the wall clock unless a test fixes it), so prices that
-    came back after the game's kickoff are in play and are not kept, and
-    the `seen` td_prices_for checks against kickoff is when they were seen."""
+    """Buy anytime-TD prices for the games td_due() names, then the ones
+    td_early_due() names (each game's early calls), one call each, if a
+    key exists - the window's first, so the reserve leaves out an early call
+    before a window one. Returns what happened. `now` (the run's clock)
+    picks the games due; each reply is merged at the time it came back
+    (_arrived, with `clock` - the wall clock unless a test fixes it), so
+    prices that came back after the game's kickoff are in play and are not
+    kept, and the `seen` td_prices_for checks against kickoff is when they
+    were seen."""
     api_key = (api_key if api_key is not None else os.environ.get("ODDS_API_KEY", "")).strip()
     refresh_asked = os.environ.get("ODDS_REFRESH") == "1" if refresh_asked is None else refresh_asked
     now = now or _now()
-    due = td_due(cache, upcoming, refresh_asked, now)
+    window = td_due(cache, upcoming, refresh_asked, now)
+    early = [g for g in td_early_due(cache, upcoming, now) if g not in window]
+    due = window + early
     if not due:
-        log(f"   [odds] anytime TD: no game within {TD_WINDOW_HOURS} hours of kickoff needs a price; "
-            "no call made")
+        log(f"   [odds] anytime TD: no game within {TD_WINDOW_HOURS} hours of kickoff needs a price, and "
+            f"every game within {TD_EARLY_DAYS} days has one on file; no call made")
         return "cached"
     if not api_key:
-        log(f"   [odds] anytime TD: {len(due)} games due, but ODDS_API_KEY is not set: no TD prices")
+        log(f"   [odds] anytime TD: {len(due)} games due ({len(early)} early), but ODDS_API_KEY is not set: "
+            "no TD prices")
         return "no key"
     ids = event_ids(cache, due, api_key, log)
     remaining, status, arrived = _last_credits(cache), None, now
-    calls = priced = 0
+    calls = priced = early_calls = early_posted = early_retries = 0
     for g in due:
         if g not in ids:
             continue
@@ -601,25 +709,36 @@ def refresh_td(cache, upcoming, api_key=None, refresh_asked=None, log=print, now
             log(f"   [odds] anytime TD: {remaining} credits left, under the {TD_RESERVE_CREDITS} kept "
                 "for the lines; no more TD calls")
             break
+        tries = early_tries(td_for_game(cache, *g))
         status, event, left = fetch_td(api_key, ids[g], log)
         arrived = _arrived(now, clock)
         calls += 1
+        early_calls += g in early
+        early_retries += g in early and tries > 0
         remaining = left if left is not None else remaining
         if status != 200 or not event:
             continue
         key, entry = parse_td_event(event)
         if key is not None and merge_td(cache, key, entry, arrived):
             priced += 1
+            note_early_calls(cache, key, tries + (g in early))
+            # Whether the books had posted by the early call: the log's
+            # measure of how early "early in the week" is (a game whose early
+            # call found none is asked again, up to TD_EARLY_TRIES).
+            early_posted += g in early and bool(entry.get("players"))
     if calls:
-        record_fetch(cache, status, priced, remaining, arrived, market=TD_MARKET, calls=calls)
-    log(f"   [odds] anytime TD: {len(due)} games due, {calls} calls ({len(due) - len(ids)} without an "
-        f"event id), {priced} games priced. Credits left: {remaining}")
+        record_fetch(cache, status, priced, remaining, arrived, market=TD_MARKET, calls=calls,
+                     early=early_calls, early_posted=early_posted, early_retries=early_retries)
+    log(f"   [odds] anytime TD: {len(due)} games due ({len(early)} early), {calls} calls ({early_calls} "
+        f"early, {early_posted} of them posted, {early_retries} of them retries; {len(due) - len(ids)} "
+        f"without an event id), {priced} games priced. Credits left: {remaining}")
     return "fetched" if calls and status == 200 else ("no event id" if not calls else f"failed ({status})")
 
 
 # Why a TD leg has no price (td_prices_for).
 TD_PRICE_MISSING = {
-    "window": f"anytime-TD prices are bought only within {TD_WINDOW_HOURS} hours of kickoff",
+    "window": (f"anytime-TD prices are bought from {TD_EARLY_DAYS} days before kickoff, and again within "
+               f"{TD_WINDOW_HOURS} hours of it"),
     "none": "no anytime-TD prices on file for this game",
     "unposted": "no book had posted anytime-TD prices when they were fetched",
     "unmatched": "no anytime-TD price under his name",
@@ -668,7 +787,7 @@ def td_prices_for(cache, away, home, kickoff, players, now=None):
     if entry is not None and pd.Timestamp(_parse_time(entry["seen"]).replace(tzinfo=None)) >= kickoff:
         entry = None                                    # never an in-play price
     if entry is None:
-        far = kickoff - pd.Timestamp(now.replace(tzinfo=None)) > pd.Timedelta(hours=TD_WINDOW_HOURS)
+        far = kickoff - pd.Timestamp(now.replace(tzinfo=None)) > pd.Timedelta(days=TD_EARLY_DAYS)
         return missing("window" if far else "none")
     feed = entry.get("players") or {}
     if not feed:
@@ -696,6 +815,186 @@ def td_prices_for(cache, away, home, kickoff, players, now=None):
             continue
         out[g] = dict(feed[name], as_of=entry["seen"], feed_name=name, match=match, missing=None)
     return out
+
+
+# The words beside the odds a TD list shows: the price is not Stake's, the
+# chance read off it keeps the books' margin, and the model has never been
+# measured against it.
+TD_ODDS_NOTE = ("Anytime-TD odds are the books' consensus Yes price (the-odds-api, US books), not Stake's: "
+                "est. The implied chance beside it is 1 / that price with the books' margin left in, so it "
+                "reads above the books' own fair chance - a Yes-only price cannot be de-vigged. The touchdown "
+                "model's chance has never been measured against these prices (no past anytime-TD price is "
+                "on file), so a gap between the two is not an edge.")
+
+
+def td_price(p):
+    """One TD candidate's price as a TD list shows it, from td_prices_for's
+    entry `p` (None: nothing bought for him): the consensus `american` and
+    its `decimal`, `implied` - 1 / decimal, the books' margin left in
+    (TD_ODDS_NOTE) - the `best_american` and its `best_book`, how many
+    `books`, `as_of` (when it was seen) and the `match` that reached him;
+    or every number None and `missing`, why. Always `est`: the books'
+    price, not Stake's."""
+    p = p or {"price": None, "missing": TD_PRICE_MISSING["none"]}
+    american = p.get("price")
+    try:
+        american = float(american)
+    except (TypeError, ValueError):
+        american = None
+    if american is not None and abs(american) < 100:
+        american = None
+    decimal = None if american is None else 1.0 + _payout(american)
+    priced = decimal is not None
+    return {"american": american, "decimal": decimal, "implied": 1.0 / decimal if priced else None,
+            "best_american": p.get("best_price") if priced else None,
+            "best_book": p.get("best_book") if priced else None, "books": p.get("books") if priced else None,
+            "as_of": p.get("as_of") if priced else None, "match": p.get("match") if priced else None,
+            "source": "the-odds-api" if priced else None,
+            "missing": None if priced else (p.get("missing") or TD_PRICE_MISSING["none"]), "est": True}
+
+
+# ---------------------------------------------------------------- the budget
+
+def _month(t):
+    return pd.Timestamp(t).strftime("%Y-%m")
+
+
+def replay_spend(kickoffs, runs, refresh_runs=()):
+    """{month: {"lines", "td_window", "td_early", "total"}}: the credits the
+    runner's purchases cost when it runs at `runs` (naive UTC; those in
+    `refresh_runs` with ODDS_REFRESH=1) over a schedule of `kickoffs`, by
+    exactly the rules here - needs_fetch for the lines (a call prices every
+    game within WINDOW_DAYS), td_due and then td_early_due for the anytime
+    TD - assuming every call is answered, and that no TD call finds the
+    books posted, so each game's early retries are all counted: the most the
+    rules can spend. The reserve is left out: this is what the rules would
+    spend, to hold against the key."""
+    line_cost = len(PARAMS["markets"].split(",")) * len(PARAMS["regions"].split(","))
+    td_cost = len(TD_PARAMS["markets"].split(",")) * len(TD_PARAMS["regions"].split(","))
+    games = pd.DataFrame({"away": [f"A{i}" for i in range(len(kickoffs))],
+                          "home": [f"H{i}" for i in range(len(kickoffs))],
+                          "kickoff": [pd.Timestamp(k) for k in kickoffs]})
+    cache, out, refresh_runs = empty(), {}, {pd.Timestamp(t) for t in refresh_runs}
+    for t in sorted(pd.Timestamp(r) for r in runs):
+        now = t.to_pydatetime().replace(tzinfo=timezone.utc)
+        upcoming = games[games["kickoff"] > t]
+        month = out.setdefault(_month(t), {"lines": 0, "td_window": 0, "td_early": 0, "total": 0})
+        if needs_fetch(cache, upcoming, t in refresh_runs, now):
+            month["lines"] += line_cost
+            for g in upcoming[upcoming["kickoff"] <= t + pd.Timedelta(days=WINDOW_DAYS)].itertuples(index=False):
+                seen = {"home": g.home, "away": g.away, "commence_time": _stamp(g.kickoff), "seen": _stamp(now)}
+                cache["games"][game_key(g.away, g.home, g.kickoff)] = {"opening": seen, "latest": seen}
+        window = td_due(cache, upcoming, t in refresh_runs, now)
+        early = [g for g in td_early_due(cache, upcoming, now) if g not in window]
+        month["td_window"] += td_cost * len(window)
+        month["td_early"] += td_cost * len(early)
+        for away, home, kickoff in window + early:
+            key, tries = game_key(away, home, kickoff), early_tries(td_for_game(cache, away, home, kickoff))
+            cache["td"][key] = {"home": home, "away": away, "players": {},
+                                "commence_time": _stamp(kickoff), "seen": _stamp(now)}
+            note_early_calls(cache, key, tries + ((away, home, kickoff) in early))
+        month["total"] = month["lines"] + month["td_window"] + month["td_early"]
+    return out
+
+
+def others_spend(cache):
+    """{month: credits} the key lost between two of this cache's own calls
+    beyond what those calls cost (the line round's markets x regions, a TD
+    round's calls) - what the other engines on the same key (MMA) spent, as
+    the credits-remaining counter saw it. A counter that went up is a new
+    month's allowance: that gap is not counted."""
+    line_cost = len(PARAMS["markets"].split(",")) * len(PARAMS["regions"].split(","))
+    out, before = {}, None
+    for f in cache.get("fetches") or []:
+        left = _credits(f.get("credits_remaining"))
+        if left is None:
+            continue
+        cost = f.get("calls", 0) if f.get("market") == TD_MARKET else line_cost
+        if before is not None and left <= before[1]:
+            gap = before[1] - left - cost
+            if gap > 0:
+                out[_month(_parse_time(f["at"]).replace(tzinfo=None))] = (
+                    out.get(_month(_parse_time(f["at"]).replace(tzinfo=None)), 0) + gap)
+        before = (f["at"], left)
+    return out
+
+
+# The runner whose slots budget() replays, read as text: its crons, and the
+# schedules its run step names for ODDS_REFRESH=1.
+WORKFLOW = nd.NFL.parent / ".github" / "workflows" / "nfl.yml"
+_DAYS = ("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
+
+
+def _cron_months(spec):
+    out = set()
+    for part in spec.split(","):
+        lo, _, hi = part.partition("-")
+        out |= set(range(int(lo), int(hi or lo) + 1))
+    return out
+
+
+def runner_runs(start, end, workflow=WORKFLOW):
+    """(every scheduled run's start between two days, the ones of them that
+    buy today's prices) - naive UTC, as the schedule's kickoffs are - from
+    the workflow's crons ("M H * months DAY") and the schedules its run step
+    names for ODDS_REFRESH=1. A manual run is not in it."""
+    text = Path(workflow).read_text()
+    crons = re.findall(r'- cron: "([^"]+)"', text)
+    refresh = set(re.findall(r'github\.event\.schedule \}\}" = "([^"]+)"', text))
+    runs, refreshed = [], []
+    for day in pd.date_range(pd.Timestamp(start).normalize(), pd.Timestamp(end).normalize()):
+        for cron in crons:
+            minute, hour, dom, months, dow = cron.split()
+            if dom != "*" or day.month not in _cron_months(months) or _DAYS[day.day_of_week] != dow:
+                continue
+            t = day + pd.Timedelta(hours=int(hour), minutes=int(minute))
+            runs.append(t)
+            if cron in refresh:
+                refreshed.append(t)
+    return sorted(runs), sorted(refreshed)
+
+
+def budget(games, cache=None, workflow=WORKFLOW):
+    """The key's monthly estimate: replay_spend over the last full season on
+    file (`games`, nfl_data.load_games) at the runner's own slots
+    (runner_runs), each month's line, TD-window and early-TD credits; the
+    busiest of them; the most the other engines on the key (MMA) were seen
+    to spend in a month (others_spend of `cache`, the committed one unless
+    given); TD_RESERVE_CREDITS; and what is left of FREE_TIER_CREDITS after
+    all three. An estimate: every call is assumed answered, every early
+    retry made (replay_spend's books never post early), a manual
+    refresh_odds run is not in it, and the others' figure covers only the
+    months this cache's counter has seen."""
+    played = games.groupby("season")["played"].all()
+    season = int(played[played].index.max())
+    kickoffs = list(games.loc[games["season"] == season, "kickoff"])
+    runs, refreshed = runner_runs(min(kickoffs) - pd.Timedelta(days=WINDOW_DAYS), max(kickoffs), workflow)
+    months = replay_spend(kickoffs, runs, refreshed)
+    busiest = max(months, key=lambda m: months[m]["total"])
+    others = others_spend(load() if cache is None else cache)
+    others_most = max(others.values(), default=0)
+    return {"season": season, "games": len(kickoffs), "runs": len(runs), "refresh_runs": len(refreshed),
+            "months": months, "busiest": busiest, "busiest_total": months[busiest]["total"],
+            "others": others, "others_most": others_most, "reserve": TD_RESERVE_CREDITS,
+            "free_tier": FREE_TIER_CREDITS,
+            "spare": FREE_TIER_CREDITS - months[busiest]["total"] - others_most - TD_RESERVE_CREDITS}
+
+
+def budget_lines(b):
+    """budget() as the --budget command prints it."""
+    out = [f"The {b['season']} season ({b['games']} games), replayed at the runner's {b['runs']} scheduled runs "
+           f"({b['refresh_runs']} with ODDS_REFRESH=1), credits a month:"]
+    for month, m in sorted(b["months"].items()):
+        out.append(f"  {month}: lines {m['lines']} + TD window {m['td_window']} + TD early {m['td_early']} "
+                   f"= {m['total']}")
+    seen = ", ".join(f"{k} {v:g}" for k, v in sorted(b["others"].items())) or "none seen"
+    out.append(f"Other engines on the key, by the credits counter: {seen}.")
+    out.append(f"Busiest month {b['busiest']}: {b['busiest_total']} + the others' most {b['others_most']:g} "
+               f"+ the reserve {b['reserve']} = {b['busiest_total'] + b['others_most'] + b['reserve']:g} of "
+               f"{b['free_tier']}; {b['spare']:g} to spare (est.: every call answered, every early retry made as if "
+               "no book posted early, no manual refresh).")
+    return out
+
 
 
 # The two sides of each line's price, as market_for names them.
@@ -812,3 +1111,15 @@ def market_for(cache, game, now=None):
         "total": lines["total"],
         **_schedule_prices(game, lines),
     }
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="NFL prices: the odds key's monthly credit estimate.")
+    parser.add_argument("--budget", action="store_true",
+                        help="replay the runner's slots over the last full season and print each month's credits")
+    args = parser.parse_args()
+    if not args.budget:
+        parser.error("nothing asked: --budget prints the monthly estimate (no call is made)")
+    print("\n".join(budget_lines(budget(nd.load_games()))))

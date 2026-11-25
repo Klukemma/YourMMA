@@ -9,7 +9,8 @@ them. The MMA export's rules carry over unchanged:
   * Every payload carries `schema` and `generated`.
   * Every caveat the reader sees is written here, in one place - the
     same-game tickets' words are assembled here (sgp_block) from the rule's
-    own wording in nfl_sgp, so the app and the rule cannot drift apart.
+    own wording in nfl_sgp and nfl_sgp2, so the app and the rule cannot
+    drift apart.
 """
 
 import json
@@ -21,12 +22,15 @@ import numpy as np
 import pandas as pd
 
 import nfl_data as nd
+import nfl_odds as no
 import nfl_sgp as sgp
+import nfl_sgp2 as sgp2
 
 APP = nd.NFL / "app"
 APP_DATA = APP / "data"
 SCHEMA = 1
 SGP_HISTORY = nd.DATA / "sgp_backtest.json"      # experiments/nfl_sgp_backtest.py writes it
+SGP2_HISTORY = nd.DATA / "sgp2_backtest.json"    # experiments/nfl_sgp2_backtest.py writes it
 
 CAVEATS = {
     "model": (
@@ -67,6 +71,8 @@ CAVEATS = {
         "The quarterback the model assumes is the one the schedule projects "
         "to start. If the injury report says he is out, the number above does "
         "not know yet."),
+    # Beside each scorer's odds in the TD lists (nfl_odds.td_price).
+    "td_odds": no.TD_ODDS_NOTE,
 }
 
 
@@ -374,7 +380,8 @@ def attach_td_meters(game, meters):
 # ---------------------------------------------------------------- same-game tickets
 
 def load_sgp_history(path=SGP_HISTORY):
-    """The same-game tickets' backtest payload, or None when none is on file."""
+    """A same-game tickets' backtest payload (v1's by default, v2's at
+    SGP2_HISTORY), or None when none is on file."""
     path = Path(path)
     return json.loads(path.read_text()) if path.exists() else None
 
@@ -382,23 +389,72 @@ def load_sgp_history(path=SGP_HISTORY):
 # What week.json's sgp.history keeps of the backtest's payload.
 SGP_HISTORY_KEYS = ("generated", "through", "history_from", "current_season", "periods", "games",
                     "left_out", "roi_reason", "td_prices", "td_groups", "inputs", "kinds")
+# ...and of v2's, which also carries its choice and what it reports beside it:
+# the confident games per period, the chosen pair and the objective that
+# chose it, every pair of the grid, SMALL with the game's best TD, and v1 on
+# the same games (all of it report-only but the choice).
+SGP2_HISTORY_KEYS = SGP_HISTORY_KEYS + ("confident_games", "chosen", "grid", "alt_small", "v1_same_games")
+
+# v1, retired: said beside its meters.
+SGP_V1_RETIRED = (f"{sgp.VERSION} is retired: each game's tickets are built by {sgp2.VERSION} now. The "
+                  f"{sgp.VERSION} tickets logged before kickoff stay logged and are graded by its own rules, "
+                  "and its history and live meters are kept here, measured as before.")
 
 
-def _sgp_history(payload):
+def _sgp_history(payload, rule=sgp, keys=SGP_HISTORY_KEYS, script="experiments/nfl_sgp_backtest.py"):
     """The backtest's meters as the app shows them, or why there are none:
     no file, or one built by another version of the rule."""
     if payload is None:
         return {"available": False,
-                "reason": "no same-game ticket backtest on file (experiments/nfl_sgp_backtest.py)"}
-    if payload.get("version") != sgp.VERSION:
+                "reason": f"no same-game ticket backtest on file ({script})"}
+    if payload.get("version") != rule.VERSION:
         return {"available": False,
-                "reason": f"the backtest on file is {payload.get('version')}, the rule is {sgp.VERSION}"}
-    return dict({k: payload.get(k) for k in SGP_HISTORY_KEYS}, available=True, reason=None)
+                "reason": f"the backtest on file is {payload.get('version')}, the rule is {rule.VERSION}"}
+    return dict({k: payload.get(k) for k in keys}, available=True, reason=None)
 
 
-def sgp_block(log, history=None):
-    """week.json's "sgp": each ticket kind's meters, history and live, and the
-    rule's words beside them.
+def _sgp2_history(payload):
+    """v2's history, or why there is none - also when the pair it replayed
+    is not the one the rule holds (a file written before --choose)."""
+    out = _sgp_history(payload, sgp2, SGP2_HISTORY_KEYS, "experiments/nfl_sgp2_backtest.py")
+    if not out["available"]:
+        return out
+    if sgp2.CONFIDENT is None or sgp2.TD_FLOOR is None:
+        return {"available": False, "reason": sgp2.NOT_CHOSEN}
+    chosen = payload.get("chosen") or {}
+    if (chosen.get("confident"), chosen.get("td_floor")) != (sgp2.CONFIDENT, sgp2.TD_FLOOR):
+        return {"available": False,
+                "reason": (f"the backtest on file replayed CONFIDENT {chosen.get('confident')} and TD_FLOOR "
+                           f"{chosen.get('td_floor')}; the rule holds {sgp2.CONFIDENT} and {sgp2.TD_FLOOR}")}
+    return out
+
+
+def _live(log, rule):
+    """(the logged games, the live meters) of one version: every ticket of
+    `rule.VERSION` logged before kickoff (prediction_history.json), graded
+    or pending, metered by that version's summarise."""
+    logged = [p for p in (log.get("picks") or {}).values()
+              if any(t.get("version") == rule.VERSION for t in p.get("tickets") or [])]
+    tickets = [t for p in logged for t in p["tickets"] if t.get("version") == rule.VERSION]
+    return logged, {"games": len(logged), "graded_games": sum(bool(p.get("tickets_graded")) for p in logged),
+                    "first_kickoff": min((p["kickoff"] for p in logged), default=None),
+                    "kinds": rule.summarise(tickets)}
+
+
+def _v1_caveats():
+    """v1's sentences (nfl_sgp), one wording live and history."""
+    return {
+        "edge": sgp.NO_EDGE, "chance": sgp.CHANCE_NOTE, "est": sgp.EST_PAYOUT,
+        "est_erratum": sgp.EST_ERRATUM, "roi_priced": sgp.ROI_PRICED, "prices": sgp.PRICE_NOTE, "exact": sgp.EXACT_PAYOUT, "bias": sgp.KNOWN_BIAS,
+        "meters": sgp.METER_NOTE, "live": sgp.LIVE_ROI, "slots": sgp.SLOT_RULE,
+        "rookie": sgp.ROOKIE_RULE, "not_in_v1": sgp.NOT_IN_V1,
+        "legs": dict(sgp.LEG_RULES), "tickets": dict(sgp.TICKET_RULES)}
+
+
+def sgp_v1_block(log, history=None):
+    """v1's (sgp-v1, retired) meters, history and live, and the rule's words
+    beside them - week.json's "sgp" before v2, under sgp.v1 now, labelled
+    retired (SGP_V1_RETIRED).
 
       history  the backtest's (nfl/data/sgp_backtest.json, `history`): per
                kind, per period, its meters and chance bins, when it was
@@ -413,21 +469,67 @@ def sgp_block(log, history=None):
                est_erratum, the correction found after the rule was fixed,
                shown beside v1's words on the est. payout and live return
     """
-    logged = [p for p in (log.get("picks") or {}).values()
-              if any(t.get("version") == sgp.VERSION for t in p.get("tickets") or [])]
-    tickets = [t for p in logged for t in p["tickets"] if t.get("version") == sgp.VERSION]
     return {
-        "version": sgp.VERSION, "rule": "nfl/engine/nfl_sgp.py", "kinds": list(sgp.KINDS),
+        "version": sgp.VERSION, "rule": "nfl/engine/nfl_sgp.py", "retired": True,
+        "retired_note": SGP_V1_RETIRED, "kinds": list(sgp.KINDS),
         "legs": dict(sgp.LEGS), "stake": sgp.STAKE_UNIT, "use_cap": sgp.USE_CAP,
         "rookie_floor": sgp.ROOKIE_FLOOR,
         "history": _sgp_history(history),
-        "live": {"games": len(logged), "graded_games": sum(bool(p.get("tickets_graded")) for p in logged),
-                 "first_kickoff": min((p["kickoff"] for p in logged), default=None),
-                 "kinds": sgp.summarise(tickets)},
-        "caveats": {
-            "edge": sgp.NO_EDGE, "chance": sgp.CHANCE_NOTE, "est": sgp.EST_PAYOUT,
-            "est_erratum": sgp.EST_ERRATUM, "roi_priced": sgp.ROI_PRICED, "prices": sgp.PRICE_NOTE, "exact": sgp.EXACT_PAYOUT, "bias": sgp.KNOWN_BIAS,
-            "meters": sgp.METER_NOTE, "live": sgp.LIVE_ROI, "slots": sgp.SLOT_RULE,
-            "rookie": sgp.ROOKIE_RULE, "not_in_v1": sgp.NOT_IN_V1,
-            "legs": dict(sgp.LEG_RULES), "tickets": dict(sgp.TICKET_RULES)},
+        "live": _live(log, sgp)[1],
+        "caveats": _v1_caveats(),
+    }
+
+
+def sgp_block(log, history=None, v1_history=None):
+    """week.json's "sgp": v2's (sgp-v2, nfl_sgp2) ticket meters, history and
+    live, the pair it was chosen with and the grid, and its rule's words -
+    with v1's whole block, retired, under "v1". `history` is v2's backtest
+    payload, `v1_history` v1's.
+
+      confident, td_floor, chosen_on, grids  the rule's two numbers
+               (nfl_sgp2), the day --choose wrote them, and the grids,
+               coverage floor and seasons they were chosen from
+      history  v2's backtest (nfl/data/sgp2_backtest.json): per kind, per
+               period, its meters, coverage and chance bins; the confident
+               games per period; `chosen` (the pair, the objective, its DEV
+               figures, how many pairs cleared the coverage floor, and
+               `rises` - the rule's "hit rate always rises" claim counted
+               against DEV's grid, found after the rule was fixed) and
+               `grid` (every pair, per period - report-only); SMALL with the
+               game's best TD and v1 on the same games (report-only) - or
+               missing, and why, when the file is not this rule's or
+               replayed another pair
+      live     every sgp-v2 ticket logged before kickoff, graded or pending,
+               and `confident_games`, how many of those games were
+               confident (each v2 ticket logs whether its game was)
+      caveats  v1's sentences, which v2 keeps (its legs, slots, grading,
+               meters and est. prices are v1's), the market-is-hard-to-beat
+               edge line among them; edge_v2, v2's own no-edge words;
+               `rules`, v2's narrowing (confident games only, the pick's
+               side only, the TD floor, SMALL's preference, how the two
+               numbers were chosen on DEV and measured on the seasons
+               after); `objective`; `tickets`, each ticket's slots as v2
+               fills them; and `untouched` (nfl_sgp2.UNTOUCHED_NOTE, found
+               after the rule was fixed): "untouched" covers the two
+               numbers, not SMALL's pick's-team clause, whose motivating
+               seasons overlap CONFIRM
+      v1       sgp_v1_block: v1's history and live meters, retired
+    """
+    logged, live = _live(log, sgp2)
+    live["confident_games"] = sum(
+        1 for p in logged if any(t.get("confident_game") for t in p["tickets"] if t.get("version") == sgp2.VERSION))
+    caveats = _v1_caveats()
+    caveats.update(edge_v2=sgp2.NO_EDGE, rules=sgp2.rules(), objective=sgp2.OBJECTIVE,
+                   tickets=sgp2.ticket_rules(), untouched=sgp2.UNTOUCHED_NOTE)
+    return {
+        "version": sgp2.VERSION, "rule": "nfl/engine/nfl_sgp2.py", "kinds": list(sgp2.KINDS),
+        "legs": dict(sgp2.LEGS), "stake": sgp.STAKE_UNIT, "use_cap": sgp.USE_CAP,
+        "rookie_floor": sgp.ROOKIE_FLOOR,
+        "confident": sgp2.CONFIDENT, "td_floor": sgp2.TD_FLOOR, "chosen_on": sgp2.CHOSEN_ON,
+        "grids": {"confident": list(sgp2.CONFIDENT_GRID), "td_floor": list(sgp2.TD_FLOOR_GRID),
+                  "coverage_min": sgp2.COVERAGE_MIN, "dev": list(sgp2.DEV), "confirm": list(sgp2.CONFIRM)},
+        "history": _sgp2_history(history),
+        "live": live,
+        "caveats": caveats,
+        "v1": sgp_v1_block(log, v1_history),
     }
