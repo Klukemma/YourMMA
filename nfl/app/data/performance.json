@@ -505,11 +505,12 @@
   "td": "Chance of a rushing or receiving touchdown, if he plays - from his recent carries, targets and snaps and his team's expected points from the betting line. In 2020-2025 each team's most likely scorer scored 43.5% of the time (the model said 41.1%). Measured, and shown, not applied.",
   "td_list": "Every active QB, RB, FB, WR and TE is listed - everyone you can back to score. A chance is shown only where the model was measured as well calibrated: within 20% of what happened in both 2014-2019 and 2020-2025. Players with little use or no NFL game are listed with a dash instead. For players with no NFL game: it said 2.7% where 7.9% scored (2020-2025); under 0.5 weighted carries + targets a game: it said 3.7% where 2.7% scored (2020-2025); 0.5-1 weighted carries + targets a game: it said 6.2% where 4.9% scored (2014-2019).",
   "td_meters": "Two meters from the live record - touchdown picks logged before kickoff, games graded from the box score. TOP 3 -> SCORED: of the times a player was in his team's top three most likely touchdown scorers, how often he scored a rushing or receiving touchdown; a pick who did not play is left out, as every chance was if he plays. NOT TOP 3 -> NO TD: of the times a player played without being in that top three, how often he did not score. Where the whole list a bettor could back (every active QB, RB, FB, WR and TE) was logged before kickoff, 'not top 3' is the rest of that list who played. Games logged before that list was, with only the top three, rebuild 'not top 3' from the snap counts: every other player of the team who took an offensive snap at QB, RB, FB, WR or TE, his touchdowns from the box score (none if he has no box-score line).",
+  "td_odds": "Anytime-TD odds are the books' consensus Yes price (the-odds-api, US books), not Stake's: est. The implied chance beside it is 1 / that price with the books' margin left in, so it reads above the books' own fair chance - a Yes-only price cannot be de-vigged. The touchdown model's chance has never been measured against these prices (no past anytime-TD price is on file), so a gap between the two is not an edge.",
   "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
   "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
  },
  "data_through": "2026-11-23",
- "generated": "2026-11-24T20:47:45Z",
+ "generated": "2026-11-25T13:57:19Z",
  "props": {
   "2014-2019": {
    "pass": {
