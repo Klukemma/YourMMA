@@ -8,7 +8,7 @@
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, pooled over the top five, each beat the leagues' own rates from earlier seasons. A league shows only the numbers that beat its own rates in both of its periods; the others are withheld and shown as missing. Both teams to score runs low: across 2016-2025 in the top five its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-25T01:10:13Z",
+ "generated": "2026-11-25T20:40:33Z",
  "leagues": [
   {
    "caveats": [
@@ -9683,8 +9683,8 @@
    "label": "Serie B",
    "model_through": "2026-11-22",
    "name": "Serie B",
-   "provisional": 6,
-   "results_through": "2026-11-24",
+   "provisional": 7,
+   "results_through": "2026-11-25",
    "rows": [
     {
      "club": {
@@ -9824,6 +9824,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "AVE",
+      "fg": "#FFFFFF",
+      "name": "Avellino"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "I2",
+       "opponent": "Cremonese",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-22",
+       "ga": 1,
+       "gf": 4,
+       "home": true,
+       "league": "I2",
+       "opponent": "Mantova",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "I2",
+       "opponent": "Benevento",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "I2",
+       "opponent": "Pisa",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-27",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "I2",
+       "opponent": "Virtus Entella",
+       "result": "D"
+      }
+     ],
+     "ga": 12,
+     "gd": 9,
+     "gf": 21,
+     "lost": 3,
+     "played": 13,
+     "points": 22,
+     "position": 3,
+     "provisional": 1,
+     "rating": -0.03995086600040576,
+     "team": "Avellino",
+     "won": 6
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "ASC",
       "fg": "#FFFFFF",
       "name": "Ascoli"
@@ -9883,7 +9951,7 @@
      "lost": 2,
      "played": 13,
      "points": 21,
-     "position": 3,
+     "position": 4,
      "provisional": 1,
      "rating": 0.016923122786094424,
      "team": "Ascoli",
@@ -9951,77 +10019,10 @@
      "lost": 2,
      "played": 13,
      "points": 21,
-     "position": 4,
+     "position": 5,
      "provisional": 1,
      "rating": -0.10358852243640171,
      "team": "Cesena",
-     "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "AVE",
-      "fg": "#FFFFFF",
-      "name": "Avellino"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-11-22",
-       "ga": 1,
-       "gf": 4,
-       "home": true,
-       "league": "I2",
-       "opponent": "Mantova",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-07",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "I2",
-       "opponent": "Benevento",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "I2",
-       "opponent": "Pisa",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-27",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "I2",
-       "opponent": "Virtus Entella",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "I2",
-       "opponent": "Padova",
-       "result": "L"
-      }
-     ],
-     "ga": 12,
-     "gd": 8,
-     "gf": 20,
-     "lost": 3,
-     "played": 12,
-     "points": 19,
-     "position": 5,
-     "provisional": 0,
-     "rating": -0.03995086600040576,
-     "team": "Avellino",
      "won": 5
     },
     {
@@ -10575,6 +10576,16 @@
      "drawn": 3,
      "form": [
       {
+       "date": "2026-11-25",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "I2",
+       "opponent": "Avellino",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-21",
        "ga": 1,
        "gf": 0,
@@ -10609,25 +10620,16 @@
        "league": "I2",
        "opponent": "Mantova",
        "result": "W"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "I2",
-       "opponent": "Juve Stabia",
-       "result": "L"
       }
      ],
-     "ga": 13,
-     "gd": 1,
+     "ga": 14,
+     "gd": 0,
      "gf": 14,
-     "lost": 5,
-     "played": 12,
+     "lost": 6,
+     "played": 13,
      "points": 15,
      "position": 14,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.1036513213293957,
      "team": "Cremonese",
      "won": 4
@@ -34838,8 +34840,8 @@
    "label": "J1 League",
    "model_through": "2026-11-21",
    "name": "J1 League",
-   "provisional": 0,
-   "results_through": "2026-11-21",
+   "provisional": 7,
+   "results_through": "2026-11-25",
    "rows": [
     {
      "club": {
@@ -34848,8 +34850,18 @@
       "fg": "#FFFFFF",
       "name": "FC Tokyo"
      },
-     "drawn": 3,
+     "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Sanfrecce Hiroshima",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-21",
        "ga": 0,
@@ -34885,25 +34897,16 @@
        "league": "JPN",
        "opponent": "Mito",
        "result": "W"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Kashiwa Reysol",
-       "result": "D"
       }
      ],
-     "ga": 8,
+     "ga": 10,
      "gd": 28,
-     "gf": 36,
+     "gf": 38,
      "lost": 1,
-     "played": 15,
-     "points": 36,
+     "played": 16,
+     "points": 37,
      "position": 1,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.626867098267119,
      "team": "FC Tokyo",
      "won": 11
@@ -34915,8 +34918,18 @@
       "fg": "#FFFFFF",
       "name": "Sanfrecce Hiroshima"
      },
-     "drawn": 4,
+     "drawn": 5,
      "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "FC Tokyo",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-21",
        "ga": 2,
@@ -34952,25 +34965,16 @@
        "league": "JPN",
        "opponent": "Shimizu S-Pulse",
        "result": "W"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 4,
-       "gf": 0,
-       "home": false,
-       "league": "JPN",
-       "opponent": "V-Varen Nagasaki",
-       "result": "L"
       }
      ],
-     "ga": 12,
+     "ga": 14,
      "gd": 22,
-     "gf": 34,
+     "gf": 36,
      "lost": 2,
-     "played": 15,
-     "points": 31,
+     "played": 16,
+     "points": 32,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.7489035914480128,
      "team": "Sanfrecce Hiroshima",
      "won": 9
@@ -35112,6 +35116,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "KAW",
+      "fg": "#FFFFFF",
+      "name": "Kawasaki Frontale"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "V-Varen Nagasaki",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-21",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Avispa Fukuoka",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Kashiwa Reysol",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 4,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Yokohama F. Marinos",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Okayama",
+       "result": "W"
+      }
+     ],
+     "ga": 25,
+     "gd": 6,
+     "gf": 31,
+     "lost": 4,
+     "played": 16,
+     "points": 28,
+     "position": 5,
+     "provisional": 1,
+     "rating": 0.2480625544845967,
+     "team": "Kawasaki Frontale",
+     "won": 8
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "VIS",
       "fg": "#FFFFFF",
       "name": "Vissel Kobe"
@@ -35170,7 +35242,7 @@
      "lost": 4,
      "played": 15,
      "points": 27,
-     "position": 5,
+     "position": 6,
      "provisional": 0,
      "rating": 0.3605458511616244,
      "team": "Vissel Kobe",
@@ -35179,69 +35251,70 @@
     {
      "club": {
       "bg": "#5B6170",
-      "code": "KAW",
+      "code": "YOK",
       "fg": "#FFFFFF",
-      "name": "Kawasaki Frontale"
+      "name": "Yokohama F. Marinos"
      },
-     "drawn": 4,
+     "drawn": 8,
      "form": [
       {
-       "date": "2026-11-21",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Avispa Fukuoka",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-07",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Kashiwa Reysol",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 4,
+       "date": "2026-11-25",
+       "ga": 1,
        "gf": 2,
        "home": false,
        "league": "JPN",
-       "opponent": "Yokohama F. Marinos",
-       "result": "L"
+       "opponent": "Avispa Fukuoka",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Sanfrecce Hiroshima",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 1,
+       "gf": 1,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Okayama",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 2,
+       "gf": 4,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Kawasaki Frontale",
+       "result": "W"
       },
       {
        "date": "2026-10-25",
        "ga": 1,
-       "gf": 2,
-       "home": true,
+       "gf": 1,
+       "home": false,
        "league": "JPN",
-       "opponent": "Okayama",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Vissel Kobe",
-       "result": "W"
+       "opponent": "Nagoya Grampus",
+       "result": "D"
       }
      ],
-     "ga": 24,
-     "gd": 5,
-     "gf": 29,
-     "lost": 4,
-     "played": 15,
-     "points": 25,
-     "position": 6,
-     "provisional": 0,
-     "rating": 0.2480625544845967,
-     "team": "Kawasaki Frontale",
-     "won": 7
+     "ga": 18,
+     "gd": 7,
+     "gf": 25,
+     "lost": 2,
+     "played": 16,
+     "points": 26,
+     "position": 7,
+     "provisional": 1,
+     "rating": 0.2534577442592696,
+     "team": "Yokohama F. Marinos",
+     "won": 6
     },
     {
      "club": {
@@ -35304,144 +35377,10 @@
      "lost": 5,
      "played": 15,
      "points": 24,
-     "position": 7,
+     "position": 8,
      "provisional": 0,
      "rating": 0.4310015890002987,
      "team": "Kashima Antlers",
-     "won": 7
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "YOK",
-      "fg": "#FFFFFF",
-      "name": "Yokohama F. Marinos"
-     },
-     "drawn": 8,
-     "form": [
-      {
-       "date": "2026-11-21",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Sanfrecce Hiroshima",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-07",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Okayama",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 2,
-       "gf": 4,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Kawasaki Frontale",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Nagoya Grampus",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Verdy",
-       "result": "D"
-      }
-     ],
-     "ga": 17,
-     "gd": 6,
-     "gf": 23,
-     "lost": 2,
-     "played": 15,
-     "points": 23,
-     "position": 8,
-     "provisional": 0,
-     "rating": 0.2534577442592696,
-     "team": "Yokohama F. Marinos",
-     "won": 5
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "URA",
-      "fg": "#FFFFFF",
-      "name": "Urawa Reds"
-     },
-     "drawn": 1,
-     "form": [
-      {
-       "date": "2026-11-21",
-       "ga": 2,
-       "gf": 1,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Kyoto",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-08",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Vissel Kobe",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 4,
-       "gf": 0,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Kashiwa Reysol",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "JPN",
-       "opponent": "V-Varen Nagasaki",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 2,
-       "gf": 3,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Chiba",
-       "result": "W"
-      }
-     ],
-     "ga": 31,
-     "gd": -7,
-     "gf": 24,
-     "lost": 7,
-     "played": 15,
-     "points": 22,
-     "position": 9,
-     "provisional": 0,
-     "rating": -0.04366031714148466,
-     "team": "Urawa Reds",
      "won": 7
     },
     {
@@ -35453,6 +35392,16 @@
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Shimizu S-Pulse",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-21",
        "ga": 0,
@@ -35488,28 +35437,87 @@
        "league": "JPN",
        "opponent": "Kawasaki Frontale",
        "result": "L"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 0,
-       "gf": 2,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Mito",
-       "result": "W"
       }
      ],
      "ga": 22,
-     "gd": -5,
-     "gf": 17,
+     "gd": -3,
+     "gf": 19,
      "lost": 7,
-     "played": 15,
-     "points": 20,
-     "position": 10,
-     "provisional": 0,
+     "played": 16,
+     "points": 23,
+     "position": 9,
+     "provisional": 1,
      "rating": -0.23574275366653963,
      "team": "Okayama",
-     "won": 6
+     "won": 7
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "URA",
+      "fg": "#FFFFFF",
+      "name": "Urawa Reds"
+     },
+     "drawn": 2,
+     "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Cerezo Osaka",
+       "provisional": true,
+       "result": "D"
+      },
+      {
+       "date": "2026-11-21",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Kyoto",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Vissel Kobe",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 4,
+       "gf": 0,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Kashiwa Reysol",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "JPN",
+       "opponent": "V-Varen Nagasaki",
+       "result": "W"
+      }
+     ],
+     "ga": 33,
+     "gd": -7,
+     "gf": 26,
+     "lost": 7,
+     "played": 16,
+     "points": 23,
+     "position": 10,
+     "provisional": 1,
+     "rating": -0.04366031714148466,
+     "team": "Urawa Reds",
+     "won": 7
     },
     {
      "club": {
@@ -35581,146 +35589,22 @@
     {
      "club": {
       "bg": "#5B6170",
-      "code": "CER",
-      "fg": "#FFFFFF",
-      "name": "Cerezo Osaka"
-     },
-     "drawn": 5,
-     "form": [
-      {
-       "date": "2026-11-21",
-       "ga": 3,
-       "gf": 0,
-       "home": true,
-       "league": "JPN",
-       "opponent": "FC Tokyo",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-08",
-       "ga": 2,
-       "gf": 3,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Gamba Osaka",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 4,
-       "gf": 1,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Kashima Antlers",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Chiba",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Nagoya Grampus",
-       "result": "D"
-      }
-     ],
-     "ga": 28,
-     "gd": -12,
-     "gf": 16,
-     "lost": 6,
-     "played": 15,
-     "points": 17,
-     "position": 12,
-     "provisional": 0,
-     "rating": -0.29200692340651924,
-     "team": "Cerezo Osaka",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "CHI",
-      "fg": "#FFFFFF",
-      "name": "Chiba"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-11-20",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Kashiwa Reysol",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-08",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Mito",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 0,
-       "gf": 3,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Avispa Fukuoka",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Cerezo Osaka",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 3,
-       "gf": 2,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Urawa Reds",
-       "result": "L"
-      }
-     ],
-     "ga": 24,
-     "gd": -7,
-     "gf": 17,
-     "lost": 7,
-     "played": 15,
-     "points": 16,
-     "position": 13,
-     "provisional": 0,
-     "rating": -0.2813601105649439,
-     "team": "Chiba",
-     "won": 4
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
       "code": "NAG",
       "fg": "#FFFFFF",
       "name": "Nagoya Grampus"
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Chiba",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-21",
        "ga": 0,
@@ -35756,27 +35640,154 @@
        "league": "JPN",
        "opponent": "Yokohama F. Marinos",
        "result": "D"
+      }
+     ],
+     "ga": 24,
+     "gd": -7,
+     "gf": 17,
+     "lost": 8,
+     "played": 16,
+     "points": 18,
+     "position": 12,
+     "provisional": 1,
+     "rating": -0.244728645536596,
+     "team": "Nagoya Grampus",
+     "won": 5
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "CER",
+      "fg": "#FFFFFF",
+      "name": "Cerezo Osaka"
+     },
+     "drawn": 6,
+     "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Urawa Reds",
+       "provisional": true,
+       "result": "D"
       },
       {
-       "date": "2026-10-21",
-       "ga": 1,
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "JPN",
+       "opponent": "FC Tokyo",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 2,
+       "gf": 3,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Gamba Osaka",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 4,
+       "gf": 1,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Kashima Antlers",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 2,
+       "gf": 2,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Chiba",
+       "result": "D"
+      }
+     ],
+     "ga": 30,
+     "gd": -12,
+     "gf": 18,
+     "lost": 6,
+     "played": 16,
+     "points": 18,
+     "position": 13,
+     "provisional": 1,
+     "rating": -0.29200692340651924,
+     "team": "Cerezo Osaka",
+     "won": 4
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "CHI",
+      "fg": "#FFFFFF",
+      "name": "Chiba"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 2,
        "gf": 1,
        "home": true,
+       "league": "JPN",
+       "opponent": "Nagoya Grampus",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-11-20",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Kashiwa Reysol",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Mito",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 0,
+       "gf": 3,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Avispa Fukuoka",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 2,
+       "gf": 2,
+       "home": false,
        "league": "JPN",
        "opponent": "Cerezo Osaka",
        "result": "D"
       }
      ],
-     "ga": 23,
+     "ga": 26,
      "gd": -8,
-     "gf": 15,
+     "gf": 18,
      "lost": 8,
-     "played": 15,
-     "points": 15,
+     "played": 16,
+     "points": 16,
      "position": 14,
-     "provisional": 0,
-     "rating": -0.244728645536596,
-     "team": "Nagoya Grampus",
+     "provisional": 1,
+     "rating": -0.2813601105649439,
+     "team": "Chiba",
      "won": 4
     },
     {
@@ -35788,6 +35799,16 @@
      },
      "drawn": 6,
      "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Mito",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-21",
        "ga": 0,
@@ -35823,28 +35844,87 @@
        "league": "JPN",
        "opponent": "Avispa Fukuoka",
        "result": "W"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Yokohama F. Marinos",
-       "result": "D"
       }
      ],
-     "ga": 22,
-     "gd": -10,
+     "ga": 23,
+     "gd": -11,
      "gf": 12,
-     "lost": 6,
-     "played": 15,
+     "lost": 7,
+     "played": 16,
      "points": 15,
      "position": 15,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.3722164247854609,
      "team": "Verdy",
      "won": 3
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "MIT",
+      "fg": "#FFFFFF",
+      "name": "Mito"
+     },
+     "drawn": 3,
+     "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Verdy",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-20",
+       "ga": 1,
+       "gf": 2,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Vissel Kobe",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-08",
+       "ga": 1,
+       "gf": 0,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Chiba",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 3,
+       "gf": 0,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Sanfrecce Hiroshima",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 6,
+       "gf": 0,
+       "home": false,
+       "league": "JPN",
+       "opponent": "FC Tokyo",
+       "result": "L"
+      }
+     ],
+     "ga": 27,
+     "gd": -12,
+     "gf": 15,
+     "lost": 9,
+     "played": 16,
+     "points": 15,
+     "position": 16,
+     "provisional": 1,
+     "rating": -0.4161390803987909,
+     "team": "Mito",
+     "won": 4
     },
     {
      "club": {
@@ -35855,6 +35935,16 @@
      },
      "drawn": 3,
      "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "JPN",
+       "opponent": "Okayama",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-20",
        "ga": 1,
@@ -35890,25 +35980,16 @@
        "league": "JPN",
        "opponent": "Sanfrecce Hiroshima",
        "result": "L"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 5,
-       "gf": 0,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Machida",
-       "result": "L"
       }
      ],
-     "ga": 24,
-     "gd": -13,
+     "ga": 26,
+     "gd": -15,
      "gf": 11,
-     "lost": 8,
-     "played": 15,
+     "lost": 9,
+     "played": 16,
      "points": 15,
-     "position": 16,
-     "provisional": 0,
+     "position": 17,
+     "provisional": 1,
      "rating": -0.41737467164847464,
      "team": "Shimizu S-Pulse",
      "won": 4
@@ -35922,6 +36003,16 @@
      },
      "drawn": 5,
      "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Kawasaki Frontale",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-21",
        "ga": 0,
@@ -35957,25 +36048,16 @@
        "league": "JPN",
        "opponent": "Urawa Reds",
        "result": "L"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 0,
-       "gf": 4,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Sanfrecce Hiroshima",
-       "result": "W"
       }
      ],
-     "ga": 22,
-     "gd": -5,
-     "gf": 17,
-     "lost": 7,
-     "played": 15,
+     "ga": 24,
+     "gd": -6,
+     "gf": 18,
+     "lost": 8,
+     "played": 16,
      "points": 14,
-     "position": 17,
-     "provisional": 0,
+     "position": 18,
+     "provisional": 1,
      "rating": -0.20522410496073717,
      "team": "V-Varen Nagasaki",
      "won": 3
@@ -36041,78 +36123,11 @@
      "lost": 7,
      "played": 15,
      "points": 12,
-     "position": 18,
+     "position": 19,
      "provisional": 0,
      "rating": -0.19997250326112392,
      "team": "Gamba Osaka",
      "won": 2
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "MIT",
-      "fg": "#FFFFFF",
-      "name": "Mito"
-     },
-     "drawn": 3,
-     "form": [
-      {
-       "date": "2026-11-20",
-       "ga": 1,
-       "gf": 2,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Vissel Kobe",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-08",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Chiba",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 3,
-       "gf": 0,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Sanfrecce Hiroshima",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 6,
-       "gf": 0,
-       "home": false,
-       "league": "JPN",
-       "opponent": "FC Tokyo",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 2,
-       "gf": 0,
-       "home": false,
-       "league": "JPN",
-       "opponent": "Okayama",
-       "result": "L"
-      }
-     ],
-     "ga": 27,
-     "gd": -13,
-     "gf": 14,
-     "lost": 9,
-     "played": 15,
-     "points": 12,
-     "position": 19,
-     "provisional": 0,
-     "rating": -0.4161390803987909,
-     "team": "Mito",
-     "won": 3
     },
     {
      "club": {
@@ -36123,6 +36138,16 @@
      },
      "drawn": 2,
      "form": [
+      {
+       "date": "2026-11-25",
+       "ga": 2,
+       "gf": 1,
+       "home": true,
+       "league": "JPN",
+       "opponent": "Yokohama F. Marinos",
+       "provisional": true,
+       "result": "L"
+      },
       {
        "date": "2026-11-21",
        "ga": 1,
@@ -36158,25 +36183,16 @@
        "league": "JPN",
        "opponent": "Verdy",
        "result": "L"
-      },
-      {
-       "date": "2026-10-21",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "JPN",
-       "opponent": "Gamba Osaka",
-       "result": "L"
       }
      ],
-     "ga": 26,
-     "gd": -12,
-     "gf": 14,
-     "lost": 11,
-     "played": 15,
+     "ga": 28,
+     "gd": -13,
+     "gf": 15,
+     "lost": 12,
+     "played": 16,
      "points": 8,
      "position": 20,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.3139497518371285,
      "team": "Avispa Fukuoka",
      "won": 2
@@ -42764,8 +42780,8 @@
    "label": "MLS",
    "model_through": "2026-11-24",
    "name": "MLS",
-   "provisional": 0,
-   "results_through": "2026-11-24",
+   "provisional": 1,
+   "results_through": "2026-11-25",
    "rows": [
     {
      "club": {
@@ -43313,6 +43329,16 @@
      "drawn": 10,
      "form": [
       {
+       "date": "2026-11-25",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "USA",
+       "opponent": "Houston Dynamo",
+       "provisional": true,
+       "result": "W"
+      },
+      {
        "date": "2026-11-08",
        "ga": 3,
        "gf": 1,
@@ -43347,28 +43373,19 @@
        "league": "USA",
        "opponent": "FC Dallas",
        "result": "L"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 1,
-       "gf": 1,
-       "home": true,
-       "league": "USA",
-       "opponent": "Nashville SC",
-       "result": "D"
       }
      ],
-     "ga": 51,
-     "gd": 6,
-     "gf": 57,
+     "ga": 52,
+     "gd": 7,
+     "gf": 59,
      "lost": 10,
-     "played": 34,
-     "points": 52,
+     "played": 35,
+     "points": 55,
      "position": 9,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.022170431688484094,
      "team": "San Jose Earthquakes",
-     "won": 14
+     "won": 15
     },
     {
      "club": {
@@ -43447,6 +43464,16 @@
      "drawn": 9,
      "form": [
       {
+       "date": "2026-11-25",
+       "ga": 2,
+       "gf": 1,
+       "home": false,
+       "league": "USA",
+       "opponent": "San Jose Earthquakes",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-08",
        "ga": 1,
        "gf": 0,
@@ -43481,25 +43508,16 @@
        "league": "USA",
        "opponent": "Minnesota United",
        "result": "D"
-      },
-      {
-       "date": "2026-10-18",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "USA",
-       "opponent": "FC Dallas",
-       "result": "D"
       }
      ],
-     "ga": 43,
-     "gd": 0,
-     "gf": 43,
-     "lost": 11,
-     "played": 34,
+     "ga": 45,
+     "gd": -1,
+     "gf": 44,
+     "lost": 12,
+     "played": 35,
      "points": 51,
      "position": 11,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.05868964585968306,
      "team": "Houston Dynamo",
      "won": 14
