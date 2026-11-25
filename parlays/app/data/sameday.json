@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-24T13:27:15Z",
+ "generated": "2026-11-25T01:39:17Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -81,353 +81,6 @@
  },
  "days": [
   {
-   "day": "2026-11-23",
-   "today": false,
-   "past": true,
-   "likeliest": {
-    "day": "2026-11-23",
-    "kind": "likeliest",
-    "status": "none",
-    "legs": [],
-    "multiplier": null,
-    "p": null,
-    "p_market": null,
-    "none_reason": "not_logged",
-    "missing_reason": "No likeliest ticket was logged for this day before its events started, so there is none to show; why none fitted then was not logged."
-   },
-   "underdog": {
-    "day": "2026-11-23",
-    "kind": "underdog",
-    "status": "lost",
-    "legs": [
-     {
-      "sport": "Soccer",
-      "event": "Monza v Fiorentina",
-      "pick": "Monza",
-      "opponent": "I1",
-      "kickoff": "2026-11-23T19:45:00Z",
-      "decimal": 3.56,
-      "p": 0.24974531709681333,
-      "p_model": null,
-      "p_market": 0.2636101491066642,
-      "price_source": "average price",
-      "american": 256,
-      "reason": "Soccer: chance 25%, market 26%",
-      "outcome": null,
-      "void_reason": null,
-      "dog": true
-     },
-     {
-      "sport": "NFL",
-      "event": "CIN @ WAS",
-      "pick": "CIN",
-      "opponent": "WAS",
-      "kickoff": "2026-11-24T01:15:00Z",
-      "decimal": 1.3389830508474576,
-      "p": 0.717879,
-      "p_model": 0.6342479999999999,
-      "p_market": 0.717454,
-      "price_source": "consensus moneyline",
-      "american": -295,
-      "reason": "NFL: chance 72%, model 63%, market 72%",
-      "outcome": "lost",
-      "void_reason": null,
-      "dog": false
-     }
-    ],
-    "multiplier": 4.7668,
-    "p": 0.179287,
-    "p_market": 0.189128,
-    "sports": [
-     "NFL",
-     "Soccer"
-    ],
-    "first_start": "2026-11-23T19:45:00Z",
-    "last_start": "2026-11-24T01:15:00Z",
-    "built_at": "2026-11-22T14:41:55Z",
-    "paid": 0.0,
-    "profit": -1.0,
-    "missing_reason": null,
-    "none_reason": null,
-    "dog": {
-     "pick": "Monza",
-     "event": "Monza v Fiorentina",
-     "sport": "Soccer",
-     "rank": 0,
-     "candidates": 4,
-     "salt": "sameday-dog-v1",
-     "version": 1
-    },
-    "lands_1_in": 5,
-    "only_one": false,
-    "best_of_books": false,
-    "price_note": null
-   },
-   "cannot_both_win": false,
-   "ufc_day": false,
-   "missing": {},
-   "likeliest_v2": {
-    "day": "2026-11-23",
-    "kind": "likeliest_v2",
-    "status": "locked",
-    "legs": [
-     {
-      "sport": "Soccer",
-      "event": "Monza v Fiorentina",
-      "pick": "Fiorentina",
-      "opponent": "I1",
-      "kickoff": "2026-11-23T19:45:00Z",
-      "decimal": 1.92,
-      "p": 0.5074497325626869,
-      "p_model": null,
-      "p_market": 0.48877715146860656,
-      "price_source": "average price",
-      "american": -109,
-      "reason": "Soccer: chance 51%, market 49%",
-      "outcome": null,
-      "void_reason": null,
-      "dog": false,
-      "bet": "1X2",
-      "bet_detail": "winner",
-      "label": "Fiorentina to win",
-      "market": "1X2",
-      "estimated": false,
-      "error_pct": null,
-      "moneyline_source": null
-     },
-     {
-      "sport": "Soccer",
-      "event": "Internacional v Vitoria",
-      "pick": "Internacional",
-      "opponent": "BRA",
-      "kickoff": "2026-11-23T22:30:00Z",
-      "decimal": 1.62,
-      "p": 0.6202082024912667,
-      "p_model": null,
-      "p_market": 0.5970149253731344,
-      "price_source": "average price",
-      "american": -161,
-      "reason": "Soccer: chance 62%, market 60%",
-      "outcome": null,
-      "void_reason": null,
-      "dog": false,
-      "bet": "1X2",
-      "bet_detail": "winner",
-      "label": "Internacional to win",
-      "market": "1X2",
-      "estimated": false,
-      "error_pct": null,
-      "moneyline_source": null
-     }
-    ],
-    "multiplier": 3.1104,
-    "p": 0.314724,
-    "p_market": 0.291807,
-    "sports": [
-     "Soccer"
-    ],
-    "first_start": "2026-11-23T19:45:00Z",
-    "last_start": "2026-11-23T22:30:00Z",
-    "built_at": "2026-11-20T19:21:26Z",
-    "paid": null,
-    "profit": null,
-    "missing_reason": null,
-    "none_reason": null,
-    "version": 2,
-    "bets": [
-     "1X2"
-    ],
-    "estimated": false
-   },
-   "underdog_v2": {
-    "day": "2026-11-23",
-    "kind": "underdog_v2",
-    "status": "locked",
-    "legs": [
-     {
-      "sport": "Soccer",
-      "event": "Wieczysta Krakow v Motor Lublin",
-      "pick": "Motor Lublin",
-      "opponent": "POL",
-      "kickoff": "2026-11-23T18:00:00Z",
-      "decimal": 2.65,
-      "p": 0.353978792983847,
-      "p_model": null,
-      "p_market": 0.353978792983847,
-      "price_source": "average price",
-      "american": 165,
-      "reason": "Soccer: chance 35%, market 35%",
-      "outcome": null,
-      "void_reason": null,
-      "dog": true,
-      "bet": "1X2",
-      "bet_detail": null,
-      "label": "Motor Lublin to win",
-      "market": "1X2",
-      "estimated": false,
-      "error_pct": null,
-      "moneyline_source": null
-     },
-     {
-      "sport": "Soccer",
-      "event": "Hammarby v Goteborg",
-      "pick": "Hammarby",
-      "opponent": "SWE",
-      "kickoff": "2026-11-23T18:00:00Z",
-      "decimal": 1.24,
-      "p": 0.8112667259036827,
-      "p_model": null,
-      "p_market": 0.7809594644849387,
-      "price_source": "average price",
-      "american": -417,
-      "reason": "Soccer: chance 81%, market 78%",
-      "outcome": "won",
-      "void_reason": null,
-      "dog": false,
-      "bet": "1X2",
-      "bet_detail": "winner",
-      "label": "Hammarby to win",
-      "market": "1X2",
-      "estimated": false,
-      "error_pct": null,
-      "moneyline_source": null
-     }
-    ],
-    "multiplier": 3.286,
-    "p": 0.287171,
-    "p_market": 0.276443,
-    "sports": [
-     "Soccer"
-    ],
-    "first_start": "2026-11-23T18:00:00Z",
-    "last_start": "2026-11-23T18:00:00Z",
-    "built_at": "2026-11-23T16:05:15Z",
-    "paid": null,
-    "profit": null,
-    "missing_reason": null,
-    "none_reason": null,
-    "version": 2,
-    "bets": [
-     "1X2"
-    ],
-    "estimated": false,
-    "dog": {
-     "pick": "Motor Lublin",
-     "event": "Wieczysta Krakow v Motor Lublin",
-     "sport": "Soccer",
-     "rank": 0,
-     "candidates": 14,
-     "salt": "sameday-dog-v2",
-     "version": 2
-    },
-    "lands_1_in": 4,
-    "only_one": false,
-    "best_of_books": false,
-    "price_note": null
-   },
-   "mixed": {
-    "day": "2026-11-23",
-    "kind": "mixed",
-    "status": "locked",
-    "legs": [
-     {
-      "sport": "Soccer",
-      "event": "Buyuksehyr v Corum",
-      "pick": "Over 2.5 goals",
-      "opponent": "T1",
-      "kickoff": "2026-11-23T17:00:00Z",
-      "decimal": 1.55,
-      "p": 0.599483204134367,
-      "p_model": null,
-      "p_market": 0.599483204134367,
-      "price_source": "average price",
-      "american": -182,
-      "reason": "Soccer: chance 60%, the market's (no-vig)",
-      "outcome": "won",
-      "void_reason": null,
-      "dog": false,
-      "bet": "OU25",
-      "bet_detail": "Over 2.5 goals",
-      "label": "Over 2.5 goals",
-      "market": "Over/under",
-      "estimated": false,
-      "error_pct": null,
-      "moneyline_source": null
-     },
-     {
-      "sport": "Soccer",
-      "event": "Hammarby v Goteborg",
-      "pick": "Hammarby",
-      "opponent": "SWE",
-      "kickoff": "2026-11-23T18:00:00Z",
-      "decimal": 1.24,
-      "p": 0.8112667259036827,
-      "p_model": null,
-      "p_market": 0.7809594644849387,
-      "price_source": "average price",
-      "american": -417,
-      "reason": "Soccer: chance 81%, market 78%",
-      "outcome": "won",
-      "void_reason": null,
-      "dog": false,
-      "bet": "1X2",
-      "bet_detail": "winner",
-      "label": "Hammarby to win",
-      "market": "1X2",
-      "estimated": false,
-      "error_pct": null,
-      "moneyline_source": null
-     },
-     {
-      "sport": "Soccer",
-      "event": "Internacional v Vitoria",
-      "pick": "Internacional",
-      "opponent": "BRA",
-      "kickoff": "2026-11-23T22:30:00Z",
-      "decimal": 1.62,
-      "p": 0.6202082024912667,
-      "p_model": null,
-      "p_market": 0.5970149253731344,
-      "price_source": "average price",
-      "american": -161,
-      "reason": "Soccer: chance 62%, market 60%",
-      "outcome": null,
-      "void_reason": null,
-      "dog": false,
-      "bet": "1X2",
-      "bet_detail": "winner",
-      "label": "Internacional to win",
-      "market": "1X2",
-      "estimated": false,
-      "error_pct": null,
-      "moneyline_source": null
-     }
-    ],
-    "multiplier": 3.1136,
-    "p": 0.301633,
-    "p_market": 0.279506,
-    "sports": [
-     "Soccer"
-    ],
-    "first_start": "2026-11-23T17:00:00Z",
-    "last_start": "2026-11-23T22:30:00Z",
-    "built_at": "2026-11-20T19:21:26Z",
-    "paid": null,
-    "profit": null,
-    "missing_reason": null,
-    "none_reason": null,
-    "version": 2,
-    "bets": [
-     "1X2",
-     "OU25"
-    ],
-    "estimated": false
-   },
-   "props": null,
-   "v2_cannot_both_win": false,
-   "in_play": true
-  },
-  {
    "day": "2026-11-24",
    "today": true,
    "past": false,
@@ -459,7 +112,7 @@
    "ufc_day": false,
    "missing": {
     "OU25": {
-     "no over/under 2.5 price posted": 33
+     "no over/under 2.5 price posted": 1
     }
    },
    "likeliest_v2": {
@@ -471,10 +124,10 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_fit",
-    "missing_reason": "No combination of this day's priced winner picks (each at least a 50% chance) pays 3-5x with 6 legs or fewer. The next likeliest ticket is on Thursday, Nov 26.",
+    "missing_reason": "No combination of this day's priced winner picks (each at least a 50% chance) pays 3-5x with 6 legs or fewer. The next likeliest ticket is on Wednesday, Nov 25.",
     "version": 2,
     "estimated": false,
-    "next_day": "2026-11-26"
+    "next_day": "2026-11-25"
    },
    "underdog_v2": {
     "day": "2026-11-24",
@@ -485,10 +138,10 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_dog",
-    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. The next underdog ticket is on Thursday, Nov 26.",
+    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. The next underdog ticket is on Wednesday, Nov 25.",
     "version": 2,
     "estimated": false,
-    "next_day": "2026-11-26"
+    "next_day": "2026-11-25"
    },
    "mixed": {
     "day": "2026-11-24",
@@ -499,10 +152,10 @@
     "p": null,
     "p_market": null,
     "none_reason": "no_other",
-    "missing_reason": "No mixed ticket: no over/under, spread, total or method leg is on offer this day (each but a method leg needs at least a 50% chance). The next mixed ticket is on Thursday, Nov 26.",
+    "missing_reason": "No mixed ticket: no over/under, spread, total or method leg is on offer this day (each but a method leg needs at least a 50% chance). The next mixed ticket is on Wednesday, Nov 25.",
     "version": 2,
     "estimated": false,
-    "next_day": "2026-11-26"
+    "next_day": "2026-11-25"
    },
    "props": null,
    "v2_cannot_both_win": false,
@@ -538,46 +191,266 @@
    "ufc_day": false,
    "missing": {
     "OU25": {
-     "no over/under 2.5 price posted": 20
+     "no over/under 2.5 price posted": 18
     }
    },
    "likeliest_v2": {
     "day": "2026-11-25",
     "kind": "likeliest_v2",
-    "status": "none",
-    "legs": [],
-    "multiplier": null,
-    "p": null,
-    "p_market": null,
-    "none_reason": "no_fit",
-    "missing_reason": "No combination of this day's priced winner picks (each at least a 50% chance) pays 3-5x with 6 legs or fewer.",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "Soccer",
+      "event": "Boca Juniors v Ind. Rivadavia",
+      "pick": "Boca Juniors",
+      "opponent": "ARG",
+      "kickoff": "2026-11-26T00:00:00Z",
+      "decimal": 1.6,
+      "p": 0.6004696647178683,
+      "p_model": null,
+      "p_market": 0.5794461720716718,
+      "price_source": "average price",
+      "american": -167,
+      "reason": "Soccer: chance 60%, market 58%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "1X2",
+      "bet_detail": "winner",
+      "label": "Boca Juniors to win",
+      "market": "1X2",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     },
+     {
+      "sport": "NFL",
+      "event": "GB @ LA",
+      "pick": "LA",
+      "opponent": "GB",
+      "kickoff": "2026-11-26T01:00:00Z",
+      "decimal": 1.6042296072507551,
+      "p": 0.599285,
+      "p_model": 0.661385,
+      "p_market": 0.59836,
+      "price_source": "consensus moneyline",
+      "american": -166,
+      "reason": "NFL: chance 60%, model 66%, market 60%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "1X2",
+      "bet_detail": "winner",
+      "label": "LA to win",
+      "market": "Moneyline",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     },
+     {
+      "sport": "Soccer",
+      "event": "Toluca v Atlas",
+      "pick": "Toluca",
+      "opponent": "MEX",
+      "kickoff": "2026-11-26T01:00:00Z",
+      "decimal": 1.4,
+      "p": 0.6806522031420899,
+      "p_model": null,
+      "p_market": 0.6534525317333383,
+      "price_source": "average price",
+      "american": -250,
+      "reason": "Soccer: chance 68%, market 65%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "1X2",
+      "bet_detail": "winner",
+      "label": "Toluca to win",
+      "market": "1X2",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     }
+    ],
+    "multiplier": 3.5935,
+    "p": 0.244934,
+    "p_market": 0.226563,
+    "sports": [
+     "NFL",
+     "Soccer"
+    ],
+    "first_start": "2026-11-26T00:00:00Z",
+    "last_start": "2026-11-26T01:00:00Z",
+    "built_at": "2026-11-25T01:13:49Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null,
     "version": 2,
+    "bets": [
+     "1X2"
+    ],
     "estimated": false
    },
    "underdog_v2": {
     "day": "2026-11-25",
     "kind": "underdog_v2",
-    "status": "none",
-    "legs": [],
-    "multiplier": null,
-    "p": null,
-    "p_market": null,
-    "none_reason": "no_fill",
-    "missing_reason": "No underdog ticket: there is an underdog priced 2.00-4.00 (+100 to +300), but no favourites on other events bring it to 3-5x.",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "Soccer",
+      "event": "Stoke City v Millwall",
+      "pick": "Millwall",
+      "opponent": "E1",
+      "kickoff": "2026-11-25T20:00:00Z",
+      "decimal": 3.18,
+      "p": 0.29432970695207733,
+      "p_model": null,
+      "p_market": 0.29432970695207733,
+      "price_source": "average price",
+      "american": 218,
+      "reason": "Soccer: chance 29%, market 29%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": true,
+      "bet": "1X2",
+      "bet_detail": null,
+      "label": "Millwall to win",
+      "market": "1X2",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     },
+     {
+      "sport": "Soccer",
+      "event": "Toluca v Atlas",
+      "pick": "Toluca",
+      "opponent": "MEX",
+      "kickoff": "2026-11-26T01:00:00Z",
+      "decimal": 1.4,
+      "p": 0.6806522031420899,
+      "p_model": null,
+      "p_market": 0.6534525317333383,
+      "price_source": "average price",
+      "american": -250,
+      "reason": "Soccer: chance 68%, market 65%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "1X2",
+      "bet_detail": "winner",
+      "label": "Toluca to win",
+      "market": "1X2",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     }
+    ],
+    "multiplier": 4.452,
+    "p": 0.200336,
+    "p_market": 0.19233,
+    "sports": [
+     "Soccer"
+    ],
+    "first_start": "2026-11-25T20:00:00Z",
+    "last_start": "2026-11-26T01:00:00Z",
+    "built_at": "2026-11-25T01:13:49Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null,
     "version": 2,
-    "estimated": false
+    "bets": [
+     "1X2"
+    ],
+    "estimated": false,
+    "dog": {
+     "pick": "Millwall",
+     "event": "Stoke City v Millwall",
+     "sport": "Soccer",
+     "rank": 0,
+     "candidates": 6,
+     "salt": "sameday-dog-v2",
+     "version": 2
+    },
+    "lands_1_in": 5,
+    "only_one": false,
+    "best_of_books": false,
+    "price_note": null
    },
    "mixed": {
     "day": "2026-11-25",
     "kind": "mixed",
-    "status": "none",
-    "legs": [],
-    "multiplier": null,
-    "p": null,
-    "p_market": null,
-    "none_reason": "no_fit",
-    "missing_reason": "No mixed ticket: no combination holding an over/under, spread, total or method leg pays 3-5x with 6 legs or fewer.",
+    "status": "open",
+    "legs": [
+     {
+      "sport": "Soccer",
+      "event": "Boca Juniors v Ind. Rivadavia",
+      "pick": "Boca Juniors",
+      "opponent": "ARG",
+      "kickoff": "2026-11-26T00:00:00Z",
+      "decimal": 1.6,
+      "p": 0.6004696647178683,
+      "p_model": null,
+      "p_market": 0.5794461720716718,
+      "price_source": "average price",
+      "american": -167,
+      "reason": "Soccer: chance 60%, market 58%",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "1X2",
+      "bet_detail": "winner",
+      "label": "Boca Juniors to win",
+      "market": "1X2",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     },
+     {
+      "sport": "NFL",
+      "event": "GB @ LA",
+      "pick": "LA -3",
+      "opponent": "GB",
+      "kickoff": "2026-11-26T01:00:00Z",
+      "decimal": 1.9090909090909092,
+      "p": 0.5,
+      "p_model": null,
+      "p_market": 0.5,
+      "price_source": "consensus price at the consensus line",
+      "american": -110,
+      "reason": "NFL: chance 50%, the market's (no-vig)",
+      "outcome": null,
+      "void_reason": null,
+      "dog": false,
+      "bet": "SPREAD",
+      "bet_detail": "LA -3",
+      "label": "LA -3",
+      "market": "Spread",
+      "estimated": false,
+      "error_pct": null,
+      "moneyline_source": null
+     }
+    ],
+    "multiplier": 3.0545,
+    "p": 0.300235,
+    "p_market": 0.289723,
+    "sports": [
+     "NFL",
+     "Soccer"
+    ],
+    "first_start": "2026-11-26T00:00:00Z",
+    "last_start": "2026-11-26T01:00:00Z",
+    "built_at": "2026-11-25T01:13:49Z",
+    "paid": null,
+    "profit": null,
+    "missing_reason": null,
+    "none_reason": null,
     "version": 2,
+    "bets": [
+     "1X2",
+     "SPREAD"
+    ],
     "estimated": false
    },
    "props": null,
@@ -730,7 +603,7 @@
    "ufc_day": false,
    "missing": {
     "OU25": {
-     "no over/under 2.5 price posted": 2
+     "no over/under 2.5 price posted": 3
     }
    },
    "likeliest_v2": {
@@ -860,39 +733,40 @@
       "moneyline_source": null
      },
      {
-      "sport": "NFL",
-      "event": "KC @ BUF",
-      "pick": "BUF",
-      "opponent": "KC",
-      "kickoff": "2026-11-27T01:20:00Z",
-      "decimal": 1.6289308176100628,
-      "p": 0.598973,
-      "p_model": 0.688417,
-      "p_market": 0.589579,
-      "price_source": "consensus moneyline",
-      "american": -159,
-      "reason": "NFL: chance 60%, model 69%, market 59%",
+      "sport": "Soccer",
+      "event": "Sao Paulo v Remo",
+      "pick": "Sao Paulo",
+      "opponent": "BRA",
+      "kickoff": "2026-11-26T23:00:00Z",
+      "decimal": 1.37,
+      "p": 0.7033432845426274,
+      "p_model": null,
+      "p_market": 0.6756281167119091,
+      "price_source": "average price",
+      "american": -270,
+      "reason": "Soccer: chance 70%, market 68%",
       "outcome": null,
       "void_reason": null,
       "dog": false,
       "bet": "1X2",
       "bet_detail": "winner",
-      "label": "BUF to win",
-      "market": "Moneyline",
+      "label": "Sao Paulo to win",
+      "market": "1X2",
       "estimated": false,
       "error_pct": null,
       "moneyline_source": null
      }
     ],
-    "multiplier": 3.6814,
-    "p": 0.246157,
-    "p_market": 0.251023,
+    "multiplier": 3.0962,
+    "p": 0.289049,
+    "p_market": 0.287659,
     "sports": [
-     "NFL"
+     "NFL",
+     "Soccer"
     ],
     "first_start": "2026-11-26T18:00:00Z",
-    "last_start": "2026-11-27T01:20:00Z",
-    "built_at": "2026-11-24T02:24:48Z",
+    "last_start": "2026-11-26T23:00:00Z",
+    "built_at": "2026-11-25T01:13:49Z",
     "paid": null,
     "profit": null,
     "missing_reason": null,
@@ -907,11 +781,11 @@
      "event": "CHI @ DET",
      "sport": "NFL",
      "rank": 0,
-     "candidates": 2,
+     "candidates": 4,
      "salt": "sameday-dog-v2",
      "version": 2
     },
-    "lands_1_in": 4,
+    "lands_1_in": 3,
     "only_one": false,
     "best_of_books": false,
     "price_note": null
@@ -1216,7 +1090,7 @@
    "ufc_day": false,
    "missing": {
     "OU25": {
-     "no over/under 2.5 price posted": 82
+     "no over/under 2.5 price posted": 84
     }
    },
    "likeliest_v2": {
@@ -1941,11 +1815,11 @@
    ]
   },
   "likeliest_v2": {
-   "settled": 3,
+   "settled": 4,
    "won": 1,
-   "units": 0.03,
-   "roi": 0.01,
-   "implied_roi": -0.2049,
+   "units": -0.97,
+   "roi": -0.2425,
+   "implied_roi": -0.1767,
    "estimated": 0,
    "pending": 3,
    "last": [
@@ -1983,15 +1857,26 @@
       "Soccer"
      ],
      "estimated": false
+    },
+    {
+     "day": "2026-11-23",
+     "status": "lost",
+     "multiplier": 3.1104,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
+      "Soccer"
+     ],
+     "estimated": false
     }
    ]
   },
   "underdog_v2": {
-   "settled": 4,
+   "settled": 5,
    "won": 2,
-   "units": 3.56,
-   "roi": 0.89,
-   "implied_roi": -0.104,
+   "units": 2.56,
+   "roi": 0.512,
+   "implied_roi": -0.1015,
    "estimated": 0,
    "pending": 3,
    "last": [
@@ -2040,15 +1925,26 @@
       "Soccer"
      ],
      "estimated": false
+    },
+    {
+     "day": "2026-11-23",
+     "status": "lost",
+     "multiplier": 3.286,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
+      "Soccer"
+     ],
+     "estimated": false
     }
    ]
   },
   "mixed": {
-   "settled": 3,
+   "settled": 4,
    "won": 1,
-   "units": 0.02,
-   "roi": 0.0067,
-   "implied_roi": -0.1693,
+   "units": -0.98,
+   "roi": -0.245,
+   "implied_roi": -0.1594,
    "estimated": 0,
    "pending": 4,
    "last": [
@@ -2083,6 +1979,17 @@
      "profit": 2.0246027658536585,
      "sports": [
       "NFL",
+      "Soccer"
+     ],
+     "estimated": false
+    },
+    {
+     "day": "2026-11-23",
+     "status": "lost",
+     "multiplier": 3.1136,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
       "Soccer"
      ],
      "estimated": false

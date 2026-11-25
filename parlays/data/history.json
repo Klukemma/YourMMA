@@ -2834,7 +2834,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "lost"
     },
     {
      "sport": "Soccer",
@@ -2993,7 +2993,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "lost"
     },
     {
      "sport": "Soccer",
@@ -4361,7 +4361,7 @@
    "day": "2026-11-23",
    "kind": "likeliest_v2",
    "built_at": "2026-11-20T19:21:26Z",
-   "status": "pending",
+   "status": "lost",
    "multiplier": 3.1104,
    "p": 0.314724,
    "p_market": 0.291807,
@@ -4395,7 +4395,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "lost"
     },
     {
      "sport": "Soccer",
@@ -4421,7 +4421,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "lost"
     }
    ],
    "version": 2,
@@ -4429,8 +4429,8 @@
     "1X2"
    ],
    "estimated": false,
-   "paid": null,
-   "profit": null
+   "paid": 0.0,
+   "profit": -1.0
   },
   {
    "day": "2026-11-23",
@@ -4520,7 +4520,7 @@
    "day": "2026-11-23",
    "kind": "mixed",
    "built_at": "2026-11-20T19:21:26Z",
-   "status": "pending",
+   "status": "lost",
    "multiplier": 3.1136,
    "p": 0.301633,
    "p_market": 0.279506,
@@ -4607,7 +4607,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "lost"
     }
    ],
    "version": 2,
@@ -4616,8 +4616,8 @@
     "OU25"
    ],
    "estimated": false,
-   "paid": null,
-   "profit": null
+   "paid": 0.0,
+   "profit": -1.0
   },
   {
    "day": "2026-11-21",
@@ -5029,7 +5029,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "won"
     }
    ],
    "version": 2,
@@ -5109,7 +5109,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "won"
     },
     {
      "sport": "Soccer",
@@ -5318,7 +5318,7 @@
      "error_pct": null,
      "lot_key": null,
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "won"
     },
     {
      "sport": "Soccer",
@@ -5790,7 +5790,7 @@
      },
      "price_source": "average price",
      "dog": true,
-     "outcome": null
+     "outcome": "won"
     },
     {
      "sport": "NFL",
@@ -5998,7 +5998,7 @@
    "day": "2026-11-23",
    "kind": "underdog_v2",
    "built_at": "2026-11-23T16:05:15Z",
-   "status": "pending",
+   "status": "lost",
    "multiplier": 3.286,
    "p": 0.287171,
    "p_market": 0.276443,
@@ -6032,7 +6032,7 @@
      "error_pct": null,
      "lot_key": "POL-20261123-wieczystakrakow-motorlublin",
      "moneyline_source": null,
-     "outcome": null
+     "outcome": "lost"
     },
     {
      "sport": "Soccer",
@@ -6075,8 +6075,8 @@
     "1X2"
    ],
    "estimated": false,
-   "paid": null,
-   "profit": null
+   "paid": 0.0,
+   "profit": -1.0
   },
   {
    "day": "2026-11-26",
@@ -6323,7 +6323,7 @@
    "day": "2026-11-26",
    "kind": "underdog_v2",
    "built_at": "2026-11-24T02:24:48Z",
-   "status": "pending",
+   "status": "superseded",
    "multiplier": 3.6814,
    "p": 0.246157,
    "p_market": 0.251023,
@@ -7141,6 +7141,355 @@
      "outcome": null
     }
    ],
+   "version": 2,
+   "bets": [
+    "1X2"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-25",
+   "kind": "likeliest_v2",
+   "built_at": "2026-11-25T01:13:49Z",
+   "status": "pending",
+   "multiplier": 3.5935,
+   "p": 0.244934,
+   "p_market": 0.226563,
+   "first_start": "2026-11-26T00:00:00Z",
+   "last_start": "2026-11-26T01:00:00Z",
+   "sports": [
+    "NFL",
+    "Soccer"
+   ],
+   "legs": [
+    {
+     "sport": "Soccer",
+     "key": "Soccer:ARG-20261126-bocajuniors-indrivadavia",
+     "event": "Boca Juniors v Ind. Rivadavia",
+     "pick": "Boca Juniors",
+     "opponent": "ARG",
+     "kickoff": "2026-11-26T00:00:00Z",
+     "decimal": 1.6,
+     "p": 0.6004696647178683,
+     "p_model": null,
+     "p_market": 0.5794461720716718,
+     "names": {
+      "match_id": "ARG-20261126-bocajuniors-indrivadavia",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_GB_LA",
+     "event": "GB @ LA",
+     "pick": "LA",
+     "opponent": "GB",
+     "kickoff": "2026-11-26T01:00:00Z",
+     "decimal": 1.6042296072507551,
+     "p": 0.599285,
+     "p_model": 0.661385,
+     "p_market": 0.59836,
+     "names": {
+      "game_id": "2026_12_GB_LA",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "Soccer",
+     "key": "Soccer:MEX-20261126-toluca-atlas",
+     "event": "Toluca v Atlas",
+     "pick": "Toluca",
+     "opponent": "MEX",
+     "kickoff": "2026-11-26T01:00:00Z",
+     "decimal": 1.4,
+     "p": 0.6806522031420899,
+     "p_model": null,
+     "p_market": 0.6534525317333383,
+     "names": {
+      "match_id": "MEX-20261126-toluca-atlas",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "version": 2,
+   "bets": [
+    "1X2"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-25",
+   "kind": "underdog_v2",
+   "built_at": "2026-11-25T01:13:49Z",
+   "status": "pending",
+   "multiplier": 4.452,
+   "p": 0.200336,
+   "p_market": 0.19233,
+   "first_start": "2026-11-25T20:00:00Z",
+   "last_start": "2026-11-26T01:00:00Z",
+   "sports": [
+    "Soccer"
+   ],
+   "legs": [
+    {
+     "sport": "Soccer",
+     "key": "Soccer:E1-20261125-stoke-millwall",
+     "event": "Stoke City v Millwall",
+     "pick": "Millwall",
+     "opponent": "E1",
+     "kickoff": "2026-11-25T20:00:00Z",
+     "decimal": 3.18,
+     "p": 0.29432970695207733,
+     "p_model": null,
+     "p_market": 0.29432970695207733,
+     "names": {
+      "match_id": "E1-20261125-stoke-millwall",
+      "pick": "A"
+     },
+     "price_source": "average price",
+     "dog": true,
+     "bet": "1X2",
+     "bet_detail": null,
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": "E1-20261125-stoke-millwall",
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "Soccer",
+     "key": "Soccer:MEX-20261126-toluca-atlas",
+     "event": "Toluca v Atlas",
+     "pick": "Toluca",
+     "opponent": "MEX",
+     "kickoff": "2026-11-26T01:00:00Z",
+     "decimal": 1.4,
+     "p": 0.6806522031420899,
+     "p_model": null,
+     "p_market": 0.6534525317333383,
+     "names": {
+      "match_id": "MEX-20261126-toluca-atlas",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "Soccer:E1-20261125-stoke-millwall",
+    "pick": "Millwall",
+    "lot_key": "E1-20261125-stoke-millwall",
+    "rank": 0,
+    "candidates": 6,
+    "salt": "sameday-dog-v2",
+    "version": 2
+   },
+   "version": 2,
+   "bets": [
+    "1X2"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-25",
+   "kind": "mixed",
+   "built_at": "2026-11-25T01:13:49Z",
+   "status": "pending",
+   "multiplier": 3.0545,
+   "p": 0.300235,
+   "p_market": 0.289723,
+   "first_start": "2026-11-26T00:00:00Z",
+   "last_start": "2026-11-26T01:00:00Z",
+   "sports": [
+    "NFL",
+    "Soccer"
+   ],
+   "legs": [
+    {
+     "sport": "Soccer",
+     "key": "Soccer:ARG-20261126-bocajuniors-indrivadavia",
+     "event": "Boca Juniors v Ind. Rivadavia",
+     "pick": "Boca Juniors",
+     "opponent": "ARG",
+     "kickoff": "2026-11-26T00:00:00Z",
+     "decimal": 1.6,
+     "p": 0.6004696647178683,
+     "p_model": null,
+     "p_market": 0.5794461720716718,
+     "names": {
+      "match_id": "ARG-20261126-bocajuniors-indrivadavia",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_GB_LA",
+     "event": "GB @ LA",
+     "pick": "LA -3",
+     "opponent": "GB",
+     "kickoff": "2026-11-26T01:00:00Z",
+     "decimal": 1.9090909090909092,
+     "p": 0.5,
+     "p_model": null,
+     "p_market": 0.5,
+     "names": {
+      "game_id": "2026_12_GB_LA",
+      "home": true,
+      "line": 3.0
+     },
+     "price_source": "consensus price at the consensus line",
+     "dog": null,
+     "bet": "SPREAD",
+     "bet_detail": "LA -3",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "version": 2,
+   "bets": [
+    "1X2",
+    "SPREAD"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-26",
+   "kind": "underdog_v2",
+   "built_at": "2026-11-25T01:13:49Z",
+   "status": "pending",
+   "multiplier": 3.0962,
+   "p": 0.289049,
+   "p_market": 0.287659,
+   "first_start": "2026-11-26T18:00:00Z",
+   "last_start": "2026-11-26T23:00:00Z",
+   "sports": [
+    "NFL",
+    "Soccer"
+   ],
+   "legs": [
+    {
+     "sport": "NFL",
+     "key": "NFL:2026_12_CHI_DET",
+     "event": "CHI @ DET",
+     "pick": "DET",
+     "opponent": "CHI",
+     "kickoff": "2026-11-26T18:00:00Z",
+     "decimal": 2.26,
+     "p": 0.410965,
+     "p_model": 0.595863,
+     "p_market": 0.4257656915258893,
+     "names": {
+      "game_id": "2026_12_CHI_DET",
+      "home": true
+     },
+     "price_source": "consensus moneyline",
+     "dog": true,
+     "bet": "1X2",
+     "bet_detail": null,
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": "2026_12_CHI_DET",
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "Soccer",
+     "key": "Soccer:BRA-20261126-saopaulo-remo",
+     "event": "Sao Paulo v Remo",
+     "pick": "Sao Paulo",
+     "opponent": "BRA",
+     "kickoff": "2026-11-26T23:00:00Z",
+     "decimal": 1.37,
+     "p": 0.7033432845426274,
+     "p_model": null,
+     "p_market": 0.6756281167119091,
+     "names": {
+      "match_id": "BRA-20261126-saopaulo-remo",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "NFL:2026_12_CHI_DET",
+    "pick": "DET",
+    "lot_key": "2026_12_CHI_DET",
+    "rank": 0,
+    "candidates": 4,
+    "salt": "sameday-dog-v2",
+    "version": 2
+   },
    "version": 2,
    "bets": [
     "1X2"
