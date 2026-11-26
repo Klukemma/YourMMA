@@ -1,14 +1,14 @@
 {
  "caveats": {
   "draws": "A draw is rarely the single likeliest result, so it is rarely the pick - even though about a quarter of matches end level. Its chance is always shown.",
-  "feeds": "Fixtures football-data.co.uk has not posted yet, and results it has not posted yet, come from two free, unofficial feeds - ESPN's public scoreboard and fixturedownload.com - which give dates, kickoff times and scores, never a price (in the leagues they cover: each league says which, and seven have neither). Until football-data.co.uk posts a match with its prices (Tuesday and Friday afternoons) its chances are the model's alone, and say so. A result from the feeds is provisional, and marked so, until football-data.co.uk posts its own; a provisional grade it disagrees with is corrected. Where the feeds have not confirmed a kickoff time, the pick closes at midnight UK time on match day. The model's ratings use only football-data.co.uk's results, with their shots where the league's history has them, through Nov 24.",
+  "feeds": "Fixtures football-data.co.uk has not posted yet, and results it has not posted yet, come from two free, unofficial feeds - ESPN's public scoreboard and fixturedownload.com - which give dates, kickoff times and scores, never a price (in the leagues they cover: each league says which, and seven have neither). Until football-data.co.uk posts a match with its prices (Tuesday and Friday afternoons) its chances are the model's alone, and say so. A result from the feeds is provisional, and marked so, until football-data.co.uk posts its own; a provisional grade it disagrees with is corrected. Where the feeds have not confirmed a kickoff time, the pick closes at midnight UK time on match day. The model's ratings use only football-data.co.uk's results, with their shots where the league's history has them, through Nov 25.",
   "model": "The pick is the betting market's chances, recalibrated on earlier seasons: across 2016-2025 in the top five the model alone picked 53.3% of results and the market 54.1%, and blending the model in added nothing the market did not already know. The model's own chances are shown beside each pick, labelled. Every league's pick is its own market's price, measured on its own seasons - the raw price, with the bookmakers' cut removed, where recalibrating it scored worse (D1, E1, E3, SC0, SC1, SC3, AUT, FIN, POL); each league's own numbers and caveats are with it. Betting the model where it disagreed with the price did not make money. Treat a pick as an opinion with a measured hit rate, not an edge.",
   "news": "The model does not read team news - injuries, suspensions, rotation. The betting market does, which is part of why the pick leans on it.",
   "rating": "The model rates each club's attack and defence from its goals, shots on target and shots - from its goals alone where its league's history has no shots, as that league says - weighted toward recent matches; a promoted club carries its rating up with a measured step. The rating is the model's own view - the pick on each match is the market's chances, because the market forecasts better.",
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, pooled over the top five, each beat the leagues' own rates from earlier seasons. A league shows only the numbers that beat its own rates in both of its periods; the others are withheld and shown as missing. Both teams to score runs low: across 2016-2025 in the top five its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-26T01:10:28Z",
+ "generated": "2026-11-26T20:32:23Z",
  "leagues": [
   {
    "caveats": [
@@ -6541,9 +6541,9 @@
    "country": "England",
    "group": "europe",
    "label": "Championship",
-   "model_through": "2026-11-22",
+   "model_through": "2026-11-25",
    "name": "Championship",
-   "provisional": 12,
+   "provisional": 0,
    "results_through": "2026-11-25",
    "rows": [
     {
@@ -6562,7 +6562,6 @@
        "home": true,
        "league": "E1",
        "opponent": "Swansea",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -6609,8 +6608,8 @@
      "played": 17,
      "points": 35,
      "position": 1,
-     "provisional": 1,
-     "rating": 0.5360968477085795,
+     "provisional": 0,
+     "rating": 0.5447617859462837,
      "team": "Middlesbrough",
      "won": 10
     },
@@ -6630,7 +6629,6 @@
        "home": true,
        "league": "E1",
        "opponent": "Millwall",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -6677,8 +6675,8 @@
      "played": 17,
      "points": 35,
      "position": 2,
-     "provisional": 1,
-     "rating": -0.07245421341057767,
+     "provisional": 0,
+     "rating": -0.05814138795653778,
      "team": "Stoke",
      "won": 11
     },
@@ -6698,7 +6696,6 @@
        "home": true,
        "league": "E1",
        "opponent": "Derby",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -6745,8 +6742,8 @@
      "played": 17,
      "points": 34,
      "position": 3,
-     "provisional": 1,
-     "rating": 0.30248771176532285,
+     "provisional": 0,
+     "rating": 0.3657781255589163,
      "team": "Wolves",
      "won": 10
     },
@@ -6766,7 +6763,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Sheffield United",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -6813,8 +6809,8 @@
      "played": 17,
      "points": 32,
      "position": 4,
-     "provisional": 1,
-     "rating": 0.4096039256243986,
+     "provisional": 0,
+     "rating": 0.38706761121710187,
      "team": "Southampton",
      "won": 9
     },
@@ -6834,7 +6830,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Burnley",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -6881,8 +6876,8 @@
      "played": 17,
      "points": 32,
      "position": 5,
-     "provisional": 1,
-     "rating": 0.2672523748468232,
+     "provisional": 0,
+     "rating": 0.30103788552837907,
      "team": "Birmingham",
      "won": 9
     },
@@ -6902,7 +6897,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Bolton",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -6949,8 +6943,8 @@
      "played": 17,
      "points": 32,
      "position": 6,
-     "provisional": 1,
-     "rating": 0.18676957475621103,
+     "provisional": 0,
+     "rating": 0.21939783025475013,
      "team": "West Brom",
      "won": 9
     },
@@ -6970,7 +6964,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Norwich",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -7017,8 +7010,8 @@
      "played": 17,
      "points": 28,
      "position": 7,
-     "provisional": 1,
-     "rating": 0.10281290415990085,
+     "provisional": 0,
+     "rating": 0.11211173252540174,
      "team": "QPR",
      "won": 7
     },
@@ -7038,7 +7031,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Middlesbrough",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -7085,8 +7077,8 @@
      "played": 17,
      "points": 27,
      "position": 8,
-     "provisional": 1,
-     "rating": 0.06438187231502979,
+     "provisional": 0,
+     "rating": 0.056731700355901804,
      "team": "Swansea",
      "won": 8
     },
@@ -7106,7 +7098,6 @@
        "home": true,
        "league": "E1",
        "opponent": "Southampton",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -7153,8 +7144,8 @@
      "played": 17,
      "points": 26,
      "position": 9,
-     "provisional": 1,
-     "rating": 0.07463323675452194,
+     "provisional": 0,
+     "rating": 0.09401039877823658,
      "team": "Sheffield United",
      "won": 7
     },
@@ -7174,7 +7165,6 @@
        "home": true,
        "league": "E1",
        "opponent": "West Ham",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -7221,8 +7211,8 @@
      "played": 17,
      "points": 26,
      "position": 10,
-     "provisional": 1,
-     "rating": -0.03942611834620435,
+     "provisional": 0,
+     "rating": -0.04170556817036153,
      "team": "Portsmouth",
      "won": 7
     },
@@ -7242,7 +7232,6 @@
        "home": true,
        "league": "E1",
        "opponent": "QPR",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -7289,8 +7278,8 @@
      "played": 17,
      "points": 25,
      "position": 11,
-     "provisional": 1,
-     "rating": 0.28935651314710165,
+     "provisional": 0,
+     "rating": 0.2739973811242349,
      "team": "Norwich",
      "won": 8
     },
@@ -7310,7 +7299,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Watford",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -7357,8 +7345,8 @@
      "played": 17,
      "points": 25,
      "position": 12,
-     "provisional": 1,
-     "rating": -0.15181234219598805,
+     "provisional": 0,
+     "rating": -0.1378230532133502,
      "team": "Blackburn",
      "won": 7
     },
@@ -7378,7 +7366,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Portsmouth",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -7425,8 +7412,8 @@
      "played": 17,
      "points": 24,
      "position": 13,
-     "provisional": 1,
-     "rating": 0.5246783840457301,
+     "provisional": 0,
+     "rating": 0.5223632930674318,
      "team": "West Ham",
      "won": 6
     },
@@ -7446,7 +7433,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Bristol City",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -7493,8 +7479,8 @@
      "played": 17,
      "points": 22,
      "position": 14,
-     "provisional": 1,
-     "rating": -0.05993599354580614,
+     "provisional": 0,
+     "rating": -0.059211277962511355,
      "team": "Wrexham",
      "won": 5
     },
@@ -7514,7 +7500,6 @@
        "home": true,
        "league": "E1",
        "opponent": "Lincoln",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -7561,8 +7546,8 @@
      "played": 17,
      "points": 20,
      "position": 15,
-     "provisional": 1,
-     "rating": -0.3811941463869938,
+     "provisional": 0,
+     "rating": -0.2932077088416716,
      "team": "Charlton",
      "won": 5
     },
@@ -7582,7 +7567,6 @@
        "home": true,
        "league": "E1",
        "opponent": "Wrexham",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -7629,8 +7613,8 @@
      "played": 17,
      "points": 19,
      "position": 16,
-     "provisional": 1,
-     "rating": -0.06917118687307933,
+     "provisional": 0,
+     "rating": -0.06912209048708062,
      "team": "Bristol City",
      "won": 5
     },
@@ -7650,7 +7634,6 @@
        "home": true,
        "league": "E1",
        "opponent": "Preston",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -7697,8 +7680,8 @@
      "played": 17,
      "points": 18,
      "position": 17,
-     "provisional": 1,
-     "rating": -0.0027906113688975775,
+     "provisional": 0,
+     "rating": -0.09931830181988777,
      "team": "Cardiff",
      "won": 4
     },
@@ -7718,7 +7701,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Stoke",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -7765,8 +7747,8 @@
      "played": 17,
      "points": 18,
      "position": 18,
-     "provisional": 1,
-     "rating": 0.011853602867149204,
+     "provisional": 0,
+     "rating": -0.003752628749686737,
      "team": "Millwall",
      "won": 5
     },
@@ -7786,7 +7768,6 @@
        "home": true,
        "league": "E1",
        "opponent": "West Brom",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -7833,8 +7814,8 @@
      "played": 17,
      "points": 18,
      "position": 19,
-     "provisional": 1,
-     "rating": -0.15763349125601755,
+     "provisional": 0,
+     "rating": -0.20214228419215186,
      "team": "Bolton",
      "won": 5
     },
@@ -7854,7 +7835,6 @@
        "home": true,
        "league": "E1",
        "opponent": "Blackburn",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -7901,8 +7881,8 @@
      "played": 17,
      "points": 15,
      "position": 20,
-     "provisional": 1,
-     "rating": -0.2756076575616786,
+     "provisional": 0,
+     "rating": -0.28897514447149564,
      "team": "Watford",
      "won": 4
     },
@@ -7922,7 +7902,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Charlton",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -7969,8 +7948,8 @@
      "played": 17,
      "points": 15,
      "position": 21,
-     "provisional": 1,
-     "rating": -0.2588488791699781,
+     "provisional": 0,
+     "rating": -0.3836678081104081,
      "team": "Lincoln",
      "won": 4
     },
@@ -7990,7 +7969,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Cardiff",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -8037,8 +8015,8 @@
      "played": 17,
      "points": 12,
      "position": 22,
-     "provisional": 1,
-     "rating": -0.4061945772831508,
+     "provisional": 0,
+     "rating": -0.34001147720238656,
      "team": "Preston",
      "won": 3
     },
@@ -8058,7 +8036,6 @@
        "home": true,
        "league": "E1",
        "opponent": "Birmingham",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -8105,8 +8082,8 @@
      "played": 17,
      "points": 11,
      "position": 23,
-     "provisional": 1,
-     "rating": -0.11257818204112424,
+     "provisional": 0,
+     "rating": -0.15717630197429666,
      "team": "Burnley",
      "won": 1
     },
@@ -8126,7 +8103,6 @@
        "home": false,
        "league": "E1",
        "opponent": "Wolves",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -8173,8 +8149,8 @@
      "played": 17,
      "points": 10,
      "position": 24,
-     "provisional": 1,
-     "rating": -0.32081365064810163,
+     "provisional": 0,
+     "rating": -0.37519562480745217,
      "team": "Derby",
      "won": 2
     }
@@ -9689,9 +9665,9 @@
    "country": "Italy",
    "group": "europe",
    "label": "Serie B",
-   "model_through": "2026-11-22",
+   "model_through": "2026-11-25",
    "name": "Serie B",
-   "provisional": 10,
+   "provisional": 0,
    "results_through": "2026-11-25",
    "rows": [
     {
@@ -9710,7 +9686,6 @@
        "home": true,
        "league": "I2",
        "opponent": "Sudtirol",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -9757,8 +9732,8 @@
      "played": 13,
      "points": 30,
      "position": 1,
-     "provisional": 1,
-     "rating": 0.3911602906961349,
+     "provisional": 0,
+     "rating": 0.39962527818635496,
      "team": "Palermo",
      "won": 9
     },
@@ -9778,7 +9753,6 @@
        "home": false,
        "league": "I2",
        "opponent": "Pisa",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -9825,8 +9799,8 @@
      "played": 13,
      "points": 27,
      "position": 2,
-     "provisional": 1,
-     "rating": 0.3190185188949699,
+     "provisional": 0,
+     "rating": 0.3109543838716551,
      "team": "Modena",
      "won": 8
     },
@@ -9846,7 +9820,6 @@
        "home": false,
        "league": "I2",
        "opponent": "Cremonese",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -9893,8 +9866,8 @@
      "played": 13,
      "points": 22,
      "position": 3,
-     "provisional": 1,
-     "rating": -0.03995086600040576,
+     "provisional": 0,
+     "rating": -0.009938940379023764,
      "team": "Avellino",
      "won": 6
     },
@@ -9914,7 +9887,6 @@
        "home": true,
        "league": "I2",
        "opponent": "Arezzo",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -9961,8 +9933,8 @@
      "played": 13,
      "points": 22,
      "position": 4,
-     "provisional": 1,
-     "rating": 0.04193625588843597,
+     "provisional": 0,
+     "rating": 0.08518019999594606,
      "team": "Mantova",
      "won": 6
     },
@@ -9982,7 +9954,6 @@
        "home": false,
        "league": "I2",
        "opponent": "Cesena",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -10029,8 +10000,8 @@
      "played": 13,
      "points": 21,
      "position": 5,
-     "provisional": 1,
-     "rating": 0.016923122786094424,
+     "provisional": 0,
+     "rating": -0.04734117022648188,
      "team": "Ascoli",
      "won": 5
     },
@@ -10050,7 +10021,6 @@
        "home": true,
        "league": "I2",
        "opponent": "Ascoli",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -10097,8 +10067,8 @@
      "played": 13,
      "points": 21,
      "position": 6,
-     "provisional": 1,
-     "rating": -0.10358852243640171,
+     "provisional": 0,
+     "rating": -0.054543088002841245,
      "team": "Cesena",
      "won": 5
     },
@@ -10118,7 +10088,6 @@
        "home": true,
        "league": "I2",
        "opponent": "Modena",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -10165,8 +10134,8 @@
      "played": 13,
      "points": 20,
      "position": 7,
-     "provisional": 1,
-     "rating": 0.23999038740068235,
+     "provisional": 0,
+     "rating": 0.24720939562058453,
      "team": "Pisa",
      "won": 5
     },
@@ -10186,7 +10155,6 @@
        "home": true,
        "league": "I2",
        "opponent": "Empoli",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -10233,8 +10201,8 @@
      "played": 13,
      "points": 19,
      "position": 8,
-     "provisional": 1,
-     "rating": 0.0423525592886691,
+     "provisional": 0,
+     "rating": 0.10170261489203969,
      "team": "Benevento",
      "won": 5
     },
@@ -10254,7 +10222,6 @@
        "home": false,
        "league": "I2",
        "opponent": "Palermo",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -10301,8 +10268,8 @@
      "played": 13,
      "points": 18,
      "position": 9,
-     "provisional": 1,
-     "rating": -0.10722945025250397,
+     "provisional": 0,
+     "rating": -0.1118587643969331,
      "team": "Sudtirol",
      "won": 4
     },
@@ -10322,7 +10289,6 @@
        "home": false,
        "league": "I2",
        "opponent": "Padova",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -10369,8 +10335,8 @@
      "played": 13,
      "points": 17,
      "position": 10,
-     "provisional": 1,
-     "rating": -0.10268687346961936,
+     "provisional": 0,
+     "rating": -0.08644361977437276,
      "team": "Sampdoria",
      "won": 5
     },
@@ -10390,7 +10356,6 @@
        "home": false,
        "league": "I2",
        "opponent": "Virtus Entella",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -10437,8 +10402,8 @@
      "played": 13,
      "points": 16,
      "position": 11,
-     "provisional": 1,
-     "rating": 0.2266178467490767,
+     "provisional": 0,
+     "rating": 0.20988694163676636,
      "team": "Verona",
      "won": 4
     },
@@ -10458,7 +10423,6 @@
        "home": true,
        "league": "I2",
        "opponent": "Sampdoria",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -10505,8 +10469,8 @@
      "played": 13,
      "points": 16,
      "position": 12,
-     "provisional": 1,
-     "rating": -0.3161173220319101,
+     "provisional": 0,
+     "rating": -0.334412993119385,
      "team": "Padova",
      "won": 4
     },
@@ -10526,7 +10490,6 @@
        "home": true,
        "league": "I2",
        "opponent": "Catanzaro",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -10573,8 +10536,8 @@
      "played": 13,
      "points": 16,
      "position": 13,
-     "provisional": 1,
-     "rating": -0.0311013008563914,
+     "provisional": 0,
+     "rating": -0.05094678310179801,
      "team": "Juve Stabia",
      "won": 4
     },
@@ -10594,7 +10557,6 @@
        "home": false,
        "league": "I2",
        "opponent": "Vicenza",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -10641,8 +10603,8 @@
      "played": 13,
      "points": 16,
      "position": 14,
-     "provisional": 1,
-     "rating": -0.10265673334772996,
+     "provisional": 0,
+     "rating": -0.09173214819863373,
      "team": "Carrarese",
      "won": 5
     },
@@ -10662,7 +10624,6 @@
        "home": true,
        "league": "I2",
        "opponent": "Avellino",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -10709,8 +10670,8 @@
      "played": 13,
      "points": 15,
      "position": 15,
-     "provisional": 1,
-     "rating": 0.1036513213293957,
+     "provisional": 0,
+     "rating": 0.0674872602603831,
      "team": "Cremonese",
      "won": 4
     },
@@ -10730,7 +10691,6 @@
        "home": true,
        "league": "I2",
        "opponent": "Verona",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -10777,8 +10737,8 @@
      "played": 13,
      "points": 13,
      "position": 16,
-     "provisional": 1,
-     "rating": -0.11985545339621617,
+     "provisional": 0,
+     "rating": -0.10627631526120807,
      "team": "Virtus Entella",
      "won": 3
     },
@@ -10798,7 +10758,6 @@
        "home": false,
        "league": "I2",
        "opponent": "Juve Stabia",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -10845,8 +10804,8 @@
      "played": 13,
      "points": 12,
      "position": 17,
-     "provisional": 1,
-     "rating": -0.05819690295754398,
+     "provisional": 0,
+     "rating": -0.035689985092646426,
      "team": "Catanzaro",
      "won": 3
     },
@@ -10866,7 +10825,6 @@
        "home": false,
        "league": "I2",
        "opponent": "Mantova",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -10913,8 +10871,8 @@
      "played": 13,
      "points": 12,
      "position": 18,
-     "provisional": 1,
-     "rating": -0.26678186732685916,
+     "provisional": 0,
+     "rating": -0.3185022490468936,
      "team": "Arezzo",
      "won": 3
     },
@@ -10934,7 +10892,6 @@
        "home": true,
        "league": "I2",
        "opponent": "Carrarese",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -10981,8 +10938,8 @@
      "played": 13,
      "points": 10,
      "position": 19,
-     "provisional": 1,
-     "rating": -0.34995680243142013,
+     "provisional": 0,
+     "rating": -0.35781154541649385,
      "team": "Vicenza",
      "won": 2
     },
@@ -11002,7 +10959,6 @@
        "home": false,
        "league": "I2",
        "opponent": "Benevento",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -11049,8 +11005,8 @@
      "played": 13,
      "points": 9,
      "position": 20,
-     "provisional": 1,
-     "rating": -0.17782550561478994,
+     "provisional": 0,
+     "rating": -0.2309240646005779,
      "team": "Empoli",
      "won": 2
     }
@@ -13519,9 +13475,9 @@
    "country": "England",
    "group": "europe",
    "label": "League One (England)",
-   "model_through": "2026-11-21",
+   "model_through": "2026-11-24",
    "name": "League One",
-   "provisional": 4,
+   "provisional": 0,
    "results_through": "2026-11-24",
    "rows": [
     {
@@ -13741,7 +13697,6 @@
        "home": false,
        "league": "E2",
        "opponent": "Stevenage",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -13788,8 +13743,8 @@
      "played": 16,
      "points": 27,
      "position": 4,
-     "provisional": 1,
-     "rating": 0.08870199186670957,
+     "provisional": 0,
+     "rating": 0.11552461298715744,
      "team": "Sheffield Weds",
      "won": 7
     },
@@ -13876,7 +13831,6 @@
        "home": true,
        "league": "E2",
        "opponent": "Barnsley",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -13923,8 +13877,8 @@
      "played": 15,
      "points": 26,
      "position": 6,
-     "provisional": 1,
-     "rating": 0.09093109450418424,
+     "provisional": 0,
+     "rating": 0.09592632488435204,
      "team": "Bradford",
      "won": 7
     },
@@ -13944,7 +13898,6 @@
        "home": false,
        "league": "E2",
        "opponent": "Blackpool",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -13991,8 +13944,8 @@
      "played": 15,
      "points": 23,
      "position": 7,
-     "provisional": 1,
-     "rating": 0.0045765399819801544,
+     "provisional": 0,
+     "rating": 0.0499531747949824,
      "team": "Leicester",
      "won": 6
     },
@@ -14347,7 +14300,6 @@
        "home": true,
        "league": "E2",
        "opponent": "Sheffield Weds",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -14394,8 +14346,8 @@
      "played": 14,
      "points": 20,
      "position": 13,
-     "provisional": 1,
-     "rating": 0.10766611512210911,
+     "provisional": 0,
+     "rating": 0.08770241579638749,
      "team": "Stevenage",
      "won": 5
     },
@@ -14482,7 +14434,6 @@
        "home": false,
        "league": "E2",
        "opponent": "Bromley",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -14529,8 +14480,8 @@
      "played": 15,
      "points": 19,
      "position": 15,
-     "provisional": 1,
-     "rating": 0.11667967784141431,
+     "provisional": 0,
+     "rating": 0.08952987909814736,
      "team": "Wycombe",
      "won": 4
     },
@@ -14818,7 +14769,6 @@
        "home": true,
        "league": "E2",
        "opponent": "Leicester",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -14865,8 +14815,8 @@
      "played": 15,
      "points": 13,
      "position": 20,
-     "provisional": 1,
-     "rating": -0.25187037692172587,
+     "provisional": 0,
+     "rating": -0.2905461692909146,
      "team": "Blackpool",
      "won": 3
     },
@@ -15020,7 +14970,6 @@
        "home": true,
        "league": "E2",
        "opponent": "Wycombe",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -15067,8 +15016,8 @@
      "played": 15,
      "points": 13,
      "position": 23,
-     "provisional": 1,
-     "rating": -0.7951134756715347,
+     "provisional": 0,
+     "rating": -0.7512195901232602,
      "team": "Bromley",
      "won": 3
     },
@@ -15088,7 +15037,6 @@
        "home": false,
        "league": "E2",
        "opponent": "Bradford",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -15135,8 +15083,8 @@
      "played": 15,
      "points": 9,
      "position": 24,
-     "provisional": 1,
-     "rating": -0.1490721266697581,
+     "provisional": 0,
+     "rating": -0.1556358948280847,
      "team": "Barnsley",
      "won": 2
     }
@@ -15154,9 +15102,9 @@
    "country": "England",
    "group": "europe",
    "label": "League Two (England)",
-   "model_through": "2026-11-21",
+   "model_through": "2026-11-24",
    "name": "League Two",
-   "provisional": 2,
+   "provisional": 0,
    "results_through": "2026-11-24",
    "rows": [
     {
@@ -15242,7 +15190,6 @@
        "home": false,
        "league": "E3",
        "opponent": "Crawley Town",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -15289,8 +15236,8 @@
      "played": 15,
      "points": 30,
      "position": 2,
-     "provisional": 1,
-     "rating": 0.35610076328106466,
+     "provisional": 0,
+     "rating": 0.3568394276507705,
      "team": "Barnet",
      "won": 8
     },
@@ -16181,7 +16128,6 @@
        "home": false,
        "league": "E3",
        "opponent": "Port Vale",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -16228,8 +16174,8 @@
      "played": 16,
      "points": 19,
      "position": 16,
-     "provisional": 1,
-     "rating": 0.08604376897370192,
+     "provisional": 0,
+     "rating": 0.08016792544651086,
      "team": "Northampton",
      "won": 4
     },
@@ -16249,7 +16195,6 @@
        "home": true,
        "league": "E3",
        "opponent": "Northampton",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -16296,8 +16241,8 @@
      "played": 15,
      "points": 19,
      "position": 17,
-     "provisional": 1,
-     "rating": 0.11433608050559352,
+     "provisional": 0,
+     "rating": 0.12012555236160383,
      "team": "Port Vale",
      "won": 5
     },
@@ -16719,7 +16664,6 @@
        "home": true,
        "league": "E3",
        "opponent": "Barnet",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -16766,8 +16710,8 @@
      "played": 14,
      "points": 13,
      "position": 24,
-     "provisional": 1,
-     "rating": -0.16885455985003883,
+     "provisional": 0,
+     "rating": -0.17241153048702795,
      "team": "Crawley Town",
      "won": 3
     }
@@ -16785,9 +16729,9 @@
    "country": "England",
    "group": "europe",
    "label": "National League",
-   "model_through": "2026-11-21",
+   "model_through": "2026-11-25",
    "name": "National League",
-   "provisional": 12,
+   "provisional": 0,
    "results_through": "2026-11-25",
    "rows": [
     {
@@ -16806,7 +16750,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Aldershot",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -16853,8 +16796,8 @@
      "played": 19,
      "points": 51,
      "position": 1,
-     "provisional": 1,
-     "rating": 0.7405928785157017,
+     "provisional": 0,
+     "rating": 0.757451759318827,
      "team": "Boreham Wood",
      "won": 16
     },
@@ -16874,7 +16817,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Kidderminster",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -16921,8 +16863,8 @@
      "played": 19,
      "points": 38,
      "position": 2,
-     "provisional": 1,
-     "rating": 0.5135025975088041,
+     "provisional": 0,
+     "rating": 0.5408041794546661,
      "team": "Harrogate",
      "won": 12
     },
@@ -16942,7 +16884,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Eastleigh",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -16989,8 +16930,8 @@
      "played": 19,
      "points": 35,
      "position": 3,
-     "provisional": 1,
-     "rating": -0.08080305554603906,
+     "provisional": 0,
+     "rating": -0.047825805028527624,
      "team": "Yeovil",
      "won": 10
     },
@@ -17010,7 +16951,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Forest Green",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -17057,8 +16997,8 @@
      "played": 19,
      "points": 35,
      "position": 4,
-     "provisional": 1,
-     "rating": 0.5755645525142357,
+     "provisional": 0,
+     "rating": 0.615172319058553,
      "team": "Southend",
      "won": 10
     },
@@ -17078,7 +17018,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Halifax",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -17125,8 +17064,8 @@
      "played": 19,
      "points": 33,
      "position": 5,
-     "provisional": 1,
-     "rating": -0.002106225410627882,
+     "provisional": 0,
+     "rating": -0.06884945203210213,
      "team": "Fylde",
      "won": 10
     },
@@ -17146,7 +17085,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Tamworth",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -17193,8 +17131,8 @@
      "played": 19,
      "points": 32,
      "position": 6,
-     "provisional": 1,
-     "rating": 0.6030952845585043,
+     "provisional": 0,
+     "rating": 0.5728720881002016,
      "team": "Carlisle",
      "won": 9
     },
@@ -17214,7 +17152,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Woking",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -17261,8 +17198,8 @@
      "played": 19,
      "points": 32,
      "position": 7,
-     "provisional": 1,
-     "rating": -0.014077061992219253,
+     "provisional": 0,
+     "rating": -0.019722661876157455,
      "team": "Worthing",
      "won": 9
     },
@@ -17282,7 +17219,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Fylde",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -17329,8 +17265,8 @@
      "played": 19,
      "points": 31,
      "position": 8,
-     "provisional": 1,
-     "rating": 0.30736627471308275,
+     "provisional": 0,
+     "rating": 0.3642460143045807,
      "team": "Halifax",
      "won": 9
     },
@@ -17350,7 +17286,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Boston Utd",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -17397,8 +17332,8 @@
      "played": 18,
      "points": 31,
      "position": 9,
-     "provisional": 1,
-     "rating": 0.17416279290762038,
+     "provisional": 0,
+     "rating": 0.1724257915273837,
      "team": "Barrow",
      "won": 9
     },
@@ -17418,7 +17353,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Wealdstone",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -17465,8 +17399,8 @@
      "played": 19,
      "points": 31,
      "position": 10,
-     "provisional": 1,
-     "rating": -0.12687444360685007,
+     "provisional": 0,
+     "rating": -0.08979967386518783,
      "team": "Altrincham",
      "won": 10
     },
@@ -17486,7 +17420,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Hornchurch",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -17533,8 +17466,8 @@
      "played": 19,
      "points": 28,
      "position": 11,
-     "provisional": 1,
-     "rating": -0.18699815012350007,
+     "provisional": 0,
+     "rating": -0.1819583812637131,
      "team": "Sutton",
      "won": 8
     },
@@ -17554,7 +17487,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Sutton",
-       "provisional": true,
        "result": "D"
       },
       {
@@ -17601,8 +17533,8 @@
      "played": 19,
      "points": 25,
      "position": 12,
-     "provisional": 1,
-     "rating": -0.43749294717197595,
+     "provisional": 0,
+     "rating": -0.4267932301157378,
      "team": "Hornchurch",
      "won": 8
     },
@@ -17622,7 +17554,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Boreham Wood",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -17669,8 +17600,8 @@
      "played": 19,
      "points": 24,
      "position": 13,
-     "provisional": 1,
-     "rating": -0.22981024615360157,
+     "provisional": 0,
+     "rating": -0.24482465399677067,
      "team": "Aldershot",
      "won": 7
     },
@@ -17690,7 +17621,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Worthing",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -17737,8 +17667,8 @@
      "played": 18,
      "points": 24,
      "position": 14,
-     "provisional": 1,
-     "rating": 0.12384648926833863,
+     "provisional": 0,
+     "rating": 0.13230943432322073,
      "team": "Woking",
      "won": 7
     },
@@ -17758,7 +17688,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Harrogate",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -17805,8 +17734,8 @@
      "played": 19,
      "points": 23,
      "position": 15,
-     "provisional": 1,
-     "rating": -0.1481672838482022,
+     "provisional": 0,
+     "rating": -0.1690267749136023,
      "team": "Kidderminster",
      "won": 5
     },
@@ -17826,7 +17755,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Altrincham",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -17873,8 +17801,8 @@
      "played": 19,
      "points": 22,
      "position": 16,
-     "provisional": 1,
-     "rating": -0.0902342629147137,
+     "provisional": 0,
+     "rating": -0.13161056096270562,
      "team": "Wealdstone",
      "won": 6
     },
@@ -17894,7 +17822,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Solihull",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -17941,8 +17868,8 @@
      "played": 19,
      "points": 22,
      "position": 17,
-     "provisional": 1,
-     "rating": -0.15900383631891057,
+     "provisional": 0,
+     "rating": -0.1426927206558264,
      "team": "Hartlepool",
      "won": 7
     },
@@ -17962,7 +17889,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Yeovil",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -18009,8 +17935,8 @@
      "played": 19,
      "points": 22,
      "position": 18,
-     "provisional": 1,
-     "rating": -0.3652038796115813,
+     "provisional": 0,
+     "rating": -0.4009165915784394,
      "team": "Eastleigh",
      "won": 6
     },
@@ -18030,7 +17956,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Carlisle",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -18077,8 +18002,8 @@
      "played": 18,
      "points": 20,
      "position": 19,
-     "provisional": 1,
-     "rating": -0.13937431257761945,
+     "provisional": 0,
+     "rating": -0.11095372688421956,
      "team": "Tamworth",
      "won": 6
     },
@@ -18098,7 +18023,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Southend",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -18145,8 +18069,8 @@
      "played": 16,
      "points": 19,
      "position": 20,
-     "provisional": 1,
-     "rating": 0.3202158827075954,
+     "provisional": 0,
+     "rating": 0.27982146142344644,
      "team": "Forest Green",
      "won": 5
     },
@@ -18166,7 +18090,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Hartlepool",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -18213,8 +18136,8 @@
      "played": 19,
      "points": 19,
      "position": 21,
-     "provisional": 1,
-     "rating": -0.36842752932565626,
+     "provisional": 0,
+     "rating": -0.38087235686633547,
      "team": "Solihull",
      "won": 6
     },
@@ -18234,7 +18157,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Barrow",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -18281,8 +18203,8 @@
      "played": 19,
      "points": 18,
      "position": 22,
-     "provisional": 1,
-     "rating": -0.13340826397522987,
+     "provisional": 0,
+     "rating": -0.13249613700956875,
      "team": "Boston Utd",
      "won": 5
     },
@@ -18302,7 +18224,6 @@
        "home": true,
        "league": "EC",
        "opponent": "Gateshead",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -18349,8 +18270,8 @@
      "played": 18,
      "points": 11,
      "position": 23,
-     "provisional": 1,
-     "rating": -0.1151225088006591,
+     "provisional": 0,
+     "rating": -0.1390551988669777,
      "team": "Scunthorpe",
      "won": 3
     },
@@ -18370,7 +18291,6 @@
        "home": false,
        "league": "EC",
        "opponent": "Scunthorpe",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -18417,8 +18337,8 @@
      "played": 18,
      "points": 7,
      "position": 24,
-     "provisional": 1,
-     "rating": -0.6944931284264997,
+     "provisional": 0,
+     "rating": -0.672698613028293,
      "team": "Gateshead",
      "won": 2
     }
@@ -18436,9 +18356,9 @@
    "country": "Scotland",
    "group": "europe",
    "label": "Premiership",
-   "model_through": "2026-11-21",
+   "model_through": "2026-11-24",
    "name": "Premiership",
-   "provisional": 2,
+   "provisional": 0,
    "results_through": "2026-11-24",
    "rows": [
     {
@@ -18524,7 +18444,6 @@
        "home": true,
        "league": "SC0",
        "opponent": "Aberdeen",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -18571,8 +18490,8 @@
      "played": 14,
      "points": 33,
      "position": 2,
-     "provisional": 1,
-     "rating": 0.8384014091843988,
+     "provisional": 0,
+     "rating": 0.8083460462274661,
      "team": "Rangers",
      "won": 10
     },
@@ -18860,7 +18779,6 @@
        "home": false,
        "league": "SC0",
        "opponent": "Hibernian",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -18907,8 +18825,8 @@
      "played": 14,
      "points": 17,
      "position": 7,
-     "provisional": 1,
-     "rating": -0.38842636252324936,
+     "provisional": 0,
+     "rating": -0.3754509996685389,
      "team": "Dundee",
      "won": 5
     },
@@ -18928,7 +18846,6 @@
        "home": false,
        "league": "SC0",
        "opponent": "Rangers",
-       "provisional": true,
        "result": "L"
       },
       {
@@ -18975,8 +18892,8 @@
      "played": 14,
      "points": 14,
      "position": 8,
-     "provisional": 1,
-     "rating": -0.3339748419671007,
+     "provisional": 0,
+     "rating": -0.3042066040439404,
      "team": "Aberdeen",
      "won": 4
     },
@@ -18996,7 +18913,6 @@
        "home": true,
        "league": "SC0",
        "opponent": "Dundee",
-       "provisional": true,
        "result": "W"
       },
       {
@@ -19043,8 +18959,8 @@
      "played": 14,
      "points": 14,
      "position": 9,
-     "provisional": 1,
-     "rating": 0.04857036189980812,
+     "provisional": 0,
+     "rating": 0.038163390625672644,
      "team": "Hibernian",
      "won": 4
     },
@@ -27201,9 +27117,77 @@
    "label": "Liga Profesional",
    "model_through": "2026-11-23",
    "name": "Liga Profesional",
-   "provisional": 0,
-   "results_through": "2026-11-23",
+   "provisional": 1,
+   "results_through": "2026-11-26",
    "rows": [
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "BOC",
+      "fg": "#FFFFFF",
+      "name": "Boca Juniors"
+     },
+     "drawn": 12,
+     "form": [
+      {
+       "date": "2026-11-26",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "ARG",
+       "opponent": "Ind. Rivadavia",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "ARG",
+       "opponent": "Defensa y Justicia",
+       "result": "W"
+      },
+      {
+       "date": "2026-11-01",
+       "ga": 0,
+       "gf": 1,
+       "home": true,
+       "league": "ARG",
+       "opponent": "River Plate",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "ARG",
+       "opponent": "Independiente",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-17",
+       "ga": 1,
+       "gf": 2,
+       "home": true,
+       "league": "ARG",
+       "opponent": "Talleres Cordoba",
+       "result": "W"
+      }
+     ],
+     "ga": 23,
+     "gd": 25,
+     "gf": 48,
+     "lost": 3,
+     "played": 33,
+     "points": 66,
+     "position": 1,
+     "provisional": 1,
+     "rating": 0.5697952891876344,
+     "team": "Boca Juniors",
+     "won": 18
+    },
     {
      "club": {
       "bg": "#5B6170",
@@ -27265,78 +27249,11 @@
      "lost": 6,
      "played": 33,
      "points": 65,
-     "position": 1,
+     "position": 2,
      "provisional": 0,
      "rating": 0.4242047011994242,
      "team": "Rosario Central",
      "won": 19
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "BOC",
-      "fg": "#FFFFFF",
-      "name": "Boca Juniors"
-     },
-     "drawn": 12,
-     "form": [
-      {
-       "date": "2026-11-07",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "ARG",
-       "opponent": "Defensa y Justicia",
-       "result": "W"
-      },
-      {
-       "date": "2026-11-01",
-       "ga": 0,
-       "gf": 1,
-       "home": true,
-       "league": "ARG",
-       "opponent": "River Plate",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "ARG",
-       "opponent": "Independiente",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-17",
-       "ga": 1,
-       "gf": 2,
-       "home": true,
-       "league": "ARG",
-       "opponent": "Talleres Cordoba",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-09",
-       "ga": 2,
-       "gf": 2,
-       "home": false,
-       "league": "ARG",
-       "opponent": "Instituto",
-       "result": "D"
-      }
-     ],
-     "ga": 23,
-     "gd": 23,
-     "gf": 46,
-     "lost": 3,
-     "played": 32,
-     "points": 63,
-     "position": 2,
-     "provisional": 0,
-     "rating": 0.5697952891876344,
-     "team": "Boca Juniors",
-     "won": 17
     },
     {
      "club": {
@@ -27683,6 +27600,16 @@
      "drawn": 9,
      "form": [
       {
+       "date": "2026-11-26",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "ARG",
+       "opponent": "Boca Juniors",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-07",
        "ga": 1,
        "gf": 1,
@@ -27717,25 +27644,16 @@
        "league": "ARG",
        "opponent": "Tigre",
        "result": "D"
-      },
-      {
-       "date": "2026-10-11",
-       "ga": 5,
-       "gf": 0,
-       "home": false,
-       "league": "ARG",
-       "opponent": "Rosario Central",
-       "result": "L"
       }
      ],
-     "ga": 39,
-     "gd": 11,
+     "ga": 41,
+     "gd": 9,
      "gf": 50,
-     "lost": 7,
-     "played": 32,
+     "lost": 8,
+     "played": 33,
      "points": 57,
      "position": 8,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.08273282542034577,
      "team": "Ind. Rivadavia",
      "won": 16
@@ -36238,8 +36156,8 @@
    "label": "Liga MX",
    "model_through": "2026-11-23",
    "name": "Liga MX",
-   "provisional": 0,
-   "results_through": "2026-11-23",
+   "provisional": 2,
+   "results_through": "2026-11-26",
    "rows": [
     {
      "club": {
@@ -36382,8 +36300,18 @@
       "fg": "#FFFFFF",
       "name": "Club America"
      },
-     "drawn": 6,
+     "drawn": 7,
      "form": [
+      {
+       "date": "2026-11-26",
+       "ga": 0,
+       "gf": 0,
+       "home": false,
+       "league": "MEX",
+       "opponent": "Monterrey",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-22",
        "ga": 1,
@@ -36419,94 +36347,18 @@
        "league": "MEX",
        "opponent": "Club Tijuana",
        "result": "D"
-      },
-      {
-       "date": "2026-10-26",
-       "ga": 2,
-       "gf": 1,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Pachuca",
-       "result": "L"
       }
      ],
      "ga": 24,
      "gd": 14,
      "gf": 38,
      "lost": 3,
-     "played": 17,
-     "points": 30,
+     "played": 18,
+     "points": 31,
      "position": 3,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.5774688067360656,
      "team": "Club America",
-     "won": 8
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "ATS",
-      "fg": "#FFFFFF",
-      "name": "Atlas"
-     },
-     "drawn": 4,
-     "form": [
-      {
-       "date": "2026-11-21",
-       "ga": 3,
-       "gf": 3,
-       "home": false,
-       "league": "MEX",
-       "opponent": "Juarez",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-07",
-       "ga": 4,
-       "gf": 1,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Pachuca",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-31",
-       "ga": 0,
-       "gf": 1,
-       "home": false,
-       "league": "MEX",
-       "opponent": "Atl. San Luis",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 3,
-       "gf": 4,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Puebla",
-       "result": "W"
-      },
-      {
-       "date": "2026-10-22",
-       "ga": 5,
-       "gf": 2,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Club America",
-       "result": "L"
-      }
-     ],
-     "ga": 33,
-     "gd": -3,
-     "gf": 30,
-     "lost": 5,
-     "played": 17,
-     "points": 28,
-     "position": 4,
-     "provisional": 0,
-     "rating": -0.22623864425990914,
-     "team": "Atlas",
      "won": 8
     },
     {
@@ -36518,6 +36370,16 @@
      },
      "drawn": 6,
      "form": [
+      {
+       "date": "2026-11-26",
+       "ga": 0,
+       "gf": 2,
+       "home": true,
+       "league": "MEX",
+       "opponent": "Atlas",
+       "provisional": true,
+       "result": "W"
+      },
       {
        "date": "2026-11-21",
        "ga": 2,
@@ -36553,28 +36415,19 @@
        "league": "MEX",
        "opponent": "Club Leon",
        "result": "D"
-      },
-      {
-       "date": "2026-10-22",
-       "ga": 2,
-       "gf": 2,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Club Tijuana",
-       "result": "D"
       }
      ],
      "ga": 23,
-     "gd": 12,
-     "gf": 35,
+     "gd": 14,
+     "gf": 37,
      "lost": 4,
-     "played": 17,
-     "points": 27,
-     "position": 5,
-     "provisional": 0,
+     "played": 18,
+     "points": 30,
+     "position": 4,
+     "provisional": 1,
      "rating": 0.5694955981653498,
      "team": "Toluca",
-     "won": 7
+     "won": 8
     },
     {
      "club": {
@@ -36583,8 +36436,18 @@
       "fg": "#FFFFFF",
       "name": "Monterrey"
      },
-     "drawn": 3,
+     "drawn": 4,
      "form": [
+      {
+       "date": "2026-11-26",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "MEX",
+       "opponent": "Club America",
+       "provisional": true,
+       "result": "D"
+      },
       {
        "date": "2026-11-22",
        "ga": 0,
@@ -36620,27 +36483,86 @@
        "league": "MEX",
        "opponent": "Club Tijuana",
        "result": "D"
-      },
-      {
-       "date": "2026-10-25",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "MEX",
-       "opponent": "Guadalajara Chivas",
-       "result": "L"
       }
      ],
      "ga": 25,
      "gd": 4,
      "gf": 29,
      "lost": 6,
-     "played": 17,
-     "points": 27,
-     "position": 6,
-     "provisional": 0,
+     "played": 18,
+     "points": 28,
+     "position": 5,
+     "provisional": 1,
      "rating": 0.17318418161145877,
      "team": "Monterrey",
+     "won": 8
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
+      "code": "ATS",
+      "fg": "#FFFFFF",
+      "name": "Atlas"
+     },
+     "drawn": 4,
+     "form": [
+      {
+       "date": "2026-11-26",
+       "ga": 2,
+       "gf": 0,
+       "home": false,
+       "league": "MEX",
+       "opponent": "Toluca",
+       "provisional": true,
+       "result": "L"
+      },
+      {
+       "date": "2026-11-21",
+       "ga": 3,
+       "gf": 3,
+       "home": false,
+       "league": "MEX",
+       "opponent": "Juarez",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-07",
+       "ga": 4,
+       "gf": 1,
+       "home": true,
+       "league": "MEX",
+       "opponent": "Pachuca",
+       "result": "L"
+      },
+      {
+       "date": "2026-10-31",
+       "ga": 0,
+       "gf": 1,
+       "home": false,
+       "league": "MEX",
+       "opponent": "Atl. San Luis",
+       "result": "W"
+      },
+      {
+       "date": "2026-10-25",
+       "ga": 3,
+       "gf": 4,
+       "home": true,
+       "league": "MEX",
+       "opponent": "Puebla",
+       "result": "W"
+      }
+     ],
+     "ga": 35,
+     "gd": -5,
+     "gf": 30,
+     "lost": 6,
+     "played": 18,
+     "points": 28,
+     "position": 6,
+     "provisional": 1,
+     "rating": -0.22623864425990914,
+     "team": "Atlas",
      "won": 8
     },
     {
@@ -44824,7 +44746,7 @@
    "table_note": "The overall table, both conferences together (the Supporters' Shield's); MLS Cup is left out."
   }
  ],
- "model_through": "2026-11-24",
+ "model_through": "2026-11-25",
  "schema": 1,
  "season": 2026,
  "season_label": "2026-27 season"
