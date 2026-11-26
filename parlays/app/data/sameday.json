@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-26T01:14:03Z",
+ "generated": "2026-11-26T15:25:03Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -82,8 +82,8 @@
  "days": [
   {
    "day": "2026-11-25",
-   "today": true,
-   "past": false,
+   "today": false,
+   "past": true,
    "likeliest": {
     "day": "2026-11-25",
     "kind": "likeliest",
@@ -92,9 +92,8 @@
     "multiplier": null,
     "p": null,
     "p_market": null,
-    "none_reason": "no_fit",
-    "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. The next likeliest ticket is on Thursday, Nov 26.",
-    "next_day": "2026-11-26"
+    "none_reason": "not_logged",
+    "missing_reason": "No likeliest ticket was logged for this day before its events started, so there is none to show; why none fitted then was not logged."
    },
    "underdog": {
     "day": "2026-11-25",
@@ -104,17 +103,12 @@
     "multiplier": null,
     "p": null,
     "p_market": null,
-    "none_reason": "no_dog",
-    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. The next underdog ticket is on Thursday, Nov 26.",
-    "next_day": "2026-11-26"
+    "none_reason": "not_logged",
+    "missing_reason": "No underdog ticket was logged for this day before its events started, so there is none to show; why none fitted then was not logged."
    },
    "cannot_both_win": false,
    "ufc_day": false,
-   "missing": {
-    "OU25": {
-     "no over/under 2.5 price posted": 1
-    }
-   },
+   "missing": {},
    "likeliest_v2": {
     "day": "2026-11-25",
     "kind": "likeliest_v2",
@@ -376,11 +370,11 @@
    },
    "props": null,
    "v2_cannot_both_win": false,
-   "in_play": false
+   "in_play": true
   },
   {
    "day": "2026-11-26",
-   "today": false,
+   "today": true,
    "past": false,
    "likeliest": {
     "day": "2026-11-26",
@@ -1270,18 +1264,6 @@
   }
  ],
  "tickets": [
-  {
-   "day": "2026-11-25",
-   "kind": "likeliest",
-   "status": "none",
-   "legs": [],
-   "multiplier": null,
-   "p": null,
-   "p_market": null,
-   "none_reason": "no_fit",
-   "missing_reason": "No combination of this day's priced picks (each at least a 50% chance) pays 3-5x with six legs or fewer. The next likeliest ticket is on Thursday, Nov 26.",
-   "next_day": "2026-11-26"
-  },
   {
    "day": "2026-11-26",
    "kind": "likeliest",
