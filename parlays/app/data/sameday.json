@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-25T20:44:20Z",
+ "generated": "2026-11-26T01:14:03Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -104,21 +104,21 @@
     "multiplier": null,
     "p": null,
     "p_market": null,
-    "none_reason": "no_fill",
-    "missing_reason": "No underdog ticket: there is an underdog priced 2.00-4.00 (+100 to +300), but no favourites on other events bring it to 3-5x. The next underdog ticket is on Thursday, Nov 26.",
+    "none_reason": "no_dog",
+    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. The next underdog ticket is on Thursday, Nov 26.",
     "next_day": "2026-11-26"
    },
    "cannot_both_win": false,
    "ufc_day": false,
    "missing": {
     "OU25": {
-     "no over/under 2.5 price posted": 4
+     "no over/under 2.5 price posted": 1
     }
    },
    "likeliest_v2": {
     "day": "2026-11-25",
     "kind": "likeliest_v2",
-    "status": "open",
+    "status": "locked",
     "legs": [
      {
       "sport": "Soccer",
@@ -216,7 +216,7 @@
    "underdog_v2": {
     "day": "2026-11-25",
     "kind": "underdog_v2",
-    "status": "locked",
+    "status": "lost",
     "legs": [
      {
       "sport": "Soccer",
@@ -231,7 +231,7 @@
       "price_source": "average price",
       "american": 218,
       "reason": "Soccer: chance 29%, market 29%",
-      "outcome": null,
+      "outcome": "lost",
       "void_reason": null,
       "dog": true,
       "bet": "1X2",
@@ -276,8 +276,8 @@
     "first_start": "2026-11-25T20:00:00Z",
     "last_start": "2026-11-26T01:00:00Z",
     "built_at": "2026-11-25T01:13:49Z",
-    "paid": null,
-    "profit": null,
+    "paid": 0.0,
+    "profit": -1.0,
     "missing_reason": null,
     "none_reason": null,
     "version": 2,
@@ -302,7 +302,7 @@
    "mixed": {
     "day": "2026-11-25",
     "kind": "mixed",
-    "status": "open",
+    "status": "locked",
     "legs": [
      {
       "sport": "Soccer",
@@ -1641,13 +1641,13 @@
    ]
   },
   "underdog_v2": {
-   "settled": 5,
+   "settled": 6,
    "won": 2,
-   "units": 2.56,
-   "roi": 0.512,
-   "implied_roi": -0.1015,
+   "units": 1.56,
+   "roi": 0.26,
+   "implied_roi": -0.1086,
    "estimated": 0,
-   "pending": 3,
+   "pending": 2,
    "last": [
     {
      "day": "2026-11-19",
@@ -1699,6 +1699,17 @@
      "day": "2026-11-23",
      "status": "lost",
      "multiplier": 3.286,
+     "paid": 0.0,
+     "profit": -1.0,
+     "sports": [
+      "Soccer"
+     ],
+     "estimated": false
+    },
+    {
+     "day": "2026-11-25",
+     "status": "lost",
+     "multiplier": 4.452,
      "paid": 0.0,
      "profit": -1.0,
      "sports": [
