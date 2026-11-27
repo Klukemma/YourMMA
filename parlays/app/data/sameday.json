@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-27T15:12:15Z",
+ "generated": "2026-11-27T20:17:14Z",
  "day_tz": "America/New_York",
  "rule": {
   "band": [
@@ -469,15 +469,15 @@
     "multiplier": null,
     "p": null,
     "p_market": null,
-    "none_reason": "no_fill",
-    "missing_reason": "No underdog ticket: there is an underdog priced 2.00-4.00 (+100 to +300), but no favourites on other events bring it to 3-5x. The next underdog ticket is on Sunday, Nov 29.",
+    "none_reason": "no_dog",
+    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. The next underdog ticket is on Sunday, Nov 29.",
     "next_day": "2026-11-29"
    },
    "cannot_both_win": false,
    "ufc_day": false,
    "missing": {
     "OU25": {
-     "no over/under 2.5 price posted": 20
+     "no over/under 2.5 price posted": 3
     }
    },
    "likeliest_v2": {
@@ -502,8 +502,8 @@
     "multiplier": null,
     "p": null,
     "p_market": null,
-    "none_reason": "no_fill",
-    "missing_reason": "No underdog ticket: there is an underdog priced 2.00-4.00 (+100 to +300), but no favourites on other events bring it to 3-5x. The next underdog ticket is on Sunday, Nov 29.",
+    "none_reason": "no_dog",
+    "missing_reason": "No underdog ticket: no underdog on this day is priced 2.00-4.00 (+100 to +300) with at least a 20% chance. The next underdog ticket is on Sunday, Nov 29.",
     "version": 2,
     "estimated": false,
     "next_day": "2026-11-29"
@@ -516,8 +516,8 @@
     "multiplier": null,
     "p": null,
     "p_market": null,
-    "none_reason": "no_fit",
-    "missing_reason": "No mixed ticket: no combination holding an over/under, spread, total or method leg pays 3-5x with 6 legs or fewer. The next mixed ticket is on Sunday, Nov 29.",
+    "none_reason": "no_other",
+    "missing_reason": "No mixed ticket: no over/under, spread, total or method leg is on offer this day (each but a method leg needs at least a 50% chance). The next mixed ticket is on Sunday, Nov 29.",
     "version": 2,
     "estimated": false,
     "next_day": "2026-11-29"
