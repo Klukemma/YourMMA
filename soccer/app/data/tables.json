@@ -8,7 +8,7 @@
   "rating_short": "The goal difference a match each club would expect against an average club of its league on a neutral pitch, by the model's ratings, strongest first.",
   "scores": "Both teams to score, over 1.5 and 3.5 goals and the likeliest scores are read off one score matrix per match: the one that best reproduces the market's home/draw/away chances (the pick's) and its over/under 2.5 price. Measured on 2006-2015 and 2016-2025, pooled over the top five, each beat the leagues' own rates from earlier seasons. A league shows only the numbers that beat its own rates in both of its periods; the others are withheld and shown as missing. Both teams to score runs low: across 2016-2025 in the top five its chance averaged 51.1% where both teams scored in 53.7% of matches, low in 10 of 10 deciles - read it as about 3 points short. Exact scores are long shots: the likeliest score happened in 13.1% of matches, about 1 in 8. Where the prices fit no score matrix within 4 points the card says how far the closest misses, and on which price. Where no price is posted, or only the home/draw/away price, these numbers are the model's own, and say so - measured too, a little less accurate (both teams to score log loss 0.6846 against 0.6832, the leagues' own rates 0.6905), and running 2 points low rather than 3."
  },
- "generated": "2026-11-26T20:32:23Z",
+ "generated": "2026-11-27T01:11:29Z",
  "leagues": [
   {
    "caveats": [
@@ -13477,8 +13477,8 @@
    "label": "League One (England)",
    "model_through": "2026-11-24",
    "name": "League One",
-   "provisional": 0,
-   "results_through": "2026-11-24",
+   "provisional": 1,
+   "results_through": "2026-11-26",
    "rows": [
     {
      "club": {
@@ -13557,6 +13557,16 @@
      "drawn": 5,
      "form": [
       {
+       "date": "2026-11-26",
+       "ga": 2,
+       "gf": 3,
+       "home": false,
+       "league": "E2",
+       "opponent": "Doncaster",
+       "provisional": true,
+       "result": "W"
+      },
+      {
        "date": "2026-11-21",
        "ga": 1,
        "gf": 0,
@@ -13591,28 +13601,19 @@
        "league": "E2",
        "opponent": "Wigan",
        "result": "W"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 1,
-       "gf": 4,
-       "home": true,
-       "league": "E2",
-       "opponent": "Peterboro",
-       "result": "W"
       }
      ],
-     "ga": 13,
-     "gd": 15,
-     "gf": 28,
+     "ga": 15,
+     "gd": 16,
+     "gf": 31,
      "lost": 2,
-     "played": 15,
-     "points": 29,
+     "played": 16,
+     "points": 32,
      "position": 2,
-     "provisional": 0,
+     "provisional": 1,
      "rating": 0.3716619129354055,
      "team": "Huddersfield",
-     "won": 8
+     "won": 9
     },
     {
      "club": {
@@ -14830,6 +14831,16 @@
      "drawn": 4,
      "form": [
       {
+       "date": "2026-11-26",
+       "ga": 3,
+       "gf": 2,
+       "home": true,
+       "league": "E2",
+       "opponent": "Huddersfield",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-21",
        "ga": 2,
        "gf": 2,
@@ -14864,25 +14875,16 @@
        "league": "E2",
        "opponent": "Sheffield Weds",
        "result": "W"
-      },
-      {
-       "date": "2026-10-20",
-       "ga": 2,
-       "gf": 0,
-       "home": true,
-       "league": "E2",
-       "opponent": "Stockport",
-       "result": "L"
       }
      ],
-     "ga": 24,
-     "gd": -8,
-     "gf": 16,
-     "lost": 7,
-     "played": 14,
+     "ga": 27,
+     "gd": -9,
+     "gf": 18,
+     "lost": 8,
+     "played": 15,
      "points": 13,
      "position": 21,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.26279918218213805,
      "team": "Doncaster",
      "won": 3
@@ -29977,8 +29979,8 @@
    "label": "S\u00e9rie A",
    "model_through": "2026-11-24",
    "name": "S\u00e9rie A",
-   "provisional": 2,
-   "results_through": "2026-11-25",
+   "provisional": 3,
+   "results_through": "2026-11-26",
    "rows": [
     {
      "club": {
@@ -30588,6 +30590,74 @@
     {
      "club": {
       "bg": "#5B6170",
+      "code": "SAO",
+      "fg": "#FFFFFF",
+      "name": "Sao Paulo"
+     },
+     "drawn": 9,
+     "form": [
+      {
+       "date": "2026-11-26",
+       "ga": 1,
+       "gf": 3,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Remo",
+       "provisional": true,
+       "result": "W"
+      },
+      {
+       "date": "2026-11-23",
+       "ga": 1,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Botafogo RJ",
+       "result": "D"
+      },
+      {
+       "date": "2026-11-20",
+       "ga": 1,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Fluminense",
+       "result": "L"
+      },
+      {
+       "date": "2026-11-05",
+       "ga": 0,
+       "gf": 0,
+       "home": true,
+       "league": "BRA",
+       "opponent": "Corinthians",
+       "result": "D"
+      },
+      {
+       "date": "2026-10-29",
+       "ga": 3,
+       "gf": 2,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Bahia",
+       "result": "L"
+      }
+     ],
+     "ga": 42,
+     "gd": 1,
+     "gf": 43,
+     "lost": 15,
+     "played": 37,
+     "points": 48,
+     "position": 10,
+     "provisional": 1,
+     "rating": -0.03040585336307411,
+     "team": "Sao Paulo",
+     "won": 13
+    },
+    {
+     "club": {
+      "bg": "#5B6170",
       "code": "VAS",
       "fg": "#FFFFFF",
       "name": "Vasco"
@@ -30646,78 +30716,11 @@
      "lost": 15,
      "played": 36,
      "points": 47,
-     "position": 10,
+     "position": 11,
      "provisional": 0,
      "rating": -0.04726078150755919,
      "team": "Vasco",
      "won": 13
-    },
-    {
-     "club": {
-      "bg": "#5B6170",
-      "code": "SAO",
-      "fg": "#FFFFFF",
-      "name": "Sao Paulo"
-     },
-     "drawn": 9,
-     "form": [
-      {
-       "date": "2026-11-23",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Botafogo RJ",
-       "result": "D"
-      },
-      {
-       "date": "2026-11-20",
-       "ga": 1,
-       "gf": 0,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Fluminense",
-       "result": "L"
-      },
-      {
-       "date": "2026-11-05",
-       "ga": 0,
-       "gf": 0,
-       "home": true,
-       "league": "BRA",
-       "opponent": "Corinthians",
-       "result": "D"
-      },
-      {
-       "date": "2026-10-29",
-       "ga": 3,
-       "gf": 2,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Bahia",
-       "result": "L"
-      },
-      {
-       "date": "2026-10-24",
-       "ga": 1,
-       "gf": 1,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Mirassol",
-       "result": "D"
-      }
-     ],
-     "ga": 41,
-     "gd": -1,
-     "gf": 40,
-     "lost": 15,
-     "played": 36,
-     "points": 45,
-     "position": 11,
-     "provisional": 0,
-     "rating": -0.03040585336307411,
-     "team": "Sao Paulo",
-     "won": 12
     },
     {
      "club": {
@@ -31199,6 +31202,16 @@
      "drawn": 11,
      "form": [
       {
+       "date": "2026-11-26",
+       "ga": 3,
+       "gf": 1,
+       "home": false,
+       "league": "BRA",
+       "opponent": "Sao Paulo",
+       "provisional": true,
+       "result": "L"
+      },
+      {
        "date": "2026-11-22",
        "ga": 4,
        "gf": 2,
@@ -31233,25 +31246,16 @@
        "league": "BRA",
        "opponent": "Botafogo RJ",
        "result": "W"
-      },
-      {
-       "date": "2026-10-23",
-       "ga": 1,
-       "gf": 0,
-       "home": false,
-       "league": "BRA",
-       "opponent": "Cruzeiro",
-       "result": "L"
       }
      ],
-     "ga": 61,
-     "gd": -20,
-     "gf": 41,
-     "lost": 18,
-     "played": 36,
+     "ga": 64,
+     "gd": -22,
+     "gf": 42,
+     "lost": 19,
+     "played": 37,
      "points": 32,
      "position": 19,
-     "provisional": 0,
+     "provisional": 1,
      "rating": -0.3637779615897391,
      "team": "Remo",
      "won": 7
