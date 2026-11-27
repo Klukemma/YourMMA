@@ -1,5 +1,5 @@
 {
- "as_of": "2026-11-26T21:36:31Z",
+ "as_of": "2026-11-27T22:05:06Z",
  "byes": [],
  "caveats": {
   "injuries": "Injury report from the league's official practice reports via nflverse: shown, not applied. The model reads only who starts at quarterback.",
@@ -16,7 +16,7 @@
   "tiers": "STRONG, SOLID, LEAN and TOSS-UP are bands of the pick's probability. The percentage beside each is how often picks in that band won in 2016-2025 - measured, not promised.",
   "value_off": "No game is labelled a bet: backing the model where it disagreed with the closing moneyline did not make money in 2016-2025 at any edge tested."
  },
- "data_through": "2026-11-25",
+ "data_through": "2026-11-26",
  "game_type": "REG",
  "games": [
   {
@@ -2309,9 +2309,18 @@
   {
    "alerts": [
     {
+     "name": "DJ Wonnum",
+     "position": "DE",
+     "reason": "did not play",
+     "role": "#1 defender",
+     "side": "home",
+     "status": "out",
+     "team": "DET"
+    },
+    {
      "name": "Aidan Hutchinson",
      "position": "DE",
-     "reason": "on a reserve list",
+     "reason": "did not play",
      "role": "#2 defender",
      "side": "home",
      "status": "out",
@@ -2428,22 +2437,28 @@
    "away_injuries_total": 5,
    "away_leaders": {
     "passing": {
+     "actual": 345.0,
      "gsis_id": "00-0039918",
      "name": "Caleb Williams",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 268.215311
     },
     "receiving": {
+     "actual": 44.0,
      "gsis_id": "00-0040735",
      "name": "Luther Burden",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 48.511662
     },
     "rushing": {
+     "actual": 65.0,
      "gsis_id": "00-0036275",
      "name": "D'Andre Swift",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 49.114039
@@ -2532,9 +2547,9 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.75,
-       "scored": 3
+       "n": 5,
+       "rate": 0.8,
+       "scored": 4
       }
      },
      "name": "D'Andre Swift",
@@ -2558,6 +2573,7 @@
       "rec_yds": 12.199688,
       "rush_yds": 49.114039
      },
+     "scored": true,
      "status": "active",
      "tds_season": 11
     },
@@ -2571,8 +2587,8 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 3,
-       "rate": 0.333333,
+       "n": 4,
+       "rate": 0.25,
        "scored": 1
       }
      },
@@ -2597,6 +2613,7 @@
       "rec_yds": 47.426382,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -2610,9 +2627,9 @@
        "rate": null
       },
       "top3": {
-       "n": 1,
-       "rate": 0.0,
-       "scored": 0
+       "n": 2,
+       "rate": 0.5,
+       "scored": 1
       }
      },
      "name": "Kyle Monangai",
@@ -2636,6 +2653,7 @@
       "rec_yds": 6.802682,
       "rush_yds": 36.765555
      },
+     "scored": true,
      "status": "active",
      "tds_season": 3
     }
@@ -2652,9 +2670,9 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.75,
-       "scored": 3
+       "n": 5,
+       "rate": 0.8,
+       "scored": 4
       }
      },
      "name": "D'Andre Swift",
@@ -2674,6 +2692,7 @@
      },
      "prob": 0.461603,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 11
     },
@@ -2688,8 +2707,8 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 3,
-       "rate": 0.333333,
+       "n": 4,
+       "rate": 0.25,
        "scored": 1
       }
      },
@@ -2710,6 +2729,7 @@
      },
      "prob": 0.339508,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -2724,9 +2744,9 @@
        "rate": null
       },
       "top3": {
-       "n": 1,
-       "rate": 0.0,
-       "scored": 0
+       "n": 2,
+       "rate": 0.5,
+       "scored": 1
       }
      },
      "name": "Kyle Monangai",
@@ -2746,6 +2766,7 @@
      },
      "prob": 0.332953,
      "rank": 3,
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -2755,9 +2776,9 @@
      "gsis_id": "00-0040735",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 0,
-       "rate": 0.0
+       "n": 2,
+       "no_td": 1,
+       "rate": 0.5
       },
       "top3": {
        "n": 3,
@@ -2782,6 +2803,7 @@
      },
      "prob": 0.310721,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -2791,9 +2813,9 @@
      "gsis_id": "00-0039919",
      "meters": {
       "rest": {
-       "n": 4,
+       "n": 5,
        "no_td": 3,
-       "rate": 0.75
+       "rate": 0.6
       },
       "top3": {
        "n": 0,
@@ -2818,6 +2840,7 @@
      },
      "prob": 0.302787,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -2827,8 +2850,8 @@
      "gsis_id": "00-0032464",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -2854,6 +2877,7 @@
      },
      "prob": 0.191792,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -2863,8 +2887,8 @@
      "gsis_id": "00-0039918",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -2890,6 +2914,7 @@
      },
      "prob": 0.16382,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -2910,6 +2935,7 @@
       }
      },
      "name": "Roschon Johnson",
+     "played": false,
      "position": "RB",
      "price": {
       "american": 947.6,
@@ -2926,6 +2952,7 @@
      },
      "prob": 0.134485,
      "rank": 8,
+     "scored": null,
      "status": "active",
      "tds_season": 1
     },
@@ -2935,8 +2962,8 @@
      "gsis_id": "00-0041051",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -2962,6 +2989,7 @@
      },
      "prob": 0.116849,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -2982,6 +3010,7 @@
       }
      },
      "name": "Tyson Bagent",
+     "played": false,
      "position": "QB",
      "price": {
       "american": null,
@@ -2998,6 +3027,7 @@
      },
      "prob": 0.087775,
      "rank": 10,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -3018,6 +3048,7 @@
       }
      },
      "name": "Case Keenum",
+     "played": false,
      "position": "QB",
      "price": {
       "american": null,
@@ -3034,6 +3065,7 @@
      },
      "prob": 0.066098,
      "rank": 11,
+     "scored": null,
      "status": "active",
      "tds_season": 1
     },
@@ -3043,8 +3075,8 @@
      "gsis_id": "00-0041558",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -3070,6 +3102,7 @@
      },
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -3079,8 +3112,8 @@
      "gsis_id": "00-0040277",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -3106,6 +3139,7 @@
      },
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -3115,8 +3149,8 @@
      "gsis_id": "00-0035039",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -3142,6 +3176,7 @@
      },
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -3256,22 +3291,28 @@
    "home_injuries_total": 4,
    "home_leaders": {
     "passing": {
+     "actual": 313.0,
      "gsis_id": "00-0033106",
      "name": "Jared Goff",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 286.737155
     },
     "receiving": {
+     "actual": 146.0,
      "gsis_id": "00-0036963",
      "name": "Amon-Ra St. Brown",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 73.267394
     },
     "rushing": {
+     "actual": 205.0,
      "gsis_id": "00-0039139",
      "name": "Jahmyr Gibbs",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 91.840251
@@ -3287,8 +3328,8 @@
       "name": "DJ Wonnum",
       "position": "DE",
       "rank": 1,
-      "reason": "Questionable on the injury report (back)",
-      "status": "questionable",
+      "reason": "did not play",
+      "status": "out",
       "value": 10.75
      },
      {
@@ -3298,7 +3339,7 @@
       "name": "Aidan Hutchinson",
       "position": "DE",
       "rank": 2,
-      "reason": "on a reserve list",
+      "reason": "did not play",
       "status": "out",
       "value": 9.0
      }
@@ -3361,9 +3402,9 @@
        "rate": null
       },
       "top3": {
-       "n": 5,
-       "rate": 0.8,
-       "scored": 4
+       "n": 6,
+       "rate": 0.833333,
+       "scored": 5
       }
      },
      "name": "Jahmyr Gibbs",
@@ -3387,6 +3428,7 @@
       "rec_yds": 31.006204,
       "rush_yds": 91.840251
      },
+     "scored": true,
      "status": "active",
      "tds_season": 15
     },
@@ -3400,8 +3442,8 @@
        "rate": null
       },
       "top3": {
-       "n": 5,
-       "rate": 0.4,
+       "n": 6,
+       "rate": 0.333333,
        "scored": 2
       }
      },
@@ -3426,6 +3468,7 @@
       "rec_yds": 73.267394,
       "rush_yds": 0.155697
      },
+     "scored": false,
      "status": "active",
      "tds_season": 8
     },
@@ -3439,8 +3482,8 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 4,
-       "rate": 0.5,
+       "n": 5,
+       "rate": 0.4,
        "scored": 2
       }
      },
@@ -3465,6 +3508,7 @@
       "rec_yds": 48.819236,
       "rush_yds": 0.419928
      },
+     "scored": false,
      "status": "active",
      "tds_season": 6
     }
@@ -3481,9 +3525,9 @@
        "rate": null
       },
       "top3": {
-       "n": 5,
-       "rate": 0.8,
-       "scored": 4
+       "n": 6,
+       "rate": 0.833333,
+       "scored": 5
       }
      },
      "name": "Jahmyr Gibbs",
@@ -3503,6 +3547,7 @@
      },
      "prob": 0.786298,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 15
     },
@@ -3517,8 +3562,8 @@
        "rate": null
       },
       "top3": {
-       "n": 5,
-       "rate": 0.4,
+       "n": 6,
+       "rate": 0.333333,
        "scored": 2
       }
      },
@@ -3539,6 +3584,7 @@
      },
      "prob": 0.406078,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 8
     },
@@ -3553,8 +3599,8 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 4,
-       "rate": 0.5,
+       "n": 5,
+       "rate": 0.4,
        "scored": 2
       }
      },
@@ -3575,6 +3621,7 @@
      },
      "prob": 0.370497,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 6
     },
@@ -3584,9 +3631,9 @@
      "gsis_id": "00-0039065",
      "meters": {
       "rest": {
-       "n": 4,
+       "n": 5,
        "no_td": 4,
-       "rate": 1.0
+       "rate": 0.8
       },
       "top3": {
        "n": 1,
@@ -3611,6 +3658,7 @@
      },
      "prob": 0.324109,
      "rank": 4,
+     "scored": true,
      "status": "active",
      "tds_season": 3
     },
@@ -3620,9 +3668,9 @@
      "gsis_id": "00-0040669",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 4,
-       "rate": 0.8
+       "n": 6,
+       "no_td": 5,
+       "rate": 0.833333
       },
       "top3": {
        "n": 0,
@@ -3647,6 +3695,7 @@
      },
      "prob": 0.191297,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -3656,8 +3705,8 @@
      "gsis_id": "00-0039364",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 5,
+       "n": 6,
+       "no_td": 6,
        "rate": 1.0
       },
       "top3": {
@@ -3683,6 +3732,7 @@
      },
      "prob": 0.125456,
      "rank": 6,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -3692,8 +3742,8 @@
      "gsis_id": "00-0036754",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 5,
+       "n": 6,
+       "no_td": 6,
        "rate": 1.0
       },
       "top3": {
@@ -3719,6 +3769,7 @@
      },
      "prob": 0.11585,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -3728,8 +3779,8 @@
      "gsis_id": "00-0033106",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 5,
+       "n": 6,
+       "no_td": 6,
        "rate": 1.0
       },
       "top3": {
@@ -3755,6 +3806,7 @@
      },
      "prob": 0.113167,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -3775,6 +3827,7 @@
       }
      },
      "name": "Joshua Dobbs",
+     "played": false,
      "position": "QB",
      "price": {
       "american": null,
@@ -3791,6 +3844,7 @@
      },
      "prob": 0.072337,
      "rank": 9,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -3800,8 +3854,8 @@
      "gsis_id": "00-0034270",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 5,
+       "n": 6,
+       "no_td": 6,
        "rate": 1.0
       },
       "top3": {
@@ -3827,6 +3881,7 @@
      },
      "prob": null,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -3836,8 +3891,8 @@
      "gsis_id": "00-0038896",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -3863,6 +3918,7 @@
      },
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -3872,8 +3928,8 @@
      "gsis_id": "00-0031763",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 3,
+       "n": 4,
+       "no_td": 4,
        "rate": 1.0
       },
       "top3": {
@@ -3899,6 +3955,7 @@
      },
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -3908,8 +3965,8 @@
      "gsis_id": "00-0037524",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 5,
+       "n": 6,
+       "no_td": 6,
        "rate": 1.0
       },
       "top3": {
@@ -3935,6 +3992,7 @@
      },
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -4098,6 +4156,10 @@
    "pick": "CHI",
    "pick_prob": 0.538061,
    "roof": "dome",
+   "score": {
+    "away": 39,
+    "home": 35
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 3.537522,
@@ -4105,30 +4167,30 @@
     "team": "DET"
    },
    "stadium": "Ford Field",
-   "status": "in progress",
+   "status": "final",
    "td_meters": {
     "away": {
      "rest": {
-      "n": 33,
-      "no_td": 30,
-      "rate": 0.909091
+      "n": 41,
+      "no_td": 37,
+      "rate": 0.902439
      },
      "top3": {
-      "n": 11,
-      "rate": 0.545455,
-      "scored": 6
+      "n": 14,
+      "rate": 0.571429,
+      "scored": 8
      }
     },
     "home": {
      "rest": {
-      "n": 41,
-      "no_td": 39,
-      "rate": 0.95122
+      "n": 50,
+      "no_td": 47,
+      "rate": 0.94
      },
      "top3": {
-      "n": 15,
-      "rate": 0.533333,
-      "scored": 8
+      "n": 18,
+      "rate": 0.5,
+      "scored": 9
      }
     }
    },
@@ -4136,64 +4198,80 @@
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "confident": 0.65,
      "confident_game": false,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "small",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "pick": "CHI",
      "pick_prob": 0.538061,
      "reason": "not a confident game: the pick's chance is below 65%",
+     "result": null,
      "td_floor": 0.45,
      "version": "sgp-v2"
     },
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "confident": 0.65,
      "confident_game": false,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "rookie",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "pick": "CHI",
      "pick_prob": 0.538061,
      "reason": "not a confident game: the pick's chance is below 65%",
+     "result": null,
      "td_floor": 0.45,
      "version": "sgp-v2"
     },
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "confident": 0.65,
      "confident_game": false,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "medium",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "pick": "CHI",
      "pick_prob": 0.538061,
      "reason": "not a confident game: the pick's chance is below 65%",
+     "result": null,
      "td_floor": 0.45,
      "version": "sgp-v2"
     },
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "confident": 0.65,
      "confident_game": false,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "large",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "pick": "CHI",
      "pick_prob": 0.538061,
      "reason": "not a confident game: the pick's chance is below 65%",
+     "result": null,
      "td_floor": 0.45,
      "version": "sgp-v2"
     }
@@ -4203,10 +4281,15 @@
     {
      "built": true,
      "chance": 0.456791,
+     "chance_graded": 0.456791,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no price on file for Jahmyr Gibbs anytime TD",
      "kind": "small",
+     "leg_results": {
+      "TD:00-0039139": "won",
+      "WIN:CHI": "won"
+     },
      "legs": [
       {
        "american": null,
@@ -4242,27 +4325,39 @@
        "team": "CHI"
       }
      ],
+     "payout": null,
      "reason": null,
+     "result": "won",
      "version": "sgp-v1"
     },
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "rookie",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "reason": "no rookie TD leg with a chance of 25% or more available",
+     "result": null,
      "version": "sgp-v1"
     },
     {
      "built": true,
      "chance": 0.228396,
+     "chance_graded": 0.228396,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no price on file for Jahmyr Gibbs anytime TD",
      "kind": "medium",
+     "leg_results": {
+      "TD:00-0039139": "won",
+      "TOTAL:OVER": "won",
+      "WIN:CHI": "won"
+     },
      "legs": [
       {
        "american": null,
@@ -4311,16 +4406,25 @@
        "side": "OVER"
       }
      ],
+     "payout": null,
      "reason": null,
+     "result": "won",
      "version": "sgp-v1"
     },
     {
      "built": true,
      "chance": 0.048559,
+     "chance_graded": 0.048559,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no price on file for D'Andre Swift anytime TD, Amon-Ra St. Brown anytime TD",
      "kind": "large",
+     "leg_results": {
+      "SPREAD:CHI": "won",
+      "TD:00-0036275": "won",
+      "TD:00-0036963": "lost",
+      "TOTAL:OVER": "won"
+     },
      "legs": [
       {
        "american": null,
@@ -4391,7 +4495,9 @@
        "side": "OVER"
       }
      ],
+     "payout": null,
      "reason": null,
+     "result": "lost",
      "version": "sgp-v1"
     }
    ],
@@ -4409,7 +4515,7 @@
     {
      "name": "Dontayvion Wicks",
      "position": "WR",
-     "reason": "on a reserve list",
+     "reason": "did not play",
      "role": "most valuable player",
      "side": "away",
      "status": "out",
@@ -4505,22 +4611,28 @@
    "away_injuries_total": 2,
    "away_leaders": {
     "passing": {
+     "actual": 331.0,
      "gsis_id": "00-0039398",
      "name": "Joe Milton",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 199.633664
     },
     "receiving": {
+     "actual": 200.0,
      "gsis_id": "00-0036912",
      "name": "DeVonta Smith",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 69.210365
     },
     "rushing": {
+     "actual": 7.0,
      "gsis_id": "00-0034844",
      "name": "Saquon Barkley",
+     "over": false,
      "position": "RB",
      "status": "active",
      "yards": 43.985876
@@ -4560,7 +4672,7 @@
       "name": "Dontayvion Wicks",
       "position": "WR",
       "rank": 1,
-      "reason": "on a reserve list",
+      "reason": "did not play",
       "status": "out",
       "value": 12.700985
      },
@@ -4609,9 +4721,9 @@
        "rate": null
       },
       "top3": {
-       "n": 1,
-       "rate": 0.0,
-       "scored": 0
+       "n": 2,
+       "rate": 0.5,
+       "scored": 1
       }
      },
      "name": "DeVonta Smith",
@@ -4635,6 +4747,7 @@
       "rec_yds": 69.210365,
       "rush_yds": 0.0
      },
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -4648,8 +4761,8 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 1.0,
+       "n": 5,
+       "rate": 0.8,
        "scored": 4
       }
      },
@@ -4674,6 +4787,7 @@
       "rec_yds": 3.644709,
       "rush_yds": 43.985876
      },
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -4687,7 +4801,7 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
+       "n": 5,
        "rate": 0.0,
        "scored": 0
       }
@@ -4713,6 +4827,7 @@
       "rec_yds": 34.436518,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     }
@@ -4729,9 +4844,9 @@
        "rate": null
       },
       "top3": {
-       "n": 1,
-       "rate": 0.0,
-       "scored": 0
+       "n": 2,
+       "rate": 0.5,
+       "scored": 1
       }
      },
      "name": "DeVonta Smith",
@@ -4751,6 +4866,7 @@
      },
      "prob": 0.297518,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -4765,8 +4881,8 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 1.0,
+       "n": 5,
+       "rate": 0.8,
        "scored": 4
       }
      },
@@ -4787,6 +4903,7 @@
      },
      "prob": 0.269948,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -4801,7 +4918,7 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
+       "n": 5,
        "rate": 0.0,
        "scored": 0
       }
@@ -4823,6 +4940,7 @@
      },
      "prob": 0.21915,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -4832,8 +4950,8 @@
      "gsis_id": "00-0040024",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -4859,6 +4977,7 @@
      },
      "prob": 0.216484,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -4868,9 +4987,9 @@
      "gsis_id": "00-0040867",
      "meters": {
       "rest": {
-       "n": 2,
+       "n": 3,
        "no_td": 1,
-       "rate": 0.5
+       "rate": 0.333333
       },
       "top3": {
        "n": 2,
@@ -4895,6 +5014,7 @@
      },
      "prob": 0.211414,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 1
     },
@@ -4904,9 +5024,9 @@
      "gsis_id": "00-0039398",
      "meters": {
       "rest": {
-       "n": 2,
+       "n": 3,
        "no_td": 2,
-       "rate": 1.0
+       "rate": 0.666667
       },
       "top3": {
        "n": 0,
@@ -4931,6 +5051,7 @@
      },
      "prob": 0.150058,
      "rank": 6,
+     "scored": true,
      "status": "active",
      "tds_season": 0
     },
@@ -4940,9 +5061,9 @@
      "gsis_id": "00-0039746",
      "meters": {
       "rest": {
-       "n": 0,
-       "no_td": 0,
-       "rate": null
+       "n": 1,
+       "no_td": 1,
+       "rate": 1.0
       },
       "top3": {
        "n": 0,
@@ -4967,6 +5088,7 @@
      },
      "prob": 0.120781,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -4976,8 +5098,8 @@
      "gsis_id": "00-0030061",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -5003,6 +5125,7 @@
      },
      "prob": 0.088387,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -5023,6 +5146,7 @@
       }
      },
      "name": "Tanner McKee",
+     "played": false,
      "position": "QB",
      "price": {
       "american": null,
@@ -5039,6 +5163,7 @@
      },
      "prob": 0.08358,
      "rank": 9,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -5048,8 +5173,8 @@
      "gsis_id": "00-0041483",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 3,
+       "n": 4,
+       "no_td": 4,
        "rate": 1.0
       },
       "top3": {
@@ -5075,6 +5200,7 @@
      },
      "prob": 0.074408,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -5084,8 +5210,8 @@
      "gsis_id": "00-0040586",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 3,
+       "n": 4,
+       "no_td": 4,
        "rate": 1.0
       },
       "top3": {
@@ -5111,6 +5237,7 @@
      },
      "prob": 0.069688,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -5120,8 +5247,8 @@
      "gsis_id": "00-0036980",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -5147,6 +5274,7 @@
      },
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -5167,6 +5295,7 @@
       }
      },
      "name": "Grant Calcaterra",
+     "played": false,
      "position": "TE",
      "price": {
       "american": 2749.1,
@@ -5183,6 +5312,7 @@
      },
      "prob": null,
      "rank": 13,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -5192,8 +5322,8 @@
      "gsis_id": "00-0033246",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -5219,6 +5349,7 @@
      },
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -5228,8 +5359,8 @@
      "gsis_id": "00-0037132",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -5255,6 +5386,7 @@
      },
      "prob": null,
      "rank": 15,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -5275,6 +5407,7 @@
       }
      },
      "name": "Cole Payton",
+     "played": false,
      "position": "QB",
      "price": {
       "american": null,
@@ -5291,6 +5424,7 @@
      },
      "prob": null,
      "rank": 16,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
@@ -5419,22 +5553,28 @@
    "home_injuries_total": 6,
    "home_leaders": {
     "passing": {
+     "actual": 291.0,
      "gsis_id": "00-0033077",
      "name": "Dak Prescott",
+     "over": true,
      "position": "QB",
      "status": "active",
      "yards": 272.442725
     },
     "receiving": {
+     "actual": 134.0,
      "gsis_id": "00-0036358",
      "name": "CeeDee Lamb",
+     "over": true,
      "position": "WR",
      "status": "active",
      "yards": 87.004102
     },
     "rushing": {
+     "actual": 101.0,
      "gsis_id": "00-0036997",
      "name": "Javonte Williams",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 65.522105
@@ -5524,9 +5664,9 @@
        "rate": null
       },
       "top3": {
-       "n": 6,
-       "rate": 0.666667,
-       "scored": 4
+       "n": 7,
+       "rate": 0.714286,
+       "scored": 5
       }
      },
      "name": "Javonte Williams",
@@ -5550,6 +5690,7 @@
       "rec_yds": 9.422245,
       "rush_yds": 65.522105
      },
+     "scored": true,
      "status": "active",
      "tds_season": 12
     },
@@ -5563,8 +5704,8 @@
        "rate": null
       },
       "top3": {
-       "n": 6,
-       "rate": 0.666667,
+       "n": 7,
+       "rate": 0.571429,
        "scored": 4
       }
      },
@@ -5589,6 +5730,7 @@
       "rec_yds": 87.004102,
       "rush_yds": 0.001946
      },
+     "scored": false,
      "status": "active",
      "tds_season": 9
     },
@@ -5602,8 +5744,8 @@
        "rate": null
       },
       "top3": {
-       "n": 5,
-       "rate": 0.6,
+       "n": 6,
+       "rate": 0.5,
        "scored": 3
       }
      },
@@ -5628,6 +5770,7 @@
       "rec_yds": 62.11293,
       "rush_yds": 0.153774
      },
+     "scored": false,
      "status": "active",
      "tds_season": 6
     }
@@ -5644,9 +5787,9 @@
        "rate": null
       },
       "top3": {
-       "n": 6,
-       "rate": 0.666667,
-       "scored": 4
+       "n": 7,
+       "rate": 0.714286,
+       "scored": 5
       }
      },
      "name": "Javonte Williams",
@@ -5666,6 +5809,7 @@
      },
      "prob": 0.574719,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 12
     },
@@ -5680,8 +5824,8 @@
        "rate": null
       },
       "top3": {
-       "n": 6,
-       "rate": 0.666667,
+       "n": 7,
+       "rate": 0.571429,
        "scored": 4
       }
      },
@@ -5702,6 +5846,7 @@
      },
      "prob": 0.518259,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 9
     },
@@ -5716,8 +5861,8 @@
        "rate": null
       },
       "top3": {
-       "n": 5,
-       "rate": 0.6,
+       "n": 6,
+       "rate": 0.5,
        "scored": 3
       }
      },
@@ -5738,6 +5883,7 @@
      },
      "prob": 0.441942,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 6
     },
@@ -5747,9 +5893,9 @@
      "gsis_id": "00-0039410",
      "meters": {
       "rest": {
-       "n": 6,
-       "no_td": 3,
-       "rate": 0.5
+       "n": 7,
+       "no_td": 4,
+       "rate": 0.571429
       },
       "top3": {
        "n": 0,
@@ -5774,6 +5920,7 @@
      },
      "prob": 0.248183,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -5783,9 +5930,9 @@
      "gsis_id": "00-0033077",
      "meters": {
       "rest": {
-       "n": 6,
+       "n": 7,
        "no_td": 4,
-       "rate": 0.666667
+       "rate": 0.571429
       },
       "top3": {
        "n": 0,
@@ -5810,6 +5957,7 @@
      },
      "prob": 0.161642,
      "rank": 5,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -5830,6 +5978,7 @@
       }
      },
      "name": "Jake Ferguson",
+     "played": false,
      "position": "TE",
      "price": {
       "american": 260.0,
@@ -5846,6 +5995,7 @@
      },
      "prob": 0.15744,
      "rank": 6,
+     "scored": null,
      "status": "active",
      "tds_season": 4
     },
@@ -5855,9 +6005,9 @@
      "gsis_id": "00-0039530",
      "meters": {
       "rest": {
-       "n": 6,
-       "no_td": 5,
-       "rate": 0.833333
+       "n": 7,
+       "no_td": 6,
+       "rate": 0.857143
       },
       "top3": {
        "n": 0,
@@ -5882,6 +6032,7 @@
      },
      "prob": 0.15594,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -5891,9 +6042,9 @@
      "gsis_id": "00-0037801",
      "meters": {
       "rest": {
-       "n": 2,
+       "n": 3,
        "no_td": 1,
-       "rate": 0.5
+       "rate": 0.333333
       },
       "top3": {
        "n": 0,
@@ -5918,6 +6069,7 @@
      },
      "prob": 0.113518,
      "rank": 8,
+     "scored": true,
      "status": "active",
      "tds_season": 2
     },
@@ -5938,6 +6090,7 @@
       }
      },
      "name": "Sam Howell",
+     "played": false,
      "position": "QB",
      "price": {
       "american": null,
@@ -5954,6 +6107,7 @@
      },
      "prob": 0.087335,
      "rank": 9,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -5974,6 +6128,7 @@
       }
      },
      "name": "Jonathan Mingo",
+     "played": false,
      "position": "WR",
      "price": {
       "american": 1300.0,
@@ -5990,6 +6145,7 @@
      },
      "prob": 0.068097,
      "rank": 10,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -5999,8 +6155,8 @@
      "gsis_id": "00-0038547",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -6026,6 +6182,7 @@
      },
      "prob": null,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -6035,8 +6192,8 @@
      "gsis_id": "00-0038738",
      "meters": {
       "rest": {
-       "n": 6,
-       "no_td": 6,
+       "n": 7,
+       "no_td": 7,
        "rate": 1.0
       },
       "top3": {
@@ -6062,6 +6219,7 @@
      },
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -6071,8 +6229,8 @@
      "gsis_id": "00-0037282",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 3,
+       "n": 4,
+       "no_td": 4,
        "rate": 1.0
       },
       "top3": {
@@ -6098,6 +6256,7 @@
      },
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -6107,8 +6266,8 @@
      "gsis_id": "00-0040930",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -6134,6 +6293,7 @@
      },
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
@@ -6301,7 +6461,11 @@
    ],
    "pick": "DAL",
    "pick_prob": 0.784216,
-   "roof": "retractable",
+   "roof": "closed",
+   "score": {
+    "away": 39,
+    "home": 38
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 2.58409,
@@ -6309,30 +6473,30 @@
     "team": "PHI"
    },
    "stadium": "AT&T Stadium",
-   "status": "in progress",
+   "status": "final",
    "td_meters": {
     "away": {
      "rest": {
-      "n": 34,
-      "no_td": 33,
-      "rate": 0.970588
+      "n": 44,
+      "no_td": 41,
+      "rate": 0.931818
      },
      "top3": {
-      "n": 12,
-      "rate": 0.416667,
-      "scored": 5
+      "n": 15,
+      "rate": 0.4,
+      "scored": 6
      }
     },
     "home": {
      "rest": {
-      "n": 50,
-      "no_td": 42,
-      "rate": 0.84
+      "n": 58,
+      "no_td": 48,
+      "rate": 0.827586
      },
      "top3": {
-      "n": 17,
-      "rate": 0.647059,
-      "scored": 11
+      "n": 20,
+      "rate": 0.6,
+      "scored": 12
      }
     }
    },
@@ -6340,12 +6504,17 @@
     {
      "built": true,
      "chance": 0.450704,
+     "chance_graded": 0.450704,
      "confident": 0.65,
      "confident_game": true,
      "est": true,
      "est_payout": 1.889983,
      "est_payout_reason": null,
      "kind": "small",
+     "leg_results": {
+      "TD:00-0036997": "won",
+      "WIN:DAL": "lost"
+     },
      "legs": [
       {
        "american": -181.0,
@@ -6382,37 +6551,49 @@
        "team": "DAL"
       }
      ],
+     "payout": 1.889982,
      "pick": "DAL",
      "pick_prob": 0.784216,
      "reason": null,
+     "result": "lost",
      "td_floor": 0.45,
      "version": "sgp-v2"
     },
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "confident": 0.65,
      "confident_game": true,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "rookie",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "pick": "DAL",
      "pick_prob": 0.784216,
      "reason": "no rookie TD leg on the pick's team with a chance of 25% or more available",
+     "result": null,
      "td_floor": 0.45,
      "version": "sgp-v2"
     },
     {
      "built": true,
      "chance": 0.233581,
+     "chance_graded": 0.233581,
      "confident": 0.65,
      "confident_game": true,
      "est": true,
      "est_payout": 3.071223,
      "est_payout_reason": null,
      "kind": "medium",
+     "leg_results": {
+      "TD:00-0036358": "lost",
+      "TD:00-0036997": "won",
+      "WIN:DAL": "lost"
+     },
      "legs": [
       {
        "american": -181.0,
@@ -6471,25 +6652,31 @@
        "team": "DAL"
       }
      ],
+     "payout": 3.071222,
      "pick": "DAL",
      "pick_prob": 0.784216,
      "reason": null,
+     "result": "lost",
      "td_floor": 0.45,
      "version": "sgp-v2"
     },
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "confident": 0.65,
      "confident_game": true,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "large",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "pick": "DAL",
      "pick_prob": 0.784216,
      "reason": "no TD leg with a chance of 45% or more on a second player available",
+     "result": null,
      "td_floor": 0.45,
      "version": "sgp-v2"
     }
@@ -6499,10 +6686,15 @@
     {
      "built": true,
      "chance": 0.428749,
+     "chance_graded": 0.428749,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no price on file for Javonte Williams anytime TD",
      "kind": "small",
+     "leg_results": {
+      "TD:00-0036997": "won",
+      "WIN:DAL": "lost"
+     },
      "legs": [
       {
        "american": null,
@@ -6538,27 +6730,39 @@
        "team": "DAL"
       }
      ],
+     "payout": null,
      "reason": null,
+     "result": "lost",
      "version": "sgp-v1"
     },
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "rookie",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "reason": "no rookie TD leg with a chance of 25% or more available",
+     "result": null,
      "version": "sgp-v1"
     },
     {
      "built": true,
      "chance": 0.217232,
+     "chance_graded": 0.217233,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no price on file for Javonte Williams anytime TD, CeeDee Lamb anytime TD",
      "kind": "medium",
+     "leg_results": {
+      "TD:00-0036358": "lost",
+      "TD:00-0036997": "won",
+      "WIN:DAL": "lost"
+     },
      "legs": [
       {
        "american": null,
@@ -6615,16 +6819,25 @@
        "team": "DAL"
       }
      ],
+     "payout": null,
      "reason": null,
+     "result": "lost",
      "version": "sgp-v1"
     },
     {
      "built": true,
      "chance": 0.055945,
+     "chance_graded": 0.055945,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no price on file for CeeDee Lamb anytime TD, George Pickens anytime TD",
      "kind": "large",
+     "leg_results": {
+      "SPREAD:DAL": "lost",
+      "TD:00-0036358": "lost",
+      "TD:00-0037247": "lost",
+      "TOTAL:OVER": "won"
+     },
      "legs": [
       {
        "american": null,
@@ -6695,7 +6908,9 @@
        "side": "OVER"
       }
      ],
+     "payout": null,
      "reason": null,
+     "result": "lost",
      "version": "sgp-v1"
     }
    ],
@@ -6820,22 +7035,28 @@
    "away_injuries_total": 5,
    "away_leaders": {
     "passing": {
+     "actual": 174.0,
      "gsis_id": "00-0033873",
      "name": "Patrick Mahomes",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 230.915811
     },
     "receiving": {
+     "actual": 19.0,
      "gsis_id": "00-0039067",
      "name": "Rashee Rice",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 36.829426
     },
     "rushing": {
+     "actual": 72.0,
      "gsis_id": "00-0041013",
      "name": "Emmett Johnson",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 41.665545
@@ -6874,11 +7095,6 @@
       "line": "2,709 pass yds, 22 TD, 4 INT, 100 rush yds",
       "name": "Patrick Mahomes",
       "position": "QB",
-      "proj": {
-       "pass_yds": 230.915811,
-       "rec_yds": null,
-       "rush_yds": 7.63084
-      },
       "rank": 1,
       "reason": null,
       "status": "active",
@@ -6890,11 +7106,6 @@
       "line": "41 rec, 586 yds, 5 TD",
       "name": "Travis Kelce",
       "position": "TE",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 31.171827,
-       "rush_yds": null
-      },
       "rank": 2,
       "reason": null,
       "status": "active",
@@ -6906,11 +7117,6 @@
       "line": "317 rush yds, 345 rec yds, 5 TD",
       "name": "Emmett Johnson",
       "position": "RB",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 23.726054,
-       "rush_yds": 41.665545
-      },
       "rank": 3,
       "reason": null,
       "status": "active",
@@ -6939,9 +7145,9 @@
        "rate": 0.25
       },
       "top3": {
-       "n": 1,
+       "n": 2,
        "rate": 1.0,
-       "scored": 1
+       "scored": 2
       }
      },
      "name": "Emmett Johnson",
@@ -6965,6 +7171,7 @@
       "rec_yds": 23.726054,
       "rush_yds": 41.665545
      },
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -6978,7 +7185,7 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 3,
+       "n": 4,
        "rate": 0.0,
        "scored": 0
       }
@@ -7004,6 +7211,7 @@
       "rec_yds": 36.829426,
       "rush_yds": 0.0
      },
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -7017,8 +7225,8 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 4,
-       "rate": 0.25,
+       "n": 5,
+       "rate": 0.2,
        "scored": 1
       }
      },
@@ -7043,6 +7251,7 @@
       "rec_yds": 31.171827,
       "rush_yds": null
      },
+     "scored": false,
      "status": "active",
      "tds_season": 5
     }
@@ -7059,9 +7268,9 @@
        "rate": 0.25
       },
       "top3": {
-       "n": 1,
+       "n": 2,
        "rate": 1.0,
-       "scored": 1
+       "scored": 2
       }
      },
      "name": "Emmett Johnson",
@@ -7081,6 +7290,7 @@
      },
      "prob": 0.4038,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 5
     },
@@ -7095,7 +7305,7 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 3,
+       "n": 4,
        "rate": 0.0,
        "scored": 0
       }
@@ -7117,6 +7327,7 @@
      },
      "prob": 0.219173,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -7131,8 +7342,8 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 4,
-       "rate": 0.25,
+       "n": 5,
+       "rate": 0.2,
        "scored": 1
       }
      },
@@ -7153,6 +7364,7 @@
      },
      "prob": 0.215991,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 5
     },
@@ -7162,9 +7374,9 @@
      "gsis_id": "00-0039894",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 2,
-       "rate": 0.666667
+       "n": 4,
+       "no_td": 3,
+       "rate": 0.75
       },
       "top3": {
        "n": 2,
@@ -7189,6 +7401,7 @@
      },
      "prob": 0.194548,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -7198,9 +7411,9 @@
      "gsis_id": "00-0038997",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 0,
-       "rate": 0.0
+       "n": 2,
+       "no_td": 1,
+       "rate": 0.5
       },
       "top3": {
        "n": 4,
@@ -7225,6 +7438,7 @@
      },
      "prob": 0.184958,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 2
     },
@@ -7234,9 +7448,9 @@
      "gsis_id": "00-0036637",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 4,
-       "rate": 0.8
+       "n": 6,
+       "no_td": 5,
+       "rate": 0.833333
       },
       "top3": {
        "n": 0,
@@ -7261,6 +7475,7 @@
      },
      "prob": 0.127491,
      "rank": 6,
+     "scored": false,
      "status": "questionable",
      "tds_season": 1
     },
@@ -7270,9 +7485,9 @@
      "gsis_id": "00-0040890",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 4,
-       "rate": 0.8
+       "n": 6,
+       "no_td": 5,
+       "rate": 0.833333
       },
       "top3": {
        "n": 0,
@@ -7297,6 +7512,7 @@
      },
      "prob": 0.106872,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -7306,8 +7522,8 @@
      "gsis_id": "00-0033873",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 5,
+       "n": 6,
+       "no_td": 6,
        "rate": 1.0
       },
       "top3": {
@@ -7333,6 +7549,7 @@
      },
      "prob": 0.095269,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -7342,8 +7559,8 @@
      "gsis_id": "00-0040959",
      "meters": {
       "rest": {
-       "n": 2,
-       "no_td": 2,
+       "n": 3,
+       "no_td": 3,
        "rate": 1.0
       },
       "top3": {
@@ -7369,6 +7586,7 @@
      },
      "prob": 0.089328,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -7378,8 +7596,8 @@
      "gsis_id": "00-0040646",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 5,
+       "n": 6,
+       "no_td": 6,
        "rate": 1.0
       },
       "top3": {
@@ -7405,6 +7623,7 @@
      },
      "prob": 0.082485,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -7425,6 +7644,7 @@
       }
      },
      "name": "Justin Fields",
+     "played": false,
      "position": "QB",
      "price": {
       "american": null,
@@ -7441,6 +7661,7 @@
      },
      "prob": 0.075553,
      "rank": 11,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -7450,9 +7671,9 @@
      "gsis_id": "00-0040298",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 4,
-       "rate": 0.8
+       "n": 6,
+       "no_td": 5,
+       "rate": 0.833333
       },
       "top3": {
        "n": 0,
@@ -7477,6 +7698,7 @@
      },
      "prob": null,
      "rank": 12,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -7486,8 +7708,8 @@
      "gsis_id": "00-0040081",
      "meters": {
       "rest": {
-       "n": 5,
-       "no_td": 5,
+       "n": 6,
+       "no_td": 6,
        "rate": 1.0
       },
       "top3": {
@@ -7513,6 +7735,7 @@
      },
      "prob": null,
      "rank": 13,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -7533,6 +7756,7 @@
       }
      },
      "name": "Garrett Nussmeier",
+     "played": false,
      "position": "QB",
      "price": {
       "american": null,
@@ -7549,6 +7773,7 @@
      },
      "prob": null,
      "rank": 14,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     }
@@ -7670,22 +7895,28 @@
    "home_injuries_total": 5,
    "home_leaders": {
     "passing": {
+     "actual": 81.0,
      "gsis_id": "00-0034857",
      "name": "Josh Allen",
+     "over": false,
      "position": "QB",
      "status": "active",
      "yards": 223.110303
     },
     "receiving": {
+     "actual": 33.0,
      "gsis_id": "00-0037261",
      "name": "Khalil Shakir",
+     "over": false,
      "position": "WR",
      "status": "active",
      "yards": 44.750702
     },
     "rushing": {
+     "actual": 117.0,
      "gsis_id": "00-0037248",
      "name": "James Cook",
+     "over": true,
      "position": "RB",
      "status": "active",
      "yards": 83.268251
@@ -7724,11 +7955,6 @@
       "line": "2,527 pass yds, 14 TD, 9 INT, 290 rush yds",
       "name": "Josh Allen",
       "position": "QB",
-      "proj": {
-       "pass_yds": 223.110303,
-       "rec_yds": null,
-       "rush_yds": 13.271241
-      },
       "rank": 1,
       "reason": null,
       "status": "active",
@@ -7740,14 +7966,9 @@
       "line": "32 rec, 487 yds, 2 TD",
       "name": "Dalton Kincaid",
       "position": "TE",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 31.498456,
-       "rush_yds": null
-      },
       "rank": 2,
-      "reason": "Questionable on the injury report (thumb)",
-      "status": "questionable",
+      "reason": null,
+      "status": "active",
       "value": 18.772013
      },
      {
@@ -7756,11 +7977,6 @@
       "line": "1,060 rush yds, 113 rec yds, 10 TD",
       "name": "James Cook",
       "position": "RB",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 6.892134,
-       "rush_yds": 83.268251
-      },
       "rank": 3,
       "reason": null,
       "status": "active",
@@ -7790,9 +8006,9 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
+       "n": 5,
        "rate": 1.0,
-       "scored": 4
+       "scored": 5
       }
      },
      "name": "James Cook",
@@ -7816,6 +8032,7 @@
       "rec_yds": 6.892134,
       "rush_yds": 83.268251
      },
+     "scored": true,
      "status": "active",
      "tds_season": 10
     },
@@ -7829,8 +8046,8 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 3,
-       "rate": 0.666667,
+       "n": 4,
+       "rate": 0.5,
        "scored": 2
       }
      },
@@ -7855,6 +8072,7 @@
       "rec_yds": 38.212536,
       "rush_yds": 0.269489
      },
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -7868,8 +8086,8 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.5,
+       "n": 5,
+       "rate": 0.4,
        "scored": 2
       }
      },
@@ -7894,6 +8112,7 @@
       "rec_yds": null,
       "rush_yds": 13.271241
      },
+     "scored": false,
      "status": "active",
      "tds_season": 11
     }
@@ -7910,9 +8129,9 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
+       "n": 5,
        "rate": 1.0,
-       "scored": 4
+       "scored": 5
       }
      },
      "name": "James Cook",
@@ -7932,6 +8151,7 @@
      },
      "prob": 0.573392,
      "rank": 1,
+     "scored": true,
      "status": "active",
      "tds_season": 10
     },
@@ -7946,8 +8166,8 @@
        "rate": 0.0
       },
       "top3": {
-       "n": 3,
-       "rate": 0.666667,
+       "n": 4,
+       "rate": 0.5,
        "scored": 2
       }
      },
@@ -7968,6 +8188,7 @@
      },
      "prob": 0.309613,
      "rank": 2,
+     "scored": false,
      "status": "active",
      "tds_season": 4
     },
@@ -7982,8 +8203,8 @@
        "rate": null
       },
       "top3": {
-       "n": 4,
-       "rate": 0.5,
+       "n": 5,
+       "rate": 0.4,
        "scored": 2
       }
      },
@@ -8004,6 +8225,7 @@
      },
      "prob": 0.291285,
      "rank": 3,
+     "scored": false,
      "status": "active",
      "tds_season": 11
     },
@@ -8013,8 +8235,8 @@
      "gsis_id": "00-0037261",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -8040,6 +8262,7 @@
      },
      "prob": 0.252035,
      "rank": 4,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -8049,8 +8272,8 @@
      "gsis_id": "00-0039901",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 3,
+       "n": 4,
+       "no_td": 4,
        "rate": 1.0
       },
       "top3": {
@@ -8076,6 +8299,7 @@
      },
      "prob": 0.231007,
      "rank": 5,
+     "scored": false,
      "status": "active",
      "tds_season": 3
     },
@@ -8085,9 +8309,9 @@
      "gsis_id": "00-0038933",
      "meters": {
       "rest": {
-       "n": 3,
-       "no_td": 2,
-       "rate": 0.666667
+       "n": 4,
+       "no_td": 3,
+       "rate": 0.75
       },
       "top3": {
        "n": 0,
@@ -8112,6 +8336,7 @@
      },
      "prob": 0.226123,
      "rank": 6,
+     "scored": false,
      "status": "questionable",
      "tds_season": 2
     },
@@ -8121,8 +8346,8 @@
      "gsis_id": "00-0035537",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -8148,6 +8373,7 @@
      },
      "prob": 0.169763,
      "rank": 7,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -8157,8 +8383,8 @@
      "gsis_id": "00-0035689",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -8184,6 +8410,7 @@
      },
      "prob": 0.163409,
      "rank": 8,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -8193,8 +8420,8 @@
      "gsis_id": "00-0039875",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -8220,6 +8447,7 @@
      },
      "prob": 0.089808,
      "rank": 9,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -8229,8 +8457,8 @@
      "gsis_id": "00-0038679",
      "meters": {
       "rest": {
-       "n": 1,
-       "no_td": 1,
+       "n": 2,
+       "no_td": 2,
        "rate": 1.0
       },
       "top3": {
@@ -8256,6 +8484,7 @@
      },
      "prob": 0.089651,
      "rank": 10,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -8265,9 +8494,9 @@
      "gsis_id": "00-0040363",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 3,
-       "rate": 0.75
+       "n": 5,
+       "no_td": 4,
+       "rate": 0.8
       },
       "top3": {
        "n": 0,
@@ -8292,6 +8521,7 @@
      },
      "prob": 0.077001,
      "rank": 11,
+     "scored": false,
      "status": "active",
      "tds_season": 1
     },
@@ -8312,6 +8542,7 @@
       }
      },
      "name": "Kyle Allen",
+     "played": false,
      "position": "QB",
      "price": {
       "american": null,
@@ -8328,6 +8559,7 @@
      },
      "prob": 0.042823,
      "rank": 12,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -8348,6 +8580,7 @@
       }
      },
      "name": "Skyler Bell",
+     "played": false,
      "position": "WR",
      "price": {
       "american": 1600.0,
@@ -8364,6 +8597,7 @@
      },
      "prob": null,
      "rank": 13,
+     "scored": null,
      "status": "active",
      "tds_season": 0
     },
@@ -8373,8 +8607,8 @@
      "gsis_id": "00-0040194",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -8400,6 +8634,7 @@
      },
      "prob": null,
      "rank": 14,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     },
@@ -8409,8 +8644,8 @@
      "gsis_id": "00-0035500",
      "meters": {
       "rest": {
-       "n": 4,
-       "no_td": 4,
+       "n": 5,
+       "no_td": 5,
        "rate": 1.0
       },
       "top3": {
@@ -8436,11 +8671,13 @@
      },
      "prob": null,
      "rank": 15,
+     "scored": false,
      "status": "active",
      "tds_season": 0
     }
    ],
    "kickoff": "2026-11-27T01:20:00Z",
+   "logged_at": "2026-11-26T21:36:31Z",
    "market": {
     "as_of": "2026-11-26T21:36:42Z",
     "away_ml": 134.0,
@@ -8601,6 +8838,10 @@
    "pick": "BUF",
    "pick_prob": 0.598844,
    "roof": "outdoors",
+   "score": {
+    "away": 10,
+    "home": 13
+   },
    "season": 2026,
    "spread_pick": {
     "edge": 2.511829,
@@ -8608,30 +8849,30 @@
     "team": "BUF"
    },
    "stadium": "Highmark Stadium",
-   "status": "upcoming",
+   "status": "final",
    "td_meters": {
     "away": {
      "rest": {
-      "n": 51,
-      "no_td": 41,
-      "rate": 0.803922
+      "n": 60,
+      "no_td": 50,
+      "rate": 0.833333
      },
      "top3": {
-      "n": 14,
-      "rate": 0.214286,
-      "scored": 3
+      "n": 17,
+      "rate": 0.235294,
+      "scored": 4
      }
     },
     "home": {
      "rest": {
-      "n": 42,
-      "no_td": 39,
-      "rate": 0.928571
+      "n": 52,
+      "no_td": 49,
+      "rate": 0.942308
      },
      "top3": {
-      "n": 12,
-      "rate": 0.666667,
-      "scored": 8
+      "n": 15,
+      "rate": 0.6,
+      "scored": 9
      }
     }
    },
@@ -8639,64 +8880,80 @@
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "confident": 0.65,
      "confident_game": false,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "small",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "pick": "BUF",
      "pick_prob": 0.598844,
      "reason": "not a confident game: the pick's chance is below 65%",
+     "result": null,
      "td_floor": 0.45,
      "version": "sgp-v2"
     },
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "confident": 0.65,
      "confident_game": false,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "rookie",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "pick": "BUF",
      "pick_prob": 0.598844,
      "reason": "not a confident game: the pick's chance is below 65%",
+     "result": null,
      "td_floor": 0.45,
      "version": "sgp-v2"
     },
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "confident": 0.65,
      "confident_game": false,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "medium",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "pick": "BUF",
      "pick_prob": 0.598844,
      "reason": "not a confident game: the pick's chance is below 65%",
+     "result": null,
      "td_floor": 0.45,
      "version": "sgp-v2"
     },
     {
      "built": false,
      "chance": null,
+     "chance_graded": null,
      "confident": 0.65,
      "confident_game": false,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no ticket",
      "kind": "large",
+     "leg_results": {},
      "legs": [],
+     "payout": null,
      "pick": "BUF",
      "pick_prob": 0.598844,
      "reason": "not a confident game: the pick's chance is below 65%",
+     "result": null,
      "td_floor": 0.45,
      "version": "sgp-v2"
     }
@@ -8706,10 +8963,15 @@
     {
      "built": true,
      "chance": 0.370822,
+     "chance_graded": 0.370822,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no price on file for James Cook anytime TD",
      "kind": "small",
+     "leg_results": {
+      "TD:00-0037248": "won",
+      "WIN:BUF": "won"
+     },
      "legs": [
       {
        "american": null,
@@ -8745,16 +9007,23 @@
        "team": "BUF"
       }
      ],
+     "payout": null,
      "reason": null,
+     "result": "won",
      "version": "sgp-v1"
     },
     {
      "built": true,
      "chance": 0.178608,
+     "chance_graded": 0.178609,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no price on file for Emmett Johnson anytime TD",
      "kind": "rookie",
+     "leg_results": {
+      "TD:00-0041013": "won",
+      "WIN:KC": "lost"
+     },
      "legs": [
       {
        "american": null,
@@ -8790,16 +9059,24 @@
        "team": "KC"
       }
      ],
+     "payout": null,
      "reason": null,
+     "result": "lost",
      "version": "sgp-v1"
     },
     {
      "built": true,
      "chance": 0.213416,
+     "chance_graded": 0.370822,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no price on file for James Cook anytime TD, Kenneth Walker III anytime TD",
      "kind": "medium",
+     "leg_results": {
+      "TD:00-0037248": "won",
+      "TD:00-0038134": "void",
+      "WIN:BUF": "won"
+     },
      "legs": [
       {
        "american": null,
@@ -8856,16 +9133,25 @@
        "team": "KC"
       }
      ],
+     "payout": null,
      "reason": null,
+     "result": "won",
      "version": "sgp-v1"
     },
     {
      "built": true,
      "chance": 0.065684,
+     "chance_graded": 0.227514,
      "est": true,
      "est_payout": null,
      "est_payout_reason": "no price on file for Kenneth Walker III anytime TD, Emmett Johnson anytime TD",
      "kind": "large",
+     "leg_results": {
+      "SPREAD:KC": "void",
+      "TD:00-0038134": "void",
+      "TD:00-0041013": "won",
+      "TOTAL:UNDER": "won"
+     },
      "legs": [
       {
        "american": null,
@@ -8936,7 +9222,9 @@
        "side": "UNDER"
       }
      ],
+     "payout": null,
      "reason": null,
+     "result": "won",
      "version": "sgp-v1"
     }
    ],
@@ -8950,7 +9238,17 @@
    "week": 12
   },
   {
-   "alerts": [],
+   "alerts": [
+    {
+     "name": "Alex Highsmith",
+     "position": "LB",
+     "reason": "Out on the injury report (ankle)",
+     "role": "#2 defender",
+     "side": "home",
+     "status": "out",
+     "team": "PIT"
+    }
+   ],
    "away": "DEN",
    "away_form": {
     "last5": [
@@ -9023,6 +9321,13 @@
    },
    "away_injuries": [
     {
+     "gsis_id": "00-0040240",
+     "injury": "Foot",
+     "name": "Caleb Lohner",
+     "position": "TE",
+     "status": "Out"
+    },
+    {
      "gsis_id": "00-0040153",
      "injury": "Hamstring",
      "name": "Sai'vion Jones",
@@ -9035,9 +9340,16 @@
      "name": "Taylor Rapp",
      "position": "S",
      "status": "Out"
+    },
+    {
+     "gsis_id": "00-0037085",
+     "injury": "Thumb",
+     "name": "Tyler Badie",
+     "position": "RB",
+     "status": "Questionable"
     }
    ],
-   "away_injuries_total": 2,
+   "away_injuries_total": 4,
    "away_leaders": {
     "passing": {
      "gsis_id": "00-0039732",
@@ -9094,11 +9406,6 @@
       "line": "16 rec, 221 yds, 2 TD",
       "name": "Pat Bryant",
       "position": "WR",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 21.746969,
-       "rush_yds": 0.306649
-      },
       "rank": 1,
       "reason": null,
       "status": "active",
@@ -9110,11 +9417,6 @@
       "line": "302 rush yds, 146 rec yds, 6 TD",
       "name": "Jonah Coleman",
       "position": "RB",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 18.684482,
-       "rush_yds": 52.878226
-      },
       "rank": 2,
       "reason": null,
       "status": "active",
@@ -9881,8 +10183,37 @@
      "wins": 6
     }
    },
-   "home_injuries": [],
-   "home_injuries_total": 0,
+   "home_injuries": [
+    {
+     "gsis_id": "00-0036862",
+     "injury": "Calf",
+     "name": "Ben Skowronek",
+     "position": "WR",
+     "status": "Out"
+    },
+    {
+     "gsis_id": "00-0041396",
+     "injury": "Knee",
+     "name": "Gennings Dunker",
+     "position": "G",
+     "status": "Out"
+    },
+    {
+     "gsis_id": "00-0036333",
+     "injury": "Ankle",
+     "name": "Alex Highsmith",
+     "position": "LB",
+     "status": "Out"
+    },
+    {
+     "gsis_id": "00-0035286",
+     "injury": "Heel",
+     "name": "Cole Holcomb",
+     "position": "LB",
+     "status": "Questionable"
+    }
+   ],
+   "home_injuries_total": 4,
    "home_leaders": {
     "passing": {
      "gsis_id": "00-0034771",
@@ -9927,8 +10258,8 @@
       "name": "Alex Highsmith",
       "position": "LB",
       "rank": 2,
-      "reason": null,
-      "status": "active",
+      "reason": "Out on the injury report (ankle)",
+      "status": "out",
       "value": 8.75
      }
     ],
@@ -9939,11 +10270,6 @@
       "line": "32 rec, 309 yds, 6 TD",
       "name": "Pat Freiermuth",
       "position": "TE",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 18.256593,
-       "rush_yds": null
-      },
       "rank": 1,
       "reason": null,
       "status": "active",
@@ -9955,11 +10281,6 @@
       "line": "747 rush yds, 321 rec yds, 3 TD",
       "name": "Jaylen Warren",
       "position": "RB",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 15.398756,
-       "rush_yds": 52.605103
-      },
       "rank": 2,
       "reason": null,
       "status": "active",
@@ -9971,11 +10292,6 @@
       "line": "23 rec, 281 yds, 3 TD",
       "name": "Darnell Washington",
       "position": "TE",
-      "proj": {
-       "pass_yds": null,
-       "rec_yds": 15.32296,
-       "rush_yds": null
-      },
       "rank": 3,
       "reason": null,
       "status": "active",
@@ -10728,6 +11044,7 @@
     }
    ],
    "kickoff": "2026-11-27T20:00:00Z",
+   "logged_at": "2026-11-26T21:36:31Z",
    "market": {
     "as_of": "2026-11-26T21:36:42Z",
     "away_ml": -238.0,
@@ -10815,13 +11132,44 @@
     {
      "dated_by_feed": true,
      "gathered": "2026-11-26T21:36:31Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/steelers-activate-michael-pittman-jr-sign-max-hurleman-to-active-roster",
+     "link": "https://sports.yahoo.com/nfl/articles/max-hurleman-signed-53-man-193237671.html",
+     "players": [
+      "Max Hurleman"
+     ],
+     "published": "2026-11-26T19:32:37Z",
+     "source": "Yahoo Sports",
+     "summary": "Steelers make two roster moves including WR Max Hurleman being signed to main roster",
+     "teams": [
+      "PIT"
+     ],
+     "title": "Max Hurleman signed to 53-man roster"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-26T21:36:31Z",
+     "link": "https://sports.yahoo.com/nfl/articles/steelers-sign-wr-max-hurleman-192913230.html",
+     "players": [
+      "Max Hurleman"
+     ],
+     "published": "2026-11-26T19:29:13Z",
+     "source": "Yahoo Sports",
+     "summary": "Steeler sign wide receiver Max Hurleman to active roster.",
+     "teams": [
+      "PIT"
+     ],
+     "title": "Steelers sign WR Max Hurleman to active roster"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-26T21:36:31Z",
+     "link": "https://sports.yahoo.com/nfl/articles/steelers-activate-michael-pittman-jr-192454302.html",
      "players": [
       "Mason Rudolph",
+      "Max Hurleman",
       "Michael Pittman"
      ],
      "published": "2026-11-26T19:24:54Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "Mason Rudolph will have wide receiver Michael Pittman Jr. available as a target in his first start of the 2026 season.",
      "teams": [
       "PIT"
@@ -10857,35 +11205,6 @@
       "PIT"
      ],
      "title": "Latest On Aaron Rodgers\u2019 Benching"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-25T17:23:51Z",
-     "link": "https://sports.yahoo.com/nfl/articles/steelers-bench-aaron-rodgers-start-155447435.html",
-     "players": [
-      "Mason Rudolph"
-     ],
-     "published": "2026-11-25T15:54:47Z",
-     "source": "Yahoo Sports",
-     "summary": "The Steelers have benched Aaron Rodgers, naming Mason Rudolph their starter against the Denver Broncos on Black Friday in an abrupt turn during Rodgers' final NFL season.",
-     "teams": [
-      "DEN",
-      "PIT"
-     ],
-     "title": "Steelers bench Aaron Rodgers, will start Mason Rudolph against Broncos on Black Friday"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-25T13:55:53Z",
-     "link": "https://sports.yahoo.com/nfl/articles/interesting-mason-rudolph-comments-came-133818496.html",
-     "players": [
-      "Mason Rudolph"
-     ],
-     "published": "2026-11-25T13:38:18Z",
-     "source": "Yahoo Sports",
-     "summary": "Mike McCarthy may have tipped his hand more than a week before he moved on from Aaron Rodgers in an absolute stunner.",
-     "teams": [],
-     "title": "The interesting Mason Rudolph comments that came right before Aaron Rodgers\u2019 shock benching"
     }
    ],
    "pick": "DEN",
@@ -10898,7 +11217,7 @@
     "team": "DEN"
    },
    "stadium": "Acrisure Stadium",
-   "status": "upcoming",
+   "status": "in progress",
    "td_meters": {
     "away": {
      "rest": {
@@ -13117,9 +13436,60 @@
    "market_total": 41.5,
    "model_prob": 0.714709,
    "model_spread": 6.852423,
-   "model_total": 44.015739,
+   "model_total": 43.934654,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/kyler-murray-off-injury-report-likely-to-be-no-2-qb-vs-falcons",
+     "players": [
+      "Kyler Murray"
+     ],
+     "published": "2026-11-27T20:22:24Z",
+     "source": "ProFootballTalk",
+     "summary": "Vikings quarterback Kyler Murray is officially off the injury report for Sunday's game against the Falcons.",
+     "teams": [
+      "ATL",
+      "MIN"
+     ],
+     "title": "Kyler Murray off injury report, likely to be No. 2 QB vs. Falcons"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/vikings-rule-out-jordan-addison-christian-darrisaw-isaiah-rodgers-for-week-12",
+     "players": [
+      "Christian Darrisaw",
+      "Isaiah Rodgers",
+      "Jordan Addison"
+     ],
+     "published": "2026-11-27T20:06:27Z",
+     "source": "ProFootballTalk",
+     "summary": "The Vikings will not have a few key players when they host the Falcons on Sunday.",
+     "teams": [
+      "ATL",
+      "MIN"
+     ],
+     "title": "Vikings rule out Jordan Addison, Christian Darrisaw, Isaiah Rodgers for Week 12"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/falcons-rule-out-wr-jahan-dotson-lg-matthew-bergeron",
+     "players": [
+      "Jahan Dotson",
+      "Matthew Bergeron"
+     ],
+     "published": "2026-11-27T19:04:19Z",
+     "source": "ProFootballTalk",
+     "summary": "The Falcons have ruled out a couple of offensive starters for Sunday's game against the Vikings.",
+     "teams": [
+      "ATL",
+      "MIN"
+     ],
+     "title": "Falcons rule out WR Jahan Dotson, LG Matthew Bergeron"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-26T21:36:31Z",
@@ -13191,49 +13561,6 @@
       "MIN"
      ],
      "title": "Vikings utilize NFL's obscure fair-catch kick rule to attempt 71-yard field goal against 49ers"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-22T14:39:16Z",
-     "link": "https://sports.yahoo.com/articles/falcoholic-reacts-pressure-heating-j-130000502.html",
-     "players": [
-      "A.J. Terrell"
-     ],
-     "published": "2026-11-22T13:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "After a tremendous defensive start to the season, Jeff Ulbrich\u2019s unit has endured some tough losses in recent weeks. Some of it can be attributed to facing two elite quarterbacks in Joe Burrow and Patrick Mahomes. Much of it comes down to the team\u2019s personnel limitations. As hard as they compete and cause chaos, it\u2019s [",
-     "teams": [],
-     "title": "The Falcoholic Reacts: The pressure is heating up on A.J. Terrell"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-20T21:10:45Z",
-     "link": "https://sports.yahoo.com/articles/one-matchup-tip-49ers-vikings-203000924.html",
-     "players": [
-      "Dallas Turner"
-     ],
-     "published": "2026-11-20T20:30:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Let them fight\u2026",
-     "teams": [
-      "MIN"
-     ],
-     "title": "The one matchup that will tip 49ers-Vikings: Dallas Turner versus Trent Williams"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-20T21:10:45Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/vikings-list-isaiah-rodgers-as-questionable-for-sunday-nights-game",
-     "players": [
-      "Isaiah Rodgers"
-     ],
-     "published": "2026-11-20T19:35:00Z",
-     "source": "ProFootballTalk",
-     "summary": "The Vikings may not have starting cornerback Isaiah Rodgers for Sunday night's game against the 49ers in Mexico City.",
-     "teams": [
-      "MIN"
-     ],
-     "title": "Vikings list Isaiah Rodgers as questionable for Sunday night's game"
     }
    ],
    "pick": "MIN",
@@ -13539,7 +13866,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 2.515739,
+    "edge": 2.434654,
     "line": 41.5,
     "side": "OVER"
    },
@@ -15283,9 +15610,54 @@
    "market_total": 47.0,
    "model_prob": 0.732706,
    "model_spread": 8.008219,
-   "model_total": 48.071595,
+   "model_total": 47.99051,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/ravens-film-study-devontez-walker-212815410.html",
+     "players": [
+      "Devontez Walker"
+     ],
+     "published": "2026-11-27T21:28:15Z",
+     "source": "Yahoo Sports",
+     "summary": "Two of the Ravens\u2019 young pass-catchers made cases for more playing time in Sunday\u2019s loss to the Panthers.",
+     "teams": [
+      "BAL"
+     ],
+     "title": "Ravens film study: Devontez Walker, Matt Hibner deserve more snaps"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-12-bold-predictions-vikings-sack-record-j-j-mccarthy-giants/",
+     "players": [
+      "Derrick Henry"
+     ],
+     "published": "2026-11-27T15:19:49Z",
+     "source": "CBS Sports",
+     "summary": "Plus, Derrick Henry gets back to his old ways against the Houston Texans",
+     "teams": [
+      "HOU"
+     ],
+     "title": "Week 12 bold predictions: Vikings set season sack record, J.J. McCarthy has best game of career"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.rotowire.com//football/player/woody-marks-18449",
+     "players": [
+      "Woody Marks"
+     ],
+     "published": "2026-11-27T01:13:00Z",
+     "source": "RotoWire",
+     "summary": "Marks (concussion) doesn't carry an injury designation for Sunday's game against the Ravens. Visit RotoWire.com for more analysis on this update.",
+     "teams": [
+      "BAL"
+     ],
+     "title": "Woody Marks: Doesn't carry Week 12 injury designation"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-25T17:23:51Z",
@@ -15359,52 +15731,6 @@
      "summary": "Henry is being evaluated for a concussion during Sunday's game against the Panthers. Visit RotoWire.com for more analysis on this update.",
      "teams": [],
      "title": "Derrick Henry: Being checked for concussion"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-21T20:09:04Z",
-     "link": "https://www.cbssports.com/nba/news/carmelo-anthony-marlon-humphrey-controversial-baltimore-criminals-comment/",
-     "players": [
-      "Marlon Humphrey"
-     ],
-     "published": "2026-11-21T18:50:04Z",
-     "source": "CBS Sports",
-     "summary": "Anthony spent his formative years growing up in Baltimore and wasn't going to let Humphrey's comments slide",
-     "teams": [
-      "BAL"
-     ],
-     "title": "Carmelo Anthony calls out Ravens' Marlon Humphrey after controversial Baltimore 'criminals' comment"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-20T21:10:45Z",
-     "link": "https://sports.yahoo.com/articles/ravens-rule-nnamdi-madubuike-jaylinn-184858177.html",
-     "players": [
-      "Jaylinn Hawkins",
-      "Nnamdi Madubuike"
-     ],
-     "published": "2026-11-20T18:48:58Z",
-     "source": "Yahoo Sports",
-     "summary": "Ravens head coach Jesse Minter ruled out a pair of players for Sunday's road game against the Panthers.",
-     "teams": [
-      "BAL"
-     ],
-     "title": "Ravens rule out Nnamdi Madubuike, Jaylinn Hawkins"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-20T21:10:45Z",
-     "link": "https://www.cbssports.com/nfl/news/c-j-stroud-texans-playoffs-nfl-college-football-picks-nba-disappointments/",
-     "players": [
-      "C.J. Stroud"
-     ],
-     "published": "2026-11-20T13:52:53Z",
-     "source": "CBS Sports",
-     "summary": "Plus, Puka Nacua draws a three-game suspension and NBA trade rumors swirl",
-     "teams": [
-      "HOU"
-     ],
-     "title": "C.J. Stroud keeps Texans' playoff hopes alive; CFB Week 12 picks; NBA's biggest disappointments"
     }
    ],
    "pick": "HOU",
@@ -15710,7 +16036,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 1.071595,
+    "edge": 0.99051,
     "line": 47.0,
     "side": "OVER"
    },
@@ -17409,9 +17735,25 @@
    "market_total": 49.5,
    "model_prob": 0.796342,
    "model_spread": 10.113796,
-   "model_total": 48.034211,
+   "model_total": 47.953126,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/tee-higgins-did-not-practice-friday-questionable-for-sunday-vs-saints",
+     "players": [
+      "Tee Higgins"
+     ],
+     "published": "2026-11-27T20:36:48Z",
+     "source": "ProFootballTalk",
+     "summary": "Bengals receiver Tee Higgins did not practice on Friday, but the injury should not keep him out of Sunday's game against the Saints.",
+     "teams": [
+      "CIN",
+      "NO"
+     ],
+     "title": "Tee Higgins did not practice Friday, questionable for Sunday vs. Saints"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-26T21:36:31Z",
@@ -17509,21 +17851,6 @@
       "CIN"
      ],
      "title": "Minor NFL Transactions: 11/23/26"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/bengals-activate-lb-swayze-bozeman-g-brian-parker-from-injured-reserve",
-     "players": [
-      "Swayze Bozeman"
-     ],
-     "published": "2026-11-23T21:21:33Z",
-     "source": "ProFootballTalk",
-     "summary": "The Bengals announced a pair of roster moves on Monday afternoon.",
-     "teams": [
-      "CIN"
-     ],
-     "title": "Bengals activate LB Swayze Bozeman, G Brian Parker from injured reserve"
     }
    ],
    "pick": "CIN",
@@ -17929,7 +18256,7 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 1.465789,
+    "edge": 1.546874,
     "line": 49.5,
     "side": "UNDER"
    },
@@ -19709,9 +20036,69 @@
    "market_total": 41.5,
    "model_prob": 0.38852,
    "model_spread": -2.552559,
-   "model_total": 44.219475,
+   "model_total": 44.13839,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/giants-colts-friday-injury-report-211219566.html",
+     "players": [
+      "Abdul Carter",
+      "Shelby Harris"
+     ],
+     "published": "2026-11-27T21:12:19Z",
+     "source": "Yahoo Sports",
+     "summary": "Giants will be without starting defensive tackle Shelby Harris.",
+     "teams": [
+      "IND",
+      "NYG"
+     ],
+     "title": "Giants-Colts Friday injury report: Abdul Carter expected to play"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/abdul-carter-returns-to-giants-practice-on-friday",
+     "players": [
+      "Abdul Carter"
+     ],
+     "published": "2026-11-27T17:55:45Z",
+     "source": "ProFootballTalk",
+     "summary": "The Giants welcomed linebacker Abdul Carter back to the practice field on Friday.",
+     "teams": [
+      "NYG"
+     ],
+     "title": "Abdul Carter returns to Giants practice on Friday"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.cbssports.com/nfl/news/nfl-week-12-bold-predictions-vikings-sack-record-j-j-mccarthy-giants/",
+     "players": [
+      "J.J. McCarthy"
+     ],
+     "published": "2026-11-27T15:19:49Z",
+     "source": "CBS Sports",
+     "summary": "Plus, Derrick Henry gets back to his old ways against the Houston Texans",
+     "teams": [],
+     "title": "Week 12 bold predictions: Vikings set season sack record, J.J. McCarthy has best game of career"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.profootballrumors.com/2026/11/colts-de-caden-curry-out-for-season-with-wrist-injury",
+     "players": [
+      "Caden Curry"
+     ],
+     "published": "2026-11-27T04:13:27Z",
+     "source": "Pro Football Rumors",
+     "summary": "Colts rookie defensive end Caden Curry was placed on injured reserve on Tuesday with a torn ligament in his wrist that will sideline him ...",
+     "teams": [
+      "IND"
+     ],
+     "title": "Colts DE Caden Curry Out For Season With Wrist Injury"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-26T21:36:31Z",
@@ -19770,68 +20157,6 @@
      "summary": "Week 11 of the NFL season concluded with 13 Maryland football alumni seeing the field.",
      "teams": [],
      "title": "Terps in the NFL Week 11: Deonte Banks shines in upset win over Jaguars"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-25T13:55:53Z",
-     "link": "https://www.profootballrumors.com/2026/11/giants-deonte-banks-discussed-extension-latest-on-paulson-adebo",
-     "players": [
-      "Deonte Banks",
-      "Paulson Adebo"
-     ],
-     "published": "2026-11-25T04:00:47Z",
-     "source": "Pro Football Rumors",
-     "summary": "In trade rumors during an offseason that did not feature a guaranteed roster spot, Deonte Banks impressed a new coaching staff and has been ...",
-     "teams": [
-      "NYG"
-     ],
-     "title": "Giants, Deonte Banks Discussed Extension; Latest On Paulson Adebo"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T20:46:21Z",
-     "link": "https://www.profootballrumors.com/2026/11/colts-work-out-three-quarterbacks",
-     "players": [
-      "Shane Buechele"
-     ],
-     "published": "2026-11-24T20:46:25Z",
-     "source": "Pro Football Rumors",
-     "summary": "2:46pm: The Colts announced that they have signed quarterback Shane Buechele off Buffalo\u2019s practice squad. Since going undrafted in 2021, Buechele has only appeared ...",
-     "teams": [
-      "IND"
-     ],
-     "title": "Colts Work Out Three Quarterbacks, Sign Shane Buechele"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T20:46:21Z",
-     "link": "https://sports.yahoo.com/articles/colts-sign-qb-shane-buechele-201532364.html",
-     "players": [
-      "Shane Buechele"
-     ],
-     "published": "2026-11-24T20:15:32Z",
-     "source": "Yahoo Sports",
-     "summary": "The Colts have added a third quarterback to their active roster.",
-     "teams": [
-      "IND"
-     ],
-     "title": "Colts sign QB Shane Buechele off Bills practice squad"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T20:46:21Z",
-     "link": "https://sports.yahoo.com/articles/giants-timeline-greg-newsome-ii-195231910.html",
-     "players": [
-      "Greg Newsome II",
-      "Paulson Adebo"
-     ],
-     "published": "2026-11-24T19:52:31Z",
-     "source": "Yahoo Sports",
-     "summary": "Greg Newsome II is going to miss more than just his revenge game.",
-     "teams": [
-      "NYG"
-     ],
-     "title": "Giants get timeline on Greg Newsome II injury with pressure now on Paulson Adebo"
     }
    ],
    "pick": "NYG",
@@ -20220,7 +20545,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 2.719475,
+    "edge": 2.63839,
     "line": 41.5,
     "side": "OVER"
    },
@@ -22063,7 +22388,7 @@
    "market_total": 40.0,
    "model_prob": 0.482264,
    "model_spread": -0.301065,
-   "model_total": 40.732763,
+   "model_total": 40.651678,
    "neutral": false,
    "news": [
     {
@@ -22525,7 +22850,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 0.732763,
+    "edge": 0.651678,
     "line": 40.0,
     "side": "OVER"
    },
@@ -24260,9 +24585,57 @@
    "market_total": 49.5,
    "model_prob": 0.892894,
    "model_spread": 16.254419,
-   "model_total": 47.274444,
+   "model_total": 47.193359,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/jaguars-bhayshul-tuten-titans-game-213000714.html",
+     "players": [
+      "Bhayshul Tuten",
+      "Parker Washington"
+     ],
+     "published": "2026-11-27T21:30:00Z",
+     "source": "Yahoo Sports",
+     "summary": "Jaguars list running back Bhayshul Tuten as out for Sunday\u2019s game, joining Parker Washington as inactive.",
+     "teams": [
+      "JAX",
+      "TEN"
+     ],
+     "title": "Jaguars Bhayshul Tuten Out For Titans Game"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/carnell-tate-set-play-titans-210050131.html",
+     "players": [
+      "Carnell Tate"
+     ],
+     "published": "2026-11-27T21:00:50Z",
+     "source": "Yahoo Sports",
+     "summary": "The Titans top wide receiver is cleared to play in Week 12.",
+     "teams": [
+      "TEN"
+     ],
+     "title": "Carnell Tate set to play for the Titans in Week 12"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.cbssports.com/nfl/news/jaguars-wr-parker-washington-out-week-12-considered-week-to-week-shoulder-injury-playoffs/",
+     "players": [
+      "Bhayshul Tuten",
+      "Parker Washington"
+     ],
+     "published": "2026-11-27T17:04:49Z",
+     "source": "CBS Sports",
+     "summary": "Jacksonville's top target is evaluated week-to-week with a shoulder issue, while leading rusher Bhayshul Tuten is also banged-up",
+     "teams": [
+      "JAX"
+     ],
+     "title": "Jaguars lose WR Parker Washington to shoulder injury as playoffs draw near"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-26T21:36:31Z",
@@ -24335,47 +24708,6 @@
      "summary": "Meyers was spotted working off to the side during Wednesday's practice, Demetrius Harvey of The Florida Times-Union reports. Visit RotoWire.com for more analysis on this update.",
      "teams": [],
      "title": "Jakobi Meyers: Working off to side Wednesday"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T13:24:31Z",
-     "link": "https://sports.yahoo.com/articles/eagles-notebook-nolan-smith-reacts-070000193.html",
-     "players": [
-      "Jordan Davis"
-     ],
-     "published": "2026-11-24T07:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "In the latest Eagles notebook: Nolan Smith reacts to the Jordan Davis trade, we go through nicknames and Sean Mannion gets a vote of confidence.",
-     "teams": [],
-     "title": "Eagles notebook: Nolan Smith reacts to the Jordan Davis trade"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://sports.yahoo.com/articles/bhayshul-tuten-aggravates-ankle-injury-013153916.html",
-     "players": [
-      "Bhayshul Tuten"
-     ],
-     "published": "2026-11-24T01:31:53Z",
-     "source": "Yahoo Sports",
-     "summary": "Jacksonville Jaguars running back Bhayshul Tuten aggravated his ankle injury in the Week 11 game",
-     "teams": [
-      "JAX"
-     ],
-     "title": "Bhayshul Tuten aggravates ankle injury"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.cbssports.com/nfl/news/parker-washington-non-catch-controversy-jevon-holland-vegas-nfl-call-correct/",
-     "players": [
-      "Parker Washington"
-     ],
-     "published": "2026-11-23T14:05:30Z",
-     "source": "CBS Sports",
-     "summary": "Holland's tongue-in-cheek comment likely won't sit well at the league office",
-     "teams": [],
-     "title": "Parker Washington non-catch controversy: Jev\u00f3n Holland says 'Shout out Vegas,' NFL says call was correct"
     }
    ],
    "pick": "JAX",
@@ -24781,7 +25113,7 @@
    "tier": "STRONG",
    "tier_hit_rate": 0.820244,
    "total_pick": {
-    "edge": 2.225556,
+    "edge": 2.306641,
     "line": 49.5,
     "side": "UNDER"
    },
@@ -26375,6 +26707,42 @@
      "tds_season": 0
     },
     {
+     "games_season": 0,
+     "group": "1-3",
+     "gsis_id": "00-0035100",
+     "meters": {
+      "rest": {
+       "n": 0,
+       "no_td": 0,
+       "rate": null
+      },
+      "top3": {
+       "n": 0,
+       "rate": null,
+       "scored": 0
+      }
+     },
+     "name": "Jake Browning",
+     "position": "QB",
+     "price": {
+      "american": null,
+      "as_of": null,
+      "best_american": null,
+      "best_book": null,
+      "books": null,
+      "decimal": null,
+      "est": true,
+      "implied": null,
+      "match": null,
+      "missing": "no anytime-TD price under his name",
+      "source": null
+     },
+     "prob": 0.071932,
+     "rank": 13,
+     "status": "active",
+     "tds_season": 0
+    },
+    {
      "games_season": 10,
      "group": "under 0.5",
      "gsis_id": "00-0038573",
@@ -26406,7 +26774,7 @@
       "source": "the-odds-api"
      },
      "prob": null,
-     "rank": 13,
+     "rank": 14,
      "status": "active",
      "tds_season": 1
     },
@@ -26442,7 +26810,7 @@
       "source": "the-odds-api"
      },
      "prob": null,
-     "rank": 14,
+     "rank": 15,
      "status": "active",
      "tds_season": 0
     },
@@ -26478,7 +26846,7 @@
       "source": "the-odds-api"
      },
      "prob": null,
-     "rank": 15,
+     "rank": 16,
      "status": "active",
      "tds_season": 0
     }
@@ -26516,14 +26884,48 @@
    "market_total": 35.5,
    "model_prob": 0.296979,
    "model_spread": -6.490075,
-   "model_total": 47.330258,
+   "model_total": 47.249173,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/patriots-vs-chargers-friday-injury-191511480.html",
+     "players": [
+      "Christian Barmore"
+     ],
+     "published": "2026-11-27T19:45:56Z",
+     "source": "Yahoo Sports",
+     "summary": "Game designations for Week 12 at SoFi Stadium.",
+     "teams": [
+      "LAC",
+      "NE"
+     ],
+     "title": "Patriots vs. Chargers Friday injury report: Four ruled out, Christian Barmore questionable"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/christian-barmore-questionable-for-patriots-alijah-vera-tucker-will-travel-to-l-a",
+     "players": [
+      "Alijah Vera-Tucker",
+      "Christian Barmore"
+     ],
+     "published": "2026-11-27T18:29:54Z",
+     "source": "ProFootballTalk",
+     "summary": "Patriots defensive tackle Christian Barmore was added to the team's injury report on Friday and his status for Sunday's game against the Chargers is uncertain as a result.",
+     "teams": [
+      "LAC",
+      "NE"
+     ],
+     "title": "Christian Barmore questionable for Patriots, Alijah Vera-Tucker will travel to L.A."
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-26T21:36:31Z",
      "link": "https://www.profootballrumors.com/2026/11/chargers-qb-justin-herbert-in-concussion-protocol-team-promotes-jake-browning",
      "players": [
+      "Jake Browning",
       "Justin Herbert"
      ],
      "published": "2026-11-26T20:14:02Z",
@@ -26533,6 +26935,21 @@
       "LAC"
      ],
      "title": "Chargers QB Justin Herbert In Concussion Protocol; Team Promotes Jake Browning"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-26T21:36:31Z",
+     "link": "https://sports.yahoo.com/nfl/articles/chargers-sign-jake-browning-active-185818549.html",
+     "players": [
+      "Jake Browning"
+     ],
+     "published": "2026-11-26T18:58:18Z",
+     "source": "Yahoo Sports",
+     "summary": "The Chargers' starting quarterback is in the concussion protocol, so they moved to add another healthy one to the active roster on Thursday.",
+     "teams": [
+      "LAC"
+     ],
+     "title": "Chargers sign Jake Browning to active roster"
     },
     {
      "dated_by_feed": true,
@@ -26585,52 +27002,6 @@
      "summary": "Track the injuries to know around the NFL, all in one place.",
      "teams": [],
      "title": "NFL Week 12 Injury Report: Drake Maye's updated timeline, Dalton Kincaid returns to practice, and more"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T20:46:21Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jim-harbaugh-on-omarion-hampton-in-hindsight-we-should-have-used-him-as-lead-back-sooner",
-     "players": [
-      "Omarion Hampton"
-     ],
-     "published": "2026-11-24T15:25:43Z",
-     "source": "ProFootballTalk",
-     "summary": "There hasn't been much to like about the Chargers' play this season, but the last two weeks have been good ones for running back Omarion Hampton.",
-     "teams": [
-      "LAC"
-     ],
-     "title": "Jim Harbaugh on Omarion Hampton: In hindsight, we should have used him as lead back sooner"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T13:24:31Z",
-     "link": "https://sports.yahoo.com/articles/veteran-offseason-pickups-yet-prove-120000643.html",
-     "players": [
-      "A.J. Brown",
-      "Romeo Doubs"
-     ],
-     "published": "2026-11-24T12:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Headlined by A.J. Brown and Romeo Doubs, a look at how the Patriots\u2019 veteran additions have performed so far.",
-     "teams": [
-      "NE"
-     ],
-     "title": "Veteran offseason pickups have yet to prove their value to the Patriots"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T02:22:14Z",
-     "link": "https://www.profootballrumors.com/2026/11/patriots-designate-g-alijah-vera-tucker-for-return",
-     "players": [
-      "Alijah Vera-Tucker"
-     ],
-     "published": "2026-11-24T01:49:18Z",
-     "source": "Pro Football Rumors",
-     "summary": "While the Patriots offense is reeling without several star pieces, they should soon be getting some reinforcement on the offensive line. Per Aaron Wilson ...",
-     "teams": [
-      "NE"
-     ],
-     "title": "Patriots Designate G Alijah Vera-Tucker For Return"
     }
    ],
    "pick": "NE",
@@ -26936,7 +27307,7 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 11.830258,
+    "edge": 11.749173,
     "line": 35.5,
     "side": "OVER"
    },
@@ -28707,9 +29078,80 @@
    "market_total": 43.5,
    "model_prob": 0.615906,
    "model_spread": 3.529294,
-   "model_total": 47.589358,
+   "model_total": 47.508273,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/brock-purdy-not-practicing-on-friday-putting-mac-jones-in-line-to-start",
+     "players": [
+      "Brock Purdy",
+      "Mac Jones"
+     ],
+     "published": "2026-11-27T21:27:40Z",
+     "source": "ProFootballTalk",
+     "summary": "It looks like 49ers quarterback Brock Purdy will not be able to play Sunday's game against the Seahawks.",
+     "teams": [
+      "SEA",
+      "SF"
+     ],
+     "title": "Brock Purdy not practicing on Friday, putting Mac Jones in line to start"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/christian-mccaffrey-psychotic-tendencies-quietly-204251550.html",
+     "players": [
+      "Christian McCaffrey"
+     ],
+     "published": "2026-11-27T20:42:51Z",
+     "source": "Yahoo Sports",
+     "summary": "Christian McCaffrey continues to defy the norms when it comes to 30-year-old running backs.",
+     "teams": [],
+     "title": "Christian McCaffrey and his \u2018psychotic tendencies\u2019 quietly becoming underrated"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/brandon-aiyuk-way-christian-mccaffrey-202050311.html",
+     "players": [
+      "Christian McCaffrey"
+     ],
+     "published": "2026-11-27T20:20:50Z",
+     "source": "Yahoo Sports",
+     "summary": "Even though he\u2019s no longer on the San Francisco 49ers, Brandon Aiyuk still has a McCaffrey as a teammate. That would be Luke McCaffrey, the Washington Commanders wide receiver who...",
+     "teams": [
+      "SF"
+     ],
+     "title": "Brandon Aiyuk has his way with Christian McCaffrey\u2019s brother in deal after 49ers exit"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.rotowire.com//football/player/jaxon-smith-njigba-16654",
+     "players": [
+      "Jaxon Smith-Njigba"
+     ],
+     "published": "2026-11-27T01:54:00Z",
+     "source": "RotoWire",
+     "summary": "Smith-Njigba (ankle) doesn't have a designation for Sunday's contest in San Francisco, Gregg Bell of Sports Radio 93.3 KJR Seattle reports. Visit RotoWire.com for more analysis on this update.",
+     "teams": [],
+     "title": "Jaxon Smith-Njigba: Set to play Sunday"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.rotowire.com//football/player/brock-purdy-15834",
+     "players": [
+      "Brock Purdy"
+     ],
+     "published": "2026-11-27T01:14:00Z",
+     "source": "RotoWire",
+     "summary": "Purdy (ankle) wasn't spotted during the portion of Friday's practice open to the media, Matt Barrows of The Athletic reports. Visit RotoWire.com for more analysis on this update.",
+     "teams": [],
+     "title": "Brock Purdy: Not seen Friday"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-26T21:36:31Z",
@@ -28753,76 +29195,6 @@
       "SF"
      ],
      "title": "49ers Activate CB Nate Hobbs, Sign WR Brandin Cooks To Practice Squad"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-26T21:36:31Z",
-     "link": "https://www.profootballrumors.com/2026/11/seahawks-expecting-sam-darnold-week-12-return",
-     "players": [
-      "Sam Darnold"
-     ],
-     "published": "2026-11-26T00:27:35Z",
-     "source": "Pro Football Rumors",
-     "summary": "An MVP candidate dealing with an injury that could take him out of a key divisional battle would normally headline an NFL news day. ...",
-     "teams": [
-      "SEA"
-     ],
-     "title": "Seahawks Expecting Sam Darnold Week 12 Return"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-26T21:36:31Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-12-injury-report-updates-kenneth-walker-brock-purdy-sam-darnold/",
-     "players": [
-      "Brock Purdy",
-      "Sam Darnold"
-     ],
-     "published": "2026-11-26T00:01:26Z",
-     "source": "CBS Sports",
-     "summary": "Brock Purdy missed Wednesday's practice with an ankle injury, while Sam Darnold appears on track to return for a pivotal NFC West matchup",
-     "teams": [],
-     "title": "NFL Week 12 injury report: Thanksgiving game statuses, latest updates for Sam Darnold, Brock Purdy"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-25T17:23:51Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/brock-purdy-wins-fourth-career-nfc-offensive-player-of-the-week-award",
-     "players": [
-      "Brock Purdy"
-     ],
-     "published": "2026-11-25T17:07:51Z",
-     "source": "ProFootballTalk",
-     "summary": "Brock Purdy is an MVP candidate and had another strong performance in Sunday\u2019s victory over the Vikings.",
-     "teams": [],
-     "title": "Brock Purdy wins fourth career NFC offensive player of the week award"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-25T17:23:51Z",
-     "link": "https://www.cbssports.com/nfl/news/week-12-qb-power-rankings-brock-purdy-joe-burrow-dak-prescott/",
-     "players": [
-      "Brock Purdy"
-     ],
-     "published": "2026-11-25T14:54:56Z",
-     "source": "CBS Sports",
-     "summary": "Brock Purdy takes the top spot from Joe Burrow, and Dak Prescott soars into the top five",
-     "teams": [],
-     "title": "NFL Week 12 QB Power Rankings: Brock Purdy swipes No. 1 spot from Joe Burrow, Dak Prescott into top five"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-25T13:55:53Z",
-     "link": "https://sports.yahoo.com/nfl/articles/nfl-secret-superstars-2026-week-120000441.html",
-     "players": [
-      "Ji'Ayir Brown"
-     ],
-     "published": "2026-11-25T12:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Rookie Ted Hurst scored two touchdowns for Tampa Bay\u2019s iffy passing game. Giants cornerbacks Paulson Adebo and Deonte Banks shut down Jacksonville's receivers over and over. And Ji'Ayir Brown's pick-six of Kirk Cousins sparked the 49ers' Sunday night rout.",
-     "teams": [
-      "SF"
-     ],
-     "title": "NFL Secret Superstars 2026: Week 11\u2019s surprise standouts in the NFC"
     }
    ],
    "pick": "SF",
@@ -29162,7 +29534,7 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 4.089358,
+    "edge": 4.008273,
     "line": 43.5,
     "side": "OVER"
    },
@@ -30248,8 +30620,7 @@
     "injury_status": null,
     "name": "Josh Johnson",
     "rating": -0.092908,
-    "replaced": "Gardner Minshew",
-    "source": "replaced",
+    "source": "projected",
     "starts": 12
    },
    "home_rest": 7.142361,
@@ -30947,9 +31318,85 @@
    "market_total": 41.5,
    "model_prob": 0.411852,
    "model_spread": -2.619028,
-   "model_total": 47.295263,
+   "model_total": 47.214178,
    "neutral": false,
    "news": [
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/luke-mccaffrey-gives-up-no-11-to-brandon-aiyuk",
+     "players": [
+      "Luke McCaffrey"
+     ],
+     "published": "2026-11-27T21:35:21Z",
+     "source": "ProFootballTalk",
+     "summary": "Receiver Brandon Aiyuk is back, and he'll be back in the only number he's ever worn in the NFL.",
+     "teams": [],
+     "title": "Luke McCaffrey gives up No. 11 to Brandon Aiyuk"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/commanders-vs-cardinals-friday-injury-210451879.html",
+     "players": [
+      "Amik Robertson"
+     ],
+     "published": "2026-11-27T21:04:51Z",
+     "source": "Yahoo Sports",
+     "summary": "The Commanders have formally ruled cornerback Amik Robertson out of Sunday\u2019s game against the Arizona Cardinals",
+     "teams": [
+      "ARI",
+      "WAS"
+     ],
+     "title": "Commanders vs. Cardinals Friday injury report: Key cornerback to miss second straight game"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/brandon-aiyuk-way-christian-mccaffrey-202050311.html",
+     "players": [
+      "Luke McCaffrey"
+     ],
+     "published": "2026-11-27T20:20:50Z",
+     "source": "Yahoo Sports",
+     "summary": "Even though he\u2019s no longer on the San Francisco 49ers, Brandon Aiyuk still has a McCaffrey as a teammate. That would be Luke McCaffrey, the Washington Commanders wide receiver who...",
+     "teams": [
+      "WAS"
+     ],
+     "title": "Brandon Aiyuk has his way with Christian McCaffrey\u2019s brother in deal after 49ers exit"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/commanders-cb-amik-robertson-to-miss-second-straight-game",
+     "players": [
+      "Amik Robertson"
+     ],
+     "published": "2026-11-27T19:16:51Z",
+     "source": "ProFootballTalk",
+     "summary": "The Commanders got a win over the Bengals without cornerback Amik Robertson and they'll try to do it again when they face the Cardinals on Sunday.",
+     "teams": [
+      "ARI",
+      "WAS"
+     ],
+     "title": "Commanders CB Amik Robertson to miss second straight game"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-beck-ruled-out-for-week-12-josh-johnson-to-start",
+     "players": [
+      "Carson Beck",
+      "Josh Johnson"
+     ],
+     "published": "2026-11-27T17:50:53Z",
+     "source": "ProFootballTalk",
+     "summary": "Josh Johnson will once again start at quarterback for the Cardinals.",
+     "teams": [
+      "ARI"
+     ],
+     "title": "Carson Beck ruled out for Week 12, Josh Johnson to start"
+    },
     {
      "dated_by_feed": true,
      "gathered": "2026-11-26T21:36:31Z",
@@ -30969,12 +31416,12 @@
     {
      "dated_by_feed": true,
      "gathered": "2026-11-26T21:36:31Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-beck-remains-out-of-cardinals-practice",
+     "link": "https://sports.yahoo.com/nfl/articles/carson-beck-remains-cardinals-practice-205036289.html",
      "players": [
       "Carson Beck"
      ],
      "published": "2026-11-26T20:50:36Z",
-     "source": "ProFootballTalk",
+     "source": "Yahoo Sports",
      "summary": "It looks like the Cardinals are on track to be without Carson Beck against the Commanders this week.",
      "teams": [
       "ARI",
@@ -30996,81 +31443,6 @@
       "WAS"
      ],
      "title": "Stefon Diggs: Off injury report"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-26T21:36:31Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jayden-daniels-brandon-aiyuk-and-i-put-the-past-behind-us",
-     "players": [
-      "Jayden Daniels"
-     ],
-     "published": "2026-11-26T09:42:18Z",
-     "source": "ProFootballTalk",
-     "summary": "Commanders quarterback Jayden Daniels and Brandon Aiyuk were once Arizona State teammates and close friends, but Aiyuk seemed to burn those bridges this year, when he posted several critical comments about Daniels on social media.",
-     "teams": [
-      "WAS"
-     ],
-     "title": "Jayden Daniels: Brandon Aiyuk and I put the past behind us"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-25T17:23:51Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/commanders-k-drew-stevens-is-the-nfc-special-teams-player-of-the-week",
-     "players": [
-      "Drew Stevens"
-     ],
-     "published": "2026-11-25T17:16:49Z",
-     "source": "ProFootballTalk",
-     "summary": "The Commanders called on kicker Drew Stevens often in Week 11 and he came through each and every time.",
-     "teams": [
-      "WAS"
-     ],
-     "title": "Commanders K Drew Stevens is the NFC special teams player of the week"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-25T17:23:51Z",
-     "link": "https://sports.yahoo.com/nfl/articles/cardinals-extend-te-elijah-higgins-160000482.html",
-     "players": [
-      "Elijah Higgins"
-     ],
-     "published": "2026-11-25T16:00:00Z",
-     "source": "Yahoo Sports",
-     "summary": "The talented tight end has now a roster member for a while",
-     "teams": [
-      "ARI"
-     ],
-     "title": "Cardinals extend TE Elijah Higgins for three-years"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-25T13:55:53Z",
-     "link": "https://www.cbssports.com/nfl/news/brandon-aiyuk-meeting-commanders-report-free-agent-wr-reunion-jayden-daniels/",
-     "players": [
-      "Jayden Daniels"
-     ],
-     "published": "2026-11-24T23:04:41Z",
-     "source": "CBS Sports",
-     "summary": "Aiyuk may already have a destination lined up shortly after his release from the 49ers and waiver clearance.",
-     "teams": [
-      "WAS"
-     ],
-     "title": "Brandon Aiyuk to meet with Commanders, per report: Free agent WR seeks reunion with Jayden Daniels"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T20:46:21Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/dan-quinn-on-stefon-diggs-i-love-his-fire",
-     "players": [
-      "Stefon Diggs"
-     ],
-     "published": "2026-11-24T20:37:05Z",
-     "source": "ProFootballTalk",
-     "summary": "Monday night ended well for the Commanders, but the start of the game was rough for the team's offense and frustrations about that boiled over on the sideline at one point.",
-     "teams": [
-      "WAS"
-     ],
-     "title": "Dan Quinn on Stefon Diggs: I love his fire"
     }
    ],
    "pick": "WAS",
@@ -31446,7 +31818,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 5.795263,
+    "edge": 5.714178,
     "line": 41.5,
     "side": "OVER"
    },
@@ -33212,126 +33584,137 @@
    "market_total": 40.0,
    "model_prob": 0.713618,
    "model_spread": 6.967431,
-   "model_total": 42.394646,
+   "model_total": 42.313561,
    "neutral": false,
    "news": [
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-26T21:36:31Z",
-     "link": "https://sports.yahoo.com/nfl/articles/raiders-qb-fernando-mendoza-thankful-185336769.html",
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/raiders-jackson-powers-johnson-suffers-214010877.html",
      "players": [
-      "Fernando Mendoza"
+      "Jackson Powers-Johnson"
      ],
-     "published": "2026-11-26T18:53:36Z",
+     "published": "2026-11-27T21:40:10Z",
      "source": "Yahoo Sports",
-     "summary": "Raiders rookie quarterback Fernando Mendoza has been working on a particular part of his game",
+     "summary": "An already-frustrating season for Raiders offensive lineman Jackson Powers-Johnson took an ominous turn Friday when he suffered a potentially serious injury during practice. Powers-Johnson was ruled out for Sunday\u2019s game...",
      "teams": [
       "LV"
      ],
-     "title": "Raiders QB Fernando Mendoza thankful for Aaron Rodgers on Thanksgiving"
+     "title": "Raiders\u2019 Jackson Powers-Johnson suffers potentially serious injury at practice"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-25T13:55:53Z",
-     "link": "https://sports.yahoo.com/nfl/articles/nfl-secret-superstars-2026-week-120000788.html",
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/klint-kubiak-gives-brock-bowers-212653529.html",
+     "players": [
+      "Brock Bowers",
+      "Fernando Mendoza"
+     ],
+     "published": "2026-11-27T21:26:53Z",
+     "source": "Yahoo Sports",
+     "summary": "Fernando Mendoza might be down his top weapon, again.",
+     "teams": [
+      "CLE",
+      "LV"
+     ],
+     "title": "Klint Kubiak gives Brock Bowers, defensive tackle injury updates ahead of Las Vegas Raiders-Cleveland Browns Week 12 Sunday Night Football matchup"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/brock-bowers-status-sunday-raiders-212220678.html",
      "players": [
       "Brock Bowers",
       "Fernando Mendoza",
+      "Michael Mayer"
+     ],
+     "published": "2026-11-27T21:22:20Z",
+     "source": "Yahoo Sports",
+     "summary": "Las Vegas Raiders tight ends Brock Bowers and Michael Mayer stand alongside quarterback Fernando Mendoza.Raiders tight end Brock Bowers is questionable for Sunday\u2019s game against the Browns. Bowers practiced this...",
+     "teams": [
+      "CLE",
+      "LV"
+     ],
+     "title": "Brock Bowers\u2019 status for Sunday\u2019s Raiders game remains up in air"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/browns-sign-ls-rex-sunahara-to-four-year-extension",
+     "players": [
+      "Rex Sunahara"
+     ],
+     "published": "2026-11-27T21:19:43Z",
+     "source": "ProFootballTalk",
+     "summary": "The Browns have signed a key special teams contributor to a new deal.",
+     "teams": [
+      "CLE"
+     ],
+     "title": "Browns sign LS Rex Sunahara to four-year extension"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/brock-bowers-questionable-for-sunday-night-vs-browns",
+     "players": [
+      "Brock Bowers"
+     ],
+     "published": "2026-11-27T21:09:16Z",
+     "source": "ProFootballTalk",
+     "summary": "The Raiders may get tight end Brock Bowers back for Sunday's game against the Browns.",
+     "teams": [
+      "CLE",
+      "LV"
+     ],
+     "title": "Brock Bowers questionable for Sunday night vs. Browns"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://www.profootballrumors.com/2026/11/browns-sign-ls-rex-sunahara-to-4-year-extension",
+     "players": [
+      "Rex Sunahara"
+     ],
+     "published": "2026-11-27T20:55:57Z",
+     "source": "Pro Football Rumors",
+     "summary": "Browns long snapper and Cleveland native Rex Sunahara has reason to be extra thankful this week after signing a four-year contract extension with his ...",
+     "teams": [
+      "CLE"
+     ],
+     "title": "Browns Sign LS Rex Sunahara To 4-Year Extension"
+    },
+    {
+     "dated_by_feed": true,
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/fernando-mendoza-found-something-special-201603630.html",
+     "players": [
+      "Fernando Mendoza",
       "Jack Bech"
      ],
-     "published": "2026-11-25T12:00:00Z",
+     "published": "2026-11-27T20:16:03Z",
      "source": "Yahoo Sports",
-     "summary": "Jack Bech posted career highs and helped Fernando Mendoza compete against Denver without Brock Bowers. Hunter Nourzad filled in admirably for Trey Smith on a rolling Chiefs line. And Dolphins rookie linebacker Jacob Rodriguez is starting to look like a cornerstone.",
-     "teams": [],
-     "title": "NFL Secret Superstars 2026: Week 11\u2019s surprise standouts in the AFC"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-25T13:55:53Z",
-     "link": "https://www.profootballrumors.com/2026/11/minor-nfl-transactions-11-24-26",
-     "players": [
-      "Raheim Sanders"
-     ],
-     "published": "2026-11-25T01:27:27Z",
-     "source": "Pro Football Rumors",
-     "summary": "Here are Tuesday\u2019s minor moves: Chicago Bears Claimed (from Commanders): CB Isaac Yiadom Cleveland Browns Designated for return: RB Raheim Sanders Indianapolis Colts Signed ...",
-     "teams": [
-      "CLE"
-     ],
-     "title": "Minor NFL Transactions: 11/24/26"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T20:46:21Z",
-     "link": "https://sports.yahoo.com/articles/fernando-mendoza-draws-praise-week-200100852.html",
-     "players": [
-      "Fernando Mendoza"
-     ],
-     "published": "2026-11-24T20:01:00Z",
-     "source": "Yahoo Sports",
-     "summary": "Despite the losses, the No. 1 pick is gaining some respect around the league.",
+     "summary": "The first touchdown pass Fernando Mendoza threw in a Raiders uniform went to Jack Bech. It happened in a preseason game, so there was nothing particularly consequential about it in...",
      "teams": [
       "LV"
      ],
-     "title": "Fernando Mendoza draws praise in Week 12 NFL Power Rankings for Las Vegas Raiders"
+     "title": "Fernando Mendoza found \u2018something special\u2019 in unlocking Raiders rising star"
     },
     {
      "dated_by_feed": true,
-     "gathered": "2026-11-24T20:46:21Z",
-     "link": "https://sports.yahoo.com/articles/raiders-gave-ashton-jeanty-needed-193939219.html",
+     "gathered": "2026-11-27T22:05:06Z",
+     "link": "https://sports.yahoo.com/nfl/articles/treydan-stukes-jermod-mccoy-las-200600833.html",
      "players": [
-      "Ashton Jeanty"
+      "Jermod McCoy",
+      "Treydan Stukes"
      ],
-     "published": "2026-11-24T19:39:39Z",
+     "published": "2026-11-27T20:06:00Z",
      "source": "Yahoo Sports",
-     "summary": "If you want to know if Ashton Jeanty turned a corner Sunday in Denver, put yourself in Klint Kubiak\u2019s shoes and take a look at the tape he broke down...",
+     "summary": "Lots of battle between 1st and 2nd year pros on Sunday",
      "teams": [
+      "CLE",
       "LV"
      ],
-     "title": "Raiders gave Ashton Jeanty what he\u2019s needed all season in breakout game vs. Broncos"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T20:46:21Z",
-     "link": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/browns-designate-rb-raheim-sanders-for-return",
-     "players": [
-      "Raheim Sanders"
-     ],
-     "published": "2026-11-24T16:01:50Z",
-     "source": "ProFootballTalk",
-     "summary": "Running back Raheim Sanders will be back at practice for the Browns this week.",
-     "teams": [
-      "CLE"
-     ],
-     "title": "Browns designate RB Raheim Sanders for return"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T13:24:31Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-12-predictions-colston-loveland-thanksgiving/",
-     "players": [
-      "Quinshon Judkins"
-     ],
-     "published": "2026-11-24T12:42:05Z",
-     "source": "CBS Sports",
-     "summary": "Our five bold calls for Week 12 include a career day for Quinshon Judkins and mounting pressure on the Seahawks to play Drew Lock",
-     "teams": [
-      "CLE"
-     ],
-     "title": "It wouldn't shock me if ... for NFL Week 12: Colston Loveland feasts on Thanksgiving, Browns RB shines"
-    },
-    {
-     "dated_by_feed": true,
-     "gathered": "2026-11-24T13:24:31Z",
-     "link": "https://www.cbssports.com/nfl/news/nfl-week-12-upset-picks-thanksgiving-games-chiefs-bills/",
-     "players": [
-      "Fernando Mendoza"
-     ],
-     "published": "2026-11-24T12:40:57Z",
-     "source": "CBS Sports",
-     "summary": "Patrick Mahomes is heating up, Detroit owns its Thanksgiving opponent and three other underdogs have compelling paths",
-     "teams": [],
-     "title": "NFL Week 12 upset alert: Don't count out Patrick Mahomes, Fernando Mendoza and these underdogs"
+     "title": "Treydan Stukes, Jermod McCoy, Las Vegas Raiders\u2019 young defensive backs face Cleveland Browns\u2019 young receiving corps in Week 12 key matchups"
     }
    ],
    "pick": "CLE",
@@ -33707,7 +34090,7 @@
    "tier": "SOLID",
    "tier_hit_rate": 0.725974,
    "total_pick": {
-    "edge": 2.394646,
+    "edge": 2.313561,
     "line": 40.0,
     "side": "OVER"
    },
@@ -35514,7 +35897,7 @@
    "market_total": 43.5,
    "model_prob": 0.60473,
    "model_spread": 3.322858,
-   "model_total": 43.876897,
+   "model_total": 43.795812,
    "neutral": false,
    "news": [
     {
@@ -35947,14 +36330,14 @@
    "tier": "LEAN",
    "tier_hit_rate": 0.584192,
    "total_pick": {
-    "edge": 0.376897,
+    "edge": 0.295812,
     "line": 43.5,
     "side": "OVER"
    },
    "week": 12
   }
  ],
- "generated": "2026-11-26T21:38:23Z",
+ "generated": "2026-11-27T22:07:00Z",
  "label": "Week 12",
  "schema": 1,
  "season": 2026,
@@ -36080,7 +36463,7 @@
       }
      },
      "2026": {
-      "coverage": 0.300613,
+      "coverage": 0.29878,
       "differs": 1,
       "meter": {
        "graded": 49,
@@ -36089,10 +36472,10 @@
        "lost": 19,
        "mean_chance": 0.439955,
        "mean_chance_graded": 0.439955,
-       "not_built": 114,
+       "not_built": 115,
        "not_built_why": {
         "no TD leg with a chance of 45% or more available": 24,
-        "not a confident game: the pick's chance is below 65%": 90
+        "not a confident game: the pick's chance is below 65%": 91
        },
        "pending": 0,
        "profit": null,
@@ -36107,7 +36490,7 @@
       }
      },
      "all": {
-      "coverage": 0.296992,
+      "coverage": 0.296907,
       "differs": 30,
       "meter": {
        "graded": 1027,
@@ -36116,10 +36499,10 @@
        "lost": 566,
        "mean_chance": 0.420697,
        "mean_chance_graded": 0.421441,
-       "not_built": 2431,
+       "not_built": 2432,
        "not_built_why": {
         "no TD leg with a chance of 45% or more available": 650,
-        "not a confident game: the pick's chance is below 65%": 1781
+        "not a confident game: the pick's chance is below 65%": 1782
        },
        "pending": 0,
        "profit": null,
@@ -36327,10 +36710,10 @@
    "games": {
     "2014-2019": 1602,
     "2020-2025": 1693,
-    "2026": 163,
-    "all": 3458
+    "2026": 164,
+    "all": 3459
    },
-   "generated": "2026-11-24T19:15:36Z",
+   "generated": "2026-11-27T22:05:05Z",
    "grid": {
     "note": "every pair of the grid, per period; only the DEV figures chose, and only by the objective",
     "report_only": true,
@@ -36434,7 +36817,7 @@
        },
        "2026": {
         "confident_games": 117,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.066667,
@@ -36470,7 +36853,7 @@
          }
         },
         "small": {
-         "coverage": 0.668712,
+         "coverage": 0.664634,
          "hit_rate": 0.513761,
          "lost": 53,
          "mean_chance": 0.364613,
@@ -36481,7 +36864,7 @@
        },
        "all": {
         "confident_games": 2462,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.051865,
@@ -36517,7 +36900,7 @@
          }
         },
         "small": {
-         "coverage": 0.653846,
+         "coverage": 0.653657,
          "hit_rate": 0.394073,
          "lost": 1370,
          "mean_chance": 0.350117,
@@ -36628,7 +37011,7 @@
        },
        "2026": {
         "confident_games": 117,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.086957,
@@ -36664,7 +37047,7 @@
          }
         },
         "small": {
-         "coverage": 0.595092,
+         "coverage": 0.591463,
          "hit_rate": 0.515464,
          "lost": 47,
          "mean_chance": 0.380787,
@@ -36675,7 +37058,7 @@
        },
        "all": {
         "confident_games": 2462,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.064583,
@@ -36711,7 +37094,7 @@
          }
         },
         "small": {
-         "coverage": 0.545402,
+         "coverage": 0.545244,
          "hit_rate": 0.402969,
          "lost": 1126,
          "mean_chance": 0.370418,
@@ -36822,7 +37205,7 @@
        },
        "2026": {
         "confident_games": 117,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.125,
@@ -36858,7 +37241,7 @@
          }
         },
         "small": {
-         "coverage": 0.441718,
+         "coverage": 0.439024,
          "hit_rate": 0.569444,
          "lost": 31,
          "mean_chance": 0.410418,
@@ -36869,7 +37252,7 @@
        },
        "all": {
         "confident_games": 2462,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.077922,
@@ -36905,7 +37288,7 @@
          }
         },
         "small": {
-         "coverage": 0.412088,
+         "coverage": 0.411969,
          "hit_rate": 0.425965,
          "lost": 818,
          "mean_chance": 0.395396,
@@ -37016,7 +37399,7 @@
        },
        "2026": {
         "confident_games": 117,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.0,
@@ -37052,7 +37435,7 @@
          }
         },
         "small": {
-         "coverage": 0.325153,
+         "coverage": 0.323171,
          "hit_rate": 0.641509,
          "lost": 19,
          "mean_chance": 0.439626,
@@ -37063,7 +37446,7 @@
        },
        "all": {
         "confident_games": 2462,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.045455,
@@ -37099,7 +37482,7 @@
          }
         },
         "small": {
-         "coverage": 0.280509,
+         "coverage": 0.280428,
          "hit_rate": 0.453608,
          "lost": 530,
          "mean_chance": 0.423559,
@@ -37210,7 +37593,7 @@
        },
        "2026": {
         "confident_games": 73,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.086957,
@@ -37246,7 +37629,7 @@
          }
         },
         "small": {
-         "coverage": 0.417178,
+         "coverage": 0.414634,
          "hit_rate": 0.529412,
          "lost": 32,
          "mean_chance": 0.402463,
@@ -37257,7 +37640,7 @@
        },
        "all": {
         "confident_games": 1677,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.043941,
@@ -37293,7 +37676,7 @@
          }
         },
         "small": {
-         "coverage": 0.45373,
+         "coverage": 0.453599,
          "hit_rate": 0.423199,
          "lost": 905,
          "mean_chance": 0.375715,
@@ -37404,7 +37787,7 @@
        },
        "2026": {
         "confident_games": 73,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.1,
@@ -37440,7 +37823,7 @@
          }
         },
         "small": {
-         "coverage": 0.392638,
+         "coverage": 0.390244,
          "hit_rate": 0.53125,
          "lost": 30,
          "mean_chance": 0.410839,
@@ -37451,7 +37834,7 @@
        },
        "all": {
         "confident_games": 1677,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.047771,
@@ -37487,7 +37870,7 @@
          }
         },
         "small": {
-         "coverage": 0.385194,
+         "coverage": 0.385082,
          "hit_rate": 0.433183,
          "lost": 755,
          "mean_chance": 0.395376,
@@ -37598,7 +37981,7 @@
        },
        "2026": {
         "confident_games": 73,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.0,
@@ -37634,7 +38017,7 @@
          }
         },
         "small": {
-         "coverage": 0.300613,
+         "coverage": 0.29878,
          "hit_rate": 0.612245,
          "lost": 19,
          "mean_chance": 0.438428,
@@ -37645,7 +38028,7 @@
        },
        "all": {
         "confident_games": 1677,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.052632,
@@ -37681,7 +38064,7 @@
          }
         },
         "small": {
-         "coverage": 0.296992,
+         "coverage": 0.296907,
          "hit_rate": 0.452775,
          "lost": 562,
          "mean_chance": 0.419602,
@@ -37792,7 +38175,7 @@
        },
        "2026": {
         "confident_games": 73,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": null,
@@ -37828,7 +38211,7 @@
          }
         },
         "small": {
-         "coverage": 0.233129,
+         "coverage": 0.231707,
          "hit_rate": 0.631579,
          "lost": 14,
          "mean_chance": 0.461888,
@@ -37839,7 +38222,7 @@
        },
        "all": {
         "confident_games": 1677,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.066667,
@@ -37875,7 +38258,7 @@
          }
         },
         "small": {
-         "coverage": 0.203586,
+         "coverage": 0.203527,
          "hit_rate": 0.487216,
          "lost": 361,
          "mean_chance": 0.448629,
@@ -37986,7 +38369,7 @@
        },
        "2026": {
         "confident_games": 55,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.055556,
@@ -38022,7 +38405,7 @@
          }
         },
         "small": {
-         "coverage": 0.331288,
+         "coverage": 0.329268,
          "hit_rate": 0.555556,
          "lost": 24,
          "mean_chance": 0.416182,
@@ -38033,7 +38416,7 @@
        },
        "all": {
         "confident_games": 1253,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.044983,
@@ -38069,7 +38452,7 @@
          }
         },
         "small": {
-         "coverage": 0.343262,
+         "coverage": 0.343163,
          "hit_rate": 0.444819,
          "lost": 659,
          "mean_chance": 0.394073,
@@ -38180,7 +38563,7 @@
        },
        "2026": {
         "confident_games": 55,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.0,
@@ -38216,7 +38599,7 @@
          }
         },
         "small": {
-         "coverage": 0.312883,
+         "coverage": 0.310976,
          "hit_rate": 0.568627,
          "lost": 22,
          "mean_chance": 0.424352,
@@ -38227,7 +38610,7 @@
        },
        "all": {
         "confident_games": 1253,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.04918,
@@ -38263,7 +38646,7 @@
          }
         },
         "small": {
-         "coverage": 0.299595,
+         "coverage": 0.299509,
          "hit_rate": 0.449807,
          "lost": 570,
          "mean_chance": 0.41085,
@@ -38374,7 +38757,7 @@
        },
        "2026": {
         "confident_games": 55,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.0,
@@ -38410,7 +38793,7 @@
          }
         },
         "small": {
-         "coverage": 0.239264,
+         "coverage": 0.237805,
          "hit_rate": 0.641026,
          "lost": 14,
          "mean_chance": 0.451918,
@@ -38421,7 +38804,7 @@
        },
        "all": {
         "confident_games": 1253,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.052632,
@@ -38457,7 +38840,7 @@
          }
         },
         "small": {
-         "coverage": 0.234239,
+         "coverage": 0.234172,
          "hit_rate": 0.467901,
          "lost": 431,
          "mean_chance": 0.434366,
@@ -38568,7 +38951,7 @@
        },
        "2026": {
         "confident_games": 55,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": null,
@@ -38604,7 +38987,7 @@
          }
         },
         "small": {
-         "coverage": 0.184049,
+         "coverage": 0.182927,
          "hit_rate": 0.666667,
          "lost": 10,
          "mean_chance": 0.477335,
@@ -38615,7 +38998,7 @@
        },
        "all": {
         "confident_games": 1253,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.076923,
@@ -38651,7 +39034,7 @@
          }
         },
         "small": {
-         "coverage": 0.162233,
+         "coverage": 0.162186,
          "hit_rate": 0.500891,
          "lost": 280,
          "mean_chance": 0.463574,
@@ -38762,7 +39145,7 @@
        },
        "2026": {
         "confident_games": 29,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.125,
@@ -38798,7 +39181,7 @@
          }
         },
         "small": {
-         "coverage": 0.177914,
+         "coverage": 0.176829,
          "hit_rate": 0.655172,
          "lost": 10,
          "mean_chance": 0.43536,
@@ -38809,7 +39192,7 @@
        },
        "all": {
         "confident_games": 702,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.046377,
@@ -38845,7 +39228,7 @@
          }
         },
         "small": {
-         "coverage": 0.196356,
+         "coverage": 0.1963,
          "hit_rate": 0.458027,
          "lost": 368,
          "mean_chance": 0.421966,
@@ -38956,7 +39339,7 @@
        },
        "2026": {
         "confident_games": 29,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": 0.0,
@@ -38992,7 +39375,7 @@
          }
         },
         "small": {
-         "coverage": 0.171779,
+         "coverage": 0.170732,
          "hit_rate": 0.642857,
          "lost": 10,
          "mean_chance": 0.440653,
@@ -39003,7 +39386,7 @@
        },
        "all": {
         "confident_games": 702,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.053333,
@@ -39039,7 +39422,7 @@
          }
         },
         "small": {
-         "coverage": 0.174957,
+         "coverage": 0.174906,
          "hit_rate": 0.456198,
          "lost": 329,
          "mean_chance": 0.437396,
@@ -39150,7 +39533,7 @@
        },
        "2026": {
         "confident_games": 29,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": null,
@@ -39186,7 +39569,7 @@
          }
         },
         "small": {
-         "coverage": 0.128834,
+         "coverage": 0.128049,
          "hit_rate": 0.714286,
          "lost": 6,
          "mean_chance": 0.47183,
@@ -39197,7 +39580,7 @@
        },
        "all": {
         "confident_games": 702,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.041667,
@@ -39233,7 +39616,7 @@
          }
         },
         "small": {
-         "coverage": 0.138519,
+         "coverage": 0.138479,
          "hit_rate": 0.480167,
          "lost": 249,
          "mean_chance": 0.461166,
@@ -39344,7 +39727,7 @@
        },
        "2026": {
         "confident_games": 29,
-        "games": 163,
+        "games": 164,
         "kinds": {
          "large": {
           "hit_rate": null,
@@ -39380,7 +39763,7 @@
          }
         },
         "small": {
-         "coverage": 0.09816,
+         "coverage": 0.097561,
          "hit_rate": 0.75,
          "lost": 4,
          "mean_chance": 0.498998,
@@ -39391,7 +39774,7 @@
        },
        "all": {
         "confident_games": 702,
-        "games": 3458,
+        "games": 3459,
         "kinds": {
          "large": {
           "hit_rate": 0.0,
@@ -39427,7 +39810,7 @@
          }
         },
         "small": {
-         "coverage": 0.098323,
+         "coverage": 0.098294,
          "hit_rate": 0.511765,
          "lost": 166,
          "mean_chance": 0.490001,
@@ -39465,8 +39848,8 @@
      "coverage": {
       "2014-2019": 0.022472,
       "2020-2025": 0.033668,
-      "2026": 0.01227,
-      "all": 0.027473
+      "2026": 0.012195,
+      "all": 0.027465
      },
      "meters": {
       "2014-2019": {
@@ -39524,11 +39907,11 @@
        "lost": 2,
        "mean_chance": 0.063342,
        "mean_chance_graded": 0.063342,
-       "not_built": 161,
+       "not_built": 162,
        "not_built_why": {
         "no TD leg with a chance of 45% or more available": 57,
         "no TD leg with a chance of 45% or more on a second player available": 14,
-        "not a confident game: the pick's chance is below 65%": 90
+        "not a confident game: the pick's chance is below 65%": 91
        },
        "pending": 0,
        "profit": null,
@@ -39548,11 +39931,11 @@
        "lost": 90,
        "mean_chance": 0.063134,
        "mean_chance_graded": 0.064425,
-       "not_built": 3363,
+       "not_built": 3364,
        "not_built_why": {
         "no TD leg with a chance of 45% or more available": 1347,
         "no TD leg with a chance of 45% or more on a second player available": 235,
-        "not a confident game: the pick's chance is below 65%": 1781
+        "not a confident game: the pick's chance is below 65%": 1782
        },
        "pending": 0,
        "profit": null,
@@ -39613,8 +39996,8 @@
      "coverage": {
       "2014-2019": 0.272784,
       "2020-2025": 0.31896,
-      "2026": 0.300613,
-      "all": 0.296703
+      "2026": 0.29878,
+      "all": 0.296618
      },
      "meters": {
       "2014-2019": {
@@ -39671,10 +40054,10 @@
        "lost": 31,
        "mean_chance": 0.217005,
        "mean_chance_graded": 0.217005,
-       "not_built": 114,
+       "not_built": 115,
        "not_built_why": {
         "no TD leg with a chance of 45% or more available": 24,
-        "not a confident game: the pick's chance is below 65%": 90
+        "not a confident game: the pick's chance is below 65%": 91
        },
        "pending": 0,
        "profit": null,
@@ -39694,11 +40077,11 @@
        "lost": 792,
        "mean_chance": 0.199987,
        "mean_chance_graded": 0.20174,
-       "not_built": 2432,
+       "not_built": 2433,
        "not_built_why": {
         "no TD leg with a chance of 45% or more available": 650,
         "no TOTAL leg or TD leg with a chance of 45% or more on another player available": 1,
-        "not a confident game: the pick's chance is below 65%": 1781
+        "not a confident game: the pick's chance is below 65%": 1782
        },
        "pending": 0,
        "profit": null,
@@ -39767,8 +40150,8 @@
      "coverage": {
       "2014-2019": 0.139201,
       "2020-2025": 0.117543,
-      "2026": 0.055215,
-      "all": 0.124639
+      "2026": 0.054878,
+      "all": 0.124602
      },
      "meters": {
       "2014-2019": {
@@ -39826,10 +40209,10 @@
        "lost": 7,
        "mean_chance": 0.241602,
        "mean_chance_graded": 0.241602,
-       "not_built": 154,
+       "not_built": 155,
        "not_built_why": {
         "no rookie TD leg on the pick's team with a chance of 25% or more available": 63,
-        "not a confident game: the pick's chance is below 65%": 90,
+        "not a confident game: the pick's chance is below 65%": 91,
         "the only rookie TD leg on the pick's team at 25% or more, with the pick's WIN, is SMALL's ticket": 1
        },
        "pending": 0,
@@ -39850,10 +40233,10 @@
        "lost": 321,
        "mean_chance": 0.255963,
        "mean_chance_graded": 0.256299,
-       "not_built": 3027,
+       "not_built": 3028,
        "not_built_why": {
         "no rookie TD leg on the pick's team with a chance of 25% or more available": 1176,
-        "not a confident game: the pick's chance is below 65%": 1781,
+        "not a confident game: the pick's chance is below 65%": 1782,
         "the only rookie TD leg on the pick's team at 25% or more, with the pick's WIN, is SMALL's ticket": 70
        },
        "pending": 0,
@@ -39923,8 +40306,8 @@
      "coverage": {
       "2014-2019": 0.273408,
       "2020-2025": 0.31896,
-      "2026": 0.300613,
-      "all": 0.296992
+      "2026": 0.29878,
+      "all": 0.296907
      },
      "meters": {
       "2014-2019": {
@@ -39980,10 +40363,10 @@
        "lost": 19,
        "mean_chance": 0.438428,
        "mean_chance_graded": 0.438428,
-       "not_built": 114,
+       "not_built": 115,
        "not_built_why": {
         "no TD leg with a chance of 45% or more available": 24,
-        "not a confident game: the pick's chance is below 65%": 90
+        "not a confident game: the pick's chance is below 65%": 91
        },
        "pending": 0,
        "profit": null,
@@ -40003,10 +40386,10 @@
        "lost": 562,
        "mean_chance": 0.419602,
        "mean_chance_graded": 0.420347,
-       "not_built": 2431,
+       "not_built": 2432,
        "not_built_why": {
         "no TD leg with a chance of 45% or more available": 650,
-        "not a confident game: the pick's chance is below 65%": 1781
+        "not a confident game: the pick's chance is below 65%": 1782
        },
        "pending": 0,
        "profit": null,
@@ -40023,7 +40406,7 @@
     }
    },
    "left_out": {
-    "not played yet": 109
+    "not played yet": 108
    },
    "periods": {
     "2014-2019": [
@@ -40063,7 +40446,7 @@
     "on_file": false,
     "rows": 0
    },
-   "through": "2026-11-24T01:15:00Z",
+   "through": "2026-11-26T01:00:00Z",
    "v1_same_games": {
     "games": {
      "2014-2019": 785,
@@ -40438,7 +40821,7 @@
    "confident_games": 10,
    "first_kickoff": "2026-11-26T01:00:00Z",
    "games": 16,
-   "graded_games": 1,
+   "graded_games": 4,
    "kinds": {
     "large": {
      "graded": 0,
@@ -40465,23 +40848,23 @@
      "won": 0
     },
     "medium": {
-     "graded": 0,
-     "hit_rate": null,
-     "hit_rate_reason": "no ticket decided yet",
-     "lost": 0,
-     "mean_chance": null,
-     "mean_chance_graded": null,
+     "graded": 1,
+     "hit_rate": 0.0,
+     "hit_rate_reason": null,
+     "lost": 1,
+     "mean_chance": 0.233581,
+     "mean_chance_graded": 0.233581,
      "not_built": 11,
      "not_built_why": {
       "no TD leg with a chance of 45% or more available": 5,
       "not a confident game: the pick's chance is below 65%": 6
      },
-     "pending": 5,
-     "profit": null,
-     "roi": null,
+     "pending": 4,
+     "profit": -10.0,
+     "roi": -1.0,
      "roi_note": null,
-     "roi_reason": "no ticket graded yet",
-     "roi_tickets": 0,
+     "roi_reason": null,
+     "roi_tickets": 1,
      "stake": 10.0,
      "tickets": 5,
      "void": 0,
@@ -40512,23 +40895,23 @@
      "won": 0
     },
     "small": {
-     "graded": 0,
-     "hit_rate": null,
-     "hit_rate_reason": "no ticket decided yet",
-     "lost": 0,
-     "mean_chance": null,
-     "mean_chance_graded": null,
+     "graded": 1,
+     "hit_rate": 0.0,
+     "hit_rate_reason": null,
+     "lost": 1,
+     "mean_chance": 0.450704,
+     "mean_chance_graded": 0.450704,
      "not_built": 11,
      "not_built_why": {
       "no TD leg with a chance of 45% or more available": 5,
       "not a confident game: the pick's chance is below 65%": 6
      },
-     "pending": 5,
-     "profit": null,
-     "roi": null,
+     "pending": 4,
+     "profit": -10.0,
+     "roi": -1.0,
      "roi_note": null,
-     "roi_reason": "no ticket graded yet",
-     "roi_tickets": 0,
+     "roi_reason": null,
+     "roi_tickets": 1,
      "stake": 10.0,
      "tickets": 5,
      "void": 0,
@@ -40575,10 +40958,10 @@
     "games": {
      "2014-2019": 1602,
      "2020-2025": 1693,
-     "2026": 163,
-     "all": 3458
+     "2026": 164,
+     "all": 3459
     },
-    "generated": "2026-11-24T20:46:20Z",
+    "generated": "2026-11-27T22:04:35Z",
     "history_from": 2014,
     "inputs": {
      "SPREAD": "closing spread_line and its prices, games.csv.gz, proportional no-vig",
@@ -40600,11 +40983,11 @@
        },
        {
         "hi": 0.05,
-        "hit_rate": 0.033448,
+        "hit_rate": 0.033433,
         "lo": 0.025,
-        "mean_chance": 0.035413,
-        "mean_chance_graded": 0.036529,
-        "tickets": 2332
+        "mean_chance": 0.035412,
+        "mean_chance_graded": 0.036527,
+        "tickets": 2333
        },
        {
         "hi": 0.1,
@@ -40659,12 +41042,12 @@
         "won": 70
        },
        "2026": {
-        "graded": 163,
-        "hit_rate": 0.042945,
+        "graded": 164,
+        "hit_rate": 0.042683,
         "hit_rate_reason": null,
-        "lost": 156,
-        "mean_chance": 0.033086,
-        "mean_chance_graded": 0.034187,
+        "lost": 157,
+        "mean_chance": 0.033084,
+        "mean_chance_graded": 0.034178,
         "not_built": 0,
         "not_built_why": {},
         "pending": 0,
@@ -40674,17 +41057,17 @@
         "roi_reason": "no anytime-TD price history on file",
         "roi_tickets": 0,
         "stake": 10.0,
-        "tickets": 163,
+        "tickets": 164,
         "void": 0,
         "won": 7
        },
        "all": {
-        "graded": 3457,
-        "hit_rate": 0.039051,
+        "graded": 3458,
+        "hit_rate": 0.03904,
         "hit_rate_reason": null,
-        "lost": 3322,
+        "lost": 3323,
         "mean_chance": 0.034481,
-        "mean_chance_graded": 0.035611,
+        "mean_chance_graded": 0.03561,
         "not_built": 1,
         "not_built_why": {
          "no TOTAL leg available": 1
@@ -40696,7 +41079,7 @@
         "roi_reason": "no anytime-TD price history on file",
         "roi_tickets": 0,
         "stake": 10.0,
-        "tickets": 3457,
+        "tickets": 3458,
         "void": 0,
         "won": 135
        }
@@ -40714,11 +41097,11 @@
        },
        {
         "hi": 0.15,
-        "hit_rate": 0.124765,
+        "hit_rate": 0.124687,
         "lo": 0.1,
-        "mean_chance": 0.125276,
+        "mean_chance": 0.125277,
         "mean_chance_graded": 0.126937,
-        "tickets": 1595
+        "tickets": 1596
        },
        {
         "hi": 0.2,
@@ -40795,12 +41178,12 @@
         "won": 281
        },
        "2026": {
-        "graded": 163,
-        "hit_rate": 0.184049,
+        "graded": 164,
+        "hit_rate": 0.182927,
         "hit_rate_reason": null,
-        "lost": 133,
-        "mean_chance": 0.165233,
-        "mean_chance_graded": 0.165638,
+        "lost": 134,
+        "mean_chance": 0.164996,
+        "mean_chance_graded": 0.165398,
         "not_built": 0,
         "not_built_why": {},
         "pending": 0,
@@ -40810,17 +41193,17 @@
         "roi_reason": "no anytime-TD price history on file",
         "roi_tickets": 0,
         "stake": 10.0,
-        "tickets": 163,
+        "tickets": 164,
         "void": 0,
         "won": 30
        },
        "all": {
-        "graded": 3458,
-        "hit_rate": 0.161943,
+        "graded": 3459,
+        "hit_rate": 0.161897,
         "hit_rate_reason": null,
-        "lost": 2898,
-        "mean_chance": 0.154405,
-        "mean_chance_graded": 0.156175,
+        "lost": 2899,
+        "mean_chance": 0.154397,
+        "mean_chance_graded": 0.156166,
         "not_built": 0,
         "not_built_why": {},
         "pending": 0,
@@ -40830,7 +41213,7 @@
         "roi_reason": "no anytime-TD price history on file",
         "roi_tickets": 0,
         "stake": 10.0,
-        "tickets": 3458,
+        "tickets": 3459,
         "void": 0,
         "won": 560
        }
@@ -40965,9 +41348,9 @@
         "lost": 29,
         "mean_chance": 0.14305,
         "mean_chance_graded": 0.14305,
-        "not_built": 129,
+        "not_built": 130,
         "not_built_why": {
-         "no rookie TD leg with a chance of 25% or more available": 126,
+         "no rookie TD leg with a chance of 25% or more available": 127,
          "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 3
         },
         "pending": 0,
@@ -40988,9 +41371,9 @@
         "lost": 1118,
         "mean_chance": 0.167929,
         "mean_chance_graded": 0.168214,
-        "not_built": 2061,
+        "not_built": 2062,
         "not_built_why": {
-         "no rookie TD leg with a chance of 25% or more available": 1896,
+         "no rookie TD leg with a chance of 25% or more available": 1897,
          "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 165
         },
         "pending": 0,
@@ -41026,11 +41409,11 @@
        },
        {
         "hi": 0.25,
-        "hit_rate": 0.229584,
+        "hit_rate": 0.230769,
         "lo": 0.2,
-        "mean_chance": 0.227836,
-        "mean_chance_graded": 0.228466,
-        "tickets": 649
+        "mean_chance": 0.227871,
+        "mean_chance_graded": 0.228499,
+        "tickets": 650
        },
        {
         "hi": 0.3,
@@ -41099,12 +41482,12 @@
         "won": 575
        },
        "2026": {
-        "graded": 163,
-        "hit_rate": 0.392638,
+        "graded": 164,
+        "hit_rate": 0.396341,
         "hit_rate_reason": null,
         "lost": 99,
-        "mean_chance": 0.330375,
-        "mean_chance_graded": 0.331178,
+        "mean_chance": 0.329885,
+        "mean_chance_graded": 0.330683,
         "not_built": 0,
         "not_built_why": {},
         "pending": 0,
@@ -41114,17 +41497,17 @@
         "roi_reason": "no anytime-TD price history on file",
         "roi_tickets": 0,
         "stake": 10.0,
-        "tickets": 163,
+        "tickets": 164,
         "void": 0,
-        "won": 64
+        "won": 65
        },
        "all": {
-        "graded": 3458,
-        "hit_rate": 0.332851,
+        "graded": 3459,
+        "hit_rate": 0.333044,
         "hit_rate_reason": null,
         "lost": 2307,
-        "mean_chance": 0.318595,
-        "mean_chance_graded": 0.319177,
+        "mean_chance": 0.318576,
+        "mean_chance_graded": 0.319157,
         "not_built": 0,
         "not_built_why": {},
         "pending": 0,
@@ -41134,15 +41517,15 @@
         "roi_reason": "no anytime-TD price history on file",
         "roi_tickets": 0,
         "stake": 10.0,
-        "tickets": 3458,
+        "tickets": 3459,
         "void": 0,
-        "won": 1151
+        "won": 1152
        }
       }
      }
     },
     "left_out": {
-     "not played yet": 109
+     "not played yet": 108
     },
     "periods": {
      "2014-2019": [
@@ -41171,14 +41554,14 @@
       "1-3",
       "3+"
      ],
-     "tickets": 11770
+     "tickets": 11773
     },
     "td_prices": {
      "file": "nfl/data/td_price_history.csv.gz",
      "on_file": false,
      "rows": 0
     },
-    "through": "2026-11-24T01:15:00Z"
+    "through": "2026-11-26T01:00:00Z"
    },
    "kinds": [
     "small",
@@ -41195,65 +41578,65 @@
    "live": {
     "first_kickoff": "2026-11-26T01:00:00Z",
     "games": 16,
-    "graded_games": 1,
+    "graded_games": 4,
     "kinds": {
      "large": {
-      "graded": 1,
-      "hit_rate": 0.0,
+      "graded": 4,
+      "hit_rate": 0.25,
       "hit_rate_reason": null,
-      "lost": 1,
-      "mean_chance": 0.033436,
-      "mean_chance_graded": 0.033436,
+      "lost": 3,
+      "mean_chance": 0.050906,
+      "mean_chance_graded": 0.091364,
       "not_built": 0,
       "not_built_why": {},
-      "pending": 15,
+      "pending": 12,
       "profit": -10.0,
       "roi": -1.0,
-      "roi_note": null,
+      "roi_note": "over the 1 of 4 graded tickets with every leg priced; 3 had a leg with no price on file",
       "roi_reason": null,
       "roi_tickets": 1,
       "stake": 10.0,
       "tickets": 16,
       "void": 0,
-      "won": 0
+      "won": 1
      },
      "medium": {
-      "graded": 1,
-      "hit_rate": 0.0,
+      "graded": 4,
+      "hit_rate": 0.5,
       "hit_rate_reason": null,
-      "lost": 1,
-      "mean_chance": 0.134825,
-      "mean_chance_graded": 0.134824,
+      "lost": 2,
+      "mean_chance": 0.198467,
+      "mean_chance_graded": 0.237819,
       "not_built": 0,
       "not_built_why": {},
-      "pending": 15,
+      "pending": 12,
       "profit": -10.0,
       "roi": -1.0,
-      "roi_note": null,
+      "roi_note": "over the 1 of 4 graded tickets with every leg priced; 3 had a leg with no price on file",
       "roi_reason": null,
       "roi_tickets": 1,
       "stake": 10.0,
       "tickets": 16,
       "void": 0,
-      "won": 0
+      "won": 2
      },
      "rookie": {
-      "graded": 0,
-      "hit_rate": null,
-      "hit_rate_reason": "no ticket decided yet",
-      "lost": 0,
-      "mean_chance": null,
-      "mean_chance_graded": null,
+      "graded": 1,
+      "hit_rate": 0.0,
+      "hit_rate_reason": null,
+      "lost": 1,
+      "mean_chance": 0.178608,
+      "mean_chance_graded": 0.178609,
       "not_built": 11,
       "not_built_why": {
        "no rookie TD leg with a chance of 25% or more available": 10,
        "the only rookie TD leg at 25% or more, with his team's WIN, is SMALL's ticket": 1
       },
-      "pending": 5,
+      "pending": 4,
       "profit": null,
       "roi": null,
       "roi_note": null,
-      "roi_reason": "no ticket graded yet",
+      "roi_reason": "none of the 1 graded tickets has every leg's price on file",
       "roi_tickets": 0,
       "stake": 10.0,
       "tickets": 5,
@@ -41261,24 +41644,24 @@
       "won": 0
      },
      "small": {
-      "graded": 1,
-      "hit_rate": 1.0,
+      "graded": 4,
+      "hit_rate": 0.75,
       "hit_rate_reason": null,
-      "lost": 0,
-      "mean_chance": 0.269649,
-      "mean_chance_graded": 0.269649,
+      "lost": 1,
+      "mean_chance": 0.381503,
+      "mean_chance_graded": 0.381503,
       "not_built": 0,
       "not_built_why": {},
-      "pending": 15,
+      "pending": 12,
       "profit": 22.0846,
       "roi": 2.20846,
-      "roi_note": null,
+      "roi_note": "over the 1 of 4 graded tickets with every leg priced; 3 had a leg with no price on file",
       "roi_reason": null,
       "roi_tickets": 1,
       "stake": 10.0,
       "tickets": 16,
       "void": 0,
-      "won": 1
+      "won": 3
      }
     }
    },
