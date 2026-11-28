@@ -9039,7 +9039,7 @@
    "day": "2026-11-28",
    "kind": "underdog_v2",
    "built_at": "2026-11-28T00:48:15Z",
-   "status": "pending",
+   "status": "superseded",
    "multiplier": 3.1248,
    "p": 0.285093,
    "p_market": 0.276927,
@@ -10084,6 +10084,90 @@
    "bets": [
     "1X2",
     "OU25"
+   ],
+   "estimated": false,
+   "paid": null,
+   "profit": null
+  },
+  {
+   "day": "2026-11-28",
+   "kind": "underdog_v2",
+   "built_at": "2026-11-28T14:17:51Z",
+   "status": "pending",
+   "multiplier": 3.1248,
+   "p": 0.285093,
+   "p_market": 0.276927,
+   "first_start": "2026-11-28T17:00:00Z",
+   "last_start": "2026-11-28T20:00:00Z",
+   "sports": [
+    "Soccer"
+   ],
+   "legs": [
+    {
+     "sport": "Soccer",
+     "key": "Soccer:SWZ-20261128-grasshoppers-basel",
+     "event": "Grasshoppers v Basel",
+     "pick": "Grasshoppers",
+     "opponent": "SWZ",
+     "kickoff": "2026-11-28T17:00:00Z",
+     "decimal": 2.79,
+     "p": 0.32578422688558234,
+     "p_model": null,
+     "p_market": 0.32875143184421535,
+     "names": {
+      "match_id": "SWZ-20261128-grasshoppers-basel",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": true,
+     "bet": "1X2",
+     "bet_detail": null,
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": "SWZ-20261128-grasshoppers-basel",
+     "moneyline_source": null,
+     "outcome": null
+    },
+    {
+     "sport": "Soccer",
+     "key": "Soccer:SP1-20261128-realmadrid-alaves",
+     "event": "Real Madrid v Alav\u00e9s",
+     "pick": "Real Madrid",
+     "opponent": "SP1",
+     "kickoff": "2026-11-28T20:00:00Z",
+     "decimal": 1.12,
+     "p": 0.8750962964379618,
+     "p_model": null,
+     "p_market": 0.8423608692586604,
+     "names": {
+      "match_id": "SP1-20261128-realmadrid-alaves",
+      "pick": "H"
+     },
+     "price_source": "average price",
+     "dog": null,
+     "bet": "1X2",
+     "bet_detail": "winner",
+     "estimated": false,
+     "est_decimal": null,
+     "error_pct": null,
+     "lot_key": null,
+     "moneyline_source": null,
+     "outcome": null
+    }
+   ],
+   "dog": {
+    "key": "Soccer:SWZ-20261128-grasshoppers-basel",
+    "pick": "Grasshoppers",
+    "lot_key": "SWZ-20261128-grasshoppers-basel",
+    "rank": 0,
+    "candidates": 31,
+    "salt": "sameday-dog-v2",
+    "version": 2
+   },
+   "version": 2,
+   "bets": [
+    "1X2"
    ],
    "estimated": false,
    "paid": null,
